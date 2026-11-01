@@ -51,6 +51,25 @@ async function shot(c,name){fs.mkdirSync(ARTIFACTS,{recursive:true});const s=awa
   await tap(c,'#msheet-body .sr-item[data-type="group"]');await wait(c,`_openGCko==='에스파'`,'선택한 그룹 카드');ok('에스파 검색 결과 터치→에스파 카드');
   const history=await c.send('Page.getNavigationHistory');if(history.currentIndex>0){await c.send('Page.navigateToHistoryEntry',{entryId:history.entries[history.currentIndex-1].id});await wait(c,`!_openGCko&&!_openTArtist`,'그룹 카드 뒤로가기');ok('브라우저 뒤로가기→선택 카드 닫힘');}else bad('그룹 카드에 뒤로가기 기록 없음');
   await shot(c,'after-browser-back');
+  // 확인 창만 열고 취소한다. 실제 즐겨찾기/계정/로그아웃 동작은 호출하지 않는다.
+  for(const [open,id,cancel,close] of [['_confirmUnfavorite','unfav-confirm-overlay','unfav-confirm-cancel','_closeUnfavConfirm'],['_confirmLogout','logout-confirm-overlay','logout-confirm-cancel','_closeLogoutConfirm'],['_confirmLinkOverwrite','link-confirm-overlay','link-confirm-cancel','_closeLinkConfirm']]){
+   await ev(c,`showGC('에스파',innerWidth/2,innerHeight*.4);window.__auditConfirmResult='pending';${open}().then(v=>window.__auditConfirmResult=v);true`);
+   await wait(c,`document.getElementById(${JSON.stringify(id)}).classList.contains('open')`,'확인 창 열기');
+   const front=await ev(c,`(()=>{const b=document.getElementById(${JSON.stringify(cancel)}),r=b.getBoundingClientRect();return !!document.elementFromPoint(r.left+r.width/2,r.top+r.height/2)?.closest('#'+${JSON.stringify(id)});})()`);
+   if(front)ok(id+' 카드보다 앞에 표시');else bad(id+' 카드 뒤에 가림');
+   await ev(c,`document.getElementById(${JSON.stringify(cancel)}).focus();true`);
+   await c.send('Input.dispatchKeyEvent',{type:'keyDown',key:'Escape',code:'Escape',windowsVirtualKeyCode:27});await c.send('Input.dispatchKeyEvent',{type:'keyUp',key:'Escape',code:'Escape',windowsVirtualKeyCode:27});await sleep(200);
+   const state=await ev(c,`({result:window.__auditConfirmResult,open:document.getElementById(${JSON.stringify(id)}).classList.contains('open'),group:_openGCko})`);
+   if(state.result===false&&!state.open&&state.group==='에스파')ok(id+' Escape는 취소, 뒤 그룹 카드 유지');else bad(id+' Escape '+JSON.stringify(state));
+   await ev(c,`${close}(false);true`); // 실패한 경우도 안전하게 취소만 하고 다음 검사로
+  }
+  for(const [open,id,input] of [['openMobSearchSheet','msheet','msheet-input'],['_openComboPanel','combo-overlay','combo-search']]){
+   await ev(c,`${open}();document.getElementById(${JSON.stringify(input)}).focus();true`);
+   await c.send('Input.dispatchKeyEvent',{type:'keyDown',key:'Escape',code:'Escape',windowsVirtualKeyCode:27});await c.send('Input.dispatchKeyEvent',{type:'keyUp',key:'Escape',code:'Escape',windowsVirtualKeyCode:27});await sleep(200);
+   const state=await ev(c,`({open:document.getElementById(${JSON.stringify(id)}).classList.contains('open'),group:_openGCko})`);
+   if(!state.open&&state.group==='에스파')ok(id+' 입력 중 Escape도 그 창만 닫음');else bad(id+' 입력 중 Escape '+JSON.stringify(state));
+  }
+  await ev(c,'closeCards();true');
  }catch(e){bad(e.message);if(c)try{await shot(c,'failure');}catch(_){}}
  finally{c?.close();try{proc.kill();}catch(_){}server.close();console.log(pass+' 통과 / '+fail+' 실패');process.exit(fail?1:0);}
 })();

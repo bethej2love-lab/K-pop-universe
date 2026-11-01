@@ -10887,7 +10887,31 @@ function _psBuildSeg(){
   requestAnimationFrame(_psSyncSeg);
 }
 
+function _closeTopCancelableSurface(){
+  // 확인/입력/검색/조합 창은 실제 맨 위일 때만 취소한다. 그 위에 연 영상·사진은 먼저 닫혀야 한다.
+  let top=null,z=-Infinity;
+  document.querySelectorAll('[data-modal].open,#msheet.open').forEach(el=>{
+    const css=getComputedStyle(el);
+    if(css.display==='none'||css.visibility==='hidden')return;
+    const n=Number(css.zIndex)||0;
+    if(n>=z){top=el;z=n;}
+  });
+  const close=top&&{
+    'generic-confirm-overlay':()=>_closeGenericConfirm(false),
+    'generic-prompt-overlay':()=>_closeGenericPrompt(null),
+    'unfav-confirm-overlay':()=>_closeUnfavConfirm(false),
+    'link-confirm-overlay':()=>_closeLinkConfirm(false),
+    'logout-confirm-overlay':()=>_closeLogoutConfirm(false),
+    'combo-overlay':()=>_closeComboPanel(),
+    'msheet':()=>closeMobSearchSheet(),
+  }[top.id];
+  if(!close)return false;
+  close();return true;
+}
 function _closeTopOverlay(){
+  if(_closeTopCancelableSurface())return true;
+  const ae=document.activeElement;
+  if(ae&&['INPUT','TEXTAREA'].includes(ae.tagName))return false; // 다른 입력창은 기존 자체 Escape 처리에 양보
   // 인스타 사진 뷰어·외부 아티스트 '함께한 앨범' 창(2026-10-19)은 카드·라이트박스 위에 뜨는 맨 위 층 — 먼저 벗긴다
   // (안 넣으면 Esc가 뷰어는 둔 채 그 밑의 카드를 닫았다)
   if(document.getElementById('igv-overlay')?.classList.contains('open')){_closeIgViewer();return true;}
@@ -10924,8 +10948,7 @@ function _closeTopOverlay(){
 }
 window.addEventListener('keydown',e=>{
   if(e.key!=='Escape')return;
-  const ae=document.activeElement;
-  if(ae&&['INPUT','TEXTAREA'].includes(ae.tagName))return; // 입력 중엔 입력창 자체 ESC에 양보
+  if(e.isComposing||e.keyCode===229)return; // 한글 조합 취소를 창 닫기로 해석하지 않는다
   if(_closeTopOverlay()){e.preventDefault();e.stopImmediatePropagation();}
 },true);
 document.getElementById('tt-prev').addEventListener('click',e=>{e.stopPropagation();navigateMember(-1);});
