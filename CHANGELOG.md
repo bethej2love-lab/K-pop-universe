@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-11-01 (Codex — 검수59차·하우 주호 직캠 오연결)
+- **[진행중] [운영 영상·sql]** 57차 후보 njWMQI0v5qY는 YouTube 공식 oEmbed HTTP200으로 ARIRANG K-POP(@arirangworld)의 HAWW JUHO/하우 주호 직캠임을 확인. SF9 주호 자동 단일 태그의 정확한 변경 전 조건을 다시 확인하고, 원본 영상은 보존한 채 오연결을 무관/수동으로 처리한다. 롤백 SQL·로컬 왕복 검증 후 적용. DK/드라마 후보는 추정 수정하지 않는다.
+
 ## 2026-11-01 (Codex — 검수58차·별 커서와 스크롤바)
 - **[검증·CI 환경 정정] [tests/star-cursor.test.js·tests/compass-width.test.js]** 실제 앱 로컬 나침반19/19와 새390px 포함 smoke 통과. 첫 CI의 별 전용26실패는 Linux headless가 pointer:fine 장치가 없는 상태(기본2px·표준thin 유지)에서 마우스 전용 스타일을 검사한 fixture 오류: Chromium primaryPointerType=4/hover=2 장치를 명시하고 fine 단언은 유지. Playwright도 사용하는 실행 설정이며 제품의 터치 분기를 바꾸지 않는다. 첫 CI smoke는 Supabase 인증 동기화 시간초과, vid-list-share는 응답200 이후 검색 skeleton 대기로 실패해 별도로 기록, 최종 head 전체 검증이 필요하다.
 - **[완료·브랜치 검증/배포 대기] [kpop_universe.css·app.js·index.html·admin.js]** 나침반/즐겨찾기/컬렉션/스크랩/영상 목록의 표준 scrollbar-width:thin·scrollbar-color가 Chromium에서 WebKit 파트 스타일을 우선하지 못하게 하여 OS 기본 스크롤바가 사용됨. 마우스+파트 지원 환경의 해당 7종만 auto로 되돌려 기존 6px/3px/10px/2px 디자인을 살리고 모든 스크롤바 파트(손잡이·트랙·트랙 조각·모서리·버튼)에 기존 분홍 SVG 별 명시. 숨긴 가로 레일 none·터치 thin·Firefox 표준 스크롤바는 유지한다. 근거: [Chromium 파트별 커서 처리](https://github.com/chromium/chromium/blob/main/third_party/blink/renderer/core/input/event_handler.cc), [Chrome 스크롤바 문서](https://developer.chrome.com/docs/css-ui/scrollbar-styling).
