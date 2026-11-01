@@ -6715,13 +6715,54 @@ let _rawConnData=[]; // connections.json raw array
 let _myReactions=new Set(); // "videoUrl\x00emoji"
 let _reactionCounts=new Map(); // "videoUrl\x00emoji" → count
 let _lbCurVideoUrl='';
+let _reactionLoadSeq=0,_reactionEditSeq=0,_reactionUserId=null;
+const _reactionWrites=new Map();
+function _reactionSyncUser(uid){
+  if(_reactionUserId!==null&&_reactionUserId!==uid){
+    _myReactions.clear();_reactionCounts.clear();_reactionWrites.clear();
+    _reactionLoadSeq++;_reactionEditSeq++;
+  }
+  _reactionUserId=uid;
+}
+function _reactionSameUser(uid){return _reactionUserId===uid&&window._sbSession?.user?.id===uid;}
+function _setReactionLocal(key,on){
+  const wasOn=_myReactions.has(key);if(wasOn===on)return;
+  if(on)_myReactions.add(key);else _myReactions.delete(key);
+  _reactionCounts.set(key,Math.max(0,(Number(_reactionCounts.get(key))||0)+(on?1:-1)));
+}
+async function _runReactionWrite(st){
+  let force=true;
+  while(force||st.desired!==st.confirmed){
+    if(!_reactionSameUser(st.uid))return;
+    force=false;
+    const desired=st.desired,revision=st.revision;
+    let failed=false;
+    try{
+      const{error}=desired
+        ?await sb.from('video_reactions').upsert({user_id:st.uid,video_url:st.videoUrl,emoji:st.emoji},{onConflict:'user_id,video_url,emoji'})
+        :await sb.from('video_reactions').delete().eq('user_id',st.uid).eq('video_url',st.videoUrl).eq('emoji',st.emoji);
+      if(error)throw error;
+    }catch(e){failed=true;console.error('_toggleReaction failed',e);}
+    if(!_reactionSameUser(st.uid))return;
+    if(failed){
+      // 요청 실패 뒤에도 사용자가 다시 눌렀다면 마지막 의도를 한 번 더 보낸다.
+      // 새 입력이 없으면 기존처럼 마지막 확인 상태로 복구하며 자동 재시도하지 않는다.
+      if(st.revision!==revision){force=true;continue;}
+      st.desired=st.confirmed;_setReactionLocal(st.key,st.confirmed);_renderReactions();return;
+    }
+    st.confirmed=desired;
+  }
+}
 
 async function _loadReactions(videoUrl){
+  const uid=window._sbSession?.user?.id||null;
+  _reactionSyncUser(uid);
+  const request=++_reactionLoadSeq,edit=_reactionEditSeq;
   document.getElementById('yt-lb-reactions')?.classList.remove('expanded'); // 새 영상은 접힌 상태로 시작(Q5)
   _renderReactions();
-  if(!videoUrl||!sb||!window._sbSession)return;
+  if(!videoUrl||!sb||!uid)return;
+  if([..._reactionWrites.values()].some(st=>st.uid===uid&&st.videoUrl===videoUrl))return;
   try{
-    const uid=window._sbSession.user.id;
     const[{data:cntData,error:cntError},{data:myData,error:myError}]=await Promise.all([
       sb.from('video_reaction_counts').select('emoji,cnt').eq('video_url',videoUrl),
       sb.from('video_reactions').select('emoji').eq('user_id',uid).eq('video_url',videoUrl)
@@ -6729,38 +6770,31 @@ async function _loadReactions(videoUrl){
     // 쇼츠 스와이프로 응답 도착 전에 이미 다른 영상으로 넘어갔으면 이 결과는 버림 — 안 그러면 늦게 도착한
     // 이전 영상 응답이 _myReactions(Set 전체 교체 방식)를 덮어써서, 지금 보고 있는 영상의 "내가 누른"
     // 상태가 순간적으로 틀리게 표시될 수 있음(빠르게 여러 번 스와이프할 때 재현 가능한 레이스 컨디션).
-    if(videoUrl!==_lbCurVideoUrl)return;
+    if(videoUrl!==_lbCurVideoUrl||request!==_reactionLoadSeq||edit!==_reactionEditSeq||!_reactionSameUser(uid))return;
     if(cntError||myError)throw cntError||myError;
     if(!Array.isArray(cntData)||!Array.isArray(myData))throw new Error('Invalid reaction response');
+    if(cntData.some(r=>!r||typeof r.emoji!=='string'||!Number.isFinite(Number(r.cnt))||Number(r.cnt)<0)||myData.some(r=>!r||typeof r.emoji!=='string'))throw new Error('Invalid reaction rows');
     const prefix=videoUrl+'\x00';
     for(const key of _reactionCounts.keys())if(key.startsWith(prefix))_reactionCounts.delete(key);
-    cntData.forEach(r=>_reactionCounts.set(prefix+r.emoji,r.cnt));
-    _myReactions=new Set(myData.map(r=>prefix+r.emoji));
+    cntData.forEach(r=>_reactionCounts.set(prefix+r.emoji,Number(r.cnt)));
+    for(const key of _myReactions)if(key.startsWith(prefix))_myReactions.delete(key);
+    myData.forEach(r=>_myReactions.add(prefix+r.emoji));
     _renderReactions();
   }catch(e){console.error('_loadReactions failed',e);}
 }
 
 async function _toggleReaction(videoUrl,emoji){
   if(!sb||!window._sbSession||!videoUrl)return;
-  const key=videoUrl+'\x00'+emoji;
   const uid=window._sbSession.user.id;
-  const wasOn=_myReactions.has(key);
-  // optimistic update
-  if(wasOn){_myReactions.delete(key);_reactionCounts.set(key,Math.max(0,(_reactionCounts.get(key)||0)-1));}
-  else{_myReactions.add(key);_reactionCounts.set(key,(_reactionCounts.get(key)||0)+1);}
+  _reactionSyncUser(uid);_reactionEditSeq++;
+  const key=videoUrl+'\x00'+emoji,writeKey=uid+'\x00'+key;
+  let st=_reactionWrites.get(writeKey);
+  if(st){st.desired=!st.desired;st.revision++;}
+  else{const on=_myReactions.has(key);st={uid,key,videoUrl,emoji,confirmed:on,desired:!on,revision:1};_reactionWrites.set(writeKey,st);}
+  _setReactionLocal(key,st.desired);
   _renderReactions();
-  try{
-    const{error}=wasOn
-      ?await sb.from('video_reactions').delete().eq('user_id',uid).eq('video_url',videoUrl).eq('emoji',emoji)
-      :await sb.from('video_reactions').upsert({user_id:uid,video_url:videoUrl,emoji},{onConflict:'user_id,video_url,emoji'});
-    if(error)throw error;
-  }catch(e){
-    // rollback
-    if(wasOn){_myReactions.add(key);_reactionCounts.set(key,(_reactionCounts.get(key)||0)+1);}
-    else{_myReactions.delete(key);_reactionCounts.set(key,Math.max(0,(_reactionCounts.get(key)||0)-1));}
-    _renderReactions();
-    console.error('_toggleReaction failed',e);
-  }
+  if(!st.promise)st.promise=_runReactionWrite(st).finally(()=>{if(_reactionWrites.get(writeKey)===st)_reactionWrites.delete(writeKey);});
+  return st.promise;
 }
 
 function _renderReactions(){
