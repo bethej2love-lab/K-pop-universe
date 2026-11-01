@@ -290956,6 +290956,29 @@
     },
     "discography": [
       {
+        "title": "D - CANDELA",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/05/700/15105700_20261030114031_500.jpg",
+        "releaseDate": "2026.11.01",
+        "trackCount": 2,
+        "titleTrack": "FUEGO",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "FUEGO",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "FUEGO (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15105700"
+      },
+      {
         "title": "D - MALÍCIA",
         "type": "싱글",
         "isMain": true,
