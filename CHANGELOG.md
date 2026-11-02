@@ -1,7 +1,50 @@
 # CHANGELOG
 
+## 2026-11-02 (Codex — 검수80차·사랑 해시태그의 인물·곡명·일반어 구분)
+- **[완료·읽기 전용] [yt_channel_videos]** 이즈나/[유사랑] primary+사랑(캔디샵) with 조건4행(limit30 미도달)을 확인했다. 모두 content_flag=NULL/tags_manual=false. 공식 가수 이름·곡 제목·일반 표현을 나눠야 하며 이즈나→캔디샵으로4행 일괄 이동하면 안 된다. 팬채널 소유자 충돌 위험에서 인접 표본을 좁힌 것이지 해당 팬채널이 이4행을 올렸다는 뜻은 아니다.
+
+| ID | 실제 제목/확인 범위 | 다음 처리 |
+|---|---|---|
+| JE8ECW4MN38 | [Simply's Mission Draw with #소람 & #사랑 #CandyShop](https://www.youtube.com/watch?v=JE8ECW4MN38). ARIRANG K-POP 공식 원본/캔디샵 해시태그 확인. DB with에 소람(캔디샵)도 있음. | 소람·사랑은 보존할 실제 출연 단서. 이즈나 유사랑을 지우고 캔디샵 출연자로 재배정할 후보. |
+| cpX79laqS_8 | [ALLIVE 원슈타인 - 사랑ㅎ새](https://www.youtube.com/watch?v=cpX79laqS_8). MBC RADIO 공식 원본의 제목/설명에 공연자 원슈타인, 곡명 사랑ㅎ새 확인. | 캔디샵 사랑이나 이즈나 유사랑 출연 근거가 아님. 미등록 공연자 포함 여부와 오태그 제거는 분리. |
+| 5-8NBifqRKk | 포테이토맨의 사랑 / 조째즈–사랑 #조째즈 #사랑 #모르시나요 #딩고. 저장 제목까지 대조, 이번 원본 전체 시청 없음. | 곡명/일반 표현 후보. 실제 출연자 설명 확인 후 오태그만 처리; 캔디샵으로 단순 이관 금지. |
+| onLM7JDB_Fo | 처음 본 남자와 요리…쿡딱뚝딱1화 #환승연애 #이별 #사랑 #요리… / KUTV1989. 저장 제목/출처까지 대조. | 일반 연애·요리 해시태그 후보. 아이돌 실제 출연 근거를 확인한 뒤 제외/포함 판단. |
+
+- **[현재 실코드 재생] [admin.js _m2ParseTitle·_normalizeMemberTags]** 운영 whitelist27개를 적재한 메모리 재생에서4행 모두 primaryGroup=캔디샵/[사랑](첫 행은 소람도), confidence=strong, 기존 태그 정규화도 with를 유지한다. 즉 strong이 소속/동반 출연을 보증하지 않는다. #사랑이 독립 이름인지 #사랑ㅎ새라는 더 긴 곡명 태그 안인지도 구분해 검토해야 한다. 전체 파이프라인/과거 태그 작성 실행 이력은 재현하지 않았다.
+- **[경계 조건 추가 재현] [admin.js hitHashtag]** 같은 실제 매처에 “원슈타인 - 노래 #사랑”, “#사랑ㅎ새”, “#사랑해”를 각각 넣으면 앞2개는 캔디샵/strong, 마지막은 매칭 없음이다. 이름 뒤 한글 경계 정규식이 가-힣만 사용해 자모가 이어진 더 긴 태그를 잘라 읽는 후보를 확인했다. _를 허용하는 기존 한국어 직캠 태그(예:#카리나_직캠)는 의도된 기능이므로 이 문제 때문에 밑줄 태그를 전량 차단하지 않는다. 이 비교는 합성 입력의 메모리 실험이며 소스/테스트 파일을 변경하지 않았다.
+- **[완료·공유 전 확인] [CHANGELOG.md·tests]** 이번 diff는 CHANGELOG만이다. syntax 필수 검사 통과. 실행 코드/명단은 직전 검수의 데이터 오류0·경고144/데스크톱·390px smoke 통과 상태에서 변경하지 않았으며, DB는 SELECT만 실행했다. 각 원본의 업로더/제목/설명 근거를 확인한 범위만 기록하고, 전체 시청/모든 후보 확정을 주장하지 않는다.
+- **⏳ 덜 된 일 [한정 재조회·소속 근거]** `select id,title,description,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,content_flag,tags_manual,source_handle from yt_channel_videos where id in ('JE8ECW4MN38','cpX79laqS_8','5-8NBifqRKk','onLM7JDB_Fo');` 재조회→공연자/곡명/일반어 구분→캔디샵 실제 출연1행과 나머지3행을 별도 판단. 사랑이라는 단어를 전역 금지하면 유사랑/캔디샵 사랑의 정상 영상까지 잃으므로 주인·명시적 그룹·태그 전체 경계를 검토할 것. 코드/SQL/DB/JSON 수정 없이 이 문서만 기록했다.
+
+## 2026-11-02 (Codex — 검수79차·도균 두 사람과 아이돌라디오 선우)
+- **[완료·읽기 전용] [artists.json·yt_channel_videos]** 82메이저/[김도균] primary와 도균(블랭키) with가 함께 있는4행(limit24 미도달)을 좁혀 대조했다. a1189 김도균(82메이저)과 a1815 도균/DK(블랭키)는 별도 인물이다. 모두 content_flag=NULL/tags_manual=false. 같은 충돌 쌍이라도 아래 정정 방향이 서로 다르므로4개를 한 SQL로 같은 태그만 지우지 않는다.
+
+| ID | 현재 태그 | 근거/후속 판단 |
+|---|---|---|
+| K-jC8IxuRVo | 김도균(82메이저) + 도균(블랭키) | [오형제 도균 숏로그 원본](https://www.youtube.com/watch?v=K-jC8IxuRVo)의 82MAJOR 공식 채널 확인. 주 공연자 유지·다른 도균 게스트 오인 검토. |
+| LPQ873womSQ·BlCx_lAES7o | 김도균(82메이저) + 도균(블랭키) | DOKYUN - LIGHT ON ME 방송 무대. 아래 공식 음악 자료는 블랭키 출신 솔로 도균의 곡이라고 명시한다. 이 경우 주 공연자 김도균 쪽을 정정할 후보이며 도균 태그만 없애면 반대로 틀림. |
+| BafcUQNmxpM | 김도균(82메이저) + 선우(엔하이픈) + 도균(블랭키) | [아이돌라디오 원본](https://www.youtube.com/watch?v=BafcUQNmxpM)의 공식 업로더와 설명 #82MAJOR/#더보이즈/#THEBOYZ/#선우 확인. 82메이저 도균은 유지, 다른 도균 연결 검토와 함께 선우를 더보이즈 쪽으로 정정할 근거가 있다. 얼굴로 인물을 구분하지 않았다. |
+
+- **[도균 솔로 이력 근거] [artists.json/a1815]** [지니 공식 아티스트 소개](https://www.genie.co.kr/detail/artistInfo?xxnm=82866813)는 “블랭키(BLANK2Y), 다올(DV.OL)을 거쳐 솔로 활동”,2025.04.25 LIGHT ON ME를 명시하고 DK(BLANK2Y)를 관련 인물로 연결한다. [A3WAVE 도균 공식 소개](https://a3wave.com/about)도 같은 곡/발매일과 후속곡을 싣는다. 명단 a1815는 현재 블랭키만 소속으로, 별도 groups 이력은 없고 다올 그룹 키도 찾지 못했다. 새 중복 아티스트를 추가하기보다 기존 도균 항목의 솔로/과거 소속 이력을 검토할 자료다. 소속사 등 다른 필드를 근거 없이 묶어 갱신하지 않았다.
+- **[현재 로직 재생의 한계] [tools/m2_harness.js]** 운영 whitelist 적재 후4행 모두 제목 매처가 블랭키 도균을 추출한다. 이는 LIGHT ON ME2행에서는 올바른 사람 쪽 단서지만82MAJOR 숏로그에서는 오인이다. 제목 매처가 저장값과 다르다고 항상 개선/회귀라고 점수 매기지 말 것. _normalizeMemberTags도 김도균/도균 별칭 차이 때문에 현재 with를 유지한다.
+- **⏳ 덜 된 일 [영상별 정정]** `select id,title,description,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,content_flag,flag_source,tags_manual,source_handle from yt_channel_videos where id in ('K-jC8IxuRVo','LPQ873womSQ','BlCx_lAES7o','BafcUQNmxpM');` 재조회 후 공식 출처/곡 크레딧별로 주 공연자/게스트 정정을 분리할 것. Bafc의 정상 더보이즈 선우와82메이저 도균을 보존하며 ENHYPEN 선우와 혼동하지 않는다. 소속 이력 정리와 데이터 정정은 Claude가 별도 검토; 이번에는 코드·DB·명단 변경 없음.
+
+## 2026-11-02 (Codex — 검수78차·제로베이스원 별칭 게스트와 한빈 정정 방향 분리)
+- **[완료·읽기 전용] [yt_channel_videos]** 제로베이스원 공개 행 중 with_members가 태래(템페스트)/한빈(템페스트)/지웅(피원하모니)/규빈(온리원오프)와 겹치는 조건58행 조회(limit120 미도달). 공식 source_handle=제로베이스원57·KBSKpop1, 전부 tags_manual=false. 태그별16/19/15/12건은 서로 겹쳐 합계62이므로 영상58건과 혼동하지 않는다. 최초 태래/한빈 두 쿼리의35행도 중복1건을 뺀34개로만 집계했다.
+- **[이슈·공식 브이로그의 이름이 외부 게스트가 됨] [ILmFnjSYCDc·yn6SP0v9pIo]** [태래 본가 VLOG 원본](https://www.youtube.com/watch?v=ILmFnjSYCDc)은 ZEROBASEONE 공식 업로더, 설명의 #김태래/#KIMTAERAE 확인. DB는 김태래(primary)+태래(템페스트)(with). [한빈 웨이브 튜토리얼](https://www.youtube.com/watch?v=yn6SP0v9pIo)은 성한빈(primary)+한빈(템페스트)(with) 후보. [태래·김태래 Chemistry](https://kpop-universe.kr/#chem=%EA%B9%80%ED%83%9C%EB%9E%98~%EC%A0%9C%EB%A1%9C%EB%B2%A0%EC%9D%B4%EC%8A%A4%EC%9B%90%2C%ED%83%9C%EB%9E%98~%ED%85%9C%ED%8E%98%EC%8A%A4%ED%8A%B8)에 실제로20개/이 조합만13개와 본가 VLOG가 표시됐다. primary가 다른 정상 교류도 이 화면에 합쳐지므로20개 전부 오류라고 하지 않는다.
+- **[중첩 후보·같은 영상의 두 별칭] [PWfHNeM9xOU·YrkUjxPJsZc·ZpFXX2G1myc·uHb-Gm4nhjA]** “한빈 VS 태래”는 성한빈/김태래에 템페스트 한빈/태래가, “지웅,태래”는 김지웅/김태래에 P1Harmony 지웅/템페스트 태래가 함께 붙는다. “한빈,규빈 ver.”에는 OnlyOneOf 규빈도 붙는다. 각 이름을 하나씩만 검수하면 남은 게스트로 허위 관계가 유지될 수 있다. 공식57행 모두를 전체 시청한 검수는 아니며 그룹명을 생략한 짧은 제목/클립은 원본 설명까지 후속 확인할 것.
+- **[정정 방향 반대·KBS1행] [wUucroH65dE]** [KBS Kpop 원본](https://www.youtube.com/watch?v=wUucroH65dE) 제목은 “한빈 직캠 'No Fear' (HANBIN Choreography) @MusicBank260828”. 설명에 #HANBIN/#TEMPEST가 명시돼 있다. DB는 제로베이스원/[성한빈]+한빈(템페스트)인데 이 경우 템페스트 게스트를 지우고 성한빈을 남기는 것이 잘못이다. 올바른 공연자 쪽으로 primary를 정정할 후보로 분리. 현행 제목 매처도 이1행을 제로베이스원으로 추론하며, _normalizeMemberTags는 기존 with를 유지한다.
+- **[보존·실제 두 그룹 합동] [GmQi4cQ-Bsg]** [TEMPEST 공식 원본](https://www.youtube.com/watch?v=GmQi4cQ-Bsg)은 제목/설명에 #TEMPEST/#ZEROBASEONE/#성한빈/#김태래, DB에도 템페스트 한빈·태래 + 성한빈·김태래가 있다. 이런 명시적 교류는 보존해야 한다. 반대 방향 별도 조회의 [HuNz3xubpqo 원본](https://www.youtube.com/watch?v=HuNz3xubpqo) “Real me, Kim Tae Rae”도 확인했다. 업로더는 TEMPEST 공식 채널인데 DB에 김태래(제로베이스원)가 추가돼 있다. 이1행은 위58행 밖의 추가 후보이며, 템페스트 태래는 유지하고 다른 태래 연결을 검토해야 한다. 두 사람은 전체 실명 김태래도 같을 수 있으므로 성을 붙이면 항상 식별된다고 가정하지 않는다.
+- **⏳ 덜 된 일 [표본 재조회→정정]** `select id,title,description,group_ko,members,with_members,with_groups,content_flag,tags_manual,source_handle from yt_channel_videos where group_ko='제로베이스원' and content_flag is null and with_members && ARRAY['태래(템페스트)','한빈(템페스트)','지웅(피원하모니)','규빈(온리원오프)']::text[];` 로 최신 상태 조회. 공식57행의 게스트 별칭 오인 검토와 KBS1행의 주 공연자 정정을 분리. 77차의 운영 규칙 포함 메모리 재생으로 현재 별칭 방어 빈틈 확인; 수집기/DB 쓰기·매처 수정 없음. 성한빈·한빈 Chemistry에는 실제 “27개/이 조합만18개”와 No Fear·튜토리얼 둘 다 보이므로 올바른 최종 개수를 단순 감산으로 정하지 말 것.
+
 ## 2026-11-02 (Codex — 검수77차·팬채널 주인과 동명 게스트 오연결)
-- **[진행중·읽기 전용] [CHANGELOG.md]** Claude 메모의 브브걸 은지·에이핑크 정은지 조합을 한정 재조회 중. 현재56행(그중eunjibee52행)이며 채널 주인은 에이핑크/정은지로 정상 등록돼 있다. 실제 원본·태깅 경로와 인접 동명이인 사례를 대조하며 코드/JSON/SQL/DB는 수정하지 않는다. 결과와 정상 보존 기준을 이 섹션에 추가 예정.
+- **[완료·읽기 전용] [ext_channels·yt_channel_videos]** 최신 main6b42eca99c 기준. 팬채널 소유자 설정425행(limit500 미도달)의 이름 충돌 위험을 읽어 점검 대상을 좁혔으며425채널 영상을 전부 검수한 것은 아니다. eunjibee는 tier=fans·owner_gko=에이핑크·owner_mko=정은지로 정상 등록돼 있다. 정은지(primary)→은지(브브걸)(with) 조건56행(limit90 미도달), 반대 방향0행.56행 중eunjibee52·source_handle NULL4, 전부 content_flag=NULL/tags_manual=false/with_groups=[]였다. 코드·JSON·SQL·DB 변경 없음.
+- **[이슈·실제 노출] [app.js Chemistry]** [정은지·은지 조합](https://kpop-universe.kr/#chem=%EC%A0%95%EC%9D%80%EC%A7%80~%EC%97%90%EC%9D%B4%ED%95%91%ED%81%AC%2C%EC%9D%80%EC%A7%80~%EB%B8%8C%EB%B8%8C%EA%B1%B8)에서 “같이 나옴56개 · 이 조합만53개”와 고함Talk 팬캠 노출 확인. 첫 조회는 실패 안내가 나왔으나1회 새로고침 뒤 결과가 나와 일시 지연과 태그 문제를 구분했다. [qwwdLxUNK5k 원본](https://www.youtube.com/watch?v=qwwdLxUNK5k)은 EUNJI BEE 업로드, 설명에 은지비/apinkjej.com. 모든56개를 전체 시청해 동반 출연 부재를 확정한 것은 아니지만, 대표 원본/정상 채널 주인/제목 별칭/현재 로직이 같은 오연결을 뒷받침한다.
+- **[이슈·곡명도 함께 게스트가 됨] [fo1wUVj1hQ8·liItxgM8EmA]** “140505 MBC 어린이에게 새생명을 Sunday Monday … 은지 직캠”2행은 with_members=[은지(브브걸),먼데이(먼데이)]. [리허설 원본](https://www.youtube.com/watch?v=fo1wUVj1hQ8)의 EUNJI BEE/Apink 팬사이트 출처와 곡명 확인. 아티스트 a1264 먼데이는 위클리 출신이므로 곡명 Monday를 그대로 게스트로 취급하면 안 된다. 다른54행은 은지(브브걸)1개만 with에 있다. source_handle=NULL4개는 fBDu5XmJkF0·eBDZbVySZDg·f8XwZ7cFLsg·7FoKicIz_Jc이며 팬채널52건에 섞어 집계하지 않는다.
+- **[원인 구분·현재 팬채널 수집 strict는 이미 방어] [admin.js _EXT_STRICT_TIERS·_ytAutoTagMembers·_extBuildRows]** 운영의 name_match_whitelist27행과 atm_exception_rules9행을 읽고 tools/m2_harness.js에 적재해 재생했다(9행은 전부admin_meta로 실제 이름 예외 규칙은0). strict=true에서는 eunjibee52개 모두 브브걸 은지가 안 잡힌다. 따라서 현재 팬채널 수집기의 strict를 무시하고52개 전부 그 경로에서 재생산된다고 쓰면 오판이다. 반면 _ytAutoTagMembers는 group_ko별로 source_tier/handle 필터 없이 조회하고, _m2ParseTitle(title,gko,undefined,published_at)를 호출한다. 이 비엄격 경로에서는56개 모두 브브걸/[은지]가 된다. 주 그룹을 고정한 채 다른 매칭 그룹을 with_에 넣는 경로가 있어 채널 주인 정보가 정상이어도 게스트는 오염될 수 있다. 어느 과거 실행이 실제 태그를 썼는지 이 검수만으로 이력 확정하지 않았다.
+- **[방어선 빈틈 재현] [admin.js _normalizeMemberTags·_amtRosterHasName]** 실제 함수를 메모리에서 그대로 실행해 대표4행(은지2·태래·한빈)의 잘못된 with가 남는 것을 확인했다. 로스터는 정은지/김태래/성한빈인데 게스트는 은지/태래/한빈이어서 현재의 이름 완전 일치 방어가 비켜간다. 비교로 엔시티127 마크 영상의 근거 없는 마크(갓세븐)는 제거되고, 제목에 GOT7이 명시된 마크 교류는 보존됐다. 동명 보호 자체가 전혀 없는 게 아니라 성을 뺀 별칭에서만 기준이 갈라진다. 실제 DB 태깅/수집기/수정 SQL은 실행하지 않았다.
+- **⏳ 덜 된 일 [동기화 경로 먼저·태그 정정은 나중]** `select id,title,group_ko,members,with_members,source_handle,content_flag,tags_manual from yt_channel_videos where group_ko='에이핑크' and '정은지'=any(members) and with_members @> ARRAY['은지(브브걸)']::text[];`로 재조회. _ytAutoTagMembers의 자체 멤버 별칭을 다른 그룹 게스트로 오인하는 경로와 _normalizeMemberTags의 별칭/그룹 근거 판단을 먼저 검토할 것. 태그만 비우면 with가 빈 행이 자동 태깅 대상이라 다시 붙을 가능성이 있다. 정은지/브브걸 은지를 전역에서 동일인으로 합치지 말고 실제 별도 그룹 동반 출연은 보존. eunjibee는 전용 팬채널이므로 삭제 대상이 아니며52개 영상 자체를 무관/삭제하지 않는다. Sunday Monday라는 곡명과 위클리 먼데이도 분리.
+
+- **[완료·착수 시점 기록] [CHANGELOG.md]** Claude 메모의 브브걸 은지·에이핑크 정은지 조합을 한정 재조회 중. 현재56행(그중eunjibee52행)이며 채널 주인은 에이핑크/정은지로 정상 등록돼 있다. 실제 원본·태깅 경로와 인접 동명이인 사례를 대조하며 코드/JSON/SQL/DB는 수정하지 않는다. 결과와 정상 보존 기준을 이 섹션에 추가 예정.
 
 ## 2026-11-02 (Codex — 검수76차·헬로비너스 출신 나라 생년월일)
 - **[이슈·명단 원본 확인] [artists.json/a1657]** 최신 원격 main의 나라(Nara, 헬로비너스 과거 소속·현재 솔로) bday=`1994.03.18`. [KBS WORLD 공식 인물 소개](https://world.kbs.co.kr/service/contents_view.htm?board_seq=363457&lang=c)는 HELLO VENUS 2012년 데뷔의 권나라를 `1991-03-13`생으로 명시하고, [씨네21 인물 DB](https://host.cine21.com/db/person/info/?person_id=96103)도 다른 이름 나라·헬로비너스와 같은 날짜를 연결한다. 등록 이력과 외부 인물 이력을 대조했으며 얼굴로 식별하지 않았다. 나라 일반명 검색 결과만 근거로 삼지 않았다.
