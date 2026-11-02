@@ -1,5 +1,64 @@
 # CHANGELOG
 
+## 2026-11-02 (Codex — 검수76차·헬로비너스 출신 나라 생년월일)
+- **[이슈·명단 원본 확인] [artists.json/a1657]** 최신 원격 main의 나라(Nara, 헬로비너스 과거 소속·현재 솔로) bday=`1994.03.18`. [KBS WORLD 공식 인물 소개](https://world.kbs.co.kr/service/contents_view.htm?board_seq=363457&lang=c)는 HELLO VENUS 2012년 데뷔의 권나라를 `1991-03-13`생으로 명시하고, [씨네21 인물 DB](https://host.cine21.com/db/person/info/?person_id=96103)도 다른 이름 나라·헬로비너스와 같은 날짜를 연결한다. 등록 이력과 외부 인물 이력을 대조했으며 얼굴로 식별하지 않았다. 나라 일반명 검색 결과만 근거로 삼지 않았다.
+- **[판단 범위] [artists.json·build_group_pages.js]** 원본 날짜 불일치는 확인했다. 생일/생년별 목록·나이 표시에 전파될 수 있으나 실제 나라 카드의 날짜 노출까지 확인한 것으로 쓰지 않는다. 솔로 진태화의 bday=1988.01.01은 [더뮤지컬 인물 자료](https://www.themusical.co.kr/People/Detail?num=4014)와 일치하는 보존 비교다. 생년월일·소속사·이름·링크를 묶어 일괄 변경하지 않았다.
+- **[완료·문서 공유 전 검사] [tests]** 최신 main276288ef2f 기반 분리 폴더에서 syntax 통과, validate-data 오류0/기존 경고144, smoke 데스크톱·390px 모두 통과. 검수73~76차만 CHANGELOG에 추가했으며 코드/데이터 수정·게이트 완화 없음.
+- **⏳ 덜 된 일 [1행 정정 후보]** `node -e "console.log(require('./artists.json').find(a=>a.id==='a1657'))"` 로 최신값 재확인→근거에 따라 bday만1991.03.13으로 한정 정정→기존 slim 데이터 생성 절차/생년·생일 정적 페이지 파생 갱신 범위를 확인할 것. 이번에는 코드·JSON 변경 없이 메모만 남겼다.
+
+## 2026-11-02 (Codex — 검수75차·열린음악회 영문 공연자와 곡명 오연결)
+- **[완료·읽기 전용] [yt_channel_videos·tools/matcher_harness.cjs]** 2026년 공개(content_flag=NULL)·공식3채널(LegendKpop/kbsworldtv/KBSKpop)·title_norm의 열린음악회/열린 음악회/open concert 조건으로120행 조회(limit160 미도달). 이 범위의 제목/저장 태그를 대조했으며120개 영상을 전부 시청한 것은 아니다. 전부 with_members/with_groups=[]였다. 저장 published_at까지 전달한 실제 _m2ParseTitle(title,undefined,false,published_at) 재생은120행 모두 저장 primaryGroup과 일치했다(개별 멤버/원곡 필드 전체 일치라는 뜻은 아님). **저장 태그와 현행 매처가 같아도 정확성 증거가 되지 않는다.** DB/코드/JSON/SQL 수정 없음.
+- **[이슈·후보30행] [yt_channel_videos]** 아래는 공식 제목의 공연자/곡명과 아이돌 소속의 불일치 후보다. 기존72차 신유2·진성2와 겹치므로 신규 총수로 중복 계산하지 않는다. 모든 후보를 즉시 무관/다른 인물로 일괄 치환하는 SQL은 만들지 않았다.
+
+| 추적 ID | 현재 저장 연결 | 원본 맥락/다음 판단 |
+|---|---|---|
+| cnGjqw1iyww·qp4wC3sV-nY | 먼데이/[먼데이] | Lee Jin-sung (Monday Kiz), Bye Bye Bye 등. 위클리 출신 먼데이(a1264)와 분리해야 함. |
+| 42hfcjxFdC0·HeUxy39IMVM·7BiI5F4j88Y·m4JAHHn6r54·MGRmX6fZB1Y·SPempWAVpts·shMwLNtEiOE·Tit1F67g4k4·ZKhUWD-0CZU·dXlVNuSN67U | 백호/[백호] | EP1588 Choi Baek-ho, 최백호 데뷔50주년. 뉴이스트 출신 백호(a0888)와 다름. 마지막 ID는 정승환과의 무대. |
+| hV5wZki-G44·9pGouaAh89s | ATBO/[정승환] | EP1588 솔로 정승환의 마치 오늘처럼/최백호와 나를 떠나가는 것들. 등록 ATBO 정승환(a1739)과 구분. |
+| -9Wx9RlEFwo·0xrHZxLiapY·JA6_PjUTpTc·La_pkRcvd8I | 힛지스/[서진] | Park Seo-jin, EP1593/1586. 박서진을 HITGS 서진(a1309)으로 성 떼어 연결한 후보. |
+| j18IiD3XyTY·iSkEx6H4bhI | 세븐어스/[희재] | Kim Hee-jae, EP1589 녹턴/이런 날 기다렸나요. 김희재와 SEVENUS 희재(a1741) 구분. |
+| UWXW4wryzKQ | 갓세븐/[진영] | Hyun Jin Young(현진영) - 현진영 Go 진영 Go. 진영이라는 일부 문자열이 GOT7 출연 근거가 되지 않음. 원본 크레딧 추가 대조 대상. |
+| mS0p0ORY7sk | 에이프릴/[] | Broccoli,you too? - Cruel April(잔인한 사월). April은 곡명. |
+| SjngMMj5oog | 미쓰에이/[] | Miraclass - I Don't Want To Miss A Thing. Miss A는 곡명 안의 연속 단어. |
+| ytogrgF5HMU | 나라/[나라] | 김소현·손태진·조민규·고우림·서울대 합창단 - 내 나라 내 겨레. 나라가 곡명에서 검출된 후보. |
+| BEaBVOBwlZc·H_rEctz4xDo·0yDd_ARwyRI·oEzuAqW6VHU | 투어스/[신유] | 앞2개는72차와 겹침. 뒤2개는 Shin Yu 영어 업로드, EP1590. 한국어와 영어 모두 같은 동명이인 확인 필요. |
+| 7uBHqpiXRag·ihOxbilYor4 | 정진성/[정진성] |72차와 겹침. Jin Sung 트로트 공연과 원더나인 출신 정진성 구분. |
+
+- **[원본/회차 근거 보강] [KBS]** [EP1588 공식 회차](https://vod.kbs.co.kr/index.html?broadcast_complete_yn=N&local_station_code=00&program_code=T2000-0096&program_id=PS-2026112110-01-000&sname=vod&source=episode&stype=vod)는 “최백호 데뷔50주년: 최백호·정승환·린”을 명시한다. [EP1593 공식 회차](https://vod.kbs.co.kr/index.html?broadcast_complete_yn=&local_station_code=00&program_code=T2000-0096&program_id=PS-2026126596-01-000&section_code=04&sname=vod&source=episode&stype=vod)는 박서진, [EP1589 공식 회차](https://vod.kbs.co.kr/index.html?broadcast_complete_yn=N&local_station_code=00&program_code=T2000-0096&program_id=PS-2026122457-01-000&sname=vod&source=episode&stype=vod)는 김희재를 명시한다. [지니의 먼데이키즈 소개](https://www.genie.co.kr/detail/artistInfo?xxnm=21000242)도2005년 데뷔 남성 솔로·이진성·Bye Bye Bye를 연결한다. 회차 전체에 해당 가수가 있다는 근거와 영상 안 모든 출연자 신원 검증은 구분했다.
+- **[보존·오정정 방지] [yt_channel_videos]** 피철인/Picheolin(seventeen Dino) `xYC4IHf5r78·5nR-H_QDDDk`은 디노의 문맥이므로 가짜 인물로 제외하지 않는다. 마이티마우스·민영(브브걸) `HaDwhfDBSfs·4bK0C6KSL_k` 역시 미등록 다른 공연자가 있다고 민영 태그를 지우면 안 된다. 진태화의 뮤지컬 Before Summer Ends `pF1VPqK5SWs·aVpkRStsi8A`도 정상 포함 비교다([소속사 활동 소개](https://palmtree.is/artists/jin-tae-hwa)).
+- **[보류·편집물 참가자 추가] [GycdJivDofY·QxyvauMoAVQ]** 김준수·김환희·진태화의 드라큘라 메들리는 제목상 여러 명이 있어도 별도 넘버 편집 가능성이 있다. 김준수 누락 여부를 실제 장면/크레딧으로 확인하기 전 with_members를 새로 채우거나 Chemistry 동반 출연으로 세지 말 것. 배우 김환희를 다른 동명이인 환희로 연결하지 않는다. 위 최백호/정승환 후보도 현재 with 배열이 비어 있으므로 둘이 이미 허위 Chemistry 쌍으로 노출된다는 뜻은 아니다.
+- **⏳ 덜 된 일 [한정 정정 순서]** DB에서 표의 ID를 `select id,title,description,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,content_flag,flag_source,tags_manual from yt_channel_videos where id in (...);` 로 재조회한 뒤 공식 회차→해당 클립 공연자/곡명→등록 인물 소속 순서로 대조할 것. 미등록 가수 포함 기준과 잘못된 아이돌 연결 제거는 분리한다. 매처 후속은 admin.js _m2ParseTitle의 공연자 영역/곡명 영역·영문 전체 이름 경계부터 검토하며, 프로그램/weak 일괄 차단은 하지 않는다. 정상 Dino·민영·진태화와 한국어/영어 쌍을 같이 검증할 것.
+
+## 2026-11-02 (Codex — 검수74차·Chemistry 개별출연 제외 누락과 검색 페이지 전파)
+- **[이슈·실화면 재현] [app.js _chemFetch·_chemHas]** [최예나·보아 Chemistry](https://kpop-universe.kr/#chem=%EC%B5%9C%EC%98%88%EB%82%98~%EC%B5%9C%EC%98%88%EB%82%98%2C%EB%B3%B4%EC%95%84~%EB%B3%B4%EC%95%84)에서 “같이 나옴 1개 · 이 조합만 1개”, ONLY US에 `-011fbWCjmo` “[Stage Mix] 보아×최예나 - 온리 원”이 뜬다. DB는 최예나/[최예나]·with_members=[보아(보아)]·content_flag=개별출연·flag_source=manual. 기존 수동 분류가 있는데 동반 출연으로 다시 소개되는 문제다. 이번 검수는 DB 분류를 바꾸지 않았다.
+- **[원인 재현·코드 변경 없음] [app.js]** 최신 원격 main e6568586c5의 _chemFetch는 무관·보류·hidden만 제외하고 개별출연을 제외하지 않는다. select에도 content_flag가 없고, _chemHas는 이름 배열만 본다. 실제 _chemFetch/_chemHas/_filterBannedVideos를 메모리에서 추출하고 위 DB 행을 반환하는 조회 대역으로 실행하니 해당 ID가 결과에 남는다(selectedFlag=false·excludesIndividual=false). API/DB 쓰기 없이 실제 함수의 입력→출력을 확인한 것이며 테스트 파일을 추가하지 않았다. 기존 함께한 멤버 렌더의 개별출연 구분과 대조 필요.
+- **[이슈·검색용 페이지에서도 실제 확인] [sql/2026-11-02_chem_pairs_rpc.sql·build_group_pages.js buildChemPages]** get_chem_pairs도 개별출연을 제외하지 않는다. 같은 그룹 members 2~4명인 개별출연 행을 한정 조회(limit12, 전체 총수 아님)하니 뉴진스 `-B_AvgfqueA` “[리무진서비스] 뉴진스 플레이리스트”가 하니·다니엘/개별출연/tags_manual=true로 남아 있다. [배포된 다니엘·하니 페이지](https://kpop-universe.kr/chem/뉴진스/다니엘-하니/)를 별도 브라우저에서 열어 “함께 나온 영상 17개, 둘만 5개”와 이 영상의 실제 링크를 확인했다. 저장소의 해당 정적 HTML에도 링크가 있다. 표본1개의 포함은 확인했지만 올바른 최종 개수가16/4라고 단정하지는 않는다(다른 개별출연·중복 태그도 재집계해야 함). 보아·최예나는 다른 그룹 조합이므로 그 조합의 정적 페이지가 있다는 뜻은 아니다.
+- **[판단 범위] [yt_channel_videos]** 개별출연 플래그는 영상 전체 편집물에 붙은 것이어서 같은 영상 일부의 동반 장면까지 이번 검수에서 전부 부정한 것은 아니다. 현재 플래그가 뜻하는 구분을 Chemistry의 “함께/둘만” 주장에 어떻게 적용할지 먼저 일치시킬 것. 개별 클립을 일반 카드에서 숨기거나 수동 플래그를 지워서 맞추지 않는다.
+- **⏳ 덜 된 일 [Claude 우선 수정 후보]** 먼저 `select id,title,group_ko,members,with_members,content_flag,flag_source,tags_manual from yt_channel_videos where id in ('-011fbWCjmo','-B_AvgfqueA');` 재조회. 앱 _chemFetch의 동반 출연 조건·select/client 방어와 get_chem_pairs의 집계 조건을 같은 정책으로 맞추고, 조합 SEO 재생성 필요 여부를 판단할 것. 2~4명/공유 링크/ONLY US·WITH OTHERS 수치, 정상 동반 출연 유지, 일반 카드에서 개별출연 재생 가능 여부를 함께 확인. 이번 변경은 CHANGELOG만이며 앱·SQL·DB·정적 HTML에는 손대지 않았다.
+
+## 2026-11-02 (Codex — 검수73차·가요무대 공연자와 원곡 괄호 분리 감사)
+- **[완료·읽기 전용] [yt_channel_videos·CHANGELOG.md]** `title_norm like '%가요무대%' and content_flag is null and published_at >= '2026-01-01'` 조건으로13행을 조회했다(상한160에 닿지 않음). 이 범위 안에서만 완전 조회이며 다른 연도/숨김/영문 전용 제목까지 포괄하지 않는다.13행=72차와 겹치는4행+새 점검 대상8행+정상 보존 비교1행. 모두 tags_manual=false, members는1명, with/cover 인물·그룹 배열은 비어 있고 cover_of_song=NULL이었다.13건 전부 오류로 집계하지 않는다. DB/코드/JSON/SQL 수정 없음.
+- **[확인·정원 카드 실제 오노출] [Tt4SQy5uRKw]** 엔하이픈 정원 카드의 영상 검색 '김무진'에 [김무진 - 미워하지 않으리(정원)](https://www.youtube.com/watch?v=Tt4SQy5uRKw)가 나왔다. 원본 KBS 레전드 케이팝0:05에는 '1966년 / 미워하지 않으리 / 작사·곡 오민우 / 노래 정원'이라는 곡 크레딧이 있다. [벅스 원곡 자료](https://music.bugs.co.kr/track/3927047)의 정원과 대조. 공연자 김무진 대신 괄호 속 원곡 가수를 a0137 정원(엔하이픈)으로 연결한 오류다. 얼굴로 신원을 식별하지 않았다.
+- **[확인·여진 원곡 크레딧 오인] [BRv-Iixvi2Q]** 현재 여진/[여진]은 a0556 이달의소녀·루셈블 출신 여진의 솔로 키다. [춘길 공식 원본](https://www.youtube.com/watch?v=BRv-Iixvi2Q)의0:05 '1979년 / 그리움만 쌓이네 / 작사·곡 여진 / 노래 여진' 곡 정보와 [음원 크레딧](https://music.bugs.co.kr/track/32979575)을 확인했다. 공연자 춘길이 아닌 원곡의 여진 이름을 아이돌 여진으로 사용한 오류다. 원곡 목록으로 옮기더라도 아이돌 여진을 원곡자로 넣으면 안 된다.
+- **[실코드 재현·아직 수정하지 않음] [tools/matcher_harness.cjs]**13개 저장 제목을 `_m2ParseTitle(title,undefined,false,published_at)`로 실행하면 모두 현재 대표 그룹과 같은 weak 매칭이 나온다. KBS 제목의 대시 앞 공연자 부분만 입력하는 반사실 비교에서는 춘길(BRv-Iixvi2Q)·김무진(Tt4SQy5uRKw)·성리(10DUkB8qtww)가 null이 되고 원곡자 쪽 아이돌 연결이 사라진다. 다른10행은 대표 그룹이 그대로다. **단순 제목 절 분리만으로 동명이인 신원 문제까지 해결되지는 않는다.** 문자열 재현 실험일 뿐 매처/하네스 파일 변경이나 재태깅은 하지 않았다.
+
+| 추적 ID | 현재 연결 | 확인/후속 판단 |
+|---|---|---|
+| BRv-Iixvi2Q | 여진(솔로) | 공연자 춘길, 괄호는1979년 원곡 여진. 위 원본 근거 확보. |
+| Tt4SQy5uRKw | 엔하이픈 정원 | 공연자 김무진, 괄호는1966년 원곡 정원. 실제 카드 노출 확인. |
+| 10DUkB8qtww | 정진성 | 성리/보릿고개(진성).72차 이관 대상과 중복이며 신규 건수에 다시 더하지 않는다. |
+| sT83TpQiizw·XaEkYVx4K6U | 올아워즈 유민 | 외나무다리·입영열차 안에서의 실제 유민 신원 대조 필요. 기존 전국노래자랑 유민과 연관 후보. |
+| R9UFd4VF9ns | 라잇썸 나영 | 십오야를 부르는 나영. 제목만으로 소속을 확정하지 않아 후보 유지. |
+| ytVut5_b98o | 드리핀 황윤성 | 같은 전체 이름을 쓰는 로미오 출신 황윤성과 대조 필요. 아래 포함 검토 근거 참조. |
+| 0rlPeUp6g-Y | 휘브 재하 | 가을비 우산 속을 부르는 재하. 별도 트로트 가수 재하가 있으나 해당 클립의 신원 확정 전 보류. |
+| 7Pk9tN-dwiM | 베리베리 강민 | 세월아 청춘아의 강민. 베리베리·로미오의 동명 강민으로도 단순 치환 금지. |
+| wDbdZ3_u5yE·vG-D9oVQohk·5XqzP2VPuY8 | 투어스 신유 | 72차와 겹치는3행. 이름 신원 확인을 잊고 프로그램 절 분리만 적용하면 그대로 남는 비교 사례. |
+| qREZpWzlMdE | EXID 솔지 | [공식 원본](https://www.youtube.com/watch?v=qREZpWzlMdE)의 솔지 무대 제목/업로더 확인. 정상 보존 비교이며 프로그램명/weak 신뢰도만으로 제외하면 안 된다. 전체 시청·모든 원곡 필드 정확성을 보증하는 비교는 아니다. |
+
+- **[포함 검토·다른 황윤성] [artists.json·groups.json]** 현재 a0619 황윤성은 드리핀, 명단에서 로미오/ROMEO 및 별도 로미오 출신 황윤성은 찾지 못했다. [벅스 로미오 멤버 자료](https://music.bugs.co.kr/artist/80229239)와 [대학의 당시 입학 소개](https://www.global.ac.kr/user/nd26634.do?View=&boardNo=00007620)는 로미오 윤성=황윤성 이력을 뒷받침한다. 가요무대의 이름을 드리핀으로 확정해서는 안 되며, 실제 공연자 신원을 대조한 뒤72차 성리/레인즈처럼 포함 검토와 잘못된 기존 연결 제거를 분리할 것.8TURN 윤성도 별개다.
+- **[추가 신원 자료/한계] [재하·강민]** [MBC의 재하 소개](https://enews.imbc.com/News/RetrieveNewsInfo/519291)는 별도 트로트 가수를 소개한다. [강민 음원 크레딧](https://music.bugs.co.kr/track/4465611)과 [KBS8/31 원본 클립 페이지](https://vod.kbs.co.kr/m/index.html?broadcast_complete_yn=N&contents_id=K01_PS-2026100140-01-000_MFSC7&program_code=T2000-0113&program_id=PS-2026100140-01-000&section_code=04&section_id=10767&sname=vod&source=smr&stype=vod)도 보강 자료다. 이 자료만으로 두 클립 전체 출연자/아이돌 동명이인 배제까지 검증했다고 세지 않으며 후보로 유지한다.
+- **⏳ 덜 된 일 [역할·신원 두 단계로 재검수]** 먼저 위3개 원곡 크레딧 오인 ID를 `select id,title,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,cover_of_song,content_flag,tags_manual from yt_channel_videos where id in ('BRv-Iixvi2Q','Tt4SQy5uRKw','10DUkB8qtww');`로 재확인할 것. 후속 로직은 가요무대의 `공연자 - 곡(원곡자)` 문맥에 한정해 검토하고 일반 괄호(그룹·영문 이름 등)를 전부 제거하지 않는다. 두 번째로 공연자 이름의 소속/전체 이름을 대조하며, 원곡 가수가 미등록이면 동명 아이돌을 cover_of에 채우지 않는다. 솔지 정상 비교·신유 같은 잔존 동명이인·성리/로미오 포함 여부를 함께 검증해야 한다. 기존13행 전량 무관/일괄 이동/수동잠금 변경은 실행하지 않는다.
+
 ## 2026-11-02 (Claude Code — 정규·미니 N집 전수 점검 1차 + KR 표시)
 - **[완료·배포] [tools/disco_ordinal_audit.mjs(점검, 읽기 전용)·tools/disco_ordinal_fix.mjs(근거 있는 것만 고침) 신설] [groups.json·artists.json 56건 + 앤팀 지역 4건 → build_slim_data] [app.js _discogRegionTag]** 사용자 "(한국) 말고 jp처럼 kr / 앤팀·엑스러브만 틀린 게 아닐 텐데 전수 조사". 점검 결과(그룹+솔로): 제목 차수와 type 다름 46·번호 없는 미니/정규 807(320팀)·번호 순서 안 맞음 37줄. 기존 disco_number_fill.mjs(위치 기반)는 "SWEAT -JAPANESE EP- → 미니 6집"·트레저 "3rd MINI ALBUM → 미니 5집" 같은 오답을 내서 안 씀. **근거가 데이터 안에 있는 것만 반영**: A 제목에 차수(3rd MINI ALBUM·The 1st Album·Repackage/Edition은 "N집 리패키지") 46건, B 양쪽 번호 사이 빈칸이 개수까지 맞는 것 10건(엔시티127 CHERRY BOMB 미니 3·몬스타엑스 One Of A Kind/NO LIMIT/SHAPE of LOVE 9~11·빅톤 nostalgia 5·템페스트 Voyage 5·정은지 공간/혜화 2·3 등). 맨 끝 번호 없는 것(최신 앨범)은 안 채움 — 싱글이 미니로 잘못 들어온 경우(에스파 Dirty Work)에 번호가 밀린다. KR 표시: 일본 기반 팀(_JP_BASED_GROUPS)에서 **한국 발매로 확인된 것(region:kr)만** · KR(앤팀 Back to Life·Mark on Me), Magic Hour/Wonderful World·Extraordinary day는 일본 발매 확인 → JP, For us·Fearless(2026 드라마 OST, 언어 미확인)는 표시 없음. 디스코 테스트 5종·validate-data 오류 0. **⏳ 남은 것(2차)**: 번호 없음 765건(대부분 활동 중 그룹 최신 앨범 — 멜론 type이 번호 없이 옴, 출처 확인 필요)·같은 앨범 중복 등록(트레저 LOVE PULSE 2건·SF9 Sensuous·씨엔블루 7℃N·엠블랙 BLAQ%) · 번호 이상(최강창민 All Of My Life 미니 3·텐 STUNNER/Humanity 순서)·싱글↔미니 type 오분류(에스파 Dirty Work).
 
