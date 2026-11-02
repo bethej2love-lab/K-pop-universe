@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-11-02 (Codex — 검수70차·기념일 인스타 프로필 주소 만료)
+- **[이슈·배포 게이트 보류] [tests/smoke.test.js·ig_accounts]** Claude 최신 인스타 변경(main83265edae8)을69차에 통합한 뒤 smoke에서 같은 외부 프로필 URL403이2회 재현됐다. JS 파싱/매칭128/기존matching246/인스타 키보드11/자료 오류0은 통과했지만 외부 이미지 오류도 기존 smoke 게이트의 실패이므로 오류 필터·단언 완화 없이 main 배포를 보류한다. 이 시점69차 구현은 분리 브랜치 codex/audit69-song-contest의 커밋6b18cd3986(최신 통합48049620f6)에만 있으며, GitHub에는 착수 문단b050813862까지만 올라갔다.
+- **[완료·주소 원인 추적] [ig_accounts·artists.json]** 반복403 경로의 파일 식별자535583416_17954526692992077_6369469885083446472_n.jpg는 게시물 media가 아니라 handle=j.youreka의 pic_url이었다. a1077 제이유(티오원 출신), 생일11/2라 오늘 기념일에 사용된다. status=ok·fetched_at=2026-10-26 00:31:03 UTC, URL oe=6AE4692A의 시각은2026-10-30 09:53:46 UTC로 이미 지났다. 만료 표기와 반복403이 함께 관찰됐으며 단순 캐러셀 게시물 문제로 오인하지 않는다. 전체 URL/사용자 인증 정보는 기록하지 않는다.
+- **[완료·수집 상태 읽기 전용 검수] [tools/ig_business_discovery.mjs·ig-stats.yml]** [최근 수집41347863950](https://github.com/bethej2love-lab/K-pop-universe/actions/runs/41347863950)은 success지만 전체1532계정 중66처리(성공60/조회불가6), 사용량90%로 조기 중단, 배분rotation33/active33였다. 성공 표시는 전체 갱신 완료가 아니다. DB 조회 시 ok1158 중4일 이상 미갱신478·7일 이상145. ok 프로필 URL1156개에서 oe 시각을 읽을 수 있었고433개는 만료 시각 경과였다. **433개 모두 HTTP 실패라고 실측한 것은 아니다.** 프로필은 게시물 최근 활동과 무관하게 만료될 수 있으므로 활동 계정 우선만으로 이 문제를 전부 막는다고 보지 않는다.
+- **[이슈·대체 표시 차이] [app.js/_fetchInstaPicUrl·_setAnnivStripThumb]** 기념일은 ig_accounts.pic_url이 있으면 먼저 반환하고, 이미지 로드 오류 때 기본 아이콘으로 전환한다. 카드의 등록사진 picBackup 경로와 달리 기념일은 이 오류 뒤 artist_pics/대표 영상으로 재시도하지 않는다. 즉 오늘 사진을 기대하는 항목이 원형 기본 아이콘이 될 수 있다. Claude가 작업 중인 app.js는 수정하지 않았다.
+- **⏳ 덜 된 일 [사용자 응답 대기/운영 갱신 미실행]** 이번69차 코드 수정 범위를 넘는 운영 수집이어서 j.youreka1계정의 기존 수집기 갱신 여부를 사용자에게 물었다. 승인되면 기존 ig-stats.yml의 workflow_dispatch only=j.youreka 입력으로1곳만 갱신하고 DB fetched_at/pic_url·반환 이미지 및 동일 smoke를 확인한다. 스케줄/쿼터를 늘리거나 광범위 재수집/행 삭제를 하지 않는다. 미승인·실패이면 로컬 구현과 이 메모를 유지하고69차 main 배포를 보류. 장기적으로는 프로필 만료 시각을 고려한 갱신 순서와 기념일의 기존 등록사진/대표 영상 대체를 별도 검토하되, 이번에 새 사진 저장소·수집기를 만들지 않는다.
+
 ## 2026-11-02 (Codex — 검수69차·전국노래자랑 동명이인 수집 방어)
 - **[완료·범위] [admin.js·tools/matcher_harness.cjs·tools/m2_harness.js·tests/korea-sings-matching.test.js]** 사용자 요청으로 전국노래자랑 신규 오수집 방어만 보완했다. 공유 작업 폴더의 Claude 미커밋 app.js·CSS는 편집하지 않고 분리 worktree 사용. 운영 DB/명단 JSON/수집 일정 변경이나 기존 영상 일괄 정정은 실행하지 않았다.
 - **[완료·사용자 수동 처리 확인] [yt_channel_videos]** Ls0kXbUD-mA(유민)·pBTJO7xCGOk(동작 아이들)는 재조회 시 content_flag=무관·flag_source=manual·tags_manual=true였다. 그대로 보존했다. 아래 매처 결과는 새 제목의 판정 실험이며 이2행을 보류로 다시 저장했다는 뜻이 아니다.
@@ -25,7 +32,7 @@
 | X2WXq5R1p3Q | 올아워즈 유민 | 사용자 무관 처리한11/1 클립과 별개의9/13 회차. |
 
 - **[완료·보존 비교/회귀] [tests/korea-sings-matching.test.js]** 실제19제목×엄격/일반×저장 그룹 유무, 정상 문맥7행, 두 실코드 하네스 일치, 가상 소속 명시/수식어/곡명/솔로 이름 경계, 실제 _extBuildRows 실행을 포함한다. 보류 행의 non-null group_ko=채널 핸들·멤버/게스트 비움·needs_review, owner 채널 본인 보존을 검사. 초기124검사에 수정 전 코드만 주입하면47실패, 수정 후128검사 전부 통과(경계4검사 추가). 테스트·재현은 운영 API/DB 쓰기0이며 원본 카드 열람의 일반 사용 통계까지0으로 주장하지 않는다.
-- **[완료·관련 검사] [tests]** 매처 관련18파일 실행 실패0(그중 golden.json은 빈 자료로 검증0), matching246·groups-matcher2080(경고25)·주호11·외부 보류8 등 통과. 외부 동기화 공정성·syntax·validate-data 오류0/기존 경고144·smoke 데스크톱/390px 신규 방문 경로도 통과. 공정성 검사에 찍힌 null group_ko 오류는 오류 보고를 검증하기 위한 합성 주입으로 운영 오류가 아니다.
+- **[완료·관련 검사/최신 통합 smoke 실패는70차] [tests]** 매처 관련18파일 실행 실패0(그중 golden.json은 빈 자료로 검증0), matching246·groups-matcher2080(경고25)·주호11·외부 보류8 등 통과. 외부 동기화 공정성·syntax·validate-data 오류0/기존 경고144·통합 전 smoke 데스크톱/390px 신규 방문 경로 통과. Claude 최신 변경 통합 후 Node검사는 통과했으나 smoke는 외부 인스타 프로필403으로 실패해 배포 보류(70차). 공정성 검사에 찍힌 null group_ko 오류는 오류 보고를 검증하기 위한 합성 주입으로 운영 오류가 아니다.
 - **⏳ 덜 된 일 [기존14행 정정·다음 검수]** `select id,title,description,source_handle,group_ko,members,with_members,with_groups,content_flag,flag_source,tags_manual from yt_channel_videos where title ~ '전국[[:space:]]*노래자랑' order by published_at desc;` 로 다시 읽고 위14 ID의 현재값/수동 보호를 확인할 것. 출연자·곡명·수식어가 분명한 항목부터 원본 크레딧을 대조해 기존57/59차 방식의 대상 ID 제한/이전값 비교/수동 unrelated 보존 계획을 준비한다. 단순 '전국노래자랑' 전량 무관 처리·owner 채널 삭제·정상7행 일괄 재태깅 금지. 동명이인 후보(신유·진성·김재이·김나영 등)는 회차 크레딧 확인 전에 실제 인물 단정 금지. 신규 로직 배포가 기존14행 자동 정정을 의미하지 않으며 이번에는 운영 정정 미실행.
 
 ## 2026-11-02 (Claude Code — 인스타 여러 장: 카드 묶음→사진 창, 탐험도 겹친 묶음, 손 따라 넘기기)
