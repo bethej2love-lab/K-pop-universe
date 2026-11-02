@@ -1,5 +1,7 @@
 # CHANGELOG
 
+- 2026-11-02 [데이터][Claude Code] 디스코 11차 일본반(24건): 김재중 한국 정규 1~4집(WWW 리패키지·NO.X·BORN GENE·FLOWER GARDEN 4집, 텐아시아)과 일본반(Flawless Love·Love Covers·Rhapsody·OASIS) 분리, 찬성·박정민·진호·찬열 Hibi·대성 D'scover·키스오브라이프 SWEAT JP EP·니쥬 New Emotion region jp. ④에 남은 10건은 웨이션브이(중국 기반이라 cn이 본판) — 정상.
+
 - 2026-11-02 [데이터][Claude Code] 디스코 번호 10차(15건): 씨아이엑스 OK Prologue=정규 1집(Wikipedia), 신화 WE=12집, 미쓰에이 Independent Women 중복→변형판, god·SS501·판타지보이즈·고스트나인·유나이트·엔싸인 프로그램/스페셜, 캣츠아이 영어반. audit은 region cn/en도 해외반으로 뺌.
 
 - 2026-11-02 [데이터][Claude Code] 그룹 디스코 번호 8~9차(81건): 스페셜 분류(레드벨벳 ReVe Festival·여름 미니, 에이티즈 ZERO:FEVER Epilogue, 아이들 HEAT·ALL OUT, 제베원 CINEMA PARADISE·BOYS PLANET, 신화 Winter Story, S.E.S. 4.5집 등), 리패키지(빅뱅 Still Alive·틴탑 No.1·케플러 Kep1going On·브아걸 Sound-G Sign·베이비복스 3집), 번호(신화 11·13집, 레인보우·오메가엑스 정규 1집, 업텐션 일급비밀 미니 1집), 영어반 region en(몬엑 ALL ABOUT LUV·The Dreaming), 빅뱅 For The World=일본. 1세대 같은 앨범 두 장("제목"+"제목 - N집") 15쌍은 번호 없는 쪽을 변형판으로. 남은 번호 없음 413건.
