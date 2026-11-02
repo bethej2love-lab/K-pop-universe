@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-11-02 (Claude Code — 정규·미니 4차: 투바투·에이티즈·아이들·트와이스)
+- **[완료·배포] [groups.json 18건 → build_slim_data]** 투바투 7TH YEAR → 미니 8집(위키·팬위키), Starkissed → 일본 정규(jp), Setsuna Hanabi → 일본 5th 싱글(jp), FIGHT OR ESCAPE → 정규 2집 리패키지. 에이티즈 GOLDEN HOUR Part.3 → 미니 12집(Part.2=11·Part.4=13 사이), Part.4 → 13·Part.5 → 14(팬위키·애플뮤직), Ashes to Light → 일본(jp), In Your Fantasy Edition → 미니 12집 리패키지. 아이들 I SWAY → 미니 7집·We are → 미니 8집(기사), We made(2026)는 확인 못 해 그대로. 트와이스 STRATEGY → 미니 14집, Merry & Happy·TWICEcoaster LANE 2·Summer Nights·The year of YES → 리패키지, The Feels 2건 → 싱글(영어 싱글). 남은 수치: 번호 없음 727·순서 이상 34줄·일본 후보 63.
+
 ## 2026-11-02 (Claude Code — 정규·미니 3차: 있지·스트레이키즈)
 - **[완료·배포] [groups.json 21건 → build_slim_data]** 있지: **CRAZY IN LOVE가 정규 1집인데 미니 5집으로 들어가 뒤 미니 번호가 하나씩 밀려 있었다** → CHECKMATE 5·CHESHIRE 6·KILL MY DOUBT 7·BORN TO BE 8·GOLD 9(위키피디아 9th EP)·Girls Will Be Girls 10·TUNNEL VISION 11(코리아타임스)·Motto 12(빌보드 필리핀), Collector=일본 정규 2집(jp)·RINGO=일본 정규 1집. 스트레이키즈: 樂-STAR(호환 한자 코드라 제목 일치 검색에 안 걸렸음) 미니 8·ATE 8→**9**·THIS & THAT 10(위키피디아), Hollow=일본 4th EP(jp), DO IT(SKZ It Tape)·HOP(hipTape)·Mixtape류 → "믹스테이프", Clé 2 → "스페셜"(미니 칩에서 빠지고 전체에만). 남은 수치: 번호 없음 745·순서 이상 35줄·일본 후보 64.
 
