@@ -45,7 +45,8 @@ function audit(owner, disco) {
     const noNum = main.filter(a => numOf(a.type) == null && !SIDE_RE.test(a.title || ''));
     noNum.forEach(a => out.nonum.push({ owner, fam, date: a.releaseDate, title: a.title, type: a.type }));
     const numbered = main.filter(a => numOf(a.type) != null).sort((x, y) => String(x.releaseDate).localeCompare(String(y.releaseDate)));
-    const ns = numbered.map(a => numOf(a.type));
+    // 나눠 낸 판(Part.1/2·Take·Chapter·EP.1~3)은 같은 번호가 연달아 나오니 묶어서 본다
+    const ns = numbered.map(a => numOf(a.type)).filter((v, i, arr) => i === 0 || v !== arr[i - 1]);
     const okSeq = ns.every((v, i) => v === i + 1);
     if (numbered.length && !okSeq) out.seq.push({ owner, fam, seq: numbered.map(a => `${numOf(a.type)}:${a.title}(${String(a.releaseDate).slice(0, 7)})`) });
     disco.filter(a => famOf(a.type) === fam && isJp(a) && numOf(a.type) != null && a.region !== 'jp').forEach(a => out.jpmix.push({ owner, fam, date: a.releaseDate, title: a.title, type: a.type }));

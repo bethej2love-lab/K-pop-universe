@@ -68802,7 +68802,7 @@
    },
    {
     "title": "BIGBANG",
-    "type": "정규 1집",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/003/28/008/328008_500.jpg",
     "releaseDate": "2006.09.29",
@@ -73916,47 +73916,6 @@
     "melonAlbumId": "2247875"
    },
    {
-    "title": "1st Mini Album",
-    "type": "미니 1집",
-    "isMain": true,
-    "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/38/344/2238344_500.jpg/melon/resize/260/quality/80/optimize",
-    "releaseDate": "2014.03.10",
-    "trackCount": 6,
-    "titleTrack": "Delicious",
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Intro",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "Delicious",
-      "isTitle": true
-     },
-     {
-      "no": 3,
-      "title": "미로 (迷路)",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "You're My Lady",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "Tell Me Why",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "출발",
-      "isTitle": false
-     }
-    ]
-   },
-   {
     "title": "3 2 1",
     "type": "미니",
     "isMain": true,
@@ -75645,7 +75604,7 @@
    },
    {
     "title": "누난 너무 예뻐 (Replay)",
-    "type": "싱글",
+    "type": "미니 1집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/003/82/083/382083_500.jpg/melon/resize/260/quality/80/optimize",
     "releaseDate": "2008.05.22",
@@ -93919,7 +93878,7 @@
    },
    {
     "title": "Dare to Crave",
-    "type": "정규 3집",
+    "type": "정규 2집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/118/62/491/11862491_20251024114426_500.jpg",
     "releaseDate": "2025.06.23",
@@ -94003,7 +93962,7 @@
    },
    {
     "title": "DARE TO CRAVE: Epilogue",
-    "type": "정규 2집",
+    "type": "정규 2집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/122/00/949/12200949_20251110113635_500.jpg",
     "releaseDate": "2025.06.09",
@@ -113596,7 +113555,7 @@
    {
     "title": "EPEX 5th EP Album Prelude of Love Chapter 2. 'Growing Pains'",
     "type": "미니 5집",
-    "isMain": true,
+    "isMain": false,
     "cover": "https://i.scdn.co/image/ab67616d0000b27340320ca58cbadbad78598e36",
     "releaseDate": "2023.04.26",
     "trackCount": 4,
@@ -113625,7 +113584,8 @@
     ],
     "src": "spotify",
     "spotifyId": "7c4HuyVRABrlh7eOdhozwd",
-    "copyright": "2023 C9 Entertainment,under license to Kakao Entertainment"
+    "copyright": "2023 C9 Entertainment,under license to Kakao Entertainment",
+    "variant": true
    },
    {
     "title": "EPEX 4th EP Album 사랑의 서 챕터 1. ‘Puppy Love’",
@@ -144624,7 +144584,7 @@
    },
    {
     "title": "回: Song of the Sirens",
-    "type": "미니 10집",
+    "type": "미니 9집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/104/59/845/10459845_20200713152520_500.jpg",
     "releaseDate": "2020.07.13",
@@ -172861,7 +172821,7 @@
    },
    {
     "title": "THE 20TH ANNIVERSARY - 5집",
-    "type": "정규",
+    "type": "정규 5집",
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music117/v4/c8/44/20/c8442096-84f3-e3e9-f53e-10c4f5b1a963/sechskies_digitalcover4000.jpg/600x600bb.jpg",
     "releaseDate": "2017.04.28",
@@ -173029,7 +172989,7 @@
    },
    {
     "title": "Blue Note - 4집",
-    "type": "정규",
+    "type": "정규 4집",
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/10/94/02/1094029d-7298-ec51-9a26-bd774b371c68/cover-_Blue_Note.jpg/600x600bb.jpg",
     "releaseDate": "2000.05.30",
@@ -173112,66 +173072,8 @@
     "melonAlbumId": "5365"
    },
    {
-    "title": "Com' Back - 3집",
-    "type": "정규 4집",
-    "isMain": true,
-    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/73/db/c4/73dbc452-c64e-a16a-4b1e-13d02d1d201e/cover-_Com_Back.jpg/600x600bb.jpg",
-    "releaseDate": "1999.09.09",
-    "trackCount": 18,
-    "titleTrack": "Com' Back",
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Com' Back",
-      "isTitle": true
-     },
-     {
-      "no": 2,
-      "title": "예감",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "커플 2",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "오늘도",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "뮤즈",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "Baby",
-      "isTitle": false
-     },
-     {
-      "no": 7,
-      "title": "남자처럼",
-      "isTitle": false
-     },
-     {
-      "no": 8,
-      "title": "뫼비우스의 띠",
-      "isTitle": false,
-      "songId": "83697"
-     },
-     {
-      "no": 9,
-      "title": "사랑해 (영원히)",
-      "isTitle": false
-     }
-    ],
-    "melonVia": "10019876"
-   },
-   {
     "title": "Com' Back",
-    "type": "정규",
+    "type": "정규 3집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/000/05/362/5362_500.jpg",
     "releaseDate": "1999.09",
@@ -173455,7 +173357,7 @@
    },
    {
     "title": "Road Fighter - 2집",
-    "type": "정규 3집",
+    "type": "정규 2집",
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/62/ce/c6/62cec617-f0ca-5dc5-ce7e-85f8635c6e24/5359.jpg/600x600bb.jpg",
     "releaseDate": "1998.07.15",

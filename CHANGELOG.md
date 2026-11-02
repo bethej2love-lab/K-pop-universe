@@ -1,5 +1,7 @@
 # CHANGELOG
 
+- 2026-11-02 [데이터][Claude Code] 그룹 디스코 순서 오류 정리: 젝스키스 2~5집(제목 근거)+Com' Back 중복 삭제, 여자친구 Song of the Sirens=미니 9집, 크래비티 Dare to Crave=정규 2집·Epilogue=리패키지, 샤이니 Replay=미니 1집·남의 앨범(2014 "1st Mini Album" Delicious) 삭제, 빅뱅 2006.09 BIGBANG=스페셜, 이펙스 5집 영문판=변형판, 김동완 1집. audit ③은 나눠 낸 판(Part/Take/EP.1~3) 같은 번호 연속을 묶어 봄 → 33줄→16줄. 남은 16줄은 **앨범이 데이터에 빠진 빈칸**(현아 A Talk·마마무 3·티아라 1 등)이라 번호는 맞음.
+
 - 2026-11-02 [데이터][Claude Code] 솔로 디스코 번호 4~6차(76건): 1세대·2세대(강타·앤디·김동완·이민우·손호영·유진·옥주현·바다·김현중), 강다니엘 CYAN 1집, 레이 미니 2~5, B.I COSMOS=정규 2집 하프, 육성재 All About Blue=미니 1집, 가인 End Again, 라비 정규 1·2, 스페셜·리믹스(보아 Miracle·비 BMW·싸이 18번·Listen-Up 등), 리패키지(보아 Copy&Paste·비 Rainism Recollection), 일본/중국반 region. 출처 Wikipedia·국내 기사.
 
 - 2026-11-02 [데이터][Claude Code] 솔로 디스코 정규·미니 번호 1~3차(73건): 믹스테이프 분류(알엠·슈가·제이홉·라비), 일본 발매 region jp(태연·백현·온유·태민·대성·강다니엘 Joy Ride/RE8EL), 번호 정정(지코·김세정·제시카·현아 1~9·원호·규현·윤지성·남우현·아이엠·장현승·라키·강다니엘 Glow to Haze 6), 스페셜(종현 이야기·아이유 조각집·강다니엘 PULSEPHASE 등), 리사 Rockstar/Moonlit Floor 묶음판→싱글. 출처 Wikipedia·국내 기사. 남은 번호 없음 552건(audit).
