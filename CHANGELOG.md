@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-11-02 (Codex — 검수69차·전국노래자랑 동명이인 수집 방어)
+- **[진행중] [admin.js·tools/matcher_harness.cjs·tests/매칭 회귀]** 사용자 제보 아이들/유민2행의 수동 무관 처리를 보존하며 전국노래자랑 제목의 일반 참가자·곡명·동명이인 자동 연결을 검수한다. 아이돌 실제 출연/자체 콘텐츠를 일괄 차단하지 않는 프로그램 문맥 보완을 분리 worktree에서 준비. Claude가 작업 중인 공유 app.js·CSS는 편집하지 않으며 운영 DB 쓰기/일괄 정정 없음.
+
 ## 2026-11-02 (Codex — 검수68차·집 노트북 인계 후 주호·DK 동명이인)
 - **[완료·읽기 전용] [CHANGELOG.md]** GitHub main90769ade3e와 집 노트북67차까지 읽고 57/59/67차의 보류 원본을 이어 확인했다. 공유 작업 폴더의 기존 미커밋 변경을 보존한 별도 worktree에서 문서만 편집했다. 코드·JSON·SQL 파일 및 운영 DB 변경 없음. 아래 추적 대상은 주호5+DK23+원시 group_ko=도겸9의 서로 다른37행이며, **37건 모두 오류라는 뜻이 아니다**. 마지막 SELECT에서 전부 content_flag=NULL·tags_manual=false·cover_manual=false였다. 조회 시점 상태이며 정정 시 다시 비교해야 한다.
 - **[이슈·드라마 배역을 아이돌로 연결] [yt_channel_videos/Djaawgoru2A]** 현재 에스에프나인/[주호]. [디글 원본](https://www.youtube.com/shorts/Djaawgoru2A)의 유미의세포들3 및 연결된 [5화 본편 클립](https://www.youtube.com/watch?v=ROucagU9_w8)을 확인했다. 0:18의 드라마 로고·순록/김 작가 자막과 공식 설명으로 드라마 장면임을 확인했고, 제작발표 보도의 [주호 역 최다니엘](https://m.newspim.com/news/view/20260408000079)과 대조했다. SF9 주호 출연 근거가 아니므로 기존57/59차와 같이 잘못된 SF9 연결만 제거하고 원본 보존하는 후속 대상이다. 아이덴티티 김주호로 이름만 보고 이관하지 않는다.
