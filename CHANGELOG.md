@@ -1,7 +1,28 @@
 # CHANGELOG
 
-## 2026-11-02 (Codex — 검수68차·집 노트북 인계 후 주호 원본 보강)
-- **[진행중·읽기 전용] [CHANGELOG.md]** GitHub 최신 main90769ade3e와 집 노트북67차까지 인계를 확인. 공유 작업 폴더의 미커밋 변경을 보존하기 위해 별도 검수 worktree에서 문서만 편집. 57/59/67차의 DK×주호·드라마 주호 보류 원본부터 확인하며 코드·JSON·SQL·운영 DB 쓰기 없음.
+## 2026-11-02 (Codex — 검수68차·집 노트북 인계 후 주호·DK 동명이인)
+- **[완료·읽기 전용] [CHANGELOG.md]** GitHub main90769ade3e와 집 노트북67차까지 읽고 57/59/67차의 보류 원본을 이어 확인했다. 공유 작업 폴더의 기존 미커밋 변경을 보존한 별도 worktree에서 문서만 편집했다. 코드·JSON·SQL 파일 및 운영 DB 변경 없음. 아래 추적 대상은 주호5+DK23+원시 group_ko=도겸9의 서로 다른37행이며, **37건 모두 오류라는 뜻이 아니다**. 마지막 SELECT에서 전부 content_flag=NULL·tags_manual=false·cover_manual=false였다. 조회 시점 상태이며 정정 시 다시 비교해야 한다.
+- **[이슈·드라마 배역을 아이돌로 연결] [yt_channel_videos/Djaawgoru2A]** 현재 에스에프나인/[주호]. [디글 원본](https://www.youtube.com/shorts/Djaawgoru2A)의 유미의세포들3 및 연결된 [5화 본편 클립](https://www.youtube.com/watch?v=ROucagU9_w8)을 확인했다. 0:18의 드라마 로고·순록/김 작가 자막과 공식 설명으로 드라마 장면임을 확인했고, 제작발표 보도의 [주호 역 최다니엘](https://m.newspim.com/news/view/20260408000079)과 대조했다. SF9 주호 출연 근거가 아니므로 기존57/59차와 같이 잘못된 SF9 연결만 제거하고 원본 보존하는 후속 대상이다. 아이덴티티 김주호로 이름만 보고 이관하지 않는다.
+- **[보류·원곡/챌린지와 출연 구분] [yt_channel_videos/E2vMjLqKljM]** 현재 에스에프나인/[주호]. [Studio:D 원본](https://www.youtube.com/watch?v=E2vMjLqKljM) 0:06 자막은 DK 'Forever' 고음 챌린지이며 주호의 도전 맥락이다. 제목의 DK X 주호만으로 두 사람이 함께 출연했다고 판단할 수 없다. 연결 영상 Dg-rBF1UwRw는 DK 'Forever'/배낭메고버스킹3라는 링크 정보까지만 확인했고 본편을 검수한 것은 아니다. [음원사 크레딧](https://www.genie.co.kr/detail/albumInfo?axnm=85634291)의 Forever는 DK(디셈버)이지만, **이 쇼츠의 주호 실명·소속은 여전히 미확정**이다. SF9→아이덴티티 이관/도겸 게스트 추가 모두 금지. 기존 주호 정상 비교3행 ukougjrYbSk·UmURzlWmKLM·zpDiaE8I6kI는 SF9 멤버/프로그램 제목 근거가 있어 일괄 제외 대상이 아니다.
+- **[이슈·실제 카드 노출 확인] [yt_channel_videos/도겸·도균]** 도겸 카드에서 같이 살자·파퀴아오·디셈버·더리슨을 검색하고 블랭키 도균 카드에서도 디셈버를 검색했다. 아래 잇츠라이브/복면가왕/예전 음방/복싱 필름이 도겸 카드에, 엔플라잉 쇼츠가 도겸과 도균 카드에 노출됐다. 원본 채널/제목/설명과 대조했으며 얼굴로 인물을 식별하지 않았다.
+
+| ID / 공식 원본 | 조회 당시 태그 | 근거와 후속 판단 |
+|---|---|---|
+| [BBGHql5kmIU](https://www.youtube.com/watch?v=BBGHql5kmIU) it's Live 같이 살자 & 발걸음 | 세븐틴/[도겸] | 공식 설명 #디셈버. DK(디셈버) 공연을 도겸으로 연결한 오류. |
+| [IgXOhhJb1Yo](https://www.youtube.com/watch?v=IgXOhhJb1Yo) ESQUIRE 파퀴아오 패션필름 | 세븐틴/[도겸] | 원본 제목 DK Yoo·유대경, 복싱 내용. 아이돌 DK와 별개. |
+| [2vnpxHFZnIs](https://www.youtube.com/watch?v=2vnpxHFZnIs) MBC 복면가왕 미아 | 도겸/[도겸] | 공식 제목 디셈버 DK 명시. |
+| [rvXqx8AOAd8](https://www.youtube.com/watch?v=rvXqx8AOAd8) SBS 그날 그밤 20210926 | 도겸/[도겸] | 공식 제목 DK(December)(디셈버) 명시. |
+| [CoN2gB5PGWo](https://www.youtube.com/watch?v=CoN2gB5PGWo) SBS 기억을 걷다보면 20130224 | 도겸/[도겸] | 공식 제목 디셈버 DK 명시. |
+| [spP_i3Cx6-w](https://www.youtube.com/watch?v=spP_i3Cx6-w) N.Flying 잔불 | 엔플라잉/[]·with 도겸(세븐틴),도균(블랭키) | 공식 N.Flying 채널 제목 #디셈버 #DK 선배님. 실제 엔플라잉 연결을 보존하고 잘못된 DK 두 게스트만 후속 제거할 것. 실제 멤버는 별도 확인 전 채우지 않는다. |
+| [IJ6c4oOj11s](https://www.youtube.com/watch?v=IJ6c4oOj11s) Blue by DK | 세븐틴/[도겸,승관]·cover 관련 필드 비어 있음 | 업로더는 SEVENTEEN이지만 0:11 화면에 Blue / by DK (디셈버) 명시. 원곡 유닛과 실제 커버 출연자를 구분해야 한다. 공식 채널 소유권과 출연/원곡 필드 처리 정책을 먼저 정하고 두 명을 실제 출연자로 간주하지 않는다. |
+
+- **[추가 후보·출연자 범위 보류] [yt_channel_videos/더리슨3행]** 7yth6JPTpBk·Qoyj4jWumWI·ztN8NlF_HMM는 모두 세븐틴/[도겸]. 첫 행은 with 유회승(엔플라잉)이 있고 나머지는 비어 있다. 첫 행 Studio:D 원본은 직접 열어 채널/제목을 확인했으며 다른2행은 저장된 설명과 실제 카드 목록까지만 대조했다. 설명의 더리슨/먼데이키즈·DK·유회승·방예담 맥락 및 [음원 카탈로그의 DK(디셈버) 참여 그룹](https://www.genie.co.kr/detail/artistInfo?xxnm=21000242)과 맞지만, 각 쇼츠별 실제 출연 범위는 본편/회차 크레딧으로 확정해야 한다. **기존 유회승 연결을 함께 지우면 안 된다.** 방예담은 기존 디모렉스 별칭을 확인하고 중복 인물/원팩트 예담으로 이동하지 않는다.
+- **[이슈·이야기 속 언급을 출연으로 오인할 위험] [yt_channel_videos/uFvQhy8UKI0]** 현재 세븐틴/[도겸]. [MBC RADIO 원본](https://www.youtube.com/watch?v=uFvQhy8UKI0)의 37초 대본에서 이진성이 행사 때 DK와 트로트 오디션 이야기를 나눴다는 과거 일화를 확인했다(약5–32초). 연결 본편 C7x_GGuHuE4 제목은 이진성 X 케이시 라디오이나 링크만 확인했고 전체 본편을 시청한 것은 아니다. 도겸 출연 근거가 없으며 DK(디셈버)로 단순 치환해도 언급 인물을 출연자로 만들 수 있다. 이 클립의 실제 발화/화면 출연자 기준으로 재검토할 것. 임영웅도 대화 주제이지 이름만으로 출연자를 추가할 근거가 아니다.
+- **[보류] [yt_channel_videos/glyGUvEB5-Q]** 원시 도겸/[도겸], MBC Moonlight paradise DK Unconditional 20160229. 제목/일반 설명만으로 DK 신원을 확정하지 못했고 원본 출연자 검증을 마치지 않았으므로 오류 확정 수에 포함하지 않는다.
+- **[완료·정상 보존 비교20행] [yt_channel_videos]** DK라는 표기만 있는 정상 도겸 후보15행은 공식 SEVENTEEN 채널 또는 팬채널 설명의 도겸/SVT 근거를 확인했다: -81RC1sNULk·17kew56z5Ok·1MMzyWHLZA0·2oZdfIdiCJ0·A1mcnVA1noc·dy9q0VjorBA·EBKxhI8x4nM·eqMqirJ-D7A·hUAr2IFaKl8·lzVaYoBAobg·OlTz-sDJ590·V43Pk46KDJc·VhLk0qultQ8·XPQ_x-7xxbY·y8ZOwhdBs7U. 원시 group_ko=도겸 중 BQf0U6_Wcls·yZTVnbeHUQo·4d_8NQI-v_0·Y9u_acDpdtg·odDWuttemGE도 도겸/BSS/엑스칼리버 제목 근거가 있어 DK/원시 그룹 키 일괄 삭제에 포함하면 안 된다. 이는 소유자 비교이며20원본 전체의 시청·모든 게스트 정확성 보증이 아니다. 엑스칼리버 제목 KAI를 EXO 카이로 자동 연결하지 않는다.
+- **[완료·현행 매처 재현/재실행만으로 해결 불가] [tools/matcher_harness.cjs·artists.json]** 최신 명단의 DK는 a0064 도겸(세븐틴)·a1815 도균(블랭키)이며 디셈버 DK는 미등록이다. 원본 title+published_at을 기존 harness로 실행하면 BBGHql5kmIU·IgXOhhJb1Yo는 null, IJ6c4oOj11s는 세븐틴/도겸 strong, spP_i3Cx6-w 등은 두 DK ambiguous가 된다. null은 기존 오태그 제거를 뜻하지 않고 ambiguous를 일괄 적용하면 도균까지 추가할 수 있다. 미등록 가수·원곡자·발언 속 언급·공식 채널 소유자를 구분하는 후속 판단이 먼저다. 매처/명단 파일 수정이나 일괄 재태깅 실행 없음.
+- **[완료·검사] [tests]** 최신 분리 checkout에서 syntax 통과, validate-data 오류0/기존 경고144, smoke 데스크톱+390px 모바일 통과(유주 동명이인 딥링크/곡 소유권 포함). 첫 smoke의 로컬 disco404는 sparse checkout에 원본 disco/album_videos가 없던 환경 문제였고 해당 경로 checkout 후 같은 검사로 통과했다. 코드 수정·검사 완화 없음. 물리 모바일 실기기 검증은 아니다. 검수용 임시 브라우저2탭만 종료했다.
+- **⏳ 덜 된 일 [정정 준비·Claude 인계]** 다음 작업은 `select id,title,description,source_handle,group_ko,members,with_members,with_groups,cover_of_groups,cover_of_members,cover_of_song,content_flag,tags_manual,cover_manual,published_at from yt_channel_videos where id in ('Djaawgoru2A','E2vMjLqKljM','BBGHql5kmIU','IgXOhhJb1Yo','2vnpxHFZnIs','rvXqx8AOAd8','CoN2gB5PGWo','spP_i3Cx6-w','IJ6c4oOj11s','7yth6JPTpBk','Qoyj4jWumWI','ztN8NlF_HMM','uFvQhy8UKI0','glyGUvEB5-Q');` 로14추적행을 재조회하고 위 근거와 기존57/59차 수동 unrelated 보존 방식을 대조할 것. 이14건은 확정 오류+보류가 섞인 작업 목록이다. 수정 전 기존값 보관·동시 변경 감지 조건·대상 ID 제한·정상 비교행 불변 검증을 갖춘 계획을 별도 작성한다. 디셈버 DK 미등록 상태에서 새 아이돌로 임의 이관하지 않으며, Blue의 공식 채널/원곡/실출연 처리 및 라디오의 언급 인물 정책부터 결정할 것. E2vMjLqKljM·glyGUvEB5-Q는 인물 확인 근거가 생기기 전 보류 유지. 이번 세션은 문서 인계까지만 완료했다.
 
 ## 2026-11-01 (Codex — 사용자용 검수 현황 요약)
 - **[반영 완료]** 별 커서가 스크롤바/버튼 자식에서 기본 커서로 바뀌던 문제, SF9 주호에 잘못 연결된14영상, 제시한 ALLIVE 모음집의 개별출연 판정, 빠른 이모지 클릭 뒤 마지막 선택이 뒤집히던 문제를 정정했다. 주호 영상은 원본 삭제 대신 잘못된 SF9 연결을 제거하고 재수집 오염을 막는 상태로 보존했다.
