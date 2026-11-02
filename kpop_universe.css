@@ -3949,6 +3949,26 @@
   #feedback-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:70;display:none;align-items:center;justify-content:center;}
   #feedback-overlay.open{display:flex;}
   #feedback-panel{width:min(340px,calc(100vw - 40px));background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  /* Chemistry(2026-11-02) — 목록 화면 머리·섹션. 영상 칸은 목록 화면 그대로 */
+  .chem-head{grid-column:1/-1;padding:6px 4px 4px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  .chem-people{display:flex;justify-content:center;align-items:flex-start;gap:0;}
+  .chem-p{display:flex;flex-direction:column;align-items:center;gap:6px;width:76px;background:none;border:none;padding:0;color:rgba(228,236,255,0.94);font-family:inherit;cursor:var(--kpu-cursor-pointer,pointer);}
+  .chem-av{width:58px;height:58px;border-radius:50%;overflow:hidden;display:block;background:rgba(255,255,255,0.06);}
+  .chem-av img{width:100%;height:100%;object-fit:cover;object-position:center 20%;display:block;}
+  .chem-n{font-size:13px;font-weight:600;max-width:76px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .chem-star{flex:0 0 16px;display:grid;place-items:center;margin-top:23px;}
+  .chem-star svg{width:14px;height:14px;fill:#FFB0D0;opacity:.9;filter:drop-shadow(0 0 4px rgba(255,176,208,.55));}
+  .chem-facts{margin:16px 4px 0;}
+  .chem-f{display:flex;gap:12px;align-items:baseline;font-size:13px;line-height:1.45;padding:7px 0;border-top:0.5px solid rgba(255,255,255,0.07);min-width:0;color:rgba(222,230,250,0.9);}
+  .chem-f:last-child{border-bottom:0.5px solid rgba(255,255,255,0.07);}
+  .chem-f .k{flex:0 0 60px;font-size:11.5px;color:rgba(150,175,222,0.5);}
+  .chem-f .v{min-width:0;word-break:keep-all;}
+  .chem-more{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:12px 4px 0;font-size:12px;color:rgba(150,175,215,0.66);}
+  .chem-co{background:none;border:none;padding:0;color:rgba(228,236,255,0.92);font:600 12px inherit;font-family:inherit;cursor:var(--kpu-cursor-pointer,pointer);}
+  .chem-co i{font-style:normal;font-weight:400;color:rgba(150,175,222,0.5);margin-left:3px;}
+  .chem-empty{margin:24px 4px;font-size:13px;color:rgba(150,175,222,0.6);text-align:center;}
+  .fl-sec-hd{grid-column:1/-1;margin:16px 4px 2px;font-size:11.5px;font-weight:700;letter-spacing:.1em;color:rgba(150,175,222,0.62);font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  .chem-entry-ico svg{width:16px;height:16px;fill:#FFB0D0;}
   .fb-cat-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;margin-bottom:12px;}
   .fb-cat-row .fb-cat-btn{flex:1 1 calc(33.333% - 6px);}
   /* 제보 대상 칩(2026-11-02) — 어떤 영상·그룹·멤버에 대한 제보인지 */
