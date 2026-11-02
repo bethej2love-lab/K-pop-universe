@@ -11875,30 +11875,17 @@ async function _renderIgStrip(prefix,url){
     return a;
   };
   media.forEach(m=>{
-    // 여러 장 게시물(캐러셀, 2026-10-19 사용자 제안) — 앨범 활동기 묶음처럼 첫 장 뒤로 두 장을 비스듬히 겹쳐 두고,
-    // 누르면 그 자리에서 안의 사진이 전부 펼쳐진다(펼친 사진을 누르면 원본 게시물). 안 사진 목록(m.c)이 없으면 한 장 + ❐ 표시
+    // 여러 장 게시물(캐러셀, 2026-10-19 사용자 제안) — 앨범 활동기 묶음처럼 첫 장 뒤로 두 장을 비스듬히 겹쳐 "여러 장"만 알린다.
+    // 누르면 사진 창(_openIgViewer)에서 옆으로 넘겨 본다(2026-11-02 사용자 "가로로 펼치니 맛이 안 산다 — 발견 탭처럼 창으로").
     if(Array.isArray(m.c)&&m.c.length>1){
       const d=document.createElement('div');d.className='ig-item ig-deck';d.setAttribute('role','button');
-      d.title=ko?`사진 ${m.c.length}장 — 눌러서 펼치기`:`${m.c.length} photos — tap to expand`;
+      d.title=ko?`사진 ${m.c.length}장`:`${m.c.length} photos`;
       m.c.slice(1,3).reverse().forEach((src,i,arr)=>{const b=document.createElement('img');b.className='ig-deck-back d'+(arr.length-i);b.src=src;b.alt='';b.loading='lazy';b.addEventListener('error',()=>b.remove());d.appendChild(b);});
       const f=document.createElement('img');f.className='ig-deck-front';f.src=m.c[0]||m.u;f.alt='';f.loading='lazy';
       f.addEventListener('error',()=>{(d.closest('.ig-cell')||d).remove();if(!strip.children.length)_igSecSync(sec);});
       d.appendChild(f);
       d.appendChild(_igBars(m.c.length));
-      d.addEventListener('click',e=>{
-        e.stopPropagation();
-        // 펼친 묶음 — 디스코 활동기 묶음과 같은 얇은 괄호선 머리줄 "사진 N장 ──── 접기", 누르면 다시 겹친 묶음으로(2026-10-21 사용자 "어떻게 접는지 모르겠음")
-        const wrap=document.createElement('div');wrap.className='ig-series';
-        const head=document.createElement('button');head.type='button';head.className='gc-discog-series-head';
-        head.innerHTML='<span class="gds-name"></span><span class="gds-line"></span><span class="gds-fold"></span>';
-        head.querySelector('.gds-name').textContent=ko?`사진 ${m.c.length}장`:`${m.c.length} photos`;
-        head.querySelector('.gds-fold').textContent=ko?'접기':'Collapse';
-        head.addEventListener('click',ev=>{ev.stopPropagation();wrap.replaceWith(cell);cell.prepend(d);});
-        wrap.appendChild(head);
-        // 캡션은 첫 장 아래에만(같은 게시물이라 반복하면 지저분하다)
-        m.c.forEach((src,i)=>{const it=mk(src,m,i);it.appendChild(_igBars(m.c.length,i));it.classList.add('ig-pop');it.style.animationDelay=(i*45)+'ms';wrap.appendChild(i?it:_igCell(it,_igCaption(who,h,m)));});
-        cell.replaceWith(wrap);
-      });
+      d.addEventListener('click',e=>{e.stopPropagation();_openIgViewer(m,h,0);});
       const cell=_igCell(d,_igCaption(who,h,m));
       strip.appendChild(cell);
     }else{
@@ -22720,7 +22707,7 @@ function _openIgViewer(m,handle,idx){
   if(!ov){
     ov=document.createElement('div');ov.id='igv-overlay';ov.setAttribute('data-modal','');
     ov.innerHTML='<div id="igv-panel"><button id="igv-close" type="button" aria-label="닫기">✕</button>'
-      +'<div id="igv-media"><img id="igv-img" alt=""><button id="igv-prev" type="button" aria-label="이전 사진">‹</button><button id="igv-next" type="button" aria-label="다음 사진">›</button><div id="igv-dots"></div></div>'
+      +'<div id="igv-media"><img id="igv-pv" class="igv-nb" alt=""><img id="igv-img" alt=""><img id="igv-nx" class="igv-nb" alt=""><button id="igv-prev" type="button" aria-label="이전 사진">‹</button><button id="igv-next" type="button" aria-label="다음 사진">›</button><div id="igv-dots"></div></div>'
       +'<div id="igv-side"><div id="igv-hd"><img id="igv-av" alt=""><div class="igv-hd-txt"><div id="igv-name"></div><div id="igv-meta"></div></div><button class="sw-to-lb" type="button"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><span></span></button></div>'
       +'<div id="igv-cap"></div><button id="igv-capall" type="button" hidden></button><a id="igv-open" target="_blank" rel="noopener noreferrer"></a></div></div>';
     document.body.appendChild(ov);
@@ -22729,9 +22716,31 @@ function _openIgViewer(m,handle,idx){
     ov.querySelector('#igv-prev').addEventListener('click',e=>{e.stopPropagation();_igvGo(-1);});
     ov.querySelector('#igv-next').addEventListener('click',e=>{e.stopPropagation();_igvGo(1);});
     ov.querySelector('#igv-capall').addEventListener('click',e=>{e.stopPropagation();if(!_igv)return;_igv.full=!_igv.full;_igvShow();});
-    const md=ov.querySelector('#igv-media');let sx=null;
-    md.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});
-    md.addEventListener('touchend',e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx;sx=null;if(_igvDrag)return;if(Math.abs(dx)>40)_igvGo(dx<0?1:-1);},{passive:true});
+    // 옆으로 넘기기 = 손가락을 따라 사진이 움직이고(양옆 장이 같이 딸려 옴), 놓으면 넘어가거나 제자리(2026-11-02 사용자 "인스타처럼
+    // Interactive Swipe Transition"). 예전엔 손을 뗀 뒤 40px 넘었는지만 보고 사진을 툭 바꿨다. 처음 8px로 방향을 정해 아래로 쓸어 닫기와 안 싸운다.
+    const md=ov.querySelector('#igv-media');let sx=null,sy=0,hx=null,hdx=0,hv=0,ht=0;
+    md.addEventListener('touchstart',e=>{
+      if(!_igv||_igv.pics.length<2||_igv.anim||e.touches.length!==1){sx=null;return;}
+      sx=e.touches[0].clientX;sy=e.touches[0].clientY;hx=null;hdx=0;hv=0;ht=performance.now();
+    },{passive:true});
+    md.addEventListener('touchmove',e=>{
+      if(sx==null||_igvDrag)return;
+      const dx=e.touches[0].clientX-sx,dy=e.touches[0].clientY-sy;
+      if(!hx){if(Math.abs(dx)<8&&Math.abs(dy)<8)return;hx=Math.abs(dx)>Math.abs(dy)?'x':'n';if(hx==='n'){sx=null;return;}}
+      if(e.cancelable)e.preventDefault();
+      const edge=(dx>0&&_igv.i<=0)||(dx<0&&_igv.i>=_igv.pics.length-1);
+      const now=performance.now(),nd=edge?dx*0.3:dx;if(now>ht)hv=hv*0.3+((nd-hdx)/(now-ht))*0.7;ht=now;hdx=nd;
+      _igvPos(hdx,false);
+    },{passive:false});
+    const mdEnd=()=>{
+      if(sx==null||hx!=='x'){sx=null;return;}sx=null;
+      const w=md.clientWidth||1,fast=performance.now()-ht<90&&Math.abs(hv)>0.35;
+      const d=hdx<0?1:-1,n=_igv.i+d;
+      if(n>=0&&n<_igv.pics.length&&(Math.abs(hdx)>w*0.22||(fast&&Math.abs(hdx)>12&&Math.sign(hv)===Math.sign(hdx))))_igvGo(d);
+      else _igvPos(0,true);
+    };
+    md.addEventListener('touchend',mdEnd,{passive:true});
+    md.addEventListener('touchcancel',mdEnd,{passive:true});
     // 모바일: 아래로 쓸어 닫기(2026-10-23 사용자 — "닫기 버튼은 최후의 수단, 모바일은 자연스러운 터치 동작으로"). 닫기 버튼은 모바일에서
     // 숨기고(PC는 유지) 위에 손잡이 막대로 끌 수 있다는 걸 보인다. 처음 8px로 방향을 정해 좌우(사진 넘기기)·위(본문 스크롤)와 안 싸운다.
     // 본문을 내려 읽던 중이면(scrollTop>0) 그 터치는 본문 스크롤 몫.
@@ -22780,7 +22789,8 @@ function _openIgViewer(m,handle,idx){
   // API·공개 페이지 모두 본문 한 덩어리(장원영 20장 게시물 실측: 장별 필드는 자동 이미지 설명뿐). 그래서 빈 줄로 나눈 문단 수가
   // 사진 수와 **정확히 같을 때만** k번째 문단을 k번째 사진 글로 보여준다. 다르면 지금처럼 본문 전체. 아래 버튼으로 언제든 전체 보기.
   const paras=String(m.cap||'').split(/\n[ \t]*\n/).map(s=>s.trim()).filter(Boolean);
-  _igv={m,pics,i:Math.max(0,Math.min(idx||0,pics.length-1)),per:pics.length>1&&paras.length===pics.length?paras:null,full:false};
+  _igv={m,pics,i:Math.max(0,Math.min(idx||0,pics.length-1)),per:pics.length>1&&paras.length===pics.length?paras:null,full:false,anim:false};
+  _igvPos(0,false);
   // 사진 틀 비율 = 첫 장 비율(인스타와 같게, 2026-10-30 사용자 "가로 사진은 위에 붙이지 말고 가운데"). 장마다 틀 높이가 바뀌면 가로 사진이
   // 위로 붙고 본문이 따라 올라왔다. 여러 장일 때만 — 한 장은 그 사진 비율 그대로. 인스타 허용 범위(1.91:1~3:4)로 자른다.
   {const md=ov.querySelector('#igv-media');md.classList.remove('igv-framed');md.style.removeProperty('--igv-ar');
@@ -22800,6 +22810,10 @@ function _igvShow(){
   const ov=document.getElementById('igv-overlay');if(!ov||!_igv)return;
   const {pics,i}=_igv;
   ov.querySelector('#igv-img').src=pics[i];
+  // 양옆 장 — 넘길 때 손가락을 따라 같이 들어오는 사진(미리 받아 둠)
+  const pv=ov.querySelector('#igv-pv'),nx=ov.querySelector('#igv-nx');
+  if(pics[i-1])pv.src=pics[i-1];else pv.removeAttribute('src');pv.hidden=!pics[i-1];
+  if(pics[i+1])nx.src=pics[i+1];else nx.removeAttribute('src');nx.hidden=!pics[i+1];
   ov.querySelector('#igv-prev').hidden=i<=0;ov.querySelector('#igv-next').hidden=i>=pics.length-1;
   const dots=ov.querySelector('#igv-dots');dots.innerHTML='';dots.hidden=pics.length<2;
   pics.forEach((_,k)=>{const d=document.createElement('span');if(k===i)d.className='on';dots.appendChild(d);});
@@ -22807,9 +22821,30 @@ function _igvShow(){
   const cap=ov.querySelector('#igv-cap'),all=ov.querySelector('#igv-capall'),ko=currentLang==='ko';
   cap.textContent=_igv.per&&!_igv.full?_igv.per[i]:(_igv.m.cap||'');cap.scrollTop=0;
   all.hidden=!_igv.per;all.textContent=_igv.full?(ko?'사진별 글 보기':'Per-photo text'):(ko?'본문 전체 보기':'Show full caption');
-  if(pics[i+1]){const pre=new Image();pre.src=pics[i+1];} // 다음 장 미리 받기
 }
-function _igvGo(d){if(!_igv)return;const n=_igv.i+d;if(n<0||n>=_igv.pics.length)return;_igv.i=n;_igvShow();}
+// 지금 장과 양옆 장을 dx만큼 옮긴다(anim이면 스르륵). 양옆 장은 사진 틀 폭만큼 떨어져 있다.
+function _igvPos(dx,anim){
+  const ov=document.getElementById('igv-overlay');if(!ov)return;
+  ov.querySelector('#igv-media').classList.toggle('igv-anim',!!anim);
+  ov.querySelector('#igv-img').style.transform=dx?'translateX('+dx+'px)':'';
+  ov.querySelector('#igv-pv').style.transform='translateX(calc(-100% + '+dx+'px))';
+  ov.querySelector('#igv-nx').style.transform='translateX(calc(100% + '+dx+'px))';
+}
+// 넘기기 — 버튼·방향키·손 뗀 뒤 모두 같은 미끄러짐으로 끝낸다. 다 미끄러진 뒤 지금 장을 바꾸고(이미 받은 그림이라 decode 후 바로) 제자리로.
+function _igvGo(d){
+  if(!_igv||_igv.anim)return;const n=_igv.i+d;if(n<0||n>=_igv.pics.length)return;
+  const ov=document.getElementById('igv-overlay'),md=ov&&ov.querySelector('#igv-media');
+  const w=md?md.clientWidth:0;
+  if(!w){_igv.i=n;_igvShow();return;}
+  const cur=_igv;cur.anim=true;
+  _igvPos(-d*w,true);
+  setTimeout(()=>{
+    if(_igv!==cur)return;
+    const img=ov.querySelector('#igv-img');img.src=cur.pics[n];
+    const fin=()=>{if(_igv!==cur)return;cur.i=n;cur.anim=false;_igvShow();_igvPos(0,false);};
+    (img.decode?img.decode():Promise.resolve()).then(fin,fin);
+  },260);
+}
 function _closeIgViewer(){
   const ov=document.getElementById('igv-overlay');
   if(ov){ov.style.background='';_swClose('igv',ov,ov.querySelector('#igv-panel'),{fin:()=>ov.classList.remove('igv-narrow')});}
@@ -22841,6 +22876,15 @@ function _igPhotos(rows,days,max){
   }));
   return out.filter(m=>m.owner).sort((a,b)=>b.ts-a.ts).slice(0,max);
 }
+// 탐험 인스타 카드의 여러 장 표시(2026-11-02 사용자 "발견·For You도 카드처럼 위로 겹쳐") — 앞 사진을 살짝 줄여 오른쪽 위로 두 장을 비스듬히
+// 겹친다. 카드 칸 밖으로는 안 나간다(옆 카드와 겹치지 않게). 누르면 기존처럼 사진 창.
+function _igFeedDeck(card,m){
+  const tw=card&&card.querySelector('.feed-card-thumb-wrap');
+  if(!tw||!Array.isArray(m.c)||m.c.length<2)return;
+  card.classList.add('ig-feed-deck');
+  m.c.slice(1,3).reverse().forEach((src,i,arr)=>{const b=document.createElement('img');b.className='ig-fd-back d'+(arr.length-i);b.src=src;b.alt='';b.loading='lazy';b.addEventListener('error',()=>b.remove());tw.insertBefore(b,tw.firstChild);});
+  tw.appendChild(_igBars(m.c.length));
+}
 function _igRenderRail(list,photos){
   photos.forEach(m=>{
     const cap1=String(m.cap||'').split('\n').map(x=>x.trim()).find(Boolean)||''; // 본문 첫 줄
@@ -22848,8 +22892,7 @@ function _igRenderRail(list,photos){
     if(cap1&&card){const c=document.createElement('div');c.className='feed-card-sub ig-cap1';c.textContent=cap1;card.querySelector('.feed-card-title')?.after(c);}
     const img=card&&card.querySelector('img');
     if(img)img.addEventListener('error',()=>card.remove()); // 만료된 인스타 주소면 그 카드만 뺀다
-    const tw=card&&card.querySelector('.feed-card-thumb-wrap');
-    if(tw&&Array.isArray(m.c)&&m.c.length>1)tw.appendChild(_igBars(m.c.length));
+    _igFeedDeck(card,m);
   });
   list.scrollLeft=0;_enableDragScroll(list);
 }
@@ -22865,7 +22908,7 @@ function _igRenderMagRail(list,items){
     if(img)img.addEventListener('error',()=>card.remove());
     const tw=card&&card.querySelector('.feed-card-thumb-wrap');
     if(tw&&m.ty==='VIDEO'){const b=document.createElement('span');b.className='ig-play';b.textContent='▶';tw.appendChild(b);}
-    else if(tw&&Array.isArray(m.c)&&m.c.length>1)tw.appendChild(_igBars(m.c.length));
+    else _igFeedDeck(card,m);
   });
   list.hidden=!list.children.length;list.scrollLeft=0;_enableDragScroll(list);
 }
