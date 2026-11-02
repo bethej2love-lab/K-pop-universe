@@ -23375,7 +23375,7 @@ function _collectWeekNews(){
         .or('title_norm.ilike.%m/v%,title_norm.ilike.%[mv]%,title_norm.ilike.% mv%,title_norm.ilike.%mv %,title_norm.ilike.%music video%,title_norm.ilike.%뮤직비디오%,title_norm.ilike.%뮤비%,title_norm.ilike.%리릭%,title_norm.ilike.%lyric%,title_norm.ilike.%티저%,title_norm.ilike.%teaser%,title_norm.ilike.%예고편%')
         // ⚠️ .not(in)만 쓰면 content_flag가 비어 있는(NULL) 행 — 즉 거의 전부 — 이 같이 빠진다(SQL NULL NOT IN = 거짓).
         //    그래서 이번 주 MV·티저 소식이 줄곧 0개였다(2026-10-16 실측 44→0). NULL을 명시적으로 살린다.
-        .or('content_flag.is.null,content_flag.not.in.("보류","hidden")')
+        .or('content_flag.is.null,content_flag.not.in.("보류","hidden","무관")')
         .order('published_at',{ascending:false}).limit(50)
         .then(r=>r,()=>({data:[]})),
       sb.from('yt_view_milestones').select('*,yt_channel_videos!inner(title,thumb,group_ko,published_at,is_short)')
@@ -23482,7 +23482,10 @@ function _collectWeekNews(){
     // ③ 같은 뮤비가 공식 채널과 유통사(원더케이 등)에 따로 있으면 공식 채널 것 하나만
     const _mvTierRank={official:0,idol:1,music:2};
     const _mvBest=new Map();
+    // 무관(관리자가 "이 그룹 영상 아님"으로 정정한 것)도 다른 영상 그리드처럼 뺀다(2026-11-03 주호·닐로 MV가 소식에 뜸).
+    const _mvOut=v=>v.content_flag==='보류'||v.content_flag==='hidden'||v.content_flag==='무관';
     (mvRes.data||[]).forEach(v=>{
+      if(_mvOut(v))return;
       const t=v.title||'';
       if(v.is_short||/#shorts?\b/i.test(t))return;
       if(['variety','show','fans'].includes(v.source_tier))return;
@@ -23492,7 +23495,7 @@ function _collectWeekNews(){
       if(!cur||r<(_mvTierRank[cur.source_tier]??3))_mvBest.set(k,v);
     });
     (mvRes.data||[]).forEach(v=>{
-      if(v.content_flag==='보류'||v.content_flag==='hidden')return;
+      if(_mvOut(v))return;
       const t=v.title||'';
       if(v.is_short||/#shorts?\b/i.test(t))return;
       if(['variety','show','fans'].includes(v.source_tier))return;
