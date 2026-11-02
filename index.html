@@ -70,6 +70,10 @@
 <script>
   window.dataLayer=window.dataLayer||[];
   function gtag(){dataLayer.push(arguments);}
+  // 자동 브라우저(우리·Codex 테스트, 크롤러)는 지표에서 뺀다(2026-11-02 — 30일 "방문자" 3,478명 중 3,410명이 헤드리스였다).
+  // GA는 공식 끄기 스위치(ga-disable-ID), 우리 app_events는 app.js _gaEvent가 이 값을 본다.
+  try{window._kpuAutomated=!!navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||'');}catch(e){window._kpuAutomated=false;}
+  if(window._kpuAutomated)window['ga-disable-G-Z5NTV6X3YF']=true;
   gtag('js',new Date());
   gtag('config','G-Z5NTV6X3YF');
   // 첫 방문자 판정(사용자 지표, 2026-10-13) — 앱 코드가 localStorage를 쓰기 **전에** 봐야 하므로 head에서 잰다.

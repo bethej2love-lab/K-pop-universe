@@ -9977,6 +9977,7 @@ function closeCards(){
 
 // ── 애널리틱스(GA4) ─────────────────────────────
 function _gaEvent(name,params){
+  if(window._kpuAutomated)return; // 자동 테스트·크롤러는 GA·app_events 둘 다 안 센다(index.html head에서 판정, 2026-11-02)
   if(typeof gtag==='function')gtag('event',name,params||{});
   if(typeof _APP_EV!=='undefined'&&_APP_EV&&_APP_EV.has(name))_appEvent(name,(params&&(params.action||params.kind||params.target||params.group_name))||null);
 }
@@ -9991,7 +9992,7 @@ var _APP_EV=new Set(['view_group','view_member','video_play','search','favorite_
   'share_card','deeplink_open','story_to_app','shelf_click','surf_hop','copy_public_collection','save_collection','save_scrap','visit']);
 var _appEvQ=[],_appEvT=null,_appEvDead=false;
 function _appEvent(ev,k){
-  if(_appEvDead)return;
+  if(_appEvDead||window._kpuAutomated)return;
   try{
     _appEvQ.push({ev,k:k==null?null:String(k).slice(0,80)});
     if(_appEvQ.length>60)_appEvQ.splice(0,_appEvQ.length-60);

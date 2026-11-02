@@ -11848,10 +11848,13 @@ async function _admErrorRate(){
 // 지난 7일 "이 기기 첫 방문자" 기준. 표본이 작을 땐(첫 방문 20명 미만) 비율 옆에 n을 같이 적어 과신하지 않게 한다.
 // 테이블/RPC가 없으면(SQL 미실행) 카드에 그 사실을 적는다.
 async function _admLoadUserMetrics(wrap){
-  const hd=document.createElement('div');hd.className='adm-metrics-hd';hd.textContent='사용자 지표 · 최근 7일 (어드민 제외)';
+  const hd=document.createElement('div');hd.className='adm-metrics-hd';hd.textContent='사용자 지표 · 최근 7일 (어드민·자동 테스트 제외)';
   hd.style.cssText='grid-column:1/-1;font-size:11px;font-weight:700;letter-spacing:.04em;color:rgba(150,175,225,0.75);margin-top:8px;';
   wrap.appendChild(hd);
   const defs=[
+    // 북극성(2026-09-05 정의 "월 2주 이상 방문") — 자동 테스트·로봇 계정은 RPC가 뺀다(2026-11-02)
+    ['settled30','정착 (30일)','최근 30일 중 서로 다른 2주 이상 방문한 사람 — 목표 1,000'],
+    ['mau30','방문자 (30일)','최근 30일 방문한 사람(기기), 자동 테스트 제외'],
     ['visitors','방문자','최근 7일 방문한 사람(기기)'],
     ['first_action_rate','첫 행동 완료율','첫 방문자 중 첫날 카드·영상·검색·최애를 한 비율'],
     ['depth_median','탐색 깊이','방문일당 카드·영상 연 수(중앙값)'],
@@ -11867,6 +11870,8 @@ async function _admLoadUserMetrics(wrap){
     if(error)throw error;
     const m=typeof data==='string'?JSON.parse(data):data;
     const n=m.new_visitors||0,small=n<20?` · 첫 방문 n=${n}`:` · 첫 방문 ${n}명`;
+    put('settled30',String(m.settled30??0),`다시 온 사람 ${m.returned30??0}명 · 목표 1,000`);
+    put('mau30',String(m.mau30??0),`자동 테스트 ${m.bots_excluded30??0}개 제외`);
     put('visitors',String(m.visitors??0),`신규 ${n}명`);
     put('first_action_rate',m.first_action_rate==null?'—':m.first_action_rate+'%',(m.first_action_rate==null?'아직 데이터 없음':'첫날 기준')+small);
     put('depth_median',m.depth_median==null?'—':String(Math.round(m.depth_median*10)/10),'방문일당 카드·영상');
