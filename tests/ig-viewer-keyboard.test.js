@@ -5,13 +5,14 @@ const viewer=src.slice(src.indexOf('function _openIgViewer('),src.indexOf('funct
 const capture=viewer.match(/document\.addEventListener\('keydown',e=>\{[\s\S]*?\n    \},true\);/)?.[0];
 const start=src.indexOf("window.addEventListener('keydown',e=>{\n  if(document.activeElement");
 const bubble=src.slice(start,src.indexOf('\n});',start)+4);
-const go=src.split('\n').find(line=>line.startsWith('function _igvGo('));
+// _igvGo는 2026-11-02부터 여러 줄(미끄러지며 넘기기) — 함수 끝(줄 맨 앞 '}')까지 자른다. 틀 폭 0이면 바로 바꾸는 길을 탄다.
+const _g0=src.indexOf('function _igvGo(');const go=_g0<0?null:src.slice(_g0,src.indexOf('\n}\n',_g0)+2);
 assert(capture&&start>=0&&bubble&&go,'actual viewer and background handlers found');
 function fixture({open=true,index=1,video=false}={}){
   const callbacks={},calls={render:0,member:[],video:[]};
   const box={ov:{classList:{contains:()=>open}},document:{activeElement:{tagName:'BODY'},
     addEventListener:(type,fn)=>callbacks.capture=fn,
-    getElementById:id=>id==='yt-lightbox'?{classList:{contains:()=>video}}:{style:{display:'block'}}},
+    getElementById:id=>id==='yt-lightbox'?{classList:{contains:()=>video}}:{style:{display:'block'},querySelector:()=>({clientWidth:0})}},
     window:{addEventListener:(type,fn)=>callbacks.bubble=fn},isMob:()=>false,_lbSessionMode:'browse',_openTArtist:{},
     _igv:{i:index,pics:['one','two','three']},_igvShow:()=>calls.render++,
     _lbGo:d=>calls.video.push(d),navigateMember:d=>calls.member.push(d),closeLightbox:()=>{},_maybeSuggestNext:()=>{},closeCards:()=>{}};
