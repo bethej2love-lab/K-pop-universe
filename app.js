@@ -12157,6 +12157,13 @@ const _koBasedGroupCache=new Map();
 // 일본에서 데뷔·주력 활동하는 팀 — 한국인 멤버가 있어도 일본 발매반이 원곡이라 숨기지 않는다(2026-11-02 사용자 "앤팀 미니 n집 안 맞음").
 // ⚠️ '한국인 절반 미만'으로 일반화하면 엔시티 위시·베이비몬스터·넥스지(한국 기반, 일본판 따로)가 뒤집힌다(실측) → 이름으로만.
 const _JP_BASED_GROUPS=new Set(['앤팀']);
+// 앨범 칸 지역 표시(2026-11-02 사용자 "(한국) 말고 jp처럼 kr") — 일본판은 · JP, 일본 기반 팀(일본판이 기본으로 보이는 팀)의 한국 발매반은 · KR.
+// 한국 그룹 전체에 KR을 붙이면 군더더기라 일본판과 섞여 보이는 팀에서만.
+function _discogRegionTag(a,owner){
+  if(!a)return'';
+  if(a.region==='jp'||_JP_RELEASE_RE.test(a.title||a.t||''))return' · JP';
+  return a.region==='kr'&&typeof owner==='string'&&_JP_BASED_GROUPS.has(owner)?' · KR':''; // 한국 발매로 확인된 것만(region:'kr') — OST처럼 모르는 건 표시 안 함
+}
 function _groupIsKoBased(gko){
   if(!gko)return true;
   if(_JP_BASED_GROUPS.has(gko))return false;
@@ -12281,8 +12288,8 @@ function _renderDiscography(prefix,albums){
       const typeEl=document.createElement('div');typeEl.className='gc-discog-type';
       const typeLabel=_discogAlbumTypeLabel(a);
       const yr=a.releaseDate?a.releaseDate.slice(0,4):'';
-      const jp=(a.region==='jp'||_JP_RELEASE_RE.test(a.title||''));
-      typeEl.textContent=yr?`${typeLabel} · ${yr}${jp?' · JP':''}`:typeLabel+(jp?' · JP':'');
+      const _rt=_discogRegionTag(a,_jpOwner);
+      typeEl.textContent=yr?`${typeLabel} · ${yr}${_rt}`:typeLabel+_rt;
       const titleEl=document.createElement('div');titleEl.className='gc-discog-item-title';titleEl.textContent=a.title;
       item.appendChild(img);item.appendChild(typeEl);item.appendChild(titleEl);
       _appendDiscogArtists(item,a);
@@ -12627,6 +12634,7 @@ function _discogEraPick(btn,a,list,eras,eraOf,onPick){
   setTimeout(()=>document.addEventListener('click',_favKebabOutside,true),0);
 }
 function _renderDiscogStacks(strip,list,prefix){
+  const _jpOwner=prefix==='gc'?_openGCko:(typeof _openTArtist!=='undefined'?_openTArtist:null); // 지역 표시(_discogRegionTag) 주인
   const owner=_discogOwnerKey(prefix);
   // 수동 지정 로드 전이면 자동 결과로 먼저 그리고, 도착하면 지정이 있는 주인만 다시 그린다
   if(!_discogEraOv){_discogEraOvLoad().then(m=>{if(m.has(owner)&&strip.isConnected&&_discogOwnerKey(prefix)===owner){strip.innerHTML='';_renderDiscogStacks(strip,list,prefix);}});}
@@ -12654,7 +12662,7 @@ function _renderDiscogStacks(strip,list,prefix){
     const typeEl=document.createElement('div');typeEl.className='gc-discog-type';
     const yr=a.releaseDate?a.releaseDate.slice(0,4):'';
     // 일본 발매반 표시(· JP) — 기본 목록과 같게(2026-11-02 — 앤팀은 일본·한국 미니 1집이 둘 다 보여 구분이 필요했다)
-    const _jpT=(a.region==='jp'||_JP_RELEASE_RE.test(a.title||''))?' · JP':'';
+    const _jpT=_discogRegionTag(a,_jpOwner);
     typeEl.textContent=yr?`${_discogAlbumTypeLabel(a)} · ${yr}${_jpT}`:_discogAlbumTypeLabel(a)+_jpT;
     admBtn(a,typeEl);
     const titleEl=document.createElement('div');titleEl.className='gc-discog-item-title';titleEl.textContent=a.title;
@@ -12687,7 +12695,7 @@ function _renderDiscogStacks(strip,list,prefix){
     const front=document.createElement('img');front.className='gc-discog-cover';front.src=e.lead.cover;front.alt=e.label;front.loading='lazy';deck.appendChild(front);
     const typeEl=document.createElement('div');typeEl.className='gc-discog-type';
     const yr=e.lead.releaseDate?e.lead.releaseDate.slice(0,4):'';
-    const _jpT=(e.lead.region==='jp'||_JP_RELEASE_RE.test(e.lead.title||''))?' · JP':'';
+    const _jpT=_discogRegionTag(e.lead,_jpOwner);
     typeEl.textContent=`${_discogTypeLabel(e.lead.type)} · ${yr}${_jpT} · ${e.items.length}${currentLang==='ko'?'장':''}`;
     const titleEl=document.createElement('div');titleEl.className='gc-discog-item-title';titleEl.textContent=e.label;
     item.append(deck,typeEl,titleEl);

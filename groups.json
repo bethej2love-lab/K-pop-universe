@@ -48196,7 +48196,7 @@
    },
    {
     "title": "Favorite - The 3rd Album Repackage",
-    "type": "정규",
+    "type": "정규 3집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/107/51/155/10751155_20211025161054_500.jpg",
     "releaseDate": "2021.10.25",
@@ -49232,7 +49232,7 @@
    },
    {
     "title": "NCT #127 CHERRY BOMB",
-    "type": "미니",
+    "type": "미니 3집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/71/172/10071172_500.jpg",
     "releaseDate": "2017.06.14",
@@ -71754,7 +71754,7 @@
    },
    {
     "title": "Atlantis - The 7th Album Repackage",
-    "type": "정규",
+    "type": "정규 7집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/105/91/034/10591034_20210412150849_500.jpg?108af522ca11ea11b985189ac0c415f1/melon/resize/260/quality/80/optimize",
     "releaseDate": "2021.04.12",
@@ -72472,7 +72472,7 @@
    },
    {
     "title": "1 and 1 - The 5th Album Repackage",
-    "type": "정규",
+    "type": "정규 5집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/15/244/10015244_500.jpg/melon/resize/260/quality/80/optimize",
     "releaseDate": "2016.11.15",
@@ -73176,7 +73176,7 @@
    },
    {
     "title": "Married To The Music - The 4th Album Repackage",
-    "type": "정규",
+    "type": "정규 4집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/023/32/709/2332709_500.jpg?e38283dba370b5360ae338976d00ec6b/melon/resize/260/quality/80/optimize",
     "releaseDate": "2015.08.03",
@@ -73906,7 +73906,7 @@
    },
    {
     "title": "1st Mini Album",
-    "type": "미니",
+    "type": "미니 1집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/38/344/2238344_500.jpg/melon/resize/260/quality/80/optimize",
     "releaseDate": "2014.03.10",
@@ -74321,7 +74321,7 @@
    },
    {
     "title": "SHINee The 3rd Album Chapter 2. 'Why So Serious? - The Misconceptions Of Me'",
-    "type": "정규",
+    "type": "정규 3집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/83/157/2183157_500.jpg/melon/resize/260/quality/80/optimize",
     "releaseDate": "2013.04.26",
@@ -74411,7 +74411,7 @@
    },
    {
     "title": "SHINee The 3rd Album Chapter 1. 'Dream Girl - The Misconceptions Of You'",
-    "type": "정규",
+    "type": "정규 3집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/75/668/2175668_500.jpg/melon/resize/260/quality/80/optimize",
     "releaseDate": "2013.02.19",
@@ -75117,7 +75117,7 @@
    },
    {
     "title": "'Hello' SHINee The 2nd Album Repackage",
-    "type": "정규",
+    "type": "정규 2집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/010/30/252/1030252_500.jpg/melon/resize/260/quality/80/optimize",
     "releaseDate": "2010.09.30",
@@ -75447,7 +75447,7 @@
    },
    {
     "title": "SHINee The First Album (Repackage) - Amigo",
-    "type": "정규",
+    "type": "정규 1집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/003/99/303/399303_500.jpg/melon/resize/260/quality/80/optimize",
     "releaseDate": "2008.10.29",
@@ -76724,7 +76724,7 @@
    },
    {
     "title": "The Perfect Red Velvet - The 2nd Album Repackage",
-    "type": "정규",
+    "type": "정규 2집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/34/032/10134032_500.jpg",
     "releaseDate": "2018.01.29",
@@ -91659,7 +91659,8 @@
     ],
     "src": "spotify",
     "spotifyId": "6QtmQ4jeXLLLZnLitg5gUj",
-    "melonAlbumId": "14530136"
+    "melonAlbumId": "14530136",
+    "region": "kr"
    },
    {
     "title": "For us",
@@ -91796,7 +91797,8 @@
       "songId": "600362665"
      }
     ],
-    "melonAlbumId": "12177706"
+    "melonAlbumId": "12177706",
+    "region": "kr"
    },
    {
     "title": "Go in Blind",
@@ -91888,7 +91890,8 @@
     ],
     "src": "spotify",
     "spotifyId": "2nGDYnWkLh4VAnm1q0Dgdg",
-    "melonAlbumId": "11704363"
+    "melonAlbumId": "11704363",
+    "region": "jp"
    },
    {
     "title": "Magic Hour / Wonderful World",
@@ -91914,7 +91917,8 @@
     ],
     "src": "spotify",
     "spotifyId": "2yrTA3wZj4sUVBcpYzsQcR",
-    "melonAlbumId": "11688042"
+    "melonAlbumId": "11688042",
+    "region": "jp"
    },
    {
     "title": "Yukiakari",
@@ -93196,7 +93200,7 @@
   "discography": [
    {
     "title": "4th MINI ALBUM [NEW WAV]",
-    "type": "미니",
+    "type": "미니 4집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/136/98/725/13698725_20260601093749_500.jpg",
     "releaseDate": "2026.06.01",
@@ -93233,7 +93237,7 @@
    },
    {
     "title": "3rd MINI ALBUM [LOVE PULSE]",
-    "type": "미니",
+    "type": "미니 3집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/120/90/567/12090567_20250901120926_500.jpg",
     "releaseDate": "2025.09.01",
@@ -102878,7 +102882,7 @@
    },
    {
     "title": "The Road : Keep on Going - The 11th Album Vol.1",
-    "type": "정규",
+    "type": "정규 11집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/109/94/380/10994380_20220712102331_500.jpg",
     "releaseDate": "2022.07.12",
@@ -104438,7 +104442,7 @@
    },
    {
     "title": "The 7th Album Special Edition 'THIS IS LOVE'",
-    "type": "정규",
+    "type": "정규 7집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/87/077/2287077_500.jpg",
     "releaseDate": "2014.10.23",
@@ -108431,7 +108435,7 @@
    },
    {
     "title": "SHAPE of LOVE",
-    "type": "미니",
+    "type": "미니 11집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/109/32/098/10932098_20220426110407_500.jpg",
     "releaseDate": "2022.04.26",
@@ -108553,7 +108557,7 @@
    },
    {
     "title": "NO LIMIT",
-    "type": "미니",
+    "type": "미니 10집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/107/84/417/10784417_20211119100852_500.jpg",
     "releaseDate": "2021.11.19",
@@ -108646,7 +108650,7 @@
    },
    {
     "title": "One Of A Kind",
-    "type": "미니",
+    "type": "미니 9집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/106/17/676/10617676_20210601151844_500.jpg",
     "releaseDate": "2021.06.01",
@@ -109633,7 +109637,7 @@
    },
    {
     "title": "WE ARE HERE - The 2nd Album Take.2",
-    "type": "정규",
+    "type": "정규 2집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/52/320/10252320_500.jpg",
     "releaseDate": "2019.02.18",
@@ -112523,7 +112527,7 @@
    },
    {
     "title": "SF9 5th Mini Album [Sensuous]",
-    "type": "미니",
+    "type": "미니 5집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/89/988/10189988_500.jpg",
     "releaseDate": "2018.07.31",
@@ -113657,7 +113661,7 @@
    },
    {
     "title": "EPEX 5th EP Album Prelude of Love Chapter 2. 'Growing Pains'",
-    "type": "미니",
+    "type": "미니 5집",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b27340320ca58cbadbad78598e36",
     "releaseDate": "2023.04.26",
@@ -121549,7 +121553,7 @@
    },
    {
     "title": "'Paradise' (정규 1집 스페셜 리패키지)",
-    "type": "정규",
+    "type": "정규 1집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/020/15/246/2015246_500.jpg",
     "releaseDate": "2011.09.26",
@@ -135761,7 +135765,7 @@
    },
    {
     "title": "KARD 7th Mini Album 'Where To Now? (Part.1 : Yellow Light)'",
-    "type": "미니",
+    "type": "미니 7집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/115/65/256/11565256_20240812153023_500.jpg",
     "releaseDate": "2024.08.13",
@@ -172094,7 +172098,7 @@
    },
    {
     "title": "I yah! - 4집",
-    "type": "정규",
+    "type": "정규 4집",
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music69/v4/c6/02/b3/c602b311-4a5d-7021-103e-1212b0ff7b30/hot_I_yah.jpg/600x600bb.jpg",
     "releaseDate": "1999.09.01",
@@ -193104,7 +193108,7 @@
    },
    {
     "title": "2PM 3rd Album Grown_Grand Edition",
-    "type": "정규",
+    "type": "정규 3집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/89/485/2189485_500.jpg",
     "releaseDate": "2013.06.19",
@@ -204625,7 +204629,7 @@
    },
    {
     "title": "MBLAQ 4th Mini Album 'BLAQ%Ver.'",
-    "type": "미니",
+    "type": "미니 4집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/020/96/208/2096208_500.jpg",
     "releaseDate": "2012.03.21",
@@ -220890,7 +220894,7 @@
    },
    {
     "title": "CNBLUE 7TH MINI ALBUM 7℃N",
-    "type": "미니",
+    "type": "미니 7집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/47/444/10047444_500.jpg",
     "releaseDate": "2017.03.20",
@@ -225661,7 +225665,7 @@
    },
    {
     "title": "TEMPEST Voyage",
-    "type": "미니",
+    "type": "미니 5집",
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/08/5c/12/085c1221-6545-28e9-5a96-a0d7452dc8e7/888272131055_Cover.jpg/600x600bb.jpg",
     "releaseDate": "2024.03.11",
@@ -235236,7 +235240,7 @@
    },
    {
     "title": "nostalgia",
-    "type": "미니",
+    "type": "미니 5집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/103/47/217/10347217_500.jpg",
     "releaseDate": "2019.11.04",
@@ -239988,7 +239992,7 @@
   "discography": [
    {
     "title": "1ST EP ALBUM [KEYVITUP]",
-    "type": "미니",
+    "type": "미니 1집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/129/59/348/12959348_20260324162319_500.jpg",
     "releaseDate": "2026.04.08",
@@ -243151,7 +243155,7 @@
   "discography": [
    {
     "title": "MCND 7th Mini Album [Devil Youth Club]",
-    "type": "미니",
+    "type": "미니 7집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/145/22/217/14522217_20260904163952_500.jpg",
     "releaseDate": "2026.09.10",
@@ -246591,7 +246595,7 @@
    },
    {
     "title": "HIGH HEELS",
-    "type": "미니",
+    "type": "미니 3집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/026/92/927/2692927_500.jpg",
     "releaseDate": "2016.06.27",
@@ -255757,7 +255761,7 @@
   "discography": [
    {
     "title": "HELLOVENUS 6th Mini Album Mystery of VENUS",
-    "type": "미니 5집",
+    "type": "미니 6집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/30/210/10030210_500.jpg",
     "releaseDate": "2017.01.11",
@@ -255847,7 +255851,7 @@
    },
    {
     "title": "Hellovenus 5th Mini Album 난 예술이야",
-    "type": "미니 4집",
+    "type": "미니 5집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/023/30/687/2330687_500.jpg",
     "releaseDate": "2015.07.22",
@@ -264377,7 +264381,7 @@
   "discography": [
    {
     "title": "The 1st EP [TUNE & PLAY]",
-    "type": "미니",
+    "type": "미니 1집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/144/73/644/14473644_20260824114752_500.jpg",
     "releaseDate": "2026.08.24",
