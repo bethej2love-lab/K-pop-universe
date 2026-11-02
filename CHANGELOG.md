@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-11-02 (Claude Code — 정규·미니 5차: 엔시티 127·드림·레드벨벳·몬스타엑스)
+- **[완료·배포] [groups.json 12건 → build_slim_data]** 확신 있는 것만: 엔시티 127 정규 1~5집(Regular-Irregular·Neo Zone·Sticker·질주·Fact Check — WALK 6집만 번호가 있고 앞 다섯이 비어 있었다), 엔시티 드림 Hello Future·Beatbox → 정규 1·2집 리패키지, 레드벨벳 The Red·Perfect Velvet·Chill Kill → 정규 1·2·3집·ReVe Festival Finale → 리패키지, 몬스타엑스 SHINE FOREVER → 정규 1집 리패키지. 확인 못 한 것은 그대로: 레드벨벳 ReVe Festival·Cosmic 미니 차수, 몬스타엑스 2025~26(THE X·Unfold·The Phase·NOW PROJECT), 엔시티 드림 Beat It Up. 남은 수치: 번호 없음 715·순서 이상 33줄·일본 후보 63.
+
 ## 2026-11-02 (Claude Code — 정규·미니 4차: 투바투·에이티즈·아이들·트와이스)
 - **[완료·배포] [groups.json 18건 → build_slim_data]** 투바투 7TH YEAR → 미니 8집(위키·팬위키), Starkissed → 일본 정규(jp), Setsuna Hanabi → 일본 5th 싱글(jp), FIGHT OR ESCAPE → 정규 2집 리패키지. 에이티즈 GOLDEN HOUR Part.3 → 미니 12집(Part.2=11·Part.4=13 사이), Part.4 → 13·Part.5 → 14(팬위키·애플뮤직), Ashes to Light → 일본(jp), In Your Fantasy Edition → 미니 12집 리패키지. 아이들 I SWAY → 미니 7집·We are → 미니 8집(기사), We made(2026)는 확인 못 해 그대로. 트와이스 STRATEGY → 미니 14집, Merry & Happy·TWICEcoaster LANE 2·Summer Nights·The year of YES → 리패키지, The Feels 2건 → 싱글(영어 싱글). 남은 수치: 번호 없음 727·순서 이상 34줄·일본 후보 63.
 
