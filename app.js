@@ -12154,8 +12154,12 @@ function _ordinal(n){
 const _JP_RELEASE_RE=/[-–(\[]\s*japan(?:ese)?\s*(?:ver\.?|version|ed(?:ition)?|ep|single|album)?\s*[-–)\]]|japanese\s+(?:ver\.?|version)|\bjp\s*ver\b/i;
 const _isKoNat=a=>!!(a&&a.nat&&/^(한국|대한민국)/.test(a.nat.ko||''));
 const _koBasedGroupCache=new Map();
+// 일본에서 데뷔·주력 활동하는 팀 — 한국인 멤버가 있어도 일본 발매반이 원곡이라 숨기지 않는다(2026-11-02 사용자 "앤팀 미니 n집 안 맞음").
+// ⚠️ '한국인 절반 미만'으로 일반화하면 엔시티 위시·베이비몬스터·넥스지(한국 기반, 일본판 따로)가 뒤집힌다(실측) → 이름으로만.
+const _JP_BASED_GROUPS=new Set(['앤팀']);
 function _groupIsKoBased(gko){
   if(!gko)return true;
+  if(_JP_BASED_GROUPS.has(gko))return false;
   if(_koBasedGroupCache.has(gko))return _koBasedGroupCache.get(gko);
   const roster=(typeof ARTISTS!=='undefined'?ARTISTS:[]).filter(a=>_artistGroups(a).some(g=>g&&g.ko===gko));
   // 로스터를 못 찾으면(데이터 공백) 한국 기반으로 본다 — 숨기는 쪽이 기본이라는 뜻이고, 토글로 펼 수 있다.
@@ -12649,7 +12653,9 @@ function _renderDiscogStacks(strip,list,prefix){
     const img=document.createElement('img');img.className='gc-discog-cover';img.loading='lazy';img.decoding='async';img.src=a.cover;img.alt=a.title;
     const typeEl=document.createElement('div');typeEl.className='gc-discog-type';
     const yr=a.releaseDate?a.releaseDate.slice(0,4):'';
-    typeEl.textContent=yr?`${_discogAlbumTypeLabel(a)} · ${yr}`:_discogAlbumTypeLabel(a);
+    // 일본 발매반 표시(· JP) — 기본 목록과 같게(2026-11-02 — 앤팀은 일본·한국 미니 1집이 둘 다 보여 구분이 필요했다)
+    const _jpT=(a.region==='jp'||_JP_RELEASE_RE.test(a.title||''))?' · JP':'';
+    typeEl.textContent=yr?`${_discogAlbumTypeLabel(a)} · ${yr}${_jpT}`:_discogAlbumTypeLabel(a)+_jpT;
     admBtn(a,typeEl);
     const titleEl=document.createElement('div');titleEl.className='gc-discog-item-title';titleEl.textContent=a.title;
     item.append(img,typeEl,titleEl);
@@ -12681,7 +12687,8 @@ function _renderDiscogStacks(strip,list,prefix){
     const front=document.createElement('img');front.className='gc-discog-cover';front.src=e.lead.cover;front.alt=e.label;front.loading='lazy';deck.appendChild(front);
     const typeEl=document.createElement('div');typeEl.className='gc-discog-type';
     const yr=e.lead.releaseDate?e.lead.releaseDate.slice(0,4):'';
-    typeEl.textContent=`${_discogTypeLabel(e.lead.type)} · ${yr} · ${e.items.length}${currentLang==='ko'?'장':''}`;
+    const _jpT=(e.lead.region==='jp'||_JP_RELEASE_RE.test(e.lead.title||''))?' · JP':'';
+    typeEl.textContent=`${_discogTypeLabel(e.lead.type)} · ${yr}${_jpT} · ${e.items.length}${currentLang==='ko'?'장':''}`;
     const titleEl=document.createElement('div');titleEl.className='gc-discog-item-title';titleEl.textContent=e.label;
     item.append(deck,typeEl,titleEl);
     item.addEventListener('click',ev=>{ev.stopPropagation();_discogStackOpen.add(openKey);rerender();});
