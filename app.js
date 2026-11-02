@@ -13594,7 +13594,7 @@ function _renderSongVideoTabs(){
       mb.querySelector('.lbl').textContent=st.member||(_ko?'멤버':'Member');
       mb.addEventListener('click',e=>{
         e.stopPropagation();
-        if(st.member){st.member=null;_renderSongVideoTabs();return;}
+        if(st.member&&e.target.closest('.x')){st.member=null;_renderSongVideoTabs();return;} // ✕만 해제, 이름은 다시 고르기(카드 ♪ 곡과 같게)
         const items=[..._memCnt.entries()].sort((a,b)=>b[1]-a[1]).map(([m,n])=>({key:m,label:m,n}));
         _openPickSheet(_ko?'멤버로 보기':'Filter by member',_ko?'멤버가 태그된 영상이 아직 없어요':'No member-tagged videos yet',Promise.resolve(items),k=>{if(_songVid!==st)return;st.member=k;_renderSongVideoTabs();});
       });
@@ -21855,7 +21855,7 @@ function _renderFeedListFacet(ctx){
         b.querySelector('.lbl').textContent=lbl(cur);
         b.addEventListener('click',e=>{
           e.stopPropagation();
-          if(on){run(f,allOpt.v);return;}
+          if(on&&e.target.closest('.x')){run(f,allOpt.v);return;} // ✕만 해제, 이름은 다시 고르기(카드 ♪ 곡과 같게)
           const items=f.options.filter(o=>o!==allOpt).map(o=>({key:o.v,label:lbl(o),n:o.n,alt:[o.ko,o.en,o.v].filter(Boolean).join(' ')}));
           _openPickSheet(f.pickTitle||(ko?'누구 영상 볼까요':'Show videos of'),ko?'고를 수 있는 팀이 없어요':'Nothing to pick',Promise.resolve(items),k=>run(f,k));
         });
@@ -27307,12 +27307,13 @@ function _makeChVidController(contId){
         songBtn.classList.toggle('on',!!state.songKey);
         songBtn.innerHTML='<span class="ic">♪</span><span class="lbl"></span><span class="x">'+(state.songKey?'✕':'▾')+'</span>';
         songBtn.querySelector('.lbl').textContent=state.songKey?(state.songLabel||state.songKey.split(':').pop()):(currentLang==='ko'?'곡':'Song');
-        songBtn.setAttribute('aria-label',state.songKey?(currentLang==='ko'?'곡 고르기 해제':'Clear song'):(currentLang==='ko'?'곡으로 보기':'Filter by song'));
+        songBtn.setAttribute('aria-label',state.songKey?(currentLang==='ko'?'다른 곡 고르기':'Change song'):(currentLang==='ko'?'곡으로 보기':'Filter by song'));
       };
       _paint();
       songBtn.addEventListener('click',e=>{
         e.stopPropagation();
-        if(state.songKey){state.songKey=null;state.songLabel=null;state.offset=0;_paint();load(ko,true);return;} // 고른 상태에서 누르면 해제(✕)
+        // 고른 상태: ✕만 해제, 곡 이름을 누르면 목록을 다시 열어 다른 곡으로 바꾼다(2026-11-02 사용자 — 이름까지 해제되면 다시 고르려고 두 번 눌러야 했다)
+        if(state.songKey&&e.target.closest('.x')){state.songKey=null;state.songLabel=null;state.offset=0;_paint();load(ko,true);return;}
         _openVidSongSheet(ko,state.memberKo,state.histKos,(key,label)=>{
           if(state.ko!==ko)return;
           state.songKey=key;state.songLabel=label;state.offset=0;_paint();load(ko,true);

@@ -1846,6 +1846,8 @@
   .gc-vid-pick .ic{opacity:.75;font-size:11px;}.gc-vid-pick .x{opacity:.6;font-size:11px;}
   .gc-vid-pick.on{color:#bcd3ff;}
   .gc-vid-pick::after{content:'';position:absolute;inset:-10px -4px;}
+  /* ✕는 따로 누르는 자리(2026-11-02) — 이름=다시 고르기, ✕=해제. 글자가 작아 손가락 자리를 넓히고 버튼 전체 터치 영역(::after) 위로 올린다 */
+  .gc-vid-pick .x{position:relative;z-index:1;padding-left:2px;}.gc-vid-pick.on .x::after{content:'';position:absolute;inset:-12px -8px -12px -6px;}
   .gc-vid-pick-sep{flex:0 0 auto;width:0.5px;height:16px;background:rgba(255,255,255,0.16);margin:0 6px 0 4px;}
   @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){.gc-vid-pick{font-size:11px;}}
   /* 곡 목록 시트 — 아래에서 올라옴(데스크톱은 가운데 좁은 시트) */

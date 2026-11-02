@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-11-02 (Claude Code — 곡 고르기 버튼: 이름=다시 고르기, ✕=해제)
+- **[완료·배포] [app.js 카드 ♪ 곡(gc-vid-pick)·곡 화면 멤버 고르기·목록 팀 고르기] [kpop_universe.css .gc-vid-pick .x]** 사용자 "곡 하나 고른 상태에서 ✕는 꺼지고, 곡 제목 쪽을 누르면 다시 목록에서 고를 수 있게". 예전엔 고른 상태에서 버튼 어디를 눌러도 해제. 이제 ✕만 해제(e.target.closest('.x')), 이름은 목록 다시 열기 → 고르면 바로 교체. 같은 모양 버튼 3곳 동일하게. ✕ 손가락 자리 넓힘(::after, 버튼 터치영역 위로). 헤드리스 390px 터치: 곡 고름→이름 탭=목록 열림→다른 곡(After LIKE→ELEVEN) 교체→✕ 탭=해제 확인. facet-pending-input·program-facets·vid-list-share·deeplink-song·syntax 통과.
+
 <<<<<<< Updated upstream
 ## 2026-11-02 (Codex — 검수68차·집 노트북 인계 후 주호 원본 보강)
 - **[진행중·읽기 전용] [CHANGELOG.md]** GitHub 최신 main90769ade3e와 집 노트북67차까지 인계를 확인. 공유 작업 폴더의 미커밋 변경을 보존하기 위해 별도 검수 worktree에서 문서만 편집. 57/59/67차의 DK×주호·드라마 주호 보류 원본부터 확인하며 코드·JSON·SQL·운영 DB 쓰기 없음.
