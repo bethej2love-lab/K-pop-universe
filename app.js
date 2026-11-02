@@ -6054,6 +6054,10 @@ async function _surfFetch(vid,ctx){
   // 조회수순 — 2026-09-29 실측 group_ko·members·with_members·cover_of_*·title_norm 조건 모두 0.25~0.45초
   const Q=(lim)=>excl(sb.from(_YT_TABLE).select(COLS)).order('view_count',{ascending:false,nullsFirst:false}).limit(lim);
   const run=q=>q.then(r=>(r&&r.data)?_filterBannedVideos(r.data):[],()=>[]);
+  // 여러 그룹을 or로 묶어 조회수순 N개 = DB가 그 그룹들 영상을 **전부** 읽고 정렬(2026-11-02 Disk IO 예산 경고 — 실측 4그룹 27,000행·120MB·4.2초,
+  // 하루도 안 돼 이 쿼리들만 30GB). 조건 하나씩 따로 N개(인덱스 idx_ytv_group_viewcount로 0.002초)를 받아 합쳐 다시 N개 — 결과는 같다.
+  const runEach=(conds,lim)=>Promise.all(conds.map(c=>run(Q(lim).or(c)))).then(ls=>{
+    const seen=new Set();return ls.flat().filter(x=>!seen.has(x.id)&&seen.add(x.id)).sort((x,y)=>(y.view_count||0)-(x.view_count||0)).slice(0,lim);});
   const{data:curRows}=await sb.from(_YT_TABLE).select(COLS).eq('id',vid).limit(1);
   const v=curRows&&curRows[0];
   if(!v)return null;
@@ -6133,12 +6137,12 @@ async function _surfFetch(vid,ctx){
       if(GROUPS[w.group])return `and(group_ko.eq.${f(w.group)},members.cs.{${f(w.name)}})`;
       return `group_ko.eq.${f(w.name)}`; // 무소속 솔로는 본인 이름이 채널 키
     });
-    jobs.weak=run(Q(80).or(conds.join(',')));
+    jobs.weak=runEach(conds,80);
   }
   if(coFav.length){
     const conds=coFav.map(r=>{const k=String(r.fav_key);const i=k.indexOf(':');
       return i>0?`and(group_ko.eq.${f(k.slice(0,i))},members.cs.{${f(k.slice(i+1))}})`:`group_ko.eq.${f(k)}`;});
-    jobs.cofav=run(Q(60).or(conds.join(',')));
+    jobs.cofav=runEach(conds,60);
   }
   // 같은 무대 — 프로그램 컬렉션 어휘(_PROGRAM_COLLECTIONS) 재사용
   const tn=_titleNorm(v.title);

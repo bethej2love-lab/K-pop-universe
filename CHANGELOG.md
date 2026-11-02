@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-11-02 (Claude Code — Supabase Disk IO 예산 경고: 파도타기 쿼리)
+- **[완료·배포] [app.js _surfFetch runEach] [sql/ytv_group_viewcount_index_2026-11-02.sql — DB 실행 완료]** Supabase "Disk IO Budget 소진" 메일(10-21에 이어 2번째). pg_stat_statements(11-01 05:43 UTC 리셋 후 19시간) 디스크 읽기 상위: ① 파도타기 "의외의 연결(weak)·함께 좋아하는(cofav)" — 그룹 여러 개를 or로 묶고 조회수순 60~80개 → 그 그룹 영상 전부 읽고 정렬(EXPLAIN: 4그룹 27,000행·15,525블록·4.2초), #0·#2·#7 합쳐 약 30GB·평균 5~20초. 수정: 인덱스 (group_ko, view_count desc nulls last) 추가 + 조건 하나씩 따로 N개 받아 합쳐 N개(결과 동일) → 그룹당 63블록·0.002초. ② 남은 큰 것(미조치): 발견 커버곡 모음 _fetchCoverPool(14GB·277회·평균 8.5초 — 표본 12그룹으론 65ms라 재현 못함, 그룹 수가 큰 경우로 추정), 제목 ilike 차트(축제·1위 등 #3·#4 각 10GB·20초), 외부채널 is_short 최신순(#5 6GB). 다음 경고 오면 이 순서로. surf 테스트 통과.
+
 ## 2026-11-02 (Codex — 검수71차·실패 알림과 현재 실행 상태 대조)
 - **[완료·읽기 전용] [GitHub Actions]** 사용자가 보여준 실패 메일의 대표 실행을 GitHub 현재 상태/실패 로그와 대조했다. 메일은 최초 실패 시점의 알림이라 재실행 성공 뒤에도 그대로 남는다. PR·main 각각의 검사와 Attempt #2가 별도 알림을 만들므로 메일 수=현재 고장 수로 세지 않는다. Gmail 설정/필터/삭제·워크플로 비활성화·무차별 재실행은 하지 않았다. 프로젝트와 무관한 메일 내용/이메일 토큰은 저장하지 않는다.
 - **[완료·이미 통과한 검사 구분] [Browser smoke·Data validation & tests]** [08e8c59 PR 검사41315706901](https://github.com/bethej2love-lab/K-pop-universe/actions/runs/41315706901)은 실패 메일이 있지만 현재 attempt2 success·12job 전부 success다. [최신 main 검사41367678061](https://github.com/bethej2love-lab/K-pop-universe/actions/runs/41367678061)도 attempt1 success·12job success, [최신 데이터 검사41367678095](https://github.com/bethej2love-lab/K-pop-universe/actions/runs/41367678095) success 확인. 이는 확인한 실행의 최종 상태이며 모든 과거 실패를 재검증했다는 뜻은 아니다.
