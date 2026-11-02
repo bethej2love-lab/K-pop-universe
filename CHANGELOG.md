@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-11-02 (Claude Code — 정규·미니 3차: 있지·스트레이키즈)
+- **[완료·배포] [groups.json 21건 → build_slim_data]** 있지: **CRAZY IN LOVE가 정규 1집인데 미니 5집으로 들어가 뒤 미니 번호가 하나씩 밀려 있었다** → CHECKMATE 5·CHESHIRE 6·KILL MY DOUBT 7·BORN TO BE 8·GOLD 9(위키피디아 9th EP)·Girls Will Be Girls 10·TUNNEL VISION 11(코리아타임스)·Motto 12(빌보드 필리핀), Collector=일본 정규 2집(jp)·RINGO=일본 정규 1집. 스트레이키즈: 樂-STAR(호환 한자 코드라 제목 일치 검색에 안 걸렸음) 미니 8·ATE 8→**9**·THIS & THAT 10(위키피디아), Hollow=일본 4th EP(jp), DO IT(SKZ It Tape)·HOP(hipTape)·Mixtape류 → "믹스테이프", Clé 2 → "스페셜"(미니 칩에서 빠지고 전체에만). 남은 수치: 번호 없음 745·순서 이상 35줄·일본 후보 64.
+
 ## 2026-11-02 (Claude Code — 정규·미니 2차: 숨은 일본 발매·중복·출처 확인분)
 - **[완료·배포] [groups.json·artists.json 19건 → build_slim_data] [tools/disco_ordinal_audit.mjs ⑤ 일본 발매 후보] [tests/discog-eras.test.js 아이브 사례 교체]** 1차 남은 것 중 출처 확인분. 핵심 발견: **"번호 없는 미니"의 상당수가 일본 발매인데 일본 표시가 없던 것**(제목에 Japanese가 없어 못 잡음). 에스파 Armageddon → 정규 1집, Dirty Work → 싱글(4곡), KISS N TELL → 일본 미니 1집(THE FIRST TIMES·edaily). 아이브 WAVE·ALIVE·Be Alright·LUCID DREAM → 일본 미니 1~4집(LUCID DREAM=일본 4th EP 코리아중앙데일리·realsound, 앞 셋은 발매순 일치), CRUSH(ALIVE 선공개) jp. 텐 TEN → 미니 1집, Humanity → 일본(allkpop). 최강창민 Devil → 미니 2집, All Of My Life → 미니 3집(텐아시아 "세 번째 미니"), Human·Close To You → 일본(번호 미확인이라 번호 없이). 엠블랙 BLAQ%Ver. → 미니 4집 리패키지(1차 자동 정정이 "4th Mini Album" 제목만 보고 본판으로 잘못 뒀던 것), BLAQ Style 3D Edition → 정규 1집 리패키지. 중복 삭제(멜론 ID 없는 쪽): 트레저 LOVE PULSE(2025.01.27), SF9 Sensuous(07.30), 씨엔블루 7°CN(04.17). 점검 도구 ⑤: 수록곡에 Japanese ver.·가나가 있는 미니·정규 = 일본 발매 후보(남은 65건 — 한국 앨범 보너스 트랙도 걸리니 출처 확인 후). 남은 수치: 번호 없음 758·순서 이상 34줄·일본 후보 65.
 
