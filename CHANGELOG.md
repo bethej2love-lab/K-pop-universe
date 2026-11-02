@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-11-02 (Claude Code — 기념일 비활동 멤버 덜 어둡게)
+- **[완료·배포] [kpop_universe.css .feed-strip-item.anniv-inactive]** 사용자 "Today's Anniversary 비활동 멤버 어둡게 처리, 일단 덜 어둡게". opacity 0.62→0.8, grayscale 0.2→0.1. 대상 판정은 그대로. anniv-dim 테스트 통과.
+
 ## 2026-11-02 (Claude Code — 곡 고르기 버튼: 이름=다시 고르기, ✕=해제)
 - **[완료·배포] [app.js 카드 ♪ 곡(gc-vid-pick)·곡 화면 멤버 고르기·목록 팀 고르기] [kpop_universe.css .gc-vid-pick .x]** 사용자 "곡 하나 고른 상태에서 ✕는 꺼지고, 곡 제목 쪽을 누르면 다시 목록에서 고를 수 있게". 예전엔 고른 상태에서 버튼 어디를 눌러도 해제. 이제 ✕만 해제(e.target.closest('.x')), 이름은 목록 다시 열기 → 고르면 바로 교체. 같은 모양 버튼 3곳 동일하게. ✕ 손가락 자리 넓힘(::after, 버튼 터치영역 위로). 헤드리스 390px 터치: 곡 고름→이름 탭=목록 열림→다른 곡(After LIKE→ELEVEN) 교체→✕ 탭=해제 확인. facet-pending-input·program-facets·vid-list-share·deeplink-song·syntax 통과.
 
