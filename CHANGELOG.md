@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-11-02 (Claude Code — 정규·미니 12차)
+- **[완료·배포] [groups.json 4건 → build_slim_data]** 데일리디렉션 WHICH WAY → 미니 1집(데일리안), 엔싸인 Maze Runner -WAY OUT- → 일본 미니 1집(jp), 원위 點 : The Quiver → 싱글(싱글 2집, OSEN), 퍼플키스 OUR NOW → 정규(첫 영어 앨범). **진행 요약(11-02 하루)**: 번호 없음 807→625, 순서 이상 37→33줄, 상위(pri4) 그룹 175→52(남은 건 대부분 원래 번호 없는 스페셜·서머 미니). 남은 것: 솔로 417·중위권/옛 그룹, 일본 후보 59. 도구: node tools/disco_ordinal_audit.mjs(점검)·disco_ordinal_fix.mjs(근거 있는 것만).
+
 ## 2026-11-02 (Claude Code — 정규·미니 11차)
 - **[완료·배포] [groups.json 5건 → build_slim_data]** 엔플라잉 Still → 미니 9집(나무위키), 플레이브 HYPERDRIVE → 미니 5집, 템페스트 As I am → 미니 7집, 올아워즈 UNBOUND → 미니 6집(엑스포츠뉴스), 티아이오티 Time for us → 미니 5집(allkpop) — 다섯 팀 모두 1번부터 빈틈없이 이어짐 확인.
 
