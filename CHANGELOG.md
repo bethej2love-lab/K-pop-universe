@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-11-02 (Claude Code — 정규·미니 11차)
+- **[완료·배포] [groups.json 5건 → build_slim_data]** 엔플라잉 Still → 미니 9집(나무위키), 플레이브 HYPERDRIVE → 미니 5집, 템페스트 As I am → 미니 7집, 올아워즈 UNBOUND → 미니 6집(엑스포츠뉴스), 티아이오티 Time for us → 미니 5집(allkpop) — 다섯 팀 모두 1번부터 빈틈없이 이어짐 확인.
+
 ## 2026-11-02 (Claude Code — 정규·미니 10차: 다음 그룹 층 최신 앨범)
 - **[완료·배포] [groups.json 8건 → build_slim_data]** 엑스디너리 히어로즈 IMPULSE → 미니 9집(JYP 공식), 틴탑 DON'T STOP → 미니 11집(allkpop)·Just 15, Just Teen Top → 미니 10집(9·11 사이)·틴탑 클래스 어디션 → 미니 4집 리패키지·20'S LOVE TWO → 미니 5집 리패키지·Come Into The World/Transform → 싱글, 이븐 on: our noise → 미니 6집(톱스타뉴스).
 
