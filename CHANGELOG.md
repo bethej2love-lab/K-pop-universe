@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-11-02 (Claude Code — 제보·제안 창구: 팬이 같이 만드는 사이트)
+- **[완료·배포] [index.html 피드백 양식·설정 맨 위·관리자 fbv 탭] [app.js openFeedback(target)·_fbPaintCat·카드 ⋮·영상 ⋯] [admin.js _fbvRenderList 대상·처리함] [about.html] [sql/2026-11-02_feedback_targets.sql — DB 실행 완료]** 사용자 "팬이랑 같이 만들어가게 — 이 팬 채널 등록·이 영상 잘못됐어·정보 틀렸어·그룹 추가해줘가 쉽고 자유롭게, 위치는?" → 상단 상시 버튼 대신 ①문제가 보이는 자리(영상 재생 ⋯·그룹/멤버 카드 ⋮ "제보하기" — 대상이 자동으로 붙음) ②설정 맨 위 "💬 제보·제안". 종류 5개(영상 오류·정보 수정·추가 요청·의견·권리 침해), 종류별 예시 문구, 권리 침해는 답장 이메일 필수, 로그인 불필요. DB feedback에 target_type/id/label·handled_at. ⚠️ **발견: feedback 표가 RLS insert 정책만 있어 관리자 목록이 늘 0건으로 보이는 구조였다**(지금까지 실제 0건이긴 함) → 관리자 select/update/delete 정책 추가. 관리자 목록: 새 제보 탭·종류 탭·대상 링크(영상=유튜브, 그룹/멤버=카드 열기)·처리함/되돌리기(삭제 대신 기록 유지 — 나중에 "팬 제보로 고친 것 N건"용). 헤드리스 390px: 카드 ⋮→대상 "그룹 · 아이브"·정보 수정 기본·전송값(target 포함), 영상 ⋯→"영상 · 제목"·영상 오류 기본, 권리 침해 이메일 없으면 막힘, 설정 맨 위 확인(전송은 가로채 실DB 미기록). overlay-front·share-copy·smoke 통과. ⏳다음: "이번 주 달라진 것"에 팬 제보 반영 수 노출.
+
 ## 2026-11-02 (Claude Code — 문의 메일 contact@kpop-universe.kr)
 - **[완료·배포] [about.html·privacy.html·terms.html·index.html 권리 침해 신고·app.js 공개 컬렉션 신고]** 공개 문의처를 개인 Gmail → **contact@kpop-universe.kr**. ImprovMX 무료 전달(별칭 contact·hello → 운영자 Gmail), 가비아 DNS에 MX mx1/mx2.improvmx.com(10/20)+TXT spf 추가 — 8.8.8.8 조회로 확인, 사이트 A 레코드 그대로. 사용자 외부 메일로 hello·contact 둘 다 수신 확인. ⚠️ ADMIN_EMAIL(관리자 판정)은 그대로 — 별개. 보낼 땐 Gmail에서 답장하면 개인 주소로 나감(ImprovMX 무료는 수신 전달만).
 

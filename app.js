@@ -658,7 +658,10 @@ const T={
       idxTitle:'인덱스',idxGroupTab:'그룹',idxMemberTab:'멤버',idxSearchPH:'그룹명 검색…',idxSearchPHMember:'멤버명 검색…',
       idxSortName:'이름 (가나다순)',idxSortDebut:'데뷔연도',idxSortAgency:'소속사',idxSortMembers:'멤버 수',
       idxSortBirth:'생년',idxSortGroup:'그룹명',idxSortNation:'국적',ppTitle:'내 프로필',ppNick:'닉네임',ppNickPH:'닉네임을 입력하세요',ppNickErr:'닉네임을 입력해주세요',ppBio:'한 줄 소개',ppBioPH:'선택사항',ppColor:'내 별 색상',ppFavLabel:'좋아요 공개',ppFavSub:'다른 사람들이 볼 수 있어요',ppSyncLabel:'계정',ppSyncSub:'연결해 두면 다른 기기에서도 그대로 이어져요',ppGoogleBtn:'구글로 연결하기',ppXBtn:'X로 연결하기',ppLinked:'계정에 연결됨 ✓',ppLogout:'로그아웃',ppSave:'저장',
-      fbBtnLabel:'💬 피드백 보내기',fbTitle:'피드백 보내기',fbCatBug:'버그 제보',fbCatSuggest:'제안',fbCatEtc:'기타',fbTextPH:'어떤 내용인지 편하게 적어주세요',fbContactPH:'답장 받을 이메일(선택)',fbErrEmpty:'내용을 입력해주세요',fbCancel:'취소',fbSubmit:'보내기',fbSending:'보내는 중…',fbSent:'전달됐어요!',fbSendFail:'전송에 실패했어요. 잠시 후 다시 시도해주세요.',
+      fbBtnLabel:'💬 제보·제안',fbTitle:'제보·제안',fbCatVideo:'영상 오류',fbCatInfo:'정보 수정',fbCatAdd:'추가 요청',fbCatIdea:'의견',fbCatRights:'권리 침해',
+      fbPH_video:'예: 윈터가 아니라 카리나예요 · 다른 그룹 영상이에요 · 분류가 틀렸어요',fbPH_info:'예: 데뷔일이 틀려요 · 탈퇴한 멤버예요 · 소속사가 바뀌었어요',
+      fbPH_add:'예: ○○ 그룹 추가 · 팬 채널 등록(유튜브 주소) · 빠진 앨범',fbPH_rights:'권리자 확인을 위해 대상(화면 주소·영상)과 사유를 적어주세요. 확인 후 지체 없이 삭제·비공개합니다.',
+      fbContactReq:'답장 받을 이메일(필수)',fbErrContact:'권리 침해 신고는 답장 받을 이메일이 필요해요',fbTgtVideo:'영상',fbTgtGroup:'그룹',fbTgtMember:'멤버',fbReport:'제보하기',fbCatBug:'버그 제보',fbCatSuggest:'제안',fbCatEtc:'기타',fbTextPH:'어떤 내용인지 편하게 적어주세요',fbContactPH:'답장 받을 이메일(선택)',fbErrEmpty:'내용을 입력해주세요',fbCancel:'취소',fbSubmit:'보내기',fbSending:'보내는 중…',fbSent:'전달됐어요!',fbSendFail:'전송에 실패했어요. 잠시 후 다시 시도해주세요.',
       cancel:'취소',colNewBtn:'+ 새 컬렉션',colNewPhotoBtn:'+ 사진 컬렉션',colTypeVideo:'영상',colTypePhoto:'사진',colNewFullBtn:'+ 새 컬렉션 만들기',colNamePH:'이름 입력',colEmpty:'아직 모아둔 컬렉션이 없어요',colCreateConfirm:'만들기',
       favEmpty:'아직 즐겨찾기가 없어요',scrapEmpty:'아직 담아둔 영상이 없어요',concertEmpty:'아직 기록한 공연이 없어요',colAddedSuffix:'에 추가됨',colChangeBtn:'다른 컬렉션',
       selLabel:'선택',selBtnTitle:'영상 여러 개 선택',sortTitle:'정렬',refreshTitle:'새로고침',searchClearLabel:'검색어 지우기',userBulkAdd:'컬렉션에 추가',
@@ -677,7 +680,10 @@ const T={
       idxTitle:'Index',idxGroupTab:'Groups',idxMemberTab:'Members',idxSearchPH:'Search group name…',idxSearchPHMember:'Search member name…',
       idxSortName:'Name (A–Z)',idxSortDebut:'Debut Year',idxSortAgency:'Agency',idxSortMembers:'Member Count',
       idxSortBirth:'Birth Year',idxSortGroup:'Group',idxSortNation:'Nationality',ppTitle:'My Profile',ppNick:'Nickname',ppNickPH:'Enter nickname',ppNickErr:'Nickname is required',ppBio:'Bio',ppBioPH:'Optional',ppColor:'Star Color',ppFavLabel:'Public Likes',ppFavSub:'Others can see your likes',ppSyncLabel:'Account',ppSyncSub:'Connect to keep everything on every device',ppGoogleBtn:'Connect with Google',ppXBtn:'Connect with X',ppLinked:'Account Connected ✓',ppLogout:'Log Out',ppSave:'Save',
-      fbBtnLabel:'💬 Send Feedback',fbTitle:'Send Feedback',fbCatBug:'Bug Report',fbCatSuggest:'Suggestion',fbCatEtc:'Other',fbTextPH:'Write anything on your mind',fbContactPH:'Email for a reply (optional)',fbErrEmpty:'Please enter a message',fbCancel:'Cancel',fbSubmit:'Send',fbSending:'Sending…',fbSent:'Sent, thank you!',fbSendFail:'Failed to send. Please try again in a moment.',
+      fbBtnLabel:'💬 Report · Suggest',fbTitle:'Report · Suggest',fbCatVideo:'Video issue',fbCatInfo:'Wrong info',fbCatAdd:'Please add',fbCatIdea:'Idea',fbCatRights:'Rights',
+      fbPH_video:'e.g. This is Karina, not Winter · Wrong group · Wrong category',fbPH_info:'e.g. Wrong debut date · Member has left · Agency changed',
+      fbPH_add:'e.g. Add a group · Register a fan channel (YouTube link) · Missing album',fbPH_rights:'Tell us the page/video and the reason so we can verify. We remove or hide it promptly.',
+      fbContactReq:'Email for a reply (required)',fbErrContact:'Rights reports need an email for a reply',fbTgtVideo:'Video',fbTgtGroup:'Group',fbTgtMember:'Member',fbReport:'Report',fbCatBug:'Bug Report',fbCatSuggest:'Suggestion',fbCatEtc:'Other',fbTextPH:'Write anything on your mind',fbContactPH:'Email for a reply (optional)',fbErrEmpty:'Please enter a message',fbCancel:'Cancel',fbSubmit:'Send',fbSending:'Sending…',fbSent:'Sent, thank you!',fbSendFail:'Failed to send. Please try again in a moment.',
       cancel:'Cancel',colNewBtn:'+ New Collection',colNewPhotoBtn:'+ Photo Collection',colTypeVideo:'Video',colTypePhoto:'Photo',colNewFullBtn:'+ Create Collection',colNamePH:'Enter name',colEmpty:'No collections yet',colCreateConfirm:'Create',
       favEmpty:'No favorites yet',scrapEmpty:'No saved videos yet',concertEmpty:'No concerts logged yet',colAddedSuffix:' added',colChangeBtn:'Change collection',
       selLabel:'Select',selBtnTitle:'Select multiple videos',sortTitle:'Sort',refreshTitle:'Refresh',searchClearLabel:'Clear search',userBulkAdd:'Add to Collection',
@@ -5644,6 +5650,8 @@ function _lbMoreOpen(){
     mute?{el:mute,t:mute.getAttribute('aria-label')||(isKo?'소리':'Sound')}:null,
     conn&&conn.style.display!=='none'?{el:conn,t:isKo?'연결 보기':'Connections'}:null,
     edit&&_isAdmin()&&_lbApiId((_lbPlaylist&&_lbIdx>=0)?_lbPlaylist[_lbIdx]:null)?{el:edit,t:isKo?'출연 멤버 지정(관리자)':'Tag members (admin)'}:null,
+    // 제보하기(2026-11-02) — 지금 영상을 대상으로 붙여 연다("윈터 아니고 카리나예요" 한 줄이면 되게)
+    {el:{click:()=>{const s=(_lbPlaylist&&_lbIdx>=0)?_lbPlaylist[_lbIdx]:null;const id=s&&(_lbApiId(s)||ytId(s.u));openFeedback(id?{type:'video',id,label:s.t||''}:null);}},t:T[currentLang].fbReport},
   ].filter(r=>r&&r.el);
   p.replaceChildren();
   rows.forEach(r=>{
@@ -15836,13 +15844,27 @@ document.getElementById('sp-reset').addEventListener('click',e=>{
 });
 
 // ── 피드백 보내기 ─────────────────────────────────
-let _fbCat='bug';
-function openFeedback(){
+// 제보·제안(2026-11-02) — 영상 재생 화면·그룹/멤버 카드 ⋮에서 열면 target({type:'video'|'group'|'member',id,label})이 붙어
+// "무엇에 대한 제보인지"를 팬이 다시 적지 않아도 된다. 종류: video·info·add·idea·rights(옛 bug/suggest/etc는 DB에만 남음).
+let _fbCat='idea',_fbTarget=null;
+function _fbPaintCat(){
+  const t=T[currentLang];
+  document.querySelectorAll('.fb-cat-btn').forEach(b=>b.classList.toggle('active',b.dataset.cat===_fbCat));
+  document.getElementById('feedback-text').placeholder=t['fbPH_'+_fbCat]||t.fbTextPH;
+  document.getElementById('feedback-contact').placeholder=_fbCat==='rights'?t.fbContactReq:t.fbContactPH;
+}
+function openFeedback(target){
   document.getElementById('feedback-text').value='';
   document.getElementById('feedback-contact').value='';
   document.getElementById('feedback-err').style.display='none';
-  _fbCat='bug';
-  document.querySelectorAll('.fb-cat-btn').forEach(b=>b.classList.toggle('active',b.dataset.cat===_fbCat));
+  _fbTarget=target&&target.id?target:null;
+  _fbCat=!_fbTarget?'idea':_fbTarget.type==='video'?'video':'info';
+  const tg=document.getElementById('feedback-target');
+  if(tg){
+    tg.hidden=!_fbTarget;
+    if(_fbTarget){const t=T[currentLang];tg.textContent=({video:t.fbTgtVideo,group:t.fbTgtGroup,member:t.fbTgtMember}[_fbTarget.type]||'')+' · '+(_fbTarget.label||_fbTarget.id);}
+  }
+  _fbPaintCat();
   const submitBtn=document.getElementById('feedback-submit');
   submitBtn.disabled=false;submitBtn.textContent=T[currentLang].fbSubmit;
   document.getElementById('feedback-overlay').classList.add('open');
@@ -16390,7 +16412,7 @@ document.querySelectorAll('.fb-cat-btn').forEach(b=>{
   b.addEventListener('click',e=>{
     e.stopPropagation();
     _fbCat=b.dataset.cat;
-    document.querySelectorAll('.fb-cat-btn').forEach(x=>x.classList.toggle('active',x===b));
+    _fbPaintCat();
   });
 });
 document.getElementById('feedback-cancel').addEventListener('click',e=>{e.stopPropagation();closeFeedback();});
@@ -16401,6 +16423,7 @@ document.getElementById('feedback-submit').addEventListener('click',async e=>{
   const msg=document.getElementById('feedback-text').value.trim();
   const errEl=document.getElementById('feedback-err');
   if(!msg){errEl.textContent=T[currentLang].fbErrEmpty;errEl.style.display='';return;}
+  if(_fbCat==='rights'&&!document.getElementById('feedback-contact').value.trim()){errEl.textContent=T[currentLang].fbErrContact;errEl.style.display='';return;}
   errEl.style.display='none';
   const btn=e.currentTarget;
   btn.disabled=true;btn.textContent=T[currentLang].fbSending;
@@ -16412,7 +16435,10 @@ document.getElementById('feedback-submit').addEventListener('click',async e=>{
       user_id:window._sbSession?.user?.id||null,
       nickname:myProfile?.nickname||null,
       page_url:location.href,
-      user_agent:navigator.userAgent
+      user_agent:navigator.userAgent,
+      target_type:_fbTarget?_fbTarget.type:null,
+      target_id:_fbTarget?String(_fbTarget.id).slice(0,200):null,
+      target_label:_fbTarget&&_fbTarget.label?String(_fbTarget.label).slice(0,200):null
     });
     if(error)throw error;
     btn.textContent=T[currentLang].fbSent;
@@ -17295,6 +17321,10 @@ function _openCardMenu(btn,ctx){
   pop.style.cssText='position:fixed;background:rgba(20,25,44,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.12);border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,0.5);padding:5px;min-width:190px;';
   const item=(label,onClick)=>{const b=document.createElement('button');b.textContent=label;b.style.cssText='display:block;width:100%;text-align:left;background:none;border:none;color:#e6edff;font-family:inherit;font-size:13px;padding:10px 12px;border-radius:8px;cursor:var(--kpu-cursor-pointer,pointer);white-space:nowrap;';b.addEventListener('click',e=>{e.stopPropagation();pop.remove();onClick();});pop.appendChild(b);};
   item(currentLang==='ko'?'+ 사진 컬렉션 만들기':'+ New photo collection',()=>_createPhotoColFromCard(ctx));
+  // 제보하기(2026-11-02) — 이 카드의 그룹/멤버를 대상으로 붙여 연다
+  if(ctx&&ctx.groupKo)item(T[currentLang].fbReport,()=>openFeedback(ctx.memberKo
+    ?{type:'member',id:ctx.groupKo+':'+ctx.memberKo,label:ctx.memberKo+(GROUPS[ctx.groupKo]?' ('+(_gLabelKo(ctx.groupKo)||ctx.groupKo)+')':'')}
+    :{type:'group',id:ctx.groupKo,label:_gLabelKo(ctx.groupKo)||ctx.groupKo}));
   document.body.appendChild(pop);
   _bringToFront(pop);
   const r=btn.getBoundingClientRect();

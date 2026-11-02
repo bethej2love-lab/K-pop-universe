@@ -6932,7 +6932,7 @@ document.getElementById('gp-search')?.addEventListener('input',()=>{
 
 // 사용자 피드백 조회 — 어드민 전용, 읽기+삭제만(상태 추적 없음, 처리 끝난 건 삭제로 정리)(2026-08-18)
 let _feedbackRows=[],_fbvTab='all';
-const _FB_CAT_LABEL={bug:'버그 제보',suggest:'제안',etc:'기타'};
+const _FB_CAT_LABEL={video:'영상 오류',info:'정보 수정',add:'추가 요청',idea:'의견',rights:'권리 침해',bug:'버그 제보',suggest:'제안',etc:'기타'};
 async function _loadFeedback(){
   if(!sb)return;
   try{
@@ -6946,9 +6946,11 @@ function _fbvRenderList(){
   const listEl=document.getElementById('fbv-list');
   if(!listEl)return;
   let rows=_feedbackRows;
-  if(_fbvTab!=='all')rows=rows.filter(r=>r.category===_fbvTab);
-  const cnt={bug:0,suggest:0,etc:0};
-  _feedbackRows.forEach(r=>{if(cnt[r.category]!==undefined)cnt[r.category]++;});
+  // 2026-11-02 제보·제안 개편 — '새 제보'(아직 처리 안 함) 탭 + 종류 5개. 옛 bug/suggest/etc는 '전체'에서만 보인다.
+  if(_fbvTab==='new')rows=rows.filter(r=>(r.status||'new')==='new');
+  else if(_fbvTab!=='all')rows=rows.filter(r=>r.category===_fbvTab);
+  const cnt={new:0,video:0,info:0,add:0,idea:0,rights:0};
+  _feedbackRows.forEach(r=>{if(cnt[r.category]!==undefined)cnt[r.category]++;if((r.status||'new')==='new')cnt.new++;});
   document.querySelectorAll('.fbv-tab').forEach(t=>{
     const c=t.querySelector('.fbv-tab-cnt');if(!c)return;
     const cat=t.dataset.cat;
@@ -6968,10 +6970,30 @@ function _fbvRenderList(){
     const date=document.createElement('span');date.className='fbv-date';
     date.textContent=r.created_at?new Date(r.created_at).toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
     top.appendChild(date);
+    // 처리함 ↔ 새 제보 — 지우지 않고 남겨 둔다("팬 제보로 고친 것 N건"에 쓸 기록)
+    const done=(r.status||'new')!=='new';
+    if(done)item.style.opacity='0.5';
+    const doneBtn=document.createElement('button');doneBtn.type='button';doneBtn.className='fbv-del-btn';doneBtn.textContent=done?'되돌리기':'처리함';
+    doneBtn.addEventListener('click',async()=>{
+      const st=done?'new':'done',at=done?null:new Date().toISOString();
+      const{error}=await sb.from('feedback').update({status:st,handled_at:at}).eq('id',r.id);
+      if(error){_showShareToast('오류: '+error.message);return;}
+      r.status=st;r.handled_at=at;_fbvRenderList();
+    });
+    top.appendChild(doneBtn);
     const delBtn=document.createElement('button');delBtn.type='button';delBtn.className='fbv-del-btn';delBtn.textContent='삭제';
     delBtn.addEventListener('click',()=>_fbvDelete(r.id));
     top.appendChild(delBtn);
     item.appendChild(top);
+    // 대상(영상·그룹·멤버) — 눌러서 바로 확인
+    if(r.target_type&&r.target_id){
+      const tg=document.createElement('a');tg.className='fbv-meta';tg.style.cssText='display:block;color:rgba(160,190,255,0.85);margin:0 0 4px;cursor:pointer;text-decoration:none;';
+      tg.textContent=({video:'🎬 ',group:'👥 ',member:'👤 '}[r.target_type]||'')+(r.target_label||r.target_id);
+      if(r.target_type==='video'){tg.href='https://www.youtube.com/watch?v='+encodeURIComponent(r.target_id);tg.target='_blank';tg.rel='noopener';}
+      else tg.addEventListener('click',()=>{try{const[g,m]=String(r.target_id).split(':');document.getElementById('fbv-overlay')?.classList.remove('open');
+        if(m){const a=ARTISTS.find(x=>x.name.ko===m&&(x.group.ko===g||_ytGroupKoFor(x)===g));if(a)showT(a,innerWidth/2,innerHeight*0.4);}else showGC(g,innerWidth/2,innerHeight*0.4);}catch(e){}});
+      item.appendChild(tg);
+    }
     const msg=document.createElement('div');msg.className='fbv-msg';msg.textContent=r.message;
     item.appendChild(msg);
     const metaParts=[r.nickname,r.contact,r.page_url].filter(Boolean);

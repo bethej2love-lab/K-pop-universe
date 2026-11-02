@@ -298,6 +298,10 @@
 </div>
 <div id="settings-panel">
   <div class="sp-hd" data-i18n="sp_title">설정</div>
+  <!-- 제보·제안(2026-11-02 사용자 "팬이랑 같이 만들어가게 — 건의·신고·제안이 쉽고 자유롭게") — 설정 맨 위. 영상·카드 ⋮ 메뉴에서도 연다 -->
+  <div class="sp-row sp-row-top">
+    <button class="sp-feedback-btn" id="sp-feedback-btn" data-i18n="fbBtnLabel">💬 제보·제안</button>
+  </div>
   <button id="sp-index-btn">
     <span id="sp-index-lbl" data-i18n="idxTitle">인덱스</span>
     <span id="sp-index-count"></span>
@@ -353,9 +357,6 @@
   </div>
   <div class="sp-row">
     <button class="sp-reset" id="sp-reset" data-i18n="reset">↺ 초기화</button>
-  </div>
-  <div class="sp-row">
-    <button class="sp-feedback-btn" id="sp-feedback-btn" data-i18n="fbBtnLabel">💬 피드백 보내기</button>
   </div>
   <div class="sp-row">
     <button class="sp-feedback-btn" id="sp-klinks-btn">🔗 K-pop 링크 모음</button>
@@ -735,9 +736,12 @@
     </div>
     <div id="fbv-tabs">
       <button class="fbv-tab active" data-cat="all">전체<span class="fbv-tab-cnt"></span></button>
-      <button class="fbv-tab" data-cat="bug">버그 제보<span class="fbv-tab-cnt"></span></button>
-      <button class="fbv-tab" data-cat="suggest">제안<span class="fbv-tab-cnt"></span></button>
-      <button class="fbv-tab" data-cat="etc">기타<span class="fbv-tab-cnt"></span></button>
+      <button class="fbv-tab" data-cat="new">새 제보<span class="fbv-tab-cnt"></span></button>
+      <button class="fbv-tab" data-cat="video">영상<span class="fbv-tab-cnt"></span></button>
+      <button class="fbv-tab" data-cat="info">정보<span class="fbv-tab-cnt"></span></button>
+      <button class="fbv-tab" data-cat="add">추가<span class="fbv-tab-cnt"></span></button>
+      <button class="fbv-tab" data-cat="idea">의견<span class="fbv-tab-cnt"></span></button>
+      <button class="fbv-tab" data-cat="rights">권리<span class="fbv-tab-cnt"></span></button>
     </div>
     <div id="fbv-count"></div>
     <div id="fbv-list"></div>
@@ -1507,11 +1511,14 @@
 </div>
 <div id="feedback-overlay" data-modal>
   <div id="feedback-panel">
-    <div class="pp-title" data-i18n="fbTitle">피드백 보내기</div>
+    <div class="pp-title" data-i18n="fbTitle">제보·제안</div>
+    <div id="feedback-target" class="fb-target" hidden></div>
     <div class="fb-cat-row">
-      <button type="button" class="fb-cat-btn active" data-cat="bug" data-i18n="fbCatBug">버그 제보</button>
-      <button type="button" class="fb-cat-btn" data-cat="suggest" data-i18n="fbCatSuggest">제안</button>
-      <button type="button" class="fb-cat-btn" data-cat="etc" data-i18n="fbCatEtc">기타</button>
+      <button type="button" class="fb-cat-btn" data-cat="video" data-i18n="fbCatVideo">영상 오류</button>
+      <button type="button" class="fb-cat-btn" data-cat="info" data-i18n="fbCatInfo">정보 수정</button>
+      <button type="button" class="fb-cat-btn" data-cat="add" data-i18n="fbCatAdd">추가 요청</button>
+      <button type="button" class="fb-cat-btn active" data-cat="idea" data-i18n="fbCatIdea">의견</button>
+      <button type="button" class="fb-cat-btn" data-cat="rights" data-i18n="fbCatRights">권리 침해</button>
     </div>
     <textarea id="feedback-text" class="pp-input" rows="5" maxlength="1000" placeholder="어떤 내용인지 편하게 적어주세요" data-i18n-ph="fbTextPH"></textarea>
     <input id="feedback-contact" type="text" class="pp-input" style="margin-top:8px" placeholder="답장 받을 이메일(선택)" autocomplete="off" data-i18n-ph="fbContactPH">

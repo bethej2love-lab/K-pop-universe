@@ -3930,7 +3930,11 @@
   #feedback-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:70;display:none;align-items:center;justify-content:center;}
   #feedback-overlay.open{display:flex;}
   #feedback-panel{width:min(340px,calc(100vw - 40px));background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
-  .fb-cat-row{display:flex;gap:6px;margin-top:14px;margin-bottom:12px;}
+  .fb-cat-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;margin-bottom:12px;}
+  .fb-cat-row .fb-cat-btn{flex:1 1 calc(33.333% - 6px);}
+  /* 제보 대상 칩(2026-11-02) — 어떤 영상·그룹·멤버에 대한 제보인지 */
+  .fb-target{margin-top:10px;padding:7px 10px;border-radius:8px;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.10);font-size:12px;color:rgba(200,215,245,0.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .fb-target[hidden]{display:none;}
   .fb-cat-btn{flex:1;padding:8px 4px;border-radius:9px;font-family:inherit;font-size:11px;font-weight:600;letter-spacing:.01em;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;background:rgba(255,255,255,0.045);border:0.5px solid rgba(255,255,255,0.09);color:rgba(160,182,222,0.62);transition:background .15s,border-color .15s,color .15s;}
   .fb-cat-btn:hover{color:rgba(200,215,245,0.85);}
   .fb-cat-btn.active{background:rgba(126,156,255,0.16);border-color:rgba(126,156,255,0.4);color:#fff;}
