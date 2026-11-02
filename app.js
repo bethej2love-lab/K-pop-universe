@@ -16450,6 +16450,69 @@ document.getElementById('feedback-submit').addEventListener('click',async e=>{
   }
 });
 
+// ── 업데이트 소식(2026-11-02, 비즈니스 체계화 ②) ───────────────────────────────
+// "이번 주 달라진 것"을 다시 온 사람에게만, 새 소식이 있을 때 한 번 화면 아래 작은 띠로 알리고(몇 초 뒤 사라짐) 누르면 시트.
+// 가운데 팝업은 보던 걸 가로막아 광고처럼 느껴져서 안 쓴다(사용자와 합의). 처음 온 사람(_kpuNewVisitor)·자동 브라우저엔 안 띄운다.
+// 내용은 updates.json(최신이 맨 앞) — 매주 CHANGELOG에서 사용자에게 의미 있는 것만 3~5줄. 설정 → 업데이트 소식에서 지난 것도 본다.
+let _updP=null;
+function _updLoad(){return _updP||(_updP=fetch('updates.json',{cache:'no-cache'}).then(r=>r.ok?r.json():[]).catch(()=>[]));}
+function _updDate(iso){const d=new Date(iso+'T00:00:00');return currentLang==='ko'?`${d.getMonth()+1}월 ${d.getDate()}일`:d.toLocaleDateString('en',{month:'short',day:'numeric'});}
+function _openUpdates(){
+  _updLoad().then(list=>{
+    let ov=document.getElementById('upd-overlay');
+    if(!ov){
+      ov=document.createElement('div');ov.id='upd-overlay';ov.setAttribute('data-modal','');
+      ov.innerHTML='<div id="upd-panel"><div class="upd-handle"></div><div class="pp-title"></div><div id="upd-list"></div></div>';
+      document.body.appendChild(ov);
+      ov.addEventListener('click',e=>{if(e.target===ov)_closeUpdates();});
+      ov.addEventListener('pointerdown',e=>e.stopPropagation());
+      // 모바일: 아래로 쓸어 닫기(버튼 대신 제스처, feedback_mobile_gesture_over_close_button)
+      const pn=ov.querySelector('#upd-panel');let y0=null,dy=0;
+      pn.addEventListener('touchstart',e=>{const l=ov.querySelector('#upd-list');y0=(l.scrollTop>0&&l.contains(e.target))?null:e.touches[0].clientY;dy=0;},{passive:true});
+      pn.addEventListener('touchmove',e=>{if(y0==null)return;dy=Math.max(0,e.touches[0].clientY-y0);pn.style.transition='none';pn.style.transform=dy?'translateY('+dy+'px)':'';},{passive:true});
+      pn.addEventListener('touchend',()=>{if(y0==null)return;y0=null;pn.style.transition='';pn.style.transform='';if(dy>90)_closeUpdates();},{passive:true});
+    }
+    ov.querySelector('.pp-title').textContent=currentLang==='ko'?'업데이트 소식':'What’s new';
+    const box=ov.querySelector('#upd-list');box.replaceChildren();
+    (list||[]).forEach((u,i)=>{
+      const sec=document.createElement('div');sec.className='upd-sec'+(i?' is-past':'');
+      const h=document.createElement('div');h.className='upd-date';h.textContent=_updDate(u.date)+(i?'':(currentLang==='ko'?' · 이번 주':' · This week'));
+      const ul=document.createElement('ul');
+      (u.items||[]).forEach(t=>{const li=document.createElement('li');li.textContent=t;ul.appendChild(li);});
+      sec.append(h,ul);box.appendChild(sec);
+    });
+    if(!box.children.length){const e=document.createElement('div');e.className='upd-date';e.textContent=currentLang==='ko'?'아직 소식이 없어요':'Nothing yet';box.appendChild(e);}
+    box.scrollTop=0;
+    ov.classList.add('open');_bringToFront(ov);
+    if(list&&list[0])try{localStorage.setItem('kpu_upd_seen',list[0].id);}catch(e){}
+  });
+}
+function _closeUpdates(){document.getElementById('upd-overlay')?.classList.remove('open');}
+document.getElementById('sp-upd-btn')?.addEventListener('click',e=>{
+  e.stopPropagation();
+  document.getElementById('settings-panel').classList.remove('open');
+  ['tab-settings','dh-settings-btn'].forEach(id=>document.getElementById(id)?.classList.remove('active'));
+  _openUpdates();
+});
+// 다시 온 사람에게 새 소식 한 번 — 앱이 다 뜬 뒤(6초), 카드·영상 등 다른 창이 열려 있으면 다음 기회로
+setTimeout(()=>{
+  if(window._kpuNewVisitor||window._kpuAutomated)return;
+  _updLoad().then(list=>{
+    const u=list&&list[0];if(!u)return;
+    let seen=null;try{seen=localStorage.getItem('kpu_upd_seen');}catch(e){return;}
+    if(seen===u.id)return;
+    try{if(!localStorage.getItem(_TIPS_KEY))return;}catch(e){return;} // 첫 안내(팁)가 아직 진행 중이면 다음 방문에 — 팁의 어둠 아래로 깔렸다(헤드리스 확인)
+    if(document.querySelector('[data-modal].open,#yt-lightbox.open'))return;
+    try{localStorage.setItem('kpu_upd_seen',u.id);}catch(e){}
+    const t=document.createElement('button');t.type='button';t.id='upd-toast';
+    t.textContent=(currentLang==='ko'?`이번 주 달라진 것 ${(u.items||[]).length}가지`:`What’s new this week · ${(u.items||[]).length}`)+' ›';
+    t.addEventListener('click',e=>{e.stopPropagation();t.remove();_openUpdates();});
+    document.body.appendChild(t);
+    requestAnimationFrame(()=>t.classList.add('show'));
+    setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),300);},7000);
+  });
+},6000);
+
 // ── Desktop header buttons ─────────────────────────
 document.getElementById('dh-lang-btn').addEventListener('click',e=>{
   e.stopPropagation();
