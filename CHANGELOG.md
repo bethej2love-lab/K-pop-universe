@@ -1,5 +1,7 @@
 # CHANGELOG
 
+- 2026-11-02 [데이터][Claude Code] 솔로 디스코 정규·미니 번호 1~3차(73건): 믹스테이프 분류(알엠·슈가·제이홉·라비), 일본 발매 region jp(태연·백현·온유·태민·대성·강다니엘 Joy Ride/RE8EL), 번호 정정(지코·김세정·제시카·현아 1~9·원호·규현·윤지성·남우현·아이엠·장현승·라키·강다니엘 Glow to Haze 6), 스페셜(종현 이야기·아이유 조각집·강다니엘 PULSEPHASE 등), 리사 Rockstar/Moonlit Floor 묶음판→싱글. 출처 Wikipedia·국내 기사. 남은 번호 없음 552건(audit).
+
 ## 2026-11-02 (Claude Code — 정규·미니 12차)
 - **[완료·배포] [groups.json 4건 → build_slim_data]** 데일리디렉션 WHICH WAY → 미니 1집(데일리안), 엔싸인 Maze Runner -WAY OUT- → 일본 미니 1집(jp), 원위 點 : The Quiver → 싱글(싱글 2집, OSEN), 퍼플키스 OUR NOW → 정규(첫 영어 앨범). **진행 요약(11-02 하루)**: 번호 없음 807→625, 순서 이상 37→33줄, 상위(pri4) 그룹 175→52(남은 건 대부분 원래 번호 없는 스페셜·서머 미니). 남은 것: 솔로 417·중위권/옛 그룹, 일본 후보 59. 도구: node tools/disco_ordinal_audit.mjs(점검)·disco_ordinal_fix.mjs(근거 있는 것만).
 
