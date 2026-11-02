@@ -9725,14 +9725,33 @@ function _extOwnerGko(owner){
 // 안 돌렸으면(컬럼 없음) 첫 시도에서 감지해 그 필드만 빼고 재시도한다. 동기화가 절대 안 깨지게(2026-08-25).
 let _ytHasSourceCols=true;
 let _ytHasPubTs=true; // published_ts(정확한 업로드 시각) 컬럼 존재 여부 — 없으면 첫 upsert에서 감지해 끈다
+// 개별출연 자동 판정(2026-11-03 넓힘 — 사용자: "[ALLIVE] 5세대 하이브 아이돌 총집합… 라이브 모음집" 같은 건 딱 봐도 개별출연).
+// 각 팀이 따로 나온 장면을 이어 붙인 모음집만 잡는다. 같은 화면에 함께 나온 것(MC 컷·케미·메들리·합동·대진·feat·&·유닛)은 건드리지 않는다.
+// ① 무대/라이브/출근길/1위류 모음 + 등록 그룹 2팀↑ ② 연말 시상식(가요대전·AAA 등) 모음 + 2팀↑ ③ 그 밖의 모음(.zip·몰아보기·총집합) + 3팀↑
+// 실측(11-03, 기존 행 299개 시뮬레이션): 갓더비트(유닛)·"조혜진&유우"·MC 모음·케미 모음은 함께 나온 것이라 빠져야 했다 → TOGETHER·유닛 이름.
+// (상수를 함수 안에 두는 건 tests/individual-compilation.test.js가 이 함수만 떼어 실행하기 때문)
 function _autoIndividualAppearance(row){
   if(!row||row.tags_manual||row.content_flag)return row;
   const title=String(row.title||'');
-  if(!/(?:라이브|무대|공연|직캠|댄스)\s*(?:모음(?:집)?|모아보기)|\blive\s+compilation\b/i.test(title))return row;
-  if(/합동|합창|콜라보|듀엣|\bcollab(?:oration)?\b|\bduet\b|\bwith\b|\bfeat(?:uring)?\b|\s[x×＆&]\s/i.test(title))return row;
+  const COMP=/모음|모아보기|몰아보기|총집합|총정리|\bcompilation\b|\.zip\b|zip\]/i;
+  const STAGE=/(?:라이브|무대|공연|직캠|댄스|칼군무|출근길|퇴근길|1위)\s*(?:모음(?:집)?|모아보기|몰아보기|총정리)|\blive\s+compilation\b|\bstage\s+compilation\b/i;
+  const AWARDS=/가요대전|가요대제전|가요대축제|\bMAMA\b|\bAAA\b|골든디스크|서울가요대상|\bKMF\b/i;
+  const TOGETHER=/\bMC\b|케미|메들리|medley|mashup|매시업|합동|합창|콜라보|듀엣|대진|파이널|퀸덤퍼즐|하이라이트 구간|남매|찐친|선후배|\bcollab(?:oration)?\b|\bduet\b|\bwith\b|\bfeat(?:uring)?\b|\bvs\b|\s[x×]\s|[&＆]/i;
+  if(!COMP.test(title)||TOGETHER.test(title))return row;
+  const tl=title.toLowerCase();
+  const unit=typeof _PROJECT_UNITS==='object'&&_PROJECT_UNITS&&Object.entries(_PROJECT_UNITS).some(([k,u])=>[k,...(u.names||[])].some(n=>{
+    n=String(n||'').toLowerCase();if(n.length<3&&!/[가-힣0-9]/.test(n))return false; // SC·JX 같은 짧은 영문은 오탐(V8처럼 숫자 섞인 건 유지)
+    if(!/[a-z0-9]/.test(n))return tl.includes(n);
+    for(let p=tl.indexOf(n);p>=0;p=tl.indexOf(n,p+1)){const b=tl[p-1]||' ',c=tl[p+n.length]||' ';if(!/[a-z0-9]/.test(b)&&!/[a-z0-9]/.test(c))return true;}
+    return false;
+  }));
+  if(unit)return row; // 유닛(갓더비트·V8 등) 활동 모음은 함께 나온 것
   const groups=new Set([row.group_ko,...(row.with_groups||[])].filter(g=>GROUPS[g]));
   for(const member of row.with_members||[]){const m=String(member).match(/\(([^()]+)\)$/);if(m&&GROUPS[m[1]])groups.add(m[1]);}
-  return groups.size>=2?{...row,..._flagPatch('개별출연','auto')}:row;
+  const n=groups.size;
+  // ③은 "총집합"만으론 안 됨 — 한자리에 모인 행사일 수도 있다. 모음·몰아보기·.zip처럼 이어 붙인 게 분명한 말일 때만.
+  const hit=(n>=2&&(STAGE.test(title)||AWARDS.test(title)))||(n>=3&&/모음|모아보기|몰아보기|compilation|zip/i.test(title));
+  return hit?{...row,..._flagPatch('개별출연','auto')}:row;
 }
 async function _ytUpsertVideos(rows,opts){
   // 여러 팀의 별도 무대를 이은 명시적 모음집만. 수동 판정/기존 플래그/합동 무대는 보존한다.

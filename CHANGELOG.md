@@ -1,5 +1,7 @@
 # CHANGELOG
 
+- 2026-11-03 [데이터][Claude Code] **개별출연 자동 판정 넓힘**(사용자: '[ALLIVE] 5세대 하이브 아이돌 총집합… 라이브 모음집' 같은 건 딱 봐도 개별출연) — admin.js _autoIndividualAppearance: ① 무대·라이브·출근길·1위류 모음+등록 그룹 2팀↑ ② 연말 시상식(가요대전·AAA 등) 모음+2팀↑ ③ 그 밖의 모음·몰아보기·.zip+3팀↑. **함께 나온 것은 제외**: MC 컷·케미·메들리·합동·대진·feat·with·X·&·유닛 이름(갓더비트·V8 등 _PROJECT_UNITS). '총집합'만으론 안 잡음(한자리 행사일 수 있음). 기존 행 299개(모음류 제목+콜라보 태그) 시뮬레이션 → 72건 적용(sql/individual_compilation_backfill_2026-11-03.sql, 되돌리기 _undo). 수동 확정·기존 표시 행은 안 건드림. 매시간 수집이 배포된 admin.js를 쓰므로 새 영상에도 적용. tests/individual-compilation.test.js 20→29.
+
 ## 2026-11-03 (Codex — 검수89차·기존 원곡 지적 재확인과 인계 복구)
 - **[완료·현재 DB 재조회] [yt_channel_videos]** PK5개만 SELECT하여81~83차 항목 pzFiBW9Qqeg/NayxuMJsUpo/oULrUc1bqAo/CbxLMXENOT0/f36gkiD9dpE가 여전히 content_flag=NULL/tags_manual=false/cover_manual=false임을 확인. HONEY→카라, 비밀일기→씨엔블루+몬스타엑스 주그룹, 기다리다→에이프릴+유니스/방윤하, Lucifer의 키 게스트 빈 배열, 예뻤어의 긴 cover_of_song 모두 남아 있다. 신규 오류5건으로 재집계하지 않고 이전 미결 상태를 갱신했다. 외부 영상 원본은 이번에 다시 전부 열지 않았으며 근거는81~83차 기록을 참조한다.
 - **[추가 검토 후보·제목/멤버 불일치] [f36gkiD9dpE]** 저장 제목은 템페스트 혁&Young K지만 현재 members=[한빈,형섭,은찬,LEW,태래], with_members/groups=[]로 혁/Young K가 없다. 이번 원본 재접근은 실패해 실제 출연자·프리뷰 형식까지 추가 확정하지 않았다. 명시된 이름과 저장 멤버 불일치를 재생/공식 회차로 검증한 뒤 정정 판단할 것. 등록된 템페스트 혁(a1234)을 빅스 혁(a1056)·오메가엑스 혁(a0773)과 섞지 않고, DAY6의 정상 원곡 연결은 보존. 기존 오메가엑스 혁 hsh0705 SNS 오연결은 검수20차와 중복이므로 신규로 재보고하지 않는다.

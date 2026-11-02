@@ -17,5 +17,11 @@ let total=0,failed=0;async function check(name,task){total++;try{await task();}c
  await check('human normal confirmation is preserved',async()=>{assert.equal((await run({...base,tags_manual:true})).row.content_flag,null);});
  await check('existing human individual flag is preserved',async()=>{const r=await run({...base,content_flag:'개별출연',flag_source:'manual'});assert.equal(r.row.flag_source,'manual');});
  await check('source input, tags and duplicate policy preserved',async()=>{const original=JSON.stringify(base),r=await run(base);assert.equal(JSON.stringify(base),original);assert.deepEqual(r.row.members,base.members);assert.deepEqual(r.row.with_groups,base.with_groups);assert.equal(r.options.ignoreDuplicates,true);});
+ // 2026-11-03 넓힌 규칙 — 실제 DB 제목 기반
+ const three={...base,group_ko:'트와이스',with_groups:['여자친구','러블리즈']};
+ for(const title of ['교복이 찰떡인 걸그룹 스쿨룩 무대 모음집! 트와이스, 여자친구, 러블리즈','[Stone Music+] 널 위한 뮤비집.zip｜트와이스, 여자친구, 러블리즈','4세대 아이돌 라디오 몰아보기 | #MBCRADIO'])await check('3-team compilation: '+title.slice(0,30),async()=>{assert.equal((await run({...three,title})).row.content_flag,'개별출연');});
+ await check('2-team awards compilation',async()=>{assert.equal((await run({...base,group_ko:'스트레이키즈',with_groups:['엔믹스'],title:"'Stray Kids'부터 'NMIXX'까지 JYP 모음 #2025SBS가요대전"})).row.content_flag,'개별출연');});
+ await check('2-team non-stage compilation stays (예능 모음은 같은 회차일 수 있음)',async()=>{assert.equal((await run({...base,group_ko:'에스파',with_groups:['아이브'],title:'아이브 에스파 냉장고 모음｜냉장고를 부탁해'})).row.content_flag,null);});
+ for(const title of ['10월 2주차 쇼챔피언 MC 모음.zip (트와이스, 여자친구, 러블리즈)','멍캣 케미 모음.zip 트와이스 여자친구 러블리즈','트와이스&여자친구&러블리즈 먹방 모음집','트와이스 댄스메들리 직캠 모음 (feat. 여자친구, 러블리즈)'])await check('together compilation stays: '+title.slice(0,25),async()=>{assert.equal((await run({...three,title})).row.content_flag,null);});
  console.log(total+' checks / '+failed+' failed');if(failed)process.exitCode=1;
 })().catch(e=>{console.error(e);process.exitCode=1;});
