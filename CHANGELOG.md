@@ -1,5 +1,26 @@
 # CHANGELOG
 
+## 2026-11-02 (Codex — 검수72차·동명이인 근거 보강과 가요무대 인접 표본)
+- **[완료·읽기 전용] [CHANGELOG.md]** 최신 main ed25ba9998의 Claude Disk IO2차 작업을 읽고 분리 검수 폴더만 최신화했다.69차 기존 후보7행 재조회+인접 프로그램 최신 표본15행 대조. 변경은 이 문서만이며 코드·명단 JSON·SQL·운영 DB 쓰기/수집기 실행 없음. Gmail 탭을 건드리지 않고 검수용 원본 탭1개만 사용 후 종료했다.
+- **[근거 보강·신유2행] [yt_channel_videos/HllVwm_UsVI·H0yfc6wXpDw]** 현재 둘 다 투어스/[신유], 공개·수동잠금 없음. 등록 a0070 신유(Shinyu/TWS)와 구분해야 한다. [지니 솔로 신유 카탈로그](https://www.genie.co.kr/detail/artistInfo?xxnm=57781125)는2008년 데뷔, [줄리엣 음원 크레딧](https://music.bugs.co.kr/track/30480334)은 솔로 신유의 곡이다.10/18 부안군 편은 [동일 회차 보도](https://mhnse.com/news/articleView.html?idxno=1600682)가 초이랩 소속 신유의 줄리엣 무대라고 명시해 이전 KBS 원본 제목과 맞는다. 방송·곡·소속 근거를 보강했지만9/6 원본의 전체 출연자 크레딧을 새로 확인한 것은 아니며 일괄 정정하지 않았다.
+- **[근거 보강·진성2행] [yt_channel_videos/GUI53-v5Ui4·Te9pVOV6psU]** 현재 정진성/[정진성], 공개·수동잠금 없음. 등록 a1561은 원더나인 출신 정진성이다. [지니 진성 카탈로그](https://www.genie.co.kr/detail/artistInfo?xxnm=14950447)는1996년 데뷔의 별도 트로트 가수이며 [MBC의 진성/소금꽃 공연 기록](https://enews.imbc.com/News/RetrieveNewsInfo/403930)도 있다. KBS 두 제목의 '초대가수 진성/소금꽃'을 정진성 이름의 성 떼기로 정당화하면 안 된다. 원본 회차 대조 후 잘못된 아이돌 연결만 정정할 후속 대상으로 유지한다.
+- **[이슈·김나영 학생 팀 확인] [yt_channel_videos/ojuHOKVjayk]** [KBS 원본](https://www.youtube.com/watch?v=ojuHOKVjayk) 0:05 자막은 제목의7명(김다빈·박다원·장지유·김나영·남승유·양서윤·이수)을 고등학교2학년 참가자 팀으로 소개한다. 현재 연결된 a1609는1995년생 구구단 출신 김나영이다. 일반 참가자 팀에서 이름 하나만 추출한 오연결 근거를 보강했다. 얼굴로 인물을 식별하지 않았으며 다른 그룹 멤버로 새로 이관하지 않는다.
+- **[보류 유지·김재이/정수빈] [yt_channel_videos/-ZUQd4tusHs·xA9BlMs6Pxc]** 등록 김재이 a1128=피에스타 출신, 정수빈 a1363=빅톤 출신임을 명단에서 확인했다. 김재이 KBS 원본의 제목/공식 업로더는 직접 확인했지만 소속·실명 대조를 확정할 소개 자막을 확보하지 못했다. 정수빈은 이번에 원본 추가 시청 없이 저장 제목의 중학교 친구 팀 맥락까지만 확인했다. 두 행 모두 공개·수동잠금 없음이지만 이름/외모만으로 인물을 확정하거나 자동 무관 처리하지 않는다.
+- **[이슈·전국노래자랑 밖의 추가 표본8행] [yt_channel_videos]** 투어스/정진성으로 연결된 가요무대·열린음악회·초대가수 제목의 최신15행(전국노래자랑 제외)을 제한 조회했다. 아래8행이 추가 점검 대상이며 전체 오태깅 총수라는 뜻은 아니다. 모두 조회 당시 content_flag=NULL·tags_manual=false였다.8개 원본을 전부 시청한 검수가 아니라 제목·공식 출처·음원 크레딧/관련 보도 대조로 후보를 좁힌 것이다.
+
+| 추가 추적 ID | 현재 연결 | 판단/다음 처리 |
+|---|---|---|
+| 5XqzP2VPuY8·vG-D9oVQohk·wDbdZ3_u5yE | 투어스 신유 | 가요무대의 남자의 인생·꽃물/일소일소 일노일노·애가 타. 실제 가수/회차 대조 후 정정. |
+| BEaBVOBwlZc·H_rEctz4xDo | 투어스 신유 | 9/13 열린음악회 님이여 님이시여·줄리엣. [동일 회차 보도](https://enter.etoday.co.kr/news/view/302391)와 솔로 신유 카탈로그가 일치. |
+| 7uBHqpiXRag·ihOxbilYor4 | 정진성 | 5/10 열린음악회 Jin Sung(진성)의 동전인생·인간시장. 영어 Jin Sung도 등록 Jinseong과 분리해야 할 후보. |
+| 10DUkB8qtww | 정진성 | 실제 제목의 공연자는 성리, 보릿고개 뒤 괄호 진성은 원곡자 맥락. 아래 별도 판단 필요. |
+
+- **[이슈·원곡 크레딧/미등록 아티스트가 겹침] [yt_channel_videos/10DUkB8qtww·artists.json·groups.json]** [KBS 공식 원본](https://www.youtube.com/watch?v=10DUkB8qtww)의 업로더 KBS 레전드 케이팝·제목 '성리 - 보릿고개(진성)' 확인. 현행 실코드 harness도 primaryGroup=정진성/[정진성], weak를 재현한다. 최신 명단에는 성리/김성리/SEONGRI/레인즈/RAINZ 항목을 찾지 못했다. 하지만 [벅스 성리 공식 아티스트 자료](https://music.bugs.co.kr/artist/80289829)에 레인즈 소속 활동, [지니 데뷔 소개](https://www.genie.co.kr/magazine/subMain?mgz_seq=4025)에 김성리=레인즈 메인보컬/리더 이력이 있다. 따라서 **공연자를 새 아티스트로 포함할지 검토할 자료**이며, 잘못된 정진성 연결 제거와 영상 자체를 무관 처리하는 판단을 분리해야 한다. 이번에 성리/레인즈를 추가하거나 원곡 필드를 자동 채우지 않았다.
+- **[완료·정상 보존7행] [yt_channel_videos]** 같은 최신15행 안에 실제 TWS 열린음악회 무대/팬캠7행도 있다:45tYEbyTrrQ·N_1yqNGotII·DiInaUIDnEo·UQfV5N8eQzY·W24w9ItnnrY·ZHN-1gKqW3g·GJvcN9ctHcY. 그룹/공식 영문명·멤버 문맥이 명시돼 있어 프로그램명 일괄 제외에 포함하면 안 된다.69차는 정규 전국노래자랑 괄호만 다루므로 위 가요무대/열린음악회 후보까지 이미 방어했다고 세지 않는다.
+- **[완료·문서 변경 검사] [tests]** 최신 분리 checkout에서 전국노래자랑128·syntax 통과, validate-data 오류0/기존 경고144, smoke 데스크톱/390px 모두 통과. 코드 변경/검사 완화 없음.
+- **⏳ 덜 된 일 [한정 재조회/정정 판단]** 다음 작업은 `select id,title,description,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,content_flag,flag_source,tags_manual from yt_channel_videos where id in ('5XqzP2VPuY8','vG-D9oVQohk','wDbdZ3_u5yE','BEaBVOBwlZc','H_rEctz4xDo','7uBHqpiXRag','ihOxbilYor4','10DUkB8qtww');` 로 현재값을 재확인하고 원본 공연자/원곡자 크레딧을 분리할 것. 소속 증거 없는 단순 이름 치환·가요무대/열린음악회 전량 무관·정상7행 삭제 금지. 성리 포함 기준(음방 무대·한국어 곡·케이팝 연결)을 검토한 뒤 기존 솔로+옛 그룹 구조로 표현 가능한지 판단하며 새 필드를 설계하지 않는다. 김재이/정수빈은 추가 신원 근거 전 보류 유지.
+
+
 ## 2026-11-02 (Claude Code — 공유 미리보기 이미지: 빠진 페이지 422개 + 목록 공유 링크)
 - **[완료·배포] [tools/ensure_og_images.cjs 신설·build_group_pages.js 끝에서 호출] [정적 페이지 420개 og:image 보충] [build_group_pages.js LIST_FWD — 그룹·멤버 페이지 첫 줄] [app.js "이 목록 공유" 주소] [tests/og-image.test.js 신설·tests/vid-list-share.test.js]** 사용자 "블로그에 공유하니 이미지 안 뜨는 링크가 많다 — 그룹·멤버 카드는 되는데 새로 만든 페이지들". 실측: 정적 index.html 38,124개 중 **422개에 og:image가 아예 없음** — 커버 모음 215·아이돌 생년 108·소속사 52·연도별 1위 38 등(페이지 종류마다 빌더 함수가 따로라 새 종류를 만들 때마다 빠뜨림). 있는 페이지 이미지 URL은 표본 59개 전부 200. 수정 ① **빌드 끝 안전망**: og:image 없는 페이지에만 넣음 — 페이지 안 첫 유튜브 썸네일(hqdefault) → 커버·콜라보면 그 그룹 대표 썸네일(og_thumbs.json) → 등록 프로필 사진 → 사이트 기본 og-image.png(1200×630). 기존 파일에 바로 돌려 420개 보충(리다이렉트 전용 제외). ② **"이 목록 공유" 링크**: 예전 kpop-universe.kr/#g=…&vf=… 는 블로그·메신저가 # 뒤를 무시해 늘 사이트 기본 그림 → 멤버·그룹 정적 페이지 주소 + #…로 바꿔 그 사람 썸네일이 미리보기로, 페이지 첫 줄 스크립트(LIST_FWD, #에 vf= 있을 때만)가 사람은 바로 앱의 그 목록으로 넘김. ⚠️ LIST_FWD는 빌더 변경이라 정적 페이지 재생성(이 push로 rebuild-seo-pages 실행) 후부터 넘김 동작 — 그 전엔 정적 페이지가 열림(앱 링크 있음). ③ og-image 테스트: 모든 정적 페이지 og:image·빌더 연결 확인(20초). ⏳ Chemistry·컬렉션·조합 공유(#chem·#col·#combo)는 여전히 사이트 기본 그림 — 조합별 썸네일은 정적 페이지가 있어야 가능(조합 SEO 페이지 때 같이).
 
