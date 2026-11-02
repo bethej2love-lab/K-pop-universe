@@ -57,7 +57,7 @@ function apart(owner, t1, t2, why) {
 // ── 선공개 싱글(싱글 곡이 120일 안 앨범 트랙에 있음) ──
 together('코르티스', ['REDRED', 'GREENGREEN', 'GREENGREEN_playextended'], '이름이 다른 선공개 + 확장판(사용자 지적 사례)');
 together('클로즈유어아이즈', ['Open Your Eyes', '256th Note'], '선공개 싱글');
-together('아이브', ['CRUSH', 'ALIVE'], '선공개 싱글');
+// (2026-11-02) 아이브 CRUSH+ALIVE 사례는 뺐다 — 둘 다 일본 발매(ALIVE=일본 2nd EP, CRUSH=그 선공개)로 확인돼 region jp(기본 숨김) — 아래 에스파 사례가 같은 규칙을 본다
 together('에스파', ['Supernova', 'Armageddon'], '선공개 싱글');
 // 괄호 안 표기로 한/영이 갈린 트랙
 together('원위', ['線 : The Wake', '面 : Unknown Atlas'], "싱글 'Neverland' ↔ 앨범 '우리들은 행방불명 (Neverland)'");

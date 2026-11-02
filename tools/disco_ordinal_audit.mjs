@@ -28,7 +28,10 @@ function titleOrdinal(t) {
 const famOf = type => /^(미니|EP)/.test(type || '') ? '미니' : /^정규/.test(type || '') ? '정규' : null;
 const numOf = type => { const m = String(type || '').match(/^(?:미니|정규|EP)\s*(\d+)\s*집/); return m ? +m[1] : null; }; // "N집 리패키지"도 번호로
 const isJp = a => a.region === 'jp' || JP_RE.test(a.title || '');
-const out = { title: [], nonum: [], seq: [], jpmix: [] };
+const out = { title: [], nonum: [], seq: [], jpmix: [], jpcand: [] };
+// ⑤ jpcand: 일본 표시(region jp) 없는 미니·정규인데 수록곡에 "Japanese ver."·가나가 들어 있음 — 일본 발매 후보(2026-11-02 실측: 아이브 WAVE·LUCID DREAM, 에스파 KISS N TELL, 텐 Humanity가 이렇게 숨어 있었다).
+//    한국 앨범에 일본어 보너스 트랙이 든 경우(트레저 THE SECOND STEP)도 걸리니 **출처 확인 후** 고칠 것.
+const KANA = /[\u3040-\u30ff]/, JPV = /japanese\s*(ver|version)|\(jp ver/i;
 function audit(owner, disco) {
   if (!Array.isArray(disco) || !disco.length) return;
   for (const a of disco) {
@@ -36,6 +39,7 @@ function audit(owner, disco) {
     if (to && f && to.fam === f && n != null && to.n !== n && !isJp(a)) out.title.push({ owner, date: a.releaseDate, title: a.title, type: a.type, should: `${to.fam} ${to.n}집` });
     if (to && f && to.fam === f && n == null && !isJp(a)) out.title.push({ owner, date: a.releaseDate, title: a.title, type: a.type, should: `${to.fam} ${to.n}집` });
   }
+  for (const a of disco) { if (a.region === 'jp' || !famOf(a.type)) continue; const tr = (a.tracks || []).map(t => typeof t === 'string' ? t : (t && t.title) || ''); const k = tr.filter(t => KANA.test(t) || JPV.test(t)).length; if (k) out.jpcand.push({ owner, date: a.releaseDate, title: a.title, type: a.type, jpTracks: `${k}/${tr.length}` }); }
   for (const fam of ['미니', '정규']) {
     const main = disco.filter(a => famOf(a.type) === fam && !a.variant && !a.program && !/리패키지/.test(a.type) && !isJp(a));
     const noNum = main.filter(a => numOf(a.type) == null && !SIDE_RE.test(a.title || ''));
@@ -50,7 +54,7 @@ function audit(owner, disco) {
 for (const [g, info] of Object.entries(G)) audit(g, info.discography);
 for (const a of (Array.isArray(A) ? A : Object.values(A))) { audit(`${a.name.ko}(${a.group && a.group.ko})`, a.discography); }
 const owners = k => new Set(out[k].map(x => x.owner)).size;
-console.log(`① 제목 차수와 다름 ${out.title.length}건(${owners('title')}팀) · ② 번호 없음 ${out.nonum.length}건(${owners('nonum')}팀) · ③ 순서 안 맞음 ${out.seq.length}줄(${owners('seq')}팀) · ④ 일본반이 한국 줄에 ${out.jpmix.length}건`);
+console.log(`① 제목 차수와 다름 ${out.title.length}건(${owners('title')}팀) · ② 번호 없음 ${out.nonum.length}건(${owners('nonum')}팀) · ③ 순서 안 맞음 ${out.seq.length}줄(${owners('seq')}팀) · ④ 일본반이 한국 줄에 ${out.jpmix.length}건 · ⑤ 일본 발매 후보 ${out.jpcand.length}건`);
 const ji = process.argv.indexOf('--json');
 if (ji > 0) fs.writeFileSync(process.argv[ji + 1], JSON.stringify(out, null, 1));
 else { for (const k of Object.keys(out)) { console.log('\n== ' + k); out[k].slice(0, 15).forEach(x => console.log(' ', JSON.stringify(x))); } }

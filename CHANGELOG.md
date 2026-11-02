@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-11-02 (Claude Code — 정규·미니 2차: 숨은 일본 발매·중복·출처 확인분)
+- **[완료·배포] [groups.json·artists.json 19건 → build_slim_data] [tools/disco_ordinal_audit.mjs ⑤ 일본 발매 후보] [tests/discog-eras.test.js 아이브 사례 교체]** 1차 남은 것 중 출처 확인분. 핵심 발견: **"번호 없는 미니"의 상당수가 일본 발매인데 일본 표시가 없던 것**(제목에 Japanese가 없어 못 잡음). 에스파 Armageddon → 정규 1집, Dirty Work → 싱글(4곡), KISS N TELL → 일본 미니 1집(THE FIRST TIMES·edaily). 아이브 WAVE·ALIVE·Be Alright·LUCID DREAM → 일본 미니 1~4집(LUCID DREAM=일본 4th EP 코리아중앙데일리·realsound, 앞 셋은 발매순 일치), CRUSH(ALIVE 선공개) jp. 텐 TEN → 미니 1집, Humanity → 일본(allkpop). 최강창민 Devil → 미니 2집, All Of My Life → 미니 3집(텐아시아 "세 번째 미니"), Human·Close To You → 일본(번호 미확인이라 번호 없이). 엠블랙 BLAQ%Ver. → 미니 4집 리패키지(1차 자동 정정이 "4th Mini Album" 제목만 보고 본판으로 잘못 뒀던 것), BLAQ Style 3D Edition → 정규 1집 리패키지. 중복 삭제(멜론 ID 없는 쪽): 트레저 LOVE PULSE(2025.01.27), SF9 Sensuous(07.30), 씨엔블루 7°CN(04.17). 점검 도구 ⑤: 수록곡에 Japanese ver.·가나가 있는 미니·정규 = 일본 발매 후보(남은 65건 — 한국 앨범 보너스 트랙도 걸리니 출처 확인 후). 남은 수치: 번호 없음 758·순서 이상 34줄·일본 후보 65.
+
 ## 2026-11-02 (Codex — 검수81차·미등록 원곡자와 동명 곡 연결)
 - **[진행중·읽기 전용] [CHANGELOG.md]** 코드/JSON/SQL/DB 수정 없이 원곡 필드 검수. 제목에 박진영 원곡자라고 쓰인 HONEY 무대의 cover_of_groups=카라 사례를 공식 원본/실제 해석기로 대조 중. 기존 링크 중복 보고는 재집계하지 않으며 결과·정상 보존 비교·후속 명령을 추가 예정.
 

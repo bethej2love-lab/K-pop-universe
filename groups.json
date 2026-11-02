@@ -2366,7 +2366,7 @@
    },
    {
     "title": "KISS N TELL",
-    "type": "미니",
+    "type": "미니 1집",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b273324f6829eabaea3358ac4140",
     "releaseDate": "2026.07.24",
@@ -2644,7 +2644,8 @@
     ],
     "src": "spotify",
     "spotifyId": "04kIYv5OBSVLYEoNXaUNrn",
-    "melonAlbumId": "13967110"
+    "melonAlbumId": "13967110",
+    "region": "jp"
    },
    {
     "title": "LEMONADE",
@@ -3548,7 +3549,7 @@
    },
    {
     "title": "Dirty Work",
-    "type": "미니",
+    "type": "싱글",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b273bf35cc79c5b22b1c19065272",
     "releaseDate": "2025.06.27",
@@ -4591,7 +4592,7 @@
    },
    {
     "title": "Armageddon",
-    "type": "정규",
+    "type": "정규 1집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/114/87/023/11487023_20240527154018_500.jpg",
     "releaseDate": "2024.05.27",
@@ -7812,7 +7813,7 @@
    },
    {
     "title": "LUCID DREAM",
-    "type": "미니",
+    "type": "미니 4집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/133/96/222/13396222_20260515165440_500.jpg?YUV444/melon/resize/260",
     "releaseDate": "2026.05.27",
@@ -8051,7 +8052,8 @@
       }
      }
     ],
-    "melonAlbumId": "13396222"
+    "melonAlbumId": "13396222",
+    "region": "jp"
    },
    {
     "title": "LUCID DREAM",
@@ -9054,7 +9056,7 @@
    },
    {
     "title": "Be Alright",
-    "type": "미니",
+    "type": "미니 3집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/118/96/453/11896453_20250715135554_500.jpg?YUV444/melon/resize/260",
     "releaseDate": "2025.07.30",
@@ -9282,7 +9284,8 @@
       }
      }
     ],
-    "melonAlbumId": "11896453"
+    "melonAlbumId": "11896453",
+    "region": "jp"
    },
    {
     "title": "Be Alright",
@@ -9946,7 +9949,7 @@
    },
    {
     "title": "ALIVE",
-    "type": "미니",
+    "type": "미니 2집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/115/76/707/11576707_20240827163404_500.jpg?YUV444/melon/resize/260",
     "releaseDate": "2024.08.28",
@@ -9984,7 +9987,8 @@
       "songId": "37931798"
      }
     ],
-    "melonAlbumId": "11576707"
+    "melonAlbumId": "11576707",
+    "region": "jp"
    },
    {
     "title": "CRUSH",
@@ -10002,7 +10006,8 @@
       "songId": "37863102"
      }
     ],
-    "melonAlbumId": "11559523"
+    "melonAlbumId": "11559523",
+    "region": "jp"
    },
    {
     "title": "SUMMER FESTA",
@@ -11011,7 +11016,7 @@
    },
    {
     "title": "WAVE",
-    "type": "미니",
+    "type": "미니 1집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/112/53/005/11253005_20230530104634_500.jpg?e7c6924554495111b3c75ef13b53a251/melon/resize/260/quality/80/optimize",
     "releaseDate": "2023.05.31",
@@ -11049,7 +11054,8 @@
       "songId": "36483068"
      }
     ],
-    "melonAlbumId": "11253005"
+    "melonAlbumId": "11253005",
+    "region": "jp"
    },
    {
     "title": "WAVE",
@@ -93310,42 +93316,6 @@
     "melonAlbumId": "11731871"
    },
    {
-    "title": "LOVE PULSE",
-    "type": "미니 3집",
-    "isMain": true,
-    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/120/90/567/12090567_20250901120926_500.jpg",
-    "releaseDate": "2025.01.27",
-    "trackCount": 5,
-    "titleTrack": "BBIBBI",
-    "tracks": [
-     {
-      "no": 1,
-      "title": "BBIBBI",
-      "isTitle": true
-     },
-     {
-      "no": 2,
-      "title": "FEVER",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "LUPIN",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "LOVE STORY",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "BBIBBI (Inst.)",
-      "isTitle": false
-     }
-    ]
-   },
-   {
     "title": "LAST NIGHT",
     "type": "싱글",
     "isMain": true,
@@ -112567,51 +112537,6 @@
     ],
     "src": "melon",
     "melonAlbumId": "10189988"
-   },
-   {
-    "title": "Sensuous",
-    "type": "미니 5집",
-    "isMain": true,
-    "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/89/988/10189988_500.jpg",
-    "releaseDate": "2018.07.30",
-    "trackCount": 6,
-    "titleTrack": "Now or Never",
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Now or Never",
-      "isTitle": true,
-      "songId": "35356146"
-     },
-     {
-      "no": 2,
-      "title": "이 별 (This Star)",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "Tonight (English Ver.)",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Turn It On",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "Together",
-      "isTitle": false,
-      "songId": "33045331"
-     },
-     {
-      "no": 6,
-      "title": "Now or Never (Inst.)",
-      "isTitle": false,
-      "songId": "35356146"
-     }
-    ],
-    "melonVia": "10994379"
    },
    {
     "title": "Mamma Mia!",
@@ -204629,7 +204554,7 @@
    },
    {
     "title": "MBLAQ 4th Mini Album 'BLAQ%Ver.'",
-    "type": "미니 4집",
+    "type": "미니 4집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/020/96/208/2096208_500.jpg",
     "releaseDate": "2012.03.21",
@@ -204825,7 +204750,7 @@
    },
    {
     "title": "BLAQ Style 3D Edition",
-    "type": "정규",
+    "type": "정규 1집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/011/80/761/1180761_500.jpg",
     "releaseDate": "2011.02.22",
@@ -220851,46 +220776,6 @@
     ],
     "src": "melon",
     "melonAlbumId": "10104235"
-   },
-   {
-    "title": "7°CN",
-    "type": "미니 7집",
-    "isMain": true,
-    "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/47/444/10047444_500.jpg?d62b769660459eeb518346381b652477",
-    "releaseDate": "2017.04.17",
-    "trackCount": 5,
-    "titleTrack": "You're So Fine",
-    "tracks": [
-     {
-      "no": 1,
-      "title": "You're So Fine",
-      "isTitle": true,
-      "songId": "33035185"
-     },
-     {
-      "no": 2,
-      "title": "Stars",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "Between Us",
-      "isTitle": false,
-      "songId": "33035183"
-     },
-     {
-      "no": 4,
-      "title": "제자리 (Stand Still)",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "Shake",
-      "isTitle": false,
-      "songId": "33009348"
-     }
-    ],
-    "melonVia": "10512748"
    },
    {
     "title": "CNBLUE 7TH MINI ALBUM 7℃N",
