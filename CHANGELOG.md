@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-11-02 (Claude Code — 정규·미니 9차: 최신 앨범 출처 확인분)
+- **[완료·배포] [groups.json 11건 → build_slim_data]** 원어스 FIRST LIGHT → 미니 12집(스타뉴스), 아이들 We made → 미니 9집(네이트), 엔시티 드림 Beat It Up → 미니 6집(contactmusic), 앤더블 Sequence 01·02 → 미니 1·2집(톱스타뉴스), 온앤오프 ONF:MY IDENTITY·MY SELF → 정규 2집 Part.1·2(나눠 낸 정규). 싱글: 방탄 NORMAL(공개 싱글)·스테이씨 2:LOVE(싱글 6집)·마마무 4WARD(스페셜 싱글). SF9 About Love → 스페셜(두 번째 스페셜 앨범). 확인 못 함: 베리베리 CONFETTI·몬스타엑스 THE X·올데이프로젝트 CRASH·시크릿 Secret Flavor. 남은 수치: 번호 없음 641·순서 이상 33줄·일본 후보 59.
+
 ## 2026-11-02 (Claude Code — 정규·미니 8차: 레드벨벳·크래비티·킥플립·에이비식스)
 - **[완료·배포] [groups.json 13건 → build_slim_data]** 레드벨벳 Cosmic → 미니 7집(판매처 표기). **크래비티 Dilly Dally·Jelly Bean이 일본 앨범인데 한국 미니 7·9집으로 들어가 번호가 밀려 있었다** → 둘 다 일본(jp), EVERSHINE 미니 7집·ReDeFINE 8집·sonorous 9집(스포츠경향·allkpop "9th mini sonorous, 8th ReDeFINE"). 킥플립 KICK OFF THE WALL Pt. 1 → 미니 5집(코리아타임스). 에이비식스 BORN LIKE THIS 미니 9집·UPSIDE DOWN 10집(코리아타임스·씨네플레이), Find YOU·5NALLY·COMPLETE WITH YOU → 스페셜, SALUTE : A NEW HOPE → 미니 3집 리패키지. 남은 수치: 번호 없음 651·순서 이상 32줄·일본 후보 59.
 
