@@ -20210,7 +20210,7 @@
    },
    {
     "title": "NJWMX",
-    "type": "정규",
+    "type": "리믹스",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/86/275/11386275_20231218160844_500.jpg",
     "releaseDate": "2023.12.19",
@@ -51696,7 +51696,7 @@
    },
    {
     "title": "The Vision",
-    "type": "미니",
+    "type": "싱글",
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/71/b2/1e/71b21ea1-aece-c8d1-a04d-f3ad5ce7038f/The_Vision-cover.jpg/600x600bb.jpg",
     "releaseDate": "2019.01.17",
@@ -67498,7 +67498,7 @@
    },
    {
     "title": "빅뱅 스페셜에디션",
-    "type": "미니",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/012/36/055/1236055_500.jpg",
     "releaseDate": "2011.04.08",
@@ -68680,7 +68680,7 @@
    },
    {
     "title": "BIGBANG Vol.1",
-    "type": "정규",
+    "type": "정규 1집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/003/37/138/337138_500.jpg",
     "releaseDate": "2006.12.22",
@@ -71643,7 +71643,7 @@
    },
    {
     "title": "2022 Winter SMTOWN : SMCU PALACE",
-    "type": "정규",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/111/22/330/11122330_20221226132433_500.jpg?36b98c496903310f90e57d249694eb67/melon/resize/260/quality/80/optimize",
     "releaseDate": "2022.12.26",
@@ -72115,7 +72115,7 @@
    },
    {
     "title": "'The Story of Light' EP.3",
-    "type": "미니",
+    "type": "정규 6집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/78/864/10178864_500.jpg?094a35fdadfa9f13ab8b7dd3220ba24d/melon/resize/260/quality/80/optimize",
     "releaseDate": "2018.06.25",
@@ -72157,7 +72157,7 @@
    },
    {
     "title": "'The Story of Light' EP.2",
-    "type": "미니",
+    "type": "정규 6집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/75/119/10175119_500.jpg?701888ea7704f2a679500d85d1f48478/melon/resize/260/quality/80/optimize",
     "releaseDate": "2018.06.11",
@@ -72199,7 +72199,7 @@
    },
    {
     "title": "'The Story of Light' EP.1",
-    "type": "미니",
+    "type": "정규 6집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/70/914/10170914_500.jpg?3011bfc00533c569ae5794b26ee1ff23/melon/resize/260/quality/80/optimize",
     "releaseDate": "2018.05.28",
@@ -74328,7 +74328,8 @@
       "songId": "4164484"
      }
     ],
-    "melonAlbumId": "2191613"
+    "melonAlbumId": "2191613",
+    "region": "jp"
    },
    {
     "title": "SHINee The 3rd Album Chapter 2. 'Why So Serious? - The Misconceptions Of Me'",
@@ -101321,7 +101322,7 @@
    },
    {
     "title": "For Life - 겨울 스페셜 앨범, 2016",
-    "type": "미니",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/24/125/10024125_500.jpg",
     "releaseDate": "2016.12.19",
@@ -101714,7 +101715,7 @@
    },
    {
     "title": "SING FOR YOU - 겨울 스페셜 앨범, 2015",
-    "type": "미니",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/026/55/828/2655828_500.jpg",
     "releaseDate": "2015.12.10",
@@ -102415,7 +102416,7 @@
    },
    {
     "title": "Miracles in December",
-    "type": "미니",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/19/671/2219671_500.jpg",
     "releaseDate": "2013.12.09",
@@ -106804,7 +106805,7 @@
    },
    {
     "title": "U",
-    "type": "정규",
+    "type": "싱글",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/003/19/502/319502_20250205095144_500.jpg",
     "releaseDate": "2006.06.07",
@@ -116093,7 +116094,7 @@
    },
    {
     "title": "OH MY GIRL SUMMER PACKAGE [FALL IN LOVE]",
-    "type": "정규",
+    "type": "정규 1집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/103/14/743/10314743_500.jpg",
     "releaseDate": "2019.08.05",
@@ -116615,7 +116616,7 @@
    },
    {
     "title": "WINDY DAY",
-    "type": "정규",
+    "type": "미니 3집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/026/87/152/2687152_500.jpg",
     "releaseDate": "2016.05.26",
@@ -120865,7 +120866,7 @@
    },
    {
     "title": "Be Back",
-    "type": "정규",
+    "type": "정규 2집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/68/235/2268235_500.jpg",
     "releaseDate": "2014.07.22",
@@ -121058,7 +121059,7 @@
    },
    {
     "title": "The Origin",
-    "type": "정규",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/50/447/2250447_500.jpg",
     "releaseDate": "2014.04.10",
@@ -125246,7 +125247,7 @@
    },
    {
     "title": "OUTRO",
-    "type": "미니",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/24/217/10224217_500.jpg",
     "releaseDate": "2018.11.20",
@@ -125362,7 +125363,7 @@
    },
    {
     "title": "CALLING YOU",
-    "type": "미니",
+    "type": "미니 1집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/66/561/10066561_500.jpg",
     "releaseDate": "2017.05.29",
@@ -125596,7 +125597,7 @@
    },
    {
     "title": "MOVE AGAIN",
-    "type": "미니",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/111/12/312/11112312_20221129115017_500.jpg",
     "releaseDate": "2022.11.29",
@@ -125945,7 +125946,7 @@
    },
    {
     "title": "KARA SoloCollection",
-    "type": "정규",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/68/404/2168404_500.jpg",
     "releaseDate": "2012.11.30",
@@ -129412,7 +129413,7 @@
    },
    {
     "title": "T-ara Winter",
-    "type": "미니",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/21/502/2221502_500.jpg",
     "releaseDate": "2013.12.14",
@@ -132125,7 +132126,7 @@
    },
    {
     "title": "[#]",
-    "type": "미니",
+    "type": "미니 2집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/103/84/712/10384712_20200205150847_500.jpg",
     "releaseDate": "2020.02.05",
@@ -132191,7 +132192,7 @@
    },
    {
     "title": "[X X]",
-    "type": "미니",
+    "type": "미니 1집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/52/794/10252794_500.jpg",
     "releaseDate": "2019.02.19",
@@ -132275,7 +132276,7 @@
    },
    {
     "title": "[+ +]",
-    "type": "미니",
+    "type": "미니 1집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/91/989/10191989_500.jpg",
     "releaseDate": "2018.08.20",
@@ -137231,7 +137232,7 @@
    },
    {
     "title": "New Chapter #2: The Truth of Love",
-    "type": "미니",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/36/755/10236755_500.jpg",
     "releaseDate": "2018.12.26",
@@ -138970,7 +138971,7 @@
    },
    {
     "title": "Humanoids",
-    "type": "정규",
+    "type": "정규 6집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/68/108/2168108_500.jpg",
     "releaseDate": "2012.11.26",
@@ -142379,7 +142380,7 @@
    },
    {
     "title": "Show Me Your Love (동방신기 & Super Junior 05)",
-    "type": "미니",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/003/11/502/311502_500.jpg",
     "releaseDate": "2005.12.15",
@@ -142695,7 +142696,7 @@
    },
    {
     "title": "Christmas Gift From 동방신기(東方神起)",
-    "type": "정규",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/003/01/372/301372_500.jpg",
     "releaseDate": "2004.12.06",
@@ -153908,7 +153909,7 @@
    },
    {
     "title": "FTISLAND 10th Anniversary Album 'OVER 10 YEARS'",
-    "type": "정규",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/68/952/10068952_500.jpg",
     "releaseDate": "2017.06.07",
@@ -154299,7 +154300,7 @@
    },
    {
     "title": "THANKS TO",
-    "type": "미니",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/01/913/2201913_500.jpg",
     "releaseDate": "2013.09.23",
@@ -154455,7 +154456,7 @@
    },
    {
     "title": "MEMORY IN FTISLAND",
-    "type": "미니",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/020/18/666/2018666_500.jpg",
     "releaseDate": "2011.10.10",
@@ -170811,7 +170812,7 @@
    },
    {
     "title": "피버뮤직 2017",
-    "type": "미니",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/00/636/10100636_500.jpg",
     "releaseDate": "2017.09.30",
@@ -171168,7 +171169,7 @@
    },
    {
     "title": "Hi~",
-    "type": "정규",
+    "type": "정규 1집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/023/06/957/2306957_500.jpg",
     "releaseDate": "2015.03.03",
@@ -195914,7 +195915,7 @@
    },
    {
     "title": "Re:MONTAGE",
-    "type": "정규",
+    "type": "정규 2집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/26/355/10126355_500.jpg",
     "releaseDate": "2018.01.08",
@@ -198215,7 +198216,7 @@
    },
    {
     "title": "Piano Man",
-    "type": "미니",
+    "type": "싱글",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/91/790/2291790_500.jpg",
     "releaseDate": "2014.11.21",
@@ -201440,7 +201441,7 @@
    },
    {
     "title": "HORN",
-    "type": "정규",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/108/66/447/10866447_20220214105300_500.jpg",
     "releaseDate": "2022.02.14",
@@ -201818,7 +201819,7 @@
    },
    {
     "title": "Dear",
-    "type": "정규",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/23/410/10023410_500.jpg",
     "releaseDate": "2016.12.15",
@@ -202793,7 +202794,7 @@
    },
    {
     "title": "After School The 6th Maxi Single '첫사랑'",
-    "type": "미니",
+    "type": "싱글",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/88/765/2188765_500.jpg",
     "releaseDate": "2013.06.13",
@@ -208100,7 +208101,7 @@
    },
    {
     "title": "Jekyll",
-    "type": "미니",
+    "type": "미니 1집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/95/068/2195068_500.jpg",
     "releaseDate": "2013.07.31",
@@ -221412,7 +221413,7 @@
    },
    {
     "title": "FIRST STEP +1 THANK YOU",
-    "type": "미니",
+    "type": "정규 1집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/012/58/151/1258151_500.jpg",
     "releaseDate": "2011.04.26",
@@ -246635,7 +246636,7 @@
    },
    {
     "title": "Back To Da Future",
-    "type": "미니",
+    "type": "미니 1집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/013/54/900/1354900_500.jpg",
     "releaseDate": "2011.07.29",

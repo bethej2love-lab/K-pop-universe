@@ -12189,6 +12189,8 @@ function _discogTypeLabel(type){
   const t=type||'';
   if(currentLang==='en'){
     if(t==='싱글')return'Single';
+    // 차수 정리(2026-11-02)로 쓰기 시작한 종류 — 미니/정규 칩엔 안 들어가고 전체에서만 보인다
+    const _ex={'스페셜':'Special','믹스테이프':'Mixtape','리믹스':'Remix','리패키지':'Repackage'};if(_ex[t])return _ex[t];
     // 리패키지: "미니 6집 리패키지"→"6th Mini Re", "정규 3집 리패키지"→"3rd Full Re"
     const mr=t.match(/^(미니|정규|EP)\s*(\d+)집\s*리패키지$/);
     if(mr)return`${_ordinal(+mr[2])} ${mr[1]==='정규'?'Full':'Mini'} Re`;

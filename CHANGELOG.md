@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-11-02 (Claude Code — 정규·미니 7차: 스페셜·리패키지·싱글 분류)
+- **[완료·배포] [groups.json 42건 → build_slim_data] [app.js _discogTypeLabel 영어 라벨]** "번호 없는 미니/정규"의 상당수가 원래 번호가 없는 스페셜·리패키지·싱글이라 종류를 바로잡아 미니/정규 칩에서 뺌(전체에서만 보임). 번호: 이달의소녀 [+ +] 미니 1집·[X X] 미니 1집 리패키지·[#] 미니 2집, 샤이니 The Story of Light EP.1~3 → 정규 6집(나눠 낸 정규), 빅뱅 BIGBANG Vol.1 → 정규 1집, 브브걸 Back To Da Future → 미니 1집. 리패키지: 인피니트 Be Back·블락비 Re:MONTAGE·동방신기 Humanoids·씨엔블루 FIRST STEP +1·러블리즈 Hi~·빅스 Jekyll·하이라이트 CALLING YOU·오마이걸 WINDY DAY/SUMMER PACKAGE. 스페셜: 엑소 겨울 스페셜 3·카라 MOVE AGAIN/SoloCollection·에이핑크 Dear/HORN·인피니트 The Origin·동방신기 크리스마스·New Chapter #2·Show Me Your Love·티아라 Winter·빅뱅 스페셜에디션·하이라이트 OUTRO·러블리즈 피버뮤직·SMTOWN 겨울·FT아일랜드 3건. 싱글: 웨이션브이 The Vision·슈퍼주니어 U·마마무 Piano Man·애프터스쿨 6th Maxi. 뉴진스 NJWMX → 리믹스, 샤이니 Boys Meet U → 일본. 영어 모드 라벨 Special/Mixtape/Remix/Repackage 추가. 남은 수치: 번호 없음 660(280팀)·순서 이상 32줄·일본 후보 61.
+
 ## 2026-11-02 (Claude Code — 정규·미니 6차: 세븐틴·방탄·엔하이픈·라이즈·엔믹스·아일릿·엔시티 위시·스테이씨·더보이즈)
 - **[완료·배포] [groups.json 15건 → build_slim_data]** 세븐틴 Love&Letter·DIRECTOR'S CUT·SECTOR 17 → 정규 1·2·4집 리패키지. 방탄 Skool Luv Affair Special Addition(정규로 잘못) → 미니 2집 리패키지·화양연화 Young Forever → 스페셜·YOU NEVER WALK ALONE → 정규 2집 리패키지. **엔하이픈 ROMANCE : UNTOLD -daydream-이 정규 3집으로 잘못 → 정규 2집 리패키지**, THE SIN : BLISS → 미니 8집(Power106). 라이즈 RIIZING : Epilogue → 미니 1집 리패키지. 엔믹스 Strange Muse → 미니 6집(위키), 아일릿 BREAK EVEN → 미니 5집, 엔시티 위시 WISHLIST → 일본 미니 1집(nct-jp.net). 스테이씨 STAYDOM → 싱글(싱글 앨범). 더보이즈 PHANTASY Pt.1·Pt.2 → 정규 2집(나눠 낸 정규). 확인 못 함: 제로베이스원 AFTERGLOW, 방탄 NORMAL, 스테이씨 2:LOVE. 남은 수치: 번호 없음 702·순서 이상 33줄·일본 후보 62.
 
