@@ -35,6 +35,9 @@ const path = require('path');
 
 const ROOT = __dirname;
 const SITE = 'https://kpop-universe.kr';
+// 영상 목록 공유 링크(2026-11-02) — 앱의 "이 목록 공유"는 그룹·멤버 정적 페이지 주소 + #…&vf=… 로 나간다. 블로그·메신저는 # 뒤를 무시하고
+// 이 페이지의 미리보기(그 사람 썸네일)를 쓰고(예전 kpop-universe.kr/#… 는 늘 사이트 기본 그림), 사람은 바로 앱의 그 목록으로 넘어간다.
+const LIST_FWD = `<script>(function(){var h=location.hash;if(/(^#|&)vf=/.test(h))location.replace('${SITE}/'+h);})();</script>`;
 
 const groups = JSON.parse(fs.readFileSync(path.join(ROOT, 'groups.json'), 'utf8'));
 const artists = JSON.parse(fs.readFileSync(path.join(ROOT, 'artists.json'), 'utf8'));
@@ -400,6 +403,7 @@ groupKos.forEach(ko => {
 <html lang="${isEn ? 'en' : 'ko'}">
 <head>
 <meta charset="UTF-8">
+${LIST_FWD}
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${escHtml(title)}</title>
 <meta name="description" content="${escHtml(desc)}">
@@ -638,6 +642,7 @@ artists.forEach(a => {
 <html lang="${isEn ? 'en' : 'ko'}">
 <head>
 <meta charset="UTF-8">
+${LIST_FWD}
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${escHtml(title)}</title>
 <meta name="description" content="${escHtml(desc)}">
@@ -2001,5 +2006,7 @@ ${smFiles.map(f => `  <sitemap>\n    <loc>${SITE}/sitemaps/${f.name}</loc>\n    
 `);
 
   console.log(`완료: 그룹 ${groupKos.length}개 + 멤버 ${memberPageCount}명 × 2개 언어 = ${pages.length}개 정적 페이지 생성`);
+  // 공유 미리보기 안전망(2026-11-02) — 페이지 종류마다 빌더가 따로라 og:image가 빠진 페이지가 422개 있었다. 없는 페이지에만 넣는다
+  { const r = require('./tools/ensure_og_images.cjs').ensureOgImages(ROOT); console.log(`og:image 안전망: ${r.fixed}개 보충`); }
   console.log(`sitemap.xml(목록) 갱신 — ${smFiles.map(f => `${f.name} ${f.n}`).join(' · ')} (총 ${sitemapUrls.length}개 URL)`);
 })();

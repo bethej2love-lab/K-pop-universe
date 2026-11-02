@@ -27645,7 +27645,10 @@ function _makeChVidController(contId){
           const who=state.memberKo||ko;
           const parts=[who,state.viewMode==='format'&&state.formatFilter?state.formatFilter:(state.filter!=='all'?_catLabel(state.filter):null),
             state.songKey?'♪ '+(state.songLabel||state.songKey.split(':').pop()):null,state.searchQ?'“'+state.searchQ+'”':null].filter(Boolean);
-          _shareCurrentView(location.origin+'/'+base+_vidShareHash(state),parts.join(' · ')+' · K-POP Universe','list');
+          // 주소는 그룹·멤버 정적 페이지 + #…(2026-11-02 사용자 "블로그 공유 시 이미지가 안 뜬다") — 블로그·메신저는 # 뒤를 무시해서 예전 주소(kpop-universe.kr/#…)는
+          // 늘 사이트 기본 그림만 떴다. 정적 페이지는 그 사람 썸네일을 미리보기로 주고, 여는 사람은 페이지 첫 줄(LIST_FWD)이 바로 앱의 그 목록으로 넘긴다.
+          const _seo=state.memberKo?(_openTArtist&&_openTArtist.name.ko===state.memberKo?_seoUrlForMember(_openTArtist):null):_seoUrlForGroup(ko);
+          _shareCurrentView((_seo||location.origin+'/')+base+_vidShareHash(state),parts.join(' · ')+' · K-POP Universe','list');
         });
         selItem.before(shareItem);
       }

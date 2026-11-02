@@ -60,6 +60,8 @@ const WAIT_GRID=sel=>`(async()=>{const S=ms=>new Promise(r=>setTimeout(r,ms));fo
     if(sent.url&&sent.url.k==='list'&&/성현/.test(sent.url.t))ok('공유 제목: '+sent.url.t);else bad('공유 제목/종류 '+JSON.stringify(sent.url));
     // ② 받는 쪽
     if(sent.url){
+      // 공유 주소는 멤버 정적 페이지 + #…(2026-11-02 — 블로그·메신저 미리보기에 그 사람 썸네일이 뜨게)
+      {const _u=decodeURIComponent(sent.url.u);(_u.includes('/g/')&&_u.indexOf('/g/')<_u.indexOf('#g=')?ok:bad)('공유 주소가 멤버 정적 페이지(미리보기 이미지) + # 목록 정보: '+_u.slice(_u.indexOf('/g/'),_u.indexOf('/g/')+60));}
       await open(c,sent.url.u.slice(sent.url.u.indexOf('#')));
       await ev(c,WAIT_GRID('#tv'));
       const got=JSON.parse(await ev(c,`(()=>{const cont=document.getElementById('tv');
