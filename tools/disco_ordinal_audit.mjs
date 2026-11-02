@@ -27,7 +27,7 @@ function titleOrdinal(t) {
 }
 const famOf = type => /^(미니|EP)/.test(type || '') ? '미니' : /^정규/.test(type || '') ? '정규' : null;
 const numOf = type => { const m = String(type || '').match(/^(?:미니|정규|EP)\s*(\d+)\s*집/); return m ? +m[1] : null; }; // "N집 리패키지"도 번호로
-const isJp = a => a.region === 'jp' || JP_RE.test(a.title || '');
+const isJp = a => (a.region && a.region !== 'kr') || JP_RE.test(a.title || ''); // 일본·중국·영어반(region jp/cn/en)은 한국 번호 줄에서 뺀다
 const out = { title: [], nonum: [], seq: [], jpmix: [], jpcand: [] };
 // ⑤ jpcand: 일본 표시(region jp) 없는 미니·정규인데 수록곡에 "Japanese ver."·가나가 들어 있음 — 일본 발매 후보(2026-11-02 실측: 아이브 WAVE·LUCID DREAM, 에스파 KISS N TELL, 텐 Humanity가 이렇게 숨어 있었다).
 //    한국 앨범에 일본어 보너스 트랙이 든 경우(트레저 THE SECOND STEP)도 걸리니 **출처 확인 후** 고칠 것.
