@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-11-02 (Claude Code — 문의 메일 contact@kpop-universe.kr)
+- **[완료·배포] [about.html·privacy.html·terms.html·index.html 권리 침해 신고·app.js 공개 컬렉션 신고]** 공개 문의처를 개인 Gmail → **contact@kpop-universe.kr**. ImprovMX 무료 전달(별칭 contact·hello → 운영자 Gmail), 가비아 DNS에 MX mx1/mx2.improvmx.com(10/20)+TXT spf 추가 — 8.8.8.8 조회로 확인, 사이트 A 레코드 그대로. 사용자 외부 메일로 hello·contact 둘 다 수신 확인. ⚠️ ADMIN_EMAIL(관리자 판정)은 그대로 — 별개. 보낼 땐 Gmail에서 답장하면 개인 주소로 나감(ImprovMX 무료는 수신 전달만).
+
 ## 2026-11-02 (Claude Code — 서비스 소개 페이지)
 - **[완료·배포] [about.html 신설] [index.html 설정 하단 링크 줄 맨 앞 "소개"] [privacy.html·terms.html 문의처에 운영자: 나랑]** 비즈니스 체계화 ②의 첫 조각. 사용자 "설정 안에 about, 너무 드러나지 않게·짜치지 않게 단순하게, 신뢰감은 있게, 운영자 닉네임 나랑". 약관·개인정보 페이지와 같은 모양: 한 줄 정의(그룹·멤버·연결을 탐색하는 팬 아카이브) → 할 수 있는 것 3줄(탐색·영상·기록) → 정보의 출처·권리 → 운영(개인 비영리·제휴 없음·운영자 나랑·문의) → 권리 침해 신고 처리 원칙. 390px 가로 넘침 없음 확인. ⏳문의 메일은 아직 개인 Gmail — 전용 주소 정해지면 about·privacy·terms·index.html 신고 링크·app.js 컬렉션 신고 5곳 같이 교체.
 

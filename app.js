@@ -21775,7 +21775,7 @@ function _setupFeedListSaveRow(ctx){
     repBtn.onclick=()=>{
       const nm=document.getElementById('feed-list-hd-title').textContent;
       const body='신고 컬렉션: '+nm+'\n작성자: '+(ctx.ownerNick||'')+'\nID: '+(ctx.colId||'')+'\n\n신고 사유:\n';
-      window.location.href='mailto:bethej2love@gmail.com?subject='+encodeURIComponent('[공개 컬렉션 신고] '+nm)+'&body='+encodeURIComponent(body);
+      window.location.href='mailto:contact@kpop-universe.kr?subject='+encodeURIComponent('[공개 컬렉션 신고] '+nm)+'&body='+encodeURIComponent(body);
     };
   }
 }
