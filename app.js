@@ -23031,7 +23031,9 @@ function _collectWeekNews(){
         .order('published_at',{ascending:false}).limit(50)
         .then(r=>r,()=>({data:[]})),
       sb.from('yt_view_milestones').select('*,yt_channel_videos!inner(title,thumb,group_ko,published_at,is_short)')
-        .eq('crossed_at',today).eq('seeded',false).limit(300)
+        // 어제+오늘(2026-11-02) — 오늘(UTC)만 보면 하루 첫 수집 전(한국 아침)엔 늘 0개라 "This Week에 조회수 소식이 없다"였다(실측: 하루 ~180건, 당일 아침 0건).
+        //   7일은 하루 200건×7이라 무겁고 정렬 없이 limit로 자르면 임의로 잘린다 → 이틀만.
+        .gte('crossed_at',new Date(Date.now()-86400000).toISOString().slice(0,10)).lte('crossed_at',today).eq('seeded',false).limit(600)
         // ⚠️ .catch가 아니라 .then(성공,실패) — Supabase 쿼리 빌더는 thenable일 뿐 Promise가 아니라 .catch가 없다.
         .then(r=>r,()=>({data:[]})),
       // 1위 무대 영상 후보(2026-10-16 재작성) — 음방들은 1위 당일·다음날 "1위 앵콜 직캠/챔피언송 Full ver."를 올린다.
@@ -23250,17 +23252,28 @@ function _renderNewsList(list,items){
   // 썸네일이 주인공인 가로 소식(MV·티저·조회수 돌파)은 For You·발견 둘 다 2열(넓은 나침반 4열). 맨 위 전폭 헤드라인과
   // 전폭 MV 줄은 뺐다(2026-10-28 사용자 "this week 뮤비 1열 배치 너무 부담스럽게 크다" — 440px 폭에서도 16:9 전폭이 화면 절반).
   items.forEach(r=>{r._compactMv=!r.isShort&&!!r.thumb&&(r.type==='mv'||r.type==='teaser'||r.type==='milestone');});
-  const rest=items.slice();
-  _pairNewsShorts(rest);
-  let SHOW=8; // 2열·4열 어느 쪽이든 줄이 꽉 차게
-  // 쇼츠 2열 한 쌍이 "더보기" 경계에서 갈라지지 않게
-  if(rest.length>SHOW&&_isNewsShortCard(rest[SHOW-1])&&_isNewsShortCard(rest[SHOW])&&rest[SHOW]._pair===rest[SHOW-1])SHOW++;
-  // 더보기 앞에서도 MV 2열의 한 쌍을 갈라 놓지 않는다.
-  if(rest.length>SHOW&&rest[SHOW-1]._compactMv&&rest[SHOW]._compactMv&&rest.slice(0,SHOW).filter(r=>r._compactMv).length%2)SHOW++;
-  _appendNewsItems(list,rest.slice(0,SHOW));
-  if(rest.length>SHOW){
+  // 접기 전 8칸은 종류를 돌아가며 고른다(2026-11-02 사용자 "더보기 전까지 뮤비만 — 1위·조회수가 섞여야"). 점수순만 쓰면 MV 점수(80-2×경과일)가
+  // 이틀 지난 1위(100-20×경과일)·조회수 돌파(≈45)보다 높아, MV가 많은 주엔 1위·조회수가 전부 접혔다. 1위(결방 포함) → MV·티저 → 조회수 순으로 하나씩.
+  const _kind=r=>(r.type==='win'||r.type==='break')?'win':r.type==='milestone'?'mile':'mv';
+  const pool=items.slice(),top=[];
+  while(top.length<8&&pool.length){
+    let add=false;
+    for(const k of ['win','mv','mile']){if(top.length>=8)break;const i=pool.findIndex(r=>_kind(r)===k);if(i>=0){top.push(pool.splice(i,1)[0]);add=true;}}
+    if(!add)break;
+  }
+  // 2열 칸(가로 소식·쇼츠)은 짝수로(2026-11-02 사용자 "홀수면 오른쪽이 비어 보기 안 좋다") — 홀수면 다음 소식에서 같은 모양 하나를 끌어와 채우고,
+  // 끌어올 게 없으면 남는 하나는 2열 칸 대신 작은 썸네일 한 줄(_solo)로 그린다.
+  const _even=(arr,from)=>{
+    [r=>r._compactMv,_isNewsShortCard].forEach(p=>{if(from&&arr.filter(p).length%2){const i=from.findIndex(p);if(i>=0)arr.push(from.splice(i,1)[0]);}});
+    arr.sort((a,b)=>b._s-a._s);
+    _pairNewsBy(arr,r=>r._compactMv);_pairNewsBy(arr,_isNewsShortCard);
+    return arr;
+  };
+  const shown=_even(top,pool);
+  _appendNewsItems(list,shown);
+  if(pool.length){
     const more=document.createElement('button');more.type='button';more.className='feed-news-more';
-    const extra=rest.slice(SHOW);
+    const extra=_even(pool,null);
     more.textContent=currentLang==='ko'?`+${extra.length}개 더보기`:`+${extra.length} more`;
     more.addEventListener('click',()=>{more.remove();_appendNewsItems(list,extra);});
     list.appendChild(more);
@@ -23282,19 +23295,21 @@ function _openNewsDrawer(){}
 // 같은 카드(_appendFeedCard short)를 .feed-grid 2열에 넣는다 — 썸네일도 같은 경로(oardefault 세로 원본)를 탄다.
 // MV·티저 줄은 원래 작은 썸네일 한 줄이라 그대로 둔다.
 function _isNewsShortCard(r){return !!(r&&r.type==='milestone'&&r.isShort&&r.thumb);}
-// 2열이 반쪽만 차지 않게, 쇼츠 카드 바로 뒤로 다음 쇼츠 카드를 끌어온다(나머지 순서는 유지).
-function _pairNewsShorts(arr){
+// 2열이 반쪽만 차지 않게, 같은 모양(pred) 소식 바로 뒤로 다음 같은 모양을 끌어와 둘씩 붙인다(나머지 순서는 유지).
+// 짝이 없는 마지막 하나는 _solo — 2열 칸 대신 한 줄로 그린다(_appendNewsItems).
+function _pairNewsBy(arr,pred){
   for(let i=0;i<arr.length;i++){
-    if(!_isNewsShortCard(arr[i])||arr[i]._pair!==undefined)continue;
-    const j=arr.findIndex((r,k)=>k>i&&_isNewsShortCard(r)&&r._pair===undefined);
-    if(j<0){arr[i]._pair=null;break;}
-    const [m]=arr.splice(j,1);arr.splice(i+1,0,m);
-    m._pair=arr[i];arr[i]._pair=null;i++;
+    if(!pred(arr[i])||arr[i]._solo)continue;
+    const j=arr.findIndex((r,k)=>k>i&&pred(r)&&!r._solo);
+    if(j<0){arr[i]._solo=true;break;}
+    if(j!==i+1){const [m]=arr.splice(j,1);arr.splice(i+1,0,m);}
+    i++;
   }
 }
 function _appendNewsItems(container,arr){
   let grid=null,mvGrid=null;
   arr.forEach(r=>{
+    if(r._solo){grid=null;mvGrid=null;_appendNewsRow(container,{...r,plain:true});return;} // 짝 없는 2열 소식 → 한 줄
     if(r._compactMv){
       grid=null;
       if(!mvGrid){mvGrid=document.createElement('div');mvGrid.className='feed-news-mvs';container.appendChild(mvGrid);}
@@ -23308,12 +23323,12 @@ function _appendNewsItems(container,arr){
     if(tw){const b=document.createElement('span');b.className='feed-news-badge fnb-milestone';b.textContent='📈 조회수';tw.appendChild(b);}
   });
 }
-function _appendNewsRow(container,{type,title,sub,thumb,nav,square}){
+function _appendNewsRow(container,{type,title,sub,thumb,nav,square,plain}){
   const LABELS={album:'💿 신보',win:'🏆 1위',mv:'🎬 MV',teaser:'🎬 티저',milestone:'📈 조회수',break:'결방'};
   const CLS={album:'fnb-album',win:'fnb-win',mv:'fnb-mv',teaser:'fnb-teaser',milestone:'fnb-milestone',break:'fnb-break'};
   const row=document.createElement('div');
   // 썸네일이 주인공인 소식 — 조회수 돌파와 MV·티저(2026-10-22 사용자: "MV도 조회수처럼 썸네일 위 배지로, 지금은 눈에 안 들어온다")
-  const isMedia=!!thumb&&(type==='milestone'||type==='mv'||type==='teaser');
+  const isMedia=!plain&&!!thumb&&(type==='milestone'||type==='mv'||type==='teaser');
   row.className='feed-news-row'+(isMedia?' is-media':'')+(type==='break'?' is-break':'');
   const badge=document.createElement('div');
   badge.className='feed-news-badge '+(CLS[type]||'');

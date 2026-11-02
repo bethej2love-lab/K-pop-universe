@@ -39,7 +39,8 @@ const fn = extractBraces(html, /^function _collectWeekNews\(/m, '_collectWeekNew
 ck(/const today=new Date\(\)\.toISOString\(\)\.slice\(0,10\)/.test(fn), '오늘 날짜를 계산함(하드코딩 아님)');
 // 음방 1위는 "이번 주"(최근 7일) — 2026-10-15 오늘→7일로 확대(오늘만이면 대부분의 날 비었다)
 ck(/\.gte\('win_date',sevenDaysAgo\)\.lte\('win_date',today\)/.test(fn), '음방 1위를 최근 7일로 필터');
-ck(/\.eq\('crossed_at',today\)/.test(fn), '조회수 마일스톤을 오늘 날짜로만 필터');
+// 2026-11-02 오늘만 → 어제+오늘(오늘만이면 한국 아침엔 늘 0개). 넓게(7일) 가면 정렬 없는 limit가 임의로 자른다
+ck(fn.includes(".gte('crossed_at',new Date(Date.now()-86400000).toISOString().slice(0,10)).lte('crossed_at',today)"), '조회수 마일스톤을 어제~오늘로 필터');
 ck(/\.eq\('seeded',false\)/.test(fn),
   '최초 시딩분(seeded=true)을 제외함 — 안 걸리면 기존 데이터 전부가 "오늘 크로싱"으로 오인됨');
 // 트로피(카드 배지)와 달리 여기선 티어 하한을 걸지 않는다 — 설계 의도(수집은 넓게, 이 선반도 넓게)
