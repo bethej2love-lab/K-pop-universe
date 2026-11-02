@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-11-02 (Claude Code — 정규·미니 8차: 레드벨벳·크래비티·킥플립·에이비식스)
+- **[완료·배포] [groups.json 13건 → build_slim_data]** 레드벨벳 Cosmic → 미니 7집(판매처 표기). **크래비티 Dilly Dally·Jelly Bean이 일본 앨범인데 한국 미니 7·9집으로 들어가 번호가 밀려 있었다** → 둘 다 일본(jp), EVERSHINE 미니 7집·ReDeFINE 8집·sonorous 9집(스포츠경향·allkpop "9th mini sonorous, 8th ReDeFINE"). 킥플립 KICK OFF THE WALL Pt. 1 → 미니 5집(코리아타임스). 에이비식스 BORN LIKE THIS 미니 9집·UPSIDE DOWN 10집(코리아타임스·씨네플레이), Find YOU·5NALLY·COMPLETE WITH YOU → 스페셜, SALUTE : A NEW HOPE → 미니 3집 리패키지. 남은 수치: 번호 없음 651·순서 이상 32줄·일본 후보 59.
+
 ## 2026-11-02 (Claude Code — 정규·미니 7차: 스페셜·리패키지·싱글 분류)
 - **[완료·배포] [groups.json 42건 → build_slim_data] [app.js _discogTypeLabel 영어 라벨]** "번호 없는 미니/정규"의 상당수가 원래 번호가 없는 스페셜·리패키지·싱글이라 종류를 바로잡아 미니/정규 칩에서 뺌(전체에서만 보임). 번호: 이달의소녀 [+ +] 미니 1집·[X X] 미니 1집 리패키지·[#] 미니 2집, 샤이니 The Story of Light EP.1~3 → 정규 6집(나눠 낸 정규), 빅뱅 BIGBANG Vol.1 → 정규 1집, 브브걸 Back To Da Future → 미니 1집. 리패키지: 인피니트 Be Back·블락비 Re:MONTAGE·동방신기 Humanoids·씨엔블루 FIRST STEP +1·러블리즈 Hi~·빅스 Jekyll·하이라이트 CALLING YOU·오마이걸 WINDY DAY/SUMMER PACKAGE. 스페셜: 엑소 겨울 스페셜 3·카라 MOVE AGAIN/SoloCollection·에이핑크 Dear/HORN·인피니트 The Origin·동방신기 크리스마스·New Chapter #2·Show Me Your Love·티아라 Winter·빅뱅 스페셜에디션·하이라이트 OUTRO·러블리즈 피버뮤직·SMTOWN 겨울·FT아일랜드 3건. 싱글: 웨이션브이 The Vision·슈퍼주니어 U·마마무 Piano Man·애프터스쿨 6th Maxi. 뉴진스 NJWMX → 리믹스, 샤이니 Boys Meet U → 일본. 영어 모드 라벨 Special/Mixtape/Remix/Repackage 추가. 남은 수치: 번호 없음 660(280팀)·순서 이상 32줄·일본 후보 61.
 
