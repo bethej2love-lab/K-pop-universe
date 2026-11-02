@@ -51768,6 +51768,34 @@
   },
   "discography": [
    {
+    "title": "TO US",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/54/654/15054654_20261021173012_500.jpg",
+    "releaseDate": "2026.11.02",
+    "trackCount": 3,
+    "titleTrack": "내 이름을 불러줘",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "WE UP",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "내 이름을 불러줘",
+      "isTitle": true
+     },
+     {
+      "no": 3,
+      "title": "heavy",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15054654"
+   },
+   {
     "title": "hey! hey! (Chinese ver.)",
     "type": "싱글",
     "isMain": true,
@@ -93172,6 +93200,24 @@
    "namu": "https://namu.wiki/w/트레저(아이돌)"
   },
   "discography": [
+   {
+    "title": "SHOCK",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/13/956/15113956_20261102094928_500.jpg",
+    "releaseDate": "2026.11.02",
+    "trackCount": 1,
+    "titleTrack": "SHOCK",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "SHOCK",
+      "isTitle": true
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15113956"
+   },
    {
     "title": "4th MINI ALBUM [NEW WAV]",
     "type": "미니 4집",
@@ -226870,6 +226916,49 @@
    "namu": "https://namu.wiki/w/xikers"
   },
   "discography": [
+   {
+    "title": "ROUTE ZERO : The CALLING",
+    "type": "미니",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/06/092/15106092_20261030150210_500.jpg",
+    "releaseDate": "2026.11.02",
+    "trackCount": 6,
+    "titleTrack": "DIENAMITE",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "DIENAMITE",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "Go",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "Mask off",
+      "isTitle": false
+     },
+     {
+      "no": 4,
+      "title": "One",
+      "isTitle": false
+     },
+     {
+      "no": 5,
+      "title": "DUMB",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "Sanctuary",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15106092"
+   },
    {
     "title": "Rhythm Check (같이 걸어가기)",
     "type": "싱글",

@@ -113889,6 +113889,129 @@
     },
     "discography": [
       {
+        "title": "2026 YANG YOSEOP LIVE 〈잔상 (Fade In)〉",
+        "type": "라이브",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/06/612/15106612_20261030171050_500.jpg",
+        "releaseDate": "2026.11.02",
+        "trackCount": 22,
+        "titleTrack": "밤의 밤을 지나 (Dear My) - Live",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "FADE IN (INTRO)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "밤의 밤을 지나 (Dear My) - Live",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "위로 - Live",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "별 - Live",
+            "isTitle": true
+          },
+          {
+            "no": 5,
+            "title": "그대는 모르죠 - Live",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "척 - Live",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "매일 밤 - Live",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "Moonlight - Live",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "떠나지 마요 - Live",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "네가 없는 곳 - Live",
+            "isTitle": true
+          },
+          {
+            "no": 1,
+            "title": "Moonlit Mirage - Live",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Body & Soul - Live",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "느려도 괜찮아 (SLOW LUV) - Live",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "BRAIN - Live",
+            "isTitle": true
+          },
+          {
+            "no": 5,
+            "title": "카페인 - Live",
+            "isTitle": true
+          },
+          {
+            "no": 6,
+            "title": "꽃샘 - Live",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "나만 - Live",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "It′s You - Live",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "옅어져 가 (Fade Away) - Live",
+            "isTitle": true
+          },
+          {
+            "no": 10,
+            "title": "Look At Me Now - Live",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "오늘만큼은 (Shine) - Live",
+            "isTitle": false
+          },
+          {
+            "no": 12,
+            "title": "LOVE DAY (with B2UTY & LIGHT) - Live",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15106612"
+      },
+      {
         "title": "Unloved Echo",
         "type": "미니 3집",
         "releaseDate": "2026.02.09",
@@ -229400,6 +229523,24 @@
     },
     "id": "a1024",
     "discography": [
+      {
+        "title": "Highway (Korean Ver.)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/02/325/15102325_20261029171840_500.jpg",
+        "releaseDate": "2026.11.02",
+        "trackCount": 1,
+        "titleTrack": "Highway (Korean Ver.)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Highway (Korean Ver.)",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15102325"
+      },
       {
         "title": "Us (Korean Ver.)",
         "type": "싱글",
