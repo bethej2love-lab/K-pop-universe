@@ -113,6 +113,7 @@ function load(){
     F(/^function _m2DebutBlocks\(/m,'_m2DebutBlocks');
   }
   F(/^function _stripProgramNames\(/m,'_stripProgramNames'); // 프로그램명 제거(2026-09-30)
+  if(/^function _m2KoreaSingsPerformer\(/m.test(adminSrc))F(/^function _m2KoreaSingsPerformer\(/m,'_m2KoreaSingsPerformer');
   F(/^function _m2ParseTitle\(/m,'_m2ParseTitle');
   // 원곡 해석기 v2(2026-08-30) — 있으면 싣는다
   if(/^function _coverResolve\(/m.test(adminSrc)){

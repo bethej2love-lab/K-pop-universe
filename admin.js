@@ -8680,7 +8680,38 @@ function _stripProgramNames(t){
     // 퀸덤퍼즐의 '퍼즐'은 그룹 퍼즐(PUZZLE)이 아니다(2026-10-26) — 퀸덤 계열 판정이 남도록 '퀸덤'만 남긴다
     .replace(/퀸덤\s*퍼즐/g,'퀸덤').replace(/queendom\s*puzzle/gi,'QUEENDOM');
 }
+// KBS 정규 클립의 참가자 이름은 아이돌 신원 증거가 아니다(2026-11-02).
+// '동작 아이들!', '제주의 장원영!'은 소개말, '타잔/엄지 척'은 곡명이다.
+// 실제 프로그램 괄호만 대상으로 삼아 팬 직캠·아이돌 특집·자체 패러디는 기존 매처에 맡긴다.
+function _m2KoreaSingsPerformer(rawTitle){
+  const s=String(rawTitle||'');
+  const show=/[\[【]\s*전국\s*노래자랑(?:\s*\/\s*Korea\s*Sings)?\s*[\]】]/i.exec(s);
+  if(!show)return null;
+  const head=(s.slice(0,show.index).trim()||s.slice(show.index+show[0].length)).split(/[|｜]/)[0];
+  const role=/\s*(?:씨|양|군|님)\s*의\s*/.exec(head);
+  // 형식을 모르면 제목을 근거로 확정하지 않고, 기존 매처가 후보를 찾은 경우에만 보류한다.
+  const lead=role?head.slice(0,role.index):head;
+  const performer=lead.split(/[!！]/).pop().trim();
+  return{title:performer.replace(/^초대\s*가수\s*/,''),structured:!!role,guest:/^초대\s*가수\s*/.test(performer)};
+}
 function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
+  const _ks=_m2KoreaSingsPerformer(rawTitle);
+  if(_ks){
+    // 프로그램 괄호·소개말·곡명을 뺀 출연자 구간으로 한 번만 재진입한다.
+    // selfGko는 재검증 때 저장된 오태그일 수도 있어 신원 보증으로 쓰지 않는다.
+    const r=_m2ParseTitle(_ks.title,undefined,strict,publishedAt);
+    if(!r)return null;
+    const tu=_ks.title.toUpperCase();
+    const groups=[r.primaryGroup,...r.withGroups].filter(g=>{
+      const d=GROUPS[g];
+      return _ks.structured&&d&&[g,d.en,...(d.altNames||[])].filter(t=>t&&t.length>=2)
+        .some(t=>_atmTextHasGroupName(tu,t))&&(_ks.guest||(r.membersByGroup[g]||[]).length>0);
+    });
+    // 이름만 같은 일반 참가자/초대가수는 기존 미지 그룹 보류 형식으로 보존한다.
+    // 솔로 이름만 있는 실제 출연도 신원 확인 전 보류하며 수동 태그를 덮어쓰지 않는다.
+    if(!groups.length)return{primaryGroup:null,withGroups:[],membersByGroup:{},confidence:'none',hold:true,holdReason:'korea-sings-identity'};
+    return{...r,primaryGroup:groups[0],withGroups:groups.slice(1),membersByGroup:Object.fromEntries(groups.map(g=>[g,r.membersByGroup[g]||[]]))};
+  }
   const _trace=[];
   // "(원곡: X)"/"[Dance Cover]"/"(BTS 커버)"류 절은 매칭 전에 먼저 제거한다 — 이 절 안의 이름은 실제
   // 출연자가 아니라 커버 대상(원곡자)이라, 그대로 두면 group_ko/with_members가 원곡자 쪽으로 잘못
