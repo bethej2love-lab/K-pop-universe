@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-11-02 (Claude Code — This Week 소식: 접기 전 종류 섞기·2열 짝수·조회수 어제+오늘)
+- **[완료·배포] [app.js _renderNewsList·_pairNewsBy·_appendNewsItems·_appendNewsRow(plain)·_collectWeekNews] [tests/feed-dailynews.test.js]** 사용자 "더보기 전까지 뮤비만 — 1위·조회수 섞여야 / 더보기 후 가로·세로 홀수면 오른쪽 빈칸". ① 접기 전 8칸을 1위(결방 포함)→MV·티저→조회수 순으로 하나씩 돌아가며 고름(점수순만 쓰면 MV 80-2×일이 2일 지난 1위·조회수≈45를 이겨 MV만 남았다) ② 2열 칸(가로 소식·쇼츠)은 홀수면 다음 소식에서 같은 모양을 끌어와 짝수로, 끌어올 게 없으면 남는 하나는 작은 썸네일 한 줄(plain)로 — 더보기 전·후 모두(_pairNewsShorts→_pairNewsBy 일반화) ③ 조회수 소식이 0개였던 원인: crossed_at=오늘(UTC)만 → 한국 아침엔 당일 수집 전이라 늘 0(실측 하루 ~180건·당일 0). 어제+오늘·limit 600으로. 실데이터 390px: 접기 전 MV3·조회수3·1위3, 2열 칸 4·2·18·2 전부 짝수, 남는 1개는 한 줄. For You 내 최애 소식도 같은 렌더.
+
 ## 2026-11-02 (Codex — 검수69차·전국노래자랑 동명이인 수집 방어)
 - **[진행중] [admin.js·tools/matcher_harness.cjs·tests/매칭 회귀]** 사용자 제보 아이들/유민2행의 수동 무관 처리를 보존하며 전국노래자랑 제목의 일반 참가자·곡명·동명이인 자동 연결을 검수한다. 아이돌 실제 출연/자체 콘텐츠를 일괄 차단하지 않는 프로그램 문맥 보완을 분리 worktree에서 준비. Claude가 작업 중인 공유 app.js·CSS는 편집하지 않으며 운영 DB 쓰기/일괄 정정 없음.
 
