@@ -1134,7 +1134,7 @@ async function buildUniverse(){
   // 일관됨(검색·b-side 폴백 분기가 이 플래그를 봄).
   // 데이터 JSON 캐시버스터 — tools/bump_cache_version.mjs가 groups/artists/connections 내용 해시로 자동
   // 갱신한다(손으로 고치지 말 것, css/js의 ?v=와 같은 방식).
-  const _DATA_VER='20261101-e4a51bf7';
+  const _DATA_VER='20261102-e4a51bf7';
   // ⚠️ 데이터 JSON에도 **캐시버스터를 붙인다**(_DATA_VER, 2026-09-03). `cache:'no-cache'`는 브라우저에게
   // "재검증하라"는 힌트일 뿐이라 **중간 프록시/CDN이 들고 있는 사본은 못 뚫는다.** 실제 사고:
   // artists.json을 고쳐 배포했는데(서버엔 반영 확인됨) 강력 새로고침을 두 번 해도 어드민 도구가 계속
@@ -13594,7 +13594,7 @@ function _renderSongVideoTabs(){
       mb.querySelector('.lbl').textContent=st.member||(_ko?'멤버':'Member');
       mb.addEventListener('click',e=>{
         e.stopPropagation();
-        if(st.member){st.member=null;_renderSongVideoTabs();return;}
+        if(st.member&&e.target.closest('.x')){st.member=null;_renderSongVideoTabs();return;} // ✕만 해제, 이름은 다시 고르기(카드 ♪ 곡과 같게)
         const items=[..._memCnt.entries()].sort((a,b)=>b[1]-a[1]).map(([m,n])=>({key:m,label:m,n}));
         _openPickSheet(_ko?'멤버로 보기':'Filter by member',_ko?'멤버가 태그된 영상이 아직 없어요':'No member-tagged videos yet',Promise.resolve(items),k=>{if(_songVid!==st)return;st.member=k;_renderSongVideoTabs();});
       });
@@ -21618,7 +21618,8 @@ function _setFeedCardThumb(item,thumbUrl){
   // 쇼츠 카드는 썸네일 뒤에 블러 배경을 깔아 좌우 여백을 채움(그룹/멤버 카드 .gc-ch-thumb-bg와 동일, 2026-08-22)
   // ⚠️ 배경 이미지는 미리 깔지 않는다(2026-10-22, 사용자 "쇼츠 썸네일이 뿌옜다가 팍 좋아진다") — 세로 원본을 받는 동안 이 블러 배경이
   //    셔머 대신 보여 "흐린 썸네일"로 읽혔다. _mountShortThumb가 실제로 뜬 이미지로 채운다(셔머는 그때까지 유지).
-  if(thumbUrl&&isShort&&!wrap.querySelector('.feed-card-thumb-bg')){const bg=document.createElement('div');bg.className='feed-card-thumb-bg';wrap.insertBefore(bg,wrap.firstChild);}
+  // 블러 배경은 전체폭 쇼츠(틀이 9:16이 아니라 좌우가 빔)만 — 2열 쇼츠는 틀이 9:16이라 앞 그림이 다 덮어 안 보이는데, 카드마다 blur(16px) 레이어를 하나 더 들게 해 아이폰이 쇼츠를 저해상도로 그렸다(2026-11-02).
+  if(thumbUrl&&isShort&&item.classList.contains('feed-wide')&&!wrap.querySelector('.feed-card-thumb-bg')){const bg=document.createElement('div');bg.className='feed-card-thumb-bg';wrap.insertBefore(bg,wrap.firstChild);}
   if(!thumbUrl){
     const sh=wrap.querySelector('.feed-card-shimmer');
     if(sh){wrap.innerHTML='<div class="feed-card-icon-fallback">'+(sh.dataset.icon||'🎵')+'</div>';}
@@ -21854,7 +21855,7 @@ function _renderFeedListFacet(ctx){
         b.querySelector('.lbl').textContent=lbl(cur);
         b.addEventListener('click',e=>{
           e.stopPropagation();
-          if(on){run(f,allOpt.v);return;}
+          if(on&&e.target.closest('.x')){run(f,allOpt.v);return;} // ✕만 해제, 이름은 다시 고르기(카드 ♪ 곡과 같게)
           const items=f.options.filter(o=>o!==allOpt).map(o=>({key:o.v,label:lbl(o),n:o.n,alt:[o.ko,o.en,o.v].filter(Boolean).join(' ')}));
           _openPickSheet(f.pickTitle||(ko?'누구 영상 볼까요':'Show videos of'),ko?'고를 수 있는 팀이 없어요':'Nothing to pick',Promise.resolve(items),k=>run(f,k));
         });
@@ -27306,12 +27307,13 @@ function _makeChVidController(contId){
         songBtn.classList.toggle('on',!!state.songKey);
         songBtn.innerHTML='<span class="ic">♪</span><span class="lbl"></span><span class="x">'+(state.songKey?'✕':'▾')+'</span>';
         songBtn.querySelector('.lbl').textContent=state.songKey?(state.songLabel||state.songKey.split(':').pop()):(currentLang==='ko'?'곡':'Song');
-        songBtn.setAttribute('aria-label',state.songKey?(currentLang==='ko'?'곡 고르기 해제':'Clear song'):(currentLang==='ko'?'곡으로 보기':'Filter by song'));
+        songBtn.setAttribute('aria-label',state.songKey?(currentLang==='ko'?'다른 곡 고르기':'Change song'):(currentLang==='ko'?'곡으로 보기':'Filter by song'));
       };
       _paint();
       songBtn.addEventListener('click',e=>{
         e.stopPropagation();
-        if(state.songKey){state.songKey=null;state.songLabel=null;state.offset=0;_paint();load(ko,true);return;} // 고른 상태에서 누르면 해제(✕)
+        // 고른 상태: ✕만 해제, 곡 이름을 누르면 목록을 다시 열어 다른 곡으로 바꾼다(2026-11-02 사용자 — 이름까지 해제되면 다시 고르려고 두 번 눌러야 했다)
+        if(state.songKey&&e.target.closest('.x')){state.songKey=null;state.songLabel=null;state.offset=0;_paint();load(ko,true);return;}
         _openVidSongSheet(ko,state.memberKo,state.histKos,(key,label)=>{
           if(state.ko!==ko)return;
           state.songKey=key;state.songLabel=label;state.offset=0;_paint();load(ko,true);
@@ -29148,7 +29150,7 @@ function _updateAdminUI(){
 // 옛 버전을 계속 서빙해서 고친 코드가 반영 안 되는 것처럼 보이는 사고가 남(2026-08-18, HTML 엔티티 정리
 // 버튼 타임아웃 재수정 후에도 계속 재현된다는 제보로 발견). admin.js 내용을 바꿀 때마다 이 버전 문자열도
 // 같이 올릴 것(sw.js의 CACHE_VERSION과 같은 수동 관리 방식).
-const _ADMIN_JS_VER='20261101-337ff8f7';
+const _ADMIN_JS_VER='20261102-337ff8f7';
 function _loadAdminScript(){
   if(!_isAdmin()||document.getElementById('admin-js-script'))return;
   const s=document.createElement('script');

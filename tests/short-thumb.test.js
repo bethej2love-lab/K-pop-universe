@@ -142,6 +142,12 @@ need(/\.feed-card\.is-short \.feed-card-thumb\{[^}]*object-fit:cover/.test(css),
   const ctx3 = { setTimeout: () => {}, out: res, last: null };
   ctx3.Image = class { constructor() { ctx3.last = this; } };
   vm.runInNewContext(probe + ';_probeAspect("y").then(r=>out.push("y:"+r));last.naturalWidth=1280;last.naturalHeight=720;last.onload();', ctx3);
+  // 아이폰 합성 레이어 폭증 방지(2026-11-02, 6번째 재발 "발견 탭 쇼츠 모자이크·뿌옇다 짠") — 카드 수백 장이 각자 레이어를 들면
+  // 사파리가 썸네일을 저해상도로 그린다. 크롬 모바일 실측 레이어 374 → 51.
+  const fcRule = (css.match(/.feed-card{[^}]*}/) || [''])[0];
+  need(/feed-card-appear[^;]*backwards/.test(fcRule) && !/feed-card-appear[^;]*(both|forwards)/.test(fcRule), '.feed-card 등장 애니메이션 fill=backwards(끝난 뒤 transform이 남지 않음)');
+  need(!/.feed-card-thumb-wrap .feed-news-badge{[^}]*backdrop-filter/.test(css), '썸네일 위 배지에 backdrop-filter 없음');
+  need(html.includes("isShort&&item.classList.contains('feed-wide')&&!wrap.querySelector('.feed-card-thumb-bg')"), '피드 쇼츠 블러 배경은 전체폭 쇼츠에만');
   setTimeout(() => {
     need(res.includes('unknown'), '120×90 플레이스홀더 → unknown(쇼츠를 가로로 강등하지 않음)');
     need(res.includes('y:landscape'), '실제 가로 원본 → landscape(진짜 가로는 강등)');
