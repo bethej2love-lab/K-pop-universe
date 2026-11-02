@@ -5126,7 +5126,7 @@ const _LIVE_EXCLUDE=['엠카드림','비하인드','behind','생일 라이브','
 //    스키마가 바뀌면 or(is.null, not.cs)로 감싸야 한다.
 const _STAGE_EXCLUDE_FORMATS=['안무영상'];
 function _applyLiveExclude(q,opts){
-  q=q.not('title','ilike','%[live]%');
+  q=q.not('title_norm','ilike','%[live]%');
   for(const k of _LIVE_EXCLUDE)q=q.not('title_norm','ilike',`*${k}*`);
   q=q.not('title_norm','ilike','*시즌*ep.*');
   if(!(opts&&opts.includeChoreo)){
@@ -23028,7 +23028,7 @@ function _collectWeekNews(){
       sb.from('music_show_wins').select('*').gte('win_date',sevenDaysAgo).lte('win_date',today).order('win_date',{ascending:false}).order('show',{ascending:true}).then(r=>r,()=>({data:[]})),
       sb.from(_YT_TABLE).select('id,title,thumb,is_short,group_ko,content_flag,published_at,source_tier'+_durCol())
         .gte('published_at',sevenDaysAgo).lt('published_at',tomorrow)
-        .or('title.ilike.%m/v%,title.ilike.%[mv]%,title.ilike.% mv%,title.ilike.%mv %,title.ilike.%music video%,title.ilike.%뮤직비디오%,title.ilike.%뮤비%,title.ilike.%리릭%,title.ilike.%lyric%,title.ilike.%티저%,title.ilike.%teaser%,title.ilike.%예고편%')
+        .or('title_norm.ilike.%m/v%,title_norm.ilike.%[mv]%,title_norm.ilike.% mv%,title_norm.ilike.%mv %,title_norm.ilike.%music video%,title_norm.ilike.%뮤직비디오%,title_norm.ilike.%뮤비%,title_norm.ilike.%리릭%,title_norm.ilike.%lyric%,title_norm.ilike.%티저%,title_norm.ilike.%teaser%,title_norm.ilike.%예고편%')
         // ⚠️ .not(in)만 쓰면 content_flag가 비어 있는(NULL) 행 — 즉 거의 전부 — 이 같이 빠진다(SQL NULL NOT IN = 거짓).
         //    그래서 이번 주 MV·티저 소식이 줄곧 0개였다(2026-10-16 실측 44→0). NULL을 명시적으로 살린다.
         .or('content_flag.is.null,content_flag.not.in.("보류","hidden")')
@@ -23046,7 +23046,7 @@ function _collectWeekNews(){
       // 무관한 옛 영상이 딸려왔다. 이제 **1위 기간 안에 올라온, 제목에 1위류 단어가 있는 영상**만 후보로 받는다(그룹·분류 무관).
         sb.from(_YT_TABLE).select('id,title,thumb,group_ko,is_short,published_at')
             .gte('published_at',new Date(new Date(sevenDaysAgo).getTime()-86400000).toISOString().slice(0,10)).lt('published_at',tomorrow)
-            .or('title.ilike.%앵콜%,title.ilike.%encore%,title.ilike.%1위%,title.ilike.%챔피언송%,title.ilike.%no.1%')
+            .or('title_norm.ilike.%앵콜%,title_norm.ilike.%encore%,title_norm.ilike.%1위%,title_norm.ilike.%챔피언송%,title_norm.ilike.%no.1%')
             .or('content_flag.is.null,content_flag.not.in.("보류","hidden")')
             .limit(400).then(r=>r,()=>({data:[]}))
     ]);
@@ -23709,8 +23709,10 @@ const _FANCAM_BRAND_RE=/직캠|팬캠|페이스캠|풀캠|세로캠|얼빡|입�
 // ⚠️ 이게 없으면 TOP 100이 안 찬다 — 실측: 연도별 live 상위 1,000행 중 직캠은 41~53개뿐(서버가 1,000행에서
 //    자르는데 그 대부분이 무대 영상이라 직캠이 밀려남). 필터를 걸면 같은 1,000행 중 550~660개가 직캠이라
 //    100자리가 그룹 48팀으로 채워진다.
+// ⚠️ 영상 제목 검색은 title이 아니라 **title_norm**(= NFKC+소문자, 전 행 일치 확인)에 건다(2026-11-02 Disk IO 경고). 검색 색인(trgm)이 title_norm에만 있어
+//    title ilike는 매번 표 전체(567MB)를 읽었다 — 축제 무대 TOP 쿼리 실측 20초 → 1.5초. 새 제목 필터도 title_norm으로.
 const _FANCAM_TITLE_ILIKE=['직캠','팬캠','페이스캠','풀캠','세로캠','얼빡','입덕직캠','팔로우캠','원픽캠','보컬캠','최애캠','단독샷','안방','fancam','facecam','fullcam','fan cam','pick cam'];
-const _fancamTitleOr=()=>_FANCAM_TITLE_ILIKE.map(w=>`title.ilike.*${w}*`).join(',');
+const _fancamTitleOr=()=>_FANCAM_TITLE_ILIKE.map(w=>`title_norm.ilike.*${w}*`).join(',');
 // "직캠으로 볼 영상"의 넓은 판정 — 탐색·필터용(2026-10-01). 위 브랜드에 더해 달리캠·DOLLY STAGE·별도녹화처럼
 // 한 사람/한 팀을 따로 찍은 포맷까지 직캠으로 본다. 필요한 곳은 이걸 가져다 쓴다(Surf 직캠 렌즈 등).
 // ⚠️ **개인 직캠 차트(_isSoloCam)는 이걸 쓰지 않는다** — 차트 기준은 순위 스냅샷 크론(kpopuniverse-share
@@ -23719,7 +23721,7 @@ const _fancamTitleOr=()=>_FANCAM_TITLE_ILIKE.map(w=>`title.ilike.*${w}*`).join('
 const _FANCAM_EXTRA_RE=/달리캠|DOLLY\s*(STAGE|CAM)|별도\s*녹화/i;
 const _FANCAM_EXTRA_ILIKE=['달리캠','dolly','별도녹화','별도 녹화'];
 function _isFancamLike(t){return _FANCAM_BRAND_RE.test(t||'')||_FANCAM_EXTRA_RE.test(t||'');}
-const _surfCamOr=()=>[..._FANCAM_TITLE_ILIKE,..._FANCAM_EXTRA_ILIKE].map(w=>`title.ilike.*${w}*`).join(',');
+const _surfCamOr=()=>[..._FANCAM_TITLE_ILIKE,..._FANCAM_EXTRA_ILIKE].map(w=>`title_norm.ilike.*${w}*`).join(',');
 // 브랜드 낱말은 있는데 **직캠 영상이 아닌** 홍보물 — 실측(직캠 판정 912건)에서 두 유형이 뚜렷했다.
 //  ① 방송사 채널의 서술형 홍보 쇼츠: "니키야 나 울어 #MPD직캠 #엔하이픈 #shorts", "BTS 지민이 진짜
 //     월클인 이유 #MPD직캠 #shorts" — 브랜드가 **괄호 밖 해시태그로만** 붙는다. 진짜 직캠은
@@ -24353,11 +24355,11 @@ const _CHART_AXES={
 const _CHART_SEL_DEFAULT={gender:'all',gen:'all',era:'all',fest:'all',festS:'all'};
 // 방송사 → 제목 조건. 연말 '전체'의 여름판 제외만 서버 OR로 표현이 안 돼 postFilter로 뺀다.
 const _FEST_Q={
-  all:q=>q.or('title.ilike.*가요대축제*,title.ilike.*가요대제전*,title.ilike.*가요대전*'),
-  kbs:q=>q.ilike('title','%가요대축제%'),
-  mbc:q=>q.ilike('title','%가요대제전%'),
-  sbs:q=>q.ilike('title','%가요대전%').not('title','ilike','%썸머%'),
-  summer:q=>q.ilike('title','%가요대전%').ilike('title','%썸머%'),
+  all:q=>q.or('title_norm.ilike.*가요대축제*,title_norm.ilike.*가요대제전*,title_norm.ilike.*가요대전*'),
+  kbs:q=>q.ilike('title_norm','%가요대축제%'),
+  mbc:q=>q.ilike('title_norm','%가요대제전%'),
+  sbs:q=>q.ilike('title_norm','%가요대전%').not('title_norm','ilike','%썸머%'),
+  summer:q=>q.ilike('title_norm','%가요대전%').ilike('title_norm','%썸머%'),
 };
 const _festNoSummer=v=>!/썸머/.test(v.title||'');
 // 성별·세대는 **그룹 집합**으로, 기간은 **발행일 하한**으로 번역된다. 둘 다 null이면 필터 없음.
@@ -24836,7 +24838,7 @@ function _bsideStagesFromVideos(vids){
 // 직캠/팬캠류로 서버에서 미리 좁힌다 — 인기 그룹은 영상이 1000개+라 그냥 조회수순으로 자르면 조회수 낮은
 // 수록곡 직캠이 잘려나가 매칭이 0에 가까워짐(실측). 곡을 따옴표로 표기하는 것도 이 직캠류라, 풀을 직캠류로
 // 좁히면 limit(PostgREST 서버 최대 ~1000행) 안에 그 그룹의 수록곡 직캠이 대부분 들어온다.
-const _BSIDE_CAM_OR='title.ilike.*직캠*,title.ilike.*fancam*,title.ilike.*팬캠*,title.ilike.*풀캠*,title.ilike.*facecam*,title.ilike.*페이스캠*,title.ilike.*fullcam*';
+const _BSIDE_CAM_OR='title_norm.ilike.*직캠*,title_norm.ilike.*fancam*,title_norm.ilike.*팬캠*,title_norm.ilike.*풀캠*,title_norm.ilike.*facecam*,title_norm.ilike.*페이스캠*,title_norm.ilike.*fullcam*';
 // 탐험 피드 카드의 둘째 줄(부제) — 순위/조회수는 **순위표인 카드에만** 붙인다.
 // "수록곡 무대 모음"·"커버곡 모음"처럼 모아보기 성격 카드는 내부적으로 조회수 순으로 뽑더라도
 // 랭킹으로 읽히면 안 되므로 부제를 비운다(2026-08-26, 사용자 재요청 — 이전에 같은 요청을 받고도

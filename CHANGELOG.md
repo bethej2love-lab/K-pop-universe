@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-11-02 (Claude Code — Disk IO 2차: 제목 검색 title→title_norm·오리지널 선반 색인)
+- **[완료·배포] [app.js 영상 제목 ilike 11곳] [sql/ytv_idol_long_published_index_2026-11-02.sql — DB 실행 완료]** 1차(파도타기)에 이어 사용자 "지금 바로 고치자". ① 영상 제목 검색(축제 무대·이번 주 MV·1위 영상·직캠 칩/파도타기 직캠·수록곡 직캠·라이브 제외)이 title ilike — 검색 색인(trgm)은 title_norm에만 있어 매번 표 전체(567MB)를 읽었다(pg_stat #3·#4 각 10GB·20초). title_norm=NFKC+소문자이며 전 행 일치(불일치 0)·결과 동일(가요대 3종 5,700=5,700) 확인 후 전부 title_norm으로(kpop_events 1곳 제외). 축제 쿼리 20초→1.5초. ② 오리지널 콘텐츠 선반(idol·가로 최신순 200) 부분 색인: 3.97초→0.033초. ③ 커버곡 모음·차트 TOP은 지금 실측 0.03~1.1초 — 통계상 평균 8~10초는 예산 소진 뒤 디스크 읽기 제한(throttle)으로 전부 느려진 영향으로 판단, 손대지 않음. pg_stat_statements 리셋(내일 재측정 기준점). chart-snapshot-parity·live-tab·program-collection·song-video·feed-dailynews·syntax 통과.
+
 ## 2026-11-02 (Claude Code — Supabase Disk IO 예산 경고: 파도타기 쿼리)
 - **[완료·배포] [app.js _surfFetch runEach] [sql/ytv_group_viewcount_index_2026-11-02.sql — DB 실행 완료]** Supabase "Disk IO Budget 소진" 메일(10-21에 이어 2번째). pg_stat_statements(11-01 05:43 UTC 리셋 후 19시간) 디스크 읽기 상위: ① 파도타기 "의외의 연결(weak)·함께 좋아하는(cofav)" — 그룹 여러 개를 or로 묶고 조회수순 60~80개 → 그 그룹 영상 전부 읽고 정렬(EXPLAIN: 4그룹 27,000행·15,525블록·4.2초), #0·#2·#7 합쳐 약 30GB·평균 5~20초. 수정: 인덱스 (group_ko, view_count desc nulls last) 추가 + 조건 하나씩 따로 N개 받아 합쳐 N개(결과 동일) → 그룹당 63블록·0.002초. ② 남은 큰 것(미조치): 발견 커버곡 모음 _fetchCoverPool(14GB·277회·평균 8.5초 — 표본 12그룹으론 65ms라 재현 못함, 그룹 수가 큰 경우로 추정), 제목 ilike 차트(축제·1위 등 #3·#4 각 10GB·20초), 외부채널 is_short 최신순(#5 6GB). 다음 경고 오면 이 순서로. surf 테스트 통과.
 
