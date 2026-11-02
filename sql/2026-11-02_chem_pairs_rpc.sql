@@ -1,5 +1,5 @@
 -- 조합(Chemistry) 정적 페이지용 — 같은 그룹 멤버 2명이 함께 나온 영상 쌍 집계 + 쌍마다 대표 영상 12개(2026-11-02, Claude Code가 실행함)
--- build_group_pages.js(주 1회 CI)가 한 번 부른다. 앱(app.js _openChem)과 같은 기준: 무관·보류·숨김 제외.
+-- build_group_pages.js(주 1회 CI)가 한 번 부른다. 앱(app.js _openChem)과 같은 기준: 무관·보류·숨김·개별출연 제외(개별출연은 2026-11-03 추가 — 각자 따로 나온 편집물이 쌍으로 세어졌음).
 -- 단체 영상(출연 태그 5명 이상)은 뺀다 — 그룹 전체 영상이 모든 멤버 쌍에 똑같이 붙어 "케미"가 흐려진다. 2~4명 영상만 센다.
 -- 다른 그룹끼리(with_members)는 아직 안 낸다 — 검색엔진에 색인되는 페이지라 게스트 태그 오탐(예: 동명이인)이 정리된 뒤에(관계 페이지 원칙과 같음).
 create or replace function public.get_chem_pairs(p_min int default 10)
@@ -8,7 +8,7 @@ with v as (
   select id, title, thumb, category, is_short, view_count, published_at, group_ko, members,
          coalesce(array_length(members,1),0) + coalesce(array_length(with_members,1),0) as np
   from yt_channel_videos
-  where (content_flag is null or content_flag not in ('무관','보류','hidden','기타'))
+  where (content_flag is null or content_flag not in ('무관','보류','hidden','기타','개별출연'))
     and group_ko is not null
     and coalesce(array_length(members,1),0) between 2 and 4
 ),

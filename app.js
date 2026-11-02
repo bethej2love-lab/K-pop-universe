@@ -14112,13 +14112,14 @@ function _chemHas(v,p){return (v.group_ko===p.group&&(v.members||[]).includes(p.
 function _chemNp(v){return (v.members||[]).length+(v.with_members||[]).length;}
 async function _chemFetch(people){
   const esc=s=>String(s).replace(/["\\]/g,'');
-  let q=sb.from(_YT_TABLE).select('id,title,thumb,category,is_short,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,published_at,view_count'+_durCol())
-    .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류').or('content_flag.is.null,content_flag.neq.hidden');
+  let q=sb.from(_YT_TABLE).select('id,title,thumb,category,is_short,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,published_at,view_count,content_flag'+_durCol())
+    .or('content_flag.is.null,content_flag.not.in.("무관","보류","hidden","개별출연")');
+  // 개별출연(각자 따로 나온 모음집·편집물)은 "함께 나온 영상"이 아니다 — 함께한 멤버 줄·연결 카드와 같은 기준(2026-11-03, 보아×최예나 Stage Mix가 ONLY US에 뜸).
   // 사람마다 .or() 한 번 = 사람끼리는 AND(전원), 한 사람 안에서는 "자기 그룹 출연 or 다른 그룹 게스트"
   people.forEach(p=>{q=q.or(`and(group_ko.eq.${_pgFilterVal(p.group)},members.cs.{"${esc(p.name)}"}),with_members.cs.{"${esc(p.name)}(${esc(p.group)})"}`);});
   const r=await _withTimeout(()=>q.limit(1500),15000);
   if(r.error||!Array.isArray(r.data))throw new Error('chem fetch');
-  return _filterBannedVideos(r.data).filter(v=>people.every(p=>_chemHas(v,p)))
+  return _filterBannedVideos(r.data).filter(v=>v.content_flag!=='개별출연'&&people.every(p=>_chemHas(v,p)))
     .sort((a,b)=>(b.view_count||0)-(a.view_count||0));
 }
 function _chemSong(v){
