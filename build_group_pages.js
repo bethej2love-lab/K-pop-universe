@@ -1858,6 +1858,79 @@ function writeSimple(rel, html, priority) {
   fs.writeFileSync(path.join(ROOT, rel, 'index.html'), html);
   pages.push({ loc: `${SITE}/${rel}`, priority });
 }
+// ── 조합(Chemistry) 페이지(2026-11-02, 사용자 "조합 페이지 보류할 필요가 있나?" → 바로) ─────────────────────────────
+// chem/{그룹}/{A}-{B}/ — 같은 그룹 멤버 둘이 함께 나온 영상(단체 영상 제외, 2~4명 출연)이 CHEM_MIN개 이상인 쌍. "성현 건호 케미"·"투샷" 검색 착지.
+// 집계는 DB 함수 get_chem_pairs(sql/2026-11-02_chem_pairs_rpc.sql)가 한 번에(쌍 + 쌍마다 대표 영상 12개, 쇼츠 포함) — 앱 Chemistry와 같은 기준.
+// ⚠️ 다른 그룹끼리는 아직 안 낸다 — 색인되는 페이지라 게스트 태그(with_members) 오탐이 정리된 뒤에(관계 페이지 원칙, 실측 예: 동명이인 쌍).
+// 미리보기 = 대표 영상 썸네일, 사람이 #chem=…로 들어오면 앱의 Chemistry로 넘긴다(CHEM_FWD). 앱이 공유 주소를 고르도록 chem/index.json도 쓴다.
+const CHEM_MIN = 10;
+const CHEM_FWD = `<script>(function(){var h=location.hash;if(/(^#|&)chem=/.test(h))location.replace('${SITE}/'+h);})();</script>`;
+function chemPagePath(g, a, b, lang) {
+  if (lang === 'en') return `en/chem/${slugify(groups[g].en || g, g)}/${slugify(a.name.en || a.name.ko, a.name.ko)}-${slugify(b.name.en || b.name.ko, b.name.ko)}/`;
+  return `chem/${urlSafeKo(g)}/${relSeg(a.name.ko, 'ko')}-${relSeg(b.name.ko, 'ko')}/`;
+}
+async function buildChemPages() {
+  const res = await fetch(`${SB_URL}/rest/v1/rpc/get_chem_pairs`, { method: 'POST', headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_min: CHEM_MIN }), signal: AbortSignal.timeout(60000) });
+  if (!res.ok) throw new Error(`get_chem_pairs ${res.status}`);
+  const raw = await res.json();
+  if (!Array.isArray(raw)) throw new Error('get_chem_pairs 응답이 배열이 아님');
+  // 그룹 멤버 이름 → 아티스트(활동명·예전 이름 별칭 포함)
+  const byName = new Map();
+  for (const g of groupKos) membersOf(g).forEach(a => { byName.set(g + '|' + a.name.ko, a); const ge = (a.groups || []).find(x => x && x.ko === g); if (ge && ge.name) byName.set(g + '|' + ge.name, a); });
+  const pairs = [];
+  for (const p of raw) {
+    if (!groups[p.g]) continue;
+    let a = byName.get(p.g + '|' + p.a), b = byName.get(p.g + '|' + p.b);
+    if (!a || !b || a === b) continue;
+    if (a.name.ko.localeCompare(b.name.ko, 'ko') > 0) [a, b] = [b, a]; // 주소 순서 고정
+    pairs.push({ g: p.g, a, b, n: p.n, only: p.only2, v: p.v || [] });
+  }
+  // 멤버별 조합(다른 조합 링크용)
+  const byMember = new Map();
+  pairs.forEach(p => [p.a, p.b].forEach(m => { if (!byMember.has(m)) byMember.set(m, []); byMember.get(m).push(p); }));
+  const index = {};
+  const nm = (a, isEn) => isEn ? (a.name.en || a.name.ko) : (a.displayName || a.name.ko);
+  for (const p of pairs) {
+    index[`${p.g}|${p.a.name.ko}|${p.b.name.ko}`] = chemPagePath(p.g, p.a, p.b, 'ko');
+    for (const lang of ['ko', 'en']) {
+      const isEn = lang === 'en';
+      const rel = chemPagePath(p.g, p.a, p.b, lang), altRel = chemPagePath(p.g, p.a, p.b, isEn ? 'ko' : 'en');
+      const A = nm(p.a, isEn), B = nm(p.b, isEn), G = isEn ? (groups[p.g].en || p.g) : p.g;
+      const debut = String(groups[p.g].debut || '').slice(0, 7);
+      const ya = String(p.a.bday || '').slice(0, 4), yb = String(p.b.bday || '').slice(0, 4);
+      const facts = [];
+      if (debut) facts.push([isEn ? 'Group' : '사이', isEn ? `${G}, debuted ${debut}` : `${debut} ${G} 데뷔`]);
+      if (/^\d{4}$/.test(ya) && /^\d{4}$/.test(yb)) {
+        if (ya === yb) facts.push([isEn ? 'Age' : '나이', isEn ? `Both born in ${ya}` : `${ya.slice(2)}라인 — ${ya}년생`]);
+        else if (Math.abs(+ya - +yb) === 1) facts.push([isEn ? 'Age' : '나이', isEn ? `Born ${Math.min(+ya, +yb)}–${Math.max(+ya, +yb)}` : `${Math.min(+ya, +yb)}·${Math.max(+ya, +yb)}년생`]);
+      }
+      facts.push([isEn ? 'Together' : '같이 나옴', isEn ? `${p.n} videos · ${p.only} just the two` : `${p.n}개 · 둘만 ${p.only}개`]);
+      const title = isEn ? `${A} & ${B} (${G}) — ${p.n} Videos Together | K-POP UNIVERSE` : `${A} ${B} 케미 - ${G} ${A}·${B} 함께 나온 영상 ${p.n}개 | K-POP UNIVERSE`;
+      const h1 = `${A} × ${B}`;
+      const desc = isEn ? `${p.n} videos with ${G}'s ${A} and ${B} together (group videos excluded), ${p.only} with just the two — fancams, stages, shorts and variety.`
+        : `${G} ${A}·${B} 함께 나온 영상 ${p.n}개(단체 영상 제외), 둘만 나온 영상 ${p.only}개 — 직캠·무대·쇼츠·예능을 조회수 순으로.`;
+      const face = a => { const img = memberFaceUrl(a, p.g); return `<a class="face" href="${SITE}/${memberPagePath(a, lang)}"><span class="face-img">${img ? `<img src="${img}" alt="${escHtml(nm(a, isEn))}" loading="lazy">` : ''}</span><span class="face-nm">${escHtml(nm(a, isEn))}</span></a>`; };
+      const cards = p.v.map(v => `<a class="card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">${escHtml(v.t || '')}</span><span class="card-y">${[v.pa ? String(v.pa).replace(/-/g, '.') : '', v.vc ? (isEn ? `${SEO.fmtViews(v.vc, true)} views` : `조회수 ${SEO.fmtViews(v.vc, false)}`) : ''].filter(Boolean).join(' · ')}</span></a>`).join('');
+      const others = [...new Set([...(byMember.get(p.a) || []), ...(byMember.get(p.b) || [])])].filter(o => o !== p).sort((x, y) => y.n - x.n).slice(0, 8);
+      const chemHash = `#chem=${encodeURIComponent(`${p.a.name.ko}~${p.g},${p.b.name.ko}~${p.g}`)}`;
+      const body = `  <div class="faces" style="justify-content:center;align-items:center">${face(p.a)}<span aria-hidden="true" style="color:#FFB0D0;font-size:18px;margin:0 4px 22px">✦</span>${face(p.b)}</div>
+  <ul class="chips" style="margin-top:14px">${facts.map(([k, v]) => `<li><b>${escHtml(k)}</b>${escHtml(v)}</li>`).join('')}</ul>
+  <p><a class="cta" href="${SITE}/${chemHash}">${isEn ? `All videos of ${A} & ${B} in the app →` : `앱에서 ${A}·${B} 모든 영상 보기 →`}</a></p>
+  <h2 class="rank-h">${isEn ? 'Top videos together' : '함께 나온 영상'}</h2>
+  <div class="grid">${cards}</div>
+  <p class="note"><a href="${SITE}/${groupPagePath(p.g, lang)}">${escHtml(G)}</a> · <a href="${SITE}/${memberPagePath(p.a, lang)}">${escHtml(A)}</a> · <a href="${SITE}/${memberPagePath(p.b, lang)}">${escHtml(B)}</a></p>
+${others.length ? `  <h2 class="rank-h">${isEn ? 'More pairs' : '다른 조합'}</h2>
+  <ul class="chips">${others.map(o => `<li><a href="${SITE}/${chemPagePath(o.g, o.a, o.b, lang)}">${escHtml(nm(o.a, isEn))} × ${escHtml(nm(o.b, isEn))}</a> ${o.n}</li>`).join('')}</ul>` : ''}`;
+      const top = p.v[0];
+      let html = simplePageHtml({ lang, selfUrl: `${SITE}/${rel}`, altUrl: `${SITE}/${altRel}`, koUrl: `${SITE}/${chemPagePath(p.g, p.a, p.b, 'ko')}`, title, h1, desc, body, kind: 'chem', ogImage: top ? `https://i.ytimg.com/vi/${top.id}/hqdefault.jpg` : null });
+      html = html.replace('<meta charset="UTF-8">', '<meta charset="UTF-8">\n' + CHEM_FWD);
+      writeSimple(rel, html, '0.4');
+    }
+  }
+  fs.mkdirSync(path.join(ROOT, 'chem'), { recursive: true });
+  fs.writeFileSync(path.join(ROOT, 'chem', 'index.json'), JSON.stringify(index));
+  console.log(`조합 페이지 ${pairs.length}쌍 × 2개 언어 (함께 나온 영상 ${CHEM_MIN}개 이상, 같은 그룹)`);
+}
 function buildAgencyPages() {
   const by = {};
   groupKos.forEach(g => String(groups[g].co || '').split('/').map(s => s.trim()).filter(Boolean).forEach(a => {
@@ -1946,6 +2019,7 @@ function buildWinsPages() {
   buildYearPages();
   buildAgencyPages();
   buildWinsPages();
+  try { await buildChemPages(); } catch (e) { console.warn(`⚠️ 조합 페이지 건너뜀(기존 페이지 유지): ${e.message}`); }
   console.log(`곡 페이지 ${songPageCount}곡 · 멤버×곡 페이지 ${memberSongPageCount}개 × 2개 언어`);
   let relPages = [], hubLinks = { ko: [], en: [] };
   try {

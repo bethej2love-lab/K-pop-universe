@@ -14236,11 +14236,18 @@ async function _openChem(people,opt){
     _openPickSheet(ko?'사람 추가':'Add someone',ko?'함께 나온 사람이 아직 없어요':'No one else yet',
       Promise.resolve(costars.slice(0,40).map(c=>({key:c.name+'~'+c.group,label:c.name+(c.group!==people[0].group&&GROUPS[c.group]?` (${_gLabelKo(c.group)})`:''),n:c.n,alt:[c.name,c.group].join(' ')}))),
       k=>{const i=k.indexOf('~');add({name:k.slice(0,i),group:k.slice(i+1)});});};}
-  // 공유 — #chem=이름~그룹,… (조합 패널 #combo와 같은 꼴)
+  // 공유 — #chem=이름~그룹,… (조합 패널 #combo와 같은 꼴). 같은 그룹 2명이고 조합 정적 페이지(chem/…)가 있으면 그 주소 + #chem=…
+  // (2026-11-02 — 블로그·메신저는 # 뒤를 무시해 사이트 기본 그림만 떴다. 조합 페이지는 대표 영상 썸네일을 주고, 첫 줄 CHEM_FWD가 사람을 앱으로 넘긴다).
+  // iOS는 await 뒤 navigator.share를 막아서 목록(chem/index.json)은 화면을 열 때 미리 받아 둔다.
+  _chemIdxLoad();
   const sh=document.getElementById('feed-list-share-btn');
   if(sh){sh.style.display='';sh.onclick=e=>{e.stopPropagation();
-    _shareCurrentView(location.origin+location.pathname+'#chem='+encodeURIComponent(key),`${sub} · Chemistry`,'chem');};}
+    let url=location.origin+location.pathname+'#chem='+encodeURIComponent(key);
+    if(people.length===2&&people[0].group===people[1].group&&_chemIdx){const[x,y]=people.map(p=>p.name).sort((p,q)=>p.localeCompare(q,'ko'));const rel=_chemIdx[people[0].group+'|'+x+'|'+y];if(rel)url=location.origin+'/'+rel+'#chem='+encodeURIComponent(key);}
+    _shareCurrentView(url,`${sub} · Chemistry`,'chem');};}
 }
+let _chemIdx=null,_chemIdxP=null; // 조합 정적 페이지 목록(build_group_pages.js가 씀) — {"그룹|이름|이름": "chem/…/"}
+function _chemIdxLoad(){return _chemIdxP||(_chemIdxP=fetch('chem/index.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).then(j=>{_chemIdx=j||{};return _chemIdx;}).catch(()=>{_chemIdxP=null;return {};}));}
 function _chemFromHash(param){
   const people=String(param).split(',').map(x=>{const i=x.indexOf('~');return i>0?{name:x.slice(0,i).trim(),group:x.slice(i+1).trim()}:null;}).filter(Boolean);
   if(people.length>=2)_openChem(people);
