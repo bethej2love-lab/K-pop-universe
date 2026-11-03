@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-11-03 (Claude Code — 비슷한 사이트 참고: 음방 회차 페이지·삭제 요청 링크)
+- **[신규] 음방 회차 페이지 show/{방송}/{날짜}/ (+en/show/{slug}/)** — 사용자가 비교 요청한 zzalbox('엠카 10/22 직캠 69개' 회차 묶음)·sourceskpop(직캠/풀캠/페이스캠 구분) 참고. 방송사 공식 채널 9개(KBSKpop·kbsworldtv·MnetM2·Mnet·MBCkpop·SBSKPOP·SBSKPOP_ZOOM·ALLTHEKPOP·thekpop) 영상만, 회차 날짜는 제목 날짜+방송 요일 일치 → EP 번호 → 올린 날 3일 안 직전 방송일 순. 팀별로 무대·앵콜·풀캠·직캠·페이스캠, 1위 표시, 이전/다음 회차, 방송별 목록·음방 허브(show/). 1위 연도 페이지(wins/)의 날짜가 회차 페이지로 이어진다. 로컬 실측 41회차(데이터가 8월 말부터라 아직 적음) — 영상 8개 미만 회차는 안 냄. 사이트맵 sitemaps/shows.xml. 해체 그룹명으로 잡힌 솔로(워너원→김재환)는 사람 이름으로.
+- **[DB] 부분 인덱스 idx_ytv_music_show_ch** (sql/music_show_episode_index_2026-11-03.sql, 실행 완료) — source_handle·published_ts 인덱스가 없어 큰 채널 조회가 시간 초과였다.
+- **[개선] 정적 페이지 전부 맨 아래에 '사이트 소개 · 삭제 요청'(about.html) 링크** — 권리 침해 신고 창구는 about·terms에 이미 있었는데 4만 장 착지 페이지에서 닿을 길이 없었다.
+- rebuild-seo-pages.yml 커밋 목록에 show en/show 추가. ⏳ 회차 페이지는 주 1회(월) 재빌드라 최신 회차가 최대 일주일 늦게 생긴다 — 필요하면 음방 1위 수집 후 매일 빌드로.
+
 ## 2026-11-03 (Codex — 한국어 질문에 영어 성현 직캠 페이지 추천 진단)
 - **[완료·원인 확인] [build_group_pages.js·en/g/cortis/seonghyeon/index.html]** 사용자가 받은 주소는 /en/g/cortis/seonghyeon/?utm_source=chatgpt.com. 원래부터 영어 정적 페이지이며 utm 파라미터가 언어를 바꾼 것이 아니다. 한국어판은 /g/코르티스/성현/. 최신 origin/main13e5003efd의 양쪽 HTML에서 각 언어별 title/canonical·ko/en hreflang·한국어 x-default를 확인했다. 영어판을 한국어판으로 잘못 리다이렉트하는 코드 버그가 아니라 외부 답변이 영어 URL을 선택한 사례다. 검색 도구에서도 영어판이 검색되는 것은 확인했지만 한국어판이 검색엔진에서 제외됐다고 단정할 근거는 없다.
 - **[이슈·접근성 개선 후보] [build_group_pages.js]** ‘한국어로 보기’가 멤버 페이지 맨 아래에 있어 영어 링크로 유입되면 전환을 놓치기 쉽다. 한국어/English 전환을 상단에도 노출하는 소규모 개선이 유효. 다만 사이트는 외부 챗봇의 질문 언어를 전달받지 못하므로 ‘한국어 질문이면 반드시 한국어 링크 추천’을 코드로 보장할 수 없다. 강제 언어 이동이나 canonical 영어→한국어 통합은 이번에 적용하지 않았다.
