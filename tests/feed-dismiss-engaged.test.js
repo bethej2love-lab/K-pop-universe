@@ -47,7 +47,8 @@ need(!/_OB_KEY/.test(bodyOf('_obEngaged')),
 need(/function closePanels\(opt\)\{/.test(src), 'closePanels가 opt를 받는다');
 need(/if\(!\(opt&&opt\.keepFeed\)\)_closeFeedOverlay\(\);/.test(src),
   'closePanels는 keepFeed일 때만 탐험 패널을 남긴다');
-need(/closePanels\(\{keepFeed:_feedEngaged\}\);_dismissOnboardHint\(\);/.test(src),
+// 2026-11-03 웹(무대 폭)은 배경 탭해도 나침반을 닫지 않고 함께 둔다 — keepFeed에 그 조건이 OR로 붙는다
+need(/closePanels\(\{keepFeed:_feedEngaged(\|\|\(!isMob\(\)&&_stageWide\(\)\))?\}\);_dismissOnboardHint\(\);/.test(src),
   '배경 탭(window pointerdown)만 keepFeed를 넘긴다');
 // 명시적으로 닫는 경로(탭바 홈·랜덤탐험 등)는 인수 없이 부르므로 동작이 그대로여야 한다
 const bare = (src.match(/closePanels\(\)/g) || []).length;

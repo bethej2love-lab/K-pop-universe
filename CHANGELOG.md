@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-11-04 (Claude Code — 어제 DB 과부하 원인 정리 + Data CI 복구)
+- **[실측] 오늘 아침 DB는 정상** — 가벼운 REST 0.1~0.2초, 레드벨벳 카드 영상 쿼리 0.03~0.6초(어제 저녁 30~57초). 어제 느린 건 Disk IO 예산 소진 스로틀. pg_stat_statements(11-03 04:55 UTC 리셋 이후) 상위는 앱 사용자 아닌 **anon=빌드 스크립트**: seo_extra 그룹별 인기 영상(2,556회·총 5,443초 — 지금 돌리면 8ms, 평균 2.1초는 스로틀 탓)·그룹별 영상 전량 id 페이징(812회·6.2GB 읽기).
+- **[원인·수정] [.github/workflows/rebuild-seo-pages.yml]** 11-03 디스코 정정 커밋 수십 개 → SEO 전체 빌드가 11번 시작·7번 중간 취소(cancel-in-progress). 취소돼도 그 전까지 DB는 이미 읽은 뒤라 IO만 날렸다. push 트리거는 **15분 대기 후 빌드** — 그 사이 새 push가 오면 DB 건드리기 전에 취소돼 마지막 하나만 돈다. 주간 스케줄·수동 실행은 대기 없음.
+- **[DB] 중복 인덱스 6개 제거** (sql/drop_duplicate_indexes_2026-11-04.sql 실행 완료, 되돌리기 _undo.sql) — 정의가 완전히 같은 쌍둥이 중 덜 쓰이는 쪽: 제목 trgm 164MB(67회, 쌍둥이 6,438회)·group_date(0회)·members·content_formats·with_members·with_groups GIN. 조회수 갱신(하루 2만여 건)마다 전부 다시 쓰던 쓰기 IO 감소, 37→31개 확인.
+- **[CI] Data CI 11-03 18연속 빨간불 = 낡은 테스트 2개** — compass-observer-init(가짜 document에 documentElement 없음 → --fw-w 폭 변수 도입 뒤 깨짐, 고정물에 추가)·feed-dismiss-engaged(웹은 배경 탭에도 나침반 유지 `||(!isMob()&&_stageWide())`를 허용). 로컬 20/0·8/8, syntax 통과.
+- ⏳ 남은 것: 앱 첫 화면 세 경로(카드 영상·For You·검색 프로필 원) 체감 속도는 DB 정상 상태에서 다시 실측 필요. 레드벨벳 '곡으로 보기' 지연, compass-width '보던 자리' 1건 기준선 비교는 그대로.
+
 ## 2026-11-03 (Codex — 사용자 합의: Claude Code/Codex 역할 분담과 통합 반영)
 - **[사용자 합의·운영] [CHANGELOG.md]** 동시 작업 자체는 유지하되 ‘같은 파일 동시 수정 + 각자 main에 수시 push’로 생기는 충돌·재검사·SEO 빌드 취소/재시작을 줄인다. 기본 역할은 **Claude Code=기능 개발/코드 수정, Codex=실제 화면·데이터 검수/오류 재현/회귀·배포 결과 확인**. 필요하면 역할 교대 가능하며, 둘 다 수정할 때는 먼저 담당 파일·범위를 나눈다. 사용자가 매번 두 에이전트 사이에서 중계하는 방식을 기본으로 삼지 않는다.
 - **[작업 시작] [브랜치·worktree]** 각자 최신 origin/main을 fetch해 별도 브랜치/worktree에서 준비하고 CHANGELOG에 ‘담당자·주제·담당 파일·현재 상태’를 한 줄로 공유. 다른 담당자가 진행 중인 같은 파일/기능은 직접 수정하지 않고 근거와 수정 후보를 인계한다. 상대의 미커밋 변경을 reset/stash/덮어쓰지 않는다. 별도 브랜치는 준비 공간이며 둘 다 독립적으로 main에 바로 올리라는 뜻이 아니다.

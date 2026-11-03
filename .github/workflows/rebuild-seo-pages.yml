@@ -45,6 +45,14 @@
     rebuild:
       runs-on: ubuntu-latest
       steps:
+        # push로 시작한 건 15분 기다렸다 빌드한다(2026-11-04). 디스코 정정 커밋이 수십 개 연달아 올라간 11-03,
+        # 이 빌드가 11번 시작해 7번 중간 취소됐는데 취소 전까지 DB를 이미 잔뜩 읽어(그룹별 영상 전량·인기 영상)
+        # Disk IO 예산이 바닥나고 앱의 가벼운 요청까지 30~57초 걸렸다. 기다리는 동안 새 push가 오면
+        # cancel-in-progress로 이 실행은 DB를 건드리기 전에 취소되고, 마지막 push 하나만 실제로 빌드한다.
+        - name: 연속 push 모아서 한 번만 (15분 대기)
+          if: github.event_name == 'push'
+          run: sleep 900
+
         - uses: actions/checkout@v4
 
         - uses: actions/setup-node@v4

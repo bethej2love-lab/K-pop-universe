@@ -7,10 +7,10 @@ const ids=text=>[...text.matchAll(/\bid="([^"]+)"/g)].map(x=>x[1]);
 function fixture(ready='loading',wide=true){
  const nodes=new Map(),watchers=new Map(),events=new Map(),windowEvents=new Map(),observers=[],intervals=[];let viewportWide=wide;
  function node(id){const set=new Set();const el={id,querySelectorAll:()=>[],classList:{contains:k=>set.has(k),toggle(k,on){const before=set.has(k);on=on===undefined?!before:on;if(on)set.add(k);else set.delete(k);if(before!==on)for(const cb of watchers.get(id)||[])queueMicrotask(cb);return on;},add(k){this.toggle(k,true);},remove(k){this.toggle(k,false);}}};return el;}
- const document={readyState:ready,body:node('body'),getElementById:id=>nodes.get(id)||null,addEventListener:(type,cb,opts)=>{events.set(type,{cb,opts});}};
+ const css=new Map();const document={readyState:ready,body:node('body'),documentElement:{style:{getPropertyValue:k=>css.get(k)||'',setProperty:(k,v)=>css.set(k,v)}},getElementById:id=>nodes.get(id)||null,addEventListener:(type,cb,opts)=>{events.set(type,{cb,opts});}};
  const addNodes=text=>ids(text).forEach(id=>{if(!nodes.has(id))nodes.set(id,node(id));});
  addNodes(ready==='loading'?html.slice(0,scriptAt):html);
- const box={document,window:{addEventListener:(type,cb)=>windowEvents.set(type,cb)},_stageWide:()=>viewportWide,
+ const box={document,window:{innerWidth:1600,addEventListener:(type,cb)=>windowEvents.set(type,cb)},_stageWide:()=>viewportWide,
  MutationObserver:class{constructor(cb){this.cb=cb;this.seen=[];observers.push(this);}observe(el,opts){this.seen.push({id:el.id,opts});if(!watchers.has(el.id))watchers.set(el.id,[]);watchers.get(el.id).push(this.cb);}},
  setInterval:cb=>intervals.push(cb),requestAnimationFrame:cb=>cb()};
  vm.createContext(box);vm.runInContext(src.slice(start,end),box);
