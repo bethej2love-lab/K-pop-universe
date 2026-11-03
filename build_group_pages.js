@@ -39,6 +39,13 @@ const SITE = 'https://kpop-universe.kr';
 // 이 페이지의 미리보기(그 사람 썸네일)를 쓰고(예전 kpop-universe.kr/#… 는 늘 사이트 기본 그림), 사람은 바로 앱의 그 목록으로 넘어간다.
 const LIST_FWD = `<script>(function(){var h=location.hash;if(/(^#|&)vf=/.test(h))location.replace('${SITE}/'+h);})();</script>`;
 
+// 검색/AI 답변이 다른 언어 URL을 골라도 첫 화면에서 대응 언어로 이동할 수 있게 한다.
+// 경로는 각 템플릿의 altUrl을 재사용해 동명이인·곡·프로그램 문맥을 보존한다.
+function languageNav(isEn, altUrl) {
+  const target = isEn ? 'ko' : 'en';
+  return `<nav class="language-nav" aria-label="${isEn ? 'Language' : '언어 선택'}" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="${escHtml(altUrl)}" lang="${target}" hreflang="${target}" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">${isEn ? '한국어로 보기' : 'View in English'}</a></nav>`;
+}
+
 const groups = JSON.parse(fs.readFileSync(path.join(ROOT, 'groups.json'), 'utf8'));
 const artists = JSON.parse(fs.readFileSync(path.join(ROOT, 'artists.json'), 'utf8'));
 
@@ -456,6 +463,7 @@ ${LIST_FWD}
 </head>
 <body>
 <div class="wrap">
+  ${languageNav(isEn, altUrl)}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
   <a class="brand" href="${SITE}/${isEn ? 'en/g/' : 'g/'}" style="margin-left:10px;">${isEn ? 'All groups' : '그룹 전체'}</a>
   <h1>${escHtml(displayName)}</h1>
@@ -695,6 +703,7 @@ ${LIST_FWD}
 </head>
 <body>
 <div class="wrap">
+  ${languageNav(isEn, altUrl)}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
   <a class="brand" href="${SITE}/${isEn ? 'en/g/' : 'g/'}" style="margin-left:10px;">${isEn ? 'All groups' : '그룹 전체'}</a>
   <h1>${escHtml(displayName)}</h1>
@@ -898,6 +907,7 @@ function hubPageHtml(lang, relLinks) {
 </head>
 <body>
 <div class="wrap">
+  ${languageNav(isEn, altUrl)}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
   <a class="brand" href="${SITE}/${isEn ? 'en/g/' : 'g/'}" style="margin-left:10px;">${isEn ? 'All groups' : '그룹 전체'}</a>
   <h1>${isEn ? 'All Groups' : '그룹 전체 목록'}</h1>
@@ -1062,6 +1072,7 @@ function relPageHtml(o) {
 </head>
 <body>
 <div class="wrap">
+  ${languageNav(isEn, altUrl)}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
   <a class="brand" href="${SITE}/${isEn ? 'en/g/' : 'g/'}" style="margin-left:10px;">${isEn ? 'All groups' : '그룹 전체'}</a>
   <h1>${escHtml(h1)}</h1>
@@ -1473,6 +1484,7 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
 </head>
 <body>
 <div class="wrap">
+  ${languageNav(isEn, altUrl)}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
   ${top[0] ? `<a class="hero" href="https://www.youtube.com/watch?v=${top[0].id}" target="_blank" rel="noopener"><img src="${ogImage}" alt="${escHtml(top[0].title)}"><span class="play"></span><span class="hero-txt"><h1>${escHtml(h1)}</h1><span class="sub">${escHtml(sub)}</span></span></a>`
            : `<h1>${escHtml(h1)}</h1>`}
@@ -1572,6 +1584,7 @@ function buildRankPages() {
 </head>
 <body>
 <div class="wrap">
+  ${languageNav(isEn, altUrl)}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
   <h1 class="rank-h1">${escHtml(h1)}</h1>
   <p class="lead">${escHtml(isEn ? 'Individual idol fancams on YouTube, ranked by views. Updated weekly from the K-POP UNIVERSE archive.' : '유튜브에 올라온 아이돌 개인 직캠을 조회수 순으로 모았어요. K-POP UNIVERSE 아카이브에서 매주 갱신.')}</p>
@@ -1685,6 +1698,7 @@ function buildProgramPages() {
 </head>
 <body>
 <div class="wrap">
+  ${languageNav(isEn, altUrl)}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
   <h1 class="rank-h1">${escHtml(h1)}</h1>
   ${back}
@@ -1779,6 +1793,7 @@ function buildYearPages() {
 </head>
 <body>
 <div class="wrap">
+  ${languageNav(isEn, altUrl)}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
   <h1 class="rank-h1">${escHtml(h1)}</h1>
   <p class="lead">${escHtml(desc)}</p>
@@ -1842,6 +1857,7 @@ ${ogImage ? `<meta property="og:image" content="${ogImage}">\n<meta name="twitte
 </head>
 <body>
 <div class="wrap">
+  ${languageNav(isEn, altUrl)}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
   <h1 class="rank-h1">${escHtml(h1)}</h1>
   <p class="lead">${escHtml(desc)}</p>

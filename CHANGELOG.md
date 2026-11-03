@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-11-03 (Codex — 정적 페이지 상단 언어 전환)
+- **[완료] [build_group_pages.js]** 한국어 질문에 /en/g/cortis/seonghyeon/ 영어판이 추천된 사례 개선. 그룹·멤버·곡/멤버×곡·관계·순위·프로그램·연도·소속사 등 공통9개 템플릿 첫 화면에 languageNav 추가. ‘한국어로 보기’/‘View in English’, lang/hreflang 속성, 각 페이지 기존 altUrl을 재사용하므로 같은 인물·곡·프로그램 문맥을 유지. 최신 회차별 show/ 페이지도 simplePageHtml을 공유해 적용된다. 기존 canonical·언어별 경로·하단 전환 링크·앱 언어 설정 유지. utm_source는 영어 선택 원인이 아님.
+- **[완료·검증] [생성기/PC·모바일]** DB 조회/실제 생성물 덮어쓰기 없이 실제 생성기 함수로4,516페이지를 메모리 렌더해 상단 링크·대응 언어 URL·속성을 대조했고, 프로그램4페이지도 별도 정상 렌더. 성현 실제 정적 HTML에 같은 생성 함수 출력을 적용한 검수 미리보기에서 PC·390px 첫 화면 표시/가로 넘침 없음/클릭 시 배포 한국어 성현 페이지 정상 도착을 확인했다. 초기 syntax·validate 오류0/144경고·PC/모바일 smoke 통과. 최신 main d4e2700cab의 회차/유입 통계 변경을 보존한 뒤 syntax·validate 오류0/144경고·PC/모바일 smoke도 모두 재통과. 시각효과/캐시버스터 변경 없음.
+- **[이슈·실제 Search Console 확인] [g/코르티스/성현/]** 11/3 한국어 URL 검사 결과 ‘Google에는 아직 알려지지 않은 URL’/색인 미생성/감지된 참조 사이트맵 없음. 같은 URL 실제 테스트는12:29 KST ‘URL을 Google에 등록할 수 있음’·‘페이지 색인을 생성할 수 있음’. 접근/색인 허용은 정상이나 실제 색인은 아직 안 된 상태를 분리. Google의 상태를 ChatGPT/Bing 색인 상태나 영어판 선택 원인 전체로 단정하지 않음. 색인 생성 요청 버튼은 아직 누르지 않았다: 브라우저 도구 전환 후 Chrome 앱 접근 승인이 시간초과됨.
+- **⏳ 덜 된 일 [색인 요청/배포 확인]** Search Console의 https://kpop-universe.kr/ 속성 → URL 검사에 https://kpop-universe.kr/g/코르티스/성현/ → ‘색인 생성 요청’. CAPTCHA가 나오면 사용자가 직접 처리. 요청 접수≠색인 완료이며 추후 Google이 선택한 canonical/색인 상태 확인. 코드 반영 후 Rebuild static SEO pages 성공과 실제 영어 성현·곡·회차 페이지의 상단 전환 노출을 확인할 것. 외부 챗봇이 한국어 질문마다 반드시 한국어 URL을 고르도록 보장하는 변경은 아님.
+
 ## 2026-11-03 (Claude Code — 비슷한 사이트 참고: 음방 회차 페이지·삭제 요청 링크)
 - **[신규] 음방 회차 페이지 show/{방송}/{날짜}/ (+en/show/{slug}/)** — 사용자가 비교 요청한 zzalbox('엠카 10/22 직캠 69개' 회차 묶음)·sourceskpop(직캠/풀캠/페이스캠 구분) 참고. 방송사 공식 채널 9개(KBSKpop·kbsworldtv·MnetM2·Mnet·MBCkpop·SBSKPOP·SBSKPOP_ZOOM·ALLTHEKPOP·thekpop) 영상만, 회차 날짜는 제목 날짜+방송 요일 일치 → EP 번호 → 올린 날 3일 안 직전 방송일 순. 팀별로 무대·앵콜·풀캠·직캠·페이스캠, 1위 표시, 이전/다음 회차, 방송별 목록·음방 허브(show/). 1위 연도 페이지(wins/)의 날짜가 회차 페이지로 이어진다. 로컬 실측 41회차(데이터가 8월 말부터라 아직 적음) — 영상 8개 미만 회차는 안 냄. 사이트맵 sitemaps/shows.xml. 해체 그룹명으로 잡힌 솔로(워너원→김재환)는 사람 이름으로.
 - **[DB] 부분 인덱스 idx_ytv_music_show_ch** (sql/music_show_episode_index_2026-11-03.sql, 실행 완료) — source_handle·published_ts 인덱스가 없어 큰 채널 조회가 시간 초과였다.
