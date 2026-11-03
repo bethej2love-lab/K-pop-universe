@@ -10248,6 +10248,8 @@ function _openFromHash(){
   if(colId){_openCollectionFromHash(colId);return;}
   const comboParam=params.get('combo');
   if(comboParam){_comboFromHash(comboParam);return;} // 조합 패널 공유 링크(#combo=이름(그룹),…)
+  const showParam=params.get('show'); // 음방 회차(#show=인기가요~2026-11-01, 정적 회차 페이지의 앱 버튼)
+  if(showParam){const i=showParam.lastIndexOf('~');if(i>0){try{_gaEvent('deeplink_open',{target:'show'});}catch(e){}setTimeout(()=>_openShowEp(showParam.slice(0,i),showParam.slice(i+1)),400);return;}}
   const chemParam=params.get('chem');
   if(chemParam){try{_gaEvent('deeplink_open',{target:'chem',ref:document.referrer?new URL(document.referrer).hostname:'(direct)'});}catch(e){}_chemFromHash(chemParam);return;} // Chemistry 공유 링크(#chem=이름~그룹,…)
   const gko=params.get('g'),mko=params.get('m');
@@ -22186,7 +22188,7 @@ function _renderFeedListFacet(ctx){
         const cur=f.options.find(o=>o.v===f.sel)||allOpt||f.options[0];
         const on=!!allOpt&&cur!==allOpt;
         const b=document.createElement('button');b.type='button';b.className='gc-vid-pick'+(on?' on':'');
-        b.innerHTML='<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="5.6" r="2.4"/><path d="M1.8 13.2c.5-2.3 2.2-3.6 4.2-3.6s3.7 1.3 4.2 3.6"/><circle cx="11.2" cy="6.2" r="1.9"/><path d="M10.6 9.7c1.7.1 3 1.2 3.5 3.1"/></svg><span class="lbl"></span><span class="x">'+(on?'✕':'▾')+'</span>';
+        b.innerHTML=(f.icon||'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="5.6" r="2.4"/><path d="M1.8 13.2c.5-2.3 2.2-3.6 4.2-3.6s3.7 1.3 4.2 3.6"/><circle cx="11.2" cy="6.2" r="1.9"/><path d="M10.6 9.7c1.7.1 3 1.2 3.5 3.1"/></svg>')+'<span class="lbl"></span><span class="x">'+(on?'✕':'▾')+'</span>';
         b.querySelector('.lbl').textContent=lbl(cur);
         b.addEventListener('click',e=>{
           e.stopPropagation();
@@ -23557,6 +23559,76 @@ function _collectWeekNews(){
   })();
   return _weekNewsP;
 }
+// ── 음방 회차 화면(2026-11-03, 사용자 "최근 건 빨리 가능해야… 우리 쓸만한 레이아웃 많잖아") ─────────────────────────────
+// 정적 회차 페이지(show/…)는 검색 입구일 뿐이고, 앱에선 DB를 바로 읽어 영상 목록 화면(_openFeedListOverlay)에 팀별 섹션·종류 탭·회차 고르기로 띄운다
+// → 방송 당일 직캠이 수집되는 대로 보인다. 묶는 규칙은 shared.js _msGroupEpisodes(정적 페이지와 같은 함수).
+// 입구: 발견 탭 This Week의 '음방 회차' 칩 줄(_appendShowEpChips) · #show=방송~날짜 링크(정적 회차 페이지의 앱 버튼).
+let _showEpReq=0;const _showEpCache=new Map();
+async function _openShowEp(showKey,date,opt){
+  const s=_MS_SHOWS.find(x=>x.key===showKey);
+  if(!s||!sb||!/^\d{4}-\d{2}-\d{2}$/.test(date||''))return;
+  const o=opt||{},ko=currentLang==='ko',myReq=++_showEpReq,ck=showKey+'|'+date;
+  const sName=ko?s.key:s.en,title=`${sName} ${date.replace(/-/g,'.')}`;
+  let got=_showEpCache.get(ck);
+  if(!got||Date.now()-got.at>3*60e3){ // 방송 직후엔 직캠이 계속 들어오므로 3분만 기억
+    _openFeedListOverlay(title,ko?'불러오는 중…':'Loading…',[],{});
+    const t0=new Date(Date.parse(date)-864e5).toISOString(),t1=new Date(Date.parse(date)+5*864e5).toISOString();
+    const [vr,wr]=await Promise.all([
+      sb.from(_YT_TABLE).select('id,title,thumb,is_short,group_ko,members,with_members,with_groups,published_at,published_ts,view_count,source_handle,content_flag'+_durCol())
+        .in('source_handle',s.h).eq('is_short',false).gte('published_ts',t0).lt('published_ts',t1)
+        .or('content_flag.is.null,content_flag.not.in.("보류","hidden","무관")').limit(1000).then(r=>r,()=>({error:1})),
+      sb.from('music_show_wins').select('group_ko,member_ko,song_title').eq('show',showKey).eq('win_date',date).then(r=>r,()=>({data:[]})),
+    ]);
+    if(myReq!==_showEpReq)return;
+    if(vr.error){document.getElementById('feed-list-sub').textContent=ko?'불러오지 못했어요. 잠시 후 다시 열어 주세요.':'Couldn’t load. Try again shortly.';return;}
+    const e=_msGroupEpisodes(_filterBannedVideos(vr.data||[]),1).find(x=>x.s.key===showKey&&x.date===date);
+    got={at:Date.now(),list:e?e.list:[],wins:wr.data||[]};
+    _showEpCache.set(ck,got);
+  }
+  const list=got.list,winG=new Set(got.wins.map(w=>w.group_ko).filter(Boolean));
+  const kindOf=r=>r.kind==='facecam'?'fancam':r.kind; // 탭은 직캠·페이스캠을 한 칸으로
+  const cnt={};list.forEach(r=>{const k=kindOf(r);cnt[k]=(cnt[k]||0)+1;});
+  const kind=o.kind&&cnt[o.kind]?o.kind:'all';
+  const KL={stage:['무대','Stages'],encore:['앵콜','Encore'],fullcam:['풀캠','Full cam'],fancam:['직캠','Fancams']};
+  const kindFacet={key:'mskind',sel:kind,options:[{v:'all',ko:'전체',en:'All',n:list.length},...['stage','encore','fullcam','fancam'].filter(k=>cnt[k]).map(k=>({v:k,ko:KL[k][0],en:KL[k][1],n:cnt[k]}))],
+    onPick:v=>_openShowEp(showKey,date,{kind:v})};
+  // 회차 고르기 — 최근 12주(방송 요일 기준)
+  const last=_msLastAir(s),eps=[];
+  for(let i=0;i<12&&last;i++)eps.push(new Date(Date.parse(last)-i*7*864e5).toISOString().slice(0,10));
+  if(eps.indexOf(date)<0)eps.push(date);
+  const epFacet={key:'msep',ui:'pick',pickTitle:ko?'어느 회차 볼까요':'Pick an episode',icon:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="3.2" width="12" height="10.6" rx="2"/><path d="M2 6.6h12M5.2 1.8v2.6M10.8 1.8v2.6"/></svg>',sel:date,options:eps.map(d=>({v:d,ko:`${s.key} ${d.slice(5).replace('-','.')}`,en:`${s.en} ${d.slice(5).replace('-','/')}`})),onPick:v=>_openShowEp(showKey,v,{kind})};
+  const teams=new Map();
+  list.filter(r=>kind==='all'||kindOf(r)===kind).forEach(r=>{const g=r.v.group_ko;if(!teams.has(g))teams.set(g,[]);teams.get(g).push(r);});
+  const tl=[...teams.entries()].sort((x,y)=>winG.has(y[0])-winG.has(x[0])||y[1].length-x[1].length);
+  const vidUrl=v=>`https://www.youtube.com/watch?v=${v.id}`;
+  const toSong=r=>({..._rowTags(r.v),t:r.v.title,u:vidUrl(r.v),thumb:r.v.thumb,vc:r.v.view_count,dur:r.v.duration_sec,pa:r.v.published_at?.slice(0,10),_apiId:r.v.id,_apiGroupKo:r.v.group_ko});
+  const who=(g,l)=>{ // 해체 팀 이름으로 잡힌 솔로(워너원 → 김재환)는 사람 이름
+    const ms=new Set(l.flatMap(r=>r.v.members||[]));
+    if(GROUPS[g]&&GROUPS[g].active===false&&ms.size===1){const n=[...ms][0];const a=ARTISTS.find(x=>x.name&&x.name.ko===n&&_artistGroups(x).some(y=>y.ko===g));return a?_dispName(a):n;}
+    return ko?g:((GROUPS[g]&&GROUPS[g].en)||g);
+  };
+  const sections=tl.map(([g,l])=>({title:who(g,l)+(winG.has(g)?(ko?' 🏆 1위':' 🏆 No.1'):''),songs:l.sort((a,b)=>_MS_KIND_ORDER.indexOf(a.kind)-_MS_KIND_ORDER.indexOf(b.kind)||(b.v.view_count||0)-(a.v.view_count||0)).map(toSong)}));
+  const sub=list.length?(ko?`${teams.size}팀 · 영상 ${sections.reduce((n,x)=>n+x.songs.length,0)}개`:`${teams.size} acts · ${sections.reduce((n,x)=>n+x.songs.length,0)} videos`):(ko?'아직 수집된 영상이 없어요':'No videos collected yet');
+  _openFeedListOverlay(title,sub,sections.flatMap(x=>x.songs),{sections,facets:list.length?[epFacet,kindFacet]:[epFacet]});
+}
+// 발견 탭 This Week 맨 위 한 줄 — 지난 7일 방송된 음방 회차 칩(최근 방송 먼저). 누르면 그 회차 화면.
+function _appendShowEpChips(list){
+  if(!list||typeof _MS_SHOWS==='undefined')return;
+  const ko=currentLang==='ko',now=Date.now();
+  // 오늘 방송은 저녁(KST 20시) 전엔 아직 영상이 없으니 지난주 회차로
+  const kst=new Date(now+9*3600e3),today=kst.toISOString().slice(0,10),early=kst.getUTCHours()<20;
+  const eps=_MS_SHOWS.map(s=>{let d=_msLastAir(s,now);if(d===today&&early)d=new Date(Date.parse(d)-7*864e5).toISOString().slice(0,10);return{s,d};}).filter(x=>x.d).sort((a,b)=>a.d<b.d?1:-1);
+  if(!eps.length)return;
+  const row=document.createElement('div');row.className='fl-facet-row fl-tabs hscroll-drag feed-showep-row';
+  eps.forEach(({s,d})=>{
+    const b=document.createElement('button');b.type='button';b.className='gc-ch-filter';
+    b.textContent=`${ko?s.short:s.en} ${d.slice(5).replace('-',ko?'.':'/')}`;
+    b.addEventListener('click',e=>{e.stopPropagation();_openShowEp(s.key,d);});
+    row.appendChild(b);
+  });
+  list.insertBefore(row,list.firstChild);
+  _enableDragScroll(row);
+}
 let _showBreaksP=null;
 function _ensureShowBreaks(){return _showBreaksP||(_showBreaksP=fetch('music_show_breaks.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).catch(()=>({})));}
 async function _buildFeedDailyNews(){
@@ -23584,6 +23656,7 @@ async function _buildFeedDailyNews(){
       });
     }catch(e){}
     _renderNewsList(list,items);
+    try{_appendShowEpChips(list);}catch(e){}
     window._discoverNewsItems=items;
     _updateNewsWidgets(items);
   }catch(e){console.warn('[feed] 오늘의 소식 선반 실패 — 이 선반만 빠집니다',e);}

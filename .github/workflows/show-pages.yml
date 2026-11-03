@@ -1,0 +1,49 @@
+name: Music show episode pages
+
+# 음방 회차 정적 페이지(show/, en/show/)만 매시간 다시 만든다(2026-11-03, 사용자 "최근 회차는 빨리 가능해야").
+# 전체 정적 페이지 빌드(rebuild-seo-pages.yml)는 4만 장·20분·주 1회라 최신 회차가 최대 일주일 늦게 생겼다.
+# 이 작업은 SHOWS_ONLY=1 모드로 1위 기록 + 방송사 채널 영상만 받아 회차 페이지와 sitemaps/shows.xml만 쓴다(로컬 실측 14초).
+# 바뀐 페이지가 없으면 커밋하지 않는다. 앱 안 회차 화면(#show=…)은 DB를 바로 읽으므로 이 주기와 무관하게 즉시 보인다.
+
+on:
+  schedule:
+    - cron: '25 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: show-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # 생성물은 언제든 다시 만들 수 있으니 경합 시 최신 main으로 리셋하고 다시 빌드한다(rebuild-seo-pages.yml과 같은 방식)
+          for i in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            SHOWS_ONLY=1 node build_group_pages.js || exit 1
+            git add -A -- $(for p in show en/show sitemaps/shows.xml; do [ -e "$p" ] && echo "$p"; done)
+            if git diff --cached --quiet; then
+              echo "바뀐 회차 페이지 없음"
+              exit 0
+            fi
+            git commit -m "chore: 음방 회차 페이지 갱신 (auto)"
+            if git push; then echo "push 성공 (시도 $i)"; exit 0; fi
+            echo "push 경합 — 최신 main 위에서 다시 ($i/3)"
+            sleep $((i * 5))
+          done
+          echo "3회 재시도 후에도 push 실패"
+          exit 1

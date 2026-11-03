@@ -681,3 +681,65 @@ function _parodyRefCueFor(title,gko){
   const g=(typeof GROUPS!=='undefined'&&GROUPS)?GROUPS[gko]:null;
   return _parodyRefCue(title,[gko,g&&g.en]);
 }
+
+// ── 음방 회차 묶기(2026-11-03) — 앱 회차 화면(_openShowEp)과 정적 회차 페이지(build_group_pages.js buildShowPages)가 같이 쓴다 ──
+// 출처는 방송사 공식 채널만. 회차 날짜 = ①제목 속 날짜(261030·2026.10.22·20261025)가 그 방송 요일과 맞을 때 ②없으면 같은 방송 다른 영상에서
+// 배운 'EP.번호→날짜' ③그래도 없으면 올린 날(KST) 기준 3일 안의 직전 방송일. 요일이 안 맞는 날짜(해외 특집·연말 무대)는 뺀다.
+// ⚠️ 채널을 늘리면 DB 부분 인덱스 idx_ytv_music_show_ch의 WHERE도 같이 바꿀 것(sql/music_show_episode_index_2026-11-03.sql) — 없으면 큰 채널이 시간 초과.
+const _MS_SHOWS = [
+  { key: '뮤직뱅크', en: 'Music Bank', short: '뮤뱅', slug: 'music-bank', dow: 5, h: ['KBSKpop', 'kbsworldtv'], re: /뮤직뱅크|music\s*bank/i },
+  { key: '엠카운트다운', en: 'M Countdown', short: '엠카', slug: 'm-countdown', dow: 4, h: ['MnetM2', 'Mnet'], re: /mcountdown|엠카운트다운|m\s*countdown/i },
+  { key: '쇼음악중심', en: 'Show! Music Core', short: '음중', slug: 'music-core', dow: 6, h: ['MBCkpop'], re: /음악중심|음중|music\s*core/i },
+  { key: '인기가요', en: 'Inkigayo', short: '인가', slug: 'inkigayo', dow: 0, h: ['SBSKPOP', 'SBSKPOP_ZOOM'], re: /inkigayo|인기가요|SBS\s*\d{6}\s*방송/i, no: /매점|live\s+in|in\s+tokyo|in\s+japan/i },
+  { key: '쇼챔피언', en: 'Show Champion', short: '쇼챔', slug: 'show-champion', dow: 3, h: ['ALLTHEKPOP'], re: /show\s*champion|쇼챔/i },
+  { key: '더쇼', en: 'THE SHOW', short: '더쇼', slug: 'the-show', dow: 2, h: ['thekpop'], re: /the\s*show|더쇼/i },
+];
+const _MS_KIND_LABEL = { stage: ['무대', 'Stage'], encore: ['앵콜', 'Encore'], fullcam: ['풀캠', 'Full cam'], fancam: ['직캠', 'Fancam'], facecam: ['페이스캠', 'Face cam'] };
+const _MS_KIND_ORDER = ['stage', 'encore', 'fullcam', 'fancam', 'facecam'];
+function _msDateOf(t) {
+  const m = t.match(/20(2\d)[.\-\/](\d{1,2})[.\-\/](\d{1,2})/) || t.match(/(?<!\d)20(2\d)(\d{2})(\d{2})(?!\d)/) || t.match(/(?<!\d)(2\d)(\d{2})(\d{2})(?!\d)/);
+  if (!m) return null; const mo = +m[2], d = +m[3]; if (mo < 1 || mo > 12 || d < 1 || d > 31) return null;
+  return '20' + m[1] + '-' + String(mo).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+}
+// 영상 종류 — null이면 회차 목록에서 뺀다(인터뷰·챌린지·비하인드 등)
+function _msKind(t) {
+  if (/페이스캠|face\s*cam/i.test(t)) return 'facecam';
+  if (/풀캠|full\s*cam/i.test(t)) return 'fullcam';
+  if (/직캠|fan\s*cam|focus/i.test(t)) return 'fancam';
+  if (/앵콜|encore/i.test(t)) return 'encore';
+  if (/interview|인터뷰|behind|비하인드|challenge|챌린지|\.zip|#shorts|엔딩요정|MC석|코너|선공개|티저|teaser/i.test(t)) return null;
+  return 'stage';
+}
+// 그 방송의 가장 최근 방송일(오늘 포함, KST) — 앱의 '음방 회차' 칩용
+function _msLastAir(s, now) {
+  const k = new Date((now || Date.now()) + 9 * 3600e3);
+  for (let i = 0; i < 7; i++) { const t = new Date(k.getTime() - i * 864e5); if (t.getUTCDay() === s.dow) return t.toISOString().slice(0, 10); }
+  return null;
+}
+// vids: yt_channel_videos 행(title·source_handle·group_ko·published_ts 필요) → [{s,date,list:[{v,kind}]}] (날짜순)
+function _msGroupEpisodes(vids, minVids) {
+  const eps = {}, epNo = {}, rows = [];
+  for (const v of vids) {
+    if (!v || !v.group_ko || !v.title) continue;
+    const s = _MS_SHOWS.find(x => x.h.indexOf(v.source_handle) >= 0 && x.re.test(v.title) && !(x.no && x.no.test(v.title)));
+    if (!s) continue;
+    const kind = _msKind(v.title); if (!kind) continue;
+    const d = _msDateOf(v.title);
+    if (d && new Date(d + 'T00:00:00Z').getUTCDay() !== s.dow) continue;
+    const ep = (v.title.match(/EP\.?\s*(\d{3,4})/i) || [])[1];
+    if (d && ep) epNo[s.key + '|' + ep] = d;
+    rows.push({ v, s, kind, d, ep });
+  }
+  for (const r of rows) {
+    if (!r.d && r.ep) r.d = epNo[r.s.key + '|' + r.ep] || null;
+    const ts = r.v.published_ts || r.v.published_at;
+    if (!r.d && ts) {
+      const k = new Date(new Date(ts).getTime() + 9 * 3600e3);
+      for (let i = 0; i <= 3; i++) { const t = new Date(k.getTime() - i * 864e5); if (t.getUTCDay() === r.s.dow) { r.d = t.toISOString().slice(0, 10); break; } }
+    }
+    if (!r.d) continue;
+    const key = r.s.key + '|' + r.d;
+    (eps[key] = eps[key] || { s: r.s, date: r.d, list: [] }).list.push({ v: r.v, kind: r.kind });
+  }
+  return Object.keys(eps).map(k => eps[k]).filter(e => e.list.length >= (minVids || 1)).sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
+}

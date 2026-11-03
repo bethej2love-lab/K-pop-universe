@@ -1977,25 +1977,11 @@ function buildAgencyPages() {
 // 출처는 방송사 공식 채널 9개만(팬 업로드 섞지 않음). 회차 날짜 = ①제목 속 날짜(261030·2026.10.22·20261025)가 그 방송 요일과 맞을 때
 // ②없으면 같은 방송 다른 영상에서 배운 'EP.번호→날짜' ③그래도 없으면 올린 날(KST) 기준 3일 안의 직전 방송일. 해외 특집(뮤직뱅크 인 바르셀로나 등)은 요일이 안 맞아 빠진다.
 // 쇼츠·인터뷰·챌린지는 뺀다. 조회는 부분 인덱스 idx_ytv_music_show_ch(sql/music_show_episode_index_2026-11-03.sql)를 탄다 — 없으면 큰 채널이 시간 초과.
-const MSHOWS = [
-  { key: '뮤직뱅크', en: 'Music Bank', slug: 'music-bank', dow: 5, h: ['KBSKpop', 'kbsworldtv'], re: /뮤직뱅크|music\s*bank/i },
-  { key: '엠카운트다운', en: 'M Countdown', slug: 'm-countdown', dow: 4, h: ['MnetM2', 'Mnet'], re: /mcountdown|엠카운트다운|m\s*countdown/i },
-  { key: '쇼음악중심', en: 'Show! Music Core', slug: 'music-core', dow: 6, h: ['MBCkpop'], re: /음악중심|음중|music\s*core/i },
-  { key: '인기가요', en: 'Inkigayo', slug: 'inkigayo', dow: 0, h: ['SBSKPOP', 'SBSKPOP_ZOOM'], re: /inkigayo|인기가요|SBS\s*\d{6}\s*방송/i, no: /매점|live\s+in|in\s+tokyo|in\s+japan/i },
-  { key: '쇼챔피언', en: 'Show Champion', slug: 'show-champion', dow: 3, h: ['ALLTHEKPOP'], re: /show\s*champion|쇼챔/i },
-  { key: '더쇼', en: 'THE SHOW', slug: 'the-show', dow: 2, h: ['thekpop'], re: /the\s*show|더쇼/i },
-];
+// 방송 목록·회차 묶기 규칙은 shared.js(_MS_SHOWS·_msGroupEpisodes) — 앱 회차 화면과 같은 함수
+const { _MS_SHOWS: MSHOWS, _msGroupEpisodes, _MS_KIND_LABEL: MS_KIND } = (() => { const vm = require('vm'); const ctx = {}; vm.createContext(ctx); vm.runInContext(fs.readFileSync(path.join(ROOT, 'shared.js'), 'utf8') + '\nthis.o={_MS_SHOWS,_msGroupEpisodes,_MS_KIND_LABEL};', ctx); return ctx.o; })();
 const MS_MIN = 8; // 영상이 이보다 적은 회차는 안 낸다(수집이 덜 된 회차가 빈약한 페이지로 색인되는 것 방지)
-const MS_KIND = { stage: ['무대', 'Stage'], encore: ['앵콜', 'Encore'], fullcam: ['풀캠', 'Full cam'], fancam: ['직캠', 'Fancam'], facecam: ['페이스캠', 'Face cam'] };
-let SHOW_EP = {}; // '방송|날짜' → 있음 (1위 연도 페이지에서 날짜를 회차 페이지로 잇는다)
+let SHOW_EP = {}; // '방송|날짜' → 방송 (1위 연도 페이지에서 날짜를 회차 페이지로 잇는다)
 function showPagePath(s, date, lang) { const isEn = lang === 'en'; return `${isEn ? 'en/' : ''}show/${isEn ? s.slug : s.key}/${date ? date + '/' : ''}`; }
-function msDateOf(t) {
-  const m = t.match(/20(2\d)[.\-\/](\d{1,2})[.\-\/](\d{1,2})/) || t.match(/(?<!\d)20(2\d)(\d{2})(\d{2})(?!\d)/) || t.match(/(?<!\d)(2\d)(\d{2})(\d{2})(?!\d)/);
-  if (!m) return null; const mo = +m[2], d = +m[3]; if (mo < 1 || mo > 12 || d < 1 || d > 31) return null;
-  return `20${m[1]}-${String(mo).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-}
-const msKind = t => /페이스캠|face\s*cam/i.test(t) ? 'facecam' : /풀캠|full\s*cam/i.test(t) ? 'fullcam' : /직캠|fan\s*cam|focus/i.test(t) ? 'fancam' : /앵콜|encore/i.test(t) ? 'encore' : /interview|인터뷰|behind|비하인드|challenge|챌린지|\.zip|#shorts|엔딩요정|MC석|코너|선공개|티저|teaser/i.test(t) ? null : 'stage';
-const msDow = d => new Date(d + 'T00:00:00Z').getUTCDay();
 async function fetchShowVideos() {
   const since = new Date(Date.now() - 400 * 864e5).toISOString().slice(0, 10);
   const all = new Map();
@@ -2010,31 +1996,7 @@ async function fetchShowVideos() {
   }
   return [...all.values()].filter(v => !['무관', '보류', 'hidden'].includes(v.content_flag) && v.group_ko);
 }
-function groupShowEpisodes(vids) {
-  const eps = {};
-  const epNo = {}; // 방송|EP번호 → 날짜
-  const rows = [];
-  for (const v of vids) {
-    const s = MSHOWS.find(s => s.h.includes(v.source_handle) && s.re.test(v.title) && !(s.no && s.no.test(v.title)));
-    if (!s) continue;
-    const kind = msKind(v.title); if (!kind) continue;
-    const d = msDateOf(v.title); if (d && msDow(d) !== s.dow) continue; // 요일이 안 맞으면 특집·해외 공연 — 뺀다
-    const ep = (v.title.match(/EP\.?\s*(\d{3,4})/i) || [])[1];
-    if (d && ep) epNo[s.key + '|' + ep] = d;
-    rows.push({ v, s, kind, d, ep });
-  }
-  for (const r of rows) {
-    if (!r.d && r.ep) r.d = epNo[r.s.key + '|' + r.ep] || null;
-    if (!r.d && r.v.published_ts) { // 올린 날(KST)에서 3일 안의 직전 방송일
-      const k = new Date(new Date(r.v.published_ts).getTime() + 9 * 3600e3);
-      for (let i = 0; i <= 3; i++) { const t = new Date(k.getTime() - i * 864e5); if (t.getUTCDay() === r.s.dow) { r.d = t.toISOString().slice(0, 10); break; } }
-    }
-    if (!r.d) continue;
-    const key = r.s.key + '|' + r.d;
-    (eps[key] = eps[key] || { s: r.s, date: r.d, list: [] }).list.push(r);
-  }
-  return Object.values(eps).filter(e => e.list.length >= MS_MIN).sort((a, b) => a.date.localeCompare(b.date));
-}
+function groupShowEpisodes(vids) { return _msGroupEpisodes(vids, MS_MIN); }
 async function buildShowPages() {
   const vids = await fetchShowVideos();
   const eps = groupShowEpisodes(vids);
@@ -2078,6 +2040,7 @@ async function buildShowPages() {
     const nav = `<p class="note">${prev ? `<a href="${SITE}/${showPagePath(s, prev.date, lang)}">← ${fmtD(prev.date, isEn)}</a>` : ''}${prev && next ? ' · ' : ''}${next ? `<a href="${SITE}/${showPagePath(s, next.date, lang)}">${fmtD(next.date, isEn)} →</a>` : ''}</p>`;
     const body = `  <div class="crumbs"><a href="${SITE}/${isEn ? 'en/' : ''}show/">${isEn ? 'Music shows' : '음악방송'}</a> › <a href="${SITE}/${showPagePath(s, null, lang)}">${escHtml(sName)}</a></div>
   <ul class="chips">${wins.length ? `<li><b>${isEn ? 'No.1' : '1위'}</b>${escHtml(winTxt)}</li>` : ''}<li><b>${isEn ? 'Acts' : '출연'}</b>${tl.length}${isEn ? '' : '팀'}</li><li><b>${isEn ? 'Stages' : '무대'}</b>${cnt('stage')}</li><li><b>${isEn ? 'Fancams' : '직캠'}</b>${cams}</li></ul>
+  <p><a class="cta" href="${SITE}/#show=${encodeURIComponent(s.key + '~' + e.date)}">${isEn ? 'Open this episode in the app →' : '앱에서 이 회차 보기 →'}</a></p>
   ${nav}
   <ul class="chips">${tl.map(([g, l], idx) => `<li><a href="#t${idx}">${escHtml(performer(g, l, isEn).name)}</a></li>`).join('')}</ul>
 ${sections}
@@ -2148,7 +2111,21 @@ function buildWinsPages() {
   console.log(`음방 1위 연도 페이지 ${WIN_YEARS.length}개 × 2개 언어 (1위 기록 ${all.length}건)`);
 }
 
-(async () => {
+// 빠른 모드(2026-11-03, 사용자 "최근 회차는 빨리") — 전체 4만 장 재빌드(주 1회·20분)를 기다리지 않고 음방 회차 페이지만 몇 분 안에.
+// show-pages.yml이 매시간 SHOWS_ONLY=1로 돌린다. 사이트맵 목록(sitemap.xml)은 전체 빌드가 이미 shows.xml을 가리키므로 shows.xml만 다시 쓴다.
+if (process.env.SHOWS_ONLY) (async () => {
+  try { EX = await SEO.prefetch({ SB_URL, SB_KEY, groupKos }); } catch (e) { console.warn('⚠️ 1위 기록 건너뜀:', e.message); }
+  await buildShowPages();
+  const urls = pages.filter(p => /\/show\//.test(p.loc));
+  fs.mkdirSync(path.join(ROOT, 'sitemaps'), { recursive: true });
+  fs.writeFileSync(path.join(ROOT, 'sitemaps', 'shows.xml'), `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls.map(u => `  <url>\n    <loc>${u.loc}</loc>\n    <lastmod>${TODAY_ISO}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>${u.priority || '0.5'}</priority>\n  </url>`).join('\n')}
+</urlset>
+`);
+  console.log(`sitemaps/shows.xml ${urls.length}개`);
+})().catch(e => { console.error(e); process.exit(1); });
+else (async () => {
   // 1) DB 보강(음방 1위·인기 직캠) → 2) 그룹·멤버 페이지. DB가 안 되면(회사망 등) 정적 정보만으로 만든다.
   try {
     EX = await SEO.prefetch({ SB_URL, SB_KEY, groupKos });
