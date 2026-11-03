@@ -134329,7 +134329,7 @@
   "discography": [
    {
     "title": "Sour Grapes",
-    "type": "미니",
+    "type": "미니 1집",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b273933c38c65ee163a4de368e95",
     "releaseDate": "2026.09.28",
@@ -136357,7 +136357,7 @@
   "discography": [
    {
     "title": "CRASH",
-    "type": "미니",
+    "type": "미니 2집",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b2730be29921b44bffabaa059c3f",
     "releaseDate": "2026.09.28",
@@ -164367,7 +164367,7 @@
   "discography": [
    {
     "title": "Mixtape : A1 GO",
-    "type": "미니",
+    "type": "믹스테이프",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b27331f295028b47d9a77982770f",
     "releaseDate": "2026.09.30",
@@ -188533,7 +188533,8 @@
     "src": "spotify",
     "spotifyId": "2OYtyR1MaRaUSKXJnHJN9l",
     "copyright": "© 2026 WARNER MUSIC JAPAN INC.",
-    "melonAlbumId": "14569140"
+    "melonAlbumId": "14569140",
+    "region": "jp"
    },
    {
     "title": "Doshite",
@@ -203241,7 +203242,7 @@
   "discography": [
    {
     "title": "Secret Flavor",
-    "type": "미니",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b2737d8878b745219135d40fda22",
     "releaseDate": "2026.06.18",
@@ -226919,7 +226920,7 @@
   "discography": [
    {
     "title": "ROUTE ZERO : The CALLING",
-    "type": "미니",
+    "type": "미니 8집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/06/092/15106092_20261030150210_500.jpg",
     "releaseDate": "2026.11.02",
@@ -239510,7 +239511,7 @@
   "discography": [
    {
     "title": "LOVEHOOD",
-    "type": "미니",
+    "type": "미니 2집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/146/45/816/14645816_20261012162618_500.jpg",
     "releaseDate": "2026.10.14",
@@ -239839,7 +239840,7 @@
    },
    {
     "title": "NAZE",
-    "type": "미니",
+    "type": "미니 1집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/133/60/203/13360203_20260429105023_500.jpg",
     "releaseDate": "2026.05.04",
@@ -253210,7 +253211,7 @@
   "discography": [
    {
     "title": "k-pop",
-    "type": "미니",
+    "type": "미니 6집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/85/864/15085864_20261027103242_500.jpg",
     "releaseDate": "2026.10.28",
@@ -253248,7 +253249,7 @@
    },
    {
     "title": "SNOW ANGEL",
-    "type": "미니 6집",
+    "type": "미니 5집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/121/93/577/12193577_20251105144707_500.jpg",
     "releaseDate": "2025.11.07",
@@ -253338,7 +253339,7 @@
    },
    {
     "title": "JUST ODD",
-    "type": "미니 5집",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/117/51/800/11751800_20250326121307_500.jpg",
     "releaseDate": "2025.03.28",
