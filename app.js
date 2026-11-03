@@ -13020,7 +13020,7 @@ function _stageRegion(){
   }
   let left=0;
   const fo=document.getElementById('feed-overlay');
-  if(fo&&fo.classList.contains('open')){const r=fo.getBoundingClientRect();if(r.width>0&&r.width<window.innerWidth*0.5&&r.left<10)left=r.right;}
+  if(fo&&fo.classList.contains('open')){const r=fo.getBoundingClientRect();if(r.width>0&&r.width<window.innerWidth-200&&r.left<10)left=r.right;}
   return{left,right};
 }
 // 앨범 창을 무대(카드들 왼쪽 ~ 탐험 패널 오른쪽)에 맞춘다 — 카드가 열리고 닫힐 때마다 따라가야 해서 열려 있는 동안 주기적으로 잰다
@@ -13066,9 +13066,38 @@ function _feedWideScroller(){
   const fo=document.getElementById('feed-overlay');if(!fo)return null;
   return [...fo.querySelectorAll('.feed-pane,#feed-body')].find(el=>el.offsetParent&&el.scrollHeight>el.clientHeight+2)||null;
 }
+// ── 나침반 폭 3단계(2026-11-03 사용자: "자유롭게 끄는 건 너무 많은 선택지, 최대 3단계 — 열린 창 조합 다 고려해서 쓸데없는 여백이 거의 없게") ──
+// 단계는 픽셀이 아니라 '나침반이 얼마나 양보하나'다. 좁게=늘 360 · 보통=혼자면 넓은 홈(최대 960)·다른 창과 함께면 440(예전 동작 그대로)
+// · 넓게=혼자면 화면 거의 전부(최대 1440, 우주가 조금은 보이게)·함께면 카드(440씩)와 가운데 창 최소 폭(560)만 남기고 나침반이 다 쓴다.
+// 폭은 --fw-w 하나로 나가고 CSS(#feed-overlay·재생 화면 left·줌)와 _stageRegion(목록·앨범 자리)이 그걸 따른다. 640px↑면 안쪽 칸도 넓은 배치(body.fw-home).
+const _FW_MODES=['narrow','normal','wide'];
+function _fwMode(){try{const m=localStorage.getItem('kpu_fw_mode');return _FW_MODES.indexOf(m)>=0?m:'normal';}catch(e){return 'normal';}}
+function _fwWidth(){
+  const W=window.innerWidth,mode=_fwMode(),open=id=>!!document.getElementById(id)?.classList.contains('open');
+  if(mode==='narrow')return 360;
+  if(!_FW_BLOCKERS.some(open))return mode==='wide'?Math.min(1440,W-120):Math.min(960,W-360);
+  if(mode==='normal')return 440;
+  const cards=['side-panel','member-panel','conn-panel'].filter(open).length*(document.body.classList.contains('card-wide')?640:440);
+  const stage=['yt-lightbox','feed-list-overlay','gc-discog-detail','venue-overlay','trophy-overlay','igv-overlay','uc-card-overlay'].some(open);
+  return Math.max(440,Math.min(1200,W-cards-(stage?560:0)));
+}
+function _fwBtnSync(){
+  const b=document.getElementById('feed-width-btn');if(!b)return;
+  const m=_fwMode(),ko=currentLang==='ko',L={narrow:['좁게','Narrow'],normal:['보통','Normal'],wide:['넓게','Wide']},nx=_FW_MODES[(_FW_MODES.indexOf(m)+1)%3];
+  const t=ko?`나침반 폭: ${L[m][0]} (누르면 ${L[nx][0]})`:`Compass width: ${L[m][1]} (click for ${L[nx][1]})`;
+  b.title=t;b.setAttribute('aria-label',t);
+  const r=b.querySelector('rect.fill');if(r)r.setAttribute('width',m==='narrow'?'4':m==='normal'?'7':'12');
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  const b=document.getElementById('feed-width-btn');if(!b)return;
+  _fwBtnSync();
+  b.addEventListener('click',e=>{e.stopPropagation();const nx=_FW_MODES[(_FW_MODES.indexOf(_fwMode())+1)%3];try{localStorage.setItem('kpu_fw_mode',nx);}catch(_){}_fwBtnSync();_feedWideSync();try{_gaEvent('fw_mode',{mode:nx});}catch(_){}});
+});
 function _feedWideSync(){
   const fo=document.getElementById('feed-overlay');if(!fo)return;
-  const on=_stageWide()&&fo.classList.contains('open')&&!_FW_BLOCKERS.some(id=>document.getElementById(id)?.classList.contains('open'));
+  const _w=_stageWide()&&fo.classList.contains('open')?_fwWidth():440;
+  if(document.documentElement.style.getPropertyValue('--fw-w')!==_w+'px')document.documentElement.style.setProperty('--fw-w',_w+'px');
+  const on=_stageWide()&&fo.classList.contains('open')&&_w>=640;
   if(document.body.classList.contains('fw-home')===on)return;
   // 보고 있던 자리: 스크롤 칸 맨 위에서 조금 아래 점에 걸린 요소
   const sc=_feedWideScroller();let anchor=null,off=0;

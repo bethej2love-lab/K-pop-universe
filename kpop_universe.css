@@ -740,7 +740,7 @@
     body:has(#member-panel.open) #yt-lb-wrap,
     body:has(#conn-panel.open) #yt-lb-wrap{max-width:88%;}
     /* 탐험 패널이 열리면: 왼쪽 440px 비우고 top:64px, 오른쪽 80px 여백으로 우주가 보이게 */
-    body:has(#feed-overlay.open) #yt-lightbox{left:440px;right:80px;top:64px;}
+    body:has(#feed-overlay.open) #yt-lightbox{left:var(--fw-w,440px);right:80px;top:64px;}
     /* 탐험+카드 동시: 카드 폭만큼 right 비움 (specificity 높아 위 규칙 override) */
     body:has(#feed-overlay.open):has(#side-panel.open) #yt-lightbox{right:440px;}
     body:has(#feed-overlay.open):has(#side-panel.open):has(#member-panel.open) #yt-lightbox{right:880px;}
@@ -3571,7 +3571,7 @@
   /* ── Zoom slider ────────────────────────────────── */
   #zoom-ctrl{position:fixed;left:18px;bottom:24px;display:flex;flex-direction:column;align-items:center;gap:0;z-index:50;user-select:none;width:30px;background:rgba(12,16,36,0.60);border:1px solid rgba(140,165,220,0.16);border-radius:14px;padding:10px 0;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 2px 14px rgba(0,0,0,0.22);transition:left 0.32s cubic-bezier(0.4,0,0.2,1);}
   #journal-sidebar.open~#zoom-ctrl{left:318px;} /* 저널 사이드바는 300px 그대로 */
-  #zoom-ctrl.zoom-feed-open{left:438px;} /* 탐험 레일 폭 - 2px */
+  #zoom-ctrl.zoom-feed-open{left:calc(var(--fw-w,440px) - 2px);} /* 탐험 레일 폭 - 2px */
   /* 모바일 줌 컨트롤(2026-08-31, 사용자 요청) — 예전엔 모바일에서 통째로 숨겼는데(핀치 줌이 있으니),
      "우주만 보이는 상태"에선 줌 레벨을 눈으로 보고 조절할 수 있는 게 낫다는 요청. 카드·탐험 패널·
      라이트박스·검색 등 **뭐라도 열려 있으면 숨긴다** — 우주가 실제로 보일 때만 뜨는 게 핵심이라
@@ -4201,7 +4201,7 @@
     #feed-overlay{
       /* 오른쪽 카드 레일(#side-panel)과 좌우 짝이라 폭을 맞춘다: 320→380(2026-09-09) → 440(2026-10-02).
          ⚠️ 카드 폭을 바꾸면 여기·아래 translateX·#zoom-ctrl.zoom-feed-open도 같이 바꿀 것. */
-      display:flex;inset:auto;top:0;left:0;height:100%;width:440px;
+      display:flex;inset:auto;top:0;left:0;height:100%;width:var(--fw-w,440px); /* 웹 ≥1024는 _feedWideSync가 3단계 폭을 --fw-w로 넣는다(2026-11-03) */
       background:rgba(14,18,34,0.92);
       backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
       border-right:0.5px solid rgba(255,255,255,0.10);
@@ -5331,8 +5331,6 @@
 /* ── 나침반 웹 홈 폭(2026-10-28) — 나침반만 열려 있으면 넓게(body.fw-home, JS _feedWideSync가 판정), 다른 창이 열리면 440 ──
    안의 영상 칸도 폭에 맞춰: 4칸 그리드(가로 영상 2·쇼츠 4), 갈래 배치(masonry)·앨범은 칸 수만 늘린다. 가로 선반은 그대로 더 많이 보인다. */
 @media(min-width:1024px){
-  body.fw-home #feed-overlay{width:min(960px,calc(100vw - 360px));}
-  body.fw-home #zoom-ctrl.zoom-feed-open{left:calc(min(960px,100vw - 360px) - 2px);}
   body.fw-home .feed-grid{grid-template-columns:repeat(5,1fr);} /* 가로 영상 3칸 + 쇼츠 1칸×2 = 한 줄(아래 span 3) */
   body.fw-home .feed-album-grid:not(.feed-album-rail){grid-template-columns:repeat(4,1fr);}
   body.fw-home .feed-news-mvs{grid-template-columns:repeat(4,minmax(0,1fr));}
@@ -5420,4 +5418,12 @@
 @media (min-width:769px) and (hover:hover){
   .feed-news-row:not(.is-media):not(.is-break)>:is(.feed-news-thumb,.feed-news-tw){order:-1;}
   body.fw-home .feed-news-list>.feed-news-row:not(.is-media):not(.is-break){grid-column:span 4;margin:0;border-radius:10px;background:rgba(255,255,255,0.022);border-top:none;}
+}
+/* 나침반 폭 3단계 버튼(2026-11-03 사용자 "자유롭게 끄는 건 선택지가 너무 많다, 최대 3단계") — 웹 무대(≥1024)에서만. ‹ 닫기 왼쪽 */
+#feed-width-btn{display:none;}
+@media(min-width:1024px) and (hover:hover){
+  #feed-width-btn{display:flex;position:absolute;top:9px;right:44px;z-index:5;width:32px;height:32px;align-items:center;justify-content:center;
+    background:none;border:none;border-radius:50%;color:rgba(170,190,235,0.6);padding:0;cursor:var(--kpu-cursor-pointer,pointer);}
+  #feed-width-btn:hover{background:rgba(255,255,255,0.07);color:rgba(210,225,255,0.9);}
+  #feed-width-btn svg rect.fill{fill:currentColor;stroke:none;}
 }
