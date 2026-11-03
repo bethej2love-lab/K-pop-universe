@@ -12201,6 +12201,7 @@ function _isJpRelease(a,owner){
 }
 // 앨범 하나의 타입 라벨 — 참여 앨범(남의 앨범에 피처링, feat:true·OST 아님)은 '싱글' 대신 '피처링'(2026-10-22). OST는 원래 feat:true라 타입 그대로.
 function _discogAlbumTypeLabel(a){return a&&a.feat&&!/OST/.test(a.type||'')?(currentLang==='ko'?'피처링':'Featuring'):_discogTypeLabel(a&&a.type);}
+const _DISCOG_PREFIX_EN={'방예담':'Bang Yedam'}; // 한글 명의 접두어의 영어 표기(영문 접두어는 그대로)
 function _discogTypeLabel(type){
   const t=type||'';
   if(currentLang==='en'){
@@ -12213,6 +12214,9 @@ function _discogTypeLabel(type){
     if(/리패키지/.test(t))return t.replace(/^(미니|EP)/,'Mini').replace(/^정규/,'Full').replace('리패키지','Re');
     const m=t.match(/^(미니|정규|EP)\s*(\d+)집$/);
     if(m)return `${_ordinal(+m[2])} ${m[1]==='정규'?'Full':'Mini'}`;
+    // 명의·유닛 접두어(2026-11-03) — "Def. 미니 2집"·"EXO-SC 정규 1집"·"방예담 미니 1집"(부캐 DIMO REX와 본명 명의를 번호 따로)
+    const pm=t.match(/^(.+?)\s+(미니|정규|EP)\s*(\d+)집$/);
+    if(pm)return `${_DISCOG_PREFIX_EN[pm[1]]||pm[1]} ${_ordinal(+pm[3])} ${pm[2]==='정규'?'Full':'Mini'}`;
     return t.replace(/^(미니|EP)/,'Mini').replace(/^정규/,'Full');
   }
   // 리패키지: "미니 6집 리패키지"→"미니 6집 Re", "정규 리패키지"→"정규 Re"

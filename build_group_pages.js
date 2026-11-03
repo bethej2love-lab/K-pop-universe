@@ -2049,7 +2049,8 @@ ${sections}
     const top = e.list.find(r => r.kind === 'stage') || e.list[0];
     writeSimple(rel, simplePageHtml({ lang, selfUrl: `${SITE}/${rel}`, altUrl: `${SITE}/${showPagePath(s, e.date, isEn ? 'ko' : 'en')}`, koUrl: `${SITE}/${showPagePath(s, e.date, 'ko')}`, title, h1, desc, body, kind: 'show_ep', ogImage: `https://i.ytimg.com/vi/${top.v.id}/hqdefault.jpg` }), '0.5');
   }
-  // 방송별 목록 + 음방 허브
+  // 방송별 목록 + 음방 허브 — og:image는 최근 회차 대표 영상(SHOWS_ONLY 빠른 경로엔 ensureOgImages 안전망이 없어 직접 넣는다, Codex 검수 11-03)
+  const epOg = e => { const t = e && (e.list.find(r => r.kind === 'stage') || e.list[0]); return t ? `https://i.ytimg.com/vi/${t.v.id}/hqdefault.jpg` : null; };
   for (const lang of ['ko', 'en']) {
     const isEn = lang === 'en';
     const showsWith = MSHOWS.filter(s => byShow[s.key]);
@@ -2058,7 +2059,7 @@ ${sections}
       const rowsHtml = list.map(e => { const w = winsBy[s.key + '|' + e.date] || []; const teams = new Set(e.list.map(r => r.v.group_ko)); return `<tr><td><a href="${SITE}/${showPagePath(s, e.date, lang)}">${fmtD(e.date, isEn)}</a></td><td>${teams.size}${isEn ? '' : '팀'}</td><td>${escHtml(w.map(x => `${x.group_ko ? gName(x.group_ko, isEn) : x.member_ko || ''} '${x.song_title}'`).join(', '))}</td></tr>`; }).join('\n    ');
       const h1 = isEn ? `${sName} — episodes` : `${s.key} 회차별 무대·직캠`;
       const desc = isEn ? `${list.length} ${sName} episodes with lineup, No.1 and every stage & fancam from the official channel.` : `${s.key} ${list.length}회차 — 회차마다 출연진·1위·공식 채널 무대와 직캠을 팀별로 모았어요.`;
-      writeSimple(rel, simplePageHtml({ lang, selfUrl: `${SITE}/${rel}`, altUrl: `${SITE}/${showPagePath(s, null, isEn ? 'ko' : 'en')}`, koUrl: `${SITE}/${showPagePath(s, null, 'ko')}`, title: `${h1} | K-POP UNIVERSE`, h1, desc, kind: 'show',
+      writeSimple(rel, simplePageHtml({ lang, selfUrl: `${SITE}/${rel}`, altUrl: `${SITE}/${showPagePath(s, null, isEn ? 'ko' : 'en')}`, koUrl: `${SITE}/${showPagePath(s, null, 'ko')}`, title: `${h1} | K-POP UNIVERSE`, h1, desc, kind: 'show', ogImage: epOg(byShow[s.key][byShow[s.key].length - 1]),
         body: `  <div class="crumbs"><a href="${SITE}/${isEn ? 'en/' : ''}show/">${isEn ? 'Music shows' : '음악방송'}</a></div>
   <table class="win-tbl"><thead><tr><th>${isEn ? 'Date' : '날짜'}</th><th>${isEn ? 'Acts' : '출연'}</th><th>${isEn ? 'No.1' : '1위'}</th></tr></thead><tbody>
     ${rowsHtml}
@@ -2067,7 +2068,7 @@ ${sections}
     const rel = `${isEn ? 'en/' : ''}show/`;
     const h1 = isEn ? 'K-pop music shows — every episode' : '음악방송 회차별 모아보기';
     const desc = isEn ? 'Music Bank, Inkigayo, M Countdown, Show! Music Core, Show Champion, THE SHOW — lineup, No.1, stages and fancams per episode.' : '뮤직뱅크·인기가요·엠카운트다운·음악중심·쇼챔피언·더쇼 — 회차마다 출연진·1위·무대·직캠을 한 페이지에.';
-    writeSimple(rel, simplePageHtml({ lang, selfUrl: `${SITE}/${rel}`, altUrl: `${SITE}/${isEn ? '' : 'en/'}show/`, koUrl: `${SITE}/show/`, title: `${h1} | K-POP UNIVERSE`, h1, desc, kind: 'show_hub',
+    writeSimple(rel, simplePageHtml({ lang, selfUrl: `${SITE}/${rel}`, altUrl: `${SITE}/${isEn ? '' : 'en/'}show/`, koUrl: `${SITE}/show/`, title: `${h1} | K-POP UNIVERSE`, h1, desc, kind: 'show_hub', ogImage: epOg(eps[eps.length - 1]),
       body: showsWith.map(s => { const l = byShow[s.key].slice(-6).reverse(); return `  <h2 class="rank-h"><a href="${SITE}/${showPagePath(s, null, lang)}">${escHtml(isEn ? s.en : s.key)}</a> <span class="rank-n">${byShow[s.key].length}</span></h2>
   <ul class="chips">${l.map(e => `<li><a href="${SITE}/${showPagePath(s, e.date, lang)}">${fmtD(e.date, isEn)}</a> ${new Set(e.list.map(r => r.v.group_ko)).size}</li>`).join('')}</ul>`; }).join('\n') }), '0.7');
   }
