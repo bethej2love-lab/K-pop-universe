@@ -16,6 +16,7 @@
 - **⏳ 덜 된 일 [외부 처리 확인]** 최신 Rebuild static SEO pages 성공 후 en/g/cortis/seonghyeon/ 및 g/코르티스/성현/의 language-nav 실제 확인. 색인은 중복 요청 대신 이후 Google URL 검사 상태/선택 canonical 확인. 이전 변형판 지정 자체의 출처·정본 선택은 별도 검수 대상이며 이번 부울 모순 정리로 모두 인증한 것은 아님.
 
 ## 2026-11-03 (Claude Code — 음방 회차: 앱 안 화면 + 매시간 갱신)
+- **[인트로 짜증 방지]** 사용자: 웹 인트로 논의 중 "모바일도 이런 조치". ① 3시간 안에 다시 연 재방문자(kpu_last_seen)는 문구 대기 0·우주 열림 700→280ms·탐험 패널 대기 0 ② 인트로 중 아무 데나 누르면 건너뛰고 바로 탐험 패널(_showOnboardHint 판정 그대로). 웹도 같은 경로. 헤드리스 폰 4회 연속 접속: 2회차부터 clip 280 확인. ⚠️ tests/reveal.test.js [3](veil/ring)은 이 수정 전부터 실패 — 09-02 발광 링 복원 뒤 테스트가 낡음.
 - **[버그] 탐험 탭 밑줄이 패널 폭 조정 전 위치에 남던 것** — window resize만 듣고 있었다. #feed-tabs에 ResizeObserver(DOM 준비 뒤 — app.js가 마크업보다 먼저 실행). 헤드리스 1600px: 패널 폭 바꾼 뒤 밑줄 130/50 = 'For You' 글자 130/50.
 - **[디자인] 웹 This Week 1위·신보 줄** — 썸네일이 오른쪽 끝에 붙어 글자와 사이가 휑하던 것(사용자 스크린샷). 웹(hover 가능·769px↑)에선 썸네일을 왼쪽으로, 넓은 홈에선 반폭 카드 두 개씩. 폰은 그대로.
 - **[Codex 인계 처리] show 허브·방송 목록 og:image 누락 14장** — SHOWS_ONLY 경로엔 ensureOgImages 안전망이 없어서. 최근 회차 대표 영상 썸네일을 직접 넣음(build_group_pages.js epOg).

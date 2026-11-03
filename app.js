@@ -2000,7 +2000,11 @@ async function buildUniverse(){
   // 이미 초기화돼 있다(전역 스크립트가 buildUniverse() 호출보다 먼저 다 돈다).
   // 목표(2026-09-02 제보 "더 빨라야"): 첫 방문 텍스트 800ms·재방문(3회+) 450ms. 리빌 clip 850과 합쳐
   // 첫 ~1.65초+로드버퍼(<3초), 재방문 ~1.3초(<2초). 이보다 더 줄이면 텍스트·모션이 안 읽힌다.
-  const _minShow=(typeof _visitCount!=='undefined'&&_visitCount>=3)?250:500;
+  // 짜증 방지(2026-11-03 사용자 "몇 시간 안에 다시 오면 인트로 생략") — 3시간 안에 다시 연 재방문자는 문구 대기 없이, 우주 열림을 짧게, 탐험 패널은 바로.
+  let _quickIntro=false;
+  try{const last=+localStorage.getItem('kpu_last_seen')||0;_quickIntro=!window._kpuNewVisitor&&last>0&&Date.now()-last<3*3600e3;localStorage.setItem('kpu_last_seen',String(Date.now()));}catch(e){}
+  if(_quickIntro){REVEAL.clip=280;REVEAL.text=150;REVEAL.panel=0;}
+  const _minShow=_quickIntro?0:(typeof _visitCount!=='undefined'&&_visitCount>=3)?250:500;
   if(_elapsed<_minShow)await new Promise(res=>setTimeout(res,_minShow-_elapsed));
   // EN 유저가 접속마다 행성 라벨을 한국어로 보던 버그 수정(2026-08-21, Fable EN 모드 감사+실측 확인) —
   // applyLang()의 groupLabels 갱신 루프는 라벨이 아직 생성 전인 데이터로드 직후(위 1681번째 줄)에 딱 한 번만
@@ -2027,6 +2031,9 @@ async function buildUniverse(){
   // 예전엔 1200/2600/2400이 리빌 1050ms를 전제로 각각 하드코딩돼 있어서 리빌만 바꾸면 어긋났다.
   _lblFarStartAt=performance.now()+REVEAL.clip+REVEAL.label; // 우주가 다 열린 뒤 이름이 fade in
   _obTimer=setTimeout(_showOnboardHint,REVEAL.clip+REVEAL.panel);
+  // 인트로 중 아무 데나 누르면 건너뛰기(2026-11-03) — 기다리지 않고 바로 탐험 패널(자동 열림 대상일 때만, _showOnboardHint가 판정)
+  {const skip=()=>{window.removeEventListener('pointerdown',skip,true);if(_obTimer){clearTimeout(_obTimer);_showOnboardHint();}};
+   window.addEventListener('pointerdown',skip,true);setTimeout(()=>window.removeEventListener('pointerdown',skip,true),REVEAL.clip+REVEAL.panel+50);}
   setTimeout(_initTips,REVEAL.clip+REVEAL.panel+300);
   // 생일 별똥별: 인트로 연출 끝난 뒤 한 번, 이후 30분마다 오늘 생일인 멤버 확인
   setTimeout(_checkBdayShootingStars,REVEAL.clip+REVEAL.hint);
