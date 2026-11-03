@@ -91,5 +91,21 @@ t('with_groups 중복 제거(순서 유지)',
   _normalizeMemberTags({title:'',groupKo:null,members:[],withGroups:['아이브','에스파','아이브'],withMembers:[]}).withGroups,
   ['아이브','에스파']);
 
+// ── 성 뗀 이름 손님 오태깅(2026-11-03, Codex 77·78차 → 실DB 348행 정리) ──
+t('정은지 팬캠의 "은지" → 브브걸 은지 아님',
+  N({title:'140220 고함Talk 콘서트 Lovely day 은지 직캠 세로ver.',groupKo:'에이핑크',members:['정은지'],withMembers:['은지(브브걸)']}),[]);
+t('성한빈 브이로그의 "한빈" → 템페스트 한빈 아님',
+  N({title:'[ZB1 CAM] 한빈 VLOG | 일본 출장 2주',groupKo:'제로베이스원',members:['성한빈'],withMembers:['한빈(템페스트)']}),[]);
+t('태깅 안 된 영상이어도 로스터 기준으로 막음',
+  N({title:"태래's 네컷",groupKo:'제로베이스원',members:[],withMembers:['태래(템페스트)']}),[]);
+t('제목에 상대 그룹이 있으면 유지(진짜 교류)',
+  N({title:'한빈 X 한빈 #TEMPEST #ZEROBASEONE',groupKo:'제로베이스원',members:['성한빈'],withMembers:['한빈(템페스트)']}),['한빈(템페스트)']);
+t('#OMEGA_X 같은 밑줄 해시태그도 그룹명으로 읽음',
+  N({title:'#OMEGA_X #재한 #예찬 님과 #OnMyKnees #TRENDZ',groupKo:'트렌드지',members:['라엘','정예찬'],withMembers:['예찬(오메가엑스)']}),['예찬(오메가엑스)']);
+t('반대 방향(손님이 성까지 붙은 이름)은 안 지움 — 주인공이 틀린 경우가 대부분',
+  N({title:"[Simply K-Pop] OH HAYOUNG 'Don't Make Me Laugh' (오하영 직캠)",groupKo:'프로미스나인',members:['하영'],withMembers:['오하영(에이핑크)']}),['오하영(에이핑크)']);
+t('"투유정 with #최유정"(진짜 함께) 유지',
+  N({title:'투유정의 POSE! with #최유정 #CHOIYOOJUNG',groupKo:'라잇썸',members:['유정'],withMembers:['최유정(아이오아이)']}),['최유정(아이오아이)']);
+
 console.log(`\n${pass}/${pass+fail} 통과`);
 process.exit(fail?1:0);

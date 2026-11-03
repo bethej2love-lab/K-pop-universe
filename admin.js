@@ -4136,7 +4136,7 @@ async function _tagReviewResolve(id){
 //    그래서 "같은 artists.json 항목이 두 그룹에 다 걸쳐 있을 때"만 동일인물로 보고 합친다.
 // ⚠️ `승한(승한)` 같은 표기는 버그가 아니다 — 솔로는 group_ko 키가 본인 이름이라(_ytGroupKoFor) 그게
 //    정상 표기이고 읽는 쪽도 그렇게 파싱한다. 그 행들의 진짜 문제는 members와의 중복이라 아래 ②가 잡는다.
-let _amtIndex=null; // 이름 → [그 이름을 쓰는 아티스트 각각의 소속 키 Set]
+let _amtIndex=null,_amtShortIdx=null; // 이름 → [그 이름을 쓰는 아티스트 각각의 소속 키 Set] / 성 뗀 2글자 → 3글자 이름 항목들
 function _amtBuildIndex(){
   const idx=new Map();
   for(const a of ARTISTS){
@@ -4165,7 +4165,21 @@ function _amtSamePerson(ko,g1,g2){
 function _amtRosterHasName(gko,ko){
   if(!gko||!ko)return false;
   if(!_amtIndex)_amtIndex=_amtBuildIndex();
-  return (_amtIndex.get(ko)||[]).some(e=>e.gs.has(gko));
+  const has=n=>(_amtIndex.get(n)||[]).some(e=>e.gs.has(gko));
+  if(has(ko))return true;
+  // 성 뗀 이름도 같은 사람 이름으로 본다(2026-11-03, Codex 77·78차): 에이핑크 정은지 팬채널의 "은지"가 브브걸 은지로,
+  // 제로베이스원 성한빈·김태래의 "한빈"·"태래"가 템페스트로, 반대로 템페스트 채널의 "김태래"가 제로베이스원으로 붙었다.
+  // 완전 일치만 보던 방어가 이걸 비켜갔다. 한글 3글자+흔한 성씨일 때만(2글자 이름에서 떼면 한 글자라 오탐).
+  const SUR=typeof _ATM_KOREAN_SURNAMES!=='undefined'?_ATM_KOREAN_SURNAMES:null;
+  const isKo3=n=>/^[가-힣]{3}$/.test(n)&&(!SUR||SUR.has(n[0]));
+  // ⚠️ 반대 방향(손님 "오하영" ↔ 로스터 "하영")은 일부러 안 넣는다 — 실측(11-03) 손님 쪽이 성까지 붙은 이름이면 대부분
+  //    **주인공이 틀린 것**(프로미스나인 하영으로 잡힌 "OH HAYOUNG 직캠", 엔시티 드림 지성으로 잡힌 윤지성 컴백 등)이거나
+  //    진짜 함께 나온 것("투유정 with #최유정", "#성한빈 님도 다가와")이었다. 여기서 지우면 맞는 사람이 지워진다.
+  if(/^[가-힣]{2}$/.test(ko)){                 // 손님 "은지" ↔ 로스터 "정은지"
+    if(!_amtShortIdx){_amtShortIdx=new Map();for(const [n,ents] of _amtIndex)if(isKo3(n)){const s=n.slice(1);if(!_amtShortIdx.has(s))_amtShortIdx.set(s,[]);_amtShortIdx.get(s).push(...ents);}}
+    if((_amtShortIdx.get(ko)||[]).some(e=>e.gs.has(gko)))return true;
+  }
+  return false;
 }
 // 겸임 멤버의 대표 그룹 고르기 — ①제목에 literal로 언급된 그룹 ②artists.json repGroup ③주 소속 ④첫 번째.
 // 제목을 먼저 보는 이유: 마시로가 케플러 영상에선 `마시로(케플러)`, 메이딘 영상에선 `마시로(메이딘)`이어야
@@ -4174,9 +4188,10 @@ function _amtRosterHasName(gko,ko){
 // 표기 흔들림을 흡수한다. 한 글자짜리는 오탐이 심해 제외.
 function _amtGroupNamedInTitle(g,title){
   const gr=GROUPS[g];
-  const t=(title||'').normalize('NFKC').toLowerCase().replace(/\s/g,'');
+  // 공백뿐 아니라 _ - . · 도 지운다(2026-11-03): 해시태그 "#OMEGA_X"가 "OMEGA X"로 안 읽혀 진짜 교류 태그가 지워질 뻔했다
+  const t=(title||'').normalize('NFKC').toLowerCase().replace(/[\s_.·-]/g,'');
   const names=[g,gr&&gr.en,...((gr&&gr.alias)||[]),...((gr&&gr.altNames)||[])].filter(Boolean);
-  return names.some(n=>{const s=String(n).toLowerCase().replace(/\s/g,'');return s.length>=2&&t.includes(s);});
+  return names.some(n=>{const s=String(n).normalize('NFKC').toLowerCase().replace(/[\s_.·-]/g,'');return s.length>=2&&t.includes(s);});
 }
 function _amtPickGroup(ko,cands,title){
   if(cands.length<=1)return cands[0];
