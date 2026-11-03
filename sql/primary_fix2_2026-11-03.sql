@@ -1,0 +1,36 @@
+-- 손님 태그 없이 주인공만 틀린 영상(전체 DB에서 '제목에 성 붙은 다른 그룹 사람 이름' 79행 검색 → 판단) 적용. tags_manual=false만, 고친 뒤 잠금.
+UPDATE public.yt_channel_videos SET group_ko='이즈나', members=ARRAY['방지민']::text[], with_members=ARRAY['대성(빅뱅)','성한빈(제로베이스원)']::text[] WHERE id='TNbyzeP7dC8' AND tags_manual=false;
+UPDATE public.yt_channel_videos SET group_ko='이즈나', members=ARRAY['방지민','코코']::text[], with_members='{}'::text[] WHERE id='rOcooLH9H84' AND tags_manual=false;
+UPDATE public.yt_channel_videos SET group_ko='저스트비', members=ARRAY['임지민']::text[], with_members='{}'::text[] WHERE id='NM0V4a6Op80' AND tags_manual=false;
+UPDATE public.yt_channel_videos SET group_ko='저스트비', members=ARRAY['임지민']::text[], with_members='{}'::text[] WHERE id='l02F4CUJWSg' AND tags_manual=false;
+UPDATE public.yt_channel_videos SET group_ko='에이비식스', members=ARRAY['임영민']::text[], with_members='{}'::text[] WHERE id='PnU0eYL9JVI' AND tags_manual=false;
+UPDATE public.yt_channel_videos SET group_ko='에이비식스', members=ARRAY['임영민']::text[], with_members='{}'::text[] WHERE id='BcvNSGYq5wE' AND tags_manual=false;
+UPDATE public.yt_channel_videos SET group_ko='에이비식스', members=ARRAY['임영민']::text[], with_members='{}'::text[] WHERE id='bh7Uk86PblI' AND tags_manual=false;
+UPDATE public.yt_channel_videos SET group_ko='에이비식스', members=ARRAY['임영민']::text[], with_members='{}'::text[] WHERE id='trVfoeYJojI' AND tags_manual=false;
+UPDATE public.yt_channel_videos SET group_ko='에이핑크', members=ARRAY['정은지']::text[], with_members='{}'::text[] WHERE id='KrPxtU0BIA0' AND tags_manual=false;
+UPDATE public.yt_channel_videos SET group_ko='비투비', members=ARRAY['임현식']::text[], with_members='{}'::text[] WHERE id='NsdK7no2NQA' AND tags_manual=false;
+UPDATE public.yt_channel_videos SET group_ko='김민주', members=ARRAY['김민주']::text[], with_members='{}'::text[] WHERE id='6EWZ1YTpp5c' AND tags_manual=false;
+UPDATE public.yt_channel_videos SET group_ko='김민주', members=ARRAY['김민주']::text[], with_members='{}'::text[] WHERE id='n6-c7FQaSXw' AND tags_manual=false;
+UPDATE public.yt_channel_videos SET group_ko='김민주', members=ARRAY['김민주']::text[], with_members='{}'::text[] WHERE id='xd75aj3HJvI' AND tags_manual=false;
+UPDATE public.yt_channel_videos SET group_ko='위너', members=ARRAY['남태현']::text[], with_members='{}'::text[] WHERE id='9DgHkYtO9Jc' AND tags_manual=false;
+UPDATE public.yt_channel_videos SET group_ko='키비츠', members=ARRAY['엄지원']::text[], with_members='{}'::text[] WHERE id='qRkK67oovDQ' AND tags_manual=false;
+UPDATE public.yt_channel_videos SET group_ko='키비츠', members=ARRAY['엄지원']::text[], with_members='{}'::text[] WHERE id='nN0gbpNaa_s' AND tags_manual=false;
+UPDATE public.yt_channel_videos SET group_ko='키비츠', members=ARRAY['엄지원']::text[], with_members='{}'::text[] WHERE id='k3wIa_PephI' AND tags_manual=false;
+UPDATE public.yt_channel_videos SET group_ko='키비츠', members=ARRAY['엄지원']::text[], with_members='{}'::text[] WHERE id='at5eeIRESuE' AND tags_manual=false;
+UPDATE public.yt_channel_videos SET group_ko='키비츠', members=ARRAY['엄지원']::text[], with_members='{}'::text[] WHERE id='_4uHwaJ4sgo' AND tags_manual=false;
+UPDATE public.yt_channel_videos SET group_ko='키비츠', members=ARRAY['엄지원']::text[], with_members='{}'::text[] WHERE id='zYaQb3Nm5Dk' AND tags_manual=false;
+UPDATE public.yt_channel_videos SET group_ko='키비츠', members=ARRAY['엄지원']::text[], with_members='{}'::text[] WHERE id='q-yE8KtTQR0' AND tags_manual=false;
+UPDATE public.yt_channel_videos SET group_ko='키비츠', members=ARRAY['엄지원']::text[], with_members='{}'::text[] WHERE id='QebHkuX_EgI' AND tags_manual=false;
+UPDATE public.yt_channel_videos SET content_flag='무관', flag_source='manual', flagged_at=now() WHERE id='a-BLx0XUGIQ' AND tags_manual=false AND (content_flag IS NULL OR content_flag='보류');
+UPDATE public.yt_channel_videos SET content_flag='무관', flag_source='manual', flagged_at=now() WHERE id='dgh9GnFQ6Kc' AND tags_manual=false AND (content_flag IS NULL OR content_flag='보류');
+UPDATE public.yt_channel_videos SET content_flag='무관', flag_source='manual', flagged_at=now() WHERE id='q_Gio6VZBO8' AND tags_manual=false AND (content_flag IS NULL OR content_flag='보류');
+UPDATE public.yt_channel_videos SET content_flag='무관', flag_source='manual', flagged_at=now() WHERE id='tKzi57Gl11Q' AND tags_manual=false AND (content_flag IS NULL OR content_flag='보류');
+UPDATE public.yt_channel_videos SET content_flag='무관', flag_source='manual', flagged_at=now() WHERE id='sZamEKmtKYU' AND tags_manual=false AND (content_flag IS NULL OR content_flag='보류');
+UPDATE public.yt_channel_videos SET content_flag='무관', flag_source='manual', flagged_at=now() WHERE id='CqC6AK4ke2A' AND tags_manual=false AND (content_flag IS NULL OR content_flag='보류');
+UPDATE public.yt_channel_videos SET content_flag='무관', flag_source='manual', flagged_at=now() WHERE id='ZiuaFYXHXwg' AND tags_manual=false AND (content_flag IS NULL OR content_flag='보류');
+UPDATE public.yt_channel_videos SET tags_manual=true WHERE id IN ('TNbyzeP7dC8','rOcooLH9H84','NM0V4a6Op80','l02F4CUJWSg','PnU0eYL9JVI','BcvNSGYq5wE','bh7Uk86PblI','trVfoeYJojI','KrPxtU0BIA0','NsdK7no2NQA','6EWZ1YTpp5c','n6-c7FQaSXw','xd75aj3HJvI','9DgHkYtO9Jc','qRkK67oovDQ','nN0gbpNaa_s','k3wIa_PephI','at5eeIRESuE','_4uHwaJ4sgo','zYaQb3Nm5Dk','q-yE8KtTQR0','QebHkuX_EgI');
+SELECT count(*) FILTER (WHERE tags_manual) locked, count(*) FILTER (WHERE content_flag='무관') unrelated, count(*) total FROM public.yt_channel_videos WHERE id IN ('TNbyzeP7dC8','rOcooLH9H84','NM0V4a6Op80','l02F4CUJWSg','PnU0eYL9JVI','BcvNSGYq5wE','bh7Uk86PblI','trVfoeYJojI','KrPxtU0BIA0','NsdK7no2NQA','6EWZ1YTpp5c','n6-c7FQaSXw','xd75aj3HJvI','9DgHkYtO9Jc','qRkK67oovDQ','nN0gbpNaa_s','k3wIa_PephI','at5eeIRESuE','_4uHwaJ4sgo','zYaQb3Nm5Dk','q-yE8KtTQR0','QebHkuX_EgI','a-BLx0XUGIQ','dgh9GnFQ6Kc','q_Gio6VZBO8','tKzi57Gl11Q','sZamEKmtKYU','CqC6AK4ke2A','ZiuaFYXHXwg');
+-- 추가: 주인공을 고친 보류 9건은 보류 해제(잠금 풀고→표시 비우고→다시 잠금)
+UPDATE public.yt_channel_videos SET tags_manual=false WHERE id IN ('qRkK67oovDQ','nN0gbpNaa_s','k3wIa_PephI','at5eeIRESuE','_4uHwaJ4sgo','zYaQb3Nm5Dk','q-yE8KtTQR0','QebHkuX_EgI','NsdK7no2NQA') AND content_flag='보류';
+UPDATE public.yt_channel_videos SET content_flag=NULL, flag_source=NULL WHERE id IN ('qRkK67oovDQ','nN0gbpNaa_s','k3wIa_PephI','at5eeIRESuE','_4uHwaJ4sgo','zYaQb3Nm5Dk','q-yE8KtTQR0','QebHkuX_EgI','NsdK7no2NQA') AND content_flag='보류';
+UPDATE public.yt_channel_videos SET tags_manual=true WHERE id IN ('qRkK67oovDQ','nN0gbpNaa_s','k3wIa_PephI','at5eeIRESuE','_4uHwaJ4sgo','zYaQb3Nm5Dk','q-yE8KtTQR0','QebHkuX_EgI','NsdK7no2NQA');

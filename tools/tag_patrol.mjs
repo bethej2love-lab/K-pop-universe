@@ -6,6 +6,9 @@
 //
 //  A. 재판정 불일치 — 지금 태그를 **현재 매처**(자체 채널 매칭+외부 역추론)로 다시 돌렸을 때 어느 쪽도 그 사람을
 //     안 잡는 태그. 코드는 고쳤는데 데이터에 남은 옛 오태깅(9/29 82건 같은 것)이 여기 뜬다.
+//  C. 주인공 오배정 의심(2026-11-03) — 주인공은 2글자 이름(하영)인데 제목엔 **다른 그룹 사람의 성 붙은 이름**(오하영)이 있고
+//     자기 그룹 이름은 없는 행. 실측 79행 중 MXM 임영민이 보이프렌드 영민으로, I-LAND2 엄지원이 프로미스나인 지원으로 잡혀 있었다.
+//     동일인 본명(라이즈 원빈=박원빈)은 대개 제목에 #RIIZE 같은 자기 그룹명이 있어 빠진다 — 그래도 의심일 뿐이니 표본부터 볼 것.
 //  B. 약한 근거 — 매처는 잡지만, 근거가 **짧은 영문 토큰 하나뿐**인 태그(한글 이름·#해시태그·그룹명이 제목/설명
 //     어디에도 없음). 새 오태깅 유형의 씨앗이 여기 뜬다(9/29 기준 스키즈 한·스테이씨 윤·러블리즈 JIN·엔하이픈 제이가 상위).
 //
@@ -64,7 +67,12 @@ export async function tagPatrol({ days = +arg('--days', 30), top = +arg('--top',
       if (got.length < 1000) break;
     }
   }
-  const A = new Map(), B = new Map(); // key "이름(그룹)" → {n,bad,samples}
+  const A = new Map(), B = new Map(), C = new Map();
+  // C용: 성 뗀 2글자 → 그 이름을 성까지 붙여 쓰는 아티스트들(흔한 성씨 + 한글 3글자)
+  const SUR = /^[김이박최정강조윤장임한오서신권황안송전홍유고문양손배백허남심노하곽성차주우구민류나진지엄채원천방공현함변염여추도소석선설마길연위표명기반왕금옥육인맹제모탁국어은편용예경봉사부가복태목형피두감음빈동온호범좌팽승간상갈견당화창]/;
+  const fullBy = new Map();
+  for (const a of ARTISTS) { const n = a.name && a.name.ko; if (!/^[가-힣]{3}$/.test(n || '') || !SUR.test(n)) continue; const k = n.slice(1); if (!fullBy.has(k)) fullBy.set(k, []); fullBy.get(k).push(a); }
+  const groupNamed = (g, t) => { const G = GROUPS[g]; const tt = t.normalize('NFKC').toLowerCase().replace(/[\s_.·-]/g, ''); return [g, G && G.en, ...((G && G.alias) || [])].filter(Boolean).some(n => { const x = String(n).toLowerCase().replace(/[\s_.·-]/g, ''); return x.length >= 2 && tt.includes(x); }); }; // key "이름(그룹)" → {n,bad,samples}
   const bump = (mp, key, sample, isBad) => {
     if (!mp.has(key)) mp.set(key, { key, n: 0, bad: 0, samples: [] });
     const s = mp.get(key); s.n++; if (isBad) { s.bad++; if (s.samples.length < 4) s.samples.push(sample); }
@@ -73,6 +81,13 @@ export async function tagPatrol({ days = +arg('--days', 30), top = +arg('--top',
   for (const v of rows) {
     if (v.tags_manual || v.content_flag || OWNER_TIERS.has(v.source_tier)) continue;
     scanned++;
+    if (!groupNamed(v.group_ko, v.title)) for (const m of v.members || []) {
+      for (const a of fullBy.get(m) || []) {
+        const ag0 = a.group && a.group.ko;
+        if (!ag0 || ag0 === v.group_ko || !v.title.includes(a.name.ko)) continue;
+        bump(C, `${v.group_ko} ${m} ← 제목 ${a.name.ko}(${ag0})`, `${v.id} ${v.title.slice(0, 70)}`, true);
+      }
+    }
     const text = `${v.title}\n${v.description || ''}`;
     const tu = text.toUpperCase();
     const own = GROUPS[v.group_ko] ? M2._atmResolveMembers(v.title, v.description || '', rosterFor(v.group_ko), v.group_ko) : [];
@@ -100,7 +115,7 @@ export async function tagPatrol({ days = +arg('--days', 30), top = +arg('--top',
   }
   const rank = (mp, minBad) => [...mp.values()].filter(s => s.bad >= minBad).map(s => ({ ...s, ratio: s.bad / s.n }))
     .sort((x, y) => y.bad - x.bad).slice(0, top);
-  return { days, scanned, since: day(days), A: rank(A, 3), B: rank(B, 5) };
+  return { days, scanned, since: day(days), A: rank(A, 3), B: rank(B, 5), C: rank(C, 1) };
 }
 
 export function patrolMarkdown(res) {
@@ -111,6 +126,8 @@ export function patrolMarkdown(res) {
     res.A.length ? tbl(res.A) : '없음 ✅', '',
     '**B. 약한 근거** — 짧은 영문 토큰 하나만 근거(한글 이름·해시태그·그룹명 없음). 새 오태깅 유형 후보', '',
     res.B.length ? tbl(res.B) : '없음 ✅', '',
+    '**C. 주인공 오배정 의심** — 주인공은 성 뗀 이름인데 제목엔 다른 그룹 사람의 성 붙은 이름(동일인 본명일 수도 있음)', '',
+    (res.C || []).length ? tbl(res.C) : '없음 ✅', '',
     '확인·수정 절차는 TAGGING.md "오태깅 추적표". 결과는 의심이므로 표본을 먼저 볼 것.'].join('\n');
 }
 
@@ -119,7 +136,7 @@ if (/tag_patrol\.mjs$/.test(process.argv[1] || '')) {
   if (process.argv.includes('--md')) console.log(patrolMarkdown(res));
   else {
     console.log(`순찰 ${res.scanned}건 (since ${res.since})`);
-    for (const [name, list] of [['A 재판정 불일치', res.A], ['B 약한 근거', res.B]]) {
+    for (const [name, list] of [['A 재판정 불일치', res.A], ['B 약한 근거', res.B], ['C 주인공 오배정 의심', res.C]]) {
       console.log(`\n== ${name}`);
       for (const s of list) { console.log(`${String(s.bad).padStart(4)}/${String(s.n).padEnd(5)} ${s.key}`); s.samples.slice(0, 3).forEach(x => console.log('         ' + x)); }
     }
