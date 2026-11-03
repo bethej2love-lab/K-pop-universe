@@ -89340,7 +89340,7 @@
    },
    {
     "title": "msnz <Beyond Beauty>",
-    "type": "미니",
+    "type": "msnz 미니 1집",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b27373267fc9ae46eeb53515546f",
     "releaseDate": "2025.11.24",
@@ -89390,7 +89390,7 @@
    },
    {
     "title": "tripleS ∞! ＜SecretHimitsuBimil＞",
-    "type": "정규",
+    "type": "∞! 정규 1집",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b273ef88c8625bfc9c6619d0c987",
     "releaseDate": "2025.10.01",
@@ -89442,7 +89442,8 @@
     ],
     "src": "spotify",
     "spotifyId": "68PVcduJ9slzf5mvgDNemZ",
-    "melonAlbumId": "12128958"
+    "melonAlbumId": "12128958",
+    "region": "jp"
    },
    {
     "title": "tripleS ∞! ＜Password＞",
@@ -89831,7 +89832,7 @@
    },
    {
     "title": "Visionary Vision <Performante>",
-    "type": "정규",
+    "type": "Visionary Vision 정규 1집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/116/21/908/11621908_20241022162415_500.jpg",
     "releaseDate": "2024.10.23",
@@ -90239,7 +90240,7 @@
    },
    {
     "title": "EVOLution <⟡>",
-    "type": "미니",
+    "type": "EVOLution 미니 1집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/41/308/11341308_20231010181053_500.jpg",
     "releaseDate": "2023.10.11",
@@ -90300,7 +90301,7 @@
    },
    {
     "title": "LOVElution <ↀ>",
-    "type": "미니",
+    "type": "LOVElution 미니 1집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/07/474/11307474_20230816170056_500.jpg",
     "releaseDate": "2023.08.17",
@@ -90411,7 +90412,7 @@
    },
    {
     "title": "+(KR)ystal Eyes <AESTHETIC>",
-    "type": "미니",
+    "type": "+(KR)ystal Eyes 미니 1집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/112/37/617/11237617_20230503152222_500.jpg",
     "releaseDate": "2023.05.04",
@@ -90514,7 +90515,7 @@
    },
    {
     "title": "Acid Angel from Asia <ACCESS>",
-    "type": "미니",
+    "type": "Acid Angel from Asia 미니 1집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/110/89/306/11089306_20221027180133_500.jpg",
     "releaseDate": "2022.10.28",
@@ -200336,7 +200337,8 @@
      }
     ],
     "src": "melon",
-    "melonAlbumId": "40235"
+    "melonAlbumId": "40235",
+    "variant": true
    },
    {
     "title": "Beloved - 3집",
@@ -200566,7 +200568,8 @@
      }
     ],
     "src": "melon",
-    "melonAlbumId": "5294"
+    "melonAlbumId": "5294",
+    "variant": true
    },
    {
     "title": "Discovery - 1집",
@@ -214550,7 +214553,8 @@
      }
     ],
     "src": "melon",
-    "melonAlbumId": "12087428"
+    "melonAlbumId": "12087428",
+    "region": "en"
    },
    {
     "title": "I Miss My...",
@@ -216786,7 +216790,8 @@
     ],
     "src": "spotify",
     "spotifyId": "6jXNxLGVIQEaVbjLb6b7VN",
-    "copyright": "© 2026 FNC ENTERTAINMENT JAPAN INC."
+    "copyright": "© 2026 FNC ENTERTAINMENT JAPAN INC.",
+    "region": "jp"
    },
    {
     "title": "360°",
@@ -217155,7 +217160,8 @@
     ],
     "src": "spotify",
     "spotifyId": "6Dwg6xCdKavhIjPvysOiGA",
-    "melonAlbumId": "11349066"
+    "melonAlbumId": "11349066",
+    "region": "jp"
    },
    {
     "title": "Synchronize",
@@ -223201,7 +223207,8 @@
       "isTitle": false
      }
     ],
-    "melonVia": "10841664"
+    "melonVia": "10841664",
+    "variant": true
    },
    {
     "title": "WarmWinterWishes",
@@ -223362,7 +223369,8 @@
       "isTitle": false
      }
     ],
-    "melonVia": "10589631"
+    "melonVia": "10589631",
+    "variant": true
    },
    {
     "title": "Produced by [   ] Part 2",
@@ -234520,7 +234528,7 @@
    },
    {
     "title": "Stargazers",
-    "type": "미니",
+    "type": "싱글",
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/d3/b6/97/d3b6979f-e90b-d413-7c2d-a53f4489226e/888272153828.jpg/600x600bb.jpg",
     "releaseDate": "2025.05.18",
@@ -234618,7 +234626,7 @@
    },
    {
     "title": "ISEGYE FESTIVAL",
-    "type": "미니",
+    "type": "싱글",
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/39/98/cf/3998cf8c-b59f-d6ba-c9dc-c7c282cd80f7/8809973500430.jpg/600x600bb.jpg",
     "releaseDate": "2023.09.24",
@@ -240206,7 +240214,7 @@
    },
    {
     "title": "Together Forever",
-    "type": "정규",
+    "type": "싱글",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/116/78/907/11678907_20241226171353_500.jpg",
     "releaseDate": "2024.12.18",
@@ -240244,7 +240252,8 @@
       "songId": "38397796"
      }
     ],
-    "melonAlbumId": "11678907"
+    "melonAlbumId": "11678907",
+    "region": "jp"
    },
    {
     "title": "Weʼre Not Alone",
@@ -240345,7 +240354,7 @@
    },
    {
     "title": "Evergreen",
-    "type": "정규",
+    "type": "싱글",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/115/02/061/11502061_20240530143834_500.jpg",
     "releaseDate": "2024.06.19",
@@ -240383,7 +240392,8 @@
       "songId": "37589773"
      }
     ],
-    "melonAlbumId": "11502061"
+    "melonAlbumId": "11502061",
+    "region": "jp"
    },
    {
     "title": "My Tune",
