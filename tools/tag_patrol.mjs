@@ -85,6 +85,7 @@ export async function tagPatrol({ days = +arg('--days', 30), top = +arg('--top',
       for (const a of fullBy.get(m) || []) {
         const ag0 = a.group && a.group.ko;
         if (!ag0 || ag0 === v.group_ko || !v.title.includes(a.name.ko)) continue;
+        if ((v.with_members || []).includes(`${a.name.ko}(${ag0})`)) continue; // 상대가 손님으로 이미 붙음 = 함께 나온 영상
         bump(C, `${v.group_ko} ${m} ← 제목 ${a.name.ko}(${ag0})`, `${v.id} ${v.title.slice(0, 70)}`, true);
       }
     }
