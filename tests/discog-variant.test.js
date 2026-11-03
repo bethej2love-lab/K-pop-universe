@@ -17,18 +17,27 @@ const ROOT = path.join(__dirname, '..');
 const html = require('../tools/index_source.cjs').readIndexSource();
 const admin = fs.readFileSync(path.join(ROOT, 'admin.js'), 'utf8');
 const groups = JSON.parse(fs.readFileSync(path.join(ROOT, 'groups.json'), 'utf8'));
+const artists = JSON.parse(fs.readFileSync(path.join(ROOT, 'artists.json'), 'utf8'));
 
 let pass = 0, fail = 0;
 const need = (c, m, d) => { if (c) { pass++; console.log(`✅ ${m}`); } else { fail++; console.log(`❌ ${m}`); if (d) console.log('   ' + d); } };
 
 /* ① 데이터 */
-let variantCnt = 0, variantMain = 0, regionCnt = 0;
-for (const g of Object.values(groups)) for (const al of (g.discography || [])) {
-  if (al.variant) { variantCnt++; if (al.isMain) variantMain++; }
+let variantCnt = 0, regionCnt = 0;
+const variantMain = [];
+const discographies = [
+  ...Object.entries(groups).map(([name, g]) => ({name, albums: g.discography || []})),
+  ...artists.flatMap(a => [
+    {name: `${a.name.ko}(${a.group.ko})`, albums: a.discography || []},
+    ...(a.unitDiscography || []).map(u => ({name: `${a.name.ko}/${u.unitName}`, albums: u.albums || []})),
+  ]),
+];
+for (const {name, albums} of discographies) for (const al of albums) {
+  if (al.variant) { variantCnt++; if (al.isMain !== false) variantMain.push(`${name}: ${al.title}`); }
   if (al.region) regionCnt++;
 }
 need(variantCnt > 0, `변형판 태그(variant)가 데이터에 있음 — ${variantCnt}장`);
-need(variantMain === 0, '변형판은 전부 부가(isMain:false)', `isMain인 변형판 ${variantMain}장`);
+need(variantMain.length === 0, '그룹·개인·유닛 변형판은 전부 부가(isMain:false)', variantMain.join('\n   '));
 need(regionCnt > 0, `해외반 태그(region)가 데이터에 있음 — ${regionCnt}장`);
 
 /* ② 화면 */

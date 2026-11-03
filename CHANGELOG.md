@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-11-03 (Codex — 변형판 주요 앨범 표시 충돌12건 정리)
+- **[완료] [groups.json·artists.json]** Data CI41582964138의 discog-variant 실패는 이미 variant=true인 그룹 앨범5장이 isMain=true이기도 해서 발생. 같은 조건을 정식 개인/유닛 필드까지 읽기 전용 대조해 개인7장 추가 발견. 기존 variant 판정은 그대로 두고 isMain만false로 맞춤: 쥬얼리 3집 Beloved/Discovery, AOA GRASS IS GREENER, OnlyOneOf Instinct Pt.1/2, 리사 Moonlit Floor/Rockstar, 장우혁 Back To The Memories/I Am The Future, 소유 RE:FRESH, 제시카 With Love J, 가영 A flower. 신규 변형판 지정/삭제/곡·앨범명·발매일 변경 없음. 기본 화면은 기존 variant 필터가 이미 숨기는 상태라 노출 정책을 새로 바꾼 것이 아님.
+- **[완료·회귀 범위] [tests/discog-variant.test.js·disco/]** 기존 검사가 그룹만 보던 것을 정식 개인·유닛 디스코까지 확장하고 문제가 있으면 주인/제목을 출력. legacy soloDiscography는 이번 범위에 포함하지 않음. 기존 생성기로 해당 disco 파생물만 동기화. 원본 JSON 삭제 줄은 isMain:true 12줄뿐이며 들여쓰기/줄바꿈 보존, 트랙43,815개 유지. variant12/0·syntax·validate 오류0/기존144경고·slim --check·disco-artifacts 통과. 필수 smoke 첫 실행은 기존 Charts30초/인증10초 지연으로 실패했고, 같은 코드의 대조 실행은 PC·모바일 모두 통과(Charts3개/새 콘솔 오류0). 간헐 지연 자체가 영구 해결됐다는 뜻은 아님. 활동기15/0·Spotify 출처 점검·솔로340명 lazy-loader도 통과.
+- **[후속 상태] [Search Console·SEO 배포]** 사용자가 한국어 성현 페이지의 색인 요청 버튼을 눌렀다고 알려줌. 조작 도구 부재로 접수 완료 메시지까지 직접 확인하지 못했으므로 추가 요청하지 않는다. 상단 언어 전환 dedd42a3f1은 main 반영됨. 해당 SEO 빌드는 후속 회차 페이지 변경으로 취소됐고 최신41583282695 재생성 중. 배포된 영어/한국어 성현 URL은 HTTP200이지만 마지막 확인 시 language-nav가 아직 없어 생성/배포 완료 전으로 기록.
+- **⏳ 덜 된 일 [외부 처리 확인]** 최신 Rebuild static SEO pages 성공 후 en/g/cortis/seonghyeon/ 및 g/코르티스/성현/의 language-nav 실제 확인. 색인은 중복 요청 대신 이후 Google URL 검사 상태/선택 canonical 확인. 이전 변형판 지정 자체의 출처·정본 선택은 별도 검수 대상이며 이번 부울 모순 정리로 모두 인증한 것은 아님.
+
 ## 2026-11-03 (Claude Code — 음방 회차: 앱 안 화면 + 매시간 갱신)
 - 사용자: "최신 회차가 최대 일주일 늦게 올라오는 건 좀… 우리 영상 빨리빨리 수집하는데 왜 오래 걸려? 우리 쓸만한 레이아웃 많잖아". 원인은 회차 페이지를 4만 장 전체 재빌드(주 1회·20분)에 끼워 넣은 것.
 - **[신규] 앱 음방 회차 화면 _openShowEp** — DB를 바로 읽어 영상 목록 화면(_openFeedListOverlay)에 팀별 섹션(1위 팀 맨 앞 🏆)·종류 탭(무대/앵콜/풀캠/직캠)·회차 고르기(최근 12주, 달력 아이콘 — 고르기 버튼에 f.icon 옵션 추가). 3분 캐시 → 방송 당일 직캠이 수집되는 대로 보인다. 입구: 발견 탭 This Week 맨 위 '음방 회차' 칩 줄(지난 7일, 오늘 방송은 KST 20시 전엔 지난주), #show=방송~날짜 링크, 정적 회차 페이지의 '앱에서 이 회차 보기'. 헤드리스 390px 실측: 인기가요 11.01 16팀·46개, 직캠 탭 12개, 콘솔 에러 0.
