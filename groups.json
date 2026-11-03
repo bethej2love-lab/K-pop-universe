@@ -159153,7 +159153,7 @@
    },
    {
     "title": "RUN",
-    "type": "미니",
+    "type": "싱글",
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/d3/09/f9/d309f969-e1c2-2b60-5e5e-8de40afdaf26/196589233561.jpg/600x600bb.jpg",
     "releaseDate": "2022.07.06",
@@ -159823,7 +159823,7 @@
    },
    {
     "title": "The Beginning",
-    "type": "미니",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/31/920/11331920_20230921155352_500.jpg",
     "releaseDate": "2023.09.22",
@@ -180860,7 +180860,7 @@
    },
    {
     "title": "Ya Ya Ya",
-    "type": "미니",
+    "type": "싱글",
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/2a/0b/b1/2a0bb133-179f-50f3-1eff-0439f918ea2e/6942870317533.jpg/600x600bb.jpg",
     "releaseDate": "1998.02.01",
@@ -181145,7 +181145,7 @@
    },
    {
     "title": "20세기",
-    "type": "미니",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/cd/67/72/cd67725b-9e3a-ed13-b63f-71aa6ce9eb19/8809795711045.jpg/600x600bb.jpg",
     "releaseDate": "2017.10.28",
@@ -201024,7 +201024,7 @@
    },
    {
     "title": "GRASS IS GREENER",
-    "type": "미니",
+    "type": "싱글",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/26/803/2226803_500.jpg/melon/resize/260/quality/80/optimize",
     "releaseDate": "2013.11.07",
@@ -201057,7 +201057,8 @@
       "isTitle": false
      }
     ],
-    "melonVia": "2226803"
+    "melonVia": "2226803",
+    "variant": true
    },
    {
     "title": "RED MOTION",
@@ -204379,7 +204380,7 @@
    },
    {
     "title": "Love Beat",
-    "type": "정규",
+    "type": "미니 5집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/96/500/2196500_500.jpg",
     "releaseDate": "2013.08.12",
@@ -215238,7 +215239,7 @@
    },
    {
     "title": "young tape",
-    "type": "정규",
+    "type": "믹스테이프",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/137/94/709/13794709_20260709172334_500.jpg",
     "releaseDate": "2026.07.13",
@@ -225018,7 +225019,7 @@
    },
    {
     "title": "Dark Dream",
-    "type": "미니",
+    "type": "싱글",
     "isMain": false,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/c7/7d/a4/c77da459-c315-6656-edc1-b4562f091276/196922631009_Cover.jpg/600x600bb.jpg",
     "releaseDate": "2021.09.29",
@@ -226430,7 +226431,7 @@
    },
    {
     "title": "We Love You",
-    "type": "미니",
+    "type": "미니 6집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/04/954/11304954_20230811154813_500.jpg",
     "releaseDate": "2023.08.14",
@@ -230847,7 +230848,7 @@
    },
    {
     "title": "LAST DANCE",
-    "type": "정규",
+    "type": "미니 3집",
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/4a/2e/ff/4a2eff38-4e54-8501-7351-6a17a3b45efa/888272128840_Cover.jpg/600x600bb.jpg",
     "releaseDate": "2024.01.11",
@@ -231357,7 +231358,7 @@
    },
    {
     "title": "Anymore",
-    "type": "미니",
+    "type": "싱글",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/115/89/560/11589560_20240910170121_500.jpg",
     "releaseDate": "2024.09.11",
@@ -232010,7 +232011,7 @@
    },
    {
     "title": "Changer : Dear Eris",
-    "type": "정규",
+    "type": "미니 5집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/107/00/653/10700653_20210902115744_500.jpg",
     "releaseDate": "2021.09.02",
@@ -236902,7 +236903,7 @@
    },
    {
     "title": "Boys Da Capo",
-    "type": "미니",
+    "type": "싱글",
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/4f/e3/92/4fe392ca-d7b8-bff2-21b8-5009b6655291/resize-001.jpg/600x600bb.jpg",
     "releaseDate": "2019.10.29",
@@ -238174,7 +238175,7 @@
    },
    {
     "title": "CHAT (_complete)",
-    "type": "정규",
+    "type": "싱글",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/143/25/641/14325641_20260731094959_500.jpg",
     "releaseDate": "2026.07.28",
@@ -238333,7 +238334,7 @@
   "discography": [
    {
     "title": "BOYAGER 6",
-    "type": "미니",
+    "type": "미니 6집",
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/41/da/9e/41da9efe-9c12-24a2-587d-f8ace48c38f7/191953543697.jpg/600x600bb.jpg",
     "releaseDate": "2026.05.26",
@@ -238419,7 +238420,7 @@
    },
    {
     "title": "Bouquet",
-    "type": "정규 2집",
+    "type": "정규",
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/8e/3e/b3/8e3eb385-d660-763a-34c3-d58d82a2e960/859754740546_cover.jpg/600x600bb.jpg",
     "releaseDate": "2019.02.27",
@@ -238481,7 +238482,8 @@
       "title": "Promise",
       "isTitle": false
      }
-    ]
+    ],
+    "region": "jp"
    },
    {
     "title": "CALL ME",
@@ -238865,7 +238867,7 @@
    },
    {
     "title": "아이야 (I Yah)",
-    "type": "정규",
+    "type": "정규 1집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/72/192/2172192_500.jpg",
     "releaseDate": "2013.01.10",
@@ -239119,7 +239121,7 @@
    },
    {
     "title": "Don't Touch My Girl",
-    "type": "미니",
+    "type": "싱글",
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music/e7/85/33/mzi.rnggitkc.jpg/600x600bb.jpg",
     "releaseDate": "2011.10.06",
@@ -243453,7 +243455,7 @@
    },
    {
     "title": "Into the Ice Age",
-    "type": "미니",
+    "type": "싱글",
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/78/84/72/7884726f-d7dd-e0b3-fe94-82d4ee29412b/cover_-_MCND.jpg/600x600bb.jpg",
     "releaseDate": "2020.02.27",
@@ -244014,7 +244016,7 @@
    },
    {
     "title": "사춘기 하 (Winter)",
-    "type": "미니",
+    "type": "정규 2집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/27/786/10027786_500.jpg?922b7b248cc34ce59184278b317d5f0d/melon/resize/260/quality/80/optimize",
     "releaseDate": "2017.10.25",
@@ -245670,7 +245672,7 @@
    },
    {
     "title": "Blow Speed",
-    "type": "정규",
+    "type": "정규 1집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/75/832/2175832_500.jpg",
     "releaseDate": "2013.02.20",
@@ -247124,7 +247126,7 @@
    },
    {
     "title": "Time to Shine",
-    "type": "미니",
+    "type": "미니 1집",
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music/a4/26/e6/mzi.hlyakoya.jpg/600x600bb.jpg",
     "releaseDate": "2010.08.18",
@@ -247234,7 +247236,7 @@
    },
    {
     "title": "The Beautiful Stardust",
-    "type": "정규",
+    "type": "정규 1집",
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music/3e/c3/99/mzi.jfhwclza.jpg/600x600bb.jpg",
     "releaseDate": "2007.07.25",
@@ -250416,7 +250418,7 @@
   "discography": [
    {
     "title": "7+UP",
-    "type": "미니",
+    "type": "미니 1집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/26/535/11326535_20230913172307_500.jpg",
     "releaseDate": "2023.09.14",
@@ -250864,7 +250866,7 @@
    },
    {
     "title": "Painkiller",
-    "type": "미니",
+    "type": "미니 1집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/01/807/2101807_500.jpg",
     "releaseDate": "2012.03.29",
@@ -254998,7 +255000,7 @@
    },
    {
     "title": "여자 대통령",
-    "type": "정규",
+    "type": "정규 1집 리패키지",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/90/068/2190068_500.jpg",
     "releaseDate": "2013.06.24",
@@ -259460,7 +259462,7 @@
   "discography": [
    {
     "title": "NEW MOON",
-    "type": "정규",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/58/979/10158979_500.jpg",
     "releaseDate": "2018.04.17",
@@ -260667,7 +260669,7 @@
   "discography": [
    {
     "title": "The Voice",
-    "type": "미니",
+    "type": "스페셜",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/49/408/11349408_20231023135853_500.jpg",
     "releaseDate": "2023.10.24",
@@ -261749,7 +261751,8 @@
     ],
     "src": "spotify",
     "spotifyId": "5O8mj0lU5nIEbhhORk3obQ",
-    "melonAlbumId": "12914687"
+    "melonAlbumId": "12914687",
+    "region": "jp"
    },
    {
     "title": "HUNGRY HEART",
@@ -264129,7 +264132,7 @@
    },
    {
     "title": "1.Got Hooked: An Addictive Symphony",
-    "type": "미니",
+    "type": "싱글",
     "isMain": true,
     "cover": "https://i.scdn.co/image/ab67616d0000b273ba51be278374dfd7062758c2",
     "releaseDate": "2026.04.13",
