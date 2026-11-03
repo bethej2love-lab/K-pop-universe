@@ -1,5 +1,7 @@
 # CHANGELOG
 
+- 2026-11-03 [데이터][Claude Code] 판단 보류였던 것 **전부 검색으로 확정**: 디스코 15차(8건, 번호 없음 329→321) 몬스타엑스 THE X=미니 13집(13th Mini 판매처)·The Phase=14집·Unfold=미국 정규 3집(region en)·NOW PROJECT vol.1·2=스페셜(리레코딩 컴필레이션/디지털), 원팩트 ONE PACK=스페셜(선공개 디지털 EP)·1'ONLY=미니 5집(allkpop fifth EP), 다이몬 HYPER LINK Vol.4=디지털 싱글(나무위키). 영상 6건(sql/primary_fix3_2026-11-03.sql+_undo): JUNMINE=휘브 김준민 포토북(에스콰이어)→싸이커스 준민에서 이동, '박지훈의 Stay Night with 배인혁'=KBS 멀푸봄 출연진→워너원 박지훈, 보이즈 플래닛 4번째 스타마스터=비투비 이민혁(OSEN), 셔누X형원 수트댄스에서 몬엑 민혁 제거, '왕자 지훈'=배우 김지훈→무관, 싸이커스 김민재 이장님은 싸이커스 민재가 맞음(유지).
+
 - 2026-11-03 [데이터][Claude Code] 디스코 번호 14차(18건, 번호 없음 347→329): 세븐어스 Summús=싱글·SPRING CANVAS 1·STAY TUNED 2·WHITE FALL 3, 아크 AR^C 1·nu kidz 2·HOPE 3, 다이몬 HYPERSPACE=미니 1·HYPER LINK Vol.2=디지털 싱글(Vol.4는 확인 못 해 그대로), 베리베리 CONFETTI=미니 8집, 아스트로 Rise Up=스페셜, 나인뮤지스 Let's Have A Party·DOLLS=싱글·LOVE CITY=미니 6집 리패키지, 라비 ROSES=미니 4·LOVE & HOLIDAY=5·PARADISE=스페셜·DESSERT TAPE(Xydo 콜라보)=스페셜. 확인 못 함: 몬스타엑스 THE X·The Phase·Unfold·NOW PROJECT 차수.
 
 - 2026-11-03 [데이터][Claude Code] 디스코 번호 13차(27건, 번호 없음 373→347): ATBO The Beginning 開花·始作·飛上 미니 1~3(Wikipedia), 픽시 Bravery 1·Temptation 2·REBORN 3·CHOSEN KARMA 4(4th Mini 판매처 표기, The Voice는 디지털 미니라 그대로), 크랙시 My Universe 1·ZERO 2 2·Who Am I 3·XX 4(판매처 3rd/4th), 빅오션 Follow 1·Underwater 2·THE GREATEST BATTLE 3, 원팩트 Moment 1·fallIn' 2·PINK CRUSH 3·ONE FACT 4(둘은 정규로 잘못), 드림노트 4장·라붐 3장은 미니가 아니라 **싱글 앨범**, 영파씨 Year 1 = 리믹스·COLD = 스페셜. 도구: tools/disco_set_types.mjs(출처 확인분을 주인+제목으로 반영, 원본 줄바꿈·들여쓰기 보존 — 처음엔 artists.json이 CRLF·들여쓰기를 잘못 읽어 30만 줄이 바뀔 뻔). 순찰 C는 상대가 손님으로 이미 붙은 영상(함께 챌린지) 제외.
