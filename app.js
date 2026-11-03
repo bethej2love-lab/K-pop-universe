@@ -2282,7 +2282,9 @@ function _dismissOnboardHint(){
   // 예전(2026-08-12)엔 모바일 peek를 카드 밑에 깔아뒀으나 반쯤 열린 채 남는 게 어색하다는 피드백으로
   // 변경). 뚝 사라지지 않게 카드 바텀시트처럼 아래로 슬라이드아웃. 데스크톱은 CSS translateX
   // 트랜지션으로 이미 부드럽게 닫히므로 그대로 _closeFeedOverlay.
-  if(!isMob())_closeFeedOverlay();
+  // 웹 넓은 화면(무대, ≥1024)은 닫지 않는다(2026-11-03 사용자와 정한 '작업대' 방향) — 자동으로 연 나침반도 카드를 누르면 440으로 줄어 같이 있고,
+  // 배경 탭에도 남게 '쓰는 중'으로 친다. 예전엔 처음 연 나침반을 두고 행성을 누르면 나침반이 통째로 사라졌다(웹 화면 조합 점검에서 발견).
+  if(!isMob()){if(typeof _stageWide==='function'&&_stageWide())_feedEngaged=true;else _closeFeedOverlay();}
   else if(document.getElementById('feed-overlay').classList.contains('open'))_slideDownCloseFeed();
 }
 
@@ -16958,7 +16960,7 @@ document.getElementById('desktop-header').addEventListener('pointerdown',e=>e.st
 ['settings-panel','search-wrap','tabbar','tt','gc','tab-settings','col-picker'].forEach(id=>{
   document.getElementById(id)?.addEventListener('pointerdown',e=>e.stopPropagation());
 });
-window.addEventListener('pointerdown',e=>{if(e.target.closest('[data-modal]')){_mdx=e.clientX;_mdy=e.clientY;return;}_mdx=e.clientX;_mdy=e.clientY;closePanels({keepFeed:_feedEngaged});_dismissOnboardHint();});
+window.addEventListener('pointerdown',e=>{if(e.target.closest('[data-modal]')){_mdx=e.clientX;_mdy=e.clientY;return;}_mdx=e.clientX;_mdy=e.clientY;closePanels({keepFeed:_feedEngaged||(!isMob()&&_stageWide())});_dismissOnboardHint();});
 // 검색창 자연 닫힘(2026-08-30) — 위 window 핸들러는 탐험 패널(feed-overlay 등)이 pointerdown을 stopPropagation해서
 // 그 안을 누르면 안 불린다. **캡처 단계**로 별도 등록하면 stopPropagation 전에 항상 먼저 발동하므로, 검색 UI
 // 자체(입력·결과)만 빼고 화면 어디를 누르든 열려있는 검색을 닫는다 — 웹앱 표준 "바깥 클릭 시 검색 닫힘".

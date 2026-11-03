@@ -1017,7 +1017,10 @@
 
   @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){
     /* 데스크톱: 좌측(재생 중) + 우측(추천 목록) 2열 — 모바일 세로 스택과 다르게 별도 설계 */
-    #yt-lightbox.lb-browse #yt-lb-wrap{width:min(92vw,1080px);display:flex;align-items:flex-start;gap:26px;}
+    /* 2026-11-03 웹 화면 조합 점검: 카드 없이 재생할 때(재생만·나침반+재생) wrap이 1080px 고정이라 1920에서 영상이 734px, 화면 39%가 비었다.
+       카드 있을 때(아래 side-panel 규칙)와 같은 원칙 — 남는 폭을 채우고(좌우 28px), 높이가 모자라면 영상 높이 기준으로 상한 */
+    #yt-lightbox.lb-browse{padding:0 28px;box-sizing:border-box;}
+    #yt-lightbox.lb-browse #yt-lb-wrap{width:100%;max-width:calc((100vh - 280px) * 16 / 9 + 346px);display:flex;align-items:flex-start;gap:26px;}
     #yt-lightbox.lb-browse #yt-lb-main{flex:1;min-width:0;}
     #yt-lightbox.lb-browse #yt-lb-uplist{width:320px;flex-shrink:0;max-height:min(80vh,720px);overflow-y:auto;padding-left:2px;overscroll-behavior:contain;will-change:transform;}
     #yt-lightbox.lb-browse #yt-lb-uplist-scroll{padding-bottom:8px;}
@@ -1035,6 +1038,11 @@
        아주 넓은 화면에선 높이 기준으로 상한 → 남는 공간은 왼쪽으로(카드 쪽에 붙임, 카드 1개 모드와 같은 원칙) */
     body:has(#member-panel.open) #yt-lightbox.lb-browse #yt-lb-wrap,
     body:has(#conn-panel.open) #yt-lightbox.lb-browse #yt-lb-wrap{flex-direction:column;align-items:stretch;width:100%;max-width:calc((100vh - 200px) * 16 / 9);gap:16px;}
+    /* 나침반+카드+재생 3개가 같이 열리면(2026-11-03 웹 조합 점검) 가운데가 400~600px뿐이라 Up Next를 옆에 두면 영상이 140px로 쪼그라들었다
+       → 카드 2장 모드와 같이 Up Next를 영상 아래로 */
+    body:has(#feed-overlay.open):has(#side-panel.open) #yt-lightbox.lb-browse:not(.lb-shorts-desk){align-items:flex-start;overflow-y:auto;padding:44px 28px 32px;justify-content:center;}
+    body:has(#feed-overlay.open):has(#side-panel.open) #yt-lightbox.lb-browse:not(.lb-shorts-desk) #yt-lb-wrap{flex-direction:column;align-items:stretch;width:100%;max-width:calc((100vh - 200px) * 16 / 9);gap:16px;}
+    body:has(#feed-overlay.open):has(#side-panel.open) #yt-lightbox.lb-browse:not(.lb-shorts-desk) #yt-lb-uplist{width:auto;max-height:none;overflow-y:visible;padding-left:0;}
     body:has(#member-panel.open) #yt-lightbox.lb-browse #yt-lb-uplist,
     body:has(#conn-panel.open) #yt-lightbox.lb-browse #yt-lb-uplist{width:auto;max-height:none;overflow-y:visible;padding-left:0;}
     body:has(#member-panel.open) #yt-lightbox.lb-browse #yt-lb-uplist-scroll,
