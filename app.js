@@ -9999,7 +9999,7 @@ function _gaEvent(name,params){
 // ⚠️ 어드민(본인 테스트)은 세지 않는다. 테이블이 아직 없으면(SQL 미실행) 조용히 버린다.
 // var: _gaEvent가 이 줄보다 먼저 불려도 TDZ 예외가 안 나게(아래 _appEvent가 미초기화면 그냥 건너뜀)
 var _APP_EV=new Set(['view_group','view_member','video_play','search','favorite_group','favorite_member','explore_open',
-  'share_card','deeplink_open','story_to_app','shelf_click','surf_hop','copy_public_collection','save_collection','save_scrap','visit','chem_open']);
+  'share_card','deeplink_open','story_to_app','shelf_click','surf_hop','copy_public_collection','save_collection','save_scrap','visit','chem_open','ref']);
 var _appEvQ=[],_appEvT=null,_appEvDead=false;
 function _appEvent(ev,k){
   if(_appEvDead||window._kpuAutomated)return;
@@ -10028,6 +10028,20 @@ async function _appEvFlush(){
     if(localStorage.getItem('kpu_ev_day')===day)return;
     localStorage.setItem('kpu_ev_day',day);
     _appEvent('visit',window._kpuNewVisitor?'new':'ret');
+  }catch(e){}
+})();
+// 바깥 유입 출처(2026-11-03) — 챗지피티 등이 사이트를 공유하기 시작해서 얼마나 오는지 세려고. 세션당 1번,
+// utm_source가 있으면 그것, 없으면 다른 사이트에서 왔을 때만 그 주소의 호스트(chatgpt.com·google.com 등). 우리 정적 페이지에서 넘어온 건 안 센다.
+(function _appRef(){
+  try{
+    if(sessionStorage.getItem('kpu_ref_sent'))return;
+    const u=new URLSearchParams(location.search).get('utm_source');
+    let h='';try{h=document.referrer?new URL(document.referrer).hostname:'';}catch(e){}
+    if(h.startsWith('www.'))h=h.slice(4);
+    const src=u||(h&&!h.endsWith('kpop-universe.kr')?h:'');
+    if(!src)return;
+    sessionStorage.setItem('kpu_ref_sent','1');
+    _appEvent('ref',src);
   }catch(e){}
 })();
 // ── 유입 계측(C2, 30일 계획) ────────────────────────────────────────────────
