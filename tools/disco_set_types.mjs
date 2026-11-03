@@ -15,8 +15,8 @@ const arts = Array.isArray(A.data) ? A.data : Object.values(A.data);
 const discoOf = owner => {
   if (G.data[owner]) return G.data[owner].discography;
   const m = owner.match(/^(.+)\((.+)\)$/);
-  const a = m && arts.find(x => x.name && x.name.ko === m[1] && (x.group && x.group.ko) === m[2]);
-  return a && a.discography;
+  // 같은 "이름(그룹)"이 여럿(예: 소희(솔로) 3명)이면 전부 합쳐서 찾는다 — 제목이 하나만 맞아야 바뀌므로 안전
+  return m && arts.filter(x => x.name && x.name.ko === m[1] && (x.group && x.group.ko) === m[2]).flatMap(x => x.discography || []);
 };
 const norm = s => String(s || '').normalize('NFKC').replace(/\s+/g, ' ').trim().toLowerCase();
 let ok = 0, skip = 0;
