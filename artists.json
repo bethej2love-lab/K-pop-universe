@@ -61363,6 +61363,198 @@
         "src": "spotify",
         "spotifyId": "1zVGPWOEg6yK5LjMSHTmKP",
         "melonAlbumId": "11897163"
+      },
+      {
+        "title": "왜요 (WAYO)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/104/40/102/10440102_20200605101526_500.jpg",
+        "releaseDate": "2020.06.05",
+        "trackCount": 1,
+        "titleTrack": "왜요 (WAYO)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "왜요 (WAYO)",
+            "isTitle": true,
+            "songId": "32649725"
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "10440102"
+      },
+      {
+        "title": "Miss You",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/61/764/11361764_20231108151221_500.jpg",
+        "releaseDate": "2023.11.10",
+        "trackCount": 1,
+        "titleTrack": "Miss You",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Miss You",
+            "isTitle": true,
+            "songId": "36953042"
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11361764"
+      },
+      {
+        "title": "ONLY ONE",
+        "type": "미니 1집",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/71/282/11371282_20231122163811_500.jpg",
+        "releaseDate": "2023.11.23",
+        "trackCount": 6,
+        "titleTrack": "하나만 해",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "하나만 해",
+            "isTitle": true,
+            "songId": "36995844"
+          },
+          {
+            "no": 2,
+            "title": "헤벌레",
+            "isTitle": false,
+            "songId": "36995845"
+          },
+          {
+            "no": 3,
+            "title": "Come To Me",
+            "isTitle": false,
+            "songId": "36995846"
+          },
+          {
+            "no": 4,
+            "title": "Miss You (Original Ver.)",
+            "isTitle": false,
+            "songId": "36995847"
+          },
+          {
+            "no": 5,
+            "title": "하나두",
+            "isTitle": false,
+            "songId": "36995848"
+          },
+          {
+            "no": 6,
+            "title": "Miss You (Piano Ver.)",
+            "isTitle": false,
+            "songId": "36995849"
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11371282"
+      },
+      {
+        "title": "Officially Cool",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/114/55/705/11455705_20240402104956_500.jpg",
+        "releaseDate": "2024.04.02",
+        "trackCount": 1,
+        "titleTrack": "Officially Cool",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Officially Cool",
+            "isTitle": true,
+            "songId": "37376846"
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11455705"
+      },
+      {
+        "title": "GOOD ViBES",
+        "type": "미니 2집",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/115/78/214/11578214_20240828152252_500.jpg",
+        "releaseDate": "2024.08.29",
+        "trackCount": 6,
+        "titleTrack": "O-HE",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "애써",
+            "isTitle": false,
+            "songId": "37936890"
+          },
+          {
+            "no": 2,
+            "title": "We Good",
+            "isTitle": false,
+            "songId": "37936891"
+          },
+          {
+            "no": 3,
+            "title": "O-HE",
+            "isTitle": true,
+            "songId": "37936892"
+          },
+          {
+            "no": 4,
+            "title": "Lovin' Ya",
+            "isTitle": false,
+            "songId": "37936893"
+          },
+          {
+            "no": 5,
+            "title": "Fallin'",
+            "isTitle": false,
+            "songId": "37936894"
+          },
+          {
+            "no": 6,
+            "title": "T.M.B(자기소개)",
+            "isTitle": false,
+            "songId": "37936895"
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11578214"
+      },
+      {
+        "title": "DIMOLLY",
+        "type": "스페셜",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/128/45/956/12845956_20260206181530_500.jpg",
+        "releaseDate": "2026.02.10",
+        "trackCount": 4,
+        "titleTrack": "넌 날 미치게 만들겠지만 (You make me crzy)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "넌 날 미치게 만들겠지만 (You make me crzy)",
+            "isTitle": true,
+            "songId": "601239989"
+          },
+          {
+            "no": 2,
+            "title": "괜찮아질 거야 (We gon’ be alright)",
+            "isTitle": false,
+            "songId": "601239990"
+          },
+          {
+            "no": 3,
+            "title": "사랑하는 이유가 사랑이 되니까 (Reason Why I luv u cause I luv u)",
+            "isTitle": false,
+            "songId": "601239991"
+          },
+          {
+            "no": 4,
+            "title": "그니까 오늘 밤 (So, tonight)",
+            "isTitle": false,
+            "songId": "601239992"
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "12845956"
       }
     ]
   },
