@@ -20424,6 +20424,24 @@
     },
     "discography": [
       {
+        "title": "AUTOMATIC",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/18/105/15118105_20261103092134_500.jpg",
+        "releaseDate": "2026.11.03",
+        "trackCount": 1,
+        "titleTrack": "AUTOMATIC",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "AUTOMATIC",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15118105"
+      },
+      {
         "title": "그대에게 드림 OST Part.1",
         "type": "OST",
         "releaseDate": "2026.07.13",
@@ -167792,6 +167810,29 @@
     },
     "id": "a0805",
     "discography": [
+      {
+        "title": "만남과 이별은 반대",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/14/136/15114136_20261102111113_500.jpg",
+        "releaseDate": "2026.11.03",
+        "trackCount": 2,
+        "titleTrack": "만남과 이별은 반대",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "만남과 이별은 반대",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "만남과 이별은 반대 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15114136"
+      },
       {
         "title": "Glory",
         "type": "싱글",

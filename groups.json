@@ -53330,6 +53330,44 @@
   },
   "discography": [
    {
+    "title": "PULSE",
+    "type": "미니",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/82/293/15082293_20261026170443_500.jpg",
+    "releaseDate": "2026.11.03",
+    "trackCount": 5,
+    "titleTrack": "With",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Finest Thing",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "With",
+      "isTitle": true
+     },
+     {
+      "no": 3,
+      "title": "백화요란 (Inside Out)",
+      "isTitle": false
+     },
+     {
+      "no": 4,
+      "title": "MEME",
+      "isTitle": false
+     },
+     {
+      "no": 5,
+      "title": "Dragon",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15082293"
+   },
+   {
     "title": "Pretty Girl - Special Single",
     "type": "싱글",
     "isMain": true,
