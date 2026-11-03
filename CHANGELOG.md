@@ -16,6 +16,8 @@
 - **⏳ 덜 된 일 [외부 처리 확인]** 최신 Rebuild static SEO pages 성공 후 en/g/cortis/seonghyeon/ 및 g/코르티스/성현/의 language-nav 실제 확인. 색인은 중복 요청 대신 이후 Google URL 검사 상태/선택 canonical 확인. 이전 변형판 지정 자체의 출처·정본 선택은 별도 검수 대상이며 이번 부울 모순 정리로 모두 인증한 것은 아님.
 
 ## 2026-11-03 (Claude Code — 음방 회차: 앱 안 화면 + 매시간 갱신)
+- **[버그] 탐험 탭 밑줄이 패널 폭 조정 전 위치에 남던 것** — window resize만 듣고 있었다. #feed-tabs에 ResizeObserver(DOM 준비 뒤 — app.js가 마크업보다 먼저 실행). 헤드리스 1600px: 패널 폭 바꾼 뒤 밑줄 130/50 = 'For You' 글자 130/50.
+- **[디자인] 웹 This Week 1위·신보 줄** — 썸네일이 오른쪽 끝에 붙어 글자와 사이가 휑하던 것(사용자 스크린샷). 웹(hover 가능·769px↑)에선 썸네일을 왼쪽으로, 넓은 홈에선 반폭 카드 두 개씩. 폰은 그대로.
 - **[Codex 인계 처리] show 허브·방송 목록 og:image 누락 14장** — SHOWS_ONLY 경로엔 ensureOgImages 안전망이 없어서. 최근 회차 대표 영상 썸네일을 직접 넣음(build_group_pages.js epOg).
 - **[데이터] 디모렉스 본명 명의 앨범 이름표** — 사용자: DIMO REX는 개명이 아니라 부캐, 지금은 부캐 활동 중이라 카드 이름은 디모렉스 유지(본캐 주력 시 방예담으로 전환 검토). ONLY ONE·GOOD ViBES = '방예담 미니 1·2집'(JAY B 'Def.' 방식), DIMO REX 미니 4·5·6집은 공식 번호 유지. 영어 라벨이 접두어 붙은 타입을 한국어 그대로 보이던 것도 고침(_discogTypeLabel: 'Bang Yedam 1st Mini'·'Def. 2nd Mini'·'EXO-SC 1st Full').
 - 2026-11-03 [데이터][Claude Code] **디모렉스(방예담) 방예담 명의 앨범 6장 추가** — 멜론에서 방예담(artistId 718037)과 DIMO REX(4359860)가 다른 아티스트로 나뉘어 디모렉스 수집에서 빠졌다. 추가: 왜요(WAYO) 2020 싱글·Miss You 싱글·ONLY ONE=미니 1집·Officially Cool 싱글·GOOD ViBES=미니 2집·DIMOLLY(2026.02.10 Molly Yam 공동 EP=스페셜). 더 리슨·룰루랄라 프렌즈·OST는 뺌. ⏳ 멜론 소개는 INTOXICATED를 '4번째 EP'라 하는데 3번째 EP는 못 찾음. 곡 정적 페이지 CI 3,900장 문제는 이미 해소(11-03 CI 로그 5,932곡·멤버×곡 9,903 = 로컬과 같음).

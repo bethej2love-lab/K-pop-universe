@@ -21417,6 +21417,13 @@ function _feedTabPos(p,anim){
   if(td)td.style.color=settled?'':mix(Math.max(0,Math.min(1,p)));
 }
 window.addEventListener('resize',()=>{const tr=document.getElementById('feed-tab-rec');if(tr)_feedTabPos(tr.classList.contains('active')?0:1,false);});
+// 패널 너비가 창 크기와 상관없이 바뀔 때(웹 넓은 홈·패널 폭 조정·열림 전환)도 밑줄을 다시 맞춘다 — window resize만 듣다가
+// 폭 조정 전 위치에 밑줄이 남아 'For You' 글자와 어긋났다(2026-11-03 사용자 스크린샷).
+// ⚠️ app.js가 #feed-tabs 마크업보다 먼저 실행되므로 DOM 준비 뒤에 붙인다.
+(function _feedTabIndObserve(){
+  const go=()=>{try{const ft=document.getElementById('feed-tabs');if(ft&&window.ResizeObserver)new ResizeObserver(()=>{const tr=document.getElementById('feed-tab-rec');if(tr&&ft.getBoundingClientRect().width)_feedTabPos(tr.classList.contains('active')?0:1,false);}).observe(ft);}catch(e){}};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',go);else go();
+})();
 // 빈/오류 상태 — 빌드 후 선반이 하나도 안 뜨면(대개 Supabase 실패) "다시 시도"를 보여준다. 예전엔 제목만
 // 남고 빈 화면이었음(2026-08-29 Step4). For You는 즐겨찾기 온보딩 카드가 항상 있어 거의 안 뜨고, 실제로는
 // Discover(차트+디스커버리)가 통째로 실패했을 때 뜬다.

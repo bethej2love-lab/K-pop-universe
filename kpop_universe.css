@@ -5408,3 +5408,8 @@
     }
   }
 }
+/* 웹(넓은 패널) 1위·신보 줄 — 썸네일이 오른쪽 끝에 붙어 글자와 사이가 휑했다(2026-11-03 사용자 스크린샷). 썸네일을 왼쪽으로, 넓은 홈에선 두 줄씩 */
+@media (min-width:769px) and (hover:hover){
+  .feed-news-row:not(.is-media):not(.is-break)>:is(.feed-news-thumb,.feed-news-tw){order:-1;}
+  body.fw-home .feed-news-list>.feed-news-row:not(.is-media):not(.is-break){grid-column:span 4;margin:0;border-radius:10px;background:rgba(255,255,255,0.022);border-top:none;}
+}
