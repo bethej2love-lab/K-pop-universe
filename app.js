@@ -10205,6 +10205,14 @@ function _cardHash(){
   if(_openGCko)return'#g='+_hashEsc(_openGCko);
   return'';
 }
+// #g=그룹&m=이름 → 사람(2026-11-04 Codex 검수115차). 대표 소속이 먼저, 없으면 그 그룹 이력(겸임·전 소속)이 있는 같은 이름 — **한 명일 때만**.
+// 멤버×곡 정적 페이지는 곡 주인 그룹을 g=에 넣어서(엔시티 드림 곡의 마크, 위아이 곡의 준서) 대표 소속만 찾으면 580페이지가 카드를 못 열었다.
+// 이력 안에서도 동명이인이 둘 이상이면 아무나 고르지 않는다(명시 mid= 없는 링크의 기존 방어와 같은 원칙).
+function _artistByGroupName(gko,mko){
+  const p=ARTISTS.find(x=>x.group.ko===gko&&x.name.ko===mko);if(p)return p;
+  const c=ARTISTS.filter(x=>x.name.ko===mko&&_artistGroups(x).some(g=>g&&g.ko===gko));
+  return c.length===1?c[0]:null;
+}
 // 해시가 가리키는 카드가 현재 스택 몇 번째에 있는지(없으면 -1) — 브라우저 뒤로가기가 "새로 열기"가
 // 아니라 "그 깊이까지 팝"으로 동작하게 하는 데 쓴다.
 function _stackIndexForHash(hash){
@@ -10227,7 +10235,7 @@ function _stackIndexForHash(hash){
   if(!gko)return -1;
   for(let i=_cardStack.length-1;i>=0;i--){
     const e=_cardStack[i];
-    if(mko){ if(e.type==='tt'&&e.data&&e.data.name.ko===mko&&e.data.group.ko===gko)return i; }
+    if(mko){ if(e.type==='tt'&&e.data&&e.data===_artistByGroupName(gko,mko))return i; }
     else { if(e.type==='gc'&&e.data===gko)return i; }
   }
   return -1;
@@ -10303,7 +10311,7 @@ function _openFromHash(){
   // 진입 GA — 공유 링크·SEO 페이지 딥링크 모두 여기서 카드가 열린다
   try{const ref=document.referrer?new URL(document.referrer).hostname:'(direct)';_gaEvent('deeplink_open',{target:mko?'member':'group',gko,ref,list:params.has('vf')?1:0,song:songParam?1:0});}catch(e){}
   if(mko){
-    const artist=exact||ARTISTS.find(x=>x.group.ko===gko&&x.name.ko===mko);
+    const artist=exact||_artistByGroupName(gko,mko);
     if(!artist)return;
     if(artist._worldPos)flyTo(artist._worldPos); // 솔로는 3D 버블 배치가 없어 _worldPos가 없음 — showT는 이 값 없이도 정상 동작
     showT(artist,window.innerWidth/2,window.innerHeight*0.4,false,'skip');

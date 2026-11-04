@@ -33,7 +33,9 @@ const STATE=`JSON.stringify((()=>{const ov=document.getElementById('gc-track-vid
     const c=await conn(webSocketDebuggerUrl);await c.send('Page.enable');await c.send('Runtime.enable');
     await c.send('Page.addScriptToEvaluateOnNewDocument',{source:`window.__deeplinkErrors=[];addEventListener('error',e=>window.__deeplinkErrors.push(e.message));addEventListener('unhandledrejection',e=>window.__deeplinkErrors.push(String(e.reason)));`});
     await c.send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:2,mobile:true});
-    for(const [hash,want] of [['#g=클로즈유어아이즈&song=Drop That!',{title:/Drop That/i}],['#g=코르티스&m=성현&song=ACAI',{title:/ACAI/i,member:'성현'}]]){
+    for(const [hash,want] of [['#g=클로즈유어아이즈&song=Drop That!',{title:/Drop That/i}],['#g=코르티스&m=성현&song=ACAI',{title:/ACAI/i,member:'성현'}],
+      // 대표 소속이 아닌 그룹의 곡(2026-11-04 Codex 검수115차) — 전 소속 위아이의 준서(대표 알파드라이브원), 이달의소녀 희진(대표 아르테미스)
+      ['#g=위아이&m=준서&song=OVERDRIVE',{title:/OVERDRIVE/i,member:'준서'}],['#g=이달의소녀&m=희진&song=So What',{title:/So What/i,member:'희진'}]]){
       await c.send('Page.navigate',{url:`http://127.0.0.1:${PORT}/index.html${encodeURI(hash)}`});
       let st={};for(let i=0;i<80;i++){await sleep(500);try{st=JSON.parse(await ev(c,STATE));if(st.open&&st.items>1&&(!want.member||st.member===want.member))break;}catch(e){}}
       if(st.open&&want.title.test(st.title)&&st.items>1&&(!want.member||st.member===want.member))ok(`${hash} → 곡 패널 '${st.title}' 열림·영상 ${st.items}${want.member?` · 멤버 ${st.member}`:''}`);
