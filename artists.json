@@ -110088,6 +110088,44 @@
     "left": "2024.08.08",
     "discography": [
       {
+        "title": "종이더미",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/06/038/15106038_20261030145039_500.jpg",
+        "releaseDate": "2026.11.04",
+        "trackCount": 5,
+        "titleTrack": "우연과 필연",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "종이비행기",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "우연과 필연",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "미완",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "너란 책",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "종이더미",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15106038"
+      },
+      {
         "title": "블루스크린",
         "type": "싱글",
         "releaseDate": "2026.04.29",
@@ -212188,6 +212226,24 @@
       }
     ],
     "discography": [
+      {
+        "title": "LA NOCHE",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/18/997/15118997_20261103114431_500.jpg",
+        "releaseDate": "2026.11.04",
+        "trackCount": 1,
+        "titleTrack": "LA NOCHE",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "LA NOCHE",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15118997"
+      },
       {
         "title": "Tú y yo",
         "type": "싱글",

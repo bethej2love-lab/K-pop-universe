@@ -236503,6 +236503,24 @@
   },
   "discography": [
    {
+    "title": "Replay",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/21/253/15121253_20261103170642_500.jpg",
+    "releaseDate": "2026.11.04",
+    "trackCount": 1,
+    "titleTrack": "Replay",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Replay",
+      "isTitle": true
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15121253"
+   },
+   {
     "title": "AFTER CRY",
     "type": "미니 1집",
     "isMain": true,
