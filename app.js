@@ -26921,12 +26921,16 @@ async function _vidSongList(ko,memberKo,histKos){
   if(_vidSongListCache.has(ck))return _vidSongListCache.get(ck);
   const p=(async()=>{
     if(!sb||_songKeysCol===false)return [];
-    let q=sb.from(_YT_TABLE).select('song_keys').neq('song_keys','{}')
+    // ⚠️ 서버는 한 번에 1,000행까지만 준다 — limit(4000)으로는 레드벨벳(곡 연결 1,534개)이 1,000개만 세어져 곡별 개수·순서가 틀렸다(2026-11-04).
+    //    id 순으로 끝까지 나눠 받되 4,000개에서 멈춘다(예전 상한 그대로).
+    const build=()=>{let q=sb.from(_YT_TABLE).select('id,song_keys').neq('song_keys','{}')
       .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류').or('content_flag.is.null,content_flag.neq.hidden');
-    q=memberKo
-      ?q.or(`and(group_ko.eq.${_pgFilterVal(ko)},members.cs.{${_pgFilterVal(memberKo)}}),with_members.cs.{${_pgFilterVal(memberKo+'('+ko+')')}}`)
-      :q.or(`group_ko.eq.${_pgFilterVal(ko)},with_groups.cs.{${_pgFilterVal(ko)}}`);
-    const{data,error}=await q.limit(4000);
+      q=memberKo
+        ?q.or(`and(group_ko.eq.${_pgFilterVal(ko)},members.cs.{${_pgFilterVal(memberKo)}}),with_members.cs.{${_pgFilterVal(memberKo+'('+ko+')')}}`)
+        :q.or(`group_ko.eq.${_pgFilterVal(ko)},with_groups.cs.{${_pgFilterVal(ko)}}`);
+      return q.order('id');};
+    const data=[];let error=null;
+    for(let from=0;from<4000;from+=1000){const r=await build().range(from,from+999);if(r.error){error=r.error;break;}data.push(...(r.data||[]));if((r.data||[]).length<1000)break;}
     if(error){if(/song_keys/.test(error.message||''))_songKeysCol=false;return [];}
     const owners=new Set([ko,memberKo,...(histKos||[])].filter(Boolean));
     const cnt=new Map();
