@@ -178876,6 +178876,29 @@
     ],
     "discography": [
       {
+        "title": "Home In Love",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/06/035/15106035_20261030144840_500.jpg",
+        "releaseDate": "2026.11.04",
+        "trackCount": 2,
+        "titleTrack": "Home In Love",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Home In Love",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Home In Love (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15106035"
+      },
+      {
         "title": "WONDER U",
         "type": "싱글",
         "releaseDate": "2026.04.03",
