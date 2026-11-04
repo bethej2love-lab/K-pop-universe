@@ -25684,6 +25684,18 @@ function _debutYearGroups(){
   });
   return[...byYear.entries()].filter(([,list])=>list.length>=3).sort((a,b)=>a[0]-b[0]);
 }
+// 여러 그룹의 최신 영상 — 그룹마다 따로(group_ko, published_at) 인덱스로 per개씩 받아 최신순으로 합친다(2026-11-04).
+// group_ko in(여럿)+최신순 한 방은 그룹들 영상 전부를 읽고 정렬한다(메모: 여러 그룹 묶기+정렬 금지). 동시 conc개로 묶어 혼잡도 막는다.
+// build(g)는 group_ko=g 조건까지 붙인 쿼리(정렬·limit 없이)를 돌려준다. 하나라도 성공하면 {data}, 전부 실패면 {error}.
+async function _perGroupLatest(groupKos,build,per,total,conc=4){
+  const out=[];let ok=0,lastErr=null,i=0;
+  const worker=async()=>{while(i<groupKos.length){const g=groupKos[i++];
+    try{const{data,error}=await build(g).order('published_at',{ascending:false}).limit(per);if(error){lastErr=error;continue;}ok++;(data||[]).forEach(v=>out.push(v));}catch(e){lastErr=e;}}};
+  await Promise.all(Array.from({length:Math.min(conc,groupKos.length)},worker));
+  if(!ok&&groupKos.length)return{data:null,error:lastErr||new Error('no data')};
+  out.sort((a,b)=>String(b.published_at||'').localeCompare(String(a.published_at||'')));
+  return{data:out.slice(0,total),error:null};
+}
 async function _buildFeedDebutYearPick(list,offset){
   if(!sb)return;
   const years=_debutYearGroups();
@@ -25695,15 +25707,16 @@ async function _buildFeedDebutYearPick(list,offset){
     const[year,groupKos]=years[(hourIdx+i)%years.length];
     if(_feedRotUsed('debutYear').has(year))continue; // 무한스크롤 offset 겹침으로 인한 재노출 방지(2026-08-21)
     try{
-      const{data,error}=await _applyLiveExclude(sb.from(_YT_TABLE)
+      // 그룹별로 최신 25개씩(동시 4개) 받아 합친다(2026-11-04). 예전엔 group_ko in(12개)+최신순 300이라 인덱스를 못 타
+      // 그 그룹들 영상 3만 개를 다 읽고 정렬했다(단독 2.3초·디스크 80MB, 발견 탭에서 다른 선반과 겹치면 5초+).
+      // 아래에서 섞은 뒤 그룹당 3개만 쓰므로 그룹당 25개면 충분하다.
+      const{data,error}=await _perGroupLatest(groupKos,g=>_applyLiveExclude(sb.from(_YT_TABLE)
         .select('id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at'+_durCol())
-        .in('group_ko',groupKos)
+        .eq('group_ko',g)
         .eq('category','live'))
         .or('content_flag.is.null,content_flag.neq.기타')
         .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
-        .or('content_flag.is.null,content_flag.neq.hidden')
-        .order('published_at',{ascending:false})
-        .limit(300);
+        .or('content_flag.is.null,content_flag.neq.hidden'),25,300);
       if(error)continue;
       const bannedFiltered=_filterBannedVideos(data||[]);
       if(bannedFiltered.length<6)continue; // 컬렉션이라 부르기엔 너무 적으면 다음 연도로
@@ -26813,6 +26826,34 @@ const _CH_VID_CACHE_TTL=60000;
 // (or 조건 exact count)를 **기다린 뒤에야** 영상 조회를 시작해서, 카드가 요청 124개를 한꺼번에 쏘는 혼잡 속에선
 // 그 한 단계만 2.7초였다(레드벨벳 실측 — 영상 줄 6.7초 중). 개수는 하루 사이 몇 개 늘 뿐이라 기억값으로 바로 시작하고,
 // 6시간 넘은 값만 뒤에서 다시 센다. 실제보다 크면 끝쪽 청크가 비어 몇 개 덜 올 뿐 깨지지 않는다.
+// '추천순' 무작위 표본을 ID 목록에서 뽑는다(2026-11-04). 예전 방식(무작위 위치 24곳 × 2개)은 위치마다 OFFSET으로 앞을 전부 건너뛰며 읽어
+// 레드벨벳(3,349개) 한 번 열 때 ~4만 행을 읽고 요청 25개(+사전확인 25개)를 보냈다 — 카드 하나 124요청 혼잡의 최대 몫, Disk IO 상위 쿼리.
+// 이제 ID만 1,000개씩(3,349개면 4요청) 받아 48개를 섞어 고르고 한 번에 가져온다. ID 목록은 10분 기억 — ↻ 섞기는 요청 1개.
+// 6,000개 넘는 그룹은 ID 목록도 무거워 예전 청크 방식 그대로. 뽑힌 표본은 같은 조건·같은 정렬(ordered)의 행이라 이후 무한스크롤과 겹치면 seenIds가 거른다.
+const _CH_IDPOOL_MAX=6000,_chIdPoolCache=new Map();
+function _chIdPoolSample(contId,ko,state,buildBaseQuery,ordered,stillMine){
+  const total=state.total;if(!total||total<=_YT_PAGE)return null;
+  const start=Math.floor(Math.random()*total); // 무한스크롤 시작점(청크 방식의 '마지막 청크 뒤'와 같은 역할)
+  state.offset=start;state.wrapEnd=start;state.wrapPhase=false;
+  const key=_chVidCacheKey(contId,ko,{...state,sortMode:'recommend'});
+  return (async()=>{
+    let hit=_chIdPoolCache.get(key);
+    if(!hit||Date.now()-hit.at>600e3){
+      const pages=Math.ceil(total/1000),reqs=[];
+      for(let p=0;p<pages;p++)reqs.push(_withTimeout(()=>ordered(buildBaseQuery(false,'id')).range(p*1000,p*1000+999),6000,undefined,1));
+      const rs=await Promise.all(reqs);
+      const bad=rs.find(r=>!r||r.error);if(bad)return{data:null,error:bad&&bad.error||new Error('id pool failed')};
+      const seen=new Set();rs.forEach(r=>(r.data||[]).forEach(v=>seen.add(v.id)));
+      hit={ids:[...seen],at:Date.now()};_chIdPoolCache.set(key,hit);
+    }
+    if(!stillMine())return{data:[],error:null,count:hit.ids.length};
+    const pick=_shuffle(hit.ids.slice()).slice(0,_YT_PAGE);
+    if(!pick.length)return{data:[],error:null,count:0};
+    const r=await _withTimeout(()=>buildBaseQuery().in('id',pick),6000,undefined,1);
+    if(!r||r.error)return{data:null,error:r&&r.error||new Error('sample failed')};
+    return{data:r.data||[],error:null,count:hit.ids.length};
+  })();
+}
 const _CH_CNT_KEY='kpu_chvid_cnt_v1';
 function _chCntGet(k){try{const e=JSON.parse(localStorage.getItem(_CH_CNT_KEY)||'{}')[k];return e&&Date.now()-e.t<864e5?e:null;}catch(e){return null;}}
 function _chCntSet(k,n){try{const m=JSON.parse(localStorage.getItem(_CH_CNT_KEY)||'{}');m[k]={n,t:Date.now()};const ks=Object.keys(m);
@@ -27492,7 +27533,7 @@ function _makeChVidController(contId){
     // 필터 조건만 담당(정렬/범위는 호출부에서 붙임) — 청크 랜덤 샘플링 시 같은 조건으로 여러 번 독립 호출해야 함
     // forCount=true면 행 데이터 없이(head:true) 총 개수만 가볍게 물어보는 전용 변형 — 카드를 처음 열 때
     // 배경에서 총 개수를 채우는 용도(아래 reset&&!randomize 분기)로 씀.
-    function buildBaseQuery(forCount){
+    function buildBaseQuery(forCount,cols){
       // count:'exact'는 Postgres가 조건에 맞는 행을 전부 세야 해서 비싼데, 이 값은 초기 렌더링엔 안
       // 쓰이고(총 개수 라벨은 스크롤 끝에 도달했을 때만 표시, hasMore는 아래에서 "이번 페이지가 꽉
       // 찼는지"로 판단하도록 바꿈) 셔플(↻)의 랜덤 청크 샘플링에만 즉시 필요함 — 그래서 카드를 처음 열 때
@@ -27506,6 +27547,7 @@ function _makeChVidController(contId){
       // 표시됨(2026-08-04, 사용자 제보 — 성현 카드에서 투바투 게스트 영상이 코르티스로 잘못 뜨던 문제).
       const selectCols='id,title,thumb,category,is_short,content_flag,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,published_at,view_count'+_durCol();
       let q=forCount?sb.from(_YT_TABLE).select('id',{count:'exact',head:true})
+        :cols?sb.from(_YT_TABLE).select(cols) // ID 목록만(아래 _chIdPool, 2026-11-04)
         :(reset&&randomize)?sb.from(_YT_TABLE).select(selectCols,{count:'exact'})
         :sb.from(_YT_TABLE).select(selectCols);
       if(state.unitKey){
@@ -27691,6 +27733,8 @@ function _makeChVidController(contId){
       const isChunkedRandomize=reset&&state.total>_YT_PAGE&&state.sortMode!=='popular'&&(randomize||state.sortMode==='recommend');
       if(cacheHit){
         mainP=Promise.resolve({data:cached.data,error:null,count:cached.count});
+      }else if(isChunkedRandomize&&state.total<=_CH_IDPOOL_MAX&&(mainP=_chIdPoolSample(contId,ko,state,buildBaseQuery,ordered,()=>myGen===state.gen))){
+        // 무작위 표본 = ID 목록에서 48개(위 _chIdPoolSample). 무한스크롤은 무작위 시작점부터 이어 내려가다 처음으로 돌아 전체를 덮는다(아래 청크 방식과 같은 규칙).
       }else if(isChunkedRandomize){
         // 한 지점에서 48개를 연속으로(날짜순) 긁어오면 매번 비슷한 시기의 영상들이 뭉텅이로 같이 나와서
         // "새로고침해도 특정 영상이 계속 눈에 띈다"는 문제가 있었음(2026-07-31) — 대신 서로 다른 랜덤
