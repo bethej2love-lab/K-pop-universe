@@ -6972,6 +6972,7 @@ document.getElementById('yt-lb-autonext-cancel')?.addEventListener('click',e=>{e
 window.addEventListener('message',e=>{
   try{
     const d=JSON.parse(e.data);
+    if(d.event==='onError'&&e.source===document.getElementById('yt-lb-iframe')?.contentWindow){_lbEmbedBlocked(+d.info);return;}
     if((d.event!=='infoDelivery'&&d.event!=='initialDelivery')||!d.info)return;
     _lbYtHeard=true; // 핸드셰이크 성공 — 더 안 보내도 된다
     if(d.info.duration>0)_lbYtDur=d.info.duration;
@@ -7117,7 +7118,22 @@ let _lbHistPushed=false,_lbIgnorePop=false,_lbFromPop=false;
 // ⚠️ 이미 문서가 뜬 iframe의 src를 바꾸면 그것도 브라우저 기록 한 칸이 된다(2026-10-20 실측 — 영상을 열고 닫을
 //    때마다 뒤로가기가 한 번씩 헛돌았다). 매번 새 iframe으로 갈아 끼운다: 붙이기 전에 src를 넣으면 첫 로드라 기록이 안 생긴다.
 //    iframe을 쥐고 있는 곳은 모두 getElementById로 그때그때 찾으므로 교체해도 안전(openLightbox의 iframe 변수만 반환값으로 갱신).
+// 유튜브가 '퍼가기 금지'(오류 101·150)·삭제/비공개(100) 등을 알려오면 로딩을 끄고 유튜브로 가는 안내를 띄운다(2026-11-04 Codex 139·142차 —
+// 인기가요 Somebody 2·리쿠 으쌰으쌰처럼 원본은 살아 있는데 외부 재생만 막힌 영상). 예전엔 오류 신호를 안 받아 로딩 표시가 5초 돌았다.
+// 영상 행을 무관·삭제로 바꾸지 않는다 — 원본은 유튜브에서 정상이다.
+function _lbEmbedBlocked(code){
+  _lbHideLoading();
+  const box=document.getElementById('yt-lb-video-box');if(!box||!_lbActiveVid)return;
+  box.querySelector('.yt-lb-blocked')?.remove();
+  const ko=currentLang==='ko',gone=code===100;
+  const d=document.createElement('div');d.className='yt-lb-blocked';
+  const p=document.createElement('p');p.textContent=gone?(ko?'유튜브에서 볼 수 없는 영상이에요':'This video is unavailable on YouTube'):(ko?'이 영상은 유튜브에서만 볼 수 있어요':'This video can only be played on YouTube');
+  d.appendChild(p);
+  if(!gone){const a=document.createElement('a');a.href='https://www.youtube.com/watch?v='+_lbActiveVid;a.target='_blank';a.rel='noopener';a.textContent=(ko?'유튜브에서 보기':'Watch on YouTube')+' ↗';d.appendChild(a);}
+  box.appendChild(d);
+}
 function _lbSetIframeSrc(url){
+  document.querySelector('#yt-lb-video-box .yt-lb-blocked')?.remove();
   const old=document.getElementById('yt-lb-iframe');
   const fr=old.cloneNode(false);
   if(url)fr.src=url;else fr.removeAttribute('src');

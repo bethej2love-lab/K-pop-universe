@@ -27483,7 +27483,9 @@
         "ko": "엔하이픈",
         "en": "ENHYPEN",
         "active": false,
-        "left": "2026.03.10"
+        "left": "2026.03.10",
+        "name": "희승",
+        "nameEn": "Heeseung"
       }
     ],
     "discography": [
@@ -143556,7 +143558,9 @@
         "ko": "엑스원",
         "en": "X1",
         "active": false,
-        "left": "2020.01.06"
+        "left": "2020.01.06",
+        "name": "조승연",
+        "nameEn": "Cho Seungyoun"
       }
     ]
   },
@@ -199025,7 +199029,7 @@
   {
     "name": {
       "ko": "률",
-      "en": "Yul"
+      "en": "Ryul"
     },
     "group": {
       "ko": "롱샷",
@@ -199048,7 +199052,10 @@
     "links": {
       "namu": "https://namu.wiki/w/%EB%A5%A0(%EB%A1%B1%EC%83%B7)"
     },
-    "id": "a0905"
+    "id": "a0905",
+    "prevEn": [
+      "Yul"
+    ]
   },
   {
     "name": {
@@ -265679,7 +265686,19 @@
         "melonAlbumId": "2200372"
       }
     ],
-    "id": "a1202"
+    "id": "a1202",
+    "groups": [
+      {
+        "ko": "피프틴앤드",
+        "en": "15&",
+        "matchNames": [
+          "박지민",
+          "Park Jimin",
+          "Park Ji-min",
+          "Jimin Park"
+        ]
+      }
+    ]
   },
   {
     "name": {
@@ -267722,7 +267741,7 @@
   {
     "name": {
       "ko": "룬",
-      "en": "Roon"
+      "en": "Lune"
     },
     "group": {
       "ko": "다크비",
@@ -267743,7 +267762,10 @@
     "links": {
       "namu": "https://namu.wiki/w/룬(다크비)"
     },
-    "id": "a1248"
+    "id": "a1248",
+    "prevEn": [
+      "Roon"
+    ]
   },
   {
     "name": {
@@ -286580,7 +286602,7 @@
   {
     "name": {
       "ko": "에빈",
-      "en": "Evin"
+      "en": "Ebin"
     },
     "group": {
       "ko": "시크릿넘버",
@@ -286604,7 +286626,7 @@
   {
     "name": {
       "ko": "민씨",
-      "en": "Minssi"
+      "en": "Min C"
     },
     "group": {
       "ko": "시크릿넘버",
@@ -286623,7 +286645,10 @@
       "ko": "영국",
       "en": "GB"
     },
-    "id": "a1896"
+    "id": "a1896",
+    "matchAliases": [
+      "MinC"
+    ]
   },
   {
     "name": {
@@ -294439,7 +294464,7 @@
   {
     "name": {
       "ko": "이지",
-      "en": "Eaji"
+      "en": "E.JI"
     },
     "group": {
       "ko": "아이칠린",
@@ -294461,7 +294486,10 @@
       "namu": "https://namu.wiki/w/%EC%9D%B4%EC%A7%80%28ICHILLIN%27%29",
       "instagram": "https://www.instagram.com/ejp_z"
     },
-    "id": "a1592"
+    "id": "a1592",
+    "prevEn": [
+      "Eaji"
+    ]
   },
   {
     "name": {

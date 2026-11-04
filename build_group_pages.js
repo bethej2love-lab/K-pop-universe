@@ -807,6 +807,12 @@ function redirectStaleMemberPages() {
       if (!g || !g.ko || !groups[g.ko]) continue;
       target.set(`g/${urlSafeKo(g.ko)}/${urlSafeKo(a.name.ko)}/`, { a, lang: 'ko' });
       target.set(`en/g/${slugify(groups[g.ko].en || g.ko, g.ko)}/${slug}/`, { a, lang: 'en' });
+      // 옛 영문 이름(prevEn, 2026-11-04 — 공식 표기로 고친 Roon→Lune·Eaji→E.JI·Yul→Ryul): 옛 슬러그 주소도 지금 페이지로 넘긴다.
+      // 예전엔 지금 이름의 경로만 알아서, 이름을 고치면 옛 페이지가 낡은 내용 그대로 남았다(중복·옛 표기 노출).
+      for (const pe of (a.prevEn || [])) {
+        const ps = slugify(pe, a.name.ko);
+        if (ps && ps !== slug) target.set(`en/g/${slugify(groups[g.ko].en || g.ko, g.ko)}/${ps}/`, { a, lang: 'en', prev: true });
+      }
     }
   }
   // 동명이인 솔로 둘이 같은 member/<이름>/을 나눠 쓰는 경우(프리스틴·공원소녀 레나, 포미닛·나인뮤지스 현아 — 빌더의 별도 문제)는
@@ -844,6 +850,22 @@ function redirectStaleMemberPages() {
 </head><body><a href="${url}">${escHtml(nm)}</a></body></html>
 `);
         redir++;
+        // 옛 영문 이름 주소 아래 멤버×곡 페이지(…/roon/s/곡/)도 같은 곡의 새 주소로(없으면 멤버 페이지로) 넘긴다
+        if (t.prev) {
+          const sDir = path.join(dir, 's');
+          if (fs.existsSync(sDir)) for (const sd of fs.readdirSync(sDir, { withFileTypes: true })) {
+            if (!sd.isDirectory() || !fs.existsSync(path.join(sDir, sd.name, 'index.html'))) continue;
+            const nowSong = `${now}s/${sd.name}/`;
+            const su = fs.existsSync(path.join(ROOT, nowSong, 'index.html')) ? `${SITE}/${nowSong}` : url;
+            fs.writeFileSync(path.join(sDir, sd.name, 'index.html'), `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>${escHtml(nm)} — K-POP UNIVERSE</title>
+<link rel="canonical" href="${su}"><meta name="robots" content="noindex">
+<meta http-equiv="refresh" content="0; url=${su}">
+</head><body><a href="${su}">${escHtml(nm)}</a></body></html>
+`);
+            redir++;
+          }
+        }
       }
     }
   }
