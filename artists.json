@@ -286534,6 +286534,102 @@
   },
   {
     "name": {
+      "ko": "나비",
+      "en": "Navi"
+    },
+    "group": {
+      "ko": "시크릿넘버",
+      "en": "SECRET NUMBER"
+    },
+    "co": "바인엔터테인먼트",
+    "active": true,
+    "joined": "2025.08.14",
+    "color": [
+      236,
+      120,
+      150
+    ],
+    "bday": "2003.04.13",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "id": "a1893"
+  },
+  {
+    "name": {
+      "ko": "딘다",
+      "en": "Dinda"
+    },
+    "group": {
+      "ko": "시크릿넘버",
+      "en": "SECRET NUMBER"
+    },
+    "co": "바인엔터테인먼트",
+    "active": true,
+    "joined": "2025.08.14",
+    "color": [
+      120,
+      190,
+      230
+    ],
+    "bday": "2003.08.22",
+    "nat": {
+      "ko": "인도네시아",
+      "en": "ID"
+    },
+    "id": "a1894"
+  },
+  {
+    "name": {
+      "ko": "에빈",
+      "en": "Evin"
+    },
+    "group": {
+      "ko": "시크릿넘버",
+      "en": "SECRET NUMBER"
+    },
+    "co": "바인엔터테인먼트",
+    "active": true,
+    "joined": "2025.08.14",
+    "color": [
+      180,
+      150,
+      235
+    ],
+    "bday": "2004.01.28",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "id": "a1895"
+  },
+  {
+    "name": {
+      "ko": "민씨",
+      "en": "Minssi"
+    },
+    "group": {
+      "ko": "시크릿넘버",
+      "en": "SECRET NUMBER"
+    },
+    "co": "바인엔터테인먼트",
+    "active": true,
+    "joined": "2025.08.14",
+    "color": [
+      250,
+      200,
+      110
+    ],
+    "bday": "2006.04.21",
+    "nat": {
+      "ko": "영국",
+      "en": "GB"
+    },
+    "id": "a1896"
+  },
+  {
+    "name": {
       "ko": "캐슬제이",
       "en": "Castle J"
     },
