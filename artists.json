@@ -72929,7 +72929,8 @@
     "links": {
       "namu": "https://namu.wiki/w/건우(ALPHA DRIVE ONE)"
     },
-    "id": "a0350"
+    "id": "a0350",
+    "pausedFrom": "2026.04.08"
   },
   {
     "name": {
@@ -131290,7 +131291,7 @@
       "en": "KARD"
     },
     "co": "무소속",
-    "active": false,
+    "active": true,
     "color": [
       180,
       60,
@@ -131305,7 +131306,6 @@
       "namu": "https://namu.wiki/w/J.seph",
       "instagram": "https://www.instagram.com/j.seph_"
     },
-    "left": "2026.07.06",
     "discography": [
       {
         "title": "J.seph 1st EP 'Spin-off'",
@@ -131362,7 +131362,7 @@
       "en": "KARD"
     },
     "co": "무소속",
-    "active": false,
+    "active": true,
     "color": [
       180,
       60,
@@ -131377,7 +131377,6 @@
       "namu": "https://namu.wiki/w/BM(KARD)",
       "instagram": "https://www.instagram.com/bigmatthewww"
     },
-    "left": "2026.07.06",
     "discography": [
       {
         "title": "BM 2nd EP 'PO:INT'",
@@ -131638,7 +131637,7 @@
       "en": "KARD"
     },
     "co": "무소속",
-    "active": false,
+    "active": true,
     "color": [
       180,
       60,
@@ -131663,7 +131662,6 @@
         "en": "APRIL"
       }
     ],
-    "left": "2026.07.06",
     "discography": [
       {
         "title": "SOMIN 1st EP 'UNVEIL'",
@@ -131757,7 +131755,7 @@
       "en": "KARD"
     },
     "co": "무소속",
-    "active": false,
+    "active": true,
     "color": [
       180,
       60,
@@ -131772,7 +131770,6 @@
       "namu": "https://namu.wiki/w/전지우",
       "instagram": "https://www.instagram.com/_zziwooo0"
     },
-    "left": "2026.07.06",
     "discography": [
       {
         "title": "JIWOO 1st EP '(EX)IST'",
@@ -287398,7 +287395,7 @@
       "en": "FANTASY BOYS"
     },
     "co": "엠이오 / 포켓돌스튜디오",
-    "active": true,
+    "active": false,
     "color": [
       230,
       202,
@@ -287413,7 +287410,8 @@
       "namu": "https://namu.wiki/w/%EA%B9%80%EA%B7%9C%EB%9E%98",
       "instagram": "https://www.instagram.com/kimgyurae09"
     },
-    "id": "a1498"
+    "id": "a1498",
+    "left": "2026.04"
   },
   {
     "name": {
@@ -287425,7 +287423,7 @@
       "en": "FANTASY BOYS"
     },
     "co": "엠이오 / 포켓돌스튜디오",
-    "active": true,
+    "active": false,
     "color": [
       244,
       188,
@@ -287506,7 +287504,8 @@
     ],
     "matchAliases": [
       "HONGSUNGMIN"
-    ]
+    ],
+    "left": "2026.04"
   },
   {
     "name": {
@@ -287544,7 +287543,7 @@
       "en": "FANTASY BOYS"
     },
     "co": "엠이오 / 포켓돌스튜디오",
-    "active": true,
+    "active": false,
     "color": [
       248,
       192,
@@ -287656,7 +287655,8 @@
     ],
     "matchAliases": [
       "LEEHANBIN"
-    ]
+    ],
+    "left": "2026.04"
   },
   {
     "name": {
@@ -287792,7 +287792,7 @@
       "en": "FANTASY BOYS"
     },
     "co": "엠이오 / 포켓돌스튜디오",
-    "active": true,
+    "active": false,
     "color": [
       242,
       182,
@@ -287873,7 +287873,8 @@
     ],
     "matchAliases": [
       "KANGMINSEO"
-    ]
+    ],
+    "left": "2026.04.16"
   },
   {
     "name": {
@@ -287968,7 +287969,7 @@
       "en": "FANTASY BOYS"
     },
     "co": "엠이오 / 포켓돌스튜디오",
-    "active": true,
+    "active": false,
     "color": [
       236,
       204,
@@ -287983,7 +287984,8 @@
       "namu": "https://namu.wiki/w/%EC%86%8C%EC%9A%B8%28FANTASY%20BOYS%29",
       "instagram": "https://www.instagram.com/kkkk_soul"
     },
-    "id": "a1505"
+    "id": "a1505",
+    "left": "2025.01.24"
   },
   {
     "name": {
@@ -288022,7 +288024,7 @@
       "en": "FANTASY BOYS"
     },
     "co": "엠이오 / 포켓돌스튜디오",
-    "active": true,
+    "active": false,
     "color": [
       230,
       190,
@@ -288043,7 +288045,8 @@
         "ko": "판타지보이즈",
         "en": "FANTASY BOYS"
       }
-    ]
+    ],
+    "left": "2026.04"
   },
   {
     "name": {
@@ -288055,7 +288058,7 @@
       "en": "FANTASY BOYS"
     },
     "co": "엠이오 / 포켓돌스튜디오",
-    "active": true,
+    "active": false,
     "color": [
       240,
       206,
@@ -288070,7 +288073,8 @@
       "namu": "https://namu.wiki/w/%EC%BC%80%EC%9D%B4%EB%8B%A8",
       "instagram": "https://www.instagram.com/kaeda_nnam"
     },
-    "id": "a1508"
+    "id": "a1508",
+    "left": "2026.04"
   },
   {
     "name": {
@@ -308041,7 +308045,7 @@
       "ko": "다이몬",
       "en": "DXMON"
     },
-    "active": true,
+    "active": false,
     "id": "a1806",
     "co": "SSQ엔터테인먼트",
     "color": [
@@ -308056,7 +308060,8 @@
     },
     "links": {
       "namu": "https://namu.wiki/w/조(다이몬)"
-    }
+    },
+    "left": "2024.09.29"
   },
   {
     "name": {
