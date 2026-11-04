@@ -3282,9 +3282,23 @@ function _appendTrendingSection(hits,res,mobSearch,obSearch){
       let url=(await _groupAvUrl(ko).catch(()=>null))||'';
       if(!url){ try{ await _ensureGroupDisco(ko); url=_latestCover((GROUPS[ko]||{}).discography); }catch(e){} } // 그래도 없으면 최신 앨범 커버
       if(!url)return;
-      const im=new Image(); // 로드 완료 후에만 교체 — 깨진 이미지·빈칸 방지
-      im.onload=()=>{disc.style.backgroundImage=`url("${String(url).replace(/"/g,'%22')}")`;disc.style.backgroundSize='cover';disc.style.backgroundPosition='center';disc.classList.add('has-cover');};
-      im.src=url;
+      // 로드 완료 후에만 교체 — 깨진 이미지·빈칸 방지. 실패하면 등록 사진(_avBackup) → 최신 앨범 커버로 넘어간다
+      // (2026-11-04 — 예전엔 실패 시 대체가 없어 인스타 주소가 깨진 그룹은 색깔 원으로만 남았다)
+      const tried=new Set();
+      const load=u=>{
+        if(!u||tried.has(u))return next();tried.add(u);
+        const im=new Image();im.referrerPolicy='no-referrer';
+        im.onload=()=>{disc.style.backgroundImage=`url("${String(u).replace(/"/g,'%22')}")`;disc.style.backgroundSize='cover';disc.style.backgroundPosition='center';disc.classList.add('has-cover');};
+        im.onerror=()=>next();
+        im.src=u;
+      };
+      let step=0;
+      const next=async()=>{
+        step++;
+        if(step===1)return load(_avBackup.get(url));
+        if(step===2){try{await _ensureGroupDisco(ko);}catch(e){}return load(_latestCover((GROUPS[ko]||{}).discography));}
+      };
+      load(url);
     })();
   });
   res.appendChild(grid);
@@ -11782,6 +11796,10 @@ async function _fetchArtistPicAnyGroup(a){
 // 쓰는 곳: ①멤버·그룹 프로필 사진(공식 인스타가 먼저, 관리자가 올린 artist_pics는 대체) ②인스타 아이콘 옆 팔로워 수
 // ③카드 "Instagram" 줄(최근 게시물 썸네일 → 원본 게시물). 테이블이 없거나(SQL 실행 전) 비면 조용히 아무것도 안 한다.
 const _igMap=new Map();let _igWarmP=null;
+// 인스타 사진 주소(fbcdn)는 oe=(16진수 유닉스 초)에 만료된다. 수집기가 한도 때문에 한 바퀴 도는 데 4~5일 걸려서
+// 11-04 실측 1,159개 중 378개(33%)가 이미 만료(403) — 앱은 인스타 사진을 먼저 쓰니 그 그룹·멤버는 사진이 깨지거나
+// (검색 첫 화면 원은 대체가 없어) 색깔 원으로만 남았다. 만료된 주소는 처음부터 없는 셈 치고 등록 사진으로 바로 간다.
+function _igPicAlive(u){const m=/[?&]oe=([0-9A-Fa-f]{6,})/.exec(u||'');return !!u&&(!m||parseInt(m[1],16)*1000>Date.now()+600e3);}
 function _igHandle(url){const m=String(url||'').match(/instagram\.com\/([A-Za-z0-9._]+)/i);return m?m[1].toLowerCase():null;}
 function _igWarm(){
   if(_igWarmP)return _igWarmP;
@@ -11790,7 +11808,7 @@ function _igWarm(){
     try{
       const{data,error}=await _sbSelectAll(()=>sb.from('ig_accounts').select('handle,followers,pic_url').eq('status','ok').order('handle'));
       if(error)return;
-      (data||[]).forEach(r=>_igMap.set(r.handle,{f:r.followers,pic:r.pic_url}));
+      (data||[]).forEach(r=>_igMap.set(r.handle,{f:r.followers,pic:_igPicAlive(r.pic_url)?r.pic_url:null}));
     }catch(e){}
   })();
 }
@@ -26671,6 +26689,14 @@ const _chVidPageCache=new Map(); // key -> {data,count,featuredFromDB,ts}
 // 15분→1분(2026-08-19, 사용자 요청) — '추천순' 기본 오픈이 이제 청크 랜덤 샘플링을 타므로(위 load()
 // 참고) 캐시가 만료돼야 새로 샘플링됨. 15분은 너무 길어서 재방문해도 계속 똑같아 보였던 원인 중 하나.
 const _CH_VID_CACHE_TTL=60000;
+// '추천순' 첫 오픈의 총 개수(청크 랜덤 범위용)를 기기에 하루 기억(2026-11-04). 예전엔 카드를 열 때마다 개수 세기
+// (or 조건 exact count)를 **기다린 뒤에야** 영상 조회를 시작해서, 카드가 요청 124개를 한꺼번에 쏘는 혼잡 속에선
+// 그 한 단계만 2.7초였다(레드벨벳 실측 — 영상 줄 6.7초 중). 개수는 하루 사이 몇 개 늘 뿐이라 기억값으로 바로 시작하고,
+// 6시간 넘은 값만 뒤에서 다시 센다. 실제보다 크면 끝쪽 청크가 비어 몇 개 덜 올 뿐 깨지지 않는다.
+const _CH_CNT_KEY='kpu_chvid_cnt_v1';
+function _chCntGet(k){try{const e=JSON.parse(localStorage.getItem(_CH_CNT_KEY)||'{}')[k];return e&&Date.now()-e.t<864e5?e:null;}catch(e){return null;}}
+function _chCntSet(k,n){try{const m=JSON.parse(localStorage.getItem(_CH_CNT_KEY)||'{}');m[k]={n,t:Date.now()};const ks=Object.keys(m);
+  if(ks.length>300)ks.sort((a,b)=>m[a].t-m[b].t).slice(0,ks.length-300).forEach(x=>delete m[x]);localStorage.setItem(_CH_CNT_KEY,JSON.stringify(m));}catch(e){}}
 const _fmtCache=new Map(); // "그룹␟멤버" → 콘텐츠 포맷 목록(⋮ 메뉴 "콘텐츠별 보기") — 세션 동안 유지(2026-10-21 Disk IO)
 // ── 카드 첫 화면 대표 영상(문제2 확정안 — 2026-09-03 사용자 결정 "대표 영상 1개만 위로", 2026-10-13 시안) ──
 // 첫 방문 실측: 그룹 카드 첫 화면에 영상 0개(첫 영상이 한 화면 아래), 사진 없는 멤버는 얼굴도 없었다.
@@ -27529,8 +27555,13 @@ function _makeChVidController(contId){
         // buildBaseQuery()가 반환하는 supabase 쿼리 빌더는 thenable이지만 진짜 Promise가 아니라
         // .catch()가 없음 — 여기서 그걸 체이닝하면 "buildBaseQuery(...).catch is not a function"으로
         // 죽어서 카드 전체가 로드 실패함(Playwright로 재현+발견). try/await로 감싸야 안전하다.
-        try{
+        const _ck=_chVidCacheKey(contId,ko,state),_memo=_chCntGet(_ck);
+        if(_memo){
+          state.total=_memo.n; // 기억값으로 바로 시작(위 _CH_CNT_KEY 주석)
+          if(Date.now()-_memo.t>6*3600e3)buildBaseQuery(true).then(({count:c2})=>{if(c2==null)return;_chCntSet(_ck,c2);if(myGen===state.gen)state.total=c2;},()=>{});
+        }else try{
           const{count:preCount}=await buildBaseQuery(true);
+          if(preCount!=null)_chCntSet(_ck,preCount);
           if(myGen===state.gen&&preCount!=null)state.total=preCount;
         }catch(e){/* 실패해도 아래에서 total 없이 안전하게 폴백 */}
       }

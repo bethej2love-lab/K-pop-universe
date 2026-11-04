@@ -64,13 +64,13 @@ async function sbUpsert(table, rows, conflict) {
 
 // 최근 게시 시각으로 활동 계정을 판정한다(팔로워 수·그룹 인기도는 사용하지 않는다).
 let prev = [];
-try { prev = await sbGetAll('ig_accounts?select=handle,status,note,fetched_at,media&order=handle'); }
+try { prev = await sbGetAll('ig_accounts?select=handle,status,note,fetched_at,media,pic_url&order=handle'); }
 catch (e) { console.error(e.message + '\n→ sql/2026-10-19_ig_stats.sql을 먼저 실행해야 한다'); process.exit(1); }
 const previous = new Map(prev.map(r => [r.handle, r]));
 const last = new Map(prev.map(r => [r.handle, r.fetched_at]));
 const coolingInvalidUser = r => r?.status === 'not_found' && /^Invalid user id\b/i.test(String(r.note || '')) && Date.now() - Date.parse(r.fetched_at) < INVALID_USER_RECHECK_MS;
 const coolingCount = [...handles].filter(h => coolingInvalidUser(previous.get(h))).length;
-// 앞쪽부터 [전체 순환, 활동, 신규, 활동]을 반복한다. 실제 호출 한도로 중간에 멈춰도 세 몫을 처리한다.
+// 앞쪽부터 [만료 임박, 전체 순환, 활동, 만료 임박, 신규, 활동]을 반복한다(빈 몫은 순환→신규→활동으로). 실제 호출 한도로 중간에 멈춰도 각 몫을 처리한다.
 // 활동: 최근 7일 게시물이 있고 마지막 수집이 4시간 이상 전. 활동끼리도 수집이 오래된 순서.
 // 전체 순환/신규 자리는 활동 계정으로 대체하지 않아 비활동·미수집 계정도 계속 전진한다.
 // Meta가 "Invalid user id"로 응답한 핸들은 재시도마다 쿼터를 쓰지만 새 정보가 없었다(2026-10-23 집계: 178 not_found 중 176).
@@ -83,7 +83,12 @@ const active = known.filter(h => {
   return r.status === 'ok' && now - Date.parse(r.fetched_at) >= 4 * 3600e3
     && (r.media || []).some(m => { const t = Date.parse(m.t); return t <= now && t >= now - 7 * 86400e3; });
 });
-const pools = { rotation: known, active, fresh }, cursor = { rotation: 0, active: 0, fresh: 0 };
+// 만료 임박: 프로필 사진 주소(fbcdn oe=16진수 초)가 36시간 안에 끝나는 계정, 빨리 끝나는 순(2026-11-04).
+// 한도 때문에 전체 순환이 4~5일 걸리는데 주소는 4~5일이면 만료돼서 늘 1/3쯤(11-04 실측 378/1,159)이 깨진 사진이었다.
+const picExp = r => { const m = /[?&]oe=([0-9A-Fa-f]{6,})/.exec(r?.pic_url || ''); return m ? parseInt(m[1], 16) * 1000 : Infinity; };
+const expiring = known.filter(h => previous.get(h).status === 'ok' && picExp(previous.get(h)) < now + 36 * 3600e3)
+  .sort((a, b) => picExp(previous.get(a)) - picExp(previous.get(b)));
+const pools = { expiring, rotation: known, active, fresh }, cursor = { expiring: 0, rotation: 0, active: 0, fresh: 0 };
 const selected = new Set(), lanes = new Map(), queue = [];
 function take(lane) {
   const pool = pools[lane];
@@ -94,14 +99,14 @@ function take(lane) {
 }
 if (ONLY) { queue.push(ONLY.toLowerCase()); lanes.set(queue[0], 'only'); }
 else for (let i = 0; queue.length < MAX; i++) {
-  const lane = ['rotation', 'active', 'fresh', 'active'][i % 4];
+  const lane = ['expiring', 'rotation', 'active', 'expiring', 'fresh', 'active'][i % 6];
   const h = take(lane) || take('rotation') || take('fresh') || take('active');
   if (!h) break;
   queue.push(h);
 }
 const laneCounts = hs => hs.reduce((n, h) => { const lane = lanes.get(h); n[lane] = (n[lane] || 0) + 1; return n; }, {});
 if (DRY) {
-  console.log(JSON.stringify({ total: handles.size, activeEligible: active.length, rotationEligible: known.length, neverFetched: fresh.length,
+  console.log(JSON.stringify({ total: handles.size, activeEligible: active.length, expiringPics: expiring.length, rotationEligible: known.length, neverFetched: fresh.length,
     coolingInvalidUser: coolingCount, planned: laneCounts(queue), first16: queue.slice(0, 16).map(h => ({ handle: h, lane: lanes.get(h) })) }, null, 2));
   process.exit(0);
 }
