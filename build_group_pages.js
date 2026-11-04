@@ -482,6 +482,7 @@ ${LIST_FWD}
   ${memberListHtml(lang)}
   ${xg.html}
   ${songLinksHtml(ko, lang)}
+  ${albumLinksHtml(ko, lang)}
   ${discogHtml(lang)}
   ${(() => { const rel = relatedGroups(ko); return rel.length ? `
     <h2>${isEn ? 'Related groups' : '함께 보면 좋은 그룹'}</h2>
@@ -724,6 +725,7 @@ ${LIST_FWD}
     ${fancams.slice(0, 24).map(v => `<a class="mf-card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">${escHtml(v.title)}</span><span class="mf-y">${[v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? (isEn ? `${SEO.fmtViews(v.view_count, isEn)} views` : `조회수 ${SEO.fmtViews(v.view_count, isEn)}`) : ''].filter(Boolean).join(' · ')}</span></a>`).join('\n    ')}
   </div>${fancams.length > 24 ? `<p class="note">${isEn ? `Top 24 of ${fancams.length} fancams` : `직캠 ${fancams.length}개 중 상위 24개`}</p>` : ''}` : ''}
   ${memberIntroHtml(a, affiliations, lang)}
+  ${creditLinkHtml(a, lang)}
   ${affiliationHtml(lang)}
   ${xm.html}
   ${songsHtml(lang)}
@@ -1978,6 +1980,133 @@ ${others.length ? `  <h2 class="rank-h">${isEn ? 'More pairs' : '다른 조합'}
   fs.writeFileSync(path.join(ROOT, 'chem', 'index.json'), JSON.stringify(index));
   console.log(`조합 페이지 ${pairs.length}쌍 × 2개 언어 (함께 나온 영상 ${CHEM_MIN}개 이상, 같은 그룹)`);
 }
+// ── 작사·작곡 페이지(2026-11-04, 검색 유입 확대 ⑨) ───────────────────────────────────────────
+// g/{그룹}/{멤버}/credits/ · en/…/credits/ — artist_credits.json(멜론 작사·작곡 크레딧, 키 = 이름\0그룹)으로 "윈터 작사 작곡 곡"·"RM 자작곡" 검색 착지.
+// 같은 곡의 리믹스·버전은 곡 기본형(_songBase)으로 하나로 묶고, 그 곡 페이지(g/…/s/{기본형}/)가 있으면 잇는다. 작사+작곡 합쳐 CREDIT_MIN곡 이상인 사람만.
+const CREDIT_MIN = 5;
+const _CRED_SB = (() => { const vm = require('vm'); const ctx = {}; vm.createContext(ctx); vm.runInContext(fs.readFileSync(path.join(ROOT, 'shared.js'), 'utf8') + ';this.B=_songBase;', ctx); return ctx.B; })();
+let _CREDITS = null;
+function creditsFor(a) {
+  if (!_CREDITS) {
+    _CREDITS = new Map();
+    let raw = {}; try { raw = JSON.parse(fs.readFileSync(path.join(ROOT, 'artist_credits.json'), 'utf8')); } catch (e) { return null; }
+    for (const [k, v] of Object.entries(raw)) {
+      const [n, g] = k.split(String.fromCharCode(0));
+      const who = artists.find(x => x && x.name && x.name.ko === n && (x.group && x.group.ko === g || (x.groups || []).some(y => y && y.ko === g)));
+      if (!who) continue;
+      const pack = list => { const by = new Map(); for (const s of list || []) { const b = _CRED_SB(s.title || ''); if (!b) continue; const cur = by.get(b); if (!cur || String(s.title).length < String(cur.title).length) by.set(b, { b, title: s.title }); } return [...by.values()]; };
+      const ly = pack(v.lyrics), co = pack(v.compose);
+      if (ly.length + co.length >= CREDIT_MIN) _CREDITS.set(who, { ly, co });
+    }
+  }
+  return _CREDITS.get(a) || null;
+}
+function creditPagePath(a, lang) { const mp = memberPagePath(a, lang); return mp ? `${mp}credits/` : null; }
+function creditLinkHtml(a, lang) {
+  const c = creditsFor(a); if (!c) return '';
+  const isEn = lang === 'en';
+  return `<p class="note"><a href="${SITE}/${creditPagePath(a, lang)}">${isEn ? `Songs written or composed (${c.ly.length} lyrics · ${c.co.length} composition) →` : `작사 ${c.ly.length}곡 · 작곡 ${c.co.length}곡 보기 →`}</a></p>`;
+}
+function buildCreditPages() {
+  let n = 0;
+  const songHref = (a, b, lang) => { for (const g of [a.group, ...(a.groups || [])]) { if (!g || !g.ko) continue; if ((SONGS[g.ko] || []).some(s => s.b === b)) return `${SITE}/${songPagePath(g.ko, b, lang)}`; } return null; };
+  for (const a of artists) {
+    const c = creditsFor(a); if (!c) continue;
+    for (const lang of ['ko', 'en']) {
+      const isEn = lang === 'en', rel = creditPagePath(a, lang); if (!rel) continue;
+      const nm = isEn ? (a.name.en || a.name.ko) : a.name.ko;
+      const gk = a.group && a.group.ko, gd = groups[gk] ? (isEn ? groups[gk].en || gk : gk) : '';
+      const who = gd ? (isEn ? `${gd} ${nm}` : `${gd} ${nm}`) : nm;
+      const both = new Set(c.ly.map(s => s.b).filter(b => c.co.some(s => s.b === b)));
+      const li = s => { const h = songHref(a, s.b, lang); const t = escHtml(s.title); return `<li>${h ? `<a href="${h}">${t}</a>` : t}${both.has(s.b) ? (isEn ? ' <span class="yr">lyrics & music</span>' : ' <span class="yr">작사·작곡</span>') : ''}</li>`; };
+      const h1 = isEn ? `${nm} — songs written & composed` : `${nm} 작사·작곡 곡`;
+      const title = isEn ? `${who} Songwriting Credits — ${c.ly.length} Lyrics · ${c.co.length} Compositions | K-POP UNIVERSE` : `${who} 작사·작곡 곡 목록 — 작사 ${c.ly.length}곡 · 작곡 ${c.co.length}곡 | K-POP UNIVERSE`;
+      const top = [...new Set([...c.ly, ...c.co].map(s => s.title))].slice(0, 5).join(isEn ? ', ' : '·');
+      const desc = isEn ? `${who} has ${c.ly.length} lyric and ${c.co.length} composition credits (Melon credits) — ${top}.` : `${who}${josa(nm, '이/가')} 작사에 참여한 곡 ${c.ly.length}곡, 작곡 ${c.co.length}곡(멜론 크레딧 기준) — ${top} 등.`;
+      const mp = memberPagePath(a, lang);
+      const body = `  <p class="note"><a href="${SITE}/${mp}">${isEn ? `${escHtml(nm)} fancams & profile →` : `${escHtml(nm)} 직캠·프로필 →`}</a></p>
+  ${c.ly.length ? `<h2>${isEn ? `Lyrics (${c.ly.length})` : `작사 ${c.ly.length}곡`}</h2>
+  <ul class="vid-list">${c.ly.map(li).join('')}</ul>` : ''}
+  ${c.co.length ? `<h2>${isEn ? `Composition (${c.co.length})` : `작곡 ${c.co.length}곡`}</h2>
+  <ul class="vid-list">${c.co.map(li).join('')}</ul>` : ''}
+  <p class="note">${isEn ? 'Source: Melon songwriting credits. Remixes and versions of the same song are listed once.' : '출처: 멜론 작사·작곡 크레딧. 같은 곡의 리믹스·버전은 한 번만 적었어요.'}</p>`;
+      writeSimple(rel, simplePageHtml({ lang, selfUrl: `${SITE}/${rel}`, altUrl: `${SITE}/${creditPagePath(a, isEn ? 'ko' : 'en')}`, koUrl: `${SITE}/${creditPagePath(a, 'ko')}`, title, h1, desc, body, kind: 'credits', ogImage: ogImageForMember(a) }), '0.5');
+      n++;
+    }
+  }
+  console.log(`작사·작곡 페이지 ${n / 2}명 × 2개 언어`);
+}
+// ── 앨범 페이지(2026-11-04, 검색 유입 확대 ⑧) ──────────────────────────────────────────────
+// g/{그룹}/a/{앨범 기본형}/ · en/… — "에스파 Armageddon 수록곡"·"트랙리스트"·"타이틀곡" 검색 착지. groups.json 디스코의 미니·정규·리패키지·스페셜 **본판**만
+// (변형판·싱글·OST·라이브·리믹스는 얇은 페이지가 돼서 뺀다), 수록곡 3곡 이상. 곡마다 멜론 작사·작곡(cr.l·cr.c), 곡 페이지가 있으면 잇는다.
+const _ALBUM_KEEP = al => al && !al.variant && /^(미니|정규|리패키지|스페셜)/.test(al.type || '') && (al.tracks || []).length >= 3;
+let _ALBUMS = null; // gko → [{al, slug}]
+function albumsFor(gko) {
+  if (!_ALBUMS) {
+    _ALBUMS = {};
+    for (const g of Object.keys(groups)) {
+      const used = new Set(), out = [];
+      for (const al of (groups[g].discography || []).filter(_ALBUM_KEEP).sort((x, y) => String(y.releaseDate || '').localeCompare(String(x.releaseDate || '')))) {
+        let slug = _CRED_SB(al.title || '') || 'album';
+        if (used.has(slug)) slug += '-' + String(al.releaseDate || '').replace(/\D/g, '');
+        if (used.has(slug)) continue; used.add(slug); out.push({ al, slug });
+      }
+      if (out.length) _ALBUMS[g] = out;
+    }
+  }
+  return _ALBUMS[gko] || [];
+}
+function albumPagePath(gko, slug, lang) { const gp = groupPagePath(gko, lang); return gp ? `${gp}a/${slug}/` : null; }
+const _ord = n => n + (n % 100 >= 11 && n % 100 <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th');
+function albumTypeEn(t) {
+  const m = String(t || '').match(/(\d+)집/), n = m ? _ord(+m[1]) + ' ' : '';
+  if (/리패키지/.test(t)) return n + (/정규/.test(t) ? 'Full Album ' : /미니/.test(t) ? 'Mini Album ' : '') + 'Repackage';
+  if (/^정규/.test(t)) return n + 'Full Album'; if (/^미니/.test(t)) return n + 'Mini Album'; if (/^스페셜/.test(t)) return 'Special Album';
+  return t;
+}
+function albumLinksHtml(gko, lang) {
+  const list = albumsFor(gko); if (!list.length) return '';
+  const isEn = lang === 'en';
+  return `
+    <h2>${isEn ? 'Albums & tracklists' : '앨범·수록곡'}</h2>
+    <ul class="member-list rel">
+      ${list.slice(0, 40).map(x => `<li><a href="${SITE}/${albumPagePath(gko, x.slug, lang)}">${escHtml(x.al.title)}</a> <span class="yr">${escHtml(String(x.al.releaseDate || '').slice(0, 4))}</span></li>`).join('\n      ')}
+    </ul>`;
+}
+function buildAlbumPages() {
+  let n = 0;
+  for (const g of Object.keys(groups)) {
+    const list = albumsFor(g); if (!list.length) continue;
+    const songB = new Set((SONGS[g] || []).map(s => s.b));
+    list.forEach(({ al, slug }, i) => {
+      for (const lang of ['ko', 'en']) {
+        const isEn = lang === 'en', rel = albumPagePath(g, slug, lang);
+        const gd = isEn ? (groups[g].en || g) : g, date = String(al.releaseDate || ''), type = isEn ? albumTypeEn(al.type) : al.type;
+        const names = arr => [...new Set((arr || []).map(x => Array.isArray(x) ? x[0] : x).filter(Boolean))].join(', ');
+        const rows = (al.tracks || []).map(t => {
+          const b = _CRED_SB(t.title || ''), href = b && songB.has(b) ? `${SITE}/${songPagePath(g, b, lang)}` : null;
+          const cr = t.cr || {}, ly = names(cr.l), co = names(cr.c);
+          const credit = [ly && `${isEn ? 'Lyrics' : '작사'} ${escHtml(ly)}`, co && `${isEn ? 'Music' : '작곡'} ${escHtml(co)}`].filter(Boolean).join(' · ');
+          return `<li>${href ? `<a href="${href}">${escHtml(t.title)}</a>` : escHtml(t.title)}${t.isTitle ? (isEn ? ' <b>(title)</b>' : ' <b>(타이틀)</b>') : ''}${credit ? `<br><span class="yr">${credit}</span>` : ''}</li>`;
+        }).join('');
+        const tt = al.titleTrack || ((al.tracks || []).find(t => t.isTitle) || {}).title || '';
+        const h1 = isEn ? `${gd} — ${al.title}` : `${g} ${al.title}`;
+        const title = isEn ? `${gd} '${al.title}' Tracklist — ${type} (${date}) | K-POP UNIVERSE` : `${g} '${al.title}' 수록곡·트랙리스트 — ${type} (${date}) | K-POP UNIVERSE`;
+        const desc = isEn ? `${gd} ${type} '${al.title}' released ${date}${tt ? `, title track '${tt}'` : ''} — ${al.tracks.length} tracks with lyrics/music credits.` : `${g} ${type} '${al.title}'(${date} 발매)${tt ? ` 타이틀곡 '${tt}'` : ''} — 수록곡 ${al.tracks.length}곡과 곡별 작사·작곡.`;
+        const nb = [list[i - 1], list[i + 1]].map((x, k) => x ? `<a href="${SITE}/${albumPagePath(g, x.slug, lang)}">${k ? '← ' : ''}${escHtml(x.al.title)}${k ? '' : ' →'}</a>` : '').filter(Boolean).join(' · ');
+        const body = `  ${al.cover ? `<img class="sp-cover" src="${escHtml(al.cover)}" alt="${escHtml(al.title)}" loading="lazy" style="width:100%;max-width:320px;border-radius:12px;display:block;margin:4px 0 16px">` : ''}
+  <p class="note"><a href="${SITE}/${groupPagePath(g, lang)}">${isEn ? `${escHtml(gd)} fancams & stages →` : `${escHtml(g)} 직캠·무대 모음 →`}</a></p>
+  <h2>${isEn ? `Tracklist (${al.tracks.length})` : `수록곡 ${al.tracks.length}곡`}</h2>
+  <ol class="vid-list">${rows}</ol>
+  ${nb ? `<p class="note">${nb}</p>` : ''}
+  <p class="note">${isEn ? 'Credits: Melon.' : '크레딧 출처: 멜론.'}</p>`;
+        writeSimple(rel, simplePageHtml({ lang, selfUrl: `${SITE}/${rel}`, altUrl: `${SITE}/${albumPagePath(g, slug, isEn ? 'ko' : 'en')}`, koUrl: `${SITE}/${albumPagePath(g, slug, 'ko')}`, title, h1, desc, body, kind: 'album', ogImage: al.cover || undefined }), '0.5');
+        n++;
+      }
+    });
+  }
+  console.log(`앨범 페이지 ${n / 2}장 × 2개 언어`);
+}
 function buildAgencyPages() {
   const by = {};
   groupKos.forEach(g => String(groups[g].co || '').split('/').map(s => s.trim()).filter(Boolean).forEach(a => {
@@ -2182,6 +2311,8 @@ else (async () => {
   buildProgramPages();
   buildYearPages();
   buildAgencyPages();
+  try { buildAlbumPages(); } catch (e) { console.error('⚠️ 앨범 페이지 실패 — 이 단계만 건너뜀:', e.message); }
+  try { buildCreditPages(); } catch (e) { console.error('⚠️ 작사·작곡 페이지 실패 — 이 단계만 건너뜀:', e.message); } // 새 단계라 실패해도 전체 빌드는 계속(2026-11-04)
   try { await buildShowPages(); } catch (e) { console.warn(`⚠️ 음방 회차 페이지 건너뜀: ${e.message}`); }
   buildWinsPages();
   try { await buildChemPages(); } catch (e) { console.warn(`⚠️ 조합 페이지 건너뜀(기존 페이지 유지): ${e.message}`); }
