@@ -13147,9 +13147,12 @@ function _feedWideSync(){
   _lbFitSync();if(typeof requestAnimationFrame==='function')requestAnimationFrame(_lbNarrowSync);
   const fo=document.getElementById('feed-overlay');if(!fo)return;
   const _w=_stageWide()&&fo.classList.contains('open')?_fwWidth():440;
-  if(document.documentElement.style.getPropertyValue('--fw-w')!==_w+'px')document.documentElement.style.setProperty('--fw-w',_w+'px');
+  const wChange=document.documentElement.style.getPropertyValue('--fw-w')!==_w+'px';
   const on=_stageWide()&&fo.classList.contains('open')&&_w>=640;
-  if(document.body.classList.contains('fw-home')===on)return;
+  const clsChange=document.body.classList.contains('fw-home')!==on;
+  if(!wChange&&!clsChange)return;
+  // ⚠️ 기준 요소는 폭을 바꾸기 **전에** 잡는다(2026-11-04) — 예전엔 --fw-w를 먼저 바꾼 뒤 잡아서, 이미 새 폭으로 다시 배치된 화면의
+  //    엉뚱한 카드를 기준으로 삼았다(compass-width '보던 자리' 832px 밀림이 이것). 폭만 바뀌는 경우(440↔360 등)도 같은 보정을 받는다.
   // 보고 있던 자리: 스크롤 칸 맨 위에서 조금 아래 점에 걸린 요소
   const sc=_feedWideScroller();let anchor=null,off=0;
   // 좁아질 때 잡은 기준을 기억해 두고, 그 사이 스크롤하지 않았으면 넓어질 때도 같은 기준으로(새로 잡으면 매번 조금씩 밀린다 — 실측 192px)
@@ -13160,10 +13163,19 @@ function _feedWideSync(){
     const hit=document.elementFromPoint(r.left+Math.min(60,r.width/4),r.top+24);
     if(hit&&sc.contains(hit)){anchor=hit.closest('.feed-card,section,.feed-section,[id^="feed-"]')||hit;off=anchor.getBoundingClientRect().top-r.top;}
   }
-  document.body.classList.toggle('fw-home',on);
+  if(wChange)document.documentElement.style.setProperty('--fw-w',_w+'px');
+  if(clsChange)document.body.classList.toggle('fw-home',on);
   if(anchor&&sc){
     const fix=()=>{if(!anchor.isConnected)return;const d=anchor.getBoundingClientRect().top-sc.getBoundingClientRect().top-off;if(Math.abs(d)>1)sc.scrollTop+=d;};
-    fix();requestAnimationFrame(()=>{fix();requestAnimationFrame(()=>{fix();_feedWideScroller._mem={sc,el:anchor,off,top:sc.scrollTop};});});
+    // 2프레임만 고치면 그 뒤 안쪽 그리드가 새 폭으로 다시 배치될 때(높이 3.2만→5.3만px) 보던 자리가 850px 밀렸다(2026-11-04 compass-width 실측).
+    // 레이아웃이 자리잡을 동안(최대 0.8초) 매 프레임 고치고, 사용자가 직접 휠·터치·클릭하면 바로 멈춘다(사용자 스크롤과 싸우지 않게).
+    let stop=false;const cancel=()=>{stop=true;};const EV=['wheel','touchstart','pointerdown'];
+    EV.forEach(t=>sc.addEventListener(t,cancel,{passive:true}));
+    const until=performance.now()+800;
+    const step=()=>{if(!stop)fix();
+      if(!stop&&performance.now()<until){requestAnimationFrame(step);return;}
+      EV.forEach(t=>sc.removeEventListener(t,cancel));_feedWideScroller._mem={sc,el:anchor,off,top:sc.scrollTop};};
+    step();
   }else _feedWideScroller._mem=null;
 }
 {
