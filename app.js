@@ -13084,6 +13084,26 @@ function _flStageClose(){
 // ⚠️ 폭이 바뀌면 칸 수가 바뀌어 글이 다시 흐르므로, 보고 있던 자리(위쪽에 걸친 요소)를 기억했다가 같은 높이로 되돌린다.
 const _FW_BLOCKERS=['side-panel','member-panel','conn-panel','yt-lightbox','feed-list-overlay','gc-discog-detail','venue-overlay','trophy-overlay','igv-overlay',
   'uc-card-overlay','adm-home-overlay','hnn-overlay','vm-overlay','gp-overlay'];
+// 좁은 웹 화면의 재생 배치(2026-11-04 Codex 검수122차 — 약 844px에서 카드+재생이면 영상 138×78, Up Next가 덮음).
+//  ① 남는 자리가 너무 좁으면(나침반+카드를 빼고 480px 미만) 영상이 나침반 위를 덮는다(body.lb-cover-feed) — 1024에서 셋 다 열면 144px였다.
+//  ② 재생 화면 폭이 800px 미만이면 'Up Next'(320px 고정)를 영상 옆이 아니라 아래로(#yt-lightbox.lb-narrow).
+//  판정은 열린 패널 폭으로만 한다(재생 화면 폭으로 ①을 정하면 덮기↔안 덮기가 서로를 바꿔 깜빡인다).
+function _lbFitSync(){
+  try{
+    const W=window.innerWidth,open=id=>{const e=document.getElementById(id);return e&&e.classList.contains('open')?e:null;};
+    const desk=W>=769&&!(typeof isMob==='function'&&isMob());
+    const fo=open('feed-overlay');
+    const w=e=>e&&typeof e.getBoundingClientRect==='function'?e.getBoundingClientRect().width:0;
+    const cards=['side-panel','member-panel','conn-panel'].map(open).filter(Boolean).reduce((n,e)=>n+w(e),0);
+    const cover=!!(desk&&fo&&W-w(fo)-(cards||80)<480);
+    if(document.body.classList.contains('lb-cover-feed')!==cover)document.body.classList.toggle('lb-cover-feed',cover);
+  }catch(e){}
+}
+function _lbNarrowSync(){
+  const lb=document.getElementById('yt-lightbox');if(!lb||typeof lb.getBoundingClientRect!=='function')return;
+  const on=lb.classList.contains('open')&&lb.getBoundingClientRect().width<800;
+  if(lb.classList.contains('lb-narrow')!==on)lb.classList.toggle('lb-narrow',on);
+}
 function _feedWideScroller(){
   const fo=document.getElementById('feed-overlay');if(!fo)return null;
   return [...fo.querySelectorAll('.feed-pane,#feed-body')].find(el=>el.offsetParent&&el.scrollHeight>el.clientHeight+2)||null;
@@ -13116,6 +13136,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   b.addEventListener('click',e=>{e.stopPropagation();const nx=_FW_MODES[(_FW_MODES.indexOf(_fwMode())+1)%3];try{localStorage.setItem('kpu_fw_mode',nx);}catch(_){}_fwBtnSync();_feedWideSync();try{_gaEvent('fw_mode',{mode:nx});}catch(_){}});
 });
 function _feedWideSync(){
+  _lbFitSync();if(typeof requestAnimationFrame==='function')requestAnimationFrame(_lbNarrowSync);
   const fo=document.getElementById('feed-overlay');if(!fo)return;
   const _w=_stageWide()&&fo.classList.contains('open')?_fwWidth():440;
   if(document.documentElement.style.getPropertyValue('--fw-w')!==_w+'px')document.documentElement.style.setProperty('--fw-w',_w+'px');
@@ -13142,6 +13163,9 @@ function _feedWideSync(){
   const _fwObserve=()=>{
     const _fwMo=new MutationObserver(()=>_feedWideSync());
     ['feed-overlay',..._FW_BLOCKERS].forEach(id=>{const el=document.getElementById(id);if(el)_fwMo.observe(el,{attributes:true,attributeFilter:['class']});});
+    // 재생 화면 폭은 left/right 전환(0.26초) 중에도 바뀌므로 크기 감시로 Up Next 위치를 맞춘다
+    const _lbEl=document.getElementById('yt-lightbox');
+    if(_lbEl&&typeof ResizeObserver==='function')new ResizeObserver(()=>_lbNarrowSync()).observe(_lbEl);
     _feedWideSync();
   };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',_fwObserve,{once:true});

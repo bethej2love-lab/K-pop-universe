@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-11-04 (Claude Code — Codex 검수 102~128차 확인 + 좁은 웹 재생 배치)
+- **[Codex 인계 위치]** Codex 검수 102~128차는 main이 아니라 Codex worktree `.audit-worktrees/seo-language-switch/CHANGELOG.md`(미커밋)에 있다. 사용자와 정한 처리 순서: ①좁은 웹 재생 배치(122차) ②멤버×곡 페이지 앱 연결(115차) ③리센느 PULSE 미니 4집(121차) ④음방 회차 분류(102·103·104·113차) ⑤공식 채널 외부 멤버 혼입 태깅(124~128차). YouTube API 심사 녹화는 사용자가 Codex에 맡김.
+- **[버그·수정] 좁은 웹에서 카드+재생 시 영상 138×78 (122차)** — 원인 2개: ① 재생 화면이 좁아도 '영상 | Up Next 320px' 2단 유지 ② 나침반+카드면 좌우 440씩 비워 1024에서 영상 자리 144px. → app.js `_lbNarrowSync`(재생 화면 800px 미만이면 #yt-lightbox.lb-narrow → Up Next를 영상 아래로, ResizeObserver) + `_lbFitSync`(나침반+카드 빼고 480px 미만이면 body.lb-cover-feed → 영상이 나침반 위를 덮음, 패널 폭으로만 판정해 깜빡임 없음). 11-03 '셋 다 열리면 무조건 세로 쌓기' CSS는 지움 — 1920에서 영상이 화면 위로 248px 밀려났다.
+- **[실측 헤드리스 900 높이, 영상 폭]** 844: 카드+재생 138→330 · 셋 다 138→330(덮기) · 1024: 카드+재생 173→510 · 셋 다 138→510 · 1280 셋 다 335(-136 밀림 없음)→429 · 1920 셋 다 위로 밀림→629. 모든 조합 영상 top ≥64.
+- 검사: syntax·smoke·desktop-close-layers 7/7·lb-every-entry 8/8·stage-venue-album 41/0·lb-topbar·lb-history-back 10/10·phone-landscape 20/0·compass-observer 20/0. compass-width '보던 자리' 1건 실패는 **오늘 작업 전 커밋(199261aeb0)에서도 같은 값(-832)으로 실패** — 기존 문제, 별도.
+
 ## 2026-11-04 (Claude Code — For You 선반 순서 재배치: 최애 새 영상 먼저)
 - **[사용자 결정]** "for you 탭에서 젤 먼저 보고싶은 건 최애의 new video" → 순서 **New Videos → This Week → New Music → 인스타 → 차트 → 공연 → 기념일 → 최근 본 것**(제안안에서 차트·인스타만 사용자가 맞바꿈). 09-18 '시간 민감도 순'(기념일 맨 위·신작 영상 7번째)을 대체.
 - **[신규] 당일 끌어올림 _fyUrgent/_fyReorder** — 최애 본인 앨범 발매 48시간 · 기념일 당일/전날 · 공연 당일이면 그 선반이 맨 위로. index.html 순서 = _FY_ORDER. 헤드리스로 강제 켜기/끄기 순서 확인.

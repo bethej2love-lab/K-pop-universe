@@ -747,6 +747,8 @@
     /* card-wide일 때 카드 640px이므로 right도 맞춰야 겹치지 않음 */
     body:has(#feed-overlay.open).card-wide:has(#side-panel.open) #yt-lightbox{right:min(640px,calc(100vw - 480px));}
     body:has(#feed-overlay.open).card-wide:has(#side-panel.open):has(#member-panel.open) #yt-lightbox{right:min(1080px,calc(100vw - 480px));}
+    /* 나침반+카드를 빼면 영상 자리가 480px도 안 남을 때(1024에서 셋 다 열면 144px였다) 영상이 나침반 위를 덮는다(app.js _lbFitSync, 2026-11-04) */
+    body.lb-cover-feed:has(#feed-overlay.open) #yt-lightbox{left:0;}
     /* 어드민 도킹(관리자 홈·영상 관리·태깅 규칙·그룹 우선순위)이 열리면 그 폭만큼 왼쪽을 비운다(2026-10-19) —
        라이트박스는 열 때 최상단으로 올라가고 도킹은 일부러 z58(카드 밑)이라, 영상을 보다 설정→영상 관리를 누르면
        도킹 패널이 플레이어 뒤에 통째로 깔려 "안 열리는 것"처럼 보였다. 탐험 패널은 도킹 중 접히므로 이 규칙이 그 자리를 대신한다. */
@@ -1024,6 +1026,12 @@
     #yt-lightbox.lb-browse #yt-lb-main{flex:1;min-width:0;}
     #yt-lightbox.lb-browse #yt-lb-uplist{width:320px;flex-shrink:0;max-height:min(80vh,720px);overflow-y:auto;padding-left:2px;overscroll-behavior:contain;will-change:transform;}
     #yt-lightbox.lb-browse #yt-lb-uplist-scroll{padding-bottom:8px;}
+    /* 좁은 재생 화면(800px 미만, app.js _lbNarrowSync — 2026-11-04 Codex 검수122차): Up Next를 영상 옆(320px 고정)이 아니라 아래로.
+       예전엔 844px 화면에서 카드를 열면 영상이 138×78로 눌리고 Up Next가 영상을 덮었다. wrap 전체가 한 번에 스크롤된다. */
+    #yt-lightbox.lb-browse.lb-narrow #yt-lb-wrap{flex-direction:column;align-items:stretch;gap:14px;max-height:100%;overflow-y:auto;overscroll-behavior:contain;}
+    #yt-lightbox.lb-browse.lb-narrow:not(.lb-shorts-desk) #yt-lb-main{flex:0 0 auto;width:100%;}
+    #yt-lightbox.lb-browse.lb-narrow.lb-shorts-desk #yt-lb-main{align-self:center;}
+    #yt-lightbox.lb-browse.lb-narrow #yt-lb-uplist{width:100%;max-height:none;overflow:visible;padding-left:0;}
     /* 카드 1개(side-panel)만 열렸을 때: wrap을 카드 방향(오른쪽)으로 붙임 — 중앙 정렬이면 카드와 uplist 사이 여백이 생김 */
     /* 2026-10-16: 예전엔 wrap이 1080px 고정+오른쪽 붙임이라 넓은 화면에서 왼쪽이 통째로 비었다(1920에서 400px). 이제 남는 폭을 채우고
        (좌우 28px), 높이가 모자란 화면에서만 영상 높이 기준으로 상한 → 그때 남는 공간은 양옆으로 나눈다 */
@@ -1038,11 +1046,8 @@
        아주 넓은 화면에선 높이 기준으로 상한 → 남는 공간은 왼쪽으로(카드 쪽에 붙임, 카드 1개 모드와 같은 원칙) */
     body:has(#member-panel.open) #yt-lightbox.lb-browse #yt-lb-wrap,
     body:has(#conn-panel.open) #yt-lightbox.lb-browse #yt-lb-wrap{flex-direction:column;align-items:stretch;width:100%;max-width:calc((100vh - 200px) * 16 / 9);gap:16px;}
-    /* 나침반+카드+재생 3개가 같이 열리면(2026-11-03 웹 조합 점검) 가운데가 400~600px뿐이라 Up Next를 옆에 두면 영상이 140px로 쪼그라들었다
-       → 카드 2장 모드와 같이 Up Next를 영상 아래로 */
-    body:has(#feed-overlay.open):has(#side-panel.open) #yt-lightbox.lb-browse:not(.lb-shorts-desk){align-items:flex-start;overflow-y:auto;padding:44px 28px 32px;justify-content:center;}
-    body:has(#feed-overlay.open):has(#side-panel.open) #yt-lightbox.lb-browse:not(.lb-shorts-desk) #yt-lb-wrap{flex-direction:column;align-items:stretch;width:100%;max-width:calc((100vh - 200px) * 16 / 9);gap:16px;}
-    body:has(#feed-overlay.open):has(#side-panel.open) #yt-lightbox.lb-browse:not(.lb-shorts-desk) #yt-lb-uplist{width:auto;max-height:none;overflow-y:visible;padding-left:0;}
+    /* 나침반+카드+재생 3개(2026-11-03)는 이제 폭으로 판단 — 재생 화면이 800px 미만이면 위 .lb-narrow가 Up Next를 아래로 내린다(2026-11-04).
+       예전 "셋 다 열리면 무조건 세로 쌓기"는 1920에서 영상이 화면 위로 248px 밀려났고, 영상이 나침반을 덮어 넓어진 경우에도 쌓았다. */
     body:has(#member-panel.open) #yt-lightbox.lb-browse #yt-lb-uplist,
     body:has(#conn-panel.open) #yt-lightbox.lb-browse #yt-lb-uplist{width:auto;max-height:none;overflow-y:visible;padding-left:0;}
     body:has(#member-panel.open) #yt-lightbox.lb-browse #yt-lb-uplist-scroll,
