@@ -2825,6 +2825,7 @@
      이유: 키보드 화살표가 여기서 멈춘다). 항목이 아니라 "이 섹션을 늘리는 조작"이라 톤도 한 단계 죽인다. */
   .sr-more{display:block;width:calc(100% - 20px);margin:3px 10px 5px;padding:8px 0;background:rgba(255,255,255,0.04);border:none;border-radius:9px;
     font-family:inherit;font-size:11.5px;font-weight:600;color:rgba(170,192,238,0.72);cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;transition:background .13s,color .13s;}
+  .feed-favnew-more{width:100%;margin:4px 0 2px;} /* For You 최애 새 영상 더보기(2026-11-04) — 그리드 전체폭 */
   .sr-more:hover{background:rgba(255,255,255,0.08);color:rgba(200,218,255,0.9);}
   .sr-more:disabled{cursor:var(--kpu-cursor-default,default);color:rgba(150,170,210,0.45);}
   #msheet-body .sr-more[hidden]{display:none!important;}

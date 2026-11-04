@@ -2002,7 +2002,11 @@ async function buildUniverse(){
   // 첫 ~1.65초+로드버퍼(<3초), 재방문 ~1.3초(<2초). 이보다 더 줄이면 텍스트·모션이 안 읽힌다.
   // 짜증 방지(2026-11-03 사용자 "몇 시간 안에 다시 오면 인트로 생략") — 3시간 안에 다시 연 재방문자는 문구 대기 없이, 우주 열림을 짧게, 탐험 패널은 바로.
   let _quickIntro=false;
-  try{const last=+localStorage.getItem('kpu_last_seen')||0;_quickIntro=!window._kpuNewVisitor&&last>0&&Date.now()-last<3*3600e3;localStorage.setItem('kpu_last_seen',String(Date.now()));}catch(e){}
+  // _kpuPrevSeen: For You 최애 새 영상의 NEW 기준 = '지난 방문' 시각(2026-11-04). 30분 안에 새로고침한 건 같은 방문으로 보고 기준을 유지한다.
+  try{const last=+localStorage.getItem('kpu_last_seen')||0;
+    if(last&&Date.now()-last>30*60e3){window._kpuPrevSeen=last;localStorage.setItem('kpu_visit_prev',String(last));}
+    else window._kpuPrevSeen=+localStorage.getItem('kpu_visit_prev')||0;
+    _quickIntro=!window._kpuNewVisitor&&last>0&&Date.now()-last<3*3600e3;localStorage.setItem('kpu_last_seen',String(Date.now()));}catch(e){}
   if(_quickIntro){REVEAL.clip=280;REVEAL.text=150;REVEAL.panel=0;}
   const _minShow=_quickIntro?0:(typeof _visitCount!=='undefined'&&_visitCount>=3)?250:500;
   if(_elapsed<_minShow)await new Promise(res=>setTimeout(res,_minShow-_elapsed));
@@ -22966,6 +22970,7 @@ function _buildFeedForYouAnniv(){
         return _fetchTopVideoThumb(gko,mko);
       })});
   });
+  _fyUrgent('feed-foryou-anniv-section',hits.some(h=>h.d<=1)); // 당일·전날이면 For You 맨 위로(2026-11-04)
   if(!hits.length){section.style.display='none';return;}
   section.style.display='';
   list.innerHTML='';
@@ -23392,7 +23397,7 @@ async function _buildFeedFavAlbums(){
   const section=document.getElementById('feed-favalbum-section');
   const list=document.getElementById('feed-favalbum');
   if(!section||!list)return;
-  list.innerHTML='';section.style.display='none';
+  list.innerHTML='';section.style.display='none';_fyUrgent('feed-favalbum-section',false);
   if(!favGroups.size&&!favMembers.size)return;
   try{
     const all=await _ensureRecentAlbums();
@@ -23422,6 +23427,8 @@ async function _buildFeedFavAlbums(){
       const meta=_albumShelfMeta(a);
       _appendFeedCard(list,'💿',a.t,ownerDisp,_albumCardNav(a),a.c,null,{meta,metaFresh:_albumIsFresh(a.d),metaNew:_albumIsNew(a.d)});
     });
+    // 최애 본인 앨범이 발매 48시간 안이면 For You 맨 위로(2026-11-04). 참여(피처링) 앨범은 제외.
+    _fyUrgent('feed-favalbum-section',picked.some(a=>{if(a.f)return false;const age=now-_albumDate(a.d);return age>=-864e5&&age<2*864e5;}));
     section.style.display='';
     list.scrollLeft=0;_enableDragScroll(list); // 1줄 가로 레일(2026-10-14) — 탐색 탭 '이번 주 발매'와 같은 모양
   }catch(e){console.warn('[feed] 즐겨찾기 신보 선반 실패 — 이 선반만 빠집니다',e);}
@@ -25131,7 +25138,7 @@ async function _buildFeedConcerts(){
 async function _buildFeedFavConcerts(){
   const section=document.getElementById('feed-favconcert-section'),list=document.getElementById('feed-favconcert');
   if(!section||!list)return;
-  list.replaceChildren();section.style.display='none';
+  list.replaceChildren();section.style.display='none';_fyUrgent('feed-favconcert-section',false);
   if(!favGroups.size&&!favMembers.size)return;
   try{
     await _ensureOgThumbs();
@@ -25140,6 +25147,9 @@ async function _buildFeedFavConcerts(){
     const mine=evs.filter(e=>(e.groups||[]).some(g=>favGroups.has(g)||favM.has(g)));
     mine.slice(0,15).forEach(e=>_appendConcertCard(list,e));
     if(list.children.length){section.style.display='';list.scrollLeft=0;_enableDragScroll(list);}
+    // 공연 당일(시작~끝 사이, 기기 날짜)이면 For You 맨 위로(2026-11-04)
+    const _td=new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
+    _fyUrgent('feed-favconcert-section',list.children.length>0&&mine.slice(0,15).some(e=>e.date_start<=_td&&_td<=(e.date_end||e.date_start)));
   }catch(e){console.warn('[feed] 즐겨찾기 공연 선반 실패',e);}
 }
 async function _buildFeedEvents(){
@@ -25958,7 +25968,7 @@ function _buildFeedRandomVideo(list){
 // 기준도 조회수가 아니라 **업로드일**이고, 노출 순서는 랜덤이다(순위표처럼 보이지 않게 — Discovery
 // Trend 카드에서 이미 확립된 규칙).
 // Trend는 "거의 무한 스크롤" 목적(2026-08-30 사용자 요청) — 7일치를 많이 깐다. 그룹당 캡은 한 채널 도배 방지용.
-const _FEED_TREND_DAYS=7,_FEED_TREND_MAX=200,_FEED_TREND_PER_GROUP=4,_FEED_FAVNEW_MAX=200;
+const _FEED_TREND_DAYS=7,_FEED_TREND_MAX=200,_FEED_TREND_PER_GROUP=4,_FEED_FAVNEW_MAX=200,_FEED_FAVNEW_FIRST=6;
 // 2열 메이슨리(열 독립 스택) — 카드를 "현재 더 짧은 열"에 순서대로 붙여, 16:9(가로)·9:16(쇼츠)가 섞여도
 // 가로영상 아래 여백이 원천적으로 안 생기게 한다(2026-08-30 사용자 제보 — grid+dense의 "한 행=같은 비율"
 // 전제 때문에 여백이 지속 발생). container를 2열 flex로 바꾸고, 반환된 함수 add(isShort)가 붙일 열을 주고
@@ -26362,29 +26372,93 @@ async function _buildFeedFavNew(){
     const rows=_packRows(_favFirst.concat(_rest),_songIsShort,{landscapeFull:true});
     if(rows.length&&!rows[rows.length-1].wide&&rows[rows.length-1].items.length===1)rows.pop(); // 끝에 홀로 남은 반폭 제거
     const flat=rows.flatMap(r=>r.items); // 라이트박스 재생목록 순서를 화면 순서와 일치
-    rows.forEach(row=>row.items.forEach(song=>{
+    // 지난 방문 이후 올라온 영상엔 날짜 앞에 NEW(2026-11-04 — "새로 뭐 올라왔지?"가 바로 보이게). 썸네일 위엔 안 얹는다.
+    const _prevSeen=window._kpuPrevSeen||0;
+    const _isNewSince=s=>{if(!_prevSeen)return false;const t=Date.parse(s.paFull||'');return isFinite(t)&&String(s.paFull).length>10&&t>_prevSeen;};
+    const drawItem=({song,row})=>{
       const isShort=_songIsShort(song);
       const _emo=_isFav(song)?String(_bias.favEmoji(song)).replace(/[<>&"']/g,''):''; // 이모지는 사용자가 친 글자 — 태그 문자 제거
-      const sub=(_emo?`<span class="feed-fav-emo">${_emo}</span>`:'')+[_feedWhoSub(song),song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
+      const sub=(_emo?`<span class="feed-fav-emo">${_emo}</span>`:'')+[_feedWhoSub(song),_isNewSince(song)?'NEW':null,song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
       _appendFeedCard(strip,'💖',song.t,sub,
         ()=>openLightbox(song.u,isShort,flat,flat.indexOf(song),{groupKo:song.groupKo,memberKo:(song.memberKos||[])[0]},false,true),
         song.thumb,null, Object.assign({dur:song.dur}, row.wide?{wide:true,short:!!row.short}:(isShort?{short:true}:{}),
           _isFav(song)?{fav:_bias.favRgb(song)}:{}));
-    }));
+    };
+    const items=rows.flatMap(row=>row.items.map(song=>({song,row})));
+    // For You 맨 위로 올라오면서(2026-11-04) 7일치 전부를 펼치면 아래 선반이 한참 밀린다 → 카드 6개까지만, 나머지는 더보기로
+    // 그 자리에서 이어 그린다. ⚠️ 숨겨 둔 채 미리 만들지 않는다 — display:none 안의 lazy 썸네일은 나중에 보여도 안 뜬다(10-15 실측).
+    // 넓은 웹 화면은 칸 수가 행 패커와 달라(한 줄 5칸 등) 6개에서 끊으면 마지막 줄에 빈칸이 남는다 → 화면상 마지막 줄이 찰 때까지 더 그린다.
+    section.style.display=''; // 줄 폭을 재야 해서 먼저 보이게(lazy 썸네일에도 그게 맞다)
+    // 그리드가 dense라 뒤 카드가 앞 빈칸을 메운다 — 마지막 카드 위치가 아니라 '모든 줄에 빈칸이 없나'로 본다.
+    const _lastRowFull=()=>{const cs=[...strip.querySelectorAll('.feed-card')];if(!cs.length)return true;
+      const sr=strip.getBoundingClientRect();if(!sr.width)return true;
+      const rowsByTop=new Map();let minW=Infinity;
+      cs.forEach(x=>{const r=x.getBoundingClientRect();const k=Math.round(r.top);rowsByTop.set(k,Math.max(rowsByTop.get(k)||0,r.right));minW=Math.min(minW,r.width);});
+      return [...rowsByTop.values()].every(right=>sr.right-right<minW*0.6);};
+    let shown=0;
+    while(shown<items.length&&shown<_FEED_FAVNEW_FIRST)drawItem(items[shown++]);
+    const restItems=items.slice(shown);
+    if(restItems.length){
+      const more=document.createElement('button');more.type='button';more.className='sr-more feed-favnew-more';
+      more.style.gridColumn='1/-1';
+      const label=()=>{more.textContent=(currentLang==='ko'?_SR_MORE_LABEL.ko:_SR_MORE_LABEL.en)+' '+restItems.length;};
+      // 빈칸 메우기: 폭을 잴 수 있을 때(선반이 숨겨진 채 미리 만들어지면 폭 0) · 폭이 바뀔 때(나침반 폭 3단계 등) 다시 본다.
+      // 한 번에 최대 8개까지만 더 그린다 — 넓은 화면 한 줄을 채우기엔 충분하다.
+      let auto=0,ro=null;
+      const topUp=()=>{
+        if(!more.isConnected)return;
+        let added=0;
+        const drawn=[];
+        while(restItems.length&&auto<8&&!_lastRowFull()){const it=restItems.shift();drawItem(it);const cs=strip.querySelectorAll('.feed-card');drawn.push({it,el:cs[cs.length-1]});auto++;added++;}
+        // 그래도 빈칸이 남으면(가로 영상만 이어지고 쇼츠가 모자랄 때) 이번에 더 그린 카드 중 **빈칸 있는 줄에 앉은 것**만 걷는다.
+        // dense 배치라 DOM 끝 카드가 화면 끝이 아니다 — 뒤에서부터 걷으면 꽉 찬 줄의 쇼츠부터 빠져 전부 걷혔다.
+        for(let guard=0;guard<16&&drawn.length&&!_lastRowFull();guard++){
+          const sr=strip.getBoundingClientRect(),rowR=new Map();let minW=Infinity;
+          strip.querySelectorAll('.feed-card').forEach(x=>{const q=x.getBoundingClientRect(),k=Math.round(q.top);rowR.set(k,Math.max(rowR.get(k)||0,q.right));minW=Math.min(minW,q.width);});
+          const bad=new Set([...rowR].filter(([,right])=>sr.right-right>=minW*0.6).map(([k])=>k));
+          let pick=-1,pickTop=-1;drawn.forEach((d,i)=>{const t=Math.round(d.el.getBoundingClientRect().top);if(bad.has(t)&&t>=pickTop){pick=i;pickTop=t;}});
+          if(pick<0)break;
+          const[d]=drawn.splice(pick,1);d.el.remove();restItems.unshift(d.it);auto--;added--;
+        }
+        restItems.sort((x,y)=>items.indexOf(x)-items.indexOf(y)); // 더보기 때 원래 순서대로
+        if(added){strip.appendChild(more);label();}
+        if(!restItems.length){more.remove();ro&&ro.disconnect();}
+      };
+      more.addEventListener('click',e=>{e.stopPropagation();more.remove();ro&&ro.disconnect();restItems.splice(0).forEach(drawItem);});
+      label();strip.appendChild(more);
+      topUp();
+      if(restItems.length&&typeof ResizeObserver==='function'){ro=new ResizeObserver(()=>{if(!more.isConnected){ro.disconnect();return;}topUp();});ro.observe(strip);}
+    }
     section.style.display='';
   }catch(e){console.warn('[feed] 즐겨찾기 신작 선반 실패 — 이 선반만 빠집니다',e);}
+}
+// For You 선반 기본 순서(index.html과 같게) + '오늘 일어난 일' 끌어올림(2026-11-04).
+const _FY_ORDER=['feed-favnew-section','feed-favnews-section','feed-favalbum-section','feed-favig-section','feed-favchart-section',
+  'feed-favconcert-section','feed-foryou-anniv-section','feed-recent-section'];
+function _fyUrgent(id,on){const el=document.getElementById(id);if(!el)return;const v=on?'1':'';if((el.dataset.urgent||'')===v)return;el.dataset.urgent=v;_fyReorder();}
+function _fyReorder(){
+  const els=_FY_ORDER.map(id=>document.getElementById(id)).filter(Boolean);if(els.length<2)return;
+  const par=els[0].parentNode;if(!els.every(e=>e.parentNode===par))return;
+  const want=[...els.filter(e=>e.dataset.urgent==='1'),...els.filter(e=>e.dataset.urgent!=='1')];
+  const cur=[...par.children].filter(e=>els.includes(e));
+  if(want.every((e,i)=>e===cur[i]))return;
+  const anchor=cur[cur.length-1].nextSibling; // 마지막 선반 뒤(빈 화면 안내 등)는 그대로
+  want.forEach(e=>par.insertBefore(e,anchor));
 }
 // 추천(For You) 탭 빌드 — 가볍게(이어보기=로컬, 즐겨찾기신작·Trend=Supabase). 나침반 열 때마다 호출(TTL 캐시).
 function _buildFeedRec(){
   if(_feedRecPending)return _feedRecPending;
   document.getElementById('feed-empty-rec').hidden=true;
-  // For You 선반 순서는 **시간 민감도** 순이다 — 오늘 지나면 의미가 없어지는 것일수록 위(2026-09-18).
-  //   기념일(D-DAY가 지나면 끝) → 신보(발매 주간) → 신작 영상(최근 7일) → 이어보기(언제 봐도 됨)
-  _buildFeedForYouAnniv();  // 다가오는 기념일(즐겨찾기 그룹·멤버 교차 D-7~D-DAY) — 시간 민감이라 최상단
-  const jobs=[_buildFeedFavNews(),_buildFeedFavAlbums(),_buildFeedFavConcerts(),_buildFeedFavIg(),_buildFeedFavCharts()];
-  // 즐겨찾기 신작(비동기)이 자리를 잡은 뒤에 이어보기를 그린다 — 예전엔 이어보기(로컬·즉시)가 먼저 위에
-  // 떴다가 favnew가 나중에 그 위로 끼어들며 이어보기를 아래로 밀어 덜컹거렸다(2026-09-13 사용자 제보).
-  jobs.push(_buildFeedFavNew().finally(()=>_buildFeedRecentlyViewed())); // 즐겨찾기 신작 → 이어보기 순서 확정
+  // For You 선반 순서(2026-11-04 사용자 "젤 먼저 보고 싶은 건 최애의 new video") — index.html 순서 = _FY_ORDER.
+  //   예전(09-18)엔 시간 민감도 순(기념일 맨 위·신작 영상 7번째)이었는데, 기념일은 1년에 몇 번뿐이라 평소엔 맨 위를 차지할 이유가 없다.
+  //   대신 '오늘 일어난 일'만 맨 위로: 신보 발매 48시간 · 기념일 당일/전날 · 공연 당일(_fyUrgent).
+  _buildFeedForYouAnniv();  // 동기(로컬 데이터)
+  // 최애 새 영상을 **먼저** 쏜다 — 선반들이 한꺼번에 쿼리를 던지면 서로 막혀(08-31 실측 단독 0.13초→동시 10초) 맨 위 선반이 늦게 뜬다.
+  // 나머지는 그게 끝나거나 1.2초가 지나면(느릴 때 다 같이 묶이지 않게) 시작.
+  const favNewP=_buildFeedFavNew();
+  const jobs=[favNewP.finally(()=>_buildFeedRecentlyViewed())]; // 즐겨찾기 신작 → 이어보기 순서 확정(09-13 덜컹 방지)
+  const gate=Promise.race([favNewP.catch(()=>{}),new Promise(r=>setTimeout(r,1200))]);
+  jobs.push(gate.then(()=>Promise.allSettled([_buildFeedFavNews(),_buildFeedFavAlbums(),_buildFeedFavConcerts(),_buildFeedFavIg(),_buildFeedFavCharts()])));
 
   setTimeout(()=>_feedCheckEmpty('rec'),1800); // 비동기 선반들이 다 실패해 빈 화면이면 재시도 노출
   const pending=Promise.allSettled(jobs).finally(()=>{if(_feedRecPending===pending)_feedRecPending=null;});
