@@ -1,5 +1,6 @@
 # 2026-11-04 남은 명단 밖 본인 멤버 128행 — 자동 정리 안 함(수동 잠금 102: 사람이 확인해 저장한 값 / 보류 26: 버가부 명단 누락 15 등)
 # 수동 잠금은 원본 확인 후 태그 편집 창에서 고칠 것(자동 일괄 금지). 열: 구분 그룹 영상ID members with_members 명단밖이름 제목
+# 2026-11-04 추가: 본인/게스트 칸 역전 14건은 role_swap_2026-11-04.sql로 정리해 목록에서 뺌. 버가부 15행은 명단 등록으로 해결(목록엔 남김 — 지금은 명단 안).
 보류	몬스타엑스	7Zp12EXMUxo	members=방찬,현진	with=방찬(스트레이키즈)	밖=현진,방찬	Do What #StrayKids #방찬 #현진 Want 😈 #shorts
 보류	버가부	lSRO2xshxG0	members=은채	with=	밖=은채	bugAboo(버가부) _ POP Point Choreography (EunChae,Cyan)
 보류	버가부	S6Bheon1t-k	members=은채	with=	밖=은채	ARA4CUT | Pop!🎉 Pop!!🎇 상큼터지는 버가부의 네컷 | POP🎉POP🎇 LIVELY bugAboo’s 4cut poses (EunChae,C
@@ -74,15 +75,11 @@
 잠금	싸이커스	XRI0YjMjp5k	members=이지	with=	밖=이지	#ICHILLIN #이지 선배님과 함께 SUPERPOWER 챌린지💪 @ICHILLIN #Shorts
 잠금	싸이커스	JDIaicLjiWk	members=이지	with=	밖=이지	#OKay with #ICHILLIN 이지 님👌 @ICHILLIN #Shorts
 잠금	씨엘씨	nrcWlNc8IbY	members=유키	with=	밖=유키	[#퀸덤퍼즐] 래퍼 포지션.ZIP (예은, 유키)
-잠금	아이브	uhrjctmaCdE	members=홍은채	with=이서(아이브)	밖=홍은채	원하면 #LE_SSERAFIM #HONGEUNCHAE 이뤄지리라🖤 #IVE #아이브 #LEESEO #이서 #BLACKHOLE #IVE_BLACKHOLE #Sho
 잠금	애프터스쿨	JJtECn57Ks8	members=박정아	with=선예(원더걸스),가희(애프터스쿨)	밖=박정아	[MPD직캠] 마마돌 직캠 8K '우아힙 (WooAh HIP)' (M.M.D FanCam) | @MCOUNTDOWN_2022.1.27
 잠금	에스에프나인	MNQucMBYw0Q	members=효진	with=	밖=효진	Mute is Off by #효진 #HYOJIN #MuteisOff챌린지
 잠금	에스에프나인	dvNIk8DA3yA	members=공민지	with=	밖=공민지	Mute is Off by #공민지 #MINZY #인성 #MuteisOff챌린지
 잠금	에스에프나인	0qWZKRm-IWA	members=서은광	with=	밖=서은광	Mute is Off by #서은광 #SEOEUNKWANG #MuteisOff챌린지
 잠금	엑스원	wMfuOZ2TpQc	members=우즈(조승연)	with=	밖=우즈(조승연)	박정민 선배님만 보인단 말이야~
-잠금	엔믹스	vWRwu9PIBMo	members=홍은채	with=규진(엔믹스)	밖=홍은채	Act like 뀨채♡ʾʾ and dress like 별별별💫#DidyouSeethat #NMIXX #KYUJIN #별별별 #LE_SSERAFIM #HONGEU
-잠금	엔믹스	cYIK6Z_Dzqs	members=홍은채	with=규진(엔믹스)	밖=홍은채	Heavy Serenade with #HONGEUNCHAE #LE_SSERAFIM 🐱ﾟ･｡⓿➏｡･ﾟ🦁 #NMIXX #KYUJIN #HeavySerenade
-잠금	엔시티 위시	PJcnVt9kUEw	members=정환	with=료(엔시티 위시)	밖=정환	Ode to Love with #SOJUNGHWAN #TREASURE #RYO#NCTWISH #OdetoLove #NCTWISH_OdetoLove
 잠금	엔하이픈	N-UJ_yOz2VI	members=에반(희승)	with=	밖=에반(희승)	[Cover HIGHLIGHT] #ENHYPEN #HEESEUNG 🌸 this is what falling in love feels like (원곡 : JVKE
 잠금	엔하이픈	lR_RI8IuG64	members=에반(희승)	with=	밖=에반(희승)	#HEESEUNG 'DARK BLOOD' Highlight Medley#ENHYPEN #DARKBLOOD
 잠금	엔하이픈	hPaoY_zz4N4	members=에반(희승)	with=	밖=에반(희승)	눈사람 (원곡 : 정승환) - 김영대&희승 [2024 KBS 가요대축제 글로벌페스티벌] | KBS 방송
@@ -96,13 +93,6 @@
 잠금	우아	XFjawCIMpdA	members=유키	with=	밖=유키	[EN/JP] [#퀸덤퍼즐/5회] ♬ Rush Hour - 퍼즐 팀 (나나, 수윤, 여름, 예은, 유키, 조아) #QUEENDOMPUZZLE | Mnet 2307
 잠금	우아	he18xHjRJTA	members=유키	with=	밖=유키	[#퀸덤퍼즐/풀버전] ♬ Rush Hour - 퍼즐 팀 (나나, 수윤, 여름, 예은, 유키, 조아) @올라운더배틀 #QUEENDOMPUZZLE
 잠금	우아	HyDR1VYpn-Y	members=유키	with=	밖=유키	[#퀸덤퍼즐/Full CAM] ♬ Rush Hour - 퍼즐 팀 (나나, 수윤, 여름, 예은, 유키, 조아) @올라운더배틀 #QUEENDOMPUZZLE
-잠금	웨이션브이	A7jh8GFAT2k	members=형준	with=샤오쥔(웨이션브이),정세비(이즈나)	밖=형준	4월 마지막 주 샤오쥔 & 정세비 & 형준 MC 컷 모음 MC CUT Collection, 5th week of April🎤 [THE SHOW 250429]
-잠금	웨이션브이	L8BkzFkfH-Y	members=형준	with=샤오쥔(웨이션브이),정세비(이즈나)	밖=형준	4월 2주 차 샤오쥔 & 형준 & 나나 MC 컷 모음 MC CUT Collection, 2th week of April🎤[THE SHOW 240409]
-잠금	웨이션브이	Xv3J2OjAMb4	members=형준	with=샤오쥔(웨이션브이),정세비(이즈나)	밖=형준	4월 4주 차 샤오쥔 & 형준 & 나나 MC 컷 모음 MC CUT Collection, 4th week of April🎤[THE SHOW 240423]
-잠금	웨이션브이	7diCafGuqfM	members=형준	with=샤오쥔(웨이션브이),정세비(이즈나)	밖=형준	4월 1주 차 샤오쥔 & 정세비 & 형준 MC 컷 모음 MC CUT Collection, 1th week of April🎤 [THE SHOW 250401]
-잠금	웨이션브이	0GR9Yhjo76o	members=형준	with=샤오쥔(웨이션브이),정세비(이즈나)	밖=형준	4월 2주 차 샤오쥔 & 정세비 & 형준 MC 컷 모음 MC CUT Collection, 2th week of April🎤 [THE SHOW 250408]
-잠금	웨이션브이	d5bh8wY1j18	members=형준	with=샤오쥔(웨이션브이),정세비(이즈나)	밖=형준	4월 1주 차 샤오쥔 & 형준 & 나나 MC 컷 모음 MC CUT Collection, 1th week of April🎤[THE SHOW 240402]
-잠금	웨이션브이	5z86CN7ON1o	members=형준	with=샤오쥔(웨이션브이),정세비(이즈나)	밖=형준	4월 3주 차 샤오쥔 & 형준 & 나나 MC 컷 모음 MC CUT Collection, 3th week of April🎤[THE SHOW 240416]
 잠금	위너	xVfZig59pGU	members=김우석	with=	밖=김우석	[#소년판타지] ＂승윤 프로듀서님 너무 무서워요,,＂ 잔뜩 긴장한 김우석과 그걸 지켜보는 강승윤.. ＜뛰어＞팀의 결과는 과연..?!ㅣ#강승윤 #뛰어 MBC2305
 잠금	위클리	_JlUgs50epc	members=이지우	with=	밖=이지우	[#퀸덤퍼즐/풀버전] ♬ 파이팅 해야지 - 이두근 (수진, 엘리, 유키, 주이, 쥬리, 지우) (원곡: 부석순) @리믹스배틀 #QUEENDOMPUZZLE
 잠금	유나이트	A8uaXaNm88c	members=우노,은상	with=	밖=은상	HIGH4 (하이포), 아이유 - 봄 사랑 벚꽃 말고 | Cover by 은상&우노 (YOUNITE)
@@ -111,9 +101,7 @@
 잠금	유나이트	KNUaP8URqlw	members=우노,은상	with=	밖=은상	벌써 봄… 4월은 벚꽃놀이 VS 중간고사? YOUNITE 은상&우노가 커버하는 4월의 케이팝은? | 아이유(IU)&EXO(디오) | 마이케이팝캘린더 | EUNSA
 잠금	유나이트	Lf4HyNYoLB4	members=은호,경문,시온,현승,은상	with=	밖=은상	SHINee(샤이니) - VIEW | Dance Cover by YOUNITE
 잠금	이즈나	ugsM8srDO_k	members=제니	with=	밖=제니	유 얼 마이 데스티니~🫶 #mynameis가브리엘
-잠금	있지	Et2rkOvDphU	members=홍은채	with=예지(있지)	밖=홍은채	Boompala boompala Mo mo mo mo mo #MottoChallenge 💃 #ITZY #LE_SSERAFIM #Shorts @LESSERAFIM
 잠금	제로베이스원	_P42eC0zQSw	members=이지	with=	밖=이지	ICHILLIN' #이지 선배님과 'In Bloom' 🌹
-잠금	케플러	_5MLbbeW4DE	members=홍은채	with=휴닝바히에(케플러)	밖=홍은채	𝙔𝙤𝙪 𝙠𝙣𝙤𝙬 𝙄’𝙢 𝙖 𝙠𝙞𝙡𝙡𝙖 W/ #LE_SSERAFIM #HONGEUNCHAE
 잠금	크래비티	PCVL7EcIHko	members=초원	with=	밖=초원	#ICHILLIN #아이칠린 #CHOWON #초원 님 없이 눈 뜰 수 없어 #Love_or_Die_Challenge ❤☠ #Shorts
 잠금	키키	TWN5egezoFc	members=성민	with=수이(키키)	밖=성민	404 🧢 with #CRAVITY #SEONGMIN #KiiiKiii #키키 #SUI #수이 #404_NewEra #404_뉴에라
 잠금	투모로우바이투게더	d5B1Fvr372U	members=노태현	with=	밖=노태현	[MPD직캠] 노태현 직캠 ‘I Wanna Know’ (ROH TAEHYUN FanCam) | @MCOUNTDOWN_2019.1.24
@@ -124,7 +112,6 @@
 잠금	트리플에스	G5GlwzEKfws	members=지우	with=	밖=지우	[#퀸덤퍼즐] 스피드 퀸터뷰🏃‍♀️ | #지우 #JIWOO #shorts
 잠금	트리플에스	JSho6jdzATk	members=서연	with=	밖=서연	[#퀸덤퍼즐] 스피드 퀸터뷰🏃‍♀️ | #서연 #SEOYEON #shorts
 잠금	트리플에스	DHyOk0Al9nU	members=초원	with=	밖=초원	We Run 🏃‍♂️ And Fly 🪽🌸 w/ #아이칠린 #초원 @ICHILLIN #CHOWON #JiWoo #지우 #tripleS #Baby_Flower
-잠금	트리플에스	NANREMeKf88	members=박우진	with=코토네(트리플에스)	밖=박우진	AB6IX 박우진 선배님과 함께 Hit the Floor💥 #tripleS #트리플에스 #Hit_the_Floor #Kotone #코토네 #AB6IX #에이비식
 잠금	트리플에스	kQUDXx74fcY	members=이수진	with=서연(프로미스나인),김연희(로켓펀치),주이(모모랜드)	밖=이수진	[#퀸덤퍼즐] 하이라이트 구간 멤버 ⭐ 직캠 모음 - Weekend (서연, 수진, 연희, 주이)
 잠금	티아이오티	LBr0SxFcai8	members=성윤,한준	with=	밖=한준,성윤	#ROCKTHANG🤙 with #nSSign #엔싸인 #성윤 & #한준 선배님 💖💫 #ROCKTHANG_Challenge #TIOT #티아이오티 #Kick_
 잠금	하츠투하츠	GfadoIzX_14	members=허윤진,홍은채	with=	밖=허윤진,홍은채	🍋올해의 탱탱탱 with #LE_SSERAFIM @LESSERAFIM_official #Hearts2Hearts #하츠투하츠 #LemonTang
