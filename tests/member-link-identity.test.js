@@ -17,7 +17,7 @@ const box={ARTISTS,GROUPS,URL,URLSearchParams,location:{hash:'',origin:'https://
  isMob:()=>box.mobile,showT:a=>{box.opened=a;},showGC:g=>{box.openedGroup=g;},openConnCard:a=>{box.connOpened=a;}};
 vm.createContext(box);
 vm.runInContext(fs.readFileSync(path.join(root,'shared.js'),'utf8'),box);
-vm.runInContext(['_memberIdParam','_cardHash','_stackIndexForHash','_openFromHash','_connShareHash',
+vm.runInContext(['_memberIdParam','_cardHash','_artistByGroupName','_stackIndexForHash','_openFromHash','_connShareHash',
  '_seoUrlSafeKo','_seoSlugify','_seoUrlForMember'].map(n=>extract(n,n==='_memberIdParam')).join('\n'),box);
 const solo=ARTISTS.filter(a=>!GROUPS[a.group.ko]);
 const ambiguous=solo.filter(a=>solo.some(b=>b!==a&&b.name.ko===a.name.ko));
