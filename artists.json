@@ -162043,6 +162043,10 @@
       {
         "ko": "프림로즈",
         "en": "Primrose"
+      },
+      {
+        "ko": "버가부",
+        "en": "bugAboo"
       }
     ],
     "id": "a0776"
@@ -307541,6 +307545,52 @@
     "links": {
       "instagram": "https://www.instagram.com/zinnia_look"
     }
+  },
+  {
+    "name": {
+      "ko": "시안",
+      "en": "Cyan"
+    },
+    "group": {
+      "ko": "버가부",
+      "en": "bugAboo"
+    },
+    "active": true,
+    "co": "에이팀엔터테인먼트",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "color": [
+      150,
+      200,
+      190
+    ],
+    "bday": "2001.04.04",
+    "id": "a1891"
+  },
+  {
+    "name": {
+      "ko": "은채",
+      "en": "Eunchae"
+    },
+    "group": {
+      "ko": "버가부",
+      "en": "bugAboo"
+    },
+    "active": true,
+    "co": "에이팀엔터테인먼트",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "color": [
+      214,
+      196,
+      140
+    ],
+    "bday": "1999.10.06",
+    "id": "a1892"
   },
   {
     "name": {

@@ -29,10 +29,15 @@ const rd = f => JSON.parse(fs.readFileSync(path.join(ROOT, f), 'utf8'));
 // 원래 주석은 "2칸"이라고만 적혀 있었고 wr()도 전부 2칸으로 썼다. 그대로 돌렸으면 artists.json(4MB)이
 // 통째로 재포맷돼 +930KB 짜리 diff가 나면서 실제 변경이 파묻혔을 것이다. 파일별 들여쓰기를 실측으로
 // 잡아 쓴다 — 새 json을 추가할 때도 이 표가 자동으로 맞는다.
-const INDENT = { 'groups.json': 2, 'artists.json': 1, 'connections.json': 0 };
+// ⚠️ 2026-11-04: 위 표가 낡았다(지금 artists.json은 2칸 + 끝 개행) — 고정 표로 쓰다 artists.json 61만 줄·groups.json 52만 줄 diff가 났다.
+//    이제 **쓰기 직전 현재 파일**에서 들여쓰기·끝 개행·CRLF를 읽어 그대로 쓰고, 신규 id가 생긴 파일만 쓴다.
+const fmtOf = f => { const raw = fs.readFileSync(path.join(ROOT, f), 'utf8'); const m = raw.match(/\n( +)\S/);
+  return { ind: m ? m[1].length : 0, nl: /\n$/.test(raw), crlf: raw.includes('\r\n') }; };
 const wr = (f, o) => {
-  let s = JSON.stringify(o, null, INDENT[f] ?? 2);
-  if (s.endsWith('\n')) s = s.slice(0, -1);
+  const { ind, nl, crlf } = fmtOf(f);
+  let s = JSON.stringify(o, null, ind);
+  if (nl) s += '\n';
+  if (crlf) s = s.replace(/\n/g, '\r\n');
   fs.writeFileSync(path.join(ROOT, f), s);
 };
 
@@ -79,7 +84,7 @@ if (gDup.length || aDup.length) {
 const gMissing = Object.keys(groups).filter(k => !groups[k].id).length;
 const aMissing = artists.filter(a => !a.id).length;
 
-if (!DRY && (gNew.length || aNew.length)) { wr('groups.json', groups); wr('artists.json', artists); }
+if (!DRY) { if (gNew.length) wr('groups.json', groups); if (aNew.length) wr('artists.json', artists); }
 
 console.log(`${DRY ? '[dry] ' : ''}그룹  신규 ${gNew.length} / 전체 ${gIds.length + (DRY ? gNew.length : 0)} · 누락 ${DRY ? gMissing - gNew.length : gMissing}`);
 console.log(`${DRY ? '[dry] ' : ''}아티스트 신규 ${aNew.length} / 전체 ${aIds.length + (DRY ? aNew.length : 0)} · 누락 ${DRY ? aMissing - aNew.length : aMissing}`);
