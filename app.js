@@ -23696,7 +23696,7 @@ function _collectWeekNews(){
 // ── 음방 회차 화면(2026-11-03, 사용자 "최근 건 빨리 가능해야… 우리 쓸만한 레이아웃 많잖아") ─────────────────────────────
 // 정적 회차 페이지(show/…)는 검색 입구일 뿐이고, 앱에선 DB를 바로 읽어 영상 목록 화면(_openFeedListOverlay)에 팀별 섹션·종류 탭·회차 고르기로 띄운다
 // → 방송 당일 직캠이 수집되는 대로 보인다. 묶는 규칙은 shared.js _msGroupEpisodes(정적 페이지와 같은 함수).
-// 입구: 발견 탭 This Week의 '음방 회차' 칩 줄(_appendShowEpChips) · #show=방송~날짜 링크(정적 회차 페이지의 앱 버튼).
+// 입구: 발견 탭 This Week 맨 아래 Music Shows 레일(_buildShowEpRail)·1위 소식 줄 '회차 무대 보기' · #show=방송~날짜 링크(정적 회차 페이지의 앱 버튼).
 let _showEpReq=0;const _showEpCache=new Map();
 async function _openShowEp(showKey,date,opt){
   const s=_MS_SHOWS.find(x=>x.key===showKey);
