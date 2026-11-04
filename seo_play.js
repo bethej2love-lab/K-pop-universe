@@ -1,0 +1,83 @@
+// 정적(검색 착지) 페이지 영상 페이지 안 재생(2026-11-04).
+// 왜: 검색·챗지피티로 들어온 사람이 직캠 카드를 누르면 유튜브 새 탭으로 나가 GA에 "1분 내 이탈"로 잡혔다(페이지당 유튜브 링크 ~27개, 남는 길은 앱 버튼 하나).
+// 이제 유튜브 링크를 누르면 이 페이지 위에서 공식 임베드로 재생하고, 아래에 같은 페이지의 다음 영상 6개 + 앱으로 가는 버튼을 둔다.
+// 링크 자체(href)는 그대로라 검색엔진·자바스크립트 꺼진 환경·새 탭 열기(ctrl/⌘/가운데 클릭)는 예전처럼 유튜브로 간다.
+// 이 파일은 모든 정적 페이지가 /seo_play.js로 불러온다 — 고칠 때 4만 장을 다시 만들 필요가 없다.
+(function(){
+  'use strict';
+  if(window.__kpuPlay)return;window.__kpuPlay=1;
+  var EN=/^\/en\//.test(location.pathname)||document.documentElement.lang==='en';
+  var T=EN?{close:'Close',next:'Up next',app:'See more in the app',yt:'Watch on YouTube'}:{close:'닫기',next:'다음 영상',app:'앱에서 더 보기',yt:'유튜브에서 보기'};
+  var RE=/(?:youtube\.com\/(?:watch\?(?:[^#]*&)?v=|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/;
+  function vidOf(a){var m=RE.exec(a&&a.getAttribute('href')||'');return m?m[1]:null;}
+  function isShort(a){return /\/shorts\//.test(a.getAttribute('href')||'');}
+  function ga(n,p){try{if(typeof gtag==='function')gtag('event',n,p||{});}catch(e){}}
+  var entity=((document.querySelector('h1')||{}).textContent||'').trim();
+  var css='.kpu-pl{position:fixed;inset:0;z-index:2147483000;background:#05070f;display:flex;justify-content:center;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}'
+    +'.kpu-pl-in{width:100%;max-width:760px;padding:56px 16px 32px;box-sizing:border-box}'
+    +'.kpu-pl-x{position:fixed;top:12px;right:12px;width:40px;height:40px;border-radius:20px;border:1px solid rgba(255,255,255,.18);background:rgba(20,24,44,.85);color:#fff;font-size:20px;line-height:38px;text-align:center;cursor:pointer;z-index:2}'
+    +'.kpu-pl-v{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden}'
+    +'.kpu-pl-v.sh{aspect-ratio:9/16;max-width:min(100%,calc((100vh - 120px)*9/16));margin:0 auto}'
+    +'.kpu-pl-v iframe{position:absolute;inset:0;width:100%;height:100%;border:0}'
+    +'.kpu-pl-t{color:#eef2ff;font-size:15px;font-weight:600;line-height:1.4;margin:12px 2px 4px;word-break:keep-all}'
+    +'.kpu-pl-yt{display:inline-block;color:rgba(170,190,235,.8);font-size:12.5px;text-decoration:none;margin:0 2px 14px}'
+    +'.kpu-pl-cta{display:block;text-align:center;padding:13px 0;border-radius:24px;background:linear-gradient(90deg,#7b5cff,#d65cff);color:#fff;font-weight:700;font-size:15px;text-decoration:none;margin:4px 0 20px}'
+    +'.kpu-pl-h{color:rgba(190,205,240,.75);font-size:12px;font-weight:700;letter-spacing:.08em;margin:6px 2px 10px}'
+    +'.kpu-pl-g{display:grid;grid-template-columns:1fr 1fr;gap:12px}'
+    +'.kpu-pl-c{display:block;text-decoration:none;color:#dfe6ff;font-size:12.5px;line-height:1.35;cursor:pointer}'
+    +'.kpu-pl-c img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;display:block;background:#141a30}'
+    +'.kpu-pl-c span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:6px}'
+    +'html.kpu-pl-open,html.kpu-pl-open body{overflow:hidden}';
+  var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
+  function titleOf(a){var t=(a.getAttribute('title')||'').trim();if(t)return t;var x=a.querySelector('.mf-t,.title,b,strong');t=((x&&x.textContent)||a.textContent||'').replace(/\s+/g,' ').trim();if(!t){var im=a.querySelector('img');t=im&&im.alt||'';}return t.slice(0,140);}
+  function allLinks(){var seen={},out=[];[].forEach.call(document.querySelectorAll('a[href]'),function(a){if(a.closest&&a.closest('.kpu-pl'))return;var v=vidOf(a);if(!v||seen[v])return;seen[v]=1;out.push({v:v,a:a,t:titleOf(a),sh:isShort(a)});});return out;}
+  var ov=null,cur=-1,list=[];
+  function close(fromPop){if(!ov)return;ov.remove();ov=null;document.documentElement.classList.remove('kpu-pl-open');if(!fromPop&&history.state&&history.state.kpuPlay)history.back();}
+  function render(i){
+    cur=i;var it=list[i];if(!it)return;
+    var box=ov.querySelector('.kpu-pl-v');box.className='kpu-pl-v'+(it.sh?' sh':'');
+    box.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+it.v+'?autoplay=1&playsinline=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title=""></iframe>';
+    box.querySelector('iframe').title=it.t;
+    ov.querySelector('.kpu-pl-t').textContent=it.t;
+    var yt=ov.querySelector('.kpu-pl-yt');yt.href=it.a.getAttribute('href');
+    var g=ov.querySelector('.kpu-pl-g');g.innerHTML='';
+    for(var k=1,n=0;k<list.length&&n<6;k++){var j=(i+k)%list.length,x=list[j];if(j===i)continue;n++;
+      var c=document.createElement('a');c.className='kpu-pl-c';c.href=x.a.getAttribute('href');c.setAttribute('data-i',j);
+      var im=document.createElement('img');im.loading='lazy';im.alt='';im.src='https://i.ytimg.com/vi/'+x.v+'/mqdefault.jpg';
+      var sp=document.createElement('span');sp.textContent=x.t;c.appendChild(im);c.appendChild(sp);g.appendChild(c);}
+    ov.scrollTop=0;
+  }
+  function open(i){
+    list=allLinks();if(!list[i])return;
+    if(!ov){
+      ov=document.createElement('div');ov.className='kpu-pl';ov.setAttribute('role','dialog');
+      ov.innerHTML='<button class="kpu-pl-x" type="button"></button><div class="kpu-pl-in"><div class="kpu-pl-v"></div><div class="kpu-pl-t"></div><a class="kpu-pl-yt" target="_blank" rel="noopener"></a><a class="kpu-pl-cta"></a><div class="kpu-pl-h"></div><div class="kpu-pl-g"></div></div>';
+      var x=ov.querySelector('.kpu-pl-x');x.textContent='✕';x.setAttribute('aria-label',T.close);x.onclick=function(){close();};
+      ov.querySelector('.kpu-pl-yt').textContent=T.yt+' ↗';
+      ov.querySelector('.kpu-pl-h').textContent=T.next;
+      var cta=document.querySelector('.cta'),ca=ov.querySelector('.kpu-pl-cta');
+      ca.href=cta?cta.getAttribute('href'):'https://kpop-universe.kr/';ca.textContent=T.app+' →';
+      ca.onclick=function(){ga('seo_play_cta',{entity_name:entity,video_id:list[cur]&&list[cur].v});};
+      ov.querySelector('.kpu-pl-yt').onclick=function(){ga('seo_play_youtube',{entity_name:entity,video_id:list[cur]&&list[cur].v});};
+      ov.addEventListener('click',function(e){
+        if(e.target===ov||e.target.classList.contains('kpu-pl-in')){close();return;}
+        var c=e.target.closest&&e.target.closest('.kpu-pl-c');
+        if(c&&!e.metaKey&&!e.ctrlKey&&!e.shiftKey){e.preventDefault();var j=+c.getAttribute('data-i');ga('seo_play_next',{entity_name:entity,video_id:list[j]&&list[j].v});render(j);}
+      });
+      document.body.appendChild(ov);document.documentElement.classList.add('kpu-pl-open');
+      try{history.pushState({kpuPlay:1},'');}catch(e){}
+    }
+    render(i);
+  }
+  window.addEventListener('popstate',function(){if(ov)close(true);});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&ov)close();});
+  document.addEventListener('click',function(e){
+    if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
+    var a=e.target.closest&&e.target.closest('a[href]');if(!a||(a.closest&&a.closest('.kpu-pl')))return;
+    var v=vidOf(a);if(!v)return;
+    e.preventDefault();
+    var L=allLinks(),i=0;for(var k=0;k<L.length;k++)if(L[k].v===v){i=k;break;}
+    ga('seo_play',{entity_name:entity,video_id:v,idx:i});
+    open(i);
+  },true);
+})();
