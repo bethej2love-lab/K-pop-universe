@@ -23759,23 +23759,41 @@ async function _openShowEp(showKey,date,opt){
   const sub=list.length?(ko?`${teams.size}팀 · 영상 ${sections.reduce((n,x)=>n+x.songs.length,0)}개`:`${teams.size} acts · ${sections.reduce((n,x)=>n+x.songs.length,0)} videos`):(ko?'아직 수집된 영상이 없어요':'No videos collected yet');
   _openFeedListOverlay(title,sub,sections.flatMap(x=>x.songs),{sections,facets:list.length?[epFacet,kindFacet]:[epFacet]});
 }
-// 발견 탭 This Week 맨 위 한 줄 — 지난 7일 방송된 음방 회차 칩(최근 방송 먼저). 누르면 그 회차 화면.
-function _appendShowEpChips(list){
-  if(!list||typeof _MS_SHOWS==='undefined')return;
-  const ko=currentLang==='ko',now=Date.now();
+// 발견 탭 This Week 맨 아래 'Music Shows' 레일 — 지난 7일 방송된 음방 회차(최근 방송 먼저), 칸마다 그날 1위.
+// 누르면 그 회차 화면. (2026-11-05 사용자: 처음엔 This Week 맨 위 칩 줄이었는데 "배치도 안 맞고 디자인도 구리고, 상단일 필요 없다,
+// 1위 정보랑 연결" → 맨 아래 레일로 내리고 1위를 같이 보여준다. 1위 소식 줄에도 '회차 무대' 링크(_appendNewsRow).)
+function _recentShowEps(){
+  if(typeof _MS_SHOWS==='undefined')return [];
+  const now=Date.now();
   // 오늘 방송은 저녁(KST 20시) 전엔 아직 영상이 없으니 지난주 회차로
   const kst=new Date(now+9*3600e3),today=kst.toISOString().slice(0,10),early=kst.getUTCHours()<20;
-  const eps=_MS_SHOWS.map(s=>{let d=_msLastAir(s,now);if(d===today&&early)d=new Date(Date.parse(d)-7*864e5).toISOString().slice(0,10);return{s,d};}).filter(x=>x.d).sort((a,b)=>a.d<b.d?1:-1);
+  return _MS_SHOWS.map(s=>{let d=_msLastAir(s,now);if(d===today&&early)d=new Date(Date.parse(d)-7*864e5).toISOString().slice(0,10);return{s,d};}).filter(x=>x.d).sort((a,b)=>a.d<b.d?1:-1);
+}
+async function _buildShowEpRail(items){
+  const sec=document.getElementById('feed-showeps-section'),rail=document.getElementById('feed-showeps');
+  if(!sec||!rail)return;
+  rail.innerHTML='';sec.style.display='none';
+  let br={};try{br=await _ensureShowBreaks();}catch(e){}
+  const off=new Set((br.breaks||[]).map(b=>b&&b.show+'|'+b.date));
+  const eps=_recentShowEps().filter(({s,d})=>!off.has(s.key+'|'+d));
   if(!eps.length)return;
-  const row=document.createElement('div');row.className='fl-facet-row fl-tabs hscroll-drag feed-showep-row';
+  const ko=currentLang==='ko',dw=ko?['일','월','화','수','목','금','토']:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   eps.forEach(({s,d})=>{
-    const b=document.createElement('button');b.type='button';b.className='gc-ch-filter';
-    b.textContent=`${ko?s.short:s.en} ${d.slice(5).replace('-',ko?'.':'/')}`;
+    const wins=(items||[]).filter(r=>r.type==='win'&&r.show===s.key&&r.date===d);
+    const b=document.createElement('button');b.type='button';b.className='feed-showep';
+    const nm=document.createElement('div');nm.className='fse-name';nm.textContent=ko?s.key:s.en;
+    const dt=document.createElement('div');dt.className='fse-date';
+    const dd=new Date(d+'T00:00:00Z');dt.textContent=`${d.slice(5).replace('-',ko?'.':'/')} (${dw[dd.getUTCDay()]})`;
+    const w=document.createElement('div');w.className='fse-win'+(wins.length?'':' is-none');
+    if(wins.length){const r=wins[0];const who=r.mko||(ko?_gLabelKo(r.gko):((GROUPS[r.gko]&&GROUPS[r.gko].en)||r.gko))||'';w.textContent='🏆 '+who;w.title=`${who} · ${_cleanTitle(r.title)}`;}
+    else{const fresh=Date.now()-Date.parse(d)<2*864e5;w.textContent=fresh?(ko?'1위 집계 전':'No.1 pending'):(ko?'1위 정보 없음':'No No.1 info');}
+    b.append(nm,dt,w);
     b.addEventListener('click',e=>{e.stopPropagation();_openShowEp(s.key,d);});
-    row.appendChild(b);
+    rail.appendChild(b);
   });
-  list.insertBefore(row,list.firstChild);
-  _enableDragScroll(row);
+  sec.style.display='';
+  _enableDragScroll(rail);
+  _syncDailyNewsSection();
 }
 let _showBreaksP=null;
 function _ensureShowBreaks(){return _showBreaksP||(_showBreaksP=fetch('music_show_breaks.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).catch(()=>({})));}
@@ -23804,7 +23822,7 @@ async function _buildFeedDailyNews(){
       });
     }catch(e){}
     _renderNewsList(list,items);
-    try{_appendShowEpChips(list);}catch(e){}
+    try{_buildShowEpRail(items).catch(()=>{});}catch(e){}
     window._discoverNewsItems=items;
     _updateNewsWidgets(items);
   }catch(e){console.warn('[feed] 오늘의 소식 선반 실패 — 이 선반만 빠집니다',e);}
@@ -23872,7 +23890,8 @@ function _syncDailyNewsSection(){
   const sec=document.getElementById('feed-dailynews-section');if(!sec)return;
   const list=document.getElementById('feed-dailynews');
   const alb=document.getElementById('feed-newalbum-section');
-  const hasContent=(list&&list.children.length>0)||(alb&&alb.style.display!=='none');
+  const eps=document.getElementById('feed-showeps-section');
+  const hasContent=(list&&list.children.length>0)||(alb&&alb.style.display!=='none')||(eps&&eps.style.display!=='none');
   sec.style.display=hasContent?'':'none';
 }
 function _updateNewsWidgets(){}
@@ -23910,7 +23929,7 @@ function _appendNewsItems(container,arr){
     if(tw){const b=document.createElement('span');b.className='feed-news-badge fnb-milestone';b.textContent='📈 조회수';tw.appendChild(b);}
   });
 }
-function _appendNewsRow(container,{type,title,sub,thumb,nav,square,plain}){
+function _appendNewsRow(container,{type,title,sub,thumb,nav,square,plain,show,date}){
   const LABELS={album:'💿 신보',win:'🏆 1위',mv:'🎬 MV',teaser:'🎬 티저',milestone:'📈 조회수',break:'결방'};
   const CLS={album:'fnb-album',win:'fnb-win',mv:'fnb-mv',teaser:'fnb-teaser',milestone:'fnb-milestone',break:'fnb-break'};
   const row=document.createElement('div');
@@ -23927,6 +23946,13 @@ function _appendNewsRow(container,{type,title,sub,thumb,nav,square,plain}){
   titleEl.textContent=_cleanTitle(title);
   body.appendChild(titleEl);
   if(sub){const subEl=document.createElement('div');subEl.className='feed-news-sub';subEl.textContent=sub;body.appendChild(subEl);}
+  // 음방 1위 → 그 회차 무대 전체(2026-11-05). 회차 화면이 있는 방송(_MS_SHOWS)만, 최근 5주 안.
+  if(type==='win'&&show&&date&&typeof _MS_SHOWS!=='undefined'&&_MS_SHOWS.some(x=>x.key===show)&&Date.now()-Date.parse(date)<35*864e5){
+    const ep=document.createElement('button');ep.type='button';ep.className='feed-news-ep';
+    ep.textContent=currentLang==='ko'?'회차 무대 보기 ›':'All stages ›';
+    ep.addEventListener('click',e=>{e.stopPropagation();_openShowEp(show,date);});
+    body.appendChild(ep);
+  }
   if(isMedia){
     // 이미지를 맨 위 전폭으로, 배지는 썸네일 위 오버레이
     const imgWrap=document.createElement('div');imgWrap.className='fnr-media';
