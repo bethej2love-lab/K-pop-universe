@@ -703,9 +703,13 @@ function _msDateOf(t) {
 }
 // 영상 종류 — null이면 회차 목록에서 뺀다(인터뷰·챌린지·비하인드 등)
 function _msKind(t) {
+  // 그 회차의 무대가 아닌 것은 **직캠 판정보다 먼저** 뺀다(2026-11-04 Codex 검수102·113차) — 예전엔 '직캠'이 들어 있으면 제외 목록을 보기 전에
+  // 직캠으로 끝나서 '최애직캠 모음집'(23분, 여러 곡)·'직캠보고서 … 사전녹화 비하인드'가 직캠이 됐고, MC 컷 모음·인생극장(예능)은 제외 목록에 없어 무대가 됐다.
+  // 회차 묶기에서만 빠진다 — 아티스트 카드의 영상은 그대로. 'zip' 하나로는 막지 않는다(곡명·그룹명 오인).
+  if (/모음집|mc\s*컷|mc\s*cut|mc\s*talk|mc석|인생극장|zip캠|최애\s*zip|직캠\s*보고서|비하인드|behind|수상소감/i.test(t)) return null;
   if (/페이스캠|face\s*cam/i.test(t)) return 'facecam';
   if (/풀캠|full\s*cam/i.test(t)) return 'fullcam';
-  if (/직캠|fan\s*cam|focus/i.test(t)) return 'fancam';
+  if (/직캠|fan\s*cam|focus|원픽캠/i.test(t)) return 'fancam'; // 원픽캠 = 쇼챔 멤버 한 명 직캠(예전엔 '무대'로 갔다)
   if (/앵콜|encore/i.test(t)) return 'encore';
   if (/interview|인터뷰|behind|비하인드|challenge|챌린지|\.zip|#shorts|엔딩요정|MC석|코너|선공개|티저|teaser/i.test(t)) return null;
   return 'stage';

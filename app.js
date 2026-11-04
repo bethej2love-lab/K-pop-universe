@@ -23678,18 +23678,32 @@ async function _openShowEp(showKey,date,opt){
   let got=_showEpCache.get(ck);
   if(!got||Date.now()-got.at>3*60e3){ // 방송 직후엔 직캠이 계속 들어오므로 3분만 기억
     _openFeedListOverlay(title,ko?'불러오는 중…':'Loading…',[],{});
-    const t0=new Date(Date.parse(date)-864e5).toISOString(),t1=new Date(Date.parse(date)+5*864e5).toISOString();
-    const [vr,wr]=await Promise.all([
-      sb.from(_YT_TABLE).select('id,title,thumb,is_short,group_ko,members,with_members,with_groups,published_at,published_ts,view_count,source_handle,content_flag'+_durCol())
+    // 로딩 화면을 띄운 그 목록 창의 번호 — 응답 전에 닫거나 다른 목록을 열면 번호가 바뀐다(2026-11-04 Codex 검수104차:
+    // 예전엔 다른 회차 요청(_showEpReq)만 봐서, 닫은 뒤 늦게 온 응답이 창을 다시 열고 새로 연 목록도 덮어썼다). 받은 결과는 캐시에는 넣는다.
+    const myIntent=_feedListIntent;
+    const COLS='id,title,thumb,is_short,group_ko,members,with_members,with_groups,published_at,published_ts,view_count,source_handle,content_flag'+_durCol();
+    const t0=new Date(Date.parse(date)-864e5).toISOString(),t1=new Date(Date.parse(date)+5*864e5).toISOString(),t2=new Date(Date.parse(date)+30*864e5).toISOString();
+    // 늦게 올라온 무대(2026-11-04 Codex 검수103차 — 10/14 쇼챔 무대가 10/20 업로드라 빠졌다): 그 뒤 30일 안 영상 중 **제목에 그 방송 날짜가 적힌 것만** 더 받는다.
+    // 날짜 없는 영상의 '업로드 3일 안 직전 방송일' 추정은 그대로라, 이 보완분이 다른 회차를 끌어오지 않는다(_msGroupEpisodes가 제목 날짜로 다시 묶는다).
+    const [Y,M,D]=date.split('-'),yy=Y.slice(2);
+    const dateOr=[`${yy}${M}${D}`,`${Y}.${M}.${D}`,`${Y}.${+M}.${+D}`].map(x=>`title_norm.ilike.*${x}*`).join(',');
+    const [vr,wr,lr]=await Promise.all([
+      sb.from(_YT_TABLE).select(COLS)
         .in('source_handle',s.h).eq('is_short',false).gte('published_ts',t0).lt('published_ts',t1)
         .or('content_flag.is.null,content_flag.not.in.("보류","hidden","무관")').limit(1000).then(r=>r,()=>({error:1})),
       sb.from('music_show_wins').select('group_ko,member_ko,song_title').eq('show',showKey).eq('win_date',date).then(r=>r,()=>({data:[]})),
+      t1<new Date().toISOString()?sb.from(_YT_TABLE).select(COLS)
+        .in('source_handle',s.h).eq('is_short',false).gte('published_ts',t1).lt('published_ts',t2).or(dateOr)
+        .or('content_flag.is.null,content_flag.not.in.("보류","hidden","무관")').limit(300).then(r=>r,()=>({data:[]})):Promise.resolve({data:[]}),
     ]);
     if(myReq!==_showEpReq)return;
-    if(vr.error){document.getElementById('feed-list-sub').textContent=ko?'불러오지 못했어요. 잠시 후 다시 열어 주세요.':'Couldn’t load. Try again shortly.';return;}
-    const e=_msGroupEpisodes(_filterBannedVideos(vr.data||[]),1).find(x=>x.s.key===showKey&&x.date===date);
+    const stale=myIntent!==_feedListIntent;
+    if(vr.error){if(!stale)document.getElementById('feed-list-sub').textContent=ko?'불러오지 못했어요. 잠시 후 다시 열어 주세요.':'Couldn’t load. Try again shortly.';return;}
+    const seen=new Set((vr.data||[]).map(v=>v.id)),rowsAll=(vr.data||[]).concat((lr&&lr.data||[]).filter(v=>!seen.has(v.id)));
+    const e=_msGroupEpisodes(_filterBannedVideos(rowsAll),1).find(x=>x.s.key===showKey&&x.date===date);
     got={at:Date.now(),list:e?e.list:[],wins:wr.data||[]};
     _showEpCache.set(ck,got);
+    if(stale)return;
   }
   const list=got.list,winG=new Set(got.wins.map(w=>w.group_ko).filter(Boolean));
   const kindOf=r=>r.kind==='facecam'?'fancam':r.kind; // 탭은 직캠·페이스캠을 한 칸으로
