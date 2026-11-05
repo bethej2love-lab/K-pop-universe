@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-11-05 (Codex — 검수251차·공식 목록과 다른8앨범 복원)
+- **[완료] [groups.json·disco/g/·tracks_index.json]** 231~232차 확정8앨범: VERIVERY ROUND3WHOLE13곡,WJSN HappyMoment10,BTOB PressPlay6,PENTAGON데뷔7/ThumbsUp5,godChapter3 13,JewelryAgain12,젝스키스RoadFighter15. 공식 Melon 발매본의 순서/제목/songId/isTitle·곡수·titleTrack로 한정 복원. before80→after81곡,전체트랙 순증1.
+- **[완료·범위] [audit-materials/album-fix-2026-11-05/catalog-restoration-plan-8.json]** 변경 전/후 전행과 공식URL 저장. 원본8앨범은 검수 시점 값과 완전 일치할 때만 적용,8앨범 밖 차이0을 역대입 검증. 커버/발매일/앨범명/종류·번호/아티스트/기존별도발매는 그대로. 정상god 촛불하나Inst.105717,공식CDOnly곡도 보존.
+- **[완료·검증] [tests/syntax.test.js·tests/validate-data.js·tests/disco-artifacts.test.js·tests/smoke.test.js]** 문법/파생물 일치/데이터 오류0(경고149)/데스크톱·390px 모바일 스모크 통과. 전체43852트랙으로 원본·인덱스 일치.
+- **⏳ 덜 된 일** RoadFighter 앨범명/종류의 2집 번호는 별도 공식 근거 확인 후 판단(이번 곡목록 복원과 섞지 않음). BTOB BornToBeat/CNBLUE TRIGGER의 발매본 혼합은 별도 정정 필요. 자동트랙 보강기가 다시 잘못 덮지 않는지 후속 수집 차분 검토. 정적 앨범 페이지는 main 반영 후 기존 SEO 재생성 확인.
+
+
 ## 2026-11-05 (Codex — 검수250차·오리지널 선반 재생불가 제외와 인스타 사진 복구)
 - **[완료] [app.js·tests/feed-unavailable.test.js]** 248차3경로 외 OriginalContents(_buildFeedJacon)에서도 Rx1hJXs-OsY가 노출된 것을 원격 두번째 실패로 확인. 이4번째 실제 쿼리에도 unavailable_at IS NULL 적용,실제 쿼리4개/정상보존/수정제거시 실패 재현 테스트 통과. DB 영상·숨김 상태 변경 없음.
 - **[완료] [ig_accounts]** 원격에서 깨진 사진5장은 체리블렛 유주 @uzoo_c. 마지막 수집10/30,게시물 주소 oe 만료11/4 확인. 기존 ig-stats --only=uzoo_c/max1 워크플로41970585359 성공,11/5 04:54UTC 갱신·6게시물 유지. 같은 사진5장의 갱신 URL 전부HTTP200/만료11/9 확인. 여자친구 유주 @yuuzth는 not_found/게시물없음이라 무작정 갱신하지 않음.

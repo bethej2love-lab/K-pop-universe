@@ -118259,61 +118259,86 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/109/30/438/10930438_20220425120930_500.jpg",
     "releaseDate": "2022.04.25",
-    "trackCount": 10,
+    "trackCount": 13,
     "titleTrack": "Undercover",
     "tracks": [
      {
       "no": 1,
+      "title": "틈 (Moment)",
+      "isTitle": false,
+      "songId": "34949396"
+     },
+     {
+      "no": 2,
       "title": "Undercover",
       "isTitle": true,
       "songId": "34949397"
      },
      {
-      "no": 2,
-      "title": "Coming Over",
+      "no": 3,
+      "title": "Coming over",
       "isTitle": false,
       "songId": "34949398"
      },
      {
-      "no": 3,
-      "title": "Wish You Were Here",
-      "isTitle": false
-     },
-     {
       "no": 4,
-      "title": "Our Spring",
-      "isTitle": false
+      "title": "Wish U were here",
+      "isTitle": false,
+      "songId": "34949399"
      },
      {
       "no": 5,
-      "title": "기억하길 (Remember)",
-      "isTitle": false
+      "title": "모든 순간들의 널 축하해 (Candle)",
+      "isTitle": false,
+      "songId": "34949400"
      },
      {
       "no": 6,
-      "title": "그런 사람 (That Person)",
-      "isTitle": false
+      "title": "O",
+      "isTitle": false,
+      "songId": "34949401"
      },
      {
       "no": 7,
-      "title": "Rain on Me",
-      "isTitle": false
+      "title": "Fallin’",
+      "isTitle": false,
+      "songId": "34949402"
      },
      {
       "no": 8,
-      "title": "숨바꼭질 (Hide and Seek)",
-      "isTitle": false
+      "title": "Childhood",
+      "isTitle": false,
+      "songId": "34949403"
      },
      {
       "no": 9,
-      "title": "I'm in Love",
-      "isTitle": false
+      "title": "Emotion",
+      "isTitle": false,
+      "songId": "34949404"
      },
      {
       "no": 10,
-      "title": "Undercover (Inst.)",
+      "title": "Velocity",
       "isTitle": false,
-      "songId": "34949397"
+      "songId": "34949405"
+     },
+     {
+      "no": 11,
+      "title": "잠깐, 봄 (Our Spring)",
+      "isTitle": false,
+      "songId": "34949406"
+     },
+     {
+      "no": 12,
+      "title": "Fine",
+      "isTitle": false,
+      "songId": "34949407"
+     },
+     {
+      "no": 13,
+      "title": "Thank you, NEXT? (CD Only)",
+      "isTitle": false,
+      "songId": "34949408"
      }
     ],
     "melonAlbumId": "10930438"
@@ -157397,70 +157422,68 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/69/220/10069220_500.jpg",
     "releaseDate": "2017.06.07",
-    "trackCount": 12,
-    "titleTrack": "Happy",
+    "trackCount": 10,
+    "titleTrack": "HAPPY",
     "tracks": [
      {
       "no": 1,
-      "title": "Happy",
+      "title": "HAPPY",
       "isTitle": true,
       "songId": "30459036"
      },
      {
       "no": 2,
-      "title": "Cantare (칸타레)",
-      "isTitle": false
+      "title": "기적 같은 아이 (Miracle)",
+      "isTitle": false,
+      "songId": "30459037"
      },
      {
       "no": 3,
-      "title": "Catch Me",
-      "isTitle": false
+      "title": "Mr. BADBOY",
+      "isTitle": false,
+      "songId": "30459038"
      },
      {
       "no": 4,
-      "title": "KISS ME",
-      "isTitle": false
+      "title": "SUGAR",
+      "isTitle": false,
+      "songId": "30459039"
      },
      {
       "no": 5,
-      "title": "I Wish (New Ver.)",
-      "isTitle": false
+      "title": "Babyface",
+      "isTitle": false,
+      "songId": "30459040"
      },
      {
       "no": 6,
-      "title": "Save Your Love (New Ver.)",
-      "isTitle": false
+      "title": "퐁당퐁당 (Plop Plop)",
+      "isTitle": false,
+      "songId": "30459041"
      },
      {
       "no": 7,
-      "title": "Secret (New Ver.)",
-      "isTitle": false
+      "title": "Follow Me",
+      "isTitle": false,
+      "songId": "30459042"
      },
      {
       "no": 8,
-      "title": "MoMoMo (New Ver.)",
-      "isTitle": false
+      "title": "B.B.B.Boo",
+      "isTitle": false,
+      "songId": "30459043"
      },
      {
       "no": 9,
-      "title": "Special Love (New Ver.)",
-      "isTitle": false
+      "title": "Geeminy",
+      "isTitle": false,
+      "songId": "30459044"
      },
      {
       "no": 10,
-      "title": "For the Summer (New Ver.)",
-      "isTitle": false
-     },
-     {
-      "no": 11,
-      "title": "Crystal Clear (New Ver.)",
-      "isTitle": false
-     },
-     {
-      "no": 12,
-      "title": "Happy (Inst.)",
+      "title": "지금 만나러 가요 (Closer to you)",
       "isTitle": false,
-      "songId": "30459036"
+      "songId": "30459045"
      }
     ],
     "melonAlbumId": "10069220"
@@ -168645,45 +168668,44 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/49/892/2149892_500.jpg",
     "releaseDate": "2012.09.12",
-    "trackCount": 7,
+    "trackCount": 6,
     "titleTrack": "WOW",
     "tracks": [
      {
       "no": 1,
+      "title": "Press Play (Feat. G.NA)",
+      "isTitle": false,
+      "songId": "3903412"
+     },
+     {
+      "no": 2,
       "title": "WOW",
       "isTitle": true,
       "songId": "3903413"
      },
      {
-      "no": 2,
-      "title": "Stay",
-      "isTitle": false
-     },
-     {
       "no": 3,
-      "title": "하루가 너무해 (The Day is Too)",
-      "isTitle": false
+      "title": "사랑밖에 난 몰라",
+      "isTitle": false,
+      "songId": "3903414"
      },
      {
       "no": 4,
-      "title": "언제나 (Always)",
-      "isTitle": false
+      "title": "U & I",
+      "isTitle": false,
+      "songId": "3903415"
      },
      {
       "no": 5,
-      "title": "오늘 이후로 (From Now On)",
-      "isTitle": false
+      "title": "Stand Up",
+      "isTitle": false,
+      "songId": "3903416"
      },
      {
       "no": 6,
-      "title": "꿈에 (Dreaming)",
-      "isTitle": false
-     },
-     {
-      "no": 7,
-      "title": "WOW (Inst.)",
+      "title": "My Girl",
       "isTitle": false,
-      "songId": "3903413"
+      "songId": "3903417"
      }
     ],
     "melonAlbumId": "2149892"
@@ -173460,7 +173482,7 @@
     "tracks": [
      {
       "no": 1,
-      "title": "Intro",
+      "title": "Technopolis",
       "isTitle": false,
       "songId": "79689"
      },
@@ -173478,73 +173500,73 @@
      },
      {
       "no": 4,
-      "title": "지금이야",
+      "title": "Chance (지금이야)",
       "isTitle": false,
       "songId": "79691"
      },
      {
       "no": 5,
-      "title": "기사도",
+      "title": "Fake G&#x27;s (절대자)",
       "isTitle": false,
       "songId": "79692"
      },
      {
       "no": 6,
-      "title": "사랑하는 너에게",
+      "title": "Crying Game",
       "isTitle": false,
       "songId": "79693"
      },
      {
       "no": 7,
-      "title": "친구",
+      "title": "Flying Love (천상비애(天上飛愛))",
       "isTitle": false,
       "songId": "79694"
      },
      {
       "no": 8,
-      "title": "말괄량이 길들이기",
+      "title": "약속된 운명 (아마게돈)",
       "isTitle": false,
       "songId": "79695"
      },
      {
       "no": 9,
-      "title": "Come to Me Baby",
+      "title": "Come To Me Baby",
       "isTitle": false,
       "songId": "79696"
      },
      {
       "no": 10,
-      "title": "예감",
+      "title": "7전 8기",
       "isTitle": false,
       "songId": "79697"
      },
      {
       "no": 11,
-      "title": "너를 보내며",
+      "title": "Run Away",
       "isTitle": false,
       "songId": "79698"
      },
      {
       "no": 12,
+      "title": "여우사냥",
+      "isTitle": false,
+      "songId": "79699"
+     },
+     {
+      "no": 13,
       "title": "Say",
       "isTitle": false,
       "songId": "79700"
      },
      {
-      "no": 13,
-      "title": "Road Fighter (Instrumental)",
-      "isTitle": false,
-      "songId": "79951"
-     },
-     {
       "no": 14,
-      "title": "무모한 사랑 (Instrumental)",
+      "title": "Last",
       "isTitle": false,
       "songId": "79701"
      },
      {
       "no": 15,
-      "title": "기사도 (Instrumental)",
+      "title": "그 날까지 (Together Forever)",
       "isTitle": false,
       "songId": "79702"
      }
@@ -177236,7 +177258,7 @@
     "tracks": [
      {
       "no": 1,
-      "title": "Intro",
+      "title": "파리 (Intro)",
       "isTitle": false,
       "songId": "10433"
      },
@@ -177266,7 +177288,7 @@
      },
      {
       "no": 6,
-      "title": "예쁜 여자",
+      "title": "나와 함께 춤을 춰",
       "isTitle": false,
       "songId": "10436"
      },
@@ -177278,39 +177300,39 @@
      },
      {
       "no": 8,
-      "title": "God 파티",
+      "title": "god 파티",
       "isTitle": false,
       "songId": "10437"
      },
      {
       "no": 9,
+      "title": "장미의 전쟁",
+      "isTitle": false,
+      "songId": "10431"
+     },
+     {
+      "no": 10,
       "title": "난 사랑을 몰라",
       "isTitle": false,
       "songId": "105716"
      },
      {
-      "no": 10,
+      "no": 11,
       "title": "사랑이 영원하다면",
       "isTitle": false,
       "songId": "10432"
      },
      {
-      "no": 11,
+      "no": 12,
       "title": "하늘색 풍선",
       "isTitle": false,
       "songId": "10438"
      },
      {
-      "no": 12,
-      "title": "촛불하나 (Instrumental)",
+      "no": 13,
+      "title": "촛불하나 (Inst.)",
       "isTitle": false,
       "songId": "105717"
-     },
-     {
-      "no": 13,
-      "title": "거짓말 (Inst.)",
-      "isTitle": false,
-      "songId": "10435"
      }
     ],
     "melonAlbumId": "717"
@@ -190291,35 +190313,35 @@
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/02/667/10202667_500.jpg",
     "releaseDate": "2018.09.10",
     "trackCount": 5,
-    "titleTrack": "Thumbs Up!",
+    "titleTrack": "청개구리",
     "tracks": [
      {
       "no": 1,
-      "title": "Thumbs Up!",
+      "title": "청개구리",
       "isTitle": true,
-      "songId": "31297127"
+      "songId": "31297123"
      },
      {
       "no": 2,
-      "title": "BTS (Behind The Scar)",
+      "title": "저두요!! (Just do it yo!!)",
       "isTitle": false,
       "songId": "31297124"
      },
      {
       "no": 3,
-      "title": "Tornado",
+      "title": "SKATEBOARD",
       "isTitle": false,
       "songId": "31297125"
      },
      {
       "no": 4,
-      "title": "Naughty Boy (English Ver.)",
+      "title": "밤에 비가 내리면",
       "isTitle": false,
       "songId": "31297126"
      },
      {
       "no": 5,
-      "title": "Thumbs Up! (Inst.)",
+      "title": "Thumbs Up!",
       "isTitle": false,
       "songId": "31297127"
      }
@@ -190759,41 +190781,50 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/04/706/10004706_500.jpg",
     "releaseDate": "2016.10.10",
-    "trackCount": 6,
+    "trackCount": 7,
     "titleTrack": "Gorilla",
     "tracks": [
      {
       "no": 1,
-      "title": "Gorilla",
-      "isTitle": true,
-      "songId": "30029167"
+      "title": "Wake Up (Intro)",
+      "isTitle": false,
+      "songId": "30029165"
      },
      {
       "no": 2,
-      "title": "Beautiful",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "Shine",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Can You Feel It",
-      "isTitle": false
-     },
-     {
-      "no": 5,
       "title": "Pentagon",
       "isTitle": false,
       "songId": "30029166"
      },
      {
-      "no": 6,
-      "title": "Gorilla (Inst.)",
-      "isTitle": false,
+      "no": 3,
+      "title": "Gorilla",
+      "isTitle": true,
       "songId": "30029167"
+     },
+     {
+      "no": 4,
+      "title": "미지근해",
+      "isTitle": false,
+      "songId": "30029168"
+     },
+     {
+      "no": 5,
+      "title": "Smile",
+      "isTitle": false,
+      "songId": "30029169"
+     },
+     {
+      "no": 6,
+      "title": "귀 좀 막아줘 (Organic Song) (이던, 유토, 우석 With 후이)",
+      "isTitle": false,
+      "songId": "30029170"
+     },
+     {
+      "no": 7,
+      "title": "You Are (진호, 후이, 홍석, 신원, 여원, 옌안, 키노)",
+      "isTitle": false,
+      "songId": "30029171"
      }
     ],
     "melonAlbumId": "10004706"
@@ -200444,7 +200475,7 @@
     "tracks": [
      {
       "no": 1,
-      "title": "Intro",
+      "title": "Cool Girl",
       "isTitle": false,
       "songId": "314578"
      },
@@ -200492,25 +200523,25 @@
      },
      {
       "no": 9,
-      "title": "1492살... (T.T;)",
+      "title": "Sad",
       "isTitle": false,
       "songId": "314600"
      },
      {
       "no": 10,
-      "title": "이별은 모르게",
+      "title": "1492...(ㅜ.ㅜ;)",
       "isTitle": false,
-      "songId": "314605"
+      "songId": "314602"
      },
      {
       "no": 11,
-      "title": "Again (Remix)",
+      "title": "Maybe",
       "isTitle": false,
       "songId": "314603"
      },
      {
       "no": 12,
-      "title": "이별은 모르게 (Inst.)",
+      "title": "이별은 모르게...",
       "isTitle": false,
       "songId": "314605"
      }
