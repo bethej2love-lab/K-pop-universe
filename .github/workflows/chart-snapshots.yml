@@ -1,0 +1,32 @@
+name: 차트 순위 기록 (매일)
+
+# 통합 차트(직캠·퍼포먼스·MV × 1주·1달·1년·역대 × 전체·보이그룹·걸그룹)의 그날 순위를 rank_snapshots에 남긴다.
+# 앱을 헤드리스로 띄워 화면과 같은 함수(_chartSongs)로 계산한다 — tools/snapshot_charts.cjs 머리말 참고.
+# 시각: KST 00:20(한국 날짜로 기록). 예전 Vercel 크론(solo_cam·monthly_stage)은 2026-11-05 통합으로 은퇴.
+
+on:
+  schedule:
+    - cron: '20 15 * * *'   # KST 00:20
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: chart-snapshots
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: 순위 계산 + 기록
+        env:
+          SUPABASE_SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE }}
+          KPU_BROWSER_PATH: /usr/bin/google-chrome
+        run: node tools/snapshot_charts.cjs

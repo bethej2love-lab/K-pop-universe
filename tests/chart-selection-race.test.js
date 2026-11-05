@@ -3,7 +3,7 @@ const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),asse
 const src=fs.readFileSync(path.join(__dirname,'..','app.js'),'utf8'),a=src.indexOf('async function _openChartList('),fn=(src.match(/^let _(?:chartViewSeq|feedListIntent)=0;$/gm)||[]).join('\n')+'\n'+src.slice(a,src.indexOf('\n}',a)+2);
 function fixture(){
  const pending=[],views=[];
- const box={currentLang:'ko',_chartViewSeq:0,_CHART_DEFS:{a:{axes:['gender','period'],ranked:true},b:{axes:['gender','period'],ranked:false}},_CHART_SEL_DEFAULT:{gender:'all',period:'all'},_CHART_AXES:{gender:[{v:'all'},{v:'female'}],period:[{v:'all'},{v:'month'}]},_chartLabel:(id,s)=>id+JSON.stringify(s),_chartSongs:(id,s)=>new Promise((resolve,reject)=>pending.push({id,s,resolve,reject})),_feedRankSub:()=>'',_openFeedListOverlay:(label,sub,songs,ctx)=>views.push({label,sub,songs,ctx,ranked:box._feedListRankedNext})};
+ const box={currentLang:'ko',_chartViewSeq:0,_CHART_DEFS:{a:{axes:['gender','period'],ranked:true},b:{axes:['gender','period'],ranked:false}},_CHART_SEL_DEFAULT:{gender:'all',period:'all'},_CHART_AXES:{gender:[{v:'all'},{v:'female'}],period:[{v:'all'},{v:'month'}]},_chartLabel:(id,s)=>id+JSON.stringify(s),_chartSnapKey:()=>null,_chartSongs:(id,s)=>new Promise((resolve,reject)=>pending.push({id,s,resolve,reject})),_feedRankSub:()=>'',_openFeedListOverlay:(label,sub,songs,ctx)=>views.push({label,sub,songs,ctx,ranked:box._feedListRankedNext})};
  vm.createContext(box);vm.runInContext(fn,box);
  return{box,pending,views,run:(id,s)=>box._openChartList(id,s),async start(){const p=box._openChartList('a');pending.at(-1).resolve([{vc:1}]);await p;return views.at(-1).ctx.facets;}};
 }

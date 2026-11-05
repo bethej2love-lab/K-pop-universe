@@ -5555,7 +5555,7 @@ function _lbUpdateToolbar(){
   }
 }
 // ── 영상 아래 "우리 차트 순위 ›"(2026-10-27 사용자 "랭크된 영상을 보고 있으면 그 정보가 영상 하단에, 그 차트로 연결되면 더 좋고 —
-// 우리 유니버스 내 모든 정보가 유기적으로 연결"). 탐험·For You 차트와 **같은 계산**(_fetchWeeklyChartRows 3분 캐시 + _wkCamPick/_wkStagePick)이라
+// 우리 유니버스 내 모든 정보가 유기적으로 연결"). 탐험·For You 차트와 **같은 계산**(통합 차트 _chartSongs — 조합별 캐시)이라
 // 여기 순위와 눌러서 열리는 차트가 어긋나지 않는다. 두 차트 다 최근 7·30일 영상만 들어가므로 그보다 오래된 영상은 조회 자체를 안 한다.
 let _lbChartReq=0;
 // 2026-10-27 ③ 역대·최근 1년 차트(개인 직캠·퍼포먼스 TOP 100)까지. 이 차트들은 조회수 순이라 기록 없이도 지금 순위가 나오지만
@@ -5582,20 +5582,16 @@ async function _lbUpdateChartChips(s,pa){
     b.addEventListener('click',e=>{e.stopPropagation();onClick();});
     box.appendChild(b);box.hidden=false;
   };
-  // ① 주간·월간(최근 7·30일 영상만 들어가는 차트)
+  // ① 최근 1주 직캠·최근 1달 퍼포먼스(그 기간 영상만 들어가는 차트) — 2026-11-05 차트 통합으로 주간 TOP 20·월간 TOP 30 대신 통합 차트의 순위
   if(!(age>32*86400000))try{
-    const[r7,r30]=await _fetchWeeklyChartRows();
+    const short=[{id:'soloCam',era:'w',days:8},{id:'stage',era:'m',days:31}].filter(c=>age<=c.days*86400000);
+    const res=await Promise.all(short.map(c=>{const sel={..._CHART_SEL_DEFAULT,era:c.era};return _chartSongs(c.id,sel).then(songs=>({c,sel,songs}),()=>null);}));
     if(my!==_lbChartReq)return;
-    const charts=[];
-    if(r7.status==='fulfilled'&&r7.value.data)charts.push({key:'solo_cam',label:isKo?'주간 개인 직캠':'Weekly Fancam',full:isKo?'주간 개인 직캠 TOP 20':'Weekly Solo Fancam TOP 20',vids:_wkCamPick(r7.value.data)});
-    if(r30.status==='fulfilled'&&r30.value.data)charts.push({key:'monthly_stage',label:isKo?'월간 퍼포먼스':'Monthly Performance',full:isKo?'월간 퍼포먼스 TOP 30':'Monthly Performance TOP 30',vids:_wkStagePick(r30.value.data)});
-    const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
-    charts.forEach(c=>{
-      const i=c.vids.findIndex(v=>v.id===id);if(i<0)return;
-      add(isKo?`${c.label} ${i+1}위`:`#${i+1} ${c.label}`,()=>{
-        const list=c.vids.map((x,k)=>({..._rowTags(x),t:x.title,u:vidUrl(x),thumb:x.thumb,vc:x.view_count,dur:x.duration_sec,pa:x.published_at?.slice(0,10),rank:k+1}));
-        _openChartStory(c.key,c.full,'',list);
-      });
+    res.forEach(r=>{
+      if(!r)return;
+      const i=r.songs.findIndex(x=>x._apiId===id);if(i<0)return;
+      const label=_chartLabel(r.c.id,r.sel).replace(/\s*TOP\s*\d+$/i,'');
+      add(isKo?`${label} ${i+1}위`:`#${i+1} ${label}`,()=>_openChartList(r.c.id,r.sel));
     });
   }catch(e){}
   // ② 역대·최근 1년 TOP 100 — 같은 차트(직캠/퍼포먼스)는 역대에 들면 1년은 생략(둘 다 띄우면 줄만 길어진다)
@@ -22327,6 +22323,26 @@ function _renderFeedListFacet(ctx){
     Promise.resolve().then(()=>f.onPick(v)).catch(()=>{}).finally(()=>{if(pn&&pn._facetRunSeq===seq)pn.classList.remove('fl-loading');});
   };
   const lbl=o=>ko?o.ko:(o.en||o.ko);
+  //  · ui:'seg'   — 디스코그래피 종류와 같은 세그먼트 컨트롤(.seg-control, 2026-11-05 차트 기간·성별). "목록 전체를 바꾸는" 축에 쓴다.
+  facets.filter(f=>f.ui==='seg').forEach(f=>{
+    const row=document.createElement('div');row.className='fl-facet-row fl-seg';
+    const seg=document.createElement('div');seg.className='seg-control';
+    const thumb=document.createElement('div');thumb.className='seg-thumb';seg.appendChild(thumb);
+    const place=b=>{thumb.style.width=b.offsetWidth+'px';thumb.style.transform=`translateX(${b.offsetLeft-2}px)`;};
+    let selected=f.sel;
+    f.options.forEach(o=>{
+      const b=document.createElement('button');b.type='button';b.className='seg-btn'+(o.v===f.sel?' active':'');
+      b.textContent=lbl(o);
+      b.addEventListener('click',e=>{
+        e.stopPropagation();if(o.v===selected)return;selected=o.v;
+        seg.querySelectorAll('.seg-btn.active').forEach(x=>x.classList.remove('active'));b.classList.add('active');place(b);
+        run(f,o.v);
+      });
+      seg.appendChild(b);
+    });
+    row.appendChild(seg);el.appendChild(row);
+    requestAnimationFrame(()=>{const on=seg.querySelector('.seg-btn.active');if(on){thumb.style.transition='none';place(on);requestAnimationFrame(()=>thumb.style.transition='');}});
+  });
   // 고르기·정렬은 한 줄(bar)에, 탭은 각자 한 줄
   const barFs=facets.filter(f=>f.ui==='pick'||f.ui==='sort');
   if(barFs.length){
@@ -22356,7 +22372,7 @@ function _renderFeedListFacet(ctx){
     });
     el.appendChild(bar);
   }
-  facets.filter(f=>f.ui!=='pick'&&f.ui!=='sort').forEach(f=>{
+  facets.filter(f=>f.ui!=='pick'&&f.ui!=='sort'&&f.ui!=='seg').forEach(f=>{
     const row=document.createElement('div');row.className='fl-facet-row fl-tabs hscroll-drag';
     let selected=f.sel;
     f.options.forEach(o=>{
@@ -24504,58 +24520,23 @@ function _chartStoryStats(songs,hist){
     return{s,id,h,streak,climb,isNew};
   });
 }
-function _openChartStory(chartType,label,sub,songs,tab){
-  tab=tab||'all';
-  const isKo=currentLang==='ko';
-  const size=chartType==='monthly_stage'?30:20;
-  const render=(hist)=>{
-    const st=_chartStoryStats(songs,hist);
-    let list=songs;
-    if(tab==='rise')list=st.filter(x=>x.climb>0).sort((a,b)=>b.climb-a.climb).map(x=>({...x.s,rankDelta:x.climb}));
-    else if(tab==='new')list=st.filter(x=>x.isNew).map(x=>({...x.s,rankDelta:null}));
-    else if(tab==='long')list=st.filter(x=>x.streak>=3).sort((a,b)=>b.streak-a.streak||a.s.rank-b.s.rank).map(x=>x.s);
-    const opts=[{v:'all',ko:'전체',en:'All'},{v:'rise',ko:'급상승',en:'Rising'},{v:'new',ko:'신규',en:'New'},{v:'long',ko:'롱런',en:'Long-run'}];
-    _feedListRankedNext=true;
-    _openFeedListOverlay(label,sub,list,{facet:{key:'cs',options:opts,sel:tab,onPick:v=>_openChartStory(chartType,label,sub,songs,v)}});
-    const grid=document.getElementById('feed-list-grid');if(!grid)return;
-    const box=document.createElement('div');box.className='cs-story';
-    grid.insertBefore(box,grid.firstChild);
-    if(hist===undefined){box.classList.add('is-loading');if(_csExpanded)box.classList.add('cs-exp');return box;}
-    _renderChartStory(box,st,hist,size,tab,v=>_openChartStory(chartType,label,sub,songs,v));
-    if(tab!=='all'&&!list.length){
-      const e=document.createElement('div');e.className='cs-empty';
-      e.textContent=isKo?({rise:'들어온 뒤 오른 무대가 없어요',new:'어제 이후 새로 들어온 무대가 없어요',long:'3일 넘게 머문 무대가 없어요'})[tab]:'Nothing here yet';
-      grid.insertBefore(e,box.nextSibling);
-    }
-    return box;
-  };
-  const c=_rankHistCache[chartType];
-  if(c&&Date.now()-c.at<180000){c.p.then(h=>render(h));return;}
-  const box=render(undefined); // 자리부터 잡는다(그림이 늦게 들어와 목록이 아래로 밀리면 초반 스크롤이 튄다)
-  _fetchRankHistory(chartType,size).then(h=>{
-    if(!box||!box.isConnected)return;
-    const tmp=document.createElement('div');tmp.className='cs-story';
-    box.replaceWith(tmp);
-    const st=_chartStoryStats(songs,h);
-    _renderChartStory(tmp,st,h,size,tab,v=>_openChartStory(chartType,label,sub,songs,v));
-  });
-}
+// (주간 TOP 20·월간 TOP 30 전용 _openChartStory는 2026-11-05 차트 통합으로 _openChartList에 합쳤다)
 // 접힌 미니 그림이 기본(2026-10-26 사용자 "그래프가 너무 자리 차지를 많이 한다" → A안): 높이 220→96, 상위 3개만 색·이름,
 // 주석은 숨김. 그림이나 '크게 보기'를 누르면 지금 크기로 펼친다. 펼친 상태는 탭을 바꿔도·다음에 열어도 유지(이 기기에만).
 let _csExpanded=(()=>{try{return localStorage.getItem('kpu_cs_exp')==='1';}catch(e){return false;}})();
-function _renderChartStory(box,st,hist,size,tab,onTab){
+function _renderChartStory(box,st,hist,size,tab,onTab,spanDays){
   const isKo=currentLang==='ko';
   const NS='http://www.w3.org/2000/svg';
   const mk=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e;};
   const today=new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
-  const span=size===30?14:7; // 주간 차트는 7일 업로드 창이라 그보다 길게 그리면 왼쪽이 빈다
+  const span=spanDays||(size===30?14:7); // 주간 차트는 7일 업로드 창이라 그보다 길게 그리면 왼쪽이 빈다
   const days=[...((hist&&hist.dates)||[]).filter(d=>d<today).slice(-span),today];
   const exp=_csExpanded;
   const _toggleExp=()=>{
     _csExpanded=!_csExpanded;try{localStorage.setItem('kpu_cs_exp',_csExpanded?'1':'0');}catch(e){}
     if(_csExpanded)_renderChartStory._drawn=false; // 펼칠 땐 선이 그려지는 연출을 한 번 더
     box.classList.toggle('cs-exp',_csExpanded);
-    box.innerHTML='';_renderChartStory(box,st,hist,size,tab,onTab);
+    box.innerHTML='';_renderChartStory(box,st,hist,size,tab,onTab,spanDays);
   };
   const W=Math.max(300,Math.min(640,(box.parentElement?.clientWidth||360)-28)),H=exp?(size===30?250:220):(size===30?112:96);
   const L=22,R=96,T=12,B=22;
@@ -24576,7 +24557,8 @@ function _renderChartStory(box,st,hist,size,tab,onTab){
   });
   svg.appendChild(grid);
   // 선 — 나머지(회색) 먼저, 상위 5개(그룹 색)를 위에. 점 사이 끊기면 선도 끊는다(그날 차트 밖).
-  const order=[...st].sort((a,b)=>b.s.rank-a.s.rank);
+  // TOP 100이어도 그림은 위 size(30)위까지만 — 100줄을 다 그리면 읽을 수 없다(숫자 3칸·탭은 100개 전부로 센다)
+  const order=[...st].filter(o=>o.s.rank<=size||days.some(d=>o.h[d]!=null&&o.h[d]<=size)).sort((a,b)=>b.s.rank-a.s.rank);
   const lines=[];
   // 주석(annotation) — 가장 크게 오른 무대는 순위가 낮아도 색을 입히고 "N위 진입"을 단다. 그림이 무슨 얘기인지 한 줄로.
   const riseO=st.filter(o=>o.climb>0).sort((a,b)=>b.climb-a.climb)[0];
@@ -24674,7 +24656,6 @@ async function _fetchWeeklyChartRows(){
   if(_wkChartP&&Date.now()-_wkChartAt<180000)return _wkChartP;
   await _optColsReady;
   const sinceDate=new Date(Date.now()-7*86400000).toISOString().slice(0,10);
-  const sinceDate30=new Date(Date.now()-30*86400000).toISOString().slice(0,10);
   const _sel='id,title,thumb,category,is_short,content_flag,group_ko,members,view_count,published_at'+_durCol();
   const _base=()=>_applyLiveExclude(sb.from(_YT_TABLE).select(_sel).eq('category','live'))
     .not('view_count','is',null)
@@ -24683,36 +24664,17 @@ async function _fetchWeeklyChartRows(){
     .or('content_flag.is.null,content_flag.neq.hidden')
     .order('view_count',{ascending:false});
   _wkChartAt=Date.now();
+  // 30일 조회(월간 퍼포먼스 TOP 30용)는 2026-11-05 차트 통합으로 뺐다 — 통합 차트가 자기 풀(_fetchStagePool)을 쓴다.
   _wkChartP=Promise.allSettled([
-    _base().gte('published_at',sinceDate).limit(300),
-    _base().gte('published_at',sinceDate30).limit(500)
+    _base().gte('published_at',sinceDate).limit(300)
   ]);
   return _wkChartP;
 }
-// 차트 뽑기 공식 — 위 두 화면이 같은 공식을 쓰게 함수로 둔다
-const _wkCamPick=data=>_capByGroup(_filterBannedVideos(data).filter(_isSoloCam),v=>v.group_ko,3).slice(0,20);
-const _wkStagePick=data=>_capByGroup(_filterBannedVideos(data).filter(v=>!_isShortClip(v)),v=>v.group_ko,3).slice(0,30);
 async function _buildFeedWeeklyTopCams(list,discList){
   if(!sb)return;
   const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
-  // ⚠️ "스냅샷에 없다 = NEW"가 아니다(2026-09-18 실측으로 발각). 스냅샷은 Vercel 크론이 **자기 코드로**
-  //    차트를 다시 계산해서 넣는데, 그 로직이 여기와 어긋나면(실제로 어긋나 있었다 — 월간 무대 30자리 중
-  //    15개가 스냅샷에 없어 전부 NEW로 찍혔다) 멀쩡히 어제도 있던 영상이 NEW가 된다.
-  //    그래서 진짜 근거인 published_at을 본다 — 스냅샷 날짜 이후에 올라온 영상만 NEW고, 그냥 스냅샷에서
-  //    빠진 것들은 "비교 기준이 없음"(rankDelta 미설정)으로 두어 변동 표기만 생략한다(순위 숫자는 그대로).
-  //    크론을 고쳐도 이 가드는 남겨둔다 — 두 곳에서 같은 차트를 따로 계산하는 구조인 한 또 어긋난다.
-  const _withRankDelta=(vids,prev)=>vids.map((v,i)=>{
-    const base={..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),rank:i+1};
-    if(!prev)return base; // 스냅샷 자체가 없음 — 순위만 보여주고 변동은 생략
-    const pr=prev.ranks[v.id];
-    if(pr!=null)return{...base,rankDelta:pr-(i+1)};
-    return (v.published_at||'')>=prev.date?{...base,rankDelta:null}:base;
-  });
-  // 카드 1(직캠 TOP 20)과 카드 3(무대 TOP 30)을 병렬로 조회해 순서대로 붙인다.
-  // 순차 실행이면 7일 쿼리가 끝나고 카드1을 붙인 뒤 30일 쿼리가 돌아 카드3을 붙이는 사이에
-  // _feedEnqueue의 다른 슬롯(ThisYearPicks 등)이 차트 선반에 카드를 먼저 끼워넣을 수 있다.
-  // Promise.allSettled로 두 쿼리를 동시에 던지면 둘 다 받은 뒤 순서대로 처리해 이 경쟁을 없앤다.
-  const [r7,r30]=await _fetchWeeklyChartRows();
+  // 이 빌더는 이제 Trend 카드와 '이번 주 급상승' 카드만 만든다(주간 직캠 TOP 20·월간 퍼포먼스 TOP 30은 2026-11-05 차트 통합으로 _openChartList로).
+  const [r7]=await _fetchWeeklyChartRows();
 
   // 카드 1+2: 7일 결과 → 직캠 TOP 20(list) + Trend(discList)
   try{
@@ -24726,32 +24688,21 @@ async function _buildFeedWeeklyTopCams(list,discList){
           // 포메이션 영상은 members가 빈 배열([])로, 진짜 개인 직캠은 그 한 명만 담겨있는 패턴이 뚜렷했음
           // (2026-08-18, 사용자 요청 — 그룹 전체 무대 영상 말고 개인만 보고 싶다고 함). 제목엔 이름이 있는데
           // 태깅이 아직 안 된 소수 케이스는 놓칠 수 있음(태깅 정확도의 한계, 이 필터 자체의 문제는 아님).
-          const camVids=_wkCamPick(data);
-          if(camVids.length>=3){
-            const label=currentLang==='ko'?'주간 개인 직캠 TOP 20':'Weekly Solo Fancam TOP 20',sub=_cleanTitle(camVids[0].title);
-            // 순위 변동 배지용 이전 순위(_fetchPrevRanks)는 리스트를 '열 때'(클릭)만 쓰인다 — 카드 자체(썸네일/라벨)엔
-            // 안 쓰이므로 await로 붙잡지 않고 백그라운드로 가져온다. await하면 이 조회가 끝날 때까지 디스커버리 탭
-            // 콘텐츠 등장이 통째로 밀렸다(2026-08-27, 1000행 잘림 방지로 이 조회가 페이지네이션되며 무거워진 뒤 체감
-            // 저하). 클릭 시점엔 대개 이미 채워져 있고, 혹시 아직이면 _withRankDelta가 undefined→배지 숨김으로 안전 폴백.
-            let _prevSolo;
-            const _openSolo=()=>_openChartStory('solo_cam',label,sub,_withRankDelta(camVids,_prevSolo));
-            const _card1=_appendFeedCard(list,'🏆',label,sub,_openSolo,camVids[0].thumb,undefined,{preview:_withRankDelta(camVids.slice(0,3),undefined),prio:1});
-            _fetchPrevRanks('solo_cam').then(r=>{
-              _prevSolo=r;if(!r)return;
-              const ranked=_withRankDelta(camVids,r);
-              if(_card1&&_card1._setPreview)_card1._setPreview(ranked);
-            });
-            // 이번 주 급상승(2026-10-15) — 차트 선반 맨 앞 한 장. **일주일 전** 스냅샷 대비 가장 크게 오른 직캠(3계단 미만이면 생략). 누르면 그 차트.
-            _fetchPrevRanks('solo_cam',7).then(r=>{
-              if(!r)return;
-              const up=_withRankDelta(camVids,r).filter(x=>x.rankDelta>0).sort((a,b)=>b.rankDelta-a.rankDelta)[0];
-              if(up&&up.rankDelta>=3){
-                const t=currentLang==='ko'?'🔥 이번 주 급상승':'🔥 Biggest Riser';
-                const c=_appendFeedCard(list,'🔥',t,'',_openSolo,up.thumb,undefined,{preview:[up],prio:0});
-                if(c)c.classList.add('feed-card-riser');
-              }
-            });
-          }
+          // 주간 직캠 TOP 20 카드는 2026-11-05 차트 통합으로 없앴다 — 개인 직캠 차트(_openChartList 'soloCam', 기간 1주)가 대신한다.
+          // 이번 주 급상승(2026-10-15) — 차트 선반 맨 앞 한 장. **일주일 전** 기록 대비 가장 크게 오른 직캠(3계단 미만이면 생략). 누르면 그 차트.
+          // 기록은 통합 차트 이름(soloCam:w:all)으로 쌓인다 — 통합 첫 주엔 일주일 전 기록이 없어 이 카드는 안 뜬다.
+          (async()=>{
+            const sel={..._CHART_SEL_DEFAULT,era:'w'};
+            const[songs,r]=await Promise.all([_chartSongs('soloCam',sel),_fetchPrevRanks(_chartSnapKey('soloCam',sel),7)]);
+            if(!r||!songs.length)return;
+            const up=songs.map((x,i)=>({...x,rank:i+1,rankDelta:r.ranks[x._apiId]!=null?r.ranks[x._apiId]-(i+1):undefined}))
+              .filter(x=>x.rankDelta>0).sort((a,b)=>b.rankDelta-a.rankDelta)[0];
+            if(up&&up.rankDelta>=3){
+              const t=currentLang==='ko'?'🔥 이번 주 급상승':'🔥 Biggest Riser';
+              const c=_appendFeedCard(list,'🔥',t,'',()=>_openChartList('soloCam',{era:'w'}),up.thumb,undefined,{preview:[up],prio:0});
+              if(c)c.classList.add('feed-card-riser');
+            }
+          })().catch(()=>{});
           // 카드 2: Trend — category='live' 전체 조회수 기준으로 뽑되(최근 7일 50개, 그룹당 최대 3개), 노출
           // 순서는 랜덤 셔플 — "차트"가 아니라 발견용 카드라 순위 나열 느낌을 주지 않기 위함(2026-08-21, 사용자
           // 요청 — 셀렉 기준은 조회수여도 노출은 랜덤하게, 순위 변동 배지도 불필요). 카드 자체의 라벨/썸네일은
@@ -24775,25 +24726,6 @@ async function _buildFeedWeeklyTopCams(list,discList){
   // 카드 3: 월간 무대 TOP 30 — 최근 30일 전체(개인 직캠 포함, 필터 없음), 조회수 기준으로 뽑아 순위
   // 그대로 노출하고 어제 대비 순위 변동 배지를 붙인다(2026-08-21, 사용자 요청 — "완전체 무대"는 이름이
   // 어색하다고 해서 폐기, 그룹 전체로 필터링하지 않고 그냥 기간을 늘린 별도 차트로 단순화).
-  try{
-    if(r30.status==='fulfilled'){
-      const{data,error}=r30.value;
-      if(!error&&data?.length){
-        // 쇼츠 제외(2026-09-10 사용자 요청) — "무대"는 카메라 여러 대로 찍어 방송에 나간 한 편이고, 쇼츠는
-        // 거기서 잘라낸 클립이라 같은 목록에 섞일 물건이 아니다. 실측으로 30자리 중 5칸이 클립이었고
-        // 조회수가 높아 1위까지 차지했다("서인영 워터밤 데뷔 직캠 최초공개", "…말아주는 Live Clip" 등).
-        // ⚠️ 직캠 차트는 반대다 — 세로 직캠은 정상 콘텐츠라 쇼츠도 그대로 둔다(is_short 마이그레이션의 전제).
-        const stageVids=_wkStagePick(data);
-        if(stageVids.length>=3){
-          const label=currentLang==='ko'?'월간 퍼포먼스 TOP 30':'Monthly Performance TOP 30',sub=_cleanTitle(stageVids[0].title);
-          // 카드1과 동일 — 순위 배지 조회는 클릭 시점에만 필요하므로 콘텐츠 렌더를 막지 않게 백그라운드로 뺀다.
-          let _prevStage;
-          const _card3=_appendFeedCard(list,'🎤',label,sub,()=>_openChartStory('monthly_stage',label,sub,_withRankDelta(stageVids,_prevStage)),stageVids[0].thumb,undefined,{preview:_withRankDelta(stageVids.slice(0,3),undefined),prio:2});
-          _fetchPrevRanks('monthly_stage').then(r=>{_prevStage=r;if(r&&_card3&&_card3._setPreview)_card3._setPreview(_withRankDelta(stageVids,r));});
-        }
-      }
-    }
-  }catch(e){/* 조용히 무시 */}
 }
 
 // "이름(그룹)" 형식 문자열 배열을 화면 표시용 텍스트로 접는다(그룹 표기는 떼고 이름만) — cover_of_members/
@@ -24807,19 +24739,7 @@ async function _buildFeedWeeklyTopCams(list,discList){
 //    동시 스탬피드([[Discover 탭 선반 동시 스탬피드]])를 다시 만드는 꼴이 된다.
 // 결과가 3건 미만이면 그 선반은 조용히 건너뛰고 다음 후보를 시도한다(연초엔 데이터가 얇을 수 있음).
 const _FEED_THIS_YEAR_POOL=[
-  // TOP 100으로 확대(2026-09-10 사용자 요청). 100자리를 채우려면 조회를 직캠으로 먼저 좁혀야 한다
-  // (titleOr) — 안 그러면 상위 1,000행이 대부분 무대 영상이라 41~53개밖에 안 찬다. fetch도 250→1000.
-  {key:'cam',icon:'🎥',ko:y=>`${y}년 개인 직캠 TOP 100`,en:y=>`${y} Solo Fancam TOP 100`,
-   subKo:'올해 올라온 직캠 조회수 기준',subEn:'Top viewed fancams this year',
-   pick:vids=>_capByGroup(vids.filter(_isSoloCam),v=>v.group_ko,3).slice(0,100),
-   cat:'live',titleOr:true,fetch:1000},
-  {key:'stage',icon:'🎤',ko:y=>`${y}년 퍼포먼스 TOP 30`,en:y=>`${y} Performance TOP 30`,
-   subKo:'올해 음악방송·무대 조회수 기준',subEn:'Top viewed stages this year',
-   // 개인 직캠 카드(위)의 정확한 여집합 — 같은 판정식을 쓴다. 그래야 직캠에서 빠진 **솔로 무대**가
-   // (태민 'FLOAT' @음악중심 등) 여기로 흘러오고, 어느 쪽에도 안 뜨는 사각지대가 안 생긴다.
-   // 쇼츠는 제외(2026-09-10) — 무대 차트 공통 규칙, 월간 무대 TOP 30 주석 참고.
-   pick:vids=>_capByGroup(vids.filter(v=>!_isSoloCam(v)&&!_isShortClip(v)),v=>v.group_ko,2).slice(0,30),
-   cat:'live'},
+  // 올해 개인 직캠 TOP 100·올해 퍼포먼스 TOP 30은 2026-11-05 차트 통합으로 뺐다 — 통합 차트의 기간 '1년'과 같은 물건이었다.
   {key:'mv',coll:true,icon:'📀',ko:y=>`${y}년 컴백·MV 모음`,en:y=>`${y} Comebacks & MVs`,
    subKo:'올해 나온 뮤직비디오',subEn:'Music videos released this year',
    pick:vids=>_capByGroup(vids,v=>v.group_ko,2).slice(0,30),cat:'mv'},
@@ -24966,13 +24886,16 @@ async function _fetchSoloFancamPool(groupKos,fetchLimit,sinceDate){
 // 기간의 '역대'는 칩이자 접두사이지만(역대 무대 TOP 100), 성별의 '전체'는 칩일 뿐 제목엔 안 붙는다.
 // 접두사를 안 쓰면 pKo:''.
 const _CHART_AXES={
-  gender:[{v:'all',ko:'전체',en:'All',pKo:'',pEn:''},{v:'f',ko:'여돌',en:'Girls',pKo:'여돌 ',pEn:'Girl Group '},
-          {v:'m',ko:'남돌',en:'Boys',pKo:'남돌 ',pEn:'Boy Group '}],
+  // 2026-11-05 사용자 "보이그룹 걸그룹으로" — 여돌/남돌 표기·순서 변경(보이그룹 먼저)
+  gender:[{v:'all',ko:'전체',en:'All',pKo:'',pEn:''},{v:'m',ko:'보이그룹',en:'Boy groups',pKo:'보이그룹 ',pEn:'Boy Group '},
+          {v:'f',ko:'걸그룹',en:'Girl groups',pKo:'걸그룹 ',pEn:'Girl Group '}],
   gen:[{v:'all',ko:'전세대',en:'All gens',pKo:'',pEn:''},{v:'5',ko:'5세대',en:'Gen 5',pKo:'5세대 ',pEn:'Gen 5 '},
        {v:'4',ko:'4세대',en:'Gen 4',pKo:'4세대 ',pEn:'Gen 4 '},{v:'3',ko:'3세대',en:'Gen 3',pKo:'3세대 ',pEn:'Gen 3 '},
        {v:'2',ko:'2세대',en:'Gen 2',pKo:'2세대 ',pEn:'Gen 2 '},{v:'1',ko:'1세대',en:'Gen 1',pKo:'1세대 ',pEn:'Gen 1 '}],
-  era:[{v:'all',ko:'역대',en:'All-time',pKo:'역대 ',pEn:'All-Time '},{v:'y',ko:'최근 1년',en:'Past year',pKo:'최근 1년 ',pEn:'Past-Year '},
-       {v:'m',ko:'최근 30일',en:'Past 30d',pKo:'최근 30일 ',pEn:'Past-30d '}],
+  // 기간(2026-11-05 차트 통합) — 주간 직캠 TOP 20·월간 퍼포먼스 TOP 30이 따로 있던 걸 이 축의 1주·1달로 합쳤다(사용자
+  // "최근 1주·1달·1년 선택, 페이지 따로 만들 필요 없다"). 짧은 기간부터. 목록 위 세그먼트로 고른다.
+  era:[{v:'w',ko:'1주',en:'1W',pKo:'최근 1주 ',pEn:'Past-Week '},{v:'m',ko:'1달',en:'1M',pKo:'최근 1달 ',pEn:'Past-Month '},
+       {v:'y',ko:'1년',en:'1Y',pKo:'최근 1년 ',pEn:'Past-Year '},{v:'all',ko:'역대',en:'All-time',pKo:'역대 ',pEn:'All-Time '}],
   // 방송사 축 — 성별·세대와 달리 그룹이 아니라 **제목 검색어**로 번역된다(축제는 영상 제목에만 남는다).
   // 연말용(fest)과 모아보기용(festS)이 나뉘는 이유: '전체'의 뜻이 다르다. 연말 전체는 여름판을 빼야
   // 하고(가요대전 썸머), 모아보기 전체는 여름판까지 포함한다.
@@ -25001,7 +24924,10 @@ const _chartGkos=sel=>{
   ).map(([k])=>k);
 };
 const _chartSince=v=>v==='y'?new Date(Date.now()-365*86400000).toISOString().slice(0,10)
-  :v==='m'?new Date(Date.now()-30*86400000).toISOString().slice(0,10):null;
+  :v==='m'?new Date(Date.now()-30*86400000).toISOString().slice(0,10)
+  :v==='w'?new Date(Date.now()-7*86400000).toISOString().slice(0,10):null;
+// 순위 기록(rank_snapshots) 차트 이름 — 세대 '전체'일 때만 기록한다(tools/snapshot_charts.cjs가 매일 같은 _chartSongs로 남김).
+const _chartSnapKey=(id,sel)=>sel.gen==='all'&&_CHART_DEFS[id]&&_CHART_DEFS[id].ranked&&_CHART_DEFS[id].axes.includes('era')?`${id}:${sel.era}:${sel.gender}`:null;
 // 차트 정의 — 차트 하나가 여기 한 줄이다. axes(쓸 축), ranked(조회수 순위인가), pool(후보 조회),
 // cap(목록 길이), kind(_appendFeedCard의 카드 종류)만 다르고 나머지 동작은 전부 공용이다.
 // ranked:false는 '모아보기' — 순위가 없으니 목록을 섞어 보여주고 '1위' 문구도 안 붙인다.
@@ -25062,13 +24988,55 @@ async function _openChartList(id,sel,_view){
   // 되돌아갈 길이 없어 막다른 골목이 된다.
   const sub=!songs.length?(currentLang==='ko'?'이 조건에 맞는 영상이 없어요 — 위 필터를 바꿔보세요':'No videos for this filter — try changing it above')
     :d.ranked?_feedRankSub(label,songs[0].vc):'';
-  const mk=key=>({key,labelKo:'',labelEn:'',options:_CHART_AXES[key],sel:sel[key],scroll:key==='gen', // 세대 6개는 390폭에 딱 맞아 더 좁은 폰에선 줄바꿈 대신 가로 밀기
+  // 축 모양(2026-11-05 차트 통합): 기간·성별 = 세그먼트(목록 전체를 바꾸는 축), 세대 = "전세대 ▾" 고르기 버튼(세 줄 쌓이면 무겁다).
+  const ui={era:'seg',gender:'seg',gen:'pick'};
+  const genIcon='<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 13h12M4 13V8M8 13V4M12 13V6"/></svg>';
+  const mk=key=>({key,labelKo:'',labelEn:'',options:_CHART_AXES[key],sel:sel[key],scroll:key==='gen',ui:ui[key],
+    icon:key==='gen'?genIcon:undefined,pickTitle:key==='gen'?(currentLang==='ko'?'어느 세대 볼까요':'Pick a generation'):undefined,
     onPick:nv=>_openChartList(id,{[key]:nv},st)});
+  const axes=['era','gender','gen'].filter(k=>d.axes.includes(k)).concat(d.axes.filter(k=>!['era','gender','gen'].includes(k)));
   // ⚠️ 순위 목록 여부는 원래 **카드 클릭 핸들러**에서만 세워졌다(선반이 feed-chart인지로 판단). 그래서
   //    칩으로 다시 열면 플래그가 이미 소비돼 순위 목록이 조용히 '발견용'으로 렌더됐다 — 조회수 2위
   //    쇼츠가 뒤로 밀려 순위가 뒤섞였다(2026-09-04 실측). 칩 경로에선 차트 정의가 직접 세운다.
   _feedListRankedNext=!!d.ranked;
-  _openFeedListOverlay(label,sub,songs,{facets:d.axes.map(mk)});
+  // 순위 이야기(그래프·급상승/신규/롱런) — 예전엔 주간 TOP 20·월간 TOP 30에만 있었다. 이제 기록이 있는 모든 조합에.
+  // 기록(rank_snapshots)은 tools/snapshot_charts.cjs가 매일 이 화면과 **같은 함수**(_chartSongs)로 남긴다(세대 '전체'만).
+  const snapKey=_chartSnapKey(id,sel);
+  let hist=null;
+  if(snapKey&&songs.length){
+    hist=await Promise.race([_fetchRankHistory(snapKey,100),new Promise(r=>setTimeout(()=>r(null),3000))]);
+    if(request!==_feedListIntent)return;
+  }
+  const tab=st.tab||'all';
+  const ranked=songs.map((s,i)=>({...s,rank:i+1}));
+  const today=new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
+  const hasPast=!!(hist&&hist.dates&&hist.dates.some(x=>x<today));
+  const facets=axes.map(mk);
+  let list=ranked;
+  let stats=null;
+  if(hasPast){
+    stats=_chartStoryStats(ranked,hist);
+    // 순위 변동 배지 — 가장 최근 지난 기록 대비
+    const past=hist.dates.filter(x=>x<today),last=past[past.length-1];
+    list=ranked.map((s,i)=>{const o=stats[i],pr=o.h[last];return{...s,rankDelta:pr!=null?pr-s.rank:(o.isNew?null:undefined)};});
+    if(tab==='rise')list=stats.filter(x=>x.climb>0).sort((a,b)=>b.climb-a.climb).map(x=>({...x.s,rankDelta:x.climb}));
+    else if(tab==='new')list=stats.filter(x=>x.isNew).map(x=>({...x.s,rankDelta:null}));
+    else if(tab==='long')list=stats.filter(x=>x.streak>=3).sort((a,b)=>b.streak-a.streak||a.s.rank-b.s.rank).map(x=>x.s);
+    facets.push({key:'cs',options:[{v:'all',ko:'전체',en:'All'},{v:'rise',ko:'급상승',en:'Rising'},{v:'new',ko:'신규',en:'New'},{v:'long',ko:'롱런',en:'Long-run'}],
+      sel:tab,onPick:v=>{st.tab=v;return _openChartList(id,{},st);}});
+  }
+  _openFeedListOverlay(label,sub,list,{facets});
+  if(!hasPast)return;
+  const grid=document.getElementById('feed-list-grid');if(!grid)return;
+  const box=document.createElement('div');box.className='cs-story';
+  grid.insertBefore(box,grid.firstChild);
+  const span=sel.era==='w'?7:14;
+  _renderChartStory(box,stats,hist,30,tab,v=>{st.tab=v;_openChartList(id,{},st);},span);
+  if(tab!=='all'&&!list.length){
+    const e=document.createElement('div');e.className='cs-empty';
+    e.textContent=currentLang==='ko'?({rise:'들어온 뒤 오른 영상이 없어요',new:'어제 이후 새로 들어온 영상이 없어요',long:'3일 넘게 머문 영상이 없어요'})[tab]:'Nothing here yet';
+    grid.insertBefore(e,box.nextSibling);
+  }
 }
 // ── 행사 페이지(2026-10-15) — 시상식·연말 무대·페스티벌·해외 특집 음방을 회차(연도·도시)별 무대 모음으로 ──────────
 // 사용자: "마마 하면 연도별 무대 모음을 보고 싶다". 행사 정의·태그 규칙은 shared.js _EVENT_SERIES/_eventTags,
@@ -26381,7 +26349,7 @@ function _appendFeedOnboardCard(strip){
 }
 // ── 내 최애 차트(2026-10-15, 사용자 "Charts 노출이 약하다") ──────────────────────────────────────────
 // 발견 탭 주간 직캠 TOP 20·월간 퍼포먼스 TOP 30에 든 최애 무대를 For You에 — 매일 열 이유가 되는 개인화 진입점.
-// 계산은 _fetchWeeklyChartRows/_wkCamPick/_wkStagePick 그대로(두 화면 순위가 어긋나지 않게). 최애 범위는 즐겨찾기 신작과 같다.
+// 계산은 통합 차트(_chartSongs 직캠 1주·퍼포먼스 1달) 그대로(두 화면 순위가 어긋나지 않게, 2026-11-05). 최애 범위는 즐겨찾기 신작과 같다.
 async function _buildFeedFavCharts(){
   const strip=document.getElementById('feed-favchart'),section=document.getElementById('feed-favchart-section');
   if(!strip||!section||!sb)return;
@@ -26394,16 +26362,17 @@ async function _buildFeedFavCharts(){
     const mem=v.members||[];return mem.some(m=>mf.has(m)); // 멤버 즐겨찾기는 그 멤버가 나온 무대만(그룹 전체 무대는 제외)
   };
   try{
-    const [r7,r30]=await _fetchWeeklyChartRows();
-    const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+    // 2026-11-05 차트 통합 — 주간 TOP 20·월간 TOP 30 대신 통합 차트(직캠 1주·퍼포먼스 1달, TOP 100)에서 최애를 찾는다.
     const isKo=currentLang==='ko';
-    const charts=[];
-    if(r7.status==='fulfilled'&&r7.value.data)charts.push({key:'solo_cam',label:isKo?'주간 개인 직캠':'Weekly Fancam',full:isKo?'주간 개인 직캠 TOP 20':'Weekly Solo Fancam TOP 20',vids:_wkCamPick(r7.value.data)});
-    if(r30.status==='fulfilled'&&r30.value.data)charts.push({key:'monthly_stage',label:isKo?'월간 퍼포먼스':'Monthly Performance',full:isKo?'월간 퍼포먼스 TOP 30':'Monthly Performance TOP 30',vids:_wkStagePick(r30.value.data)});
-    const prevs=await Promise.all(charts.map(c=>_fetchPrevRanks(c.key)));
+    const defs=[{id:'soloCam',era:'w',short:isKo?'1주 개인 직캠':'1W Fancam'},{id:'stage',era:'m',short:isKo?'1달 퍼포먼스':'1M Performance'}];
+    const charts=await Promise.all(defs.map(async c=>{
+      const sel={..._CHART_SEL_DEFAULT,era:c.era};
+      const[songs,prev]=await Promise.all([_chartSongs(c.id,sel),_fetchPrevRanks(_chartSnapKey(c.id,sel))]);
+      return{...c,sel,label:c.short,prev,vids:songs.map(x=>({id:x._apiId,group_ko:x.groupKo,members:x.memberKos,title:x.t,thumb:x.thumb,published_at:x.pa}))};
+    }));
     const items=[];
-    charts.forEach((c,ci)=>{
-      const prev=prevs[ci];
+    charts.forEach(c=>{
+      const prev=c.prev;
       c.vids.forEach((v,i)=>{
         if(!isFav(v))return;
         const pr=prev&&prev.ranks[v.id];
@@ -26423,10 +26392,7 @@ async function _buildFeedFavCharts(){
       const who=_feedWho(song),tune=_feedSong(v.title);
       const d=delta===null?' · NEW':delta>0?` · ↑${delta}`:delta<0?` · ↓${-delta}`:'';
       const sub=`${c.label} ${rank}${isKo?'위':''}${d}`;
-      const open=()=>{
-        const list=c.vids.map((x,i)=>({..._rowTags(x),t:x.title,u:vidUrl(x),thumb:x.thumb,vc:x.view_count,dur:x.duration_sec,pa:x.published_at?.slice(0,10),rank:i+1}));
-        _openChartStory(c.key,c.full,'',list);
-      };
+      const open=()=>_openChartList(c.id,c.sel);
       _appendFeedCard(strip,'📈',who?(tune?who+' · '+tune:who):_cleanTitle(v.title),sub,open,v.thumb);
     });
     _enableDragScroll(strip);
@@ -26655,10 +26621,11 @@ function _buildFeedDisc(){
   _feedEnqueue(()=>_buildFeedThisYearPicks(chart,list)); // 올해 한정 — TOP은 Charts(chart), 모음은 Discovery(list)로 라우팅
   _feedEnqueue(()=>_buildFeedYearlyTop(chart));
   _feedEnqueue(()=>_buildFeedLegend100(chart));
-  _feedEnqueue(()=>_buildChartCard(chart,'soloCam'));
-  _feedEnqueue(()=>_buildChartCard(chart,'stage'));
-  _feedEnqueue(()=>_buildChartCard(chart,'mv',{era:'m'})); // 최근 30일 MV = 신곡 MV 차트
-  _feedEnqueue(()=>_buildChartCard(chart,'mv'));
+  // 차트 통합(2026-11-05) — 직캠·퍼포먼스·MV는 한 장씩. 기간(1주·1달·1년·역대)·성별은 차트 안 세그먼트로 고른다.
+  // 처음 여는 기간: 직캠 1주(예전 주간 직캠 TOP 20 자리), 퍼포먼스 1달(월간 TOP 30 자리), MV 1달(신곡 MV).
+  _feedEnqueue(()=>_buildChartCard(chart,'soloCam',{era:'w'}));
+  _feedEnqueue(()=>_buildChartCard(chart,'stage',{era:'m'}));
+  _feedEnqueue(()=>_buildChartCard(chart,'mv',{era:'m'}));
   // "연말 무대 모음 TOP 100"은 라벨에 랭킹(TOP)이 붙어있는 이상 다른 TOP류와 마찬가지로 Charts로
   // (2026-08-21, 사용자 요청 — "TOP 들어가면 다 discover 아닌 charts 쪽으로"). KBS/MBC/SBS/썸머는
   // "모아보기"라 TOP이 없어서 그대로 Discovery에 남긴다.

@@ -11,7 +11,7 @@ function fixture(mobile=false){
  const defer=(kind,id)=>{let resolve,reject;const p=new Promise((a,b)=>{resolve=a;reject=b;});pending.push({kind,id,resolve,reject});return p;};
  const q=()=>{const p=defer('db');for(const k of ['select','or','order','limit','eq','contains','maybeSingle'])p[k]=()=>p;return p;};
  const box={currentLang:'ko',sb:{from:q},_YT_TABLE:'videos',_durCol:()=>'',_isShortV:()=>false,_rowTags:v=>v,_filterBannedVideos:v=>v,_pgFilterVal:v=>v,_PF_FAVHIT:()=>false,_PF_INGROUP:(v,g)=>v.group_ko===g,favGroups:new Set(),favMembers:new Set(),GROUPS:{},
- _CHART_DEFS:{a:{axes:[],ranked:true},b:{axes:[],ranked:false}},_CHART_SEL_DEFAULT:{},_CHART_AXES:{},_chartLabel:id=>'chart '+id,_feedRankSub:()=>'',_chartSongs:id=>defer('chart',id),
+ _CHART_DEFS:{a:{axes:[],ranked:true},b:{axes:[],ranked:false}},_CHART_SEL_DEFAULT:{},_CHART_AXES:{},_chartLabel:id=>'chart '+id,_chartSnapKey:()=>null,_feedRankSub:()=>'',_chartSongs:id=>defer('chart',id),
  _EVENT_SERIES:[{id:'a',ko:'event a'},{id:'b',ko:'event b'}],_eventRows:s=>defer('event',s.id),_evIsStage:()=>true,_evKind:()=> 'stage',_evEdLabel:x=>x,
  collections:[],window:{_sbSession:null},_colVidCountText:n=>String(n),console:{warn(){},error(){}},
  document:{getElementById:id=>id==='feed-list-overlay'?overlay:id==='feed-list-panel'?panel:null},isMob:()=>mobile,_feedListObserver:null,_flStageClose:()=>{},setTimeout:f=>timers.push(f),
