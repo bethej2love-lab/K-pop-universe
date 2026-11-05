@@ -40,13 +40,13 @@ for (const [show, s] of Object.entries(SHOWS)) {
   for (const y of years) {
     const raw = get(`https://en.wikipedia.org/w/index.php?title=${encodeURIComponent(`List of ${s.wiki} Chart winners (${y})`.replace(/ /g, '_'))}&action=raw&redirect=yes`);
     if (!raw || raw.length < 3000) continue;
-    let pending = 0; // rowspan으로 다음 줄까지 덮는 "No show"
+    let pending = 0; // rowspan으로 다음 줄까지 덮는 "No show" · "No Broadcast or Winner"(2026-11-05 엠카 연말까지 결방이 이 문구라 놓쳤다)
     for (const blk of raw.split(/\n\|-\s*\n/)) {
       const m = blk.match(/\{\{dts\|([A-Za-z]+) (\d{1,2})\}\}/);
       if (!m) continue;
       const mi = MONTHS.indexOf(m[1]); if (mi < 0) continue;
       const date = `${y}-${String(mi + 1).padStart(2, '0')}-${String(+m[2]).padStart(2, '0')}`;
-      if (/No show/i.test(blk)) { add(show, date, 'wiki'); const rs = blk.match(/No show[\s\S]*?$/) && (blk.match(/rowspan="(\d+)"[^\n]*No show/i) || [])[1]; pending = rs ? +rs - 1 : 0; }
+      if (/No (?:show|broadcast)/i.test(blk)) { add(show, date, 'wiki'); const rs = blk.match(/No (?:show|broadcast)[\s\S]*?$/i) &&(blk.match(/rowspan="(\d+)"[^\n]*No (?:show|broadcast)/i) || [])[1]; pending = rs ? +rs - 1 : 0; }
       else if (pending > 0 && !/\[\[|"[^"]+"/.test(blk.replace(m[0], ''))) { add(show, date, 'wiki'); pending--; }
       else pending = 0;
     }

@@ -115,8 +115,8 @@ const ALIAS = {
   'bss': '세븐틴',
   'txt': '투모로우바이투게더', 'tomorrowxtogether': '투모로우바이투게더', 'wannaone': '워너원',
 };
-const memberByEn = {};
-for (const a of arts) { if (a.name && a.name.en) memberByEn[norm(a.name.en)] = a; }
+const memberByEn = {}, memberCandsEn = {};
+for (const a of arts) { if (a.name && a.name.en) { const k = norm(a.name.en); memberByEn[k] = a; (memberCandsEn[k] = memberCandsEn[k] || []).push(a); } }
 // 위키 솔로 표기가 등록 영문명과 다른 유니버스 멤버(동명이인 없는 것만)
 // ⚠️ 동명이인 위험 낮은 것만. 박지훈(Park Ji-hoon)은 워너원 외 동명 가수 다수 → 제외(2008 수상 오매칭 실측).
 const MEMBER_ALIAS = { 'mino': '송민호', 'kimjaehwan': '김재환', 'kimjaehwanwannaone': '김재환' };
@@ -128,9 +128,20 @@ function resolveOne(enName) {
   if (ALIAS[n] !== undefined) return ALIAS[n] ? { group_ko: ALIAS[n], member_ko: null } : null;
   if (groupByEn[n]) return { group_ko: groupByEn[n], member_ko: null };
   if (MEMBER_ALIAS[n] && memberByKo[MEMBER_ALIAS[n]]) return { group_ko: '솔로', member_ko: MEMBER_ALIAS[n] };
-  const m = memberByEn[n];
+  const cands = memberCandsEn[n] || [];
+  // 영문 이름이 같은 사람이 여럿이면(Jisoo=블랙핑크 지수/러블리즈 서지수, Yena=최예나/양예나, JIN=방탄 진/러블리즈 JIN …)
+  // 예전엔 마지막 사람을 골라 오배정했다(2026-11-05 발견). 그 곡이 디스코그래피에 있는 사람이 딱 하나일 때만 고르고, 아니면 버린다.
+  const m = cands.length === 1 ? cands[0] : (() => { const hit = cands.filter(a => _hasSong(a, _curSong)); return hit.length === 1 ? hit[0] : null; })();
   if (m) return { group_ko: '솔로', member_ko: m.name.ko };
+  if (cands.length > 1) _ambiguous[enName] = (_ambiguous[enName] || 0) + 1;
   return null;
+}
+let _curSong = '';
+const _ambiguous = {};
+const _songKey = s => (s || '').toLowerCase().replace(/[^a-z0-9가-힣]/g, '');
+function _hasSong(a, song) {
+  const k = _songKey(song); if (k.length < 2) return false;
+  return (a.discography || []).some(d => [d.title, d.titleTrack, ...(d.tracks || []).map(t => t.title)].some(t => { const x = _songKey(t); return x.length >= 2 && (x.includes(k) || k.includes(x)); }));
 }
 // 수상자 없는 주(위키 표의 안내문)는 아티스트가 아니다 — 특히 "…and Winner"류가 컬래버 분리로
 // "Winner"→WINNER(위너)로 둔갑하는 것을 막는다(2026-09-04).
@@ -197,67 +208,62 @@ function parseMaster(html) {
 function parseSection(html, year) {
   const out = [];
   const rows = html.match(/<tr[^>]*>[\s\S]*?<\/tr>/g) || [];
+  const carry = { left: 0 };
   for (const r of rows) {
-    const row = parseRow(r, year);
+    const row = parseRow(r, year, carry);
     if (row) out.push(row);
   }
   return out;
 }
-function parseRow(r, year) {
+// 연속 1위(2026-11-05): 위키 표는 같은 가수가 몇 주 연속이면 가수·곡 칸을 rowspan으로 합친다. 아래 줄엔 날짜·점수만 남아
+// 예전엔 "수상자 없는 주"로 버려 연속 1위 둘째 주부터가 전부 빠졌다(인가 11.01 A2O LITE). carry로 위 줄 가수·곡을 이어 쓴다.
+function parseRow(r, year, carry) {
+  const raw = r.match(new RegExp('<t[dh][^>]*>[^]*?</t[dh]>', 'g')) || [];
   const cells = (r.match(/<t[dh][^>]*>[\s\S]*?<\/t[dh]>/g) || []).map(strip);
   const di = cells.findIndex(c => /\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}\b/.test(c));
   if (di < 0) return null;
   const dm = cells[di].match(/\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2})\b/);
   const mm = MONTHS[dm[1]], dd = +dm[2];
   const rest = cells.slice(di + 1).filter(c => c && !/^\d[\d,]*$/.test(c) && !/^\[[\d\s\]\[]*$/.test(c));
-  if (rest.length < 1) return null;
+  if (rest.length < 1) {
+    if (carry && carry.left > 0) {
+      const date = `${year}-${String(mm).padStart(2, '0')}-${String(dd).padStart(2, '0')}`, from = carry.date;
+      carry.left--; carry.date = date;
+      return { date, artist: carry.artist, song: carry.song, from }; // from = 바로 앞 주(곡명은 그 주 것을 그대로 — ingest)
+    }
+    return null;
+  }
+  // 가수 칸에 rowspan="N"이면 아래 N-1줄에 이어 쓴다
+  const firstRaw = raw.slice(di + 1).find(h => strip(h) === rest[0]) || '';
+  const rs = +((firstRaw.match(/rowspan="?([0-9]+)/) || [])[1] || 1);
   let artist = rest[0], song = '';
   const songCell = rest.find(c => /["“]/.test(c));
   if (songCell) song = songCell.replace(/["“”]/g, '').trim();
   if (rest.length >= 2 && !/["“]/.test(rest[0])) { artist = rest[0]; if (!song) song = rest[1].replace(/["“”]/g, '').trim(); }
   artist = artist.replace(/\s*\((feat|featuring|ft|with)[^)]*\)/gi, '').replace(/\s+(feat|featuring|ft)\.?\s.*$/i, '').trim();
   if (!artist) return null;
-  return { date: `${year}-${String(mm).padStart(2, '0')}-${String(dd).padStart(2, '0')}`, artist, song };
+  const date = `${year}-${String(mm).padStart(2, '0')}-${String(dd).padStart(2, '0')}`;
+  if (carry) { carry.left = rs > 1 ? rs - 1 : 0; carry.artist = artist; carry.song = song; carry.date = date; }
+  return { date, artist, song };
 }
 function parseYear(html, year) {
   if (!dominantYearOk(html, year)) return [];
-  const out = [];
-  const rows = html.match(/<tr[^>]*>[\s\S]*?<\/tr>/g) || [];
-  for (const r of rows) {
-    const cells = (r.match(/<t[dh][^>]*>[\s\S]*?<\/t[dh]>/g) || []).map(strip);
-    // 날짜 셀 찾기
-    const di = cells.findIndex(c => /\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}\b/.test(c));
-    if (di < 0) continue;
-    const dm = cells[di].match(/\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2})\b/);
-    const mm = MONTHS[dm[1]], dd = +dm[2];
-    // 아티스트·곡 = 날짜 다음 셀들. 곡은 보통 따옴표로 감싸짐.
-    const rest = cells.slice(di + 1).filter(c => c && !/^\d[\d,]*$/.test(c) && !/^\[[\d\s\]\[]*$/.test(c));
-    if (rest.length < 1) continue; // 수상자 없는 주(포인트만)
-    let artist = rest[0], song = '';
-    const songCell = rest.find(c => /["“]/.test(c));
-    if (songCell) song = songCell.replace(/["“”]/g, '').trim();
-    if (rest.length >= 2 && !/["“]/.test(rest[0])) { artist = rest[0]; if (!song) song = rest[1].replace(/["“”]/g, '').trim(); }
-    // feat/with 괄호만 제거(f(x)·(G)I-dle 같은 이름 속 괄호는 보존)
-    artist = artist.replace(/\s*\((feat|featuring|ft|with)[^)]*\)/gi, '').replace(/\s+(feat|featuring|ft)\.?\s.*$/i, '').trim();
-    if (!artist) continue;
-    const date = `${year}-${String(mm).padStart(2, '0')}-${String(dd).padStart(2, '0')}`;
-    out.push({ date, artist, song });
-  }
-  return out;
+  return parseSection(html, year); // 줄 파싱은 parseRow 하나(연속 1위 이어쓰기 포함)
 }
 
 // ── 메인 ──
 (async () => {
   // 중복제거용 기존 DB 키
   const existing = new Set();
+  const songOf = new Map(); // 그룹|멤버|방송|날짜 → 곡명 (연속 1위 둘째 주부터는 앞 주 곡명을 그대로 쓴다)
   if (DEDUP) {
     const BASE = 'https://dukgguehegnembimqvkm.supabase.co', KEY = 'sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0';
     let fromN = 0;
     while (true) {
       // 현재 DB 전체와 대조(원본 1932 + 앞서 넣은 674 그룹분 모두 정상). 솔로는 group_ko가 다 '솔로'라 member_ko까지 키에.
-      const r = await fetch(BASE + '/rest/v1/music_show_wins?select=group_ko,win_date,show,member_ko', { headers: { apikey: KEY, Authorization: 'Bearer ' + KEY, Range: `${fromN}-${fromN + 999}` } });
+      const r = await fetch(BASE + '/rest/v1/music_show_wins?select=group_ko,win_date,show,member_ko,song_title', { headers: { apikey: KEY, Authorization: 'Bearer ' + KEY, Range: `${fromN}-${fromN + 999}` } });
       const b = await r.json(); if (!Array.isArray(b) || !b.length) break;
-      b.forEach(x => existing.add(`${x.group_ko}|${x.member_ko || ''}|${x.win_date}|${x.show}`));
+      b.forEach(x => { existing.add(`${x.group_ko}|${x.member_ko || ''}|${x.win_date}|${x.show}`); if (x.song_title) songOf.set(`${x.group_ko}|${x.member_ko || ''}|${x.show}|${x.win_date}`, x.song_title); });
       if (b.length < 1000) break; fromN += 1000;
     }
     console.log(`기존 DB 키 ${existing.size}개 로드(중복제거)`);
@@ -268,6 +274,7 @@ function parseYear(html, year) {
   const ingest = (parsed, show) => {
     for (const w of parsed) {
       if (w.date.slice(0, 4) < Y0 || w.date.slice(0, 4) > Y1) continue;
+      _curSong = w.song || '';
       const results = resolveArtists(w.artist);
       if (!results.length) { unmapped[w.artist] = (unmapped[w.artist] || 0) + 1; continue; }
       for (const res of results) {
@@ -279,14 +286,18 @@ function parseYear(html, year) {
           if (w.date < deb) { unmapped['[pre-debut] ' + w.artist] = (unmapped['[pre-debut] ' + w.artist] || 0) + 1; continue; }
         }
         const dkey = `${res.group_ko}|${res.member_ko || ''}|${w.date}|${show.db}`;
+        const sk = `${res.group_ko}|${res.member_ko || ''}|${show.db}|`;
         if (existing.has(dkey)) continue;
         existing.add(dkey);
-        let song = (w.song || '').replace(/[\t†‡*]/g, ' ').replace(/\s+/g, ' ').trim() || null; // 각주(†‡)·탭 제거
+        let song = (w.song || '').replace(/[\t†‡*]/g, ' ').replace(/\s*\[\s*[a-z]\s*\]/g, '').replace(/\s+/g, ' ').trim() || null; // 각주(†‡·[ a ])·탭 제거
+        const prevSong = w.from ? songOf.get(sk + w.from) : null;
+        if (prevSong) song = prevSong; // 연속 1위 — 앞 주와 같은 곡(멜론 보정이 날짜 근접 다른 앨범을 집는 것 방지)
         // 위키 제목이 영어면 멜론 디스코그래피에서 발매일 근접 타이틀 곡으로 대체 시도
-        if (song && !_isHangul(song)) {
+        else if (song && !_isHangul(song)) {
           const melonTitle = _getMelonTitle(res.group_ko, res.member_ko, w.date);
           if (melonTitle) song = melonTitle;
         }
+        if (song) songOf.set(sk + w.date, song);
         rows.push({ show: show.db, win_date: w.date, song_title: song, group_ko: res.group_ko, member_ko: res.member_ko });
       }
     }
@@ -300,6 +311,14 @@ function parseYear(html, year) {
         if (!html || html.length < 20000) continue;
         pages++;
         ingest(parseMaster(html), show);
+      }
+      // 2021년부터는 연도별 문서가 따로 있다(마스터엔 2020까지만) — 2026-11-05까지 쇼챔·더쇼 최근 1위가 위키 경로로 한 번도
+      // 안 들어왔다(더쇼 11.03 앤더블 누락으로 발견). 연도 문서가 마스터로 넘어가는 해는 dominantYearOk가 걸러 빈 배열.
+      for (let y = Math.max(Y0, 2021); y <= Y1; y++) {
+        const html = fetchWiki(`List of ${show.wiki} Chart winners (${y})`);
+        if (!html) continue;
+        pages++;
+        ingest(parseYear(html, y), show);
       }
     } else {
       for (let y = Y0; y <= Y1; y++) {
@@ -317,6 +336,8 @@ function parseYear(html, year) {
   console.log('신규 상위:', Object.entries(byG).sort((a, b) => b[1] - a[1]).slice(0, 20).map(([g, n]) => `${g}(${n})`).join(' · '));
   const un = Object.entries(unmapped).sort((a, b) => b[1] - a[1]);
   console.log(`매핑 실패 아티스트 ${un.length}종(상위): ` + un.slice(0, 15).map(([a, n]) => `${a}(${n})`).join(', '));
+  const amb = Object.entries(_ambiguous);
+  if (amb.length) console.log(`동명 영문 이름이라 곡으로도 못 가려 뺀 것 ${amb.length}종: ` + amb.map(([a, n]) => `${a}(${n})`).join(", "));
 
   if (INSERT_MODE) {
     // Supabase REST API로 직접 upsert — ON CONFLICT DO NOTHING 역할을 resolution=ignore-duplicates가 함
