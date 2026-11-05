@@ -215,7 +215,7 @@ async function prefetchGroupVideos({ SB_URL, SB_KEY, groupKos }) {
       const g = queue.shift(); const rows = []; let last = '';
       try {
         for (let i = 0; i < 40; i++) {
-          const page = await sbGet(SB_URL, SB_KEY, `yt_channel_videos?select=id,title,view_count,members,category,published_at&group_ko=eq.${encodeURIComponent(g)}&content_flag=is.null&is_short=eq.false&order=id&limit=1000${last ? `&id=gt.${encodeURIComponent(last)}` : ''}`);
+          const page = await sbGet(SB_URL, SB_KEY, `yt_channel_videos?select=id,title,view_count,members,category,published_at&group_ko=eq.${encodeURIComponent(g)}&content_flag=is.null&is_short=eq.false&unavailable_at=is.null&order=id&limit=1000${last ? `&id=gt.${encodeURIComponent(last)}` : ''}`);
           if (!Array.isArray(page) || !page.length) break;
           rows.push(...page); last = page[page.length - 1].id;
           if (page.length < 1000) break;

@@ -1296,10 +1296,13 @@ function songLinksHtml(gko, lang) {
     </ul>`;
 }
 function buildSongPages() {
+  const shareRoutes = Object.fromEntries(Object.keys(groups).map(g => [g, {g: [], m: {}}]));
+  const memberRouteOwners = new Map();
   for (const gko of Object.keys(SONGS)) {
     const info = groups[gko]; if (!info) continue;
     const all = SONGS[gko];
     all.forEach(s => {
+      shareRoutes[gko].g.push(s.b);
       const others = all.filter(o => o.b !== s.b).slice(0, 16);
       for (const lang of ['ko', 'en']) {
         const rel = songPagePath(gko, s.b, lang);
@@ -1311,6 +1314,14 @@ function buildSongPages() {
       songPageCount++;
       // 멤버×곡 페이지(2026-10-30) — 이 곡에서 개인 직캠이 MEMBER_SONG_MIN개 이상인 멤버
       (MEMBER_SONGS_BY_SONG.get(gko + '|' + s.b) || []).forEach(ms => {
+        if (ms.a.id) {
+          const route = memberSongPagePath(ms.a, s.b, 'ko');
+          const previous = memberRouteOwners.get(route);
+          if (previous) shareRoutes[previous.gko].m[previous.id] = shareRoutes[previous.gko].m[previous.id].filter(b => b !== previous.b);
+          memberRouteOwners.set(route, {gko, id: ms.a.id, b: s.b});
+          const list = shareRoutes[gko].m[ms.a.id] || (shareRoutes[gko].m[ms.a.id] = []);
+          list.push(s.b);
+        }
         for (const lang of ['ko', 'en']) {
           const rel = memberSongPagePath(ms.a, s.b, lang);
           const dir = path.join(ROOT, rel);
@@ -1321,6 +1332,12 @@ function buildSongPages() {
         memberSongPageCount++;
       });
     });
+  }
+  const shareDir = path.join(ROOT, 'share_routes');
+  fs.mkdirSync(shareDir, {recursive: true});
+  for (const [gko, routes] of Object.entries(shareRoutes)) {
+    const key = gko.replace(/[\/\\]/g, '_').replace(/[.\s]+$/, '');
+    fs.writeFileSync(path.join(shareDir, key + '.json'), JSON.stringify(routes) + '\n');
   }
 }
 
@@ -1399,6 +1416,10 @@ function memberFaceUrl(a, gko) {
 }
 // 스타일은 저장소의 song-page.css 한 파일(페이지마다 넣으면 3만 쪽 × 5KB) — 바꾸면 SONG_CSS_V를 올릴 것
 const SONG_CSS_V = 4;
+function songShareVideo(vids) {
+  return vids.find(v => (v.category === 'live' || FANCAM_RE.test(v.title || ''))
+    && !/\bM\/?V\b|music\s*video|뮤직비디오|\bteaser\b|티저/i.test(v.title || '')) || vids[0];
+}
 function songLikePageHtml({ gko, info, s, lang, others, member }) {
   const credit = (arr) => (arr || []).map(x => Array.isArray(x) ? x[0] : x).filter(Boolean);
   const isEn = lang === 'en';
@@ -1436,7 +1457,9 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
     h1 = s.title;
     sub = `${gName}${s.isTitle ? (isEn ? ' · Title track' : ' · 타이틀곡') : ''}`;
   }
-  const ogImage = top[0] ? ytThumb(top[0].id) : ogImageForGroup(gko, info);
+  const heroImage = top[0] ? ytThumb(top[0].id) : ogImageForGroup(gko, info);
+  const preview = songShareVideo(vids);
+  const ogImage = preview ? ytThumb(preview.id) : heroImage;
   const jsonLd = ms ? {
     '@context': 'https://schema.org', '@type': 'CollectionPage', name: h1, url: selfUrl, description: desc,
     about: [{ '@type': 'Person', name: mName, url: `${SITE}/${memberPagePath(ms.a, lang)}` }, { '@type': 'MusicRecording', name: s.title, url: songUrl, byArtist: { '@type': 'MusicGroup', name: gName } }],
@@ -1497,7 +1520,7 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
 <link rel="alternate" hreflang="x-default" href="${koUrl}">
 <meta property="og:type" content="${ms ? 'website' : 'music.song'}">
 <meta property="og:site_name" content="K-POP UNIVERSE">
-<meta property="og:title" content="${escHtml(ms ? h1 : `${s.title} - ${gName}`)}">
+<meta property="og:title" content="${escHtml(title.replace(' | K-POP UNIVERSE', ''))}">
 <meta property="og:description" content="${escHtml(desc)}">
 <meta property="og:url" content="${selfUrl}">
 <meta property="og:image" content="${ogImage}">
@@ -1510,12 +1533,13 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var e=((document.querySelector('h1')||{}).textContent||'').trim();gtag('event','seo_land',{entity_name:e,page_type:'${ms ? 'member_song' : 'song'}'});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:e,page_type:'${ms ? 'member_song' : 'song'}'});});});</script>
 <script src="/seo_play.js" defer></script>
+${LIST_FWD}
 </head>
 <body>
 <div class="wrap">
   ${languageNav(isEn, altUrl)}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
-  ${top[0] ? `<a class="hero" href="https://www.youtube.com/watch?v=${top[0].id}" target="_blank" rel="noopener"><img src="${ogImage}" alt="${escHtml(top[0].title)}"><span class="play"></span><span class="hero-txt"><h1>${escHtml(h1)}</h1><span class="sub">${escHtml(sub)}</span></span></a>`
+  ${top[0] ? `<a class="hero" href="https://www.youtube.com/watch?v=${top[0].id}" target="_blank" rel="noopener"><img src="${heroImage}" alt="${escHtml(top[0].title)}"><span class="play"></span><span class="hero-txt"><h1>${escHtml(h1)}</h1><span class="sub">${escHtml(sub)}</span></span></a>`
            : `<h1>${escHtml(h1)}</h1>`}
   ${crumbs}
   ${lead ? `<p class="lead">${escHtml(lead)}</p>` : ''}
