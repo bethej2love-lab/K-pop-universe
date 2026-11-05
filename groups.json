@@ -165942,6 +165942,49 @@
   },
   "discography": [
    {
+    "title": "ETERNAL FADE",
+    "type": "미니",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/25/578/15125578_20261104142049_500.jpg",
+    "releaseDate": "2026.11.05",
+    "trackCount": 6,
+    "titleTrack": "Melt",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Footsteps",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "Melt",
+      "isTitle": true
+     },
+     {
+      "no": 3,
+      "title": "Blue",
+      "isTitle": false
+     },
+     {
+      "no": 4,
+      "title": "Glow",
+      "isTitle": false
+     },
+     {
+      "no": 5,
+      "title": "LIT IT",
+      "isTitle": true
+     },
+     {
+      "no": 6,
+      "title": "Find U",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15125578"
+   },
+   {
     "title": "H.O.W's Delight",
     "type": "싱글",
     "isMain": true,
@@ -222610,6 +222653,29 @@
   },
   "discography": [
    {
+    "title": "TiNG TiNG",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/02/321/15102321_20261105095525_500.jpg",
+    "releaseDate": "2026.11.05",
+    "trackCount": 2,
+    "titleTrack": "팅팅 (TiNG TiNG)",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "빛 (TRICKY GRLS)",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "팅팅 (TiNG TiNG)",
+      "isTitle": true
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15102321"
+   },
+   {
     "title": "We Are UNCHILD",
     "type": "싱글",
     "isMain": true,
@@ -232625,6 +232691,30 @@
    "namu": "https://namu.wiki/w/HITGS"
   },
   "discography": [
+   {
+    "title": "Things We Dream : Vol.4",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/26/104/15126104_20261104161659_500.jpg",
+    "releaseDate": "2026.11.05",
+    "trackCount": 2,
+    "titleTrack": "BRB",
+    "region": "jp",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "BRB",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "BRB (Japanese Ver.)",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15126104"
+   },
    {
     "title": "Things We Dream : Vol.3",
     "type": "싱글",
