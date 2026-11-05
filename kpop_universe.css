@@ -2422,6 +2422,11 @@
   #feed-list-hd{display:flex;align-items:flex-start;justify-content:space-between;padding:16px 18px 12px;flex-shrink:0;gap:10px;}
   #feed-list-hd-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
   #feed-list-hd-title{font-size:var(--fz-title);font-weight:600;color:rgba(220,230,255,0.9);}
+  /* Rewind 연도 넘기기(2026-11-05) — 제목 "Rewind ‹ 2019 ›". 화살표는 제목 글자 크기, 누르기 쉽게 좌우 여유 */
+  #feed-list-hd-title .rw-year{font-variant-numeric:tabular-nums;}
+  #feed-list-hd-title .rw-step{background:none;border:0;padding:2px 9px;margin:0 1px;font:inherit;line-height:1;color:rgba(170,190,240,0.85);cursor:pointer;border-radius:8px;-webkit-tap-highlight-color:transparent;}
+  #feed-list-hd-title .rw-step:active{background:rgba(255,255,255,0.08);}
+  #feed-list-hd-title .rw-step:disabled{opacity:.25;cursor:default;}
   #feed-list-sub{font-size:11px;color:rgba(155,178,228,0.61);margin-top:3px;}
   /* 콜렉션 한줄평(선택 입력) — 목록/칩처럼 좁은 자리엔 넣을 공간이 없어서 상세를 열었을 때만 보여준다
      (2026-08-12, 사용자 요청). 내 컬렉션일 때만 연필 아이콘으로 수정 가능, 남의 공개 컬렉션은 있을

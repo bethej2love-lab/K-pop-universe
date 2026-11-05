@@ -24790,12 +24790,14 @@ async function _buildFeedThisYearPicks(chartEl,discEl){
     }catch(e){/* 조용히 다음 후보 */}
   }
 }
-async function _buildFeedYearlyTop(list){
-  if(!sb)return;
+// Rewind(2026-11-05 사용자 — "임의 연도 TOP 100" 대신 이름을 Rewind로, 목록에선 ‹ 2019 › 로 연도를 넘기게).
+// 탐험을 열 때마다 연도 하나를 골라 카드로 내고(옛 기억 찾기), 목록 제목 옆 화살표로 다른 해로 넘어간다. 계산은 그해 live 조회수 순 그대로.
+const _REWIND_FROM=2004;
+const _rewindCache=new Map();
+function _rewindSongs(year){
+  if(_rewindCache.has(year))return _rewindCache.get(year);
   const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
-  const currentYear=new Date().getFullYear();
-  const year=2004+Math.floor(Math.random()*(currentYear-2004+1));
-  try{
+  const p=(async()=>{
     const{data,error}=await _applyLiveExclude(sb.from(_YT_TABLE)
       .select('id,title,thumb,category,is_short,content_flag,view_count,published_at,group_ko,members') /* group_ko·members: 차트 카드 미리보기 이름(2026-10-15) */
       .eq('category','live'))
@@ -24807,14 +24809,38 @@ async function _buildFeedYearlyTop(list){
       .or('content_flag.is.null,content_flag.neq.hidden')
       .order('view_count',{ascending:false})
       .limit(200);
-    if(error||!data?.length)return;
-    const vids=_filterBannedVideos(data).slice(0,100);
-    if(vids.length<3)return;
-    const songs=vids.map(v=>({..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
-    const label=currentLang==='ko'?`${year}년 TOP 100`:`${year} TOP 100`;
-    const top1=vids[0];
-    const sub=_feedRankSub(label,top1.view_count,currentLang==='ko'?'무대·직캠 조회수 기준':'Based on stage/fancam views');
-    _appendFeedCard(list,'🏅',label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb,undefined,list&&list.id==='feed-chart'?{preview:songs.slice(0,3),prio:6}:undefined);
+    if(error)throw error;
+    return _filterBannedVideos(data||[]).slice(0,100).map(v=>({..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
+  })();
+  _rewindCache.set(year,p);p.catch(()=>{if(_rewindCache.get(year)===p)_rewindCache.delete(year);});
+  return p;
+}
+const _rewindSub=(songs)=>songs.length?_feedRankSub('Rewind',songs[0].vc,'',true):(currentLang==='ko'?'이 해에 모인 영상이 없어요':'No videos for this year');
+async function _openRewind(year){
+  const req=++_feedListIntent;
+  let songs=[];try{songs=await _rewindSongs(year);}catch(e){}
+  if(req!==_feedListIntent)return;
+  _feedListRankedNext=true;
+  _openFeedListOverlay(`Rewind ${year}`,_rewindSub(songs),songs.map((x,i)=>({...x,rank:i+1}))); // 순위 번호 — 다른 차트와 같게
+  // 제목 옆 연도 넘기기 — "Rewind ‹ 2019 ›"
+  const t=document.getElementById('feed-list-hd-title');if(!t)return;
+  const now=new Date().getFullYear(),ko=currentLang==='ko';
+  t.textContent='Rewind ';
+  const mk=(dir,txt,label)=>{const b=document.createElement('button');b.type='button';b.className='rw-step';b.textContent=txt;b.setAttribute('aria-label',label);
+    const ny=year+dir;b.disabled=ny<_REWIND_FROM||ny>now;
+    b.addEventListener('click',e=>{e.stopPropagation();if(!b.disabled)_openRewind(ny);});return b;};
+  const y=document.createElement('span');y.className='rw-year';y.textContent=year;
+  t.append(mk(-1,'‹',ko?'이전 해':'Previous year'),y,mk(1,'›',ko?'다음 해':'Next year'));
+}
+async function _buildFeedYearlyTop(list){
+  if(!sb)return;
+  const currentYear=new Date().getFullYear();
+  const year=_REWIND_FROM+Math.floor(Math.random()*(currentYear-_REWIND_FROM+1));
+  try{
+    const songs=await _rewindSongs(year);
+    if(songs.length<3)return;
+    const label=`Rewind ${year}`;
+    _appendFeedCard(list,'⏪',label,_rewindSub(songs),()=>_openRewind(year),songs[0].thumb,undefined,list&&list.id==='feed-chart'?{preview:songs.slice(0,3),prio:6}:undefined);
   }catch(e){/* 조용히 무시 */}
 }
 // 케이팝 레전드 100은 2026-11-05 뺐다(사용자) — 퍼포먼스 차트 '역대'와 거의 같은 목록이었다.
