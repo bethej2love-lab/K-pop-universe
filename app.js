@@ -23386,6 +23386,9 @@ function _igRenderRail(list,photos){
   photos.forEach(m=>{
     const cap1=String(m.cap||'').split('\n').map(x=>x.trim()).find(Boolean)||''; // 본문 첫 줄
     const card=_appendFeedCard(list,'📷',m.owner.name,'',()=>_openIgViewer(m,m.h,0),m.u,null,{meta:_igAgo(m.t)});
+    // 이름 옆 흐린 @계정 — 카드 인스타 줄(_igCaption)과 같은 표기(2026-11-05 사용자 "카드엔 있는데 발견 탭엔 없다, 발견 탭이 더 필요")
+    const tt=card&&card.querySelector('.feed-card-title');
+    if(tt&&m.h){const hs=document.createElement('span');hs.className='ig-cap-h';hs.textContent='@'+m.h;tt.appendChild(hs);}
     if(cap1&&card){const c=document.createElement('div');c.className='feed-card-sub ig-cap1';c.textContent=cap1;card.querySelector('.feed-card-title')?.after(c);}
     const img=card&&card.querySelector('img');
     if(img)img.addEventListener('error',()=>card.remove()); // 만료된 인스타 주소면 그 카드만 뺀다

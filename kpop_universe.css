@@ -1598,6 +1598,7 @@
   .ig-cap>div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .ig-cap-who{font-size:12.5px;font-weight:600;color:rgba(232,240,255,0.92);}
   .ig-cap-h{margin-left:5px;font-size:11px;font-weight:400;color:rgba(150,175,222,0.55);}
+  .feed-card-title .ig-cap-h{font-size:.88em;} /* 발견·For You 인스타 칸 이름 옆 @계정(2026-11-05) — 카드와 같은 흐린 표기 */
   .ig-cap-txt{margin-top:1px;font-size:11.5px;color:rgba(200,212,240,0.75);}
   .ig-cap-ago{margin-top:1px;font-size:10.5px;color:rgba(150,175,222,0.55);}
   /* 여러 장 막대 줄(X 스타일, 2026-10-22) — 앞 장 위쪽 가로로, 첫 막대만 밝게 */
