@@ -9,13 +9,14 @@
 // 실행: node tests/phone-landscape.test.js
 const fs=require('fs'),path=require('path'),http=require('http'),os=require('os');const{spawn}=require('child_process');
 const ROOT=path.join(__dirname,'..');
+const fullscreenTouch=require('./fixtures/lb_fullscreen_touch.cjs');
 const {waitForBrowserCdp}=require('../tools/browser_test_runtime.cjs');
 const PORT=8994,CDP_PORT=9394;
 const BROWSER=['C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe','C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe','C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe','/Applications/Google Chrome.app/Contents/MacOS/Google Chrome','/usr/bin/google-chrome','/usr/bin/chromium-browser','/usr/bin/chromium'].find(p=>fs.existsSync(p));
 const MIME={'.html':'text/html','.js':'text/javascript','.json':'application/json','.css':'text/css','.png':'image/png','.svg':'image/svg+xml'};
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 let pass=0,fail=0;const ok=m=>{pass++;console.log('✅ '+m)},bad=m=>{fail++;console.log('❌ '+m)};
-const server=http.createServer((req,res)=>{const p=decodeURIComponent(req.url.split('?')[0]);const f=path.join(ROOT,p==='/'?'index.html':p);
+const server=http.createServer((req,res)=>{if(fullscreenTouch.serve(req,res,ROOT,PORT))return;const p=decodeURIComponent(req.url.split('?')[0]);const f=path.join(ROOT,p==='/'?'index.html':p);
   if(!fs.existsSync(f)||fs.statSync(f).isDirectory()){res.writeHead(404);res.end();return;}res.writeHead(200,{'Content-Type':MIME[path.extname(f)]||'application/octet-stream'});fs.createReadStream(f).pipe(res);});
 function conn(url){return new Promise((res,rej)=>{const ws=new WebSocket(url);let id=0;const w=new Map();
   ws.addEventListener('open',()=>res({send:(m,p)=>new Promise((a,b)=>{const i=++id;w.set(i,{a,b});ws.send(JSON.stringify({id:i,method:m,params:p}));}),close:()=>ws.close()}));
@@ -40,6 +41,8 @@ async function setup(c,W,H){
     await waitForBrowserCdp(proc,CDP_PORT);
     const{webSocketDebuggerUrl}=await (await fetch(`http://127.0.0.1:${CDP_PORT}/json/new?about:blank`,{method:'PUT'})).json();
     const c=await conn(webSocketDebuggerUrl);await c.send('Page.enable');await c.send('Runtime.enable');
+    for(const r of await fullscreenTouch.check(c,ev,PORT))r.ok?ok(r.name):bad(r.name+' '+JSON.stringify(r));
+    if(process.argv.includes('--fullscreen-only')){c.close();return;}
     // ── 가로 ──
     await setup(c,844,390);
     ok(`가로 — 폰 판정 isMob()=${await ev(c,'isMob()')}`);if(!(await ev(c,'isMob()'))){pass--;bad('가로인데 isMob() 거짓');}
