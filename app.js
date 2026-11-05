@@ -8329,6 +8329,7 @@ function openMobSheet(cardEl){
     // 기본을 100%(bs-full)로 열어서 카드 콘텐츠에 몰입하게 하되, 아래로 끌면 60%로 줄이거나
     // 닫는 기존 스와이프 제스처(_wireSheetSwipe)는 그대로 남겨서 우주 뷰로 돌아가는 길을 열어둔다.
     _sheetFull=true;
+    try{updateSheetBottom();}catch(e){} // 꽉 찬 높이를 열 때마다 다시 잰다(굳은 높이로 열리지 않게, 2026-11-05)
     _cardStack=[{type,data,viaConn}];
     _placeInContainer(cardEl,mobSheetInner);
     mobCardStackEl.style.display='none';mobCardStackEl.classList.remove('bs-open');
@@ -9976,6 +9977,11 @@ function _wireSheetSwipe(sheetEl,innerEl,onDismiss,syncEl,sensFn){
       _sheetFull=true;
       sheetEl.style.transform='';
       sheetEl.classList.add('bs-full');try{_tlog('끌어서펼침',1);}catch(e){}
+    }else if(_sheetFull&&dy<-60*_sens&&innerEl.scrollTop<=0){
+      // 이미 꽉 찬 상태인데 위로 끌었다 = 화면상 덜 펴져 보인다는 뜻 — 높이를 다시 재서 복구(2026-11-05 고착 사례)
+      sheetEl.style.transform='';if(syncEl)syncEl.style.transform='';
+      try{updateSheetBottom();}catch(e){}
+      sheetEl.classList.add('bs-full');
     }else if(_sheetFull&&dy>0&&innerEl.scrollTop<=0){
       if(dy>150*_sens){
         onDismiss();
@@ -15679,12 +15685,17 @@ let _tabbarOff=false; // 지금 탭바가 숨겨져 있어서 시트가 그 자�
 // .tab-hidden(translateY(110%))인 동안 재측정하면 화면 밖 좌표가 잡혀 높이가 0 근처로 망가진다
 // (iOS는 주소창 접힘/펼침 때 resize가 수시로 발화하므로 실제로 그 타이밍에 걸림). 레이아웃 높이인
 // offsetHeight + CSS bottom 오프셋으로 재는 게 transform과 무관해서 안전하다.
+// 꽉 찬 카드 높이(--mob-vh) — 예전엔 visualViewport.height를 그대로 썼는데, 이 값은 키보드가 올라와 있거나 화면이
+// 살짝 확대된 동안 작아진다. 그때 한 번 재고 나면 웹앱은 resize가 거의 안 나 다시 잴 계기가 없어서, 카드가 "꽉 참" 상태인데
+// 높이만 짧게 굳었다(2026-11-05 사용자 캡처: 카드가 화면 중간에서 시작, 위로 당겨도 안 펴짐 — 이미 꽉 참이라 제스처가 무시).
+// innerHeight(레이아웃 높이)는 iOS에서 키보드·확대에 안 줄어든다. 둘 중 큰 값을 쓴다.
+function _layoutVh(){const v=window.visualViewport;return Math.round(Math.max(window.innerHeight||0,v?v.height*(v.scale||1):0));}
 function updateSheetBottom(){
   if(!isMob())return;
   const tb=document.getElementById('tabbar');if(!tb)return;
   const off=parseFloat(getComputedStyle(tb).bottom)||0; // 검색 모드(bottom:4px) 같은 띄움 보정
   _tabbarH=Math.round(tb.offsetHeight+off);
-  document.documentElement.style.setProperty('--mob-vh',(window.visualViewport?.height??window.innerHeight)+'px');
+  document.documentElement.style.setProperty('--mob-vh',_layoutVh()+'px');
   _applySheetMetrics();
   _ensureTabbarIfUnscrollable(); // 회전/뷰포트 변화로 카드가 더는 안 스크롤되게 됐으면 탭바 복구
 }
@@ -15743,6 +15754,13 @@ function exitMobSearch(){
 }
 window.addEventListener('resize',updateSheetBottom);
 requestAnimationFrame(updateSheetBottom);
+// 웹앱은 resize가 거의 안 나므로 다시 잴 계기를 더 둔다 — 키보드가 내려간 뒤(입력칸 포커스 해제), 화면 영역 변화
+// (키보드·확대), 영상 전체화면에서 돌아온 뒤. 값이 같으면 CSS 변수만 같은 값으로 다시 쓰므로 부담 없음.
+{let _vhT=0;const _vhLater=ms=>{clearTimeout(_vhT);_vhT=setTimeout(updateSheetBottom,ms);};
+  document.addEventListener('focusout',()=>_vhLater(400));
+  window.visualViewport&&window.visualViewport.addEventListener('resize',()=>_vhLater(250));
+  document.addEventListener('webkitendfullscreen',()=>_vhLater(500),true);
+  document.addEventListener('fullscreenchange',()=>_vhLater(500));}
 // 탭바가 숨겨질 때 시트가 그 자리까지 내려오고 안쪽 콘텐츠도 같이 늘어나야 하는데, 예전엔 여기서
 // 시트 3개에 인라인 min/max-height·bottom을 직접 박았다. 그 값이 "호출 시점의 bs-full 여부" 기준이라
 // 나중에 열리는 카드가 옛 값에 갇혔음(자세한 건 kpop_universe.css의 #mob-sheet 주석). 지금은 변수
