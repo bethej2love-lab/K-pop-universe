@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-11-05 (Codex — iPad Safari 영상 복귀 후 빈 화면 조사)
+- **[조사중·원인 미확정/런타임 미변경]** 사용자 신고: iPad에서 영상 시청 후 Safari로 돌아오면 빈 화면,새로고침도 무반응. 전체화면 종료/YouTube 앱 전환/다른 탭 복귀 중 어떤 경로인지와 주소창까지 비는지 확인을 요청했다. 실기기 재현/오류 로그 없이 직전 전체화면 수정이나 Safari 자체 문제로 단정하지 않는다.
+- **[확인] [공개 파일·app.js]** 공개 루트 HTML·CSS?v=20261105-a1194aa5·app.js?v=20261105-4cfb025a 모두HTTP200. 이는 이 확인 환경의 파일 응답만 보장하며 iPad 캐시/실행 성공을 뜻하지 않는다. pageshow/visibilitychange는 기존 뷰포트 보정,fullscreenchange/webkitendfullscreen은 시트 높이 재측정만 수행한다. 초기 THREE.WebGLRenderer 생성 예외는 buildUniverse의 catch보다 앞이라 기존 로드 실패 UI로 처리되지 않는 잠재 경로가 있지만,이번 기기 증상이 WebGL 손실이라는 근거는 아직 없다. 저장소 삭제·서비스워커 전체 해제·자동 새로고침 루프·임의 렌더러 재생성은 하지 않았다.
+- **⏳ 다음 확인** 사용자 복귀 경로/빈 화면 범위/iPadOS·Safari 버전 확보 후 같은 영상으로 세로·가로 전체화면 종료와 앱/탭 왕복을 분리 재현. 가능하면 Web Inspector의 예외·webglcontextlost/restored·pageshow.persisted·화면 치수와 RAF/캔버스 가시성을 함께 관찰. WebGL 생성/복원 실패를 별도 주입한 검사는 실제 iPad 증상 재현으로 집계하지 말 것. 직전 pointer:coarse 캡 해제는 iPad에도 적용되므로 필요 시 원래 상위 iframe 전체화면 경로와 네이티브 영상 경로를 한 기기에서 대조하고,확인 전 전체 사용자에게 되돌리지 않는다. [WebKit의 유사 그래픽 손실 보고](https://bugs.webkit.org/show_bug.cgi?id=289601)는 참고 사례일 뿐 이 프로젝트의 원인 증거가 아니다.
+
 ## 2026-11-05 (Codex — 휴대폰 세로/가로 유튜브 전체화면 터치)
 - **[완료·main/배포 확인] [PR96·GitHub Pages]** 최종486208d97e의 Node+브라우저13종 전부 첫 실행success 후main5280dd6907 병합. 자동 캐시 갱신f67562ee41의 Pages42015336761 success. 11:04UTC 일반 공개 루트의 `kpop_universe.css?v=20261105-a1194aa5` HTTP200,모바일 캡 비활성 규칙 존재 및 검증한 CSS 전체 본문과SHA256 일치 확인. 아래 브랜치 검증/착수 기록의 배포 대기는 완료됐다. 이미 열려 있던 화면은 새로고침해야 새 스타일이 적용된다.
 - **[완료·브랜치 검증] [kpop_universe.css]** 터치 주 입력(pointer:coarse)에서만56px 투명 전체화면 캡을 숨겨 교차 출처 플레이어의 보이는 버튼이 직접 첫 터치를 받게 했다. 화면 회전과 무관하게 적용하며 데스크톱의 기존 전체화면 우회·상단 닫기 드래그·배속 터치 영역은 그대로다. iframe 요소 전체화면 API가 없는 조건에서 기존 캡은 터치를 소비하고 아무 동작도 하지 않는 경로를 재현했다. 런타임 변경은 CSS3줄이며 API/재생/저장 로직 변경 없음.
