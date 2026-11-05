@@ -10,6 +10,7 @@
 const fs=require('fs'),path=require('path'),http=require('http'),os=require('os');const{spawn}=require('child_process');
 const ROOT=path.join(__dirname,'..');
 const fullscreenTouch=require('./fixtures/lb_fullscreen_touch.cjs');
+const graphicsBootFailure=require('./fixtures/graphics_boot_failure.cjs');
 const {waitForBrowserCdp}=require('../tools/browser_test_runtime.cjs');
 const PORT=8994,CDP_PORT=9394;
 const BROWSER=['C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe','C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe','C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe','/Applications/Google Chrome.app/Contents/MacOS/Google Chrome','/usr/bin/google-chrome','/usr/bin/chromium-browser','/usr/bin/chromium'].find(p=>fs.existsSync(p));
@@ -41,6 +42,7 @@ async function setup(c,W,H){
     await waitForBrowserCdp(proc,CDP_PORT);
     const{webSocketDebuggerUrl}=await (await fetch(`http://127.0.0.1:${CDP_PORT}/json/new?about:blank`,{method:'PUT'})).json();
     const c=await conn(webSocketDebuggerUrl);await c.send('Page.enable');await c.send('Runtime.enable');
+    if(!process.argv.includes('--fullscreen-only'))for(const r of await graphicsBootFailure(c,ev,PORT))r.ok?ok(r.name):bad(r.name+' '+JSON.stringify(r));
     for(const r of await fullscreenTouch.check(c,ev,PORT))r.ok?ok(r.name):bad(r.name+' '+JSON.stringify(r));
     if(process.argv.includes('--fullscreen-only')){c.close();return;}
     // ── 가로 ──
