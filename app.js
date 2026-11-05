@@ -83,7 +83,29 @@ const camera=new THREE.PerspectiveCamera(60,W/H,0.1,1000);
 // 홈 화면 = 최대 줌아웃(flyHome()이 날아가는 지점, controls.maxDistance)과 동일한 위치로 시작
 camera.position.copy(new THREE.Vector3(0,8,155).normalize().multiplyScalar(UNIVERSE_MAX_DIST));
 
-const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+function _createUniverseRenderer(){
+  try{
+    const r=new THREE.WebGLRenderer({antialias:true,alpha:true});
+    if(r.getContext().isContextLost()){r.dispose();throw new Error('WebGL context unavailable at startup');}
+    return r;
+  }catch(error){
+    // 그래픽 초기화는 buildUniverse의 catch보다 앞이다. 여기서 실패해도 빈 화면으로 숨기지 않는다.
+    document.documentElement.classList.remove('booting','chrome-wait');
+    const el=document.getElementById('loading');
+    if(el){
+      let lang;try{lang=localStorage.getItem('kpu_lang');}catch(_){}
+      const ko=lang==='ko'||(!lang&&(navigator.language||'').toLowerCase().startsWith('ko'));
+      el.classList.add('loading-error');el.innerHTML='';
+      Object.assign(el.style,{display:'flex',visibility:'visible',opacity:'1',animation:'none',transition:'none'});
+      const msg=document.createElement('div');
+      msg.textContent=ko?'화면을 준비하지 못했어요. 다시 시도해도 같으면 브라우저 앱을 완전히 종료한 뒤 다시 열어주세요.':'The display could not be started. If retrying does not help, close the browser app completely and reopen it.';
+      const btn=document.createElement('button');btn.className='uc-btn uc-btn-primary';btn.type='button';btn.textContent=ko?'다시 시도':'Retry';
+      btn.addEventListener('click',()=>location.reload());el.appendChild(msg);el.appendChild(btn);
+    }
+    throw error;
+  }
+}
+const renderer=_createUniverseRenderer();
 renderer.setSize(W,H);
 // 모바일 발열의 최대 원인은 픽셀비 — 아이폰은 devicePixelRatio가 3이라, 기본 캡 2.0이면 프레임당 채우는
 // 픽셀이 어마어마하다(제보: 영상·탐험 중 발열 심함). setPixelRatio는 3D 캔버스에만 적용되므로 낮춰도
