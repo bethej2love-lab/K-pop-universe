@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-11-06 (Codex — 누적 검수 미실행 항목 일괄 정정)
+- **[진행중] [groups.json·artists.json·app.js·shared.js·build_group_pages.js·tools/seo_extra.js·sql/]** 사용자: Claude 작업 중단 상태에서 누적 검수 메모 실행까지 전담 요청. 207~245차/이후 인수인계와 최신 main을 대조해 이미 적용한 영상/15앨범은 재실행하지 않고,남은 발매본 혼합·소개 인원/활동중단·크레딧 집계·합류일 소비·확정 오태깅을 순차 실행한다. 항목별 근거·정정·검증·판단 불가 사유를 별도 목록에 유지하고 관련 SEO는 입력 변경을 모은 뒤 한 번만 재생성한다. iPad 실기기 미확정 증상은 추측 수정하지 않음.
+
 ## 2026-11-06 (Codex — 남은 투피엠 오귀속 검수 실행)
 - **[완료] [yt_channel_videos·sql/codex_attribution_2026-11-06*.sql]** 공식 Mnet/MBC4영상: bDpWUAvDfnI·8vabGtI72xE는 갓세븐/JAY B(a0598),z1eFI6wSr4U는 브라운아이드걸스/가인(a0981),X3nUZxdnwtU는 원어스/레이븐(a0435)으로 2PM 오귀속 정정. 레이븐의 2019커버는 탈퇴 전 원어스 활동이고 박재범은 원곡자이므로 cover_of_members=['박재범(2PM)']만 추가(기존 신원 키를 재사용,cover_of_groups=2PM 추가 아님). Feat.표기만으로 박재범의 실제 동반 출연을 추정하지 않아 with_*는 유지.
 - **[완료] [yt_channel_videos·sql/codex_namesake_2026-11-06*.sql]** KaWiUJigSbM·QIQl3MrERw0: 공식 MBC WORLD/KBS 제목의 격투기 선수 정찬성은 2PM 찬성이 아님. 영상에 명시된 박재범의 솔로 키 group_ko=박재범/members=[박재범]으로 한정 재귀속. 정찬성을 새 아이돌/친분/게스트로 등록하지 않고 기존 with_*/원곡 칸 유지.
