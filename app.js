@@ -24752,11 +24752,8 @@ const _FEED_THIS_YEAR_POOL=[
    subKo:'올해 올라온 커버',subEn:'Covers uploaded this year',
    pick:vids=>_capByGroup(vids.filter(v=>(v.cover_of_groups||[]).length||(v.cover_of_members||[]).length),v=>v.group_ko,2).slice(0,30),
    cat:null,cover:true},
-  {key:'half',icon:'🗓️',ko:y=>`${y}년 ${_thisYearHalf()===1?'상반기':'하반기'} TOP 30`,en:y=>`${y} H${_thisYearHalf()} TOP 30`,
-   subKo:'반기별 조회수 기준',subEn:'Top viewed this half',
-   pick:vids=>_capByGroup(vids,v=>v.group_ko,2).slice(0,30),cat:'live',half:true},
+  // 상·하반기 TOP 30은 2026-11-05 뺐다(사용자) — 퍼포먼스 차트 1달·1년과 겹치고, 한 시간마다 상/하반기가 바뀌어 차트로서 믿음이 안 갔다.
 ];
-function _thisYearHalf(){return (Math.floor(Date.now()/3600000)%2)?1:2;} // 시간대별로 상/하반기 번갈아
 async function _buildFeedThisYearPicks(chartEl,discEl){
   if(!sb)return;
   const y=new Date().getFullYear();
@@ -24766,9 +24763,7 @@ async function _buildFeedThisYearPicks(chartEl,discEl){
   for(const opt of pool){
     if(made>=2)break;
     try{
-      const half=opt.half?_thisYearHalf():null;
-      const from=half===2?`${y}-07-01`:`${y}-01-01`;
-      const to=half===1?`${y}-07-01`:`${y+1}-01-01`;
+      const from=`${y}-01-01`,to=`${y+1}-01-01`;
       let q=sb.from(_YT_TABLE)
         .select('id,title,thumb,category,is_short,content_flag,group_ko,members,cover_of_groups,cover_of_members,view_count,published_at'+_durCol());
       if(opt.cat)q=_applyLiveExclude(q.eq('category',opt.cat));
@@ -24822,33 +24817,7 @@ async function _buildFeedYearlyTop(list){
     _appendFeedCard(list,'🏅',label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb,undefined,list&&list.id==='feed-chart'?{preview:songs.slice(0,3),prio:6}:undefined);
   }catch(e){/* 조용히 무시 */}
 }
-// 레전드 100 — 위 연도별 TOP 100과 같은 구조인데 연도 제한이 없는 전체 기간(역대) 조회수 기준
-// (2026-08-19, 사용자 요청). 매번 같은 결과라 무한스크롤 반복 풀(_FEED_MORE_RANDOM_FNS)에는 안 넣고
-// 패널 열 때 한 번만(3분 TTL) 뽑히는 초기 카드로만 둔다 — 반복 호출해도 새로울 게 없어서.
-async function _buildFeedLegend100(list){
-  if(!sb)return;
-  const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
-  try{
-    const{data,error}=await _applyLiveExclude(sb.from(_YT_TABLE)
-      .select('id,title,thumb,category,is_short,content_flag,view_count,published_at,group_ko,members') /* group_ko·members: 차트 카드 미리보기 이름(2026-10-15) */
-      .eq('category','live'))
-      .not('view_count','is',null)
-      .or('content_flag.is.null,content_flag.neq.기타')
-      .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
-      .or('content_flag.is.null,content_flag.neq.hidden')
-      .order('view_count',{ascending:false})
-      .limit(200);
-    if(error){console.warn('[feed] 레전드 100 조회 실패 — 카드만 빠집니다(역대 조회수 정렬: category,view_count 인덱스 필요)',error.message);return;}
-    if(!data?.length)return;
-    const vids=_filterBannedVideos(data).slice(0,100);
-    if(vids.length<3)return;
-    const songs=vids.map(v=>({..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
-    const label=currentLang==='ko'?'케이팝 레전드 100':'K-pop Legend 100';
-    const top1=vids[0];
-    const sub=_feedRankSub(label,top1.view_count,currentLang==='ko'?'무대·직캠 역대 조회수 기준':'Based on all-time stage/fancam views',true);
-    _appendFeedCard(list,'👑',label,sub,()=>_openFeedListOverlay(label,sub,songs),top1.thumb,undefined,list&&list.id==='feed-chart'?{preview:songs.slice(0,3),prio:8}:undefined);
-  }catch(e){console.warn('[feed] 레전드 100 실패 — 카드만 빠집니다',e);}
-}
+// 케이팝 레전드 100은 2026-11-05 뺐다(사용자) — 퍼포먼스 차트 '역대'와 거의 같은 목록이었다.
 // 역대 개인(멤버 단독) 직캠 TOP 100 계열(2026-08-19, 사용자 요청) — "개인" 용어는 기존 "주간 개인
 // 직캠 TOP 20"(_buildFeedWeeklyTopCams)에서 이미 쓰던 표현을 그대로 통일해서 재사용(사용자가 "개인"/
 // "멤버" 중 뭐가 나을지 물어봐서, 새로 고민하기보다 기존에 이미 정착된 용어를 계속 쓰는 쪽으로 결정).
@@ -26620,7 +26589,6 @@ function _buildFeedDisc(){
   _feedEnqueue(()=>_buildFeedWeeklyTopCams(chart,list));
   _feedEnqueue(()=>_buildFeedThisYearPicks(chart,list)); // 올해 한정 — TOP은 Charts(chart), 모음은 Discovery(list)로 라우팅
   _feedEnqueue(()=>_buildFeedYearlyTop(chart));
-  _feedEnqueue(()=>_buildFeedLegend100(chart));
   // 차트 통합(2026-11-05) — 직캠·퍼포먼스·MV는 한 장씩. 기간(1주·1달·1년·역대)·성별은 차트 안 세그먼트로 고른다.
   // 처음 여는 기간: 직캠 1주(예전 주간 직캠 TOP 20 자리), 퍼포먼스 1달(월간 TOP 30 자리), MV 1달(신곡 MV).
   _feedEnqueue(()=>_buildChartCard(chart,'soloCam',{era:'w'}));
