@@ -1,6 +1,7 @@
 # CHANGELOG
 
 ## 2026-11-05 (Codex — iPad Safari 영상 복귀 후 빈 화면 조사)
+- **[진행중·확정 경로 한정] [app.js 그래픽 부팅 가드]** 사용자 답: YouTube 앱→Safari 앱 전환,주소창은 보이며 원래 kpop-universe.kr 탭의 내용만 빈 화면. Chrome1024×1366에서 WebGL 사용 불가를 주입한 재로드는 실제로 booting/chrome-wait가 남고 로더 opacity0·renderer 초기화 ReferenceError로 안내 없이 중단됨을 확인했다. 이 확정된 부팅 실패 경로에 보이는 복구 안내/사용자 재시도만 추가한다. 최초 iPad 복귀 실패 원인/전체 해결로 주장하지 않으며,Chrome frozen/active 실험은 active 뒤에도 document.hidden이어서 정상 전경 복귀 검증으로 세지 않는다. 저장소/기록 삭제나 자동 재로딩/렌더러 재생성은 하지 않는다.
 - **[조사중·원인 미확정/런타임 미변경]** 사용자 신고: iPad에서 영상 시청 후 Safari로 돌아오면 빈 화면,새로고침도 무반응. 전체화면 종료/YouTube 앱 전환/다른 탭 복귀 중 어떤 경로인지와 주소창까지 비는지 확인을 요청했다. 실기기 재현/오류 로그 없이 직전 전체화면 수정이나 Safari 자체 문제로 단정하지 않는다.
 - **[확인] [공개 파일·app.js]** 공개 루트 HTML·CSS?v=20261105-a1194aa5·app.js?v=20261105-4cfb025a 모두HTTP200. 이는 이 확인 환경의 파일 응답만 보장하며 iPad 캐시/실행 성공을 뜻하지 않는다. pageshow/visibilitychange는 기존 뷰포트 보정,fullscreenchange/webkitendfullscreen은 시트 높이 재측정만 수행한다. 초기 THREE.WebGLRenderer 생성 예외는 buildUniverse의 catch보다 앞이라 기존 로드 실패 UI로 처리되지 않는 잠재 경로가 있지만,이번 기기 증상이 WebGL 손실이라는 근거는 아직 없다. 저장소 삭제·서비스워커 전체 해제·자동 새로고침 루프·임의 렌더러 재생성은 하지 않았다.
 - **⏳ 다음 확인** 사용자 복귀 경로/빈 화면 범위/iPadOS·Safari 버전 확보 후 같은 영상으로 세로·가로 전체화면 종료와 앱/탭 왕복을 분리 재현. 가능하면 Web Inspector의 예외·webglcontextlost/restored·pageshow.persisted·화면 치수와 RAF/캔버스 가시성을 함께 관찰. WebGL 생성/복원 실패를 별도 주입한 검사는 실제 iPad 증상 재현으로 집계하지 말 것. 직전 pointer:coarse 캡 해제는 iPad에도 적용되므로 필요 시 원래 상위 iframe 전체화면 경로와 네이티브 영상 경로를 한 기기에서 대조하고,확인 전 전체 사용자에게 되돌리지 않는다. [WebKit의 유사 그래픽 손실 보고](https://bugs.webkit.org/show_bug.cgi?id=289601)는 참고 사례일 뿐 이 프로젝트의 원인 증거가 아니다.
