@@ -59,7 +59,7 @@ const WAIT_GRID=sel=>`(async()=>{const S=ms=>new Promise(r=>setTimeout(r,ms));fo
     if(sent.url&&/&vf=short/.test(sent.url.u)&&/&vs=popular/.test(sent.url.u))ok('공유 링크에 탭·정렬이 실림: '+decodeURIComponent(sent.url.u.replace(/^https?:\/\/[^/]+\//,'')));else bad('공유 링크 '+JSON.stringify(sent.url));
     if(sent.hasItem&&sent.url&&sent.url.u.includes('&vk='))ok('곡 키도 실림 ('+sent.song.label+')');else bad('곡 시트 항목/곡 키 '+JSON.stringify(sent));
     if(sent.url&&sent.url.k==='list'&&/성현/.test(sent.url.t))ok('공유 제목: '+sent.url.t);else bad('공유 제목/종류 '+JSON.stringify(sent.url));
-    if(sent.url&&/\/s\/[^/]+\/#/.test(sent.url.u)&&sent.url.text?.includes(sent.song.label)&&/모음/.test(sent.url.text))ok('곡별 미리보기 주소·모음 텍스트');else bad('곡별 주소/텍스트 '+JSON.stringify(sent.url));
+    if(sent.url&&/\/s\/[^/]+\/#/.test(sent.url.u)&&sent.url.text?.includes(sent.song.label)&&/모음|fancams & stages/i.test(sent.url.text))ok('곡별 미리보기 주소·모음 텍스트');else bad('곡별 주소/텍스트 '+JSON.stringify(sent.url));
     // ② 받는 쪽
     if(sent.url){
       // 공유 주소는 멤버 정적 페이지 + #…(2026-11-02 — 블로그·메신저 미리보기에 그 사람 썸네일이 뜨게)
@@ -94,7 +94,7 @@ const WAIT_GRID=sel=>`(async()=>{const S=ms=>new Promise(r=>setTimeout(r,ms));fo
     await open(c,'#g=클로즈유어아이즈&vf=all&vk=클로즈유어아이즈:snowysummer&vkl=Snowy%20Summer');
     await ev(c,WAIT_GRID('#gc-ch-vid'));
     const snowy=await ev(c,`(async()=>{const cont=document.getElementById('gc-ch-vid');for(let i=0;i<40&&cont.querySelector('.gc-ch-share-item')?.disabled;i++)await new Promise(r=>setTimeout(r,150));let result=null;const orig=window._shareCurrentView;window._shareCurrentView=(u,t,k,text)=>{result={u,t,text};};cont.querySelector('.gc-ch-share-item')?.click();window._shareCurrentView=orig;return result;})()`);
-    if(snowy&&/\/s\/snowysummer\/#/.test(snowy.u)&&/Snowy Summer.*모음/.test(snowy.t)&&snowy.text===snowy.t)ok('Snowy Summer: 곡 주소·제목·설명');else bad('Snowy Summer 공유 '+JSON.stringify(snowy));
+    if(snowy&&/\/s\/snowysummer\/#/.test(snowy.u)&&/Snowy Summer.*(모음|fancams & stages)/i.test(snowy.t)&&snowy.text===snowy.t)ok('Snowy Summer: 곡 주소·제목·설명');else bad('Snowy Summer 공유 '+JSON.stringify(snowy));
     c.close();
   }catch(e){bad('예외: '+e.message);}
   finally{try{proc.kill();}catch(e){}server.close();}
