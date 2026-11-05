@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-11-05 (Codex — 검수247차·공식 대조7앨범 한정 정정)
+- **[완료] [groups.json·disco/g/·tracks_index.json]** 검수230차 언어판 음원ID4행 정정: WayV VisionWings602739386/KickBack33340659,브브걸SummerQueen33589260,TWICEFormulaOfLove 한국어CDOnly34254837. 정상 다른 언어판/수록곡/순서 보존.
+- **[완료] [groups.json]** 검수209/237/238차 SecretFlavor ICECREAM,We made GimmeDatLove,ALD1 김부장OST GO!GO!의 누락 타이틀3행과 titleTrack 반영. SecretFlavor 공식 EP는 미니로 통일(번호 추정 없음). 원본1칸 들여쓰기 유지, 삭제/추가된 트랙0.
+- **[완료] [audit-materials/album-fix-2026-11-05/]** 원본7앨범/변경내역/기존 공식 목록 근거 저장. slim 빌더 재생성43851트랙 유지. 문법/데이터무결성 오류0(기존경고149)/파생물 정합성/데스크톱+390px 신규 모바일 스모크 모두 통과. 앱 코드/아티스트명/그룹상태/캐시버스터 변경 없음.
+- **⏳ 덜 된 일** We made CD전용1곡은 판본 정책 확인 후 별도 추가 판단. 전체 목록 오염8앨범/합류일·활동중단/매처 재발 방지는 아직 미수정. 정적 SEO는 groups.json main 반영 후 기존 rebuild-seo-pages workflow에서 재생성. 수정 전 상태는 before.json,공식 목록은 같은 폴더 참조.
+
+
 ## 2026-11-05 (Codex — 검수246차·확정 오귀속21건 실제 DB 정정)
 - **[완료] [yt_channel_videos·sql/codex_audit211_223_2026-11-05.sql]** 사용자 직접 실행 승인(Claude 사용량 소진) 후 최신 main0a1aa5d7f8 확인. 211/212/220/223차 확정21ID 현재값 재조회→갓세븐/진영15,시크릿넘버3,스피카1,이은상 솔로1,JR 솔로1로 한정 정정. 갓세븐·솔로 키는 기존 정상DB표현과 대조. 중복 게스트그룹(시크릿넘버/스피카)은 주인으로 옮긴 후 with에서 제거. 나머지 게스트/원곡/숨김/제목은 보존.
 - **[완료] [sql/*_before.json·*_undo.sql·*_after.json·*_verification.json]** 원본21행을 먼저 저장하고 정확한 기존5필드 일치/행잠금/트랜잭션으로 적용. 21행 모두 수동 잠금으로 자동 재태깅 덮어쓰기 방지. 원본복원 SQL도 실제 트랜잭션 안에서 원상21행 검증 후 ROLLBACK으로 시험, 이후 정정21행을 독립 재조회해 기대값 일치·제목/숨김/원곡 필드 보존 확인. 사용자가 추가 SQL 실행할 필요 없음.

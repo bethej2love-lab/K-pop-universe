@@ -1,0 +1,15 @@
+{
+  "albums": 7,
+  "audioLinks": 4,
+  "titleFlags": 3,
+  "typeCorrections": 1,
+  "tracksBefore": 43851,
+  "tracksAfter": 43851,
+  "syntax": "passed",
+  "validateData": {
+    "errors": 0,
+    "warnings": 149
+  },
+  "discoArtifacts": "passed",
+  "smoke": "passed, desktop and 390px mobile; console errors 0"
+}
