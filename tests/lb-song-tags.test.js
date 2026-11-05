@@ -29,7 +29,13 @@ need(!miss.length, `전부 _rowTags 포함${miss.length ? ` — 빠진 줄: ${mi
 // 카드 하나짜리 라이트박스(Discover 단일 영상 카드)도 태그를 싣는다
 const single = [...html.matchAll(/openLightbox\((?:vidUrl|vUrl),_isShortV\((\w+)\),\[\{([^}]*)\}\]/g)];
 need(single.length>=5&&single.every(x=>x[2].startsWith('..._rowTags(')),`단일 영상 카드 ${single.length}곳도 태그 포함`);
-need(/const base=\{\.\.\._rowTags\(v\),t:v\.title/.test(html), '순위 목록(_withRankDelta)도 태그 포함');
+// 2026-11-05 차트 통합: _withRankDelta 대신 _chartSongs가 모든 차트의 입력을 만든다.
+const chartStart = html.indexOf('async function _chartSongs(');
+const chartEnd = html.indexOf('async function _openChartList(', chartStart);
+const chartBody = chartStart >= 0 && chartEnd > chartStart ? html.slice(chartStart, chartEnd) : '';
+const hasChartTags = body => /\.\.\._rowTags\(x\),t:x\.title/.test(body);
+need(hasChartTags(chartBody), '통합 순위 목록(_chartSongs)도 태그 포함');
+need(!hasChartTags(chartBody.replace('..._rowTags(x),', '')), '통합 차트 태그 누락 통제에서 검사 실패 확인');
 
 // 상단바
 const i = html.indexOf('function _lbUpdateMemberInfo(');

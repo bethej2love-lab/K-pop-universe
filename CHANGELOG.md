@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-11-05 (Codex — 검수249차·차트 통합 후 낡은 태그 검사 복원)
+- **[완료] [tests/lb-song-tags.test.js]** 원격 Node CI의 유일한 실패: 삭제된 _withRankDelta의 const base를 계속 검색. 현행 _chartSongs는 이미 _rowTags(x)를 전달하고 있어 앱 태그 유실이 아님. 실제 통합 차트 함수 범위로 검사 대상을 옮기고 태그 제거 통제에서 실패하는지 추가 확인. 태그 검사 생략/약화나 런타임 수정 없음. 로컬 해당 검사 통과.
+
+
 ## 2026-11-05 (Codex — 검수248차·재생 불가 영상의 탐험 피드 노출 차단)
 - **[완료] [app.js]** 247차 원격 스모크 실패 원인 Rx1hJXs-OsY: DB unavailable_at=2026.11.03인데 발견 NewVideos에 노출되어 썸네일404. 두 해상도404/oEmbed403 확인. 앨범 수정으로 생긴 오류는 아님.
 - **[완료] [app.js]** 발견 Trend/ForYou 본인/ForYou 게스트 조회3곳에 기존 unavailable_at IS NULL 조건 적용. 숨김/무관 변경이나 영상 삭제 없음. 정상 재생 가능 행은 유지, 수집기가 unavailable_at을 null로 복구하면 다음 조회에 다시 포함.
