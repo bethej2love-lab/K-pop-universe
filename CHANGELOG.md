@@ -1,7 +1,11 @@
 # CHANGELOG
 
 ## 2026-11-06 (Codex — 남은 투피엠 오귀속 검수 실행)
-- **[진행중] [yt_channel_videos·sql/·audit-materials/]** 최신 main 기준으로 이전94건 정정 이후 남은 후보를 재조회. JAY B/가인/레이븐처럼 공식 제목에 실제 주연 가수가 명시된 영상부터 원문·등록 신원·원곡 관계 대조 후 한정 정정한다. 기존94건 재실행/추정 친분·피처링 실출연 추가/수집기 일괄 재태깅은 하지 않음. 별도 Codex 작업 공간에서 실행·복원 근거를 남긴다.
+- **[완료] [yt_channel_videos·sql/codex_attribution_2026-11-06*.sql]** 공식 Mnet/MBC4영상: bDpWUAvDfnI·8vabGtI72xE는 갓세븐/JAY B(a0598),z1eFI6wSr4U는 브라운아이드걸스/가인(a0981),X3nUZxdnwtU는 원어스/레이븐(a0435)으로 2PM 오귀속 정정. 레이븐의 2019커버는 탈퇴 전 원어스 활동이고 박재범은 원곡자이므로 cover_of_members=['박재범(2PM)']만 추가(기존 신원 키를 재사용,cover_of_groups=2PM 추가 아님). Feat.표기만으로 박재범의 실제 동반 출연을 추정하지 않아 with_*는 유지.
+- **[완료] [yt_channel_videos·sql/codex_namesake_2026-11-06*.sql]** KaWiUJigSbM·QIQl3MrERw0: 공식 MBC WORLD/KBS 제목의 격투기 선수 정찬성은 2PM 찬성이 아님. 영상에 명시된 박재범의 솔로 키 group_ko=박재범/members=[박재범]으로 한정 재귀속. 정찬성을 새 아이돌/친분/게스트로 등록하지 않고 기존 with_*/원곡 칸 유지.
+- **[완료·검증] [sql/*2026-11-06_{before,after}.json·audit-materials/attribution-fix-2026-11-06/]** 6/6 공식 oEmbed HTTP200·제목/업로더 재검증,등록 신원/활동 시기 대조. 두 배치 모두 제목/설명/일자/주인/출연/원곡/출처/수동/공개값 완전 일치 guard→ROLLBACK 시험→실행→전필드 기대값 일치→복원 SQL ROLLBACK 시험. 최종 공개 anon 조회6/6 일치·tags_manual=true·공개 상태 유지. 런타임/수집기/아티스트 원본/스키마 변경 없음,문법 가드·diff 검사 통과.
+- **[완료·수치 정정] [audit-materials/jaypark-2pm-2026-11-05/candidates.json·attribution-fix-2026-11-06/remaining-2pm.json]** 전날 메모148은 오기: 실제 최초 후보149건. 기존94+이번6=100건 정정,현재49건(공개47·보류1·외부인1). 새로 들어온 ID는 없었다. 남은49건을 모두 오류/재발 건수로 집계하지 않음. 전날 최종 공유 CI41982004531·Node41982004629는 모두success 확인.
+- **⏳ 덜 된 일** remaining-2pm.json의 ID별로 공식 원문/실제 출연/촬영 시기를 확인. 특히 WLC-UJL9pLk는 제목에 'feat.2PM Jae-bum'이 있어 2012업로드일만 보고 탈퇴 후 솔로로 옮기지 말 것. I-LAND/빌드업은 원곡자와 실제 오디션 참가자를 구분; p9qrNPkDRfY는 정찬성/찬성 위험이 있으나 박재범 해시태그만으로 주연/실출연 확정 금지; mrbprkmmK-g는 기존 수동 잠금·다그룹 태그 보존하며 한정 검토. 이번6건 SQL 재실행 금지(현재 값 guard가 중단),복원은 paired *_undo.sql. 같은 공개 검증 재실행: `node --use-system-ca audit-materials/attribution-fix-2026-11-06/check-public.cjs`. 정적 SEO 과거 목록 갱신은 다음 정기 빌드에 맡기고 같은 데이터를 전체 재빌드하지 않음.
 
 ## 2026-11-05 (Codex — iPad Safari 영상 복귀 후 빈 화면 조사)
 - **[완료·확정 부팅 실패 경로 한정/main·배포 확인] [PR97·app.js]** 최종74b6888c43의 Node+브라우저13종 전부 첫 실행success 후main4f926f3f27 병합. 자동 캐시eb8d0c3117의 Pages42022739295 success, 공개 app.js?v=20261105-6717cc6f HTTP200·복구 함수 존재·검증한main 본문과SHA256 일치 확인. 실제 iPad 앱 복귀 빈 화면의 원인/해결은 미확정이며 아래 진행중 기록의 부팅 가드 배포만 완료됐다.

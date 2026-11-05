@@ -1,0 +1,3 @@
+const fs=require('fs'),path=require('path'),assert=require('node:assert/strict');
+const ids=['bDpWUAvDfnI','8vabGtI72xE','z1eFI6wSr4U','X3nUZxdnwtU','KaWiUJigSbM','QIQl3MrERw0'];
+(async()=>{const results=[];for(const id of ids){const r=await fetch('https://www.youtube.com/oembed?url='+encodeURIComponent('https://www.youtube.com/watch?v='+id)+'&format=json');assert.equal(r.status,200,id);const d=await r.json();results.push({id,status:r.status,title:d.title,author:d.author_name,authorUrl:d.author_url});}fs.writeFileSync(path.join(__dirname,'official-oembed.json'),JSON.stringify(results,null,2)+'\n');console.log(results);})().catch(e=>{console.error(e.message);process.exitCode=1;});
