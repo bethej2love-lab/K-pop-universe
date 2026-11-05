@@ -26547,7 +26547,17 @@ async function _buildFeedFavNew(){
         if(added){strip.appendChild(more);label();}
         if(!restItems.length){more.remove();ro&&ro.disconnect();}
       };
-      more.addEventListener('click',e=>{e.stopPropagation();more.remove();ro&&ro.disconnect();restItems.splice(0).forEach(drawItem);});
+      // 더보기 = 누른 자리에서 바로 이어 보이게(2026-11-05 사용자 "보이던 부분 바로 밑부터 이어져야 하는데 맨 아래로 내려가는 듯").
+      // 크롬은 그대로였지만 사파리(아이폰)는 많은 카드가 한꺼번에 들어올 때 스크롤을 브라우저가 따로 처리한다 — 맡기지 않고
+      // 첫 새 카드를 버튼이 있던 화면 위치로 직접 맞춘다(레이아웃·썸네일이 자리 잡는 동안 두 번 더).
+      more.addEventListener('click',e=>{
+        e.stopPropagation();
+        let sc=strip.parentElement;while(sc&&sc!==document.body){const oy=getComputedStyle(sc).overflowY;if(oy==='auto'||oy==='scroll')break;sc=sc.parentElement;}
+        const y0=more.getBoundingClientRect().top,n0=strip.querySelectorAll('.feed-card').length;
+        more.remove();ro&&ro.disconnect();restItems.splice(0).forEach(drawItem);
+        const pin=()=>{const c=strip.querySelectorAll('.feed-card')[n0];if(!c||!sc||sc===document.body)return;const d=c.getBoundingClientRect().top-y0;if(Math.abs(d)>2)sc.scrollTop+=d;};
+        pin();requestAnimationFrame(pin);setTimeout(pin,300);
+      });
       label();strip.appendChild(more);
       topUp();
       if(restItems.length&&typeof ResizeObserver==='function'){ro=new ResizeObserver(()=>{if(!more.isConnected){ro.disconnect();return;}topUp();});ro.observe(strip);}
