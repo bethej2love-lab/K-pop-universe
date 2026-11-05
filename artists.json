@@ -117739,6 +117739,29 @@
     "left": "2017.02.10",
     "discography": [
       {
+        "title": "Slow Jam",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/19/528/15119528_20261103141002_500.jpg",
+        "releaseDate": "2026.11.05",
+        "trackCount": 2,
+        "titleTrack": "Slow Jam",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Slow Jam",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Slow Jam (Yunu Remix)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15119528"
+      },
+      {
         "title": "향수(PERFUME)",
         "type": "싱글",
         "releaseDate": "2021.01.13",
@@ -129033,6 +129056,29 @@
       }
     ],
     "discography": [
+      {
+        "title": "미워도 사랑하니까",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/25/729/15125729_20261104145359_500.jpg",
+        "releaseDate": "2026.11.05",
+        "trackCount": 2,
+        "titleTrack": "미워도 사랑하니까",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "미워도 사랑하니까",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "미워도 사랑하니까 (inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15125729"
+      },
       {
         "title": "사랑합니다",
         "type": "싱글",
@@ -141381,6 +141427,29 @@
     },
     "left": "2021.05.22",
     "discography": [
+      {
+        "title": "미워도 사랑하니까",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/25/729/15125729_20261104145359_500.jpg",
+        "releaseDate": "2026.11.05",
+        "trackCount": 2,
+        "titleTrack": "미워도 사랑하니까",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "미워도 사랑하니까",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "미워도 사랑하니까 (inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15125729"
+      },
       {
         "title": "file. 07",
         "type": "미니 4집",
@@ -278907,6 +278976,24 @@
       "namu": "https://namu.wiki/w/%ED%98%84%EC%84%B1"
     },
     "discography": [
+      {
+        "title": "눈이 부시게",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/18/210/15118210_20261103093949_500.jpg",
+        "releaseDate": "2026.11.05",
+        "trackCount": 1,
+        "titleTrack": "눈이 부시게",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "눈이 부시게",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15118210"
+      },
       {
         "title": "Afterglow",
         "type": "싱글",
