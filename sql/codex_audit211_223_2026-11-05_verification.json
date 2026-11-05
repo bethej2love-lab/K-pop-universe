@@ -1,0 +1,21 @@
+{
+  "date": "2026-11-05",
+  "rows": 21,
+  "verified": true,
+  "undoTest": "Executed undo inside transaction, validated originals, then ROLLBACK; corrected values independently re-read",
+  "issues": [],
+  "fieldsChanged": [
+    "group_ko",
+    "members",
+    "with_groups",
+    "with_members",
+    "tags_manual"
+  ],
+  "unchangedVerified": [
+    "title",
+    "content_flag",
+    "cover_of_groups",
+    "cover_of_members"
+  ],
+  "scope": "Existing saved rows only, no matcher or collection rules changed"
+}
