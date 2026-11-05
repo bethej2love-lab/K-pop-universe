@@ -18,7 +18,24 @@
     "publicDiscoFilesChecked": 6,
     "http200": 6,
     "exactLocalMatches": 6,
-    "staticSeo": "existing 15-minute coalescing delay",
-    "remoteCI": "pending at record time"
+    "staticSeo": "success; finalChecks",
+    "remoteCI": "success; finalChecks"
+  },
+  "finalChecks": {
+    "sourceCommit": "5ce34e9cfe",
+    "latestPublishedCommit": "25bff1736f",
+    "correctedAlbums": 15,
+    "liveDiscoGroups": 13,
+    "liveSeoAlbumPages": 5,
+    "dataValidationRun": 41972305435,
+    "dataValidation": "success",
+    "browserRun": 41972305464,
+    "browserJobsPassed": 12,
+    "browserJobsFailed": 0,
+    "seoRun": 41972313533,
+    "seoResult": "success",
+    "staticPagesGenerated": 48584,
+    "seoPagesDeployRun": 41974124384,
+    "seoPagesDeploy": "success"
   }
 }

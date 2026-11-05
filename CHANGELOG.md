@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-11-05 (Codex — 검수253차·최종 배포/검색 페이지 대조 완료)
+- **[완료] [groups.json·disco/g/·tracks_index.json]** 이번 실행의 앨범 정정은247차7개+251차8개=15개. 공개13그룹 disco 데이터가 검증본과 일치,배포된 app.js에 재생불가 제외4조건 확인. 원본/수정/공식 근거/복원 계획은 audit-materials/album-fix-2026-11-05/ 보관.
+- **[완료] [.github/workflows/]** 최종 소스5ce34e9cfe의 Data validation41972305435 성공/Browser smoke41972305464 작업12개 전부 성공/Pages41972304717 성공/디스코 재생성41972305529 성공. 이전 실패는250/252차로 원인 보완했고 최신 검사는 정상. 테스트 스킵/실패 무시는 하지 않음.
+- **[완료] [build_group_pages.js·g/·en/g/]** 사용자 main반영/검색재생성 명시 승인 후 수동41972313533 성공. 48584정적페이지 생성,최신 자동 공연장 변경도 보존해 게시25bff1736f. 해당 Pages41974124384도 성공. 재생성 중 추가코드/데이터push 없이 중복DB부하 방지.
+- **[완료] [live-seo-catalog-verification.json]** 실제 공개 PressPlay6곡/godChapter3 13곡/PENTAGON7곡/ThumbsUp5곡/HappyMoment10곡 모두 HTTP200,곡명·순서·타이틀 표시가 공식 복원 목록과 완전 일치. 링크가 열린다는 검사만으로 끝내지 않음. verify-live-catalog.cjs로 재검사 가능.
+- **[기록] [CHANGELOG.md]** 서비스 수정/실행/252차까지 인수인계는 main에 반영,최종 검증 자료는 Codex 기록 브랜치에 추가 보관. 앞서246차 DB21건은 이미 실행/검증됐으므로 같은 SQL 재실행 불필요.
+- **⏳ 덜 된 일** BornToBeat/CNBLUE 발매본 혼합(226~227),합류일/활동중단/그룹 인원/크레딧 곡수 기준(215~218/234~245),미등록 솔로 디아·게스트 범위 판단은 별도. 이번 수정 완료와 구별. 기존 자체 검수 CHANGELOG/근거에서 대상·판단기준 확인 후 한정 수정,원본 백업→node tools/build_slim_data.mjs→node tests/disco-artifacts.test.js 및 해당 소비경로 검증. 전체 SEO는 한 번에 묶어 재생성(이번 실제 약17분).
+
+
 ## 2026-11-05 (Codex — 검수252차·뒤로가기 검사 브라우저 시작 안정화)
 - **[완료] [tests/lb-history-back.test.js·tools/browser_test_runtime.cjs]** 원격 f21bb60 CI의 유일한 Node 실패는 앱 진입 전 CDP 준비 실패. 개별12초 반복 대기를 기존 공용45초/프로세스 종료 감지/오류 캡처 함수로 교체(공용 함수 자체 수정 없음),KPU_BROWSER_PATH 지원. 뒤로가기5흐름/10검증 항목 그대로,로컬10/10 통과. 테스트 스킵/오류 무시/실제 앱 기록 동작 변경 없음.
 

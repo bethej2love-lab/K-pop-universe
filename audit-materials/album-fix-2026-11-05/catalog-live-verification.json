@@ -1,0 +1,44 @@
+{
+  "groups": [
+    {
+      "group": "베리베리",
+      "status": 200,
+      "exactMatch": true
+    },
+    {
+      "group": "우주소녀",
+      "status": 200,
+      "exactMatch": true
+    },
+    {
+      "group": "비투비",
+      "status": 200,
+      "exactMatch": true
+    },
+    {
+      "group": "펜타곤",
+      "status": 200,
+      "exactMatch": true
+    },
+    {
+      "group": "god",
+      "status": 200,
+      "exactMatch": true
+    },
+    {
+      "group": "쥬얼리",
+      "status": 200,
+      "exactMatch": true
+    },
+    {
+      "group": "젝스키스",
+      "status": 200,
+      "exactMatch": true
+    }
+  ],
+  "runtime": {
+    "status": 200,
+    "unavailableFeedClauses": 4
+  },
+  "allMatch": true
+}
