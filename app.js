@@ -26186,9 +26186,10 @@ function _packRows(items,isShort,opts){
 const _FEED_TREND_TTL=10*60*1000;
 let _feedTrendData=null,_feedTrendP=null,_feedTrendAt=0,_feedTrendLoading=false;
 const _feedTrendFresh=()=>!!_feedTrendData&&(Date.now()-_feedTrendAt<_FEED_TREND_TTL);
+// 수집기의 재생 불가 표식을 피드에서 반영한다. For You 본인/게스트 조회도 같은 조건.
 function _feedTrendQuery(){
   const since=new Date(Date.now()-_FEED_TREND_DAYS*86400000).toISOString().slice(0,10);
-  let q=_applyLiveExclude(sb.from(_YT_TABLE).select(_FEED_COLS()))
+  let q=_applyLiveExclude(sb.from(_YT_TABLE).select(_FEED_COLS())).is('unavailable_at',null)
     .gte('published_at',since)
     .or('content_flag.is.null,content_flag.neq.기타')
     .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
@@ -26443,7 +26444,7 @@ async function _buildFeedFavNew(){
   };
   try{
     const since=new Date(Date.now()-_FEED_TREND_DAYS*86400000).toISOString().slice(0,10); // 최근 7일만(2026-08-30)
-    const _q=()=>_applyLiveExclude(sb.from(_YT_TABLE).select(_FEED_COLS()))
+    const _q=()=>_applyLiveExclude(sb.from(_YT_TABLE).select(_FEED_COLS())).is('unavailable_at',null)
       .in('group_ko',[...queryGkos].slice(0,80))
       .gte('published_at',since)
       .or('content_flag.is.null,content_flag.neq.기타')
@@ -26458,7 +26459,7 @@ async function _buildFeedFavNew(){
     favMembers.forEach(k=>{const a=ARTISTS.find(x=>_mFavKey(x)===k);if(a)_gMem.push(`${a.name.ko}(${GROUPS[a.group.ko]?a.group.ko:a.name.ko})`);});
     passAll.forEach(g=>{if(GROUPS[g])_gGrp.push(g);else _gMem.push(`${g}(${g})`);});
     const _pgArr=a=>'{'+a.slice(0,60).map(x=>'"'+String(x).replace(/"/g,'\\"')+'"').join(',')+'}';
-    const _qGuest=(_gMem.length||_gGrp.length)?()=>_applyLiveExclude(sb.from(_YT_TABLE).select(_FEED_COLS()))
+    const _qGuest=(_gMem.length||_gGrp.length)?()=>_applyLiveExclude(sb.from(_YT_TABLE).select(_FEED_COLS())).is('unavailable_at',null)
       .or([_gMem.length?`with_members.ov.${_pgArr(_gMem)}`:null,_gGrp.length?`with_groups.ov.${_pgArr(_gGrp)}`:null].filter(Boolean).join(','))
       .gte('published_at',since)
       .or('content_flag.is.null,content_flag.neq.기타')

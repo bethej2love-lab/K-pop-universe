@@ -1,9 +1,17 @@
 # CHANGELOG
 
+## 2026-11-05 (Codex — 검수248차·재생 불가 영상의 탐험 피드 노출 차단)
+- **[완료] [app.js]** 247차 원격 스모크 실패 원인 Rx1hJXs-OsY: DB unavailable_at=2026.11.03인데 발견 NewVideos에 노출되어 썸네일404. 두 해상도404/oEmbed403 확인. 앨범 수정으로 생긴 오류는 아님.
+- **[완료] [app.js]** 발견 Trend/ForYou 본인/ForYou 게스트 조회3곳에 기존 unavailable_at IS NULL 조건 적용. 숨김/무관 변경이나 영상 삭제 없음. 정상 재생 가능 행은 유지, 수집기가 unavailable_at을 null로 복구하면 다음 조회에 다시 포함.
+- **[완료·검증] [tests/feed-unavailable.test.js]** 실제3쿼리 실행에서 unavailable행 제외/정상행 보존,수정 제거 통제에서 원래 누출 재현. 문법·데이터오류0·데스크톱+390px 모바일 스모크 재통과.
+- **⏳ 덜 된 일** 카드/검색 등 다른 조회의 unavailable_at 반영은 별도 범위 검토. 이번에는 실패한 탐험 피드 경로3개만 변경.
+
+
 ## 2026-11-05 (Codex — 검수247차·공식 대조7앨범 한정 정정)
 - **[완료] [groups.json·disco/g/·tracks_index.json]** 검수230차 언어판 음원ID4행 정정: WayV VisionWings602739386/KickBack33340659,브브걸SummerQueen33589260,TWICEFormulaOfLove 한국어CDOnly34254837. 정상 다른 언어판/수록곡/순서 보존.
 - **[완료] [groups.json]** 검수209/237/238차 SecretFlavor ICECREAM,We made GimmeDatLove,ALD1 김부장OST GO!GO!의 누락 타이틀3행과 titleTrack 반영. SecretFlavor 공식 EP는 미니로 통일(번호 추정 없음). 원본1칸 들여쓰기 유지, 삭제/추가된 트랙0.
 - **[완료] [audit-materials/album-fix-2026-11-05/]** 원본7앨범/변경내역/기존 공식 목록 근거 저장. slim 빌더 재생성43851트랙 유지. 문법/데이터무결성 오류0(기존경고149)/파생물 정합성/데스크톱+390px 신규 모바일 스모크 모두 통과. 앱 코드/아티스트명/그룹상태/캐시버스터 변경 없음.
+- **[완료·배포 확인] [disco/g/]** 81a3cfb285 main 반영,GitHub Pages deploy job 성공. 공개6그룹 disco JSON HTTP200/검증한 로컬 파일과 전체 내용 일치(7앨범 모두 포함). 정적SEO는 기존15분 대기 단계,GitHub 전체CI/원격Browser smoke 결과는 이 기록 시점 진행 중(로컬 검사는 전부 통과).
 - **⏳ 덜 된 일** We made CD전용1곡은 판본 정책 확인 후 별도 추가 판단. 전체 목록 오염8앨범/합류일·활동중단/매처 재발 방지는 아직 미수정. 정적 SEO는 groups.json main 반영 후 기존 rebuild-seo-pages workflow에서 재생성. 수정 전 상태는 before.json,공식 목록은 같은 폴더 참조.
 
 

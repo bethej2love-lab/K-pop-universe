@@ -11,5 +11,14 @@
     "warnings": 149
   },
   "discoArtifacts": "passed",
-  "smoke": "passed, desktop and 390px mobile; console errors 0"
+  "smoke": "passed, desktop and 390px mobile; console errors 0",
+  "liveDeployment": {
+    "commit": "81a3cfb285d5fcc17da655d2613adad4ba4700aa",
+    "pagesDeployJob": "success",
+    "publicDiscoFilesChecked": 6,
+    "http200": 6,
+    "exactLocalMatches": 6,
+    "staticSeo": "existing 15-minute coalescing delay",
+    "remoteCI": "pending at record time"
+  }
 }
