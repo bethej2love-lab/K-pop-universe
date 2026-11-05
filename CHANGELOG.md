@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-11-05 (Codex — 검수252차·뒤로가기 검사 브라우저 시작 안정화)
+- **[완료] [tests/lb-history-back.test.js·tools/browser_test_runtime.cjs]** 원격 f21bb60 CI의 유일한 Node 실패는 앱 진입 전 CDP 준비 실패. 개별12초 반복 대기를 기존 공용45초/프로세스 종료 감지/오류 캡처 함수로 교체(공용 함수 자체 수정 없음),KPU_BROWSER_PATH 지원. 뒤로가기5흐름/10검증 항목 그대로,로컬10/10 통과. 테스트 스킵/오류 무시/실제 앱 기록 동작 변경 없음.
+
+
 ## 2026-11-05 (Codex — 검수251차·공식 목록과 다른8앨범 복원)
 - **[완료] [groups.json·disco/g/·tracks_index.json]** 231~232차 확정8앨범: VERIVERY ROUND3WHOLE13곡,WJSN HappyMoment10,BTOB PressPlay6,PENTAGON데뷔7/ThumbsUp5,godChapter3 13,JewelryAgain12,젝스키스RoadFighter15. 공식 Melon 발매본의 순서/제목/songId/isTitle·곡수·titleTrack로 한정 복원. before80→after81곡,전체트랙 순증1.
 - **[완료·범위] [audit-materials/album-fix-2026-11-05/catalog-restoration-plan-8.json]** 변경 전/후 전행과 공식URL 저장. 원본8앨범은 검수 시점 값과 완전 일치할 때만 적용,8앨범 밖 차이0을 역대입 검증. 커버/발매일/앨범명/종류·번호/아티스트/기존별도발매는 그대로. 정상god 촛불하나Inst.105717,공식CDOnly곡도 보존.
