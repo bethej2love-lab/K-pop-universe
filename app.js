@@ -10462,10 +10462,10 @@ async function _copyShareLink(url,quiet=false){
 // 이걸로 구분. 데스크톱은 네이티브 시트에 "복사" 확장이 있는지 시스템 설정에 좌우돼 신뢰할 수 없어서
 // (2026-08-19, 사용자 제보 — macOS 시트에 링크 복사 옵션 자체가 없던 사례) 무조건 즉시 클립보드 복사로 통일.
 function _isTouchPrimary(){try{return matchMedia('(pointer: coarse)').matches;}catch(e){return false;}}
-function _shareCurrentView(url,title,kind){
+function _shareCurrentView(url,title,kind,text){
   _gaEvent('share_card',{kind:kind||'view',target:title||'',method:navigator.share&&_isTouchPrimary()?'native':'link'}); // 30일 계획 계측(C1)
   if(navigator.share&&_isTouchPrimary()){
-    navigator.share({title:title||'K-POP Universe',url}).catch(()=>{}); // 취소/실패 시 아무것도 안 함 — 몰래 클립보드로 대체하지 않음
+    navigator.share({title:title||'K-POP Universe',url,...(text?{text}:{})}).catch(()=>{}); // 취소/실패 시 아무것도 안 함 — 몰래 클립보드로 대체하지 않음
   }else{
     _copyShareLink(url);
   }
@@ -10508,6 +10508,34 @@ function _seoUrlForMember(a){
       : 'g/'+encodeURIComponent(_seoUrlSafeKo(gko))+'/'+encodeURIComponent(_seoUrlSafeKo(nameKo))+'/';
   }
   return location.origin+'/'+path;
+}
+// 곡 공유는 실제 발행된 곡/멤버×곡 페이지만 사용한다. 작은 그룹별 목록은 곡 선택 때 미리 받아
+// 네이티브 공유 클릭 안에서 네트워크를 기다리지 않는다(iOS 사용자 활성화 유지).
+const _songShareRoutes=new Map(),_songShareLoads=new Map();
+function _songShareParts(key){
+  const i=String(key||'').lastIndexOf(':');
+  if(i<1)return null;
+  const g=key.slice(0,i),b=key.slice(i+1);
+  return GROUPS[g]&&b?{g,b}:null;
+}
+function _ensureSongShareRoutes(g){
+  if(_songShareRoutes.has(g))return Promise.resolve(_songShareRoutes.get(g));
+  if(_songShareLoads.has(g))return _songShareLoads.get(g);
+  const ac=new AbortController(),timer=setTimeout(()=>ac.abort(),4000);
+  const p=fetch('share_routes/'+encodeURIComponent(_discoFileKey(g))+'.json',{cache:'no-cache',signal:ac.signal})
+    .then(r=>r.ok?r.json():null).then(data=>{
+      if(data&&Array.isArray(data.g)&&data.m&&typeof data.m==='object'&&!Array.isArray(data.m))_songShareRoutes.set(g,data);
+      return data;
+    }).catch(()=>null).finally(()=>{clearTimeout(timer);_songShareLoads.delete(g);});
+  _songShareLoads.set(g,p);return p;
+}
+function _seoUrlForSongList(key,a){
+  const x=_songShareParts(key);if(!x)return null;
+  const routes=_songShareRoutes.get(x.g);
+  if(!routes||!routes.g.includes(x.b))return null;
+  const member=a&&Array.isArray(routes.m[a.id])&&routes.m[a.id].includes(x.b);
+  const base=member?_seoUrlForMember(a):_seoUrlForGroup(x.g);
+  return base?base+'s/'+encodeURIComponent(x.b)+'/':null;
 }
 document.getElementById('gc-share').addEventListener('click',e=>{
   e.stopPropagation();
@@ -28065,6 +28093,7 @@ function _makeChVidController(contId){
     // 영상 줄 정리(2026-10-27 사용자 "카드 영상 탭 한 줄에 뭐가 너무 많다") — 탭 오른쪽에 단독만·🔍·⋮·선택 넷이 붙박이라 폭 절반을
     // 먹고 탭은 3개만 보였다. 🔍(자주 씀)만 밖에 두고 선택·단독만은 ⋮ 메뉴 항목으로 켠다. 켜져 있는 동안만 줄에 "취소"/"단독만 ✕"로
     // 보여서 바로 끌 수 있다(CSS .gc-ch-hd .gc-ch-sel-btn:not(.active) 숨김). 버튼 자체는 그대로라 일괄 선택 바 연결은 안 바뀐다.
+    let refreshListShare=()=>{};
     {
       const selItem=document.createElement('button');
       selItem.className='gc-ch-sort-item gc-ch-sel-item';selItem.type='button';
@@ -28076,17 +28105,27 @@ function _makeChVidController(contId){
         const shareItem=document.createElement('button');
         shareItem.className='gc-ch-sort-item gc-ch-share-item';shareItem.type='button';
         shareItem.innerHTML='<span class="chk" style="visibility:hidden">✓</span><span>'+(currentLang==='ko'?'이 목록 공유':'Share this list')+'</span>';
+        refreshListShare=()=>{
+          const x=_songShareParts(state.songKey);
+          if(!x||_songShareRoutes.has(x.g)){shareItem.disabled=false;return;}
+          const key=state.songKey;shareItem.disabled=true;
+          _ensureSongShareRoutes(x.g).finally(()=>{if(shareItem.isConnected&&state.songKey===key)shareItem.disabled=false;});
+        };
+        refreshListShare();
         shareItem.addEventListener('click',e=>{
           e.stopPropagation();closeSortMenu();
           const base=_cardHash();
           if(!base)return;
           const who=state.memberKo||ko;
           const parts=[who,state.viewMode==='format'&&state.formatFilter?state.formatFilter:(state.filter!=='all'?_catLabel(state.filter):null),
-            state.songKey?'♪ '+(state.songLabel||state.songKey.split(':').pop()):null,state.searchQ?'“'+state.searchQ+'”':null].filter(Boolean);
+            state.songKey?(state.songLabel||state.songKey.split(':').pop())+(currentLang==='ko'?' 무대·직캠 모음':' fancams & stages'):null,state.searchQ?'“'+state.searchQ+'”':null].filter(Boolean);
           // 주소는 그룹·멤버 정적 페이지 + #…(2026-11-02 사용자 "블로그 공유 시 이미지가 안 뜬다") — 블로그·메신저는 # 뒤를 무시해서 예전 주소(kpop-universe.kr/#…)는
           // 늘 사이트 기본 그림만 떴다. 정적 페이지는 그 사람 썸네일을 미리보기로 주고, 여는 사람은 페이지 첫 줄(LIST_FWD)이 바로 앱의 그 목록으로 넘긴다.
-          const _seo=state.memberKo?(_openTArtist&&_openTArtist.name.ko===state.memberKo?_seoUrlForMember(_openTArtist):null):_seoUrlForGroup(ko);
-          _shareCurrentView((_seo||location.origin+'/')+base+_vidShareHash(state),parts.join(' · ')+' · K-POP Universe','list');
+          const a=state.memberKo&&_openTArtist&&_openTArtist.name.ko===state.memberKo?_openTArtist:null;
+          const fallback=state.memberKo?(a?_seoUrlForMember(a):null):_seoUrlForGroup(ko);
+          const _seo=_seoUrlForSongList(state.songKey,a)||fallback;
+          const title=parts.join(' · ')+' · K-POP Universe';
+          _shareCurrentView((_seo||location.origin+'/')+base+_vidShareHash(state),title,'list',state.songKey?title:undefined);
         });
         selItem.before(shareItem);
       }
@@ -28129,6 +28168,7 @@ function _makeChVidController(contId){
       const songBtn=document.createElement('button');songBtn.type='button';songBtn.className='gc-vid-pick';
       const songSep=document.createElement('span');songSep.className='gc-vid-pick-sep';
       const _paint=()=>{
+        refreshListShare();
         songBtn.classList.toggle('on',!!state.songKey);
         songBtn.innerHTML='<span class="ic">♪</span><span class="lbl"></span><span class="x">'+(state.songKey?'✕':'▾')+'</span>';
         songBtn.querySelector('.lbl').textContent=state.songKey?(state.songLabel||state.songKey.split(':').pop()):(currentLang==='ko'?'곡':'Song');

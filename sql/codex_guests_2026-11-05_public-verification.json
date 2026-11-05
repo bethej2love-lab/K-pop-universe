@@ -1,0 +1,47 @@
+{
+  "checkedAt": "2026-11-05T06:16:46.261Z",
+  "http": 200,
+  "rows": [
+    {
+      "id": "_ETWA9wVykw",
+      "group_ko": "르세라핌",
+      "members": [
+        "홍은채"
+      ],
+      "with_groups": [],
+      "with_members": [],
+      "tags_manual": true,
+      "content_flag": null
+    },
+    {
+      "id": "CQKbw3xr3Io",
+      "group_ko": "빅뱅",
+      "members": [
+        "대성"
+      ],
+      "with_groups": [
+        "제로베이스원"
+      ],
+      "with_members": [
+        "성한빈"
+      ],
+      "tags_manual": true,
+      "content_flag": null
+    },
+    {
+      "id": "TPXVXEiwhwM",
+      "group_ko": "빅뱅",
+      "members": [
+        "대성"
+      ],
+      "with_groups": [
+        "제로베이스원"
+      ],
+      "with_members": [
+        "성한빈"
+      ],
+      "tags_manual": true,
+      "content_flag": null
+    }
+  ]
+}
