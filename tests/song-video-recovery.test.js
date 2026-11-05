@@ -1,7 +1,7 @@
 // Actual song-video loader + deadline helper, controlled queries; no network/DB writes.
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict');
 const src=fs.readFileSync(path.join(__dirname,'..','app.js'),'utf8');
-const a=src.indexOf('async function _openSongVideos('),b=src.indexOf('// 형식 칩',a);assert(a>=0&&b>a);
+const a=src.indexOf('function _songTitleAmbiguous('),b=src.indexOf('// 형식 칩',a);assert(a>=0&&b>a);
 function fn(name){const start=src.indexOf('function '+name+'(');assert(start>=0,name);return src.slice(start,src.indexOf('\n}',start)+2);}
 const timeout=fn('_withTimeout');
 const issue=src.includes('function _appendSongVideoLoadIssue(')?fn('_appendSongVideoLoadIssue'):'';

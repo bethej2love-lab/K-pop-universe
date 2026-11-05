@@ -1,7 +1,7 @@
 // Old official MVs imported from a new channel must survive the newest-50 title limit.
 const fs = require('fs'), path = require('path'), vm = require('vm'), assert = require('assert');
 const html = require('../tools/index_source.cjs').readIndexSource();
-const start = html.indexOf('async function _openSongVideos(');
+const start = html.indexOf('function _songTitleAmbiguous(');
 const end = html.indexOf('// 형식 칩', start);
 assert(start >= 0 && end > start, 'song-video function boundary');
 const official = { id: 'official', title: 'IVE BANG BANG MV', category: 'mv', published_at: '2026-02-09', song_keys: null };

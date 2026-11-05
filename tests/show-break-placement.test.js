@@ -1,0 +1,14 @@
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict');
+const source=fs.readFileSync(path.join(__dirname,'..','app.js'),'utf8'),start=source.indexOf('function _showEpRailEntries('),end=source.indexOf('\nasync function _buildShowEpRail',start);
+const c={};vm.createContext(c);vm.runInContext(source.slice(start,end),c);
+const recent=[{s:{key:'엠카운트다운'},d:'2026-10-29'},{s:{key:'뮤직뱅크'},d:'2026-10-30'}];
+const breaks=[{show:'엠카운트다운',date:'2026-11-05'},{show:'뮤직뱅크',date:'2026-11-06'},{show:'뮤직뱅크',date:'2026-11-06'},{show:'엠카운트다운',date:'2026-09-24'}];
+const result=c._showEpRailEntries(recent,breaks,[],'2026-11-05');
+assert.equal(result.length,4,'recent normal episodes plus today/upcoming cancellations, no duplicates or old notices');
+assert.equal(result[0].d,'2026-11-06');assert.equal(result.filter(x=>x.breakInfo).length,2);
+const withWinner=c._showEpRailEntries([{s:{key:'엠카운트다운'},d:'2026-11-05'}],breaks,[{type:'win',show:'엠카운트다운',date:'2026-11-05'}],'2026-11-05');
+assert.equal(withWinner[0].breakInfo,undefined,'confirmed broadcast/winner overrides stale cancellation');
+const news=source.slice(source.indexOf('async function _buildFeedDailyNews('),source.indexOf('async function _buildFeedFavNews('));
+assert.equal(news.includes("type:'break'"),false,'cancellations never enter top news/widgets');
+assert.ok(news.includes('_buildShowEpRail(items)'),'Music Shows remains connected');
+console.log('✅ Cancellation notices stay in Music Shows with date/dedup/winner safeguards');

@@ -541,11 +541,24 @@ function _songLinkBases(title,songs,blockNames){
 // 제목에 곡명이 그냥 들어 있는 건 안 믿는다('엄마 잔소리'·'잔소리 STOP 챌린지'). 인정하는 건
 //   ① 다른 주인의 같은 곡 키(song_keys '아이즈원:잔소리') ② 따옴표·꺾쇠 안 곡명 ③ "가수 - 곡명" 대시 뒤가 곡명으로 시작(짧은·흔한 곡명 제외)
 // 다른 곡에만 연결된 영상(song_keys에 이 곡 없음)은 버린다.
-function _songCoverByTitle(v,base){
+function _songCoverByTitle(v,base,owner){
   if(!v||!base)return false;
   const t=String(v.title||'');
   const keys=Array.isArray(v.song_keys)?v.song_keys:[];
-  if(keys.length)return keys.some(k=>String(k).slice(String(k).indexOf(':')+1)===base);
+  if(keys.length)return owner?keys.includes(owner.key):keys.some(k=>String(k).slice(String(k).indexOf(':')+1)===base);
+  // 동명곡은 곡명만으로 원곡자를 추정하지 않는다. 제목의 원곡자 또는 명시된 원곡 태그가 필요하다.
+  if(owner&&owner.ambiguous){
+    const named=(owner.names||[]).some(n=>{
+      const raw=String(n||'').normalize('NFKC').toLowerCase(),words=raw.match(/[a-z0-9]+/g);
+      if(/^[a-z0-9\s._-]+$/.test(raw)&&words){
+        return new RegExp('(^|[^a-z0-9])'+words.join('[^a-z0-9]*')+'(?![a-z0-9])','i').test(t.normalize('NFKC'));
+      }
+      return _songNorm(n).length>=2&&_songNorm(t).includes(_songNorm(n));
+    });
+    const tagged=(owner.groupKey&&(v.cover_of_groups||[]).includes(owner.groupKey))
+      ||(owner.personKeys||[]).some(k=>(v.cover_of_members||[]).includes(k));
+    if(!named&&!tagged)return false;
+  }
   const Q=/['‘’"“”「」『』<>＜＞《》〈〉]([^'‘’"“”「」『』<>＜＞《》〈〉\n]{1,60})['‘’"“”「」『』<>＜＞《》〈〉]/g;
   for(const m of t.matchAll(Q))if(_songBase(m[1])===base)return true;
   if((/^[가-힣]+$/.test(base)?base.length<3:base.length<4)||_SONG_COMMON.has(base))return false;

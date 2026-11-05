@@ -13635,6 +13635,19 @@ async function _fillSongMeta(title,o,myReq){
   if(m){metaEl.textContent=[o.ownerName,m.album,m.year].filter(Boolean).join(' · ');
     if(coverEl&&m.cover){coverEl.src=m.cover;coverEl.hidden=false;}}
 }
+function _songTitleAmbiguous(index,gko,memberKo,base){
+  if(!index)return true; // 인덱스 조회 실패 시 동명곡이 없다고 추정하지 않는다.
+  for(const [g,tracks] of Object.entries(index.groups||{})){
+    if(!memberKo&&g===gko)continue;
+    if(tracks.some(t=>_songBase(t[0])===base))return true;
+  }
+  for(const [key,tracks] of Object.entries(index.members||{})){
+    const i=key.indexOf('\u0000');
+    if(memberKo&&key.slice(0,i)===memberKo&&key.slice(i+1)===gko)continue;
+    if(tracks.some(t=>_songBase(t[0])===base))return true;
+  }
+  return false;
+}
 async function _openSongVideos(title,owner,songMeta,opt){
   const gko=owner&&owner.gko,memberKo=(owner&&owner.memberKo)||null;
   if(!gko||!sb)return;
@@ -13670,6 +13683,7 @@ async function _openSongVideos(title,owner,songMeta,opt){
   }
   if(myReq!==_songVidReq)return;
   const songKey=gko+':'+_songBase(title);
+  const indexP=typeof _ensureTracksIndex==='function'?_withTimeout(()=>_ensureTracksIndex(),4000).catch(()=>null):Promise.resolve(null);
   const COLS='id,title,thumb,category,is_short,group_ko,members,with_members,cover_of_members,cover_of_groups,content_flag,published_at,view_count,duration_sec'+(_songKeysCol?',song_keys':''); // members·with_members: "멤버 ▾"(2026-10-27)
   // 그룹/멤버 카드 영상 그리드와 동일한 노출 조건(무관/보류/숨김 제외)
   const _excl=q=>q.or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류').or('content_flag.is.null,content_flag.neq.hidden');
@@ -13700,6 +13714,7 @@ async function _openSongVideos(title,owner,songMeta,opt){
   let settled;
   try{settled=await Promise.all([keyP,origP,mvP,titleAllP,...coverQs].map(q=>_withTimeout(()=>q,15000).then(r=>r,()=>({data:null}))));}
   catch(e){settled=null;}
+  const songIndex=await indexP;
   if(!_hostOpen()||myReq!==_songVidReq)return; // 그 사이 닫힘/다른 곡 클릭
   const loadFailed=keyProbeFailed||!settled||settled.some(r=>r?.error||!Array.isArray(r?.data));
   const[keyR,origR,mvR,titleAllR,...coverRs]=(settled||[]).map(r=>!r?.error&&Array.isArray(r?.data)?r:{data:[]});
@@ -13712,13 +13727,15 @@ async function _openSongVideos(title,owner,songMeta,opt){
     .sort((a,b)=>String(b.published_at||'').localeCompare(String(a.published_at||'')));
   const coverSeen=new Set();
   // 원곡 목록에 이미 있는 영상은 커버서 제외(주인 채널 자체 커버 영상 등이 양쪽에 걸릴 때 중복 방지)
-  const cover=_filterBannedVideos(coverRs.flatMap(r=>(r&&r.data)||[])).filter(v=>!origSeen.has(v.id)&&!coverSeen.has(v.id)&&coverSeen.add(v.id));
+  const cover=_filterBannedVideos(coverRs.flatMap(r=>(r&&r.data)||[])).filter(_okTitleHit).filter(v=>!origSeen.has(v.id)&&!coverSeen.has(v.id)&&coverSeen.add(v.id));
   // 제목으로 찾은 것: 원곡자 이름이 든 남의 채널 영상(음방 채널의 "IU & Seul Ong - 잔소리")은 원곡, 나머지는 커버
   {
     const ownerNames=[gko,GROUPS[gko]?.en,memberKo,memberKo&&ARTISTS.find(a=>a.name&&a.name.ko===memberKo)?.name?.en].filter(Boolean).map(_songNorm).filter(n=>n.length>=2);
     const base=_songBase(title);
+    const coverOwner={key:songKey,names:[gko,GROUPS[gko]?.en,memberKo,memberKo&&ARTISTS.find(a=>a.name&&a.name.ko===memberKo)?.name?.en].filter(Boolean),
+      groupKey,personKeys,ambiguous:_songTitleAmbiguous(songIndex,gko,memberKo,base)};
     _filterBannedVideos((titleAllR&&titleAllR.data)||[]).forEach(v=>{
-      if(origSeen.has(v.id)||coverSeen.has(v.id)||!_songCoverByTitle(v,base))return;
+      if(origSeen.has(v.id)||coverSeen.has(v.id)||!_songCoverByTitle(v,base,coverOwner))return;
       const tn=_songNorm(v.title);
       // "[원곡:아이유(IU)]"·"cover"처럼 원곡자를 크레딧으로 적은 건 이름이 들어 있어도 커버(업텐션 쿨룩 LIVE)
       if(ownerNames.some(n=>tn.includes(n))&&!/원곡|\bcover(ed)?\b|original\s+(song\s+)?by/i.test(v.title||'')){origSeen.add(v.id);orig.push(v);}
@@ -23835,23 +23852,37 @@ function _recentShowEps(){
   const kst=new Date(now+9*3600e3),today=kst.toISOString().slice(0,10),early=kst.getUTCHours()<20;
   return _MS_SHOWS.map(s=>{let d=_msLastAir(s,now);if(d===today&&early)d=new Date(Date.parse(d)-7*864e5).toISOString().slice(0,10);return{s,d};}).filter(x=>x.d).sort((a,b)=>a.d<b.d?1:-1);
 }
+function _showEpRailEntries(recent,breaks,items,today){
+  const won=new Set((items||[]).filter(r=>r.type==='win').map(r=>r.show+'|'+r.date));
+  const off=new Map((breaks||[]).filter(b=>b&&b.show&&/^\d{4}-\d{2}-\d{2}$/.test(b.date)&&!won.has(b.show+'|'+b.date)).map(b=>[b.show+'|'+b.date,b]));
+  const entries=recent.map(x=>({...x,breakInfo:off.get(x.s.key+'|'+x.d)}));
+  const seen=new Set(entries.map(x=>x.s.key+'|'+x.d));
+  for(const [key,b] of off){
+    const distance=(Date.parse(b.date)-Date.parse(today))/864e5;
+    const show=recent.find(x=>x.s.key===b.show);
+    if(!show||Math.abs(distance)>7||seen.has(key))continue;
+    entries.push({s:show.s,d:b.date,breakInfo:b});seen.add(key);
+  }
+  return entries.sort((a,b)=>b.d.localeCompare(a.d));
+}
 async function _buildShowEpRail(items){
   const sec=document.getElementById('feed-showeps-section'),rail=document.getElementById('feed-showeps');
   if(!sec||!rail)return;
   rail.innerHTML='';sec.style.display='none';
   let br={};try{br=await _ensureShowBreaks();}catch(e){}
-  const off=new Set((br.breaks||[]).map(b=>b&&b.show+'|'+b.date));
-  const eps=_recentShowEps().filter(({s,d})=>!off.has(s.key+'|'+d));
+  const today=new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
+  const eps=_showEpRailEntries(_recentShowEps(),br.breaks,items,today);
   if(!eps.length)return;
   const ko=currentLang==='ko',dw=ko?['일','월','화','수','목','금','토']:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  eps.forEach(({s,d})=>{
+  eps.forEach(({s,d,breakInfo})=>{
     const wins=(items||[]).filter(r=>r.type==='win'&&r.show===s.key&&r.date===d);
     const b=document.createElement('button');b.type='button';b.className='feed-showep';
     const nm=document.createElement('div');nm.className='fse-name';nm.textContent=ko?s.key:s.en;
     const dt=document.createElement('div');dt.className='fse-date';
     const dd=new Date(d+'T00:00:00Z');dt.textContent=`${d.slice(5).replace('-',ko?'.':'/')} (${dw[dd.getUTCDay()]})`;
     const w=document.createElement('div');w.className='fse-win'+(wins.length?'':' is-none');
-    if(wins.length){const r=wins[0];const who=r.mko||(ko?_gLabelKo(r.gko):((GROUPS[r.gko]&&GROUPS[r.gko].en)||r.gko))||'';w.textContent='🏆 '+who;w.title=`${who} · ${_cleanTitle(r.title)}`;}
+    if(breakInfo){w.textContent=d>today?(ko?'결방 예정':'Not airing'):(ko?'결방':'Not aired');b.disabled=true;}
+    else if(wins.length){const r=wins[0];const who=r.mko||(ko?_gLabelKo(r.gko):((GROUPS[r.gko]&&GROUPS[r.gko].en)||r.gko))||'';w.textContent='🏆 '+who;w.title=`${who} · ${_cleanTitle(r.title)}`;}
     else{const fresh=Date.now()-Date.parse(d)<2*864e5;w.textContent=fresh?(ko?'1위 집계 전':'No.1 pending'):(ko?'1위 정보 없음':'No No.1 info');}
     b.append(nm,dt,w);
     b.addEventListener('click',e=>{e.stopPropagation();_openShowEp(s.key,d);});
@@ -23869,24 +23900,7 @@ async function _buildFeedDailyNews(){
   list.innerHTML='';
   try{
     const items=(await _collectWeekNews()).map(r=>({...r})); // 렌더가 _s/_pair를 덧붙이므로 복사본
-    // 음방 결방(2026-10-19, 사용자: "월요일에 어제 인기가요 1위가 없으면 수집 안 된 건가 싶다") — 지난 7일 결방은 "결방",
-    // 다음 7일 안 예정은 "결방 예정"으로 작고 흐리게. 1위 기록이 있는 날은 뺀다. 목록은 tools/music_show_breaks.mjs(하루 3번)
-    try{
-      const br=await _ensureShowBreaks();
-      const won=new Set(items.filter(r=>r.type==='win').map(r=>r.show+'|'+r.date));
-      const todayK=new Date(Date.now()+9*3600e3).toISOString().slice(0,10),ko=currentLang==='ko';
-      const dw=ko?['일','월','화','수','목','금','토']:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-      (br.breaks||[]).forEach(b=>{
-        if(!b||!b.show||!b.date||won.has(b.show+'|'+b.date))return;
-        const dd=Math.round((Date.parse(todayK)-Date.parse(b.date))/86400000);
-        if(dd>7||dd<-7)return;
-        const d=new Date(b.date+'T00:00:00Z'),lbl=`${d.getUTCMonth()+1}/${d.getUTCDate()}(${dw[d.getUTCDay()]})`;
-        // 순서(2026-10-22 사용자: "화요일 이후엔 결방이 위에 혼자 있을 필요 없다, 1위 쪽으로") — 다음 날(월요일)까지만 맨 위,
-        // 그 뒤로는 같은 날 1위와 같은 점수(100-경과일×20)에서 살짝 아래 = 그날 음방 1위들 옆에 선다.
-        const sc=dd<0?46:dd<=1?99:Math.max(0,100-dd*20)-0.5;
-        items.push({type:'break',title:b.show,sub:dd<0?(ko?lbl+' 결방 예정':lbl+' · not airing'):(ko?lbl+' 결방':lbl+' · not aired'),thumb:null,nav:()=>{},score:sc});
-      });
-    }catch(e){}
+    // 결방 안내는 Music Shows 레일에서만 표시한다(대표 소식으로 올리지 않음).
     _renderNewsList(list,items);
     try{_buildShowEpRail(items).catch(()=>{});}catch(e){}
     window._discoverNewsItems=items;
