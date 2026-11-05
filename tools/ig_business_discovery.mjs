@@ -83,11 +83,21 @@ const active = known.filter(h => {
   return r.status === 'ok' && now - Date.parse(r.fetched_at) >= 4 * 3600e3
     && (r.media || []).some(m => { const t = Date.parse(m.t); return t <= now && t >= now - 7 * 86400e3; });
 });
-// 만료 임박: 프로필 사진 주소(fbcdn oe=16진수 초)가 36시간 안에 끝나는 계정, 빨리 끝나는 순(2026-11-04).
+// 만료 임박: 프로필·게시물·캐러셀 사진 주소(oe=16진수 초)가 36시간 안에 끝나는 계정, 빨리 끝나는 순.
 // 한도 때문에 전체 순환이 4~5일 걸리는데 주소는 4~5일이면 만료돼서 늘 1/3쯤(11-04 실측 378/1,159)이 깨진 사진이었다.
-const picExp = r => { const m = /[?&]oe=([0-9A-Fa-f]{6,})/.exec(r?.pic_url || ''); return m ? parseInt(m[1], 16) * 1000 : Infinity; };
-const expiring = known.filter(h => previous.get(h).status === 'ok' && picExp(previous.get(h)) < now + 36 * 3600e3)
-  .sort((a, b) => picExp(previous.get(a)) - picExp(previous.get(b)));
+function imageExp(r) {
+  let expiry = Infinity;
+  const take = url => { const m = /[?&]oe=([0-9A-Fa-f]{6,})/.exec(url || ''); if (m) expiry = Math.min(expiry, parseInt(m[1], 16) * 1000); };
+  take(r?.pic_url);
+  for (const m of Array.isArray(r?.media) ? r.media : []) {
+    take(m?.u);
+    for (const url of Array.isArray(m?.c) ? m.c : []) take(url);
+  }
+  return expiry;
+}
+const imageExpiries = new Map(known.map(h => [h, imageExp(previous.get(h))]));
+const expiring = known.filter(h => previous.get(h).status === 'ok' && imageExpiries.get(h) < now + 36 * 3600e3)
+  .sort((a, b) => imageExpiries.get(a) - imageExpiries.get(b));
 const pools = { expiring, rotation: known, active, fresh }, cursor = { expiring: 0, rotation: 0, active: 0, fresh: 0 };
 const selected = new Set(), lanes = new Map(), queue = [];
 function take(lane) {

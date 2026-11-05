@@ -24130,7 +24130,7 @@ async function _buildFeedJacon(){
   _enableDragScroll(list);
   try{
     await _optColsReady; // was_live/duration_sec을 select에 실어야 라이브 아카이브 제외가 실제로 동작한다
-    const _q=()=>sb.from(_YT_TABLE).select(_FEED_COLS())
+    const _q=()=>sb.from(_YT_TABLE).select(_FEED_COLS()).is('unavailable_at',null)
       .eq('source_tier','idol')
       .eq('is_short',false) // 쇼츠 형식 제외(2026-09-05 사용자 요청) — 오리지널 콘텐츠 선반은 가로 영상만
       .or('content_flag.is.null,content_flag.neq.기타')

@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-11-05 (Codex — 검수250차·오리지널 선반 재생불가 제외와 인스타 사진 복구)
+- **[완료] [app.js·tests/feed-unavailable.test.js]** 248차3경로 외 OriginalContents(_buildFeedJacon)에서도 Rx1hJXs-OsY가 노출된 것을 원격 두번째 실패로 확인. 이4번째 실제 쿼리에도 unavailable_at IS NULL 적용,실제 쿼리4개/정상보존/수정제거시 실패 재현 테스트 통과. DB 영상·숨김 상태 변경 없음.
+- **[완료] [ig_accounts]** 원격에서 깨진 사진5장은 체리블렛 유주 @uzoo_c. 마지막 수집10/30,게시물 주소 oe 만료11/4 확인. 기존 ig-stats --only=uzoo_c/max1 워크플로41970585359 성공,11/5 04:54UTC 갱신·6게시물 유지. 같은 사진5장의 갱신 URL 전부HTTP200/만료11/9 확인. 여자친구 유주 @yuuzth는 not_found/게시물없음이라 무작정 갱신하지 않음.
+- **[완료] [tools/ig_business_discovery.mjs·tests/ig-image-expiry.test.js]** 기존 만료임박 우선순위가 프로필 pic_url만 보던 것을 게시물 u/캐러셀 c 중 가장 이른 만료까지 보강. 계정별1회 계산으로 정렬 반복 파싱 방지. 기존6칸 배분/전체순환·활동·신규 몫/Meta호출한도/InvalidUser냉각은 보존. 새 필드/외부API/전체 수집 실행 없음.
+- **[완료·검증] [tests/ig-image-expiry.test.js·tests/feed-unavailable.test.js]** 프로필/게시물/캐러셀/만료없음 회귀 및 피드4경로 테스트,문법·데이터오류0·데스크톱/390px 스모크 통과. 249차 포함 원격 Data validation 41970165871도 성공.
+- **[근거] [audit-materials/album-fix-2026-11-05/]** ig-refresh-before-summary.json,ig-refresh-http-proof.json,smoke-unavailable-proof.json. 기존 브라우저 CI 실패는 썸네일/만료 인스타 리소스,Node CI 실패는249차의 옛 차트 함수 검사였다. 회귀/게이트 후 원격 재확인 필요.
+
+
 ## 2026-11-05 (Codex — 검수249차·차트 통합 후 낡은 태그 검사 복원)
 - **[완료] [tests/lb-song-tags.test.js]** 원격 Node CI의 유일한 실패: 삭제된 _withRankDelta의 const base를 계속 검색. 현행 _chartSongs는 이미 _rowTags(x)를 전달하고 있어 앱 태그 유실이 아님. 실제 통합 차트 함수 범위로 검사 대상을 옮기고 태그 제거 통제에서 실패하는지 추가 확인. 태그 검사 생략/약화나 런타임 수정 없음. 로컬 해당 검사 통과.
 
