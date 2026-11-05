@@ -5467,3 +5467,17 @@
 #yt-lb-video-box .yt-lb-blocked{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:rgba(6,8,18,.94);color:#e6ecff;text-align:center;padding:16px;}
 #yt-lb-video-box .yt-lb-blocked p{margin:0;font-size:14px;font-weight:600;}
 #yt-lb-video-box .yt-lb-blocked a{padding:9px 18px;border-radius:20px;background:rgba(255,255,255,.12);color:#fff;text-decoration:none;font-size:13px;font-weight:600;}
+/* 웹(마우스) — 탐험 가로 선반 아래 얇은 스크롤바(2026-11-05 사용자 "세로 휠이 막혀 불편, 보조로 가로 스크롤바").
+   세로 휠은 이제 페이지로 가고(_enableDragScroll), 선반은 이 바·끌기·Shift+휠·트랙패드로 민다. 폰은 손가락 스와이프라 그대로 숨김. */
+@media (hover:hover) and (pointer:fine){
+  :is(#feed-favalbum,#feed-favig,#feed-favigmag,#feed-favchart,#feed-favconcert,#feed-recent,#feed-newalbum,#feed-showeps,#feed-ig,#feed-igmag,#feed-anniv,#feed-concerts,#feed-events,#feed-chart,#feed-jacon){padding-bottom:8px;}
+  /* 크롬·사파리는 아래 ::-webkit-scrollbar(화살표 없는 둥근 6px 막대). scrollbar-width를 같이 주면 크롬이 그걸 우선해 기본 막대(양끝 화살표)가 나와서 파이어폭스에만 준다 */
+  @supports not selector(::-webkit-scrollbar){:is(#feed-favalbum,#feed-favig,#feed-favigmag,#feed-favchart,#feed-favconcert,#feed-recent,#feed-newalbum,#feed-showeps,#feed-ig,#feed-igmag,#feed-anniv,#feed-concerts,#feed-events,#feed-chart,#feed-jacon){scrollbar-width:thin!important;scrollbar-color:rgba(170,190,240,0.28) transparent!important;}}
+  @supports selector(::-webkit-scrollbar){:is(#feed-favalbum,#feed-favig,#feed-favigmag,#feed-favchart,#feed-favconcert,#feed-recent,#feed-newalbum,#feed-showeps,#feed-ig,#feed-igmag,#feed-anniv,#feed-concerts,#feed-events,#feed-chart,#feed-jacon){scrollbar-width:auto!important;}}
+  :is(#feed-favalbum,#feed-favig,#feed-favigmag,#feed-favchart,#feed-favconcert,#feed-recent,#feed-newalbum,#feed-showeps,#feed-ig,#feed-igmag,#feed-anniv,#feed-concerts,#feed-events,#feed-chart,#feed-jacon)::-webkit-scrollbar{display:block!important;height:6px;}
+  :is(#feed-favalbum,#feed-favig,#feed-favigmag,#feed-favchart,#feed-favconcert,#feed-recent,#feed-newalbum,#feed-showeps,#feed-ig,#feed-igmag,#feed-anniv,#feed-concerts,#feed-events,#feed-chart,#feed-jacon)::-webkit-scrollbar-thumb{background:rgba(170,190,240,0.28);border-radius:3px;}
+  :is(#feed-favalbum,#feed-favig,#feed-favigmag,#feed-favchart,#feed-favconcert,#feed-recent,#feed-newalbum,#feed-showeps,#feed-ig,#feed-igmag,#feed-anniv,#feed-concerts,#feed-events,#feed-chart,#feed-jacon)::-webkit-scrollbar-track{background:transparent;}
+}
+/* 섹션 제목 줄 오른쪽 작은 정렬 버튼(2026-11-05 공연 임박순/최근 등록순) — 제목의 대문자·자간을 물려받지 않게 */
+.feed-section-ttl.feed-ttl-row{display:flex;align-items:center;gap:8px;}
+.feed-ttl-row .tvf-sort-sm{margin-left:auto;padding:4px 10px;font-size:11px;letter-spacing:0;text-transform:none;border-radius:10px;}

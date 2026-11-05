@@ -10832,10 +10832,11 @@ function _enableDragScroll(el){
   el.addEventListener('click',e=>{
     if(_dragScrollState.dragged){_dragScrollState.dragged=false;e.stopPropagation();e.preventDefault();}
   },true);
+  // 세로 휠은 가로채지 않는다(2026-11-05 사용자 "웹에서 가로 선반 위에선 세로 스크롤이 막혀 불편") — 예전엔 휠을 전부 가로 이동으로
+  // 바꿔 선반 위에 마우스가 있으면 페이지가 안 내려갔다. 가로 이동은 Shift+휠·트랙패드 좌우(브라우저 기본)·끌기·선반 아래 스크롤바(웹).
   el.addEventListener('wheel',e=>{
     if(el.scrollWidth<=el.clientWidth)return;
-    e.preventDefault();
-    el.scrollLeft+=e.deltaY;
+    if(e.shiftKey&&!e.deltaX&&e.deltaY){e.preventDefault();el.scrollLeft+=e.deltaY;} // Shift+휠이 가로로 안 오는 브라우저 보정
   },{passive:false});
 }
 _enableDragScroll(document.getElementById('tco'));
@@ -25205,18 +25206,45 @@ function _appendConcertCard(list,ev){
   const thumb=_posterUrl(ev.poster_url)||(_ogThumbs&&own&&_ogThumbs[own])||null;
   _appendFeedCard(list,'🎟️',ev.title,who,()=>_openConcertSheet(ev),thumb,null,{meta});
 }
+// 공연 선반 순서(2026-11-05 사용자 "임박순만 말고 등록순 같은 것도") — 임박순(45일 안, 가까운 날짜부터) / 최근 등록순(앞으로 열릴 공연 전체에서
+// 새로 등록된 것부터 — 몇 달 뒤 공연도 발표되자마자 보인다). 고른 건 이 기기에 기억.
+let _concertSort=(()=>{try{return localStorage.getItem('kpu_concert_sort')==='new'?'new':'soon';}catch(e){return 'soon';}})();
+let _newConcertsP=null,_newConcertsAt=0;
+function _loadNewConcerts(){
+  if(_newConcertsP&&Date.now()-_newConcertsAt<600000)return _newConcertsP;
+  if(!sb)return Promise.resolve([]);
+  const today=new Date().toISOString().slice(0,10);
+  _newConcertsAt=Date.now();
+  const p=Promise.resolve(sb.from('kpop_events').select('id,title,type,groups,date_start,date_end,venue,city,country,poster_url,official_url,created_at')
+    .gte('date_end',today).order('created_at',{ascending:false}).limit(80))
+    .then(r=>{if(r?.error||!Array.isArray(r?.data))throw r?.error||new Error('Invalid concert response');return r.data;})
+    .catch(()=>{if(_newConcertsP===p){_newConcertsP=null;_newConcertsAt=0;}return [];});
+  _newConcertsP=p;return p;
+}
+function _syncConcertSortBtn(){
+  const b=document.getElementById('feed-concerts-sort');if(!b)return;
+  const ko=currentLang==='ko';
+  b.textContent=_concertSort==='new'?(ko?'최근 등록순':'Newly added'):(ko?'임박순':'Soonest');
+  if(!b._bound){b._bound=true;b.addEventListener('click',e=>{
+    e.stopPropagation();_concertSort=_concertSort==='new'?'soon':'new';
+    try{localStorage.setItem('kpu_concert_sort',_concertSort);}catch(e2){}
+    _buildFeedConcerts();
+  });}
+}
 async function _buildFeedConcerts(){
   const section=document.getElementById('feed-concerts-section'),list=document.getElementById('feed-concerts');
   if(!section||!list)return;
-  list.replaceChildren();section.style.display='none';
+  _syncConcertSortBtn();
+  const wasOpen=section.style.display!=='none';
+  list.replaceChildren();if(!wasOpen)section.style.display='none';
   try{
     await _ensureOgThumbs();
-    const evs=await _loadUpcomingConcerts();
+    const evs=_concertSort==='new'?await _loadNewConcerts():await _loadUpcomingConcerts();
     // 같은 그룹이 연달아 여러 회차면 한 칸만(투어 도시별 행 — 선반이 한 그룹으로 도배되지 않게)
     const seen=new Set();
     evs.filter(e=>{const k=(e.groups||[]).join(',')+'|'+(e.title||'').slice(0,12);if(seen.has(k))return false;seen.add(k);return true;})
       .slice(0,20).forEach(e=>_appendConcertCard(list,e));
-    if(list.children.length){section.style.display='';list.scrollLeft=0;_enableDragScroll(list);}
+    if(list.children.length){section.style.display='';list.scrollLeft=0;_enableDragScroll(list);}else section.style.display='none';
   }catch(e){console.warn('[feed] 공연 선반 실패 — 이 선반만 빠집니다',e);}
 }
 async function _buildFeedFavConcerts(){
