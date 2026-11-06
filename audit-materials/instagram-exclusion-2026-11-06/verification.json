@@ -1,0 +1,23 @@
+{
+  "handle": "idolissue",
+  "source": "POW Hong a1465 incorrect Instagram link",
+  "deleted": {
+    "accounts": 1,
+    "posts": 6,
+    "followerDays": 4,
+    "photoTags": 0
+  },
+  "remaining": {
+    "accounts": 0,
+    "followerDays": 0,
+    "photoTags": 0
+  },
+  "sourceDelta": "only a1465.links.instagram removed",
+  "checks": [
+    "syntax",
+    "collector module syntax",
+    "source/slim consistency",
+    "excluded group/member/magazine and manual override",
+    "photo-tag identity and image expiry"
+  ]
+}

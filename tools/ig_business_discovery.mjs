@@ -24,11 +24,14 @@ const IG_USER = '17841420475472395'; // 우리 인스타 비즈니스 계정(Kpo
 const GRAPH = 'https://graph.facebook.com/v26.0';
 const arg = k => (process.argv.find(a => a.startsWith('--' + k + '=')) || '').split('=')[1];
 const MAX = +(arg('max') || process.env.IG_MAX || 180);
-const ONLY = arg('only');
+const ONLY = arg('only')?.trim().toLowerCase();
 const DRY = process.argv.includes('--dry-run'); // 공개 DB로 순서만 미리보기 — Meta 호출·DB 쓰기 없음
 if (!DRY && (!TOKEN || !SKEY)) { console.error('META_IG_TOKEN / SUPABASE_SERVICE_ROLE 없음'); process.exit(1); }
 
 const readJson = p => JSON.parse(fs.readFileSync(path.join(ROOT, p), 'utf8'));
+const excludedHandles = new Set((readJson('ig_excluded_accounts.json').accounts || []).map(x => String(x.h || '').toLowerCase()).filter(Boolean));
+// Explicit manual requests must obey the same editorial exclusion as scheduled collection.
+if (ONLY && excludedHandles.has(ONLY.toLowerCase())) { console.log('수집 제외 계정: ' + ONLY.toLowerCase()); process.exit(0); }
 const groups = readJson('groups.json'), artistsRaw = readJson('artists.json');
 const artists = Array.isArray(artistsRaw) ? artistsRaw : Object.values(artistsRaw);
 // 링크 → 핸들(소문자). 'instagram.com/<핸들>' 형식만(검사 결과 비정형 0건)
@@ -39,8 +42,9 @@ for (const a of artists) { const h = handleOf(a.links && a.links.instagram); if 
 // 공식 외 계정(매거진·디지털 매거진, 2026-10-20 사용자 — "데페뉴·아이즈 같은 계정에 아이돌 직접 출연 콘텐츠가 많다").
 // 목록은 ig_media_accounts.json. 이 계정들은 게시물을 더 많이(최대 50) 받고, **본문에 우리 아이돌 공식 계정(@핸들)을 태그한 게시물만** 남긴다.
 // 출연자 연결은 이름 글자 추측이 아니라 @핸들 일치라 동명이인·흔한 단어 오태깅이 구조적으로 없다(m: 태그된 우리 핸들 목록).
+for (const h of excludedHandles) handles.delete(h);
 const artistHandles = new Set(handles);
-const MAG = new Set((readJson('ig_media_accounts.json').accounts || []).map(x => String(x.h || '').toLowerCase()).filter(Boolean));
+const MAG = new Set((readJson('ig_media_accounts.json').accounts || []).map(x => String(x.h || '').toLowerCase()).filter(h => h && !excludedHandles.has(h)));
 for (const h of MAG) handles.add(h);
 const mentionsOf = cap => [...new Set((String(cap || '').match(/@([A-Za-z0-9._]+)/g) || []).map(x => x.slice(1).toLowerCase().replace(/\.+$/, '')))].filter(h => artistHandles.has(h));
 const INVALID_USER_RECHECK_MS = 7 * 24 * 3600e3; // Invalid user id는 매 회차 재시도하지 않고 주 1회만 확인
