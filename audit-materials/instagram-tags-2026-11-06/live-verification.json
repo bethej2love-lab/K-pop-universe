@@ -1,21 +1,29 @@
 {
-  "at": "2026-11-06T05:53:12.593Z",
+  "at": "2026-11-06T05:58:55.020Z",
   "root": 200,
   "app": {
-    "url": "app.js?v=20261106-d869020b",
+    "url": "app.js?v=20261106-0d24cae6",
     "status": 200,
     "identity": true,
-    "tags": true
+    "tags": true,
+    "paginated": true
   },
   "admin": {
     "status": 200,
     "editor": true,
-    "sharedVideoPicker": true
+    "sharedVideoPicker": true,
+    "boundedWrite": true
   },
   "css": {
     "url": "kpop_universe.css?v=20261106-7b6e7d8a",
     "status": 200,
     "publisher": true,
     "editor": true
+  },
+  "cortis": {
+    "posts": 6,
+    "photoIds": 88,
+    "manualTags": 0,
+    "collectionRun": 42170391788
   }
 }
