@@ -15,7 +15,7 @@ const need = (c, m) => { console.log((c ? '✅ ' : '❌ ') + m); if (!c) fail++;
 
 need(/const MEMBER_SONG_MIN = \d+;/.test(b) && /m\.length !== 1/.test(b), '① 개인 직캠 기준(멤버 한 명만 태깅) + 최소 개수');
 need(/function memberSongPagePath\(a, b, lang\) \{ return `\$\{memberPagePath\(a, lang\)\}s\/\$\{b\}\/`; \}/.test(b), '① 경로 = 멤버 페이지 아래 s/곡/');
-need(/\$\{mName\} \$\{s\.title\} 직캠 모음 - /.test(b), '① 한국어 제목 "멤버 곡 직캠 모음"');
+need(/\$\{mName\} \$\{songLabel\} 직캠 모음 - /.test(b), '① 한국어 제목 "멤버 곡 직캠 모음"');
 need(/computeMemberSongs\(\);/.test(b) && b.indexOf('computeMemberSongs();') < b.indexOf('buildMemberPages();'), '① 멤버 페이지보다 먼저 계산(멤버 페이지에 곡별 직캠 링크)');
 need(/\$\{memberSongLinksHtml\(a, lang\)\}/.test(b), '① 멤버 페이지에 곡별 직캠 칸');
 need(/song-page\.css\?v=\$\{SONG_CSS_V\}/.test(b) && !/SONG_PAGE_CSS/.test(b) && css.length > 1000, '② 공용 스타일 파일(song-page.css)');
@@ -23,8 +23,8 @@ need(/class="hero"/.test(b) && /class="grid"/.test(b) && /class="faces"/.test(b)
 need(/cover: al\.cover/.test(ex) || /m\.cover = al\.cover/.test(ex), '② 곡 타일용 앨범 커버');
 need(/\.card-th\{[^}]*display:block[^}]*aspect-ratio:16\/9/.test(css) && /\.face-img\{[^}]*display:block/.test(css) && /\.card-y\{[^}]*display:block/.test(css), '③ span 칸 display:block(비율 유지)');
 
-// ④ 멤버 페이지 '성현 직캠 모음'(2026-10-30): 개인 직캠 MEMBER_FANCAM_MIN개 이상이면 제목 맨 앞 '{이름} 직캠 모음·프로필 - {그룹} {이름}', 맨 위 썸네일 그리드
-need(/const MEMBER_FANCAM_MIN = \d+;/.test(b) && b.includes('function memberFancams(a, gko)') && b.includes('직캠 모음·프로필 - ') && b.includes('mf-grid') && ex.includes('.mf-grid{'), '④ 멤버 페이지 직캠 모음 제목·그리드');
+// ④ 멤버 페이지 '성현 직캠 모음'(2026-10-30): 개인 직캠 MEMBER_FANCAM_MIN개 이상이면 제목 '{그룹·이름 한영 병기} 직캠 모음·프로필', 맨 위 썸네일 그리드
+need(/const MEMBER_FANCAM_MIN = \d+;/.test(b) && b.includes('function memberFancams(a, gko)') && b.includes("${who} ${isEn ? 'Fancams & Profile' : '직캠 모음·프로필'}") && b.includes('mf-grid') && ex.includes('.mf-grid{'), '④ 멤버 페이지 직캠 모음 제목·그리드');
 // ⑤ 그룹 직캠·무대 모음·직캠 순위 페이지·사이트맵 분할(2026-10-30)
 need(b.includes('function groupStageVids(gko)') && b.includes('직캠·무대 모음 - ${memTitle}') && b.includes('const curMembers = members.filter('), '⑤ 그룹 페이지 "코르티스(CORTIS) 직캠·무대 모음 - 마틴·제임스…"(6명 이하 이름·넘으면 멤버 N명)');
 need(b.includes('function buildRankPages()') && b.includes('buildRankPages();') && b.includes('rank/fancam/') && css.includes('.rank-n{'), '⑤ 직캠 조회수 순위 페이지');

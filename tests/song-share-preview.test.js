@@ -63,3 +63,6 @@ assert.equal(labels('청개구리 (Naughty Boy)','청개구리'),'청개구리 (
 assert.equal(labels('CRUSH (가시)','CRUSH'),'CRUSH (가시)');
 for(const t of ['Snowy Summer','FRI(END)S','청개구리 (Inst.)','청개구리 (Japanese Ver.)','청개구리 (Feat. Somebody)','청개구리 (CD Only)'])assert.equal(labels(t,'fallback'),'fallback');
 console.log('✅ bilingual registered names/titles; no invented translations or version aliases');
+
+assert.equal(ctx.bilingualLabel('CORTIS','cortis'),'CORTIS');
+assert.equal(ctx.bilingualLabel('성현',''),'성현');
