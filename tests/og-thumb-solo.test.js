@@ -141,4 +141,19 @@ for (const name of ['아이유', '청하', '태연']) {
 }
 
 console.log(pass ? '\n✅ og:image 커버리지 테스트 통과' : '\n❌ 실패 있음');
+
+
+// Run the collector's actual identity helpers without invoking its network sweep.
+const loader=builder.match(/^const videoGroupKoFor = .+;$/m)[0];
+const guard=builder.slice(builder.indexOf('function _ogCanNameFallback('),builder.indexOf('// 대표성 우선순위'));
+const identity=new Function('fs','path','ROOT','artists','groups',loader+';'+guard+';return {key:videoGroupKoFor,allow:_ogCanNameFallback};')(fs,path,ROOT,artists,groups);
+const assert=require('node:assert/strict'),dia=artists.find(a=>a.id==='a1897');
+assert.equal(identity.key(dia),'디아#a1897');assert.equal(identity.allow(dia),false);
+assert.equal(identity.key(artists.find(a=>a.id==='a1798')),'픽시');
+const iu=artists.find(a=>a.name.ko==='아이유');assert.equal(identity.key(iu),'아이유');assert.equal(identity.allow(iu),true);
+assert.ok(builder.includes('soloCands[soloKey]')&&builder.includes('!isSolo || _ogCanNameFallback(a)'));
+assert.ok(builder.includes("q.set('group_ko', 'eq.' + videoGroupKoFor(a))"));
+assert.ok(thumbs.members['솔로|디아'].includes('UdDVIYATjtk'));
+console.log('✅ solo DIA/PIXY Dia query separation and no cross-group namesake fallback; IU unchanged');
+
 process.exit(pass ? 0 : 1);

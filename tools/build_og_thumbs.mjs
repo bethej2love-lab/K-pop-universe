@@ -27,6 +27,11 @@ const PROBE = !args.includes('--no-probe');
 
 const groups = JSON.parse(fs.readFileSync(path.join(ROOT, 'groups.json'), 'utf8'));
 const artists = JSON.parse(fs.readFileSync(path.join(ROOT, 'artists.json'), 'utf8'));
+// Use the app's identity key for names shared across different artists.
+const videoGroupKoFor = new Function('ARTISTS', 'GROUPS', fs.readFileSync(path.join(ROOT, 'shared.js'), 'utf8') + '\nreturn _ytGroupKoFor;')(artists, groups);
+function _ogCanNameFallback(a) {
+  return videoGroupKoFor(a) === a.name.ko;
+}
 
 // 대표성 우선순위: 뮤비 > 무대/직캠 > 그 외. 같은 등급이면 조회수, 조회수 없으면 최신순.
 const CAT_RANK = { mv: 0, live: 1, performance: 1, dance: 2, cover: 3, variety: 4, show: 4 };
@@ -122,7 +127,7 @@ const isCoverish = v => COVER_CREDIT.test(v.title || '')
   || (v.cover_of_members || []).length > 0 || (v.cover_of_groups || []).length > 0;
 const dirtyIds = new Set(); // 예전 캐시가 이런 영상을 물고 있으면 --keep-existing이어도 새로 뽑는다
 
-const soloKeys = [...new Set(artists.filter(a => a && a.group && a.name && !groups[a.group.ko]).map(a => a.name.ko))];
+const soloKeys = [...new Set(artists.filter(a => a && a.group && a.name && !groups[a.group.ko]).map(a => videoGroupKoFor(a)))];
 const soloPick = {};   // "이름" → row (폴백용 best)
 const soloCands = {};  // "이름" → [row,...] MV·라이브 후보
 const queryKeys = [...gkos.map(k => ({ key: k, solo: false })), ...soloKeys.map(k => ({ key: k, solo: true }))];
@@ -243,11 +248,12 @@ for (const a of artists) {
   // 솔로 아티스트는 본인 이름 키가 곧 본인 영상이라 1순위. 그룹 멤버는 소속 그룹 영상이 더 대표적이라
   // 그쪽이 1순위이고, 본인 이름 키(솔로 활동분)는 그다음 — 둘 다 "본인이 나온 영상"이므로 이름만
   // 같으면 걸리는 memberAny 폴백보다는 앞에 둔다.
-  let pick = isSolo ? randomEligible(soloCands[a.name.ko], soloPick[a.name.ko], [v => !isCollab(v)]) : null;
+  const soloKey = isSolo ? videoGroupKoFor(a) : a.name.ko;
+  let pick = isSolo ? randomEligible(soloCands[soloKey], soloPick[soloKey], [v => !isCollab(v)]) : null;
   if (pick) memSolo++;
   if (!pick) { pick = randomEligible(memberCands[key], memberPick[key], [v => !isCollab(v)]); if (pick) memHit++; } // 소속 그룹의 MV/라이브 중 랜덤
   if (!pick && !isSolo) { pick = randomEligible(soloCands[a.name.ko], soloPick[a.name.ko], [v => !isCollab(v)]); if (pick) memSolo++; } // 그룹 멤버의 솔로 활동분
-  if (!pick) { pick = randomEligible(memberAnyCands[a.name.ko], memberAny[a.name.ko], [v => !isCollab(v)]); if (pick) memFallback++; } // 겸임/타그룹 폴백
+  if (!pick && (!isSolo || _ogCanNameFallback(a))) { pick = randomEligible(memberAnyCands[a.name.ko], memberAny[a.name.ko], [v => !isCollab(v)]); if (pick) memFallback++; } // Ambiguous solo names cannot borrow another group's namesake.
   if (!pick) { misses.push(a); continue; }
   memberOut[key] = pick.id;
 }
@@ -277,7 +283,7 @@ if (misses.length) {
     });
     // 소속 그룹이 실존하면 그 그룹으로 좁힌다(동명이인이 남의 영상을 물어오는 걸 막는다 —
     // 이 프로젝트에서 반복된 사고 유형이다). 무소속 솔로는 group_ko가 본인 이름이라 그걸로 좁힌다.
-    q.set('group_ko', 'eq.' + (groups[a.group.ko] ? a.group.ko : a.name.ko));
+    q.set('group_ko', 'eq.' + videoGroupKoFor(a));
     let rows = [];
     try { rows = await fetchJson(SB + '?' + q); } catch (e) { console.warn(`  ! ${key} 재조회 실패: ${e.message}`); }
     let best = null; const cands = [];

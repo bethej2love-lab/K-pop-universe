@@ -1,0 +1,25 @@
+{
+  "reason": "Name-only cross-group fallback selected PIXY Dia for new solo DIA; pin verified solo MV and update exactly two generated pages; all other pages/PIXY untouched",
+  "pages": [
+    {
+      "file": "member/디아/index.html",
+      "oldImage": "https://img.youtube.com/vi/C48F3OEd_fU/mqdefault.jpg",
+      "image": "https://i.ytimg.com/vi/UdDVIYATjtk/hqdefault.jpg",
+      "source": "https://www.youtube.com/watch?v=UdDVIYATjtk",
+      "oldSource": "PIXY Addicted; different group/person",
+      "oldUses": 4,
+      "newUses": 4,
+      "sha256": "626686e6b6112817f885c24cb5232c43a72151a887ce5d280aa2b2d9c23023e5"
+    },
+    {
+      "file": "en/member/dia/index.html",
+      "oldImage": "https://img.youtube.com/vi/C48F3OEd_fU/mqdefault.jpg",
+      "image": "https://i.ytimg.com/vi/UdDVIYATjtk/hqdefault.jpg",
+      "source": "https://www.youtube.com/watch?v=UdDVIYATjtk",
+      "oldSource": "PIXY Addicted; different group/person",
+      "oldUses": 4,
+      "newUses": 4,
+      "sha256": "35f73e0ce1b1605ad4e799c3b85349b0a43be938d9915b5d42068f7be4eeb242"
+    }
+  ]
+}

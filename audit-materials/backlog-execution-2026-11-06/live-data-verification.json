@@ -1,0 +1,45 @@
+{
+  "at": "2026-11-06T01:00:53.588Z",
+  "files": [
+    {
+      "file": "artists.slim.json",
+      "status": 200,
+      "sha256": "e3be9864a6b0938e86b9edc0012c1917a7d528dd9349e3495a573fa6d74071d7"
+    },
+    {
+      "file": "disco/g/유스피어.json",
+      "status": 200,
+      "sha256": "9495c4c0d6256ab07fdae670e64060b64c081c3ef0579e6140193132ea53b4df"
+    },
+    {
+      "file": "disco/g/버가부.json",
+      "status": 200,
+      "sha256": "356567ee14f48468b18018cd292db2773d2a953e2cf3f494112bcaabd7c2fd19"
+    },
+    {
+      "file": "disco/g/비투비.json",
+      "status": 200,
+      "sha256": "5d5cfc9a8dfa2b13c81b4d3eb57e8d0dfc854776b2c65280d2aca3d1d9cafe7f"
+    },
+    {
+      "file": "disco/g/씨엔블루.json",
+      "status": 200,
+      "sha256": "f216c6a85674e782e1f08b0d9c6da4d25edfa7cc2c1ab7e389f86c56771a6ca5"
+    },
+    {
+      "file": "artist_credits.json",
+      "status": 200,
+      "sha256": "1d2df99467c3c6b321bfe528e3c6e31aedd6917bed90fca21520bc81c40d3f13"
+    },
+    {
+      "file": "written_songs.json",
+      "status": 200,
+      "sha256": "2b5859a20ae0126639358b9bf703c6696cece0967c7fdf303b18d18a2945cc01"
+    },
+    {
+      "file": "tracks_index.json",
+      "status": 200,
+      "sha256": "449869a08300bac7f0bf3528f22a5b3cf36002a1cf78ce271abe1e5cbf84ab6c"
+    }
+  ]
+}

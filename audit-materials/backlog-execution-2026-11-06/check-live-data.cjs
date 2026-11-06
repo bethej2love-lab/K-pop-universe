@@ -1,0 +1,4 @@
+const fs=require('fs'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+const files=['artists.slim.json','disco/g/유스피어.json','disco/g/버가부.json','disco/g/비투비.json','disco/g/씨엔블루.json','artist_credits.json','written_songs.json','tracks_index.json'];
+const hash=x=>crypto.createHash('sha256').update(JSON.stringify(x)).digest('hex');
+(async()=>{const out=[];for(const file of files){const r=await fetch('https://kpop-universe.kr/'+file,{signal:AbortSignal.timeout(30000)});assert.equal(r.status,200,file);const remote=await r.json(),local=JSON.parse(fs.readFileSync(file)),actual=hash(remote),expected=hash(local);assert.equal(actual,expected,file);out.push({file,status:r.status,sha256:actual});console.log('PASS',file);}fs.writeFileSync(__dirname+'/live-data-verification.json',JSON.stringify({at:new Date().toISOString(),files:out},null,2)+String.fromCharCode(10));})().catch(e=>{console.error(e.message);process.exitCode=1;});
