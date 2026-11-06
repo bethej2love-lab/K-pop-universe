@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-11-06 (Codex — 인스타 게시자 카드 연결·사진별 수동 멤버 태그)
+- **[진행중] [app.js·admin.js·kpop_universe.css·tools/ig_business_discovery.mjs·sql/]** 사용자 구현 요청: 기존 뷰어 레이아웃을 유지하며 게시자 이름/프로필→아티스트카드,관리자 사진별 멤버 수동태그/공개표시·미태깅사진 기존유지. 태그는수집캐시와분리보존·DB관리자쓰기통제·사진이동/뒤로복귀/모바일검증. 영상임베드는기존메모만유지하고미구현.
+
 ## 2026-11-06 (Codex — 인스타 사진별 태그·카드 연결·영상 표시 검토)
 - **[완료·현행 확인/코드 미변경] [app.js·tools/ig_business_discovery.mjs]** 사진은 공식oEmbed가 아닌 CDN이미지+자체뷰어(_openIgViewer). VIDEO는수집시thumbnail_url만저장하고재생media_url은버리며클릭시원본으로나감. 캐러셀c도이미지URL배열로저장하여장별영상/안정ID를보존하지않음. 발견공식사진선반은IMAGE/CAROUSEL만선별. '영상은기술적으로사이트재생불가'가아니라현재구현/수집정책의한계.
 - **[완료·카드연결 가능 지점] [app.js _igOwners·_openIgViewer]** 계정소유자에gko또는art객체가이미매핑되나뷰어의계정명은textContent뿐/카드클릭없음. 이름·프로필누르기→해당그룹/멤버카드가1순위권장. 게시계정과사진실제등장인물은구별하고사진넘김/뒤로복귀문맥보존.
