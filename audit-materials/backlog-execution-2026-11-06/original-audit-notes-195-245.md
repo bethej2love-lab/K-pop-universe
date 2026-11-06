@@ -372,3 +372,14 @@ These are historical observations, not current status or execution instructions.
 
 
 
+
+## Supplement: historical ONF evidence referenced by audit195
+
+## 2026-11-04 (Codex — 검수172차·공개 tvN 온앤오프9행/써니2개 실제 카드 오노출)
+- **[확정·실제 UI2행] [AKHg2tvbXEs·Aayt9m08Rxg]** 온앤오프 그룹 카드→영상 검색 써니. 보아·이수만 싸움 얘기의 써니 클립과 한강 집의 써니 집순이 라이프 클립이 실제 결과에 나온다. DB primary 온앤오프/본인·with 빈값/public/auto. 실제 소녀시대 써니를 다루는 tvN 예능과 그룹 ONF 혼동. 앞 클립의 보아/이수만은 대화 속 언급일 수 있어 함께한 멤버로 자동 추가 금지.
+- **[같은 공개 오배정7행]** sDozPLuQYjQ 이승윤 싱어게인, l64vrYbVhd4 청하·강미나·정채연 아이오아이 먹방, woV6dkJq0Ss 소진 싱글시절, N_C9CAOn41k 김완선 일상, FlvEwwoLDEY 하하 결혼 이야기, PyVwt9nIouE 성시경 요리, fUvesMJe5Z4 엄정화X성시경 식사. 전부 온앤오프/public/auto. 실제 인물 지원 여부/동명이인/화면 출연을 확인하고 정확 귀속 또는 무관·보류 판단. 아이오아이 먹방은 with_groups 아이오아이가 이미 있으므로 정상 근거를 보존하고 ONF와 역할만 구분.
+- **[숨김과 차이]**167~170차75행은 hidden이었지만 이번9행은 content_flag=null. 같은 프로그램 오배정이 실제 공개 데이터에도 남아 있음을 확인. 이9개 제목/업로더 공개oEmbed 모두200, 예능을 그룹으로 보는 실제 제목 매처 strong도 재현. 숨김 정책 변경만으로 해결되지 않는 주인 분류 문제.
+- **[검수 방법]** 사용자 Edge/기존 탭을 건드리지 않고 별도 비표시 내장브라우저 탭에서 읽기·검색만 했다. 좋아요/즐겨찾기/관리자 정정·로그아웃·촬영·이메일 전송 없음. 검색 입력 직후 기존 결과가 남은 과도 상태는 증거로 쓰지 않고 완료된 결과 제목을 확인.
+- **⏳ 덜 된 일 [Claude]** 써니2행과 명시된 실제 출연자부터 현재값/백업 확인 후 정정 검토. ONF 정상 음악/공식 채널은 보존. 공개9행의 모든 개인별 실제 등장을 얼굴로 전편 확인한 것은 아님. 자체 public-name-collision-33-db/oembed/replay.json에 공개33표본과 UI/인물식별 근거 저장; 주인 정상16행(그중 멤버 누락1)과 주인 오류17행을 구분. 이33ID는 pinned main/기존 내 CHANGELOG에서 모두 새 ID였음. 코드/DB 변경 없음.
+
+
