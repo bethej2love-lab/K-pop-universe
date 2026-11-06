@@ -1,0 +1,5113 @@
+[
+  {
+    "type": "group",
+    "owner": "라이즈",
+    "kind": "discography",
+    "index": 9,
+    "source": "https://www.melon.com/album/detail.htm?albumId=11582670",
+    "before": {
+      "title": "RIIZING : Epilogue",
+      "type": "미니 1집 리패키지",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/115/82/670/11582670_20240903103809_500.jpg",
+      "releaseDate": "2024.09.04",
+      "trackCount": 9,
+      "titleTrack": "Combo",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Boom Boom Bass",
+          "isTitle": false,
+          "songId": "37956037"
+        },
+        {
+          "no": 2,
+          "title": "Impossible",
+          "isTitle": false,
+          "songId": "37956039"
+        },
+        {
+          "no": 3,
+          "title": "Love 119",
+          "isTitle": false,
+          "songId": "37956044"
+        },
+        {
+          "no": 4,
+          "title": "Talk Saxy",
+          "isTitle": false,
+          "songId": "37956043"
+        },
+        {
+          "no": 5,
+          "title": "Siren",
+          "isTitle": false,
+          "songId": "37956038"
+        },
+        {
+          "no": 6,
+          "title": "Breathe Easy",
+          "isTitle": false,
+          "songId": "37956041"
+        },
+        {
+          "no": 7,
+          "title": "Run to You",
+          "isTitle": false,
+          "songId": "37956042"
+        },
+        {
+          "no": 8,
+          "title": "Get A Guitar",
+          "isTitle": false,
+          "songId": "37956043"
+        },
+        {
+          "no": 9,
+          "title": "Combo",
+          "isTitle": true,
+          "songId": "37956036"
+        }
+      ],
+      "melonAlbumId": "11582670"
+    },
+    "after": {
+      "title": "RIIZING : Epilogue",
+      "type": "미니 1집 리패키지",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/115/82/670/11582670_20240903103809_500.jpg",
+      "releaseDate": "2024.09.04",
+      "trackCount": 9,
+      "titleTrack": "Combo",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Combo",
+          "songId": "37956036",
+          "isTitle": true
+        },
+        {
+          "no": 2,
+          "title": "Boom Boom Bass",
+          "songId": "37956037",
+          "isTitle": false
+        },
+        {
+          "no": 3,
+          "title": "Siren",
+          "songId": "37956038",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "Impossible",
+          "songId": "37956039",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "9 Days",
+          "songId": "37956040",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "Honestly",
+          "songId": "37956041",
+          "isTitle": false
+        },
+        {
+          "no": 7,
+          "title": "One Kiss",
+          "songId": "37956042",
+          "isTitle": false
+        },
+        {
+          "no": 8,
+          "title": "Talk Saxy",
+          "songId": "37956043",
+          "isTitle": false
+        },
+        {
+          "no": 9,
+          "title": "Love 119",
+          "songId": "37956044",
+          "isTitle": false
+        }
+      ],
+      "melonAlbumId": "11582670"
+    },
+    "policy": "Combo existing promotional lead flag preserved; official list/IDs restored"
+  },
+  {
+    "type": "group",
+    "owner": "라이즈",
+    "kind": "discography",
+    "index": 6,
+    "source": "https://www.melon.com/album/detail.htm?albumId=12402759",
+    "before": {
+      "title": "Fame",
+      "type": "싱글",
+      "isMain": false,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/124/02/759/12402759_20251121172323_500.jpg",
+      "releaseDate": "2025.11.24",
+      "trackCount": 3,
+      "titleTrack": "Fame",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Fame",
+          "isTitle": true,
+          "songId": "600552360"
+        },
+        {
+          "no": 2,
+          "title": "Love Song",
+          "isTitle": false,
+          "songId": "600552360"
+        },
+        {
+          "no": 3,
+          "title": "Fame (Inst.)",
+          "isTitle": false,
+          "songId": "600552361"
+        }
+      ],
+      "melonAlbumId": "12402759"
+    },
+    "after": {
+      "title": "Fame",
+      "type": "싱글",
+      "isMain": false,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/124/02/759/12402759_20251121172323_500.jpg",
+      "releaseDate": "2025.11.24",
+      "trackCount": 3,
+      "titleTrack": "Fame",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Something's in the Water",
+          "songId": "600552359",
+          "isTitle": false
+        },
+        {
+          "no": 2,
+          "title": "Fame",
+          "songId": "600552360",
+          "isTitle": true
+        },
+        {
+          "no": 3,
+          "title": "Sticky Like",
+          "songId": "600552361",
+          "isTitle": false
+        }
+      ],
+      "melonAlbumId": "12402759"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "라이즈",
+    "kind": "discography",
+    "index": 12,
+    "source": "https://www.melon.com/album/detail.htm?albumId=11456179",
+    "before": {
+      "title": "RIIZING",
+      "type": "미니 1집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/114/56/179/11456179_20240617152303_500.jpg",
+      "releaseDate": "2024.06.17",
+      "trackCount": 8,
+      "titleTrack": "Boom Boom Bass",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Boom Boom Bass",
+          "isTitle": true,
+          "songId": "37640352"
+        },
+        {
+          "no": 2,
+          "title": "Impossible",
+          "isTitle": false,
+          "songId": "37431365"
+        },
+        {
+          "no": 3,
+          "title": "Love 119",
+          "isTitle": false,
+          "songId": "37640354"
+        },
+        {
+          "no": 4,
+          "title": "Talk Saxy",
+          "isTitle": false,
+          "songId": "37640353"
+        },
+        {
+          "no": 5,
+          "title": "Siren",
+          "isTitle": false,
+          "songId": "37378932"
+        },
+        {
+          "no": 6,
+          "title": "Breathe Easy",
+          "isTitle": false,
+          "songId": "37463421"
+        },
+        {
+          "no": 7,
+          "title": "Run to You",
+          "isTitle": false,
+          "songId": "37640353"
+        },
+        {
+          "no": 8,
+          "title": "Get A Guitar",
+          "isTitle": false,
+          "songId": "37640354"
+        }
+      ],
+      "melonAlbumId": "11456179"
+    },
+    "after": {
+      "title": "RIIZING",
+      "type": "미니 1집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/114/56/179/11456179_20240617152303_500.jpg",
+      "releaseDate": "2024.06.17",
+      "trackCount": 8,
+      "titleTrack": "Boom Boom Bass",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Boom Boom Bass",
+          "songId": "37640352",
+          "isTitle": true
+        },
+        {
+          "no": 2,
+          "title": "Siren",
+          "songId": "37378932",
+          "isTitle": false
+        },
+        {
+          "no": 3,
+          "title": "Impossible",
+          "songId": "37431365",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "9 Days",
+          "songId": "37463419",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "Honestly",
+          "songId": "37463420",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "One Kiss",
+          "songId": "37463421",
+          "isTitle": false
+        },
+        {
+          "no": 7,
+          "title": "Talk Saxy",
+          "songId": "37640353",
+          "isTitle": false
+        },
+        {
+          "no": 8,
+          "title": "Love 119",
+          "songId": "37640354",
+          "isTitle": false
+        }
+      ],
+      "melonAlbumId": "11456179"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "빅뱅",
+    "kind": "discography",
+    "index": 9,
+    "source": "https://www.melon.com/album/detail.htm?albumId=2084128",
+    "before": {
+      "title": "Alive",
+      "type": "미니 5집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/020/84/128/2084128_500.jpg",
+      "releaseDate": "2012.02.29",
+      "trackCount": 7,
+      "titleTrack": "Fantastic Baby",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Fantastic Baby",
+          "isTitle": true,
+          "songId": "3715676"
+        },
+        {
+          "no": 2,
+          "title": "Bad Boy",
+          "isTitle": false,
+          "songId": "3715674"
+        },
+        {
+          "no": 3,
+          "title": "Monster",
+          "isTitle": false,
+          "songId": "3715673"
+        },
+        {
+          "no": 4,
+          "title": "Blue",
+          "isTitle": false,
+          "songId": "3715672"
+        },
+        {
+          "no": 5,
+          "title": "Love Dust",
+          "isTitle": false,
+          "songId": "3715675"
+        },
+        {
+          "no": 6,
+          "title": "날 봐줘요 (Look at Me)",
+          "isTitle": false,
+          "songId": "3715676"
+        },
+        {
+          "no": 7,
+          "title": "Ego",
+          "isTitle": false,
+          "songId": "3715677"
+        }
+      ],
+      "melonAlbumId": "2084128"
+    },
+    "after": {
+      "title": "Alive",
+      "type": "미니 5집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/020/84/128/2084128_500.jpg",
+      "releaseDate": "2012.02.29",
+      "trackCount": 7,
+      "titleTrack": "BLUE / 사랑먼지 / BAD BOY / 재미없어 / FANTASTIC BABY / 날개 (대성 SOLO)",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "INTRO (ALIVE)",
+          "songId": "3715671",
+          "isTitle": false
+        },
+        {
+          "no": 2,
+          "title": "BLUE",
+          "songId": "3715672",
+          "isTitle": true
+        },
+        {
+          "no": 3,
+          "title": "사랑먼지",
+          "songId": "3715673",
+          "isTitle": true
+        },
+        {
+          "no": 4,
+          "title": "BAD BOY",
+          "songId": "3715674",
+          "isTitle": true
+        },
+        {
+          "no": 5,
+          "title": "재미없어",
+          "songId": "3715675",
+          "isTitle": true
+        },
+        {
+          "no": 6,
+          "title": "FANTASTIC BABY",
+          "songId": "3715676",
+          "isTitle": true
+        },
+        {
+          "no": 7,
+          "title": "날개 (대성 SOLO)",
+          "songId": "3715677",
+          "isTitle": true
+        }
+      ],
+      "melonAlbumId": "2084128"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "트리플에스",
+    "kind": "discography",
+    "index": 12,
+    "source": "https://www.melon.com/album/detail.htm?albumId=12128958",
+    "before": {
+      "title": "tripleS ∞! ＜SecretHimitsuBimil＞",
+      "type": "∞! 정규 1집",
+      "isMain": true,
+      "cover": "https://i.scdn.co/image/ab67616d0000b273ef88c8625bfc9c6619d0c987",
+      "releaseDate": "2025.10.01",
+      "trackCount": 7,
+      "titleTrack": "Password",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Password",
+          "isTitle": true,
+          "songId": "600151051"
+        },
+        {
+          "no": 2,
+          "title": "ヘッドフォン",
+          "isTitle": false,
+          "songId": "600151057"
+        },
+        {
+          "no": 3,
+          "title": "トキメティック",
+          "isTitle": false,
+          "songId": "600151053"
+        },
+        {
+          "no": 4,
+          "title": "TOKYO",
+          "isTitle": false,
+          "songId": "600151054"
+        },
+        {
+          "no": 5,
+          "title": "Oshare",
+          "isTitle": false,
+          "songId": "600151055"
+        },
+        {
+          "no": 6,
+          "title": "アンタイトル",
+          "isTitle": false,
+          "songId": "600151056"
+        },
+        {
+          "no": 7,
+          "title": "### - ∞! Ver.",
+          "isTitle": false,
+          "songId": "600151057"
+        }
+      ],
+      "src": "spotify",
+      "spotifyId": "68PVcduJ9slzf5mvgDNemZ",
+      "melonAlbumId": "12128958",
+      "region": "jp"
+    },
+    "after": {
+      "title": "tripleS ∞! ＜SecretHimitsuBimil＞",
+      "type": "∞! 정규 1집",
+      "isMain": true,
+      "cover": "https://i.scdn.co/image/ab67616d0000b273ef88c8625bfc9c6619d0c987",
+      "releaseDate": "2025.10.01",
+      "trackCount": 7,
+      "titleTrack": "Password",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Password",
+          "isTitle": true,
+          "songId": "600151051"
+        },
+        {
+          "no": 2,
+          "title": "ヘッドフォン",
+          "isTitle": false,
+          "songId": "600151052"
+        },
+        {
+          "no": 3,
+          "title": "トキメティック",
+          "isTitle": false,
+          "songId": "600151053"
+        },
+        {
+          "no": 4,
+          "title": "TOKYO",
+          "isTitle": false,
+          "songId": "600151054"
+        },
+        {
+          "no": 5,
+          "title": "Oshare",
+          "isTitle": false,
+          "songId": "600151055"
+        },
+        {
+          "no": 6,
+          "title": "アンタイトル",
+          "isTitle": false,
+          "songId": "600151056"
+        },
+        {
+          "no": 7,
+          "title": "### - ∞! Ver.",
+          "isTitle": false,
+          "songId": "600151057"
+        }
+      ],
+      "src": "spotify",
+      "spotifyId": "68PVcduJ9slzf5mvgDNemZ",
+      "melonAlbumId": "12128958",
+      "region": "jp"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "빅뱅",
+    "kind": "discography",
+    "index": 11,
+    "source": "https://www.melon.com/album/detail.htm?albumId=1184151",
+    "before": {
+      "title": "Tonight",
+      "type": "미니 4집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/011/84/151/1184151_500.jpg",
+      "releaseDate": "2011.02.24",
+      "trackCount": 6,
+      "titleTrack": "Tonight",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Tonight",
+          "isTitle": true,
+          "songId": "3156950"
+        },
+        {
+          "no": 2,
+          "title": "나만 바라봐 (Look Only at Me)",
+          "isTitle": false,
+          "songId": "3156949"
+        },
+        {
+          "no": 3,
+          "title": "Oh Mom",
+          "isTitle": false,
+          "songId": "3156950"
+        },
+        {
+          "no": 4,
+          "title": "Stupid Liar",
+          "isTitle": false,
+          "songId": "3156951"
+        },
+        {
+          "no": 5,
+          "title": "Feeling",
+          "isTitle": false,
+          "songId": "3156952"
+        },
+        {
+          "no": 6,
+          "title": "손을 잡고 가자 (Let's Hold Hands)",
+          "isTitle": false,
+          "songId": "3156953"
+        }
+      ],
+      "melonAlbumId": "1184151"
+    },
+    "after": {
+      "title": "Tonight",
+      "type": "미니 4집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/011/84/151/1184151_500.jpg",
+      "releaseDate": "2011.02.24",
+      "trackCount": 6,
+      "titleTrack": "TONIGHT",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "INTRO (THANK YOU & YOU)",
+          "songId": "3156948",
+          "isTitle": false
+        },
+        {
+          "no": 2,
+          "title": "HANDS UP",
+          "songId": "3156949",
+          "isTitle": false
+        },
+        {
+          "no": 3,
+          "title": "TONIGHT",
+          "songId": "3156950",
+          "isTitle": true
+        },
+        {
+          "no": 4,
+          "title": "SOMEBODY TO LOVE",
+          "songId": "3156951",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "WHAT IS RIGHT",
+          "songId": "3156952",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "CAFE",
+          "songId": "3156953",
+          "isTitle": false
+        }
+      ],
+      "melonAlbumId": "1184151"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "아이오아이",
+    "kind": "discography",
+    "index": 0,
+    "source": "https://www.melon.com/album/detail.htm?albumId=13399673",
+    "before": {
+      "title": "I.O.I : LOOP",
+      "type": "미니 3집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/133/99/673/13399673_20260518151131_500.jpg",
+      "releaseDate": "2026.05.19",
+      "trackCount": 6,
+      "titleTrack": "갑자기 (Suddenly)",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "IOI (Where My Girls At)",
+          "isTitle": false,
+          "songId": "602024047"
+        },
+        {
+          "no": 2,
+          "title": "갑자기 (Suddenly)",
+          "isTitle": true,
+          "songId": "602024048"
+        },
+        {
+          "no": 3,
+          "title": "웃으며 안녕",
+          "isTitle": false,
+          "songId": "602024052"
+        },
+        {
+          "no": 4,
+          "title": "Bittersweet",
+          "isTitle": false,
+          "songId": "602024050"
+        },
+        {
+          "no": 5,
+          "title": "Missing U",
+          "isTitle": false,
+          "songId": "602024051"
+        },
+        {
+          "no": 6,
+          "title": "Into The Night",
+          "isTitle": false,
+          "songId": "602024052"
+        }
+      ],
+      "spotifyId": "09oicnXd9BtWOqgzgCi6gp",
+      "melonAlbumId": "13399673"
+    },
+    "after": {
+      "title": "I.O.I : LOOP",
+      "type": "미니 3집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/133/99/673/13399673_20260518151131_500.jpg",
+      "releaseDate": "2026.05.19",
+      "trackCount": 6,
+      "titleTrack": "갑자기",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "IOI (Where My Girls At)",
+          "songId": "602024047",
+          "isTitle": false
+        },
+        {
+          "no": 2,
+          "title": "갑자기",
+          "songId": "602024048",
+          "isTitle": true
+        },
+        {
+          "no": 3,
+          "title": "SPF 100+ (Summer Pop Fantasy)",
+          "songId": "602024049",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "IF I",
+          "songId": "602024050",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "그때 우리 지금",
+          "songId": "602024051",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "웃으며 안녕 (Recorded in 2016) (Prod.진영)",
+          "songId": "602024052",
+          "isTitle": false
+        }
+      ],
+      "spotifyId": "09oicnXd9BtWOqgzgCi6gp",
+      "melonAlbumId": "13399673"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "제로베이스원",
+    "kind": "discography",
+    "index": 12,
+    "source": "https://www.melon.com/album/detail.htm?albumId=11720927",
+    "before": {
+      "title": "BLUE PARADISE",
+      "type": "미니 5집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/117/20/927/11720927_20250221122612_500.jpg",
+      "releaseDate": "2025.02.24",
+      "trackCount": 6,
+      "titleTrack": "Out of Love",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Out of Love",
+          "isTitle": true,
+          "songId": "38583476"
+        },
+        {
+          "no": 2,
+          "title": "Midnight Sun",
+          "isTitle": false,
+          "songId": "38583474"
+        },
+        {
+          "no": 3,
+          "title": "Butterfly Effect",
+          "isTitle": false,
+          "songId": "38583475"
+        },
+        {
+          "no": 4,
+          "title": "모든 게 떠오르는 밤 (Night Everything Comes Up)",
+          "isTitle": false,
+          "songId": "38583476"
+        },
+        {
+          "no": 5,
+          "title": "Forever",
+          "isTitle": false,
+          "songId": "38583477"
+        },
+        {
+          "no": 6,
+          "title": "Out of Love (Inst.)",
+          "isTitle": false,
+          "songId": "38583478"
+        }
+      ],
+      "melonAlbumId": "11720927"
+    },
+    "after": {
+      "title": "BLUE PARADISE",
+      "type": "미니 5집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/117/20/927/11720927_20250221122612_500.jpg",
+      "releaseDate": "2025.02.24",
+      "trackCount": 6,
+      "titleTrack": "BLUE",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "BLUE",
+          "songId": "38583473",
+          "isTitle": true
+        },
+        {
+          "no": 2,
+          "title": "Devil Game",
+          "songId": "38583474",
+          "isTitle": false
+        },
+        {
+          "no": 3,
+          "title": "Doctor! Doctor!",
+          "songId": "38583475",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "Out of Love",
+          "songId": "38583476",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "Step Back",
+          "songId": "38583477",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "Cruel",
+          "songId": "38583478",
+          "isTitle": false
+        }
+      ],
+      "melonAlbumId": "11720927"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "제로베이스원",
+    "kind": "discography",
+    "index": 23,
+    "source": "https://www.melon.com/album/detail.htm?albumId=11469986",
+    "before": {
+      "title": "You had me at HELLO",
+      "type": "미니 3집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/114/69/986/11469986_20240513162331_500.jpg",
+      "releaseDate": "2024.05.13",
+      "trackCount": 7,
+      "titleTrack": "HELLO",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "HELLO",
+          "isTitle": true,
+          "songId": "37526071"
+        },
+        {
+          "no": 2,
+          "title": "SWEAT (Remix)",
+          "isTitle": false,
+          "songId": "37438252"
+        },
+        {
+          "no": 3,
+          "title": "Lovestruck",
+          "isTitle": false,
+          "songId": "37526069"
+        },
+        {
+          "no": 4,
+          "title": "그리운 날에 (On a Day I Miss You)",
+          "isTitle": false,
+          "songId": "37438252"
+        },
+        {
+          "no": 5,
+          "title": "WHEREVER",
+          "isTitle": false,
+          "songId": "37526070"
+        },
+        {
+          "no": 6,
+          "title": "We Belong Together",
+          "isTitle": false,
+          "songId": "37526071"
+        },
+        {
+          "no": 7,
+          "title": "HELLO (Inst.)",
+          "isTitle": false,
+          "songId": "37526072"
+        }
+      ],
+      "melonAlbumId": "11469986"
+    },
+    "after": {
+      "title": "You had me at HELLO",
+      "type": "미니 3집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/114/69/986/11469986_20240513162331_500.jpg",
+      "releaseDate": "2024.05.13",
+      "trackCount": 7,
+      "titleTrack": "Feel the POP",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Solar POWER",
+          "songId": "37526067",
+          "isTitle": false
+        },
+        {
+          "no": 2,
+          "title": "Feel the POP",
+          "songId": "37526068",
+          "isTitle": true
+        },
+        {
+          "no": 3,
+          "title": "Dear ECLIPSE",
+          "songId": "37526069",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "SWEAT",
+          "songId": "37438252",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "Sunday RIDE",
+          "songId": "37526070",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "HELLO",
+          "songId": "37526071",
+          "isTitle": false
+        },
+        {
+          "no": 7,
+          "title": "Feel the POP (Sped Up ver.)",
+          "songId": "37526072",
+          "isTitle": false
+        }
+      ],
+      "melonAlbumId": "11469986"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "제로베이스원",
+    "kind": "discography",
+    "index": 26,
+    "source": "https://www.melon.com/album/detail.htm?albumId=11358523",
+    "before": {
+      "title": "MELTING POINT",
+      "type": "미니 2집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/58/523/11358523_20231103153003_500.jpg",
+      "releaseDate": "2023.11.06",
+      "trackCount": 5,
+      "titleTrack": "Feel the POP",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Feel the POP",
+          "isTitle": true,
+          "songId": "36937526"
+        },
+        {
+          "no": 2,
+          "title": "CRUSH",
+          "isTitle": false,
+          "songId": "36937528"
+        },
+        {
+          "no": 3,
+          "title": "Good Night",
+          "isTitle": false,
+          "songId": "36937530"
+        },
+        {
+          "no": 4,
+          "title": "이유 (Reason)",
+          "isTitle": false,
+          "songId": "36937529"
+        },
+        {
+          "no": 5,
+          "title": "Feel the POP (Inst.)",
+          "isTitle": false,
+          "songId": "36937530"
+        }
+      ],
+      "melonAlbumId": "11358523"
+    },
+    "after": {
+      "title": "MELTING POINT",
+      "type": "미니 2집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/58/523/11358523_20231103153003_500.jpg",
+      "releaseDate": "2023.11.06",
+      "trackCount": 5,
+      "titleTrack": "CRUSH (가시)",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "MELTING POINT",
+          "songId": "36937526",
+          "isTitle": false
+        },
+        {
+          "no": 2,
+          "title": "Take My Hand",
+          "songId": "36937527",
+          "isTitle": false
+        },
+        {
+          "no": 3,
+          "title": "CRUSH (가시)",
+          "songId": "36937528",
+          "isTitle": true
+        },
+        {
+          "no": 4,
+          "title": "Kidz Zone",
+          "songId": "36937529",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "Good Night",
+          "songId": "36937530",
+          "isTitle": false
+        }
+      ],
+      "melonAlbumId": "11358523"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "에스에프나인",
+    "kind": "discography",
+    "index": 13,
+    "source": "https://www.melon.com/album/detail.htm?albumId=10785918",
+    "before": {
+      "title": "Rumination",
+      "type": "미니 10집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/107/85/918/10785918_20211122140742_500.jpg",
+      "releaseDate": "2021.10.05",
+      "trackCount": 6,
+      "titleTrack": "Tear Drop",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Tear Drop",
+          "isTitle": true,
+          "songId": "35356140"
+        },
+        {
+          "no": 2,
+          "title": "AWAKENING",
+          "isTitle": false
+        },
+        {
+          "no": 3,
+          "title": "Move Me",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "불꽃(Fire)",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "Addicted 2U",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "Tear Drop (Inst.)",
+          "isTitle": false,
+          "songId": "35356140"
+        }
+      ],
+      "melonVia": "10994379"
+    },
+    "after": {
+      "title": "Rumination",
+      "type": "미니 10집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/107/85/918/10785918_20211122140742_500.jpg",
+      "releaseDate": "2021.11.22",
+      "trackCount": 7,
+      "titleTrack": "Trauma",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Trauma",
+          "songId": "34302403",
+          "isTitle": true
+        },
+        {
+          "no": 2,
+          "title": "Memory",
+          "songId": "34302404",
+          "isTitle": false
+        },
+        {
+          "no": 3,
+          "title": "Dreams",
+          "songId": "34302405",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "Gentleman",
+          "songId": "34302406",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "잠시 (On And On)",
+          "songId": "34302407",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "Scenario",
+          "songId": "34302408",
+          "isTitle": false
+        },
+        {
+          "no": 7,
+          "title": "오늘이라서 (For Fantasy)",
+          "songId": "34302409",
+          "isTitle": false
+        }
+      ],
+      "melonVia": "10994379",
+      "melonAlbumId": "10785918"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "제로베이스원",
+    "kind": "discography",
+    "index": 27,
+    "source": "https://www.melon.com/album/detail.htm?albumId=11281739",
+    "before": {
+      "title": "YOUTH IN THE SHADE",
+      "type": "미니 1집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/112/81/739/11281739_20230707121615_500.jpg",
+      "releaseDate": "2023.07.10",
+      "trackCount": 6,
+      "titleTrack": "In Bloom",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "In Bloom",
+          "isTitle": true,
+          "songId": "36601157"
+        },
+        {
+          "no": 2,
+          "title": "New Thing",
+          "isTitle": false,
+          "songId": "36601157"
+        },
+        {
+          "no": 3,
+          "title": "SWEAT",
+          "isTitle": false,
+          "songId": "36601158"
+        },
+        {
+          "no": 4,
+          "title": "We Go",
+          "isTitle": false,
+          "songId": "36601159"
+        },
+        {
+          "no": 5,
+          "title": "Melting Point",
+          "isTitle": false,
+          "songId": "36601160"
+        },
+        {
+          "no": 6,
+          "title": "In Bloom (Inst.)",
+          "isTitle": false,
+          "songId": "36601161"
+        }
+      ],
+      "melonAlbumId": "11281739"
+    },
+    "after": {
+      "title": "YOUTH IN THE SHADE",
+      "type": "미니 1집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/112/81/739/11281739_20230707121615_500.jpg",
+      "releaseDate": "2023.07.10",
+      "trackCount": 6,
+      "titleTrack": "In Bloom",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Back to ZEROBASE",
+          "songId": "36601156",
+          "isTitle": false
+        },
+        {
+          "no": 2,
+          "title": "In Bloom",
+          "songId": "36601157",
+          "isTitle": true
+        },
+        {
+          "no": 3,
+          "title": "New Kidz on the Block",
+          "songId": "36601158",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "우주먼지 (and I)",
+          "songId": "36601159",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "Our Season",
+          "songId": "36601160",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "Always",
+          "songId": "36601161",
+          "isTitle": false
+        }
+      ],
+      "melonAlbumId": "11281739"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "에스에프나인",
+    "kind": "discography",
+    "index": 31,
+    "source": "https://www.melon.com/album/detail.htm?albumId=10371755",
+    "before": {
+      "title": "FIRST COLLECTION",
+      "type": "정규 1집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/103/71/755/10371755_20200107153901_500.jpg",
+      "releaseDate": "2020.07.14",
+      "trackCount": 12,
+      "titleTrack": "Enough",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Enough",
+          "isTitle": true,
+          "songId": "35356147"
+        },
+        {
+          "no": 2,
+          "title": "Spring Breeze",
+          "isTitle": false
+        },
+        {
+          "no": 3,
+          "title": "Tear Drop",
+          "isTitle": false,
+          "songId": "35356140"
+        },
+        {
+          "no": 4,
+          "title": "Summer Vacation",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "Another",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "Puzzle",
+          "isTitle": false
+        },
+        {
+          "no": 7,
+          "title": "해줄게 (I'll Give You)",
+          "isTitle": false
+        },
+        {
+          "no": 8,
+          "title": "Go Back",
+          "isTitle": false
+        },
+        {
+          "no": 9,
+          "title": "The Length of One Day",
+          "isTitle": false
+        },
+        {
+          "no": 10,
+          "title": "Life is So Beautiful",
+          "isTitle": false,
+          "songId": "33035312"
+        },
+        {
+          "no": 11,
+          "title": "날아라 (Fly)",
+          "isTitle": false
+        },
+        {
+          "no": 12,
+          "title": "Enough (Inst.)",
+          "isTitle": false,
+          "songId": "35356147"
+        }
+      ],
+      "melonVia": "10994379"
+    },
+    "after": {
+      "title": "FIRST COLLECTION",
+      "type": "정규 1집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/103/71/755/10371755_20200107153901_500.jpg",
+      "releaseDate": "2020.01.07",
+      "trackCount": 10,
+      "titleTrack": "Good Guy",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Good Guy",
+          "songId": "32292434",
+          "isTitle": true
+        },
+        {
+          "no": 2,
+          "title": "나만 그래 (Am I The Only One)",
+          "songId": "32292435",
+          "isTitle": false
+        },
+        {
+          "no": 3,
+          "title": "Shh",
+          "songId": "32292436",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "룰루랄라 (Lullu Lalla)",
+          "songId": "32292437",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "One Love",
+          "songId": "32292438",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "널 꽉 잡은 손만큼 (Like The Hands Held Tight)",
+          "songId": "32292439",
+          "isTitle": false
+        },
+        {
+          "no": 7,
+          "title": "타 (Fire)",
+          "songId": "32292440",
+          "isTitle": false
+        },
+        {
+          "no": 8,
+          "title": "더 잔인하게 (Stop It Now)",
+          "songId": "32292441",
+          "isTitle": false
+        },
+        {
+          "no": 9,
+          "title": "춤을 출 거야 (Dance With Us)",
+          "songId": "32292442",
+          "isTitle": false
+        },
+        {
+          "no": 10,
+          "title": "Beautiful Light",
+          "songId": "32292443",
+          "isTitle": false
+        }
+      ],
+      "melonVia": "10994379",
+      "melonAlbumId": "10371755"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "에스에프나인",
+    "kind": "discography",
+    "index": 34,
+    "source": "https://www.melon.com/album/detail.htm?albumId=10297401",
+    "before": {
+      "title": "RPM",
+      "type": "미니 7집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/97/401/10297401_500.jpg",
+      "releaseDate": "2019.09.23",
+      "trackCount": 6,
+      "titleTrack": "Good Guy",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Good Guy",
+          "isTitle": true,
+          "songId": "35356149"
+        },
+        {
+          "no": 2,
+          "title": "Tear Drop",
+          "isTitle": false,
+          "songId": "35356140"
+        },
+        {
+          "no": 3,
+          "title": "AWAKE",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "Butterfly Effect",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "Believer",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "Good Guy (Inst.)",
+          "isTitle": false,
+          "songId": "35356149"
+        }
+      ],
+      "melonVia": "10994379"
+    },
+    "after": {
+      "title": "RPM",
+      "type": "미니 7집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/97/401/10297401_500.jpg",
+      "releaseDate": "2019.06.17",
+      "trackCount": 6,
+      "titleTrack": "RPM",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "RPM",
+          "songId": "31869575",
+          "isTitle": true
+        },
+        {
+          "no": 2,
+          "title": "돌고 돌아 (Round And Round)",
+          "songId": "31869576",
+          "isTitle": false
+        },
+        {
+          "no": 3,
+          "title": "Dreamer",
+          "songId": "31869577",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "Liar",
+          "songId": "31869578",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "See U Tomorrow",
+          "songId": "31869579",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "Echo",
+          "songId": "31869580",
+          "isTitle": false
+        }
+      ],
+      "melonVia": "10994379",
+      "melonAlbumId": "10297401"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "베리베리",
+    "kind": "discography",
+    "index": 10,
+    "source": "https://www.melon.com/album/detail.htm?albumId=10688402",
+    "before": {
+      "title": "SERIES 'O' [ROUND 2 : HOLE]",
+      "type": "미니 6집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/106/88/402/10688402_20210823113617_500.jpg",
+      "releaseDate": "2021.08.28",
+      "trackCount": 6,
+      "titleTrack": "TRIGGER",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "TRIGGER",
+          "isTitle": true,
+          "songId": "35313614"
+        },
+        {
+          "no": 2,
+          "title": "마그네틱 (Magnetic)",
+          "isTitle": false
+        },
+        {
+          "no": 3,
+          "title": "Beautiful-x (Re-Record)",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "Super Special (Re-Record)",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "태양을 피하는 법 (Away from the Sun)",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "TRIGGER (Inst.)",
+          "isTitle": false,
+          "songId": "35313614"
+        }
+      ],
+      "melonVia": "10986349"
+    },
+    "after": {
+      "title": "SERIES 'O' [ROUND 2 : HOLE]",
+      "type": "미니 6집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/106/88/402/10688402_20210823113617_500.jpg",
+      "releaseDate": "2021.08.28",
+      "trackCount": 5,
+      "titleTrack": "TRIGGER",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "TRIGGER",
+          "songId": "33836235",
+          "isTitle": true
+        },
+        {
+          "no": 2,
+          "title": "Underdog",
+          "songId": "33836236",
+          "isTitle": false
+        },
+        {
+          "no": 3,
+          "title": "Prom",
+          "songId": "33836237",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "Heart Attack",
+          "songId": "33836238",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "Thank you, NEXT? (CD Only)",
+          "songId": "33836239",
+          "isTitle": false
+        }
+      ],
+      "melonVia": "10986349",
+      "melonAlbumId": "10688402"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "에스에프나인",
+    "kind": "discography",
+    "index": 35,
+    "source": "https://www.melon.com/album/detail.htm?albumId=10253147",
+    "before": {
+      "title": "Narcissus",
+      "type": "미니 6집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/53/147/10253147_500.jpg",
+      "releaseDate": "2019.05.27",
+      "trackCount": 6,
+      "titleTrack": "RPM",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "RPM",
+          "isTitle": true,
+          "songId": "35356148"
+        },
+        {
+          "no": 2,
+          "title": "좋아한다 (Like Him)",
+          "isTitle": false
+        },
+        {
+          "no": 3,
+          "title": "Feel So Good",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "야생화 (Wild Flower)",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "Whatever",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "RPM (Inst.)",
+          "isTitle": false,
+          "songId": "35356148"
+        }
+      ],
+      "melonVia": "10994379"
+    },
+    "after": {
+      "title": "Narcissus",
+      "type": "미니 6집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/53/147/10253147_500.jpg",
+      "releaseDate": "2019.02.20",
+      "trackCount": 6,
+      "titleTrack": "예뻐지지 마",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "예뻐지지 마",
+          "songId": "31622667",
+          "isTitle": true
+        },
+        {
+          "no": 2,
+          "title": "화끈하게",
+          "songId": "31622668",
+          "isTitle": false
+        },
+        {
+          "no": 3,
+          "title": "하필",
+          "songId": "31622669",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "Life Is So Beautiful",
+          "songId": "31622670",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "Fall In Love",
+          "songId": "31622671",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "무중력",
+          "songId": "31622672",
+          "isTitle": false
+        }
+      ],
+      "melonVia": "10994379",
+      "melonAlbumId": "10253147"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "에이비식스",
+    "kind": "discography",
+    "index": 31,
+    "source": "https://www.melon.com/album/detail.htm?albumId=10512189",
+    "before": {
+      "title": "SALUTE",
+      "type": "미니 3집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/105/12/189/10512189_20201102121756_500.jpg",
+      "releaseDate": "2020.11.02",
+      "trackCount": 6,
+      "titleTrack": "SALUTE",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "SALUTE",
+          "isTitle": true,
+          "songId": "33032414"
+        },
+        {
+          "no": 2,
+          "title": "LOVE SHOT",
+          "isTitle": false,
+          "songId": "33032414"
+        },
+        {
+          "no": 3,
+          "title": "ABOVE",
+          "isTitle": false,
+          "songId": "33032415"
+        },
+        {
+          "no": 4,
+          "title": "STRANGER",
+          "isTitle": false,
+          "songId": "33032416"
+        },
+        {
+          "no": 5,
+          "title": "BEBE",
+          "isTitle": false,
+          "songId": "33032417"
+        },
+        {
+          "no": 6,
+          "title": "NEED TO KNOW",
+          "isTitle": false,
+          "songId": "33032418"
+        }
+      ],
+      "melonAlbumId": "10512189"
+    },
+    "after": {
+      "title": "SALUTE",
+      "type": "미니 3집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/105/12/189/10512189_20201102121756_500.jpg",
+      "releaseDate": "2020.11.02",
+      "trackCount": 6,
+      "titleTrack": "SALUTE",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "MIRROR",
+          "songId": "33032413",
+          "isTitle": false
+        },
+        {
+          "no": 2,
+          "title": "SALUTE",
+          "songId": "33032414",
+          "isTitle": true
+        },
+        {
+          "no": 3,
+          "title": "HEAVEN",
+          "songId": "33032415",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "이게 그리움이 아니라면 대체 뭐겠어 (MAYBE)",
+          "songId": "33032416",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "BLOOM",
+          "songId": "33032417",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "한걸음 뒤에 서서 (BEHIND YOU)",
+          "songId": "33032418",
+          "isTitle": false
+        }
+      ],
+      "melonAlbumId": "10512189"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "에이비식스",
+    "kind": "discography",
+    "index": 34,
+    "source": "https://www.melon.com/album/detail.htm?albumId=10278828",
+    "before": {
+      "title": "B:COMPLETE",
+      "type": "미니 1집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/78/828/10278828_500.jpg",
+      "releaseDate": "2019.05.22",
+      "trackCount": 7,
+      "titleTrack": "BREATHE",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "BREATHE",
+          "isTitle": true,
+          "songId": "31817362"
+        },
+        {
+          "no": 2,
+          "title": "HOLLYWOOD",
+          "isTitle": false,
+          "songId": "31764624"
+        },
+        {
+          "no": 3,
+          "title": "WAIT",
+          "isTitle": false,
+          "songId": "31817362"
+        },
+        {
+          "no": 4,
+          "title": "BLIND FOR LOVE",
+          "isTitle": false,
+          "songId": "31817363"
+        },
+        {
+          "no": 5,
+          "title": "STAY",
+          "isTitle": false,
+          "songId": "31817364"
+        },
+        {
+          "no": 6,
+          "title": "CHERRY",
+          "isTitle": false,
+          "songId": "31817365"
+        },
+        {
+          "no": 7,
+          "title": "THE REAL",
+          "isTitle": false,
+          "songId": "31764624"
+        }
+      ],
+      "melonAlbumId": "10278828"
+    },
+    "after": {
+      "title": "B:COMPLETE",
+      "type": "미니 1집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/78/828/10278828_500.jpg",
+      "releaseDate": "2019.05.22",
+      "trackCount": 7,
+      "titleTrack": "BREATHE",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "ABSOLUTE (完全體)",
+          "songId": "31817360",
+          "isTitle": false
+        },
+        {
+          "no": 2,
+          "title": "별자리 (SHINING STARS)",
+          "songId": "31817361",
+          "isTitle": false
+        },
+        {
+          "no": 3,
+          "title": "BREATHE",
+          "songId": "31817362",
+          "isTitle": true
+        },
+        {
+          "no": 4,
+          "title": "FRIEND ZONE",
+          "songId": "31817363",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "LIGHT ME UP",
+          "songId": "31817364",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "둘만의 춤 (DANCE FOR TWO)",
+          "songId": "31817365",
+          "isTitle": false
+        },
+        {
+          "no": 7,
+          "title": "HOLLYWOOD",
+          "songId": "31764624",
+          "isTitle": false
+        }
+      ],
+      "melonAlbumId": "10278828"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "하이라이트",
+    "kind": "discography",
+    "index": 3,
+    "source": "https://www.melon.com/album/detail.htm?albumId=11437485",
+    "before": {
+      "title": "Switch On",
+      "type": "미니 5집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/114/37/485/11437485_20240308145759_500.jpg",
+      "releaseDate": "2024.03.11",
+      "trackCount": 5,
+      "titleTrack": "SWITCH ON",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "SWITCH ON",
+          "isTitle": true,
+          "songId": "37292497"
+        },
+        {
+          "no": 2,
+          "title": "Hello",
+          "isTitle": false,
+          "songId": "37292497"
+        },
+        {
+          "no": 3,
+          "title": "나 돌아갈래 (I Wanna Go Back)",
+          "isTitle": false,
+          "songId": "37292498"
+        },
+        {
+          "no": 4,
+          "title": "Love Again",
+          "isTitle": false,
+          "songId": "37292499"
+        },
+        {
+          "no": 5,
+          "title": "SWITCH ON (Inst.)",
+          "isTitle": false,
+          "songId": "37292500"
+        }
+      ],
+      "melonAlbumId": "11437485"
+    },
+    "after": {
+      "title": "Switch On",
+      "type": "미니 5집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/114/37/485/11437485_20240308145759_500.jpg",
+      "releaseDate": "2024.03.11",
+      "trackCount": 5,
+      "titleTrack": "BODY",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "BODY",
+          "songId": "37292496",
+          "isTitle": true
+        },
+        {
+          "no": 2,
+          "title": "Switch On",
+          "songId": "37292497",
+          "isTitle": false
+        },
+        {
+          "no": 3,
+          "title": "Feel Your Love (48.6Hertz)",
+          "songId": "37292498",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "How to Love",
+          "songId": "37292499",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "In My Head",
+          "songId": "37292500",
+          "isTitle": false
+        }
+      ],
+      "melonAlbumId": "11437485"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "카라",
+    "kind": "discography",
+    "index": 13,
+    "source": "https://www.melon.com/album/detail.htm?albumId=2009327",
+    "before": {
+      "title": "STEP",
+      "type": "정규 3집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/020/09/327/2009327_500.jpg",
+      "releaseDate": "2011.09.06",
+      "trackCount": 10,
+      "titleTrack": "STEP",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "STEP",
+          "isTitle": true,
+          "songId": "3538478"
+        },
+        {
+          "no": 2,
+          "title": "Jet Coaster Love",
+          "isTitle": false,
+          "songId": "3538478"
+        },
+        {
+          "no": 3,
+          "title": "Angel",
+          "isTitle": false,
+          "songId": "3544236"
+        },
+        {
+          "no": 4,
+          "title": "Guilty",
+          "isTitle": false,
+          "songId": "3544237"
+        },
+        {
+          "no": 5,
+          "title": "Speed Up",
+          "isTitle": false,
+          "songId": "3544238"
+        },
+        {
+          "no": 6,
+          "title": "WELCOME",
+          "isTitle": false,
+          "songId": "3544239"
+        },
+        {
+          "no": 7,
+          "title": "Karma",
+          "isTitle": false,
+          "songId": "3544240"
+        },
+        {
+          "no": 8,
+          "title": "기다려줄게",
+          "isTitle": false,
+          "songId": "3544241"
+        },
+        {
+          "no": 9,
+          "title": "Superstar",
+          "isTitle": false,
+          "songId": "3544242"
+        },
+        {
+          "no": 10,
+          "title": "Beautiful Days",
+          "isTitle": false,
+          "songId": "3544243"
+        }
+      ],
+      "melonAlbumId": "2009327"
+    },
+    "after": {
+      "title": "STEP",
+      "type": "정규 3집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/020/09/327/2009327_500.jpg",
+      "releaseDate": "2011.09.06",
+      "trackCount": 10,
+      "titleTrack": "STEP",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Ey! Oh! (Intro)",
+          "songId": "3544235",
+          "isTitle": false
+        },
+        {
+          "no": 2,
+          "title": "STEP",
+          "songId": "3538478",
+          "isTitle": true
+        },
+        {
+          "no": 3,
+          "title": "Rider",
+          "songId": "3544236",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "Strawberry",
+          "songId": "3544237",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "따라와",
+          "songId": "3544238",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "Date (My boy)",
+          "songId": "3544239",
+          "isTitle": false
+        },
+        {
+          "no": 7,
+          "title": "나는.. (Ing) (Acoustic Ver.)",
+          "songId": "3544240",
+          "isTitle": false
+        },
+        {
+          "no": 8,
+          "title": "KARA 4 U (Outro)",
+          "songId": "3544241",
+          "isTitle": false
+        },
+        {
+          "no": 9,
+          "title": "STEP (Inst.)",
+          "songId": "3544242",
+          "isTitle": false
+        },
+        {
+          "no": 10,
+          "title": "내 마음을 담아서 (Dear Kamilia)",
+          "songId": "3544243",
+          "isTitle": false
+        }
+      ],
+      "melonAlbumId": "2009327"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "카라",
+    "kind": "discography",
+    "index": 25,
+    "source": "https://www.melon.com/album/detail.htm?albumId=348747",
+    "before": {
+      "title": "Blooming",
+      "type": "정규 1집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/003/48/747/348747_500.jpg",
+      "releaseDate": "2007.03.29",
+      "trackCount": 10,
+      "titleTrack": "Break It",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Break It",
+          "isTitle": true,
+          "songId": "1610054"
+        },
+        {
+          "no": 2,
+          "title": "맘에 들면 (If U Wanna)",
+          "isTitle": false,
+          "songId": "1610055"
+        },
+        {
+          "no": 3,
+          "title": "Secret World",
+          "isTitle": false,
+          "songId": "1610056"
+        },
+        {
+          "no": 4,
+          "title": "I'll Wait",
+          "isTitle": false,
+          "songId": "1610056"
+        },
+        {
+          "no": 5,
+          "title": "Everyday",
+          "isTitle": false,
+          "songId": "1610057"
+        },
+        {
+          "no": 6,
+          "title": "Girls Power",
+          "isTitle": false,
+          "songId": "1610058"
+        },
+        {
+          "no": 7,
+          "title": "Baby",
+          "isTitle": false,
+          "songId": "1610059"
+        },
+        {
+          "no": 8,
+          "title": "In My World",
+          "isTitle": false,
+          "songId": "1610060"
+        },
+        {
+          "no": 9,
+          "title": "Feel It",
+          "isTitle": false,
+          "songId": "1610061"
+        },
+        {
+          "no": 10,
+          "title": "Breaking Down",
+          "isTitle": false,
+          "songId": "1610062"
+        }
+      ],
+      "melonAlbumId": "348747"
+    },
+    "after": {
+      "title": "Blooming",
+      "type": "정규 1집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/003/48/747/348747_500.jpg",
+      "releaseDate": "2007.03.29",
+      "trackCount": 10,
+      "titleTrack": "Break It",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "못 지킨 말",
+          "songId": "1610053",
+          "isTitle": false
+        },
+        {
+          "no": 2,
+          "title": "Break It",
+          "songId": "1610054",
+          "isTitle": true
+        },
+        {
+          "no": 3,
+          "title": "맘에 들면 (If U Wanna)",
+          "songId": "1610055",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "Secret World",
+          "songId": "1610056",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "Don’t Be Shy",
+          "songId": "1610057",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "우리 둘",
+          "songId": "1610058",
+          "isTitle": false
+        },
+        {
+          "no": 7,
+          "title": "I’ll Be There",
+          "songId": "1610059",
+          "isTitle": false
+        },
+        {
+          "no": 8,
+          "title": "눈물 지우개",
+          "songId": "1610060",
+          "isTitle": false
+        },
+        {
+          "no": 9,
+          "title": "Break It (Inst.)",
+          "songId": "1610061",
+          "isTitle": false
+        },
+        {
+          "no": 10,
+          "title": "못 지킨 말 (Inst.)",
+          "songId": "1610062",
+          "isTitle": false
+        }
+      ],
+      "melonAlbumId": "348747"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "동방신기",
+    "kind": "discography",
+    "index": 59,
+    "source": "https://www.melon.com/album/detail.htm?albumId=397972",
+    "before": {
+      "title": "MIROTIC",
+      "type": "정규 4집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/003/97/972/397972_500.jpg",
+      "releaseDate": "2008.09.23",
+      "trackCount": 13,
+      "titleTrack": "주문-MIROTIC",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "주문-MIROTIC (Clean Ver.)",
+          "isTitle": true,
+          "songId": "4653917"
+        },
+        {
+          "no": 2,
+          "title": "Wrong Number",
+          "isTitle": false,
+          "songId": "4653903"
+        },
+        {
+          "no": 3,
+          "title": "노을..바라보다 (Picture Of You)",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "Crazy Love",
+          "isTitle": false,
+          "songId": "2238996"
+        },
+        {
+          "no": 5,
+          "title": "Hey! (Don't Bring Me Down)",
+          "isTitle": false,
+          "songId": "4653896"
+        },
+        {
+          "no": 6,
+          "title": "넌 나의 노래 (You're My Melody)",
+          "isTitle": false
+        },
+        {
+          "no": 7,
+          "title": "무지개 (Rainbow)",
+          "isTitle": false,
+          "songId": "2238975"
+        },
+        {
+          "no": 8,
+          "title": "낙원 (Paradise)",
+          "isTitle": false,
+          "songId": "2238974"
+        },
+        {
+          "no": 9,
+          "title": "악녀 (Are You A Good Girl?)",
+          "isTitle": false,
+          "songId": "2238972"
+        },
+        {
+          "no": 10,
+          "title": "Flower Lady",
+          "isTitle": false
+        },
+        {
+          "no": 11,
+          "title": "잊혀진 계절 (Forgotten Season)",
+          "isTitle": false
+        },
+        {
+          "no": 12,
+          "title": "Love In The Ice",
+          "isTitle": false,
+          "songId": "2581386"
+        },
+        {
+          "no": 13,
+          "title": "주문-MIROTIC (Original Ver.)",
+          "isTitle": false,
+          "songId": "4653917"
+        }
+      ],
+      "melonVia": "803952"
+    },
+    "after": {
+      "title": "MIROTIC",
+      "type": "정규 4집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/003/97/972/397972_500.jpg",
+      "releaseDate": "2008.09.23",
+      "trackCount": 13,
+      "titleTrack": "주문-MIROTIC",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "주문-MIROTIC (Clean Ver.)",
+          "isTitle": true,
+          "songId": "1928828"
+        },
+        {
+          "no": 2,
+          "title": "Wrong Number",
+          "isTitle": false,
+          "songId": "1931633"
+        },
+        {
+          "no": 3,
+          "title": "노을..바라보다 (Picture Of You)",
+          "isTitle": false,
+          "songId": "1931634"
+        },
+        {
+          "no": 4,
+          "title": "Crazy Love",
+          "isTitle": false,
+          "songId": "1931641"
+        },
+        {
+          "no": 5,
+          "title": "Hey! (Don't Bring Me Down)",
+          "isTitle": false,
+          "songId": "1931642"
+        },
+        {
+          "no": 6,
+          "title": "넌 나의 노래 (You're My Melody)",
+          "isTitle": false,
+          "songId": "1931643"
+        },
+        {
+          "no": 7,
+          "title": "무지개 (Rainbow)",
+          "isTitle": false,
+          "songId": "1931644"
+        },
+        {
+          "no": 8,
+          "title": "낙원 (Paradise)",
+          "isTitle": false,
+          "songId": "1931645"
+        },
+        {
+          "no": 9,
+          "title": "악녀 (Are You A Good Girl?)",
+          "isTitle": false,
+          "songId": "1931646"
+        },
+        {
+          "no": 10,
+          "title": "Flower Lady",
+          "isTitle": false,
+          "songId": "1931647"
+        },
+        {
+          "no": 11,
+          "title": "잊혀진 계절 (Forgotten Season)",
+          "isTitle": false,
+          "songId": "1931648"
+        },
+        {
+          "no": 12,
+          "title": "Love In The Ice",
+          "isTitle": false,
+          "songId": "1931649"
+        },
+        {
+          "no": 13,
+          "title": "주문-MIROTIC (Original Ver.)",
+          "isTitle": false,
+          "songId": "1992252"
+        }
+      ],
+      "melonVia": "803952",
+      "melonAlbumId": "397972"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "우주소녀",
+    "kind": "discography",
+    "index": 21,
+    "source": "https://www.melon.com/album/detail.htm?albumId=2669168",
+    "before": {
+      "title": "Would You Like?",
+      "type": "미니 1집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/026/69/168/2669168_500.jpg",
+      "releaseDate": "2016.02.25",
+      "trackCount": 6,
+      "titleTrack": "MoMoMo",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "MoMoMo",
+          "isTitle": true,
+          "songId": "8067358"
+        },
+        {
+          "no": 2,
+          "title": "Open Up",
+          "isTitle": false,
+          "songId": "8067358"
+        },
+        {
+          "no": 3,
+          "title": "Stay With Me",
+          "isTitle": false,
+          "songId": "8067359"
+        },
+        {
+          "no": 4,
+          "title": "Save Your Love",
+          "isTitle": false,
+          "songId": "8067360"
+        },
+        {
+          "no": 5,
+          "title": "Crystal Clear",
+          "isTitle": false,
+          "songId": "8067361"
+        },
+        {
+          "no": 6,
+          "title": "You Are My Universe",
+          "isTitle": false,
+          "songId": "8067362"
+        }
+      ],
+      "melonAlbumId": "2669168"
+    },
+    "after": {
+      "title": "Would You Like?",
+      "type": "미니 1집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/026/69/168/2669168_500.jpg",
+      "releaseDate": "2016.02.25",
+      "trackCount": 6,
+      "titleTrack": "MoMoMo (모모모)",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Space Cowgirl",
+          "songId": "8067357",
+          "isTitle": false
+        },
+        {
+          "no": 2,
+          "title": "MoMoMo (모모모)",
+          "songId": "8067358",
+          "isTitle": true
+        },
+        {
+          "no": 3,
+          "title": "Catch Me",
+          "songId": "8067359",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "Tick-Tock",
+          "songId": "8067360",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "Take My Breath",
+          "songId": "8067361",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "MoMoMo (Chinese Ver.)",
+          "songId": "8067362",
+          "isTitle": false
+        }
+      ],
+      "melonAlbumId": "2669168"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "비원에이포",
+    "kind": "discography",
+    "index": 28,
+    "source": "https://www.melon.com/album/detail.htm?albumId=10098883",
+    "before": {
+      "title": "Rollin'",
+      "type": "미니 7집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/98/883/10098883_500.jpg",
+      "releaseDate": "2017.01.09",
+      "trackCount": 5,
+      "titleTrack": "Rollin'",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Rollin'",
+          "isTitle": true,
+          "songId": "30881786"
+        },
+        {
+          "no": 2,
+          "title": "Lovely Cookie",
+          "isTitle": false
+        },
+        {
+          "no": 3,
+          "title": "너의 이름을 (Your Name)",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "여름날 (Summer Day)",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "Rollin' (Inst.)",
+          "isTitle": false,
+          "songId": "30881786"
+        }
+      ],
+      "melonVia": "10137107"
+    },
+    "after": {
+      "title": "Rollin'",
+      "type": "미니 7집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/98/883/10098883_500.jpg",
+      "releaseDate": "2017.09.25",
+      "trackCount": 6,
+      "titleTrack": "Rollin'",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Rollin'",
+          "songId": "30648988",
+          "isTitle": true
+        },
+        {
+          "no": 2,
+          "title": "너는 내가 필요해",
+          "songId": "30648989",
+          "isTitle": false
+        },
+        {
+          "no": 3,
+          "title": "Love Emotion",
+          "songId": "30648990",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "Smile Mask",
+          "songId": "30648991",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "내게 전화해",
+          "songId": "30648992",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "아이처럼",
+          "songId": "30648993",
+          "isTitle": false
+        }
+      ],
+      "melonVia": "10137107",
+      "melonAlbumId": "10098883"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "비원에이포",
+    "kind": "discography",
+    "index": 50,
+    "source": "https://www.melon.com/album/detail.htm?albumId=2012446",
+    "before": {
+      "title": "It B1A4",
+      "type": "미니 2집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/020/12/446/2012446_500.jpg",
+      "releaseDate": "2011.09.15",
+      "trackCount": 6,
+      "titleTrack": "Baby I'm Sorry",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Baby I'm Sorry",
+          "isTitle": true,
+          "songId": "3548553"
+        },
+        {
+          "no": 2,
+          "title": "Promise",
+          "isTitle": false,
+          "songId": "3551039"
+        },
+        {
+          "no": 3,
+          "title": "Gimme ur address",
+          "isTitle": false,
+          "songId": "3551040"
+        },
+        {
+          "no": 4,
+          "title": "Chu",
+          "isTitle": false,
+          "songId": "3551041"
+        },
+        {
+          "no": 5,
+          "title": "Beautiful Target (Reprise)",
+          "isTitle": false,
+          "songId": "3551043"
+        },
+        {
+          "no": 6,
+          "title": "Baby I'm Sorry (Inst.)",
+          "isTitle": false,
+          "songId": "3551043"
+        }
+      ],
+      "melonAlbumId": "2012446"
+    },
+    "after": {
+      "title": "It B1A4",
+      "type": "미니 2집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/020/12/446/2012446_500.jpg",
+      "releaseDate": "2011.09.15",
+      "trackCount": 6,
+      "titleTrack": "Beautiful Target",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Beautiful Target",
+          "songId": "3548553",
+          "isTitle": true
+        },
+        {
+          "no": 2,
+          "title": "My Love",
+          "songId": "3551039",
+          "isTitle": false
+        },
+        {
+          "no": 3,
+          "title": "쮸쮸쮸 (Chu Chu Chu)",
+          "songId": "3551040",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "Wonderful Tonight",
+          "songId": "3551041",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "Fooool",
+          "songId": "3551042",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "Beautiful Target (Inst.)",
+          "songId": "3551043",
+          "isTitle": false
+        }
+      ],
+      "melonAlbumId": "2012446"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "비투비",
+    "kind": "discography",
+    "index": 37,
+    "source": "https://www.melon.com/album/detail.htm?albumId=2200239",
+    "before": {
+      "title": "스릴러 (Thriller)",
+      "type": "미니 3집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/00/239/2200239_500.jpg?8e08b8d8ee957a96cd9317b1641ad216/melon/resize/260/quality/80/optimize",
+      "releaseDate": "2013.09.09",
+      "trackCount": 6,
+      "titleTrack": "스릴러 (Thriller)",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "스릴러 (Thriller)",
+          "isTitle": true,
+          "songId": "4235348"
+        },
+        {
+          "no": 2,
+          "title": "그리워하다 (Miss You)",
+          "isTitle": false,
+          "songId": "4235348"
+        },
+        {
+          "no": 3,
+          "title": "Good Boy",
+          "isTitle": false,
+          "songId": "4235349"
+        },
+        {
+          "no": 4,
+          "title": "뚜뚜루루 (Do Do Ru Ru)",
+          "isTitle": false,
+          "songId": "4235350"
+        },
+        {
+          "no": 5,
+          "title": "여기 있을게 (Stay Here)",
+          "isTitle": false,
+          "songId": "4235351"
+        },
+        {
+          "no": 6,
+          "title": "스릴러 (Thriller) (Inst.)",
+          "isTitle": false,
+          "songId": "4235352"
+        }
+      ],
+      "melonAlbumId": "2200239"
+    },
+    "after": {
+      "title": "스릴러 (Thriller)",
+      "type": "미니 3집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/00/239/2200239_500.jpg?8e08b8d8ee957a96cd9317b1641ad216/melon/resize/260/quality/80/optimize",
+      "releaseDate": "2013.09.09",
+      "trackCount": 6,
+      "titleTrack": "스릴러",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "내가 니 남자였을 때",
+          "songId": "4235347",
+          "isTitle": false
+        },
+        {
+          "no": 2,
+          "title": "스릴러",
+          "songId": "4235348",
+          "isTitle": true
+        },
+        {
+          "no": 3,
+          "title": "왜 이래",
+          "songId": "4235349",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "Catch Me",
+          "songId": "4235350",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "크리스탈같이",
+          "songId": "4235351",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "별",
+          "songId": "4235352",
+          "isTitle": false
+        }
+      ],
+      "melonAlbumId": "2200239"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "S.E.S.",
+    "kind": "discography",
+    "index": 22,
+    "source": "https://www.melon.com/album/detail.htm?albumId=5407",
+    "before": {
+      "title": "Sea & Eugene & Shoo - 2집",
+      "type": "정규 2집",
+      "isMain": true,
+      "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/08/02/57/08025725-a6bb-2692-a6bc-6d12f6f20698/mzm.zdiivoem.jpg/600x600bb.jpg",
+      "releaseDate": "1998.11.01",
+      "trackCount": 10,
+      "titleTrack": "Shy Boy",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Shy Boy",
+          "isTitle": true,
+          "songId": "75067"
+        },
+        {
+          "no": 2,
+          "title": "Dreams Come True",
+          "isTitle": false,
+          "songId": "75068"
+        },
+        {
+          "no": 3,
+          "title": "Snow, X-Mas",
+          "isTitle": false,
+          "songId": "75069"
+        },
+        {
+          "no": 4,
+          "title": "느낌",
+          "isTitle": false,
+          "songId": "75071"
+        },
+        {
+          "no": 5,
+          "title": "비가",
+          "isTitle": false,
+          "songId": "75072"
+        },
+        {
+          "no": 6,
+          "title": "애인찾기",
+          "isTitle": false,
+          "songId": "75073"
+        },
+        {
+          "no": 7,
+          "title": "바람의 여행",
+          "isTitle": false,
+          "songId": "75073"
+        },
+        {
+          "no": 8,
+          "title": "Shy Boy (Remix)",
+          "isTitle": false,
+          "songId": "75074"
+        },
+        {
+          "no": 9,
+          "title": "Dreams Come True (Remix)",
+          "isTitle": false,
+          "songId": "81244"
+        },
+        {
+          "no": 10,
+          "title": "Shy Boy (Instrumental)",
+          "isTitle": false,
+          "songId": "81245"
+        }
+      ],
+      "melonAlbumId": "5407"
+    },
+    "after": {
+      "title": "Sea & Eugene & Shoo - 2집",
+      "type": "정규 2집",
+      "isMain": true,
+      "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/08/02/57/08025725-a6bb-2692-a6bc-6d12f6f20698/mzm.zdiivoem.jpg/600x600bb.jpg",
+      "releaseDate": "1998.11.01",
+      "trackCount": 10,
+      "titleTrack": "Dreams Come True",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Shy Boy",
+          "songId": "75067",
+          "isTitle": false
+        },
+        {
+          "no": 2,
+          "title": "Dreams Come True",
+          "songId": "75068",
+          "isTitle": true
+        },
+        {
+          "no": 3,
+          "title": "Snow, X-Mas",
+          "songId": "75069",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "너를 사랑해",
+          "songId": "75070",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "느낌",
+          "songId": "75071",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "비가",
+          "songId": "75072",
+          "isTitle": false
+        },
+        {
+          "no": 7,
+          "title": "애인찾기",
+          "songId": "75073",
+          "isTitle": false
+        },
+        {
+          "no": 8,
+          "title": "너에게",
+          "songId": "75074",
+          "isTitle": false
+        },
+        {
+          "no": 9,
+          "title": "Kiss",
+          "songId": "81244",
+          "isTitle": false
+        },
+        {
+          "no": 10,
+          "title": "Eternal Love",
+          "songId": "81245",
+          "isTitle": false
+        }
+      ],
+      "melonAlbumId": "5407"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "S.E.S.",
+    "kind": "discography",
+    "index": 23,
+    "source": "https://www.melon.com/album/detail.htm?albumId=5405",
+    "before": {
+      "title": "S.E.S. - 1집",
+      "type": "정규 1집",
+      "isMain": true,
+      "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/34/7c/5f/347c5f8c-f792-e629-918e-bce5db845e0d/ses_1st.jpg/600x600bb.jpg",
+      "releaseDate": "1997.11.01",
+      "trackCount": 10,
+      "titleTrack": "I'm Your Girl",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "I'm Your Girl",
+          "isTitle": true,
+          "songId": "78184"
+        },
+        {
+          "no": 2,
+          "title": "달리기",
+          "isTitle": false,
+          "songId": "78185"
+        },
+        {
+          "no": 3,
+          "title": "Oh My Love",
+          "isTitle": false,
+          "songId": "78186"
+        },
+        {
+          "no": 4,
+          "title": "친구",
+          "isTitle": false,
+          "songId": "78190"
+        },
+        {
+          "no": 5,
+          "title": "그대의 향기",
+          "isTitle": false,
+          "songId": "78193"
+        },
+        {
+          "no": 6,
+          "title": "미래로",
+          "isTitle": false,
+          "songId": "78189"
+        },
+        {
+          "no": 7,
+          "title": "누구에게나",
+          "isTitle": false,
+          "songId": "78190"
+        },
+        {
+          "no": 8,
+          "title": "I'm Your Girl (Club Mix)",
+          "isTitle": false,
+          "songId": "78191"
+        },
+        {
+          "no": 9,
+          "title": "달리기 (Remix)",
+          "isTitle": false,
+          "songId": "78192"
+        },
+        {
+          "no": 10,
+          "title": "Oh My Love (Inst.)",
+          "isTitle": false,
+          "songId": "78185"
+        }
+      ],
+      "melonAlbumId": "5405"
+    },
+    "after": {
+      "title": "S.E.S. - 1집",
+      "type": "정규 1집",
+      "isMain": true,
+      "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/34/7c/5f/347c5f8c-f792-e629-918e-bce5db845e0d/ses_1st.jpg/600x600bb.jpg",
+      "releaseDate": "1997.11.01",
+      "trackCount": 10,
+      "titleTrack": "('Cause) I'm Your Girl",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "('Cause) I'm Your Girl",
+          "songId": "78184",
+          "isTitle": true
+        },
+        {
+          "no": 2,
+          "title": "Oh, My Love",
+          "songId": "78185",
+          "isTitle": false
+        },
+        {
+          "no": 3,
+          "title": "Nonsense",
+          "songId": "78186",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "Dejavu (데자부)",
+          "songId": "78187",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "Good-Bye",
+          "songId": "78188",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "완전한 이유",
+          "songId": "78189",
+          "isTitle": false
+        },
+        {
+          "no": 7,
+          "title": "친구",
+          "songId": "78190",
+          "isTitle": false
+        },
+        {
+          "no": 8,
+          "title": "Rock'n 나라",
+          "songId": "78191",
+          "isTitle": false
+        },
+        {
+          "no": 9,
+          "title": "오늘이 지나면",
+          "songId": "78192",
+          "isTitle": false
+        },
+        {
+          "no": 10,
+          "title": "그대의 향기",
+          "songId": "78193",
+          "isTitle": false
+        }
+      ],
+      "melonAlbumId": "5405"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "블락비",
+    "kind": "discography",
+    "index": 7,
+    "source": "https://www.melon.com/album/detail.htm?albumId=2678718",
+    "before": {
+      "title": "Blooming Period",
+      "type": "미니 5집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/026/78/718/2678718_500.jpg",
+      "releaseDate": "2016.04.04",
+      "trackCount": 6,
+      "titleTrack": "Toy",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Toy",
+          "isTitle": true,
+          "songId": "34189120"
+        },
+        {
+          "no": 2,
+          "title": "A Few Years Later",
+          "isTitle": false
+        },
+        {
+          "no": 3,
+          "title": "봄날 (Spring Days)",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "기도 (Prayer)",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "몇 해 전 (A Few Years Ago)",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "Toy (Inst.)",
+          "isTitle": false,
+          "songId": "34189120"
+        }
+      ],
+      "melonVia": "10758392"
+    },
+    "after": {
+      "title": "Blooming Period",
+      "type": "미니 5집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/026/78/718/2678718_500.jpg",
+      "releaseDate": "2016.04.04",
+      "trackCount": 6,
+      "titleTrack": "Toy",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "몇 년 후에",
+          "songId": "8138939",
+          "isTitle": false
+        },
+        {
+          "no": 2,
+          "title": "Toy",
+          "songId": "8138940",
+          "isTitle": true
+        },
+        {
+          "no": 3,
+          "title": "사랑이었다 (Song By 태일)",
+          "songId": "8138941",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "Walkin' In The Rain",
+          "songId": "8138942",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "빙글빙글 (Song By 비범, 유권)",
+          "songId": "8138943",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "몇 년 후에 (Inst.)",
+          "songId": "8138944",
+          "isTitle": false
+        }
+      ],
+      "melonVia": "10758392",
+      "melonAlbumId": "2678718"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "블락비",
+    "kind": "discography",
+    "index": 13,
+    "source": "https://www.melon.com/album/detail.htm?albumId=2153172",
+    "before": {
+      "title": "BLOCKBUSTER",
+      "type": "정규 1집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/53/172/2153172_500.jpg",
+      "releaseDate": "2012.10.17",
+      "trackCount": 12,
+      "titleTrack": "닐리리맘보 (Nillili Mambo)",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "닐리리맘보 (Nillili Mambo)",
+          "isTitle": true,
+          "songId": "3928713"
+        },
+        {
+          "no": 2,
+          "title": "LOL",
+          "isTitle": false,
+          "songId": "3928712"
+        },
+        {
+          "no": 3,
+          "title": "그냥 (Still in the Air)",
+          "isTitle": false,
+          "songId": "3928713"
+        },
+        {
+          "no": 4,
+          "title": "뻔한 멜로디 (Melodically)",
+          "isTitle": false,
+          "songId": "3928714"
+        },
+        {
+          "no": 5,
+          "title": "Romantically",
+          "isTitle": false,
+          "songId": "3928715"
+        },
+        {
+          "no": 6,
+          "title": "물들어 (Drenched)",
+          "isTitle": false,
+          "songId": "3928716"
+        },
+        {
+          "no": 7,
+          "title": "쇼챔피언 (Show Champion)",
+          "isTitle": false,
+          "songId": "3928717"
+        },
+        {
+          "no": 8,
+          "title": "B-Bomb",
+          "isTitle": false,
+          "songId": "3928718"
+        },
+        {
+          "no": 9,
+          "title": "Burn Out",
+          "isTitle": false,
+          "songId": "3928719"
+        },
+        {
+          "no": 10,
+          "title": "Tell Them",
+          "isTitle": false,
+          "songId": "3928720"
+        },
+        {
+          "no": 11,
+          "title": "Nanlina",
+          "isTitle": false,
+          "songId": "3928721"
+        },
+        {
+          "no": 12,
+          "title": "닐리리맘보 (Inst.)",
+          "isTitle": false,
+          "songId": "3928722"
+        }
+      ],
+      "melonAlbumId": "2153172"
+    },
+    "after": {
+      "title": "BLOCKBUSTER",
+      "type": "정규 1집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/53/172/2153172_500.jpg",
+      "releaseDate": "2012.10.17",
+      "trackCount": 12,
+      "titleTrack": "닐리리맘보",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "11:30",
+          "songId": "3928711",
+          "isTitle": false
+        },
+        {
+          "no": 2,
+          "title": "INTERLUDE",
+          "songId": "3928712",
+          "isTitle": false
+        },
+        {
+          "no": 3,
+          "title": "닐리리맘보",
+          "songId": "3928713",
+          "isTitle": true
+        },
+        {
+          "no": 4,
+          "title": "MENTAL BREAKER",
+          "songId": "3928714",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "장난없다(NO JOKE)",
+          "songId": "3928715",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "MOVIE'S OVER",
+          "songId": "3928716",
+          "isTitle": false
+        },
+        {
+          "no": 7,
+          "title": "넌 어디에",
+          "songId": "3928717",
+          "isTitle": false
+        },
+        {
+          "no": 8,
+          "title": "로맨틱하게",
+          "songId": "3928718",
+          "isTitle": false
+        },
+        {
+          "no": 9,
+          "title": "했어 안했어",
+          "songId": "3928719",
+          "isTitle": false
+        },
+        {
+          "no": 10,
+          "title": "HALO",
+          "songId": "3928720",
+          "isTitle": false
+        },
+        {
+          "no": 11,
+          "title": "닐리리맘보 (INST)",
+          "songId": "3928721",
+          "isTitle": false
+        },
+        {
+          "no": 12,
+          "title": "MENTAL BREAKER (INST)",
+          "songId": "3928722",
+          "isTitle": false
+        }
+      ],
+      "melonAlbumId": "2153172"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "블락비",
+    "kind": "discography",
+    "index": 10,
+    "source": "https://www.melon.com/album/detail.htm?albumId=2250057",
+    "before": {
+      "title": "HER",
+      "type": "미니 4집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/50/057/2250057_500.jpg",
+      "releaseDate": "2014.05.13",
+      "trackCount": 5,
+      "titleTrack": "HER",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "HER",
+          "isTitle": true,
+          "songId": "34189115"
+        },
+        {
+          "no": 2,
+          "title": "떠나지마요 (Don't Leave)",
+          "isTitle": false,
+          "songId": "30824538"
+        },
+        {
+          "no": 3,
+          "title": "Hold",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "깊이 (Deeply)",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "HER (Inst.)",
+          "isTitle": false,
+          "songId": "34189115"
+        }
+      ],
+      "melonVia": "10758392"
+    },
+    "after": {
+      "title": "HER",
+      "type": "미니 4집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/50/057/2250057_500.jpg",
+      "releaseDate": "2014.07.24",
+      "trackCount": 6,
+      "titleTrack": "HER",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "보기 드문 여자",
+          "songId": "4764927",
+          "isTitle": false
+        },
+        {
+          "no": 2,
+          "title": "HER",
+          "songId": "4764928",
+          "isTitle": true
+        },
+        {
+          "no": 3,
+          "title": "이제 날 안아요",
+          "songId": "4764932",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "JACKPOT",
+          "songId": "4591400",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "Very Good (Rough Ver.)",
+          "songId": "4764949",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "JACKPOT (Inst.)",
+          "songId": "4764953",
+          "isTitle": false
+        }
+      ],
+      "melonVia": "10758392",
+      "melonAlbumId": "2250057"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "group",
+    "owner": "빅스",
+    "kind": "discography",
+    "index": 21,
+    "source": "https://www.melon.com/album/detail.htm?albumId=2185649",
+    "before": {
+      "title": "Hyde",
+      "type": "미니 1집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/85/649/2185649_500.jpg",
+      "releaseDate": "2013.05.20",
+      "trackCount": 6,
+      "titleTrack": "Hyde",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Hyde",
+          "isTitle": true,
+          "songId": "4117691"
+        },
+        {
+          "no": 2,
+          "title": "G.R.8.U",
+          "isTitle": false,
+          "songId": "4117691"
+        },
+        {
+          "no": 3,
+          "title": "사랑스러워 (Loveable)",
+          "isTitle": false,
+          "songId": "4117692"
+        },
+        {
+          "no": 4,
+          "title": "Rock Ur Body",
+          "isTitle": false,
+          "songId": "4117693"
+        },
+        {
+          "no": 5,
+          "title": "Starlight",
+          "isTitle": false,
+          "songId": "4117694"
+        },
+        {
+          "no": 6,
+          "title": "Hyde (Inst.)",
+          "isTitle": false,
+          "songId": "4117695"
+        }
+      ],
+      "melonAlbumId": "2185649"
+    },
+    "after": {
+      "title": "Hyde",
+      "type": "미니 1집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/85/649/2185649_500.jpg",
+      "releaseDate": "2013.05.20",
+      "trackCount": 6,
+      "titleTrack": "hyde",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "어둠 속을 밝혀줘",
+          "songId": "4117690",
+          "isTitle": false
+        },
+        {
+          "no": 2,
+          "title": "hyde",
+          "songId": "4117691",
+          "isTitle": true
+        },
+        {
+          "no": 3,
+          "title": "그만 버티고 (Feat. 민아 Of 걸스데이)",
+          "songId": "4117692",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "CHAOS",
+          "songId": "4117693",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "Love Letter",
+          "songId": "4117694",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "hyde (Inst.)",
+          "songId": "4117695",
+          "isTitle": false
+        }
+      ],
+      "melonAlbumId": "2185649"
+    },
+    "policy": "Official exact album; identity/cover/type preserved; close physical/digital date differences not changed"
+  },
+  {
+    "type": "artist-unit",
+    "owner": "a0166",
+    "unitName": "SM THE BALLAD",
+    "index": 4,
+    "source": "https://www.melon.com/album/detail.htm?albumId=2232902",
+    "before": {
+      "albumId": 2232902,
+      "title": "S.M. The Ballad Vol.2 'Breath'",
+      "type": "정규",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/32/902/2232902_500.jpg",
+      "releaseDate": "2014.02.13",
+      "trackCount": 10,
+      "titleTrack": "숨소리 (Breath)",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Dear...",
+          "isTitle": false,
+          "songId": "4450165"
+        },
+        {
+          "no": 2,
+          "title": "숨소리 (Breath)",
+          "isTitle": true,
+          "note": "태연 & 종현",
+          "songId": "4450166"
+        },
+        {
+          "no": 3,
+          "title": "내 욕심이 많았다 (Blind)",
+          "isTitle": false,
+          "note": "예성",
+          "songId": "4450167"
+        },
+        {
+          "no": 4,
+          "title": "Set Me Free",
+          "isTitle": false,
+          "note": "태연",
+          "songId": "4450168"
+        },
+        {
+          "no": 5,
+          "title": "하루 (A Day Without You)",
+          "isTitle": false,
+          "note": "종현 & 첸",
+          "songId": "4450169"
+        },
+        {
+          "no": 6,
+          "title": "좋았던 건, 아팠던 건 (When I Was... When U Were...)",
+          "isTitle": false,
+          "note": "크리스탈 & 첸",
+          "songId": "4450170"
+        },
+        {
+          "no": 7,
+          "title": "Breath",
+          "isTitle": false,
+          "note": "최강창민 & 크리스탈",
+          "songId": "4450171"
+        },
+        {
+          "no": 8,
+          "title": "僕のせいだよ (Blind)",
+          "isTitle": false,
+          "note": "예성 (일본어 버전)",
+          "songId": "4450174"
+        },
+        {
+          "no": 9,
+          "title": "呼吸 (Breath)",
+          "isTitle": false,
+          "note": "첸 & 장리인 (중국어 버전)",
+          "songId": "4450173"
+        },
+        {
+          "no": 10,
+          "title": "太貪心 (Blind)",
+          "isTitle": false,
+          "note": "조미 (중국어 버전)",
+          "songId": "4450174"
+        }
+      ],
+      "generation": "2기",
+      "artists": [
+        "최강창민 (동방신기)",
+        "예성 (슈퍼주니어)",
+        "태연 (소녀시대)",
+        "종현 (샤이니)",
+        "첸 (EXO)",
+        "크리스탈 (f(x))",
+        "조미 (슈퍼주니어-M)",
+        "장리인"
+      ],
+      "melonAlbumId": "2232902"
+    },
+    "after": {
+      "albumId": 2232902,
+      "title": "S.M. The Ballad Vol.2 'Breath'",
+      "type": "정규",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/32/902/2232902_500.jpg",
+      "releaseDate": "2014.02.13",
+      "trackCount": 10,
+      "titleTrack": "숨소리 (Breath)",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Dear...",
+          "isTitle": false,
+          "songId": "4450165"
+        },
+        {
+          "no": 2,
+          "title": "숨소리 (Breath)",
+          "isTitle": true,
+          "note": "태연 & 종현",
+          "songId": "4450166"
+        },
+        {
+          "no": 3,
+          "title": "내 욕심이 많았다 (Blind)",
+          "isTitle": false,
+          "note": "예성",
+          "songId": "4450167"
+        },
+        {
+          "no": 4,
+          "title": "Set Me Free",
+          "isTitle": false,
+          "note": "태연",
+          "songId": "4450168"
+        },
+        {
+          "no": 5,
+          "title": "하루 (A Day Without You)",
+          "isTitle": false,
+          "note": "종현 & 첸",
+          "songId": "4450169"
+        },
+        {
+          "no": 6,
+          "title": "좋았던 건, 아팠던 건 (When I Was... When U Were...)",
+          "isTitle": false,
+          "note": "크리스탈 & 첸",
+          "songId": "4450170"
+        },
+        {
+          "no": 7,
+          "title": "Breath",
+          "isTitle": false,
+          "note": "최강창민 & 크리스탈",
+          "songId": "4450171"
+        },
+        {
+          "no": 8,
+          "title": "僕のせいだよ (Blind)",
+          "isTitle": false,
+          "note": "예성 (일본어 버전)",
+          "songId": "4450172"
+        },
+        {
+          "no": 9,
+          "title": "呼吸 (Breath)",
+          "isTitle": false,
+          "note": "첸 & 장리인 (중국어 버전)",
+          "songId": "4450173"
+        },
+        {
+          "no": 10,
+          "title": "太貪心 (Blind)",
+          "isTitle": false,
+          "note": "조미 (중국어 버전)",
+          "songId": "4450174"
+        }
+      ],
+      "generation": "2기",
+      "artists": [
+        "최강창민 (동방신기)",
+        "예성 (슈퍼주니어)",
+        "태연 (소녀시대)",
+        "종현 (샤이니)",
+        "첸 (EXO)",
+        "크리스탈 (f(x))",
+        "조미 (슈퍼주니어-M)",
+        "장리인"
+      ],
+      "melonAlbumId": "2232902"
+    },
+    "policy": "Japanese Blind ID only; Chinese language track/performer notes preserved"
+  },
+  {
+    "type": "artist-unit",
+    "owner": "a0177",
+    "unitName": "SM THE BALLAD",
+    "index": 4,
+    "source": "https://www.melon.com/album/detail.htm?albumId=2232902",
+    "before": {
+      "albumId": 2232902,
+      "title": "S.M. The Ballad Vol.2 'Breath'",
+      "type": "정규",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/32/902/2232902_500.jpg",
+      "releaseDate": "2014.02.13",
+      "trackCount": 10,
+      "titleTrack": "숨소리 (Breath)",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Dear...",
+          "isTitle": false,
+          "songId": "4450165"
+        },
+        {
+          "no": 2,
+          "title": "숨소리 (Breath)",
+          "isTitle": true,
+          "note": "태연 & 종현",
+          "songId": "4450166"
+        },
+        {
+          "no": 3,
+          "title": "내 욕심이 많았다 (Blind)",
+          "isTitle": false,
+          "note": "예성",
+          "songId": "4450167"
+        },
+        {
+          "no": 4,
+          "title": "Set Me Free",
+          "isTitle": false,
+          "note": "태연",
+          "songId": "4450168"
+        },
+        {
+          "no": 5,
+          "title": "하루 (A Day Without You)",
+          "isTitle": false,
+          "note": "종현 & 첸",
+          "songId": "4450169"
+        },
+        {
+          "no": 6,
+          "title": "좋았던 건, 아팠던 건 (When I Was... When U Were...)",
+          "isTitle": false,
+          "note": "크리스탈 & 첸",
+          "songId": "4450170"
+        },
+        {
+          "no": 7,
+          "title": "Breath",
+          "isTitle": false,
+          "note": "최강창민 & 크리스탈",
+          "songId": "4450171"
+        },
+        {
+          "no": 8,
+          "title": "僕のせいだよ (Blind)",
+          "isTitle": false,
+          "note": "예성 (일본어 버전)",
+          "songId": "4450174"
+        },
+        {
+          "no": 9,
+          "title": "呼吸 (Breath)",
+          "isTitle": false,
+          "note": "첸 & 장리인 (중국어 버전)",
+          "songId": "4450173"
+        },
+        {
+          "no": 10,
+          "title": "太貪心 (Blind)",
+          "isTitle": false,
+          "note": "조미 (중국어 버전)",
+          "songId": "4450174"
+        }
+      ],
+      "generation": "2기",
+      "artists": [
+        "최강창민 (동방신기)",
+        "예성 (슈퍼주니어)",
+        "태연 (소녀시대)",
+        "종현 (샤이니)",
+        "첸 (EXO)",
+        "크리스탈 (f(x))",
+        "조미 (슈퍼주니어-M)",
+        "장리인"
+      ],
+      "melonAlbumId": "2232902"
+    },
+    "after": {
+      "albumId": 2232902,
+      "title": "S.M. The Ballad Vol.2 'Breath'",
+      "type": "정규",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/32/902/2232902_500.jpg",
+      "releaseDate": "2014.02.13",
+      "trackCount": 10,
+      "titleTrack": "숨소리 (Breath)",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Dear...",
+          "isTitle": false,
+          "songId": "4450165"
+        },
+        {
+          "no": 2,
+          "title": "숨소리 (Breath)",
+          "isTitle": true,
+          "note": "태연 & 종현",
+          "songId": "4450166"
+        },
+        {
+          "no": 3,
+          "title": "내 욕심이 많았다 (Blind)",
+          "isTitle": false,
+          "note": "예성",
+          "songId": "4450167"
+        },
+        {
+          "no": 4,
+          "title": "Set Me Free",
+          "isTitle": false,
+          "note": "태연",
+          "songId": "4450168"
+        },
+        {
+          "no": 5,
+          "title": "하루 (A Day Without You)",
+          "isTitle": false,
+          "note": "종현 & 첸",
+          "songId": "4450169"
+        },
+        {
+          "no": 6,
+          "title": "좋았던 건, 아팠던 건 (When I Was... When U Were...)",
+          "isTitle": false,
+          "note": "크리스탈 & 첸",
+          "songId": "4450170"
+        },
+        {
+          "no": 7,
+          "title": "Breath",
+          "isTitle": false,
+          "note": "최강창민 & 크리스탈",
+          "songId": "4450171"
+        },
+        {
+          "no": 8,
+          "title": "僕のせいだよ (Blind)",
+          "isTitle": false,
+          "note": "예성 (일본어 버전)",
+          "songId": "4450172"
+        },
+        {
+          "no": 9,
+          "title": "呼吸 (Breath)",
+          "isTitle": false,
+          "note": "첸 & 장리인 (중국어 버전)",
+          "songId": "4450173"
+        },
+        {
+          "no": 10,
+          "title": "太貪心 (Blind)",
+          "isTitle": false,
+          "note": "조미 (중국어 버전)",
+          "songId": "4450174"
+        }
+      ],
+      "generation": "2기",
+      "artists": [
+        "최강창민 (동방신기)",
+        "예성 (슈퍼주니어)",
+        "태연 (소녀시대)",
+        "종현 (샤이니)",
+        "첸 (EXO)",
+        "크리스탈 (f(x))",
+        "조미 (슈퍼주니어-M)",
+        "장리인"
+      ],
+      "melonAlbumId": "2232902"
+    },
+    "policy": "Japanese Blind ID only; Chinese language track/performer notes preserved"
+  },
+  {
+    "type": "artist-unit",
+    "owner": "a0182",
+    "unitName": "SM THE BALLAD",
+    "index": 4,
+    "source": "https://www.melon.com/album/detail.htm?albumId=2232902",
+    "before": {
+      "albumId": 2232902,
+      "title": "S.M. The Ballad Vol.2 'Breath'",
+      "type": "정규",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/32/902/2232902_500.jpg",
+      "releaseDate": "2014.02.13",
+      "trackCount": 10,
+      "titleTrack": "숨소리 (Breath)",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Dear...",
+          "isTitle": false,
+          "songId": "4450165"
+        },
+        {
+          "no": 2,
+          "title": "숨소리 (Breath)",
+          "isTitle": true,
+          "note": "태연 & 종현",
+          "songId": "4450166"
+        },
+        {
+          "no": 3,
+          "title": "내 욕심이 많았다 (Blind)",
+          "isTitle": false,
+          "note": "예성",
+          "songId": "4450167"
+        },
+        {
+          "no": 4,
+          "title": "Set Me Free",
+          "isTitle": false,
+          "note": "태연",
+          "songId": "4450168"
+        },
+        {
+          "no": 5,
+          "title": "하루 (A Day Without You)",
+          "isTitle": false,
+          "note": "종현 & 첸",
+          "songId": "4450169"
+        },
+        {
+          "no": 6,
+          "title": "좋았던 건, 아팠던 건 (When I Was... When U Were...)",
+          "isTitle": false,
+          "note": "크리스탈 & 첸",
+          "songId": "4450170"
+        },
+        {
+          "no": 7,
+          "title": "Breath",
+          "isTitle": false,
+          "note": "최강창민 & 크리스탈",
+          "songId": "4450171"
+        },
+        {
+          "no": 8,
+          "title": "僕のせいだよ (Blind)",
+          "isTitle": false,
+          "note": "예성 (일본어 버전)",
+          "songId": "4450174"
+        },
+        {
+          "no": 9,
+          "title": "呼吸 (Breath)",
+          "isTitle": false,
+          "note": "첸 & 장리인 (중국어 버전)",
+          "songId": "4450173"
+        },
+        {
+          "no": 10,
+          "title": "太貪心 (Blind)",
+          "isTitle": false,
+          "note": "조미 (중국어 버전)",
+          "songId": "4450174"
+        }
+      ],
+      "generation": "2기",
+      "artists": [
+        "최강창민 (동방신기)",
+        "예성 (슈퍼주니어)",
+        "태연 (소녀시대)",
+        "종현 (샤이니)",
+        "첸 (EXO)",
+        "크리스탈 (f(x))",
+        "조미 (슈퍼주니어-M)",
+        "장리인"
+      ],
+      "melonAlbumId": "2232902"
+    },
+    "after": {
+      "albumId": 2232902,
+      "title": "S.M. The Ballad Vol.2 'Breath'",
+      "type": "정규",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/32/902/2232902_500.jpg",
+      "releaseDate": "2014.02.13",
+      "trackCount": 10,
+      "titleTrack": "숨소리 (Breath)",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Dear...",
+          "isTitle": false,
+          "songId": "4450165"
+        },
+        {
+          "no": 2,
+          "title": "숨소리 (Breath)",
+          "isTitle": true,
+          "note": "태연 & 종현",
+          "songId": "4450166"
+        },
+        {
+          "no": 3,
+          "title": "내 욕심이 많았다 (Blind)",
+          "isTitle": false,
+          "note": "예성",
+          "songId": "4450167"
+        },
+        {
+          "no": 4,
+          "title": "Set Me Free",
+          "isTitle": false,
+          "note": "태연",
+          "songId": "4450168"
+        },
+        {
+          "no": 5,
+          "title": "하루 (A Day Without You)",
+          "isTitle": false,
+          "note": "종현 & 첸",
+          "songId": "4450169"
+        },
+        {
+          "no": 6,
+          "title": "좋았던 건, 아팠던 건 (When I Was... When U Were...)",
+          "isTitle": false,
+          "note": "크리스탈 & 첸",
+          "songId": "4450170"
+        },
+        {
+          "no": 7,
+          "title": "Breath",
+          "isTitle": false,
+          "note": "최강창민 & 크리스탈",
+          "songId": "4450171"
+        },
+        {
+          "no": 8,
+          "title": "僕のせいだよ (Blind)",
+          "isTitle": false,
+          "note": "예성 (일본어 버전)",
+          "songId": "4450172"
+        },
+        {
+          "no": 9,
+          "title": "呼吸 (Breath)",
+          "isTitle": false,
+          "note": "첸 & 장리인 (중국어 버전)",
+          "songId": "4450173"
+        },
+        {
+          "no": 10,
+          "title": "太貪心 (Blind)",
+          "isTitle": false,
+          "note": "조미 (중국어 버전)",
+          "songId": "4450174"
+        }
+      ],
+      "generation": "2기",
+      "artists": [
+        "최강창민 (동방신기)",
+        "예성 (슈퍼주니어)",
+        "태연 (소녀시대)",
+        "종현 (샤이니)",
+        "첸 (EXO)",
+        "크리스탈 (f(x))",
+        "조미 (슈퍼주니어-M)",
+        "장리인"
+      ],
+      "melonAlbumId": "2232902"
+    },
+    "policy": "Japanese Blind ID only; Chinese language track/performer notes preserved"
+  },
+  {
+    "type": "artist-unit",
+    "owner": "a0373",
+    "unitName": "SM THE BALLAD",
+    "index": 4,
+    "source": "https://www.melon.com/album/detail.htm?albumId=2232902",
+    "before": {
+      "albumId": 2232902,
+      "title": "S.M. The Ballad Vol.2 'Breath'",
+      "type": "정규",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/32/902/2232902_500.jpg",
+      "releaseDate": "2014.02.13",
+      "trackCount": 10,
+      "titleTrack": "숨소리 (Breath)",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Dear...",
+          "isTitle": false,
+          "songId": "4450165"
+        },
+        {
+          "no": 2,
+          "title": "숨소리 (Breath)",
+          "isTitle": true,
+          "note": "태연 & 종현",
+          "songId": "4450166"
+        },
+        {
+          "no": 3,
+          "title": "내 욕심이 많았다 (Blind)",
+          "isTitle": false,
+          "note": "예성",
+          "songId": "4450167"
+        },
+        {
+          "no": 4,
+          "title": "Set Me Free",
+          "isTitle": false,
+          "note": "태연",
+          "songId": "4450168"
+        },
+        {
+          "no": 5,
+          "title": "하루 (A Day Without You)",
+          "isTitle": false,
+          "note": "종현 & 첸",
+          "songId": "4450169"
+        },
+        {
+          "no": 6,
+          "title": "좋았던 건, 아팠던 건 (When I Was... When U Were...)",
+          "isTitle": false,
+          "note": "크리스탈 & 첸",
+          "songId": "4450170"
+        },
+        {
+          "no": 7,
+          "title": "Breath",
+          "isTitle": false,
+          "note": "최강창민 & 크리스탈",
+          "songId": "4450171"
+        },
+        {
+          "no": 8,
+          "title": "僕のせいだよ (Blind)",
+          "isTitle": false,
+          "note": "예성 (일본어 버전)",
+          "songId": "4450174"
+        },
+        {
+          "no": 9,
+          "title": "呼吸 (Breath)",
+          "isTitle": false,
+          "note": "첸 & 장리인 (중국어 버전)",
+          "songId": "4450173"
+        },
+        {
+          "no": 10,
+          "title": "太貪心 (Blind)",
+          "isTitle": false,
+          "note": "조미 (중국어 버전)",
+          "songId": "4450174"
+        }
+      ],
+      "generation": "2기",
+      "artists": [
+        "최강창민 (동방신기)",
+        "예성 (슈퍼주니어)",
+        "태연 (소녀시대)",
+        "종현 (샤이니)",
+        "첸 (EXO)",
+        "크리스탈 (f(x))",
+        "조미 (슈퍼주니어-M)",
+        "장리인"
+      ],
+      "melonAlbumId": "2232902"
+    },
+    "after": {
+      "albumId": 2232902,
+      "title": "S.M. The Ballad Vol.2 'Breath'",
+      "type": "정규",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/32/902/2232902_500.jpg",
+      "releaseDate": "2014.02.13",
+      "trackCount": 10,
+      "titleTrack": "숨소리 (Breath)",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Dear...",
+          "isTitle": false,
+          "songId": "4450165"
+        },
+        {
+          "no": 2,
+          "title": "숨소리 (Breath)",
+          "isTitle": true,
+          "note": "태연 & 종현",
+          "songId": "4450166"
+        },
+        {
+          "no": 3,
+          "title": "내 욕심이 많았다 (Blind)",
+          "isTitle": false,
+          "note": "예성",
+          "songId": "4450167"
+        },
+        {
+          "no": 4,
+          "title": "Set Me Free",
+          "isTitle": false,
+          "note": "태연",
+          "songId": "4450168"
+        },
+        {
+          "no": 5,
+          "title": "하루 (A Day Without You)",
+          "isTitle": false,
+          "note": "종현 & 첸",
+          "songId": "4450169"
+        },
+        {
+          "no": 6,
+          "title": "좋았던 건, 아팠던 건 (When I Was... When U Were...)",
+          "isTitle": false,
+          "note": "크리스탈 & 첸",
+          "songId": "4450170"
+        },
+        {
+          "no": 7,
+          "title": "Breath",
+          "isTitle": false,
+          "note": "최강창민 & 크리스탈",
+          "songId": "4450171"
+        },
+        {
+          "no": 8,
+          "title": "僕のせいだよ (Blind)",
+          "isTitle": false,
+          "note": "예성 (일본어 버전)",
+          "songId": "4450172"
+        },
+        {
+          "no": 9,
+          "title": "呼吸 (Breath)",
+          "isTitle": false,
+          "note": "첸 & 장리인 (중국어 버전)",
+          "songId": "4450173"
+        },
+        {
+          "no": 10,
+          "title": "太貪心 (Blind)",
+          "isTitle": false,
+          "note": "조미 (중국어 버전)",
+          "songId": "4450174"
+        }
+      ],
+      "generation": "2기",
+      "artists": [
+        "최강창민 (동방신기)",
+        "예성 (슈퍼주니어)",
+        "태연 (소녀시대)",
+        "종현 (샤이니)",
+        "첸 (EXO)",
+        "크리스탈 (f(x))",
+        "조미 (슈퍼주니어-M)",
+        "장리인"
+      ],
+      "melonAlbumId": "2232902"
+    },
+    "policy": "Japanese Blind ID only; Chinese language track/performer notes preserved"
+  },
+  {
+    "type": "artist-unit",
+    "owner": "a0382",
+    "unitName": "SM THE BALLAD",
+    "index": 4,
+    "source": "https://www.melon.com/album/detail.htm?albumId=2232902",
+    "before": {
+      "albumId": 2232902,
+      "title": "S.M. The Ballad Vol.2 'Breath'",
+      "type": "정규",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/32/902/2232902_500.jpg",
+      "releaseDate": "2014.02.13",
+      "trackCount": 10,
+      "titleTrack": "숨소리 (Breath)",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Dear...",
+          "isTitle": false,
+          "songId": "4450165"
+        },
+        {
+          "no": 2,
+          "title": "숨소리 (Breath)",
+          "isTitle": true,
+          "note": "태연 & 종현",
+          "songId": "4450166"
+        },
+        {
+          "no": 3,
+          "title": "내 욕심이 많았다 (Blind)",
+          "isTitle": false,
+          "note": "예성",
+          "songId": "4450167"
+        },
+        {
+          "no": 4,
+          "title": "Set Me Free",
+          "isTitle": false,
+          "note": "태연",
+          "songId": "4450168"
+        },
+        {
+          "no": 5,
+          "title": "하루 (A Day Without You)",
+          "isTitle": false,
+          "note": "종현 & 첸",
+          "songId": "4450169"
+        },
+        {
+          "no": 6,
+          "title": "좋았던 건, 아팠던 건 (When I Was... When U Were...)",
+          "isTitle": false,
+          "note": "크리스탈 & 첸",
+          "songId": "4450170"
+        },
+        {
+          "no": 7,
+          "title": "Breath",
+          "isTitle": false,
+          "note": "최강창민 & 크리스탈",
+          "songId": "4450171"
+        },
+        {
+          "no": 8,
+          "title": "僕のせいだよ (Blind)",
+          "isTitle": false,
+          "note": "예성 (일본어 버전)",
+          "songId": "4450174"
+        },
+        {
+          "no": 9,
+          "title": "呼吸 (Breath)",
+          "isTitle": false,
+          "note": "첸 & 장리인 (중국어 버전)",
+          "songId": "4450173"
+        },
+        {
+          "no": 10,
+          "title": "太貪心 (Blind)",
+          "isTitle": false,
+          "note": "조미 (중국어 버전)",
+          "songId": "4450174"
+        }
+      ],
+      "generation": "2기",
+      "artists": [
+        "최강창민 (동방신기)",
+        "예성 (슈퍼주니어)",
+        "태연 (소녀시대)",
+        "종현 (샤이니)",
+        "첸 (EXO)",
+        "크리스탈 (f(x))",
+        "조미 (슈퍼주니어-M)",
+        "장리인"
+      ],
+      "melonAlbumId": "2232902"
+    },
+    "after": {
+      "albumId": 2232902,
+      "title": "S.M. The Ballad Vol.2 'Breath'",
+      "type": "정규",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/32/902/2232902_500.jpg",
+      "releaseDate": "2014.02.13",
+      "trackCount": 10,
+      "titleTrack": "숨소리 (Breath)",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Dear...",
+          "isTitle": false,
+          "songId": "4450165"
+        },
+        {
+          "no": 2,
+          "title": "숨소리 (Breath)",
+          "isTitle": true,
+          "note": "태연 & 종현",
+          "songId": "4450166"
+        },
+        {
+          "no": 3,
+          "title": "내 욕심이 많았다 (Blind)",
+          "isTitle": false,
+          "note": "예성",
+          "songId": "4450167"
+        },
+        {
+          "no": 4,
+          "title": "Set Me Free",
+          "isTitle": false,
+          "note": "태연",
+          "songId": "4450168"
+        },
+        {
+          "no": 5,
+          "title": "하루 (A Day Without You)",
+          "isTitle": false,
+          "note": "종현 & 첸",
+          "songId": "4450169"
+        },
+        {
+          "no": 6,
+          "title": "좋았던 건, 아팠던 건 (When I Was... When U Were...)",
+          "isTitle": false,
+          "note": "크리스탈 & 첸",
+          "songId": "4450170"
+        },
+        {
+          "no": 7,
+          "title": "Breath",
+          "isTitle": false,
+          "note": "최강창민 & 크리스탈",
+          "songId": "4450171"
+        },
+        {
+          "no": 8,
+          "title": "僕のせいだよ (Blind)",
+          "isTitle": false,
+          "note": "예성 (일본어 버전)",
+          "songId": "4450172"
+        },
+        {
+          "no": 9,
+          "title": "呼吸 (Breath)",
+          "isTitle": false,
+          "note": "첸 & 장리인 (중국어 버전)",
+          "songId": "4450173"
+        },
+        {
+          "no": 10,
+          "title": "太貪心 (Blind)",
+          "isTitle": false,
+          "note": "조미 (중국어 버전)",
+          "songId": "4450174"
+        }
+      ],
+      "generation": "2기",
+      "artists": [
+        "최강창민 (동방신기)",
+        "예성 (슈퍼주니어)",
+        "태연 (소녀시대)",
+        "종현 (샤이니)",
+        "첸 (EXO)",
+        "크리스탈 (f(x))",
+        "조미 (슈퍼주니어-M)",
+        "장리인"
+      ],
+      "melonAlbumId": "2232902"
+    },
+    "policy": "Japanese Blind ID only; Chinese language track/performer notes preserved"
+  },
+  {
+    "type": "artist-unit",
+    "owner": "a0388",
+    "unitName": "SM THE BALLAD",
+    "index": 4,
+    "source": "https://www.melon.com/album/detail.htm?albumId=2232902",
+    "before": {
+      "albumId": 2232902,
+      "title": "S.M. The Ballad Vol.2 'Breath'",
+      "type": "정규",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/32/902/2232902_500.jpg",
+      "releaseDate": "2014.02.13",
+      "trackCount": 10,
+      "titleTrack": "숨소리 (Breath)",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Dear...",
+          "isTitle": false,
+          "songId": "4450165"
+        },
+        {
+          "no": 2,
+          "title": "숨소리 (Breath)",
+          "isTitle": true,
+          "note": "태연 & 종현",
+          "songId": "4450166"
+        },
+        {
+          "no": 3,
+          "title": "내 욕심이 많았다 (Blind)",
+          "isTitle": false,
+          "note": "예성",
+          "songId": "4450167"
+        },
+        {
+          "no": 4,
+          "title": "Set Me Free",
+          "isTitle": false,
+          "note": "태연",
+          "songId": "4450168"
+        },
+        {
+          "no": 5,
+          "title": "하루 (A Day Without You)",
+          "isTitle": false,
+          "note": "종현 & 첸",
+          "songId": "4450169"
+        },
+        {
+          "no": 6,
+          "title": "좋았던 건, 아팠던 건 (When I Was... When U Were...)",
+          "isTitle": false,
+          "note": "크리스탈 & 첸",
+          "songId": "4450170"
+        },
+        {
+          "no": 7,
+          "title": "Breath",
+          "isTitle": false,
+          "note": "최강창민 & 크리스탈",
+          "songId": "4450171"
+        },
+        {
+          "no": 8,
+          "title": "僕のせいだよ (Blind)",
+          "isTitle": false,
+          "note": "예성 (일본어 버전)",
+          "songId": "4450174"
+        },
+        {
+          "no": 9,
+          "title": "呼吸 (Breath)",
+          "isTitle": false,
+          "note": "첸 & 장리인 (중국어 버전)",
+          "songId": "4450173"
+        },
+        {
+          "no": 10,
+          "title": "太貪心 (Blind)",
+          "isTitle": false,
+          "note": "조미 (중국어 버전)",
+          "songId": "4450174"
+        }
+      ],
+      "generation": "2기",
+      "artists": [
+        "최강창민 (동방신기)",
+        "예성 (슈퍼주니어)",
+        "태연 (소녀시대)",
+        "종현 (샤이니)",
+        "첸 (EXO)",
+        "크리스탈 (f(x))",
+        "조미 (슈퍼주니어-M)",
+        "장리인"
+      ],
+      "melonAlbumId": "2232902"
+    },
+    "after": {
+      "albumId": 2232902,
+      "title": "S.M. The Ballad Vol.2 'Breath'",
+      "type": "정규",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/32/902/2232902_500.jpg",
+      "releaseDate": "2014.02.13",
+      "trackCount": 10,
+      "titleTrack": "숨소리 (Breath)",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Dear...",
+          "isTitle": false,
+          "songId": "4450165"
+        },
+        {
+          "no": 2,
+          "title": "숨소리 (Breath)",
+          "isTitle": true,
+          "note": "태연 & 종현",
+          "songId": "4450166"
+        },
+        {
+          "no": 3,
+          "title": "내 욕심이 많았다 (Blind)",
+          "isTitle": false,
+          "note": "예성",
+          "songId": "4450167"
+        },
+        {
+          "no": 4,
+          "title": "Set Me Free",
+          "isTitle": false,
+          "note": "태연",
+          "songId": "4450168"
+        },
+        {
+          "no": 5,
+          "title": "하루 (A Day Without You)",
+          "isTitle": false,
+          "note": "종현 & 첸",
+          "songId": "4450169"
+        },
+        {
+          "no": 6,
+          "title": "좋았던 건, 아팠던 건 (When I Was... When U Were...)",
+          "isTitle": false,
+          "note": "크리스탈 & 첸",
+          "songId": "4450170"
+        },
+        {
+          "no": 7,
+          "title": "Breath",
+          "isTitle": false,
+          "note": "최강창민 & 크리스탈",
+          "songId": "4450171"
+        },
+        {
+          "no": 8,
+          "title": "僕のせいだよ (Blind)",
+          "isTitle": false,
+          "note": "예성 (일본어 버전)",
+          "songId": "4450172"
+        },
+        {
+          "no": 9,
+          "title": "呼吸 (Breath)",
+          "isTitle": false,
+          "note": "첸 & 장리인 (중국어 버전)",
+          "songId": "4450173"
+        },
+        {
+          "no": 10,
+          "title": "太貪心 (Blind)",
+          "isTitle": false,
+          "note": "조미 (중국어 버전)",
+          "songId": "4450174"
+        }
+      ],
+      "generation": "2기",
+      "artists": [
+        "최강창민 (동방신기)",
+        "예성 (슈퍼주니어)",
+        "태연 (소녀시대)",
+        "종현 (샤이니)",
+        "첸 (EXO)",
+        "크리스탈 (f(x))",
+        "조미 (슈퍼주니어-M)",
+        "장리인"
+      ],
+      "melonAlbumId": "2232902"
+    },
+    "policy": "Japanese Blind ID only; Chinese language track/performer notes preserved"
+  },
+  {
+    "type": "artist-unit",
+    "owner": "a0594",
+    "unitName": "SM THE BALLAD",
+    "index": 4,
+    "source": "https://www.melon.com/album/detail.htm?albumId=2232902",
+    "before": {
+      "albumId": 2232902,
+      "title": "S.M. The Ballad Vol.2 'Breath'",
+      "type": "정규",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/32/902/2232902_500.jpg",
+      "releaseDate": "2014.02.13",
+      "trackCount": 10,
+      "titleTrack": "숨소리 (Breath)",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Dear...",
+          "isTitle": false,
+          "songId": "4450165"
+        },
+        {
+          "no": 2,
+          "title": "숨소리 (Breath)",
+          "isTitle": true,
+          "note": "태연 & 종현",
+          "songId": "4450166"
+        },
+        {
+          "no": 3,
+          "title": "내 욕심이 많았다 (Blind)",
+          "isTitle": false,
+          "note": "예성",
+          "songId": "4450167"
+        },
+        {
+          "no": 4,
+          "title": "Set Me Free",
+          "isTitle": false,
+          "note": "태연",
+          "songId": "4450168"
+        },
+        {
+          "no": 5,
+          "title": "하루 (A Day Without You)",
+          "isTitle": false,
+          "note": "종현 & 첸",
+          "songId": "4450169"
+        },
+        {
+          "no": 6,
+          "title": "좋았던 건, 아팠던 건 (When I Was... When U Were...)",
+          "isTitle": false,
+          "note": "크리스탈 & 첸",
+          "songId": "4450170"
+        },
+        {
+          "no": 7,
+          "title": "Breath",
+          "isTitle": false,
+          "note": "최강창민 & 크리스탈",
+          "songId": "4450171"
+        },
+        {
+          "no": 8,
+          "title": "僕のせいだよ (Blind)",
+          "isTitle": false,
+          "note": "예성 (일본어 버전)",
+          "songId": "4450174"
+        },
+        {
+          "no": 9,
+          "title": "呼吸 (Breath)",
+          "isTitle": false,
+          "note": "첸 & 장리인 (중국어 버전)",
+          "songId": "4450173"
+        },
+        {
+          "no": 10,
+          "title": "太貪心 (Blind)",
+          "isTitle": false,
+          "note": "조미 (중국어 버전)",
+          "songId": "4450174"
+        }
+      ],
+      "generation": "2기",
+      "artists": [
+        "최강창민 (동방신기)",
+        "예성 (슈퍼주니어)",
+        "태연 (소녀시대)",
+        "종현 (샤이니)",
+        "첸 (EXO)",
+        "크리스탈 (f(x))",
+        "조미 (슈퍼주니어-M)",
+        "장리인"
+      ],
+      "melonAlbumId": "2232902"
+    },
+    "after": {
+      "albumId": 2232902,
+      "title": "S.M. The Ballad Vol.2 'Breath'",
+      "type": "정규",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/32/902/2232902_500.jpg",
+      "releaseDate": "2014.02.13",
+      "trackCount": 10,
+      "titleTrack": "숨소리 (Breath)",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Dear...",
+          "isTitle": false,
+          "songId": "4450165"
+        },
+        {
+          "no": 2,
+          "title": "숨소리 (Breath)",
+          "isTitle": true,
+          "note": "태연 & 종현",
+          "songId": "4450166"
+        },
+        {
+          "no": 3,
+          "title": "내 욕심이 많았다 (Blind)",
+          "isTitle": false,
+          "note": "예성",
+          "songId": "4450167"
+        },
+        {
+          "no": 4,
+          "title": "Set Me Free",
+          "isTitle": false,
+          "note": "태연",
+          "songId": "4450168"
+        },
+        {
+          "no": 5,
+          "title": "하루 (A Day Without You)",
+          "isTitle": false,
+          "note": "종현 & 첸",
+          "songId": "4450169"
+        },
+        {
+          "no": 6,
+          "title": "좋았던 건, 아팠던 건 (When I Was... When U Were...)",
+          "isTitle": false,
+          "note": "크리스탈 & 첸",
+          "songId": "4450170"
+        },
+        {
+          "no": 7,
+          "title": "Breath",
+          "isTitle": false,
+          "note": "최강창민 & 크리스탈",
+          "songId": "4450171"
+        },
+        {
+          "no": 8,
+          "title": "僕のせいだよ (Blind)",
+          "isTitle": false,
+          "note": "예성 (일본어 버전)",
+          "songId": "4450172"
+        },
+        {
+          "no": 9,
+          "title": "呼吸 (Breath)",
+          "isTitle": false,
+          "note": "첸 & 장리인 (중국어 버전)",
+          "songId": "4450173"
+        },
+        {
+          "no": 10,
+          "title": "太貪心 (Blind)",
+          "isTitle": false,
+          "note": "조미 (중국어 버전)",
+          "songId": "4450174"
+        }
+      ],
+      "generation": "2기",
+      "artists": [
+        "최강창민 (동방신기)",
+        "예성 (슈퍼주니어)",
+        "태연 (소녀시대)",
+        "종현 (샤이니)",
+        "첸 (EXO)",
+        "크리스탈 (f(x))",
+        "조미 (슈퍼주니어-M)",
+        "장리인"
+      ],
+      "melonAlbumId": "2232902"
+    },
+    "policy": "Japanese Blind ID only; Chinese language track/performer notes preserved"
+  }
+]
