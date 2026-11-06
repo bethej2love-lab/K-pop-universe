@@ -1265,6 +1265,17 @@
     },
     "checkedAt": "2026-09-30"
   },
+  "디아": {
+    "id": "5Pcx98OUnL52aGZRRQx5v8",
+    "spotifyName": "DIA",
+    "kind": "solo",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-11-06"
+  },
   "라이즈": {
     "id": "2jOm3cYujQx6o1dxuiuqaX",
     "spotifyName": "RIIZE",
