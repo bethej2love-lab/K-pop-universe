@@ -1,0 +1,80 @@
+// Real viewer/editor with an in-memory annotation API; no production tag writes.
+const fs=require('fs'),path=require('path'),http=require('http'),os=require('os');const{spawn}=require('child_process');
+const ROOT=path.join(__dirname,'..');
+const {waitForBrowserCdp}=require('../tools/browser_test_runtime.cjs');
+const PORT=8999,CDP_PORT=9399;
+const BROWSER=process.env.KPU_BROWSER_PATH||['C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe','C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe','C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe','/Applications/Google Chrome.app/Contents/MacOS/Google Chrome','/usr/bin/google-chrome','/usr/bin/chromium-browser','/usr/bin/chromium'].find(p=>fs.existsSync(p));
+const MIME={'.html':'text/html','.js':'text/javascript','.json':'application/json','.css':'text/css','.png':'image/png','.svg':'image/svg+xml'};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+let pass=0,fail=0;const ok=m=>{pass++;console.log('✅ '+m)},bad=m=>{fail++;console.log('❌ '+m)};
+const server=http.createServer((req,res)=>{const p=decodeURIComponent(req.url.split('?')[0]);const f=path.join(ROOT,p==='/'?'index.html':p);
+  if(!fs.existsSync(f)||fs.statSync(f).isDirectory()){res.writeHead(404);res.end();return;}res.writeHead(200,{'Content-Type':MIME[path.extname(f)]||'application/octet-stream'});fs.createReadStream(f).pipe(res);});
+function conn(url){return new Promise((res,rej)=>{const ws=new WebSocket(url);let id=0;const w=new Map();
+  ws.addEventListener('open',()=>res({send:(m,p)=>new Promise((a,b)=>{const i=++id;w.set(i,{a,b});ws.send(JSON.stringify({id:i,method:m,params:p}));}),close:()=>ws.close()}));
+  ws.addEventListener('message',e=>{const m=JSON.parse(e.data);if(m.id&&w.has(m.id)){const{a,b}=w.get(m.id);w.delete(m.id);m.error?b(new Error(m.error.message)):a(m.result);}});ws.addEventListener('error',rej);});}
+async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw new Error(r.exceptionDetails.exception?.description||r.exceptionDetails.text);return r.result.value;}
+async function open(c,hash){
+  await c.send('Page.navigate',{url:'about:blank'});await sleep(300);
+  await c.send('Page.navigate',{url:`http://127.0.0.1:${PORT}/index.html${hash}`});
+  for(let i=0;i<60;i++){await sleep(500);try{if(await ev(c,`typeof showT==='function'&&ARTISTS.length>0`))break;}catch(e){}}
+}
+(async()=>{
+ if(!BROWSER){console.log('No browser available');process.exit(1);}
+ server.listen(PORT);const prof=fs.mkdtempSync(path.join(os.tmpdir(),'kpu-ig-tags-'));
+ const proc=spawn(BROWSER,['--headless=new','--no-sandbox',`--remote-debugging-port=${CDP_PORT}`,`--user-data-dir=${prof}`,'--no-first-run','--disable-gpu','--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader','--window-size=1400,900','about:blank'],{stdio:['ignore','ignore','pipe']});
+ const assert=require('node:assert/strict');const out=process.env.KPU_BROWSER_ARTIFACT_DIR||path.join(ROOT,'audit-materials/instagram-tags-2026-11-06');fs.mkdirSync(out,{recursive:true});
+ try{
+  await waitForBrowserCdp(proc,CDP_PORT);const tab=await(await fetch(`http://127.0.0.1:${CDP_PORT}/json/new?about:blank`,{method:'PUT'})).json(),c=await conn(tab.webSocketDebuggerUrl);await c.send('Page.enable');await c.send('Runtime.enable');
+  await c.send('Page.addScriptToEvaluateOnNewDocument',{source:"window.__igErrors=[];addEventListener('error',e=>__igErrors.push(e.message));addEventListener('unhandledrejection',e=>__igErrors.push(String(e.reason)));"});
+  await open(c,'');
+  for(let i=0;i<60;i++){if(await ev(c,"!!sb&&typeof _openIgViewer==='function'"))break;await sleep(250);}
+  const admin=fs.readFileSync(path.join(ROOT,'admin.js'),'utf8'),p=admin.indexOf('function _vidTagExactMatch('),picker=admin.slice(p,admin.indexOf("document.getElementById('vid-tag-with-search')",p));
+  await ev(c,`(0,eval)(${JSON.stringify(picker+'\n'+admin.slice(admin.indexOf('function _igTagEditorClose(')))});`);
+  const vg=admin.indexOf('function _renderVidTagMemberCheckboxes(');await ev(c,`window._vidTagRenderedGko=null;(0,eval)(${JSON.stringify(admin.slice(vg,admin.indexOf("document.getElementById('vid-tag-members-all')",vg)))});const oldMembers=document.createElement('div');oldMembers.id='vid-tag-members';oldMembers.hidden=true;document.body.appendChild(oldMembers);_renderVidTagMemberCheckboxes('코르티스',{savedMembers:new Set(['성현'])});`);assert.equal(await ev(c,"document.querySelectorAll('#vid-tag-members input').length"),5);assert.equal(await ev(c,"document.querySelector('#vid-tag-members input:checked').value"),'성현');await ev(c,"document.getElementById('vid-tag-members').remove()");ok('Existing video-tag checkboxes retain names and saved selections');
+  await ev(c,`(()=>{
+   window.__igRows=[];window.__igWrites=[];window.__igFail=false;
+   const original=sb.from.bind(sb);sb.from=function(table){if(table!=='ig_photo_tags')return original(table);let op='select',payload=null,filters=[];const q={select(){return q;},eq(k,v){filters.push([k,v]);return q;},insert(v){op='insert';payload=v;return q;},update(v){op='update';payload=v;return q;},delete(){op='delete';return q;},then(resolve,reject){return Promise.resolve().then(()=>{if(window.__igFail&&op!=='select'){window.__igFail=false;return{data:null,error:{message:'test offline'}};}const matches=r=>filters.every(([k,v])=>r[k]===v);let data=window.__igRows.filter(matches);if(op!=='select')window.__igWrites.push({op,payload,filters});if(op==='insert'){if(__igRows.some(r=>r.post_key===payload.post_key&&r.photo_key===payload.photo_key))return{data:null,error:{code:'23505'}};data=[structuredClone(payload)];__igRows.push(data[0]);}if(op==='update'){for(const r of data)Object.assign(r,payload);}if(op==='delete')window.__igRows=__igRows.filter(r=>!matches(r));return{data:structuredClone(data),error:null};}).then(resolve,reject);}};return q;};
+   window.__igHandle=_igHandle(GROUPS['코르티스'].links.instagram);window.__igMember=ARTISTS.find(a=>a.group.ko==='코르티스'&&a.name.ko==='성현');
+   window.__igFixture={p:'https://www.instagram.com/p/IgPhotoTagFixture/',t:new Date().toISOString(),ty:'CAROUSEL_ALBUM',cap:'Photo caption',u:location.origin+'/tests/fixtures/ig-photo-a.svg',c:[location.origin+'/tests/fixtures/ig-photo-a.svg',location.origin+'/tests/fixtures/ig-photo-b.svg']};__igFixture.mi=__igFixture.c.map((u,i)=>({u,id:String(123450+i),ty:'IMAGE'}));
+   _isAdmin=()=>false;_openIgViewer(__igFixture,__igHandle,0);
+  })()`);
+  await sleep(500);
+  assert(await ev(c,"document.getElementById('igv-tags').hidden&&!document.getElementById('igv-tag-edit')&&_igv.tagLoad==='ready'"));ok('Untagged public photo has no tag row or admin tools');
+  const geometry=await ev(c,"(()=>{const h=document.querySelector('#igv-hd').getBoundingClientRect(),a=document.querySelector('#igv-author').getBoundingClientRect();return{header:h.height,overflow:document.querySelector('#igv-panel').scrollWidth>document.querySelector('#igv-panel').clientWidth,inside:a.left>=h.left&&a.right<=h.right};})()");assert(!geometry.overflow&&geometry.inside);ok('Publisher name/profile retains the header layout');
+  await ev(c,"document.querySelector('#igv-author').click()");assert(await ev(c,"_openGCko==='코르티스'&&!document.getElementById('igv-overlay').classList.contains('open')"));ok('Publisher opens the correct group card');
+  await ev(c,"window.__igPublisher=ARTISTS.find(a=>{const h=_igHandle(a.links?.instagram);return h&&_igOwners().get(h)?.art?.id===a.id;});_openIgViewer({...__igFixture,p:'https://www.instagram.com/p/IgMemberPublisherFixture/'},_igHandle(__igPublisher.links.instagram),0);document.querySelector('#igv-author').click()");assert(await ev(c,"_openTArtist.id===__igPublisher.id"));ok('Individual publisher opens its exact member card');
+  await ev(c,"_isAdmin=()=>true;_openIgViewer(__igFixture,__igHandle,0)");await sleep(200);await ev(c,"document.querySelector('#igv-tag-edit').click()");await sleep(100);
+  assert.equal(await ev(c,"document.querySelectorAll('#igv-tag-editor .igv-edit-options input').length"),5);ok('Admin editor starts with the five CORTIS members using video-tag checkboxes');
+  await ev(c,"document.querySelector('.igv-edit-all').click()");assert.equal(await ev(c,'_igv.tagEditor.ids.size'),5);await ev(c,"document.querySelector('[data-action=clear]').click()");ok('Group-wide selection uses the same roster and stays manual');
+  await ev(c,"document.querySelector('#igv-tag-editor input[data-artist-id=\"'+__igMember.id+'\"]').click()");
+  assert(await ev(c,"_igv.tagEditor.ids.has(__igMember.id)"));
+  await ev(c,"document.querySelector('#igv-tag-editor input[type=search]').value='은채';document.querySelector('#igv-tag-editor input[type=search]').dispatchEvent(new Event('input'))");
+  assert(await ev(c,"!!document.querySelector('#igv-tag-editor input[data-artist-id=a0148]')&&!!document.querySelector('#igv-tag-editor input[data-artist-id=a0953]')"));ok('Shared member search distinguishes Hong Eunchae and DIA Eunchae');
+  await ev(c,"document.querySelector('#igv-tag-editor input[data-artist-id=a0148]').click();document.querySelector('#igv-tag-editor [data-action=save]').click()");await sleep(100);
+  assert.equal(await ev(c,"document.querySelectorAll('#igv-tags button').length"),2);assert.equal(await ev(c,'__igRows.length'),1);ok('Save publishes only this photo’s selected members');
+  await ev(c,"_igvGo(1)");await sleep(700);assert(await ev(c,"_igv.i===1&&document.querySelector('#igv-tags').hidden"));ok('Next untagged photo stays unchanged');
+  await ev(c,"document.querySelector('#igv-tag-edit').click()");await sleep(100);await ev(c,"document.querySelector('#igv-tag-editor input[data-artist-id=\"'+__igMember.id+'\"]').click();window.__igFail=true;document.querySelector('#igv-tag-editor [data-action=save]').click()");await sleep(100);
+  assert(await ev(c,"!!_igv.tagEditor&&_igv.tagEditor.ids.has(__igMember.id)&&!document.querySelector('.igv-edit-error').hidden&&__igRows.length===1"));ok('Failed save preserves the selection and existing public tags');
+  await ev(c,"document.querySelector('#igv-tag-editor [data-action=save]').click()");await sleep(100);assert.equal(await ev(c,'__igRows.length'),2);
+  await ev(c,"_isAdmin=()=>false;_igvRenderTags()");assert(await ev(c,"!document.querySelector('#igv-tag-edit')&&document.querySelectorAll('#igv-tags button').length===1"));ok('Public viewers see saved tags, never editing controls');
+  await ev(c,"document.querySelector('#igv-tags button').click()");assert(await ev(c,"_openTArtist.id===__igMember.id&&!document.getElementById('igv-overlay').classList.contains('open')"));ok('Member tag opens the exact artist card');
+  await c.send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});await c.send('Emulation.setTouchEmulationEnabled',{enabled:true});
+  await ev(c,"_openIgViewer(__igFixture,__igHandle,0)");await sleep(600);
+  const mobile=await ev(c,"(()=>{const p=document.querySelector('#igv-panel').getBoundingClientRect(),h=document.querySelector('#igv-hd').getBoundingClientRect();return{width:p.width,right:p.right,bottom:p.bottom,overflow:document.querySelector('#igv-panel').scrollWidth>document.querySelector('#igv-panel').clientWidth,header:h.height};})()");assert(mobile.right<=391&&!mobile.overflow);ok('390px mobile viewer has no horizontal overflow');
+  assert(await ev(c,"!_isAdmin()&&!document.querySelector('#igv-tag-edit')&&!document.querySelector('#igv-tag-editor')"));
+  fs.writeFileSync(path.join(out,'public-mobile-dom.json'),JSON.stringify(await ev(c,"({admin:_isAdmin(),side:document.querySelector('#igv-side').innerHTML})"),null,2));
+  await sleep(300);const shot=await c.send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(path.join(out,'ig-tagged-mobile.png'),Buffer.from(shot.data,'base64'));
+  await ev(c,"_isAdmin=()=>true;_igvRenderTags();document.querySelector('#igv-tag-edit').click()");await sleep(150);
+  await sleep(300);const saveBounds=await ev(c,"(()=>{const b=document.querySelector('#igv-tag-editor [data-action=save]').getBoundingClientRect();return {top:b.top,bottom:b.bottom,height:innerHeight};})()");assert(saveBounds.bottom<=saveBounds.height&&saveBounds.top>0,'mobile Save must be visible without scrolling');ok('Mobile editor keeps Save visible');
+  const editShot=await c.send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(path.join(out,'ig-editor-mobile.png'),Buffer.from(editShot.data,'base64'));
+  await c.send('Emulation.setDeviceMetricsOverride',{width:390,height:500,deviceScaleFactor:1,mobile:true});await sleep(400);const shortEditor=await ev(c,"(()=>{const r=document.querySelector('[data-action=save]').getBoundingClientRect();return{top:r.top,bottom:r.bottom};})()");assert(shortEditor.top>0&&shortEditor.bottom<=500,'Save stays in the reduced mobile viewport');ok('Reduced mobile viewport keeps the editor actions visible');await c.send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});await sleep(300);
+  await ev(c,"__igRows.find(r=>r.media_id==='123450').revision++;document.querySelector('#igv-tag-editor [data-action=save]').click()");await sleep(100);assert(await ev(c,"!!_igv.tagEditor&&_igv.tagLoad==='error'&&!document.querySelector('.igv-edit-error').hidden"));ok('Concurrent edits cannot silently overwrite a newer tag revision');
+  await ev(c,"document.querySelector('[data-action=cancel]').click();document.querySelector('#igv-tag-edit').click()");await sleep(150);assert.equal(await ev(c,'_igv.tagEditor.row.revision'),2);
+  await ev(c,"document.querySelector('#igv-tag-editor [data-action=clear]').click();document.querySelector('#igv-tag-editor [data-action=save]').click()");await sleep(100);assert(await ev(c,"document.querySelector('#igv-tags').hidden&&__igRows.length===1&&__igRows[0].media_id==='123451'"));ok('Clearing one photo leaves the other photo’s tags intact');
+  await ev(c,"window.__igSolo=ARTISTS.find(a=>a.name.ko==='아이유');_openIgViewer({...__igFixture,p:'https://www.instagram.com/p/IgSoloPhotoFixture/'},_igHandle(__igSolo.links.instagram),0)");await sleep(100);await ev(c,"document.querySelector('#igv-tag-edit').click()");await sleep(100);assert.equal(await ev(c,"document.querySelectorAll('#igv-tag-editor .igv-edit-options input').length"),1);assert(await ev(c,"!document.querySelector('.igv-edit-all')"));ok('Solo publisher suggests only that artist, not every solo artist');await ev(c,'_igTagEditorClose()');
+  await ev(c,"_isAdmin=()=>false;_igvRenderTags()");const errors=await ev(c,'__igErrors');assert.deepEqual(errors,[]);ok('No page errors during tagging, card navigation or mobile resize');
+  fs.writeFileSync(path.join(out,'ui-verification.json'),JSON.stringify({checks:pass,mobile,desktop:geometry,productionTagWrites:0},null,2));c.close();
+ }catch(e){bad(e.stack||e.message);}
+ finally{proc.kill();server.close();}
+ console.log(`${pass} passed / ${fail} failed`);process.exit(fail?1:0);
+})();

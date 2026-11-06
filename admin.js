@@ -10747,15 +10747,9 @@ function _renderVidTagMemberCheckboxes(gko,{soloAutoCheck=false,unitGuess=null,s
   _vidTagRenderedGko=gko;
   const membersEl=document.getElementById('vid-tag-members');
   membersEl.innerHTML='';
-  const groupMembers=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko));
+  const groupMembers=_vidTagGroupMembers(gko);
   groupMembers.forEach(a=>{
-    const label=document.createElement('label');
-    label.className='vid-tag-mem';
-    const cb=document.createElement('input');
-    cb.type='checkbox';cb.value=a.name.ko;
-    if(soloAutoCheck||unitGuess?.has(a.name.ko)||savedMembers?.has(a.name.ko))cb.checked=true;
-    label.appendChild(cb);
-    label.appendChild(document.createTextNode(a.name.ko));
+    const label=_vidTagMemberChoice(a,{checked:!!(soloAutoCheck||unitGuess?.has(a.name.ko)||savedMembers?.has(a.name.ko))});
     // ⚑ 오태깅 규칙 등록(2026-08-30) — 이 이름이 흔한 단어라 무관 영상에 붙는 경우, 체크 해제하고 여기서
     // 바로 "해시태그만 인정" 규칙 등록 + 그 이름 한정 재검증(발견→규칙→청소를 이 자리에서).
     const flag=document.createElement('span');
@@ -10968,6 +10962,24 @@ document.getElementById('vid-tag-overlay').addEventListener('pointerdown',e=>e.s
 // "준혁"처럼 부분 일치하는 다른 이름들이 8개 상한을 먼저 채워버려서 정작 정확히 찾던 사람이 목록에서
 // 밀려나 안 보이는 문제가 있었음(2026-08-05, 사용자 제보 — "혁" 검색했는데 "혁(템페스트)"가 안 보임).
 function _vidTagExactMatch(a,q,qLower){return a.name.ko===q||(a.name.en||'').toLowerCase()===qLower;}
+// Video and Instagram editors share roster, exact-name priority and checkbox selection.
+function _vidTagGroupMembers(gko){return ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko));}
+function _vidTagFindMembers(q,{excludeGroup=null,already=new Set(),limit=8,includeGroupNames=false}={}){
+  const lower=q.toLowerCase();
+  return ARTISTS.filter(a=>
+    (a.name.ko.includes(q)||(a.name.en||'').toLowerCase().includes(lower)||(includeGroupNames&&_artistGroups(a).some(g=>[g.ko,g.en].some(n=>String(n||'').toLowerCase().includes(lower)))))&&
+    (!excludeGroup||!_artistGroups(a).some(g=>g.ko===excludeGroup))&&!already.has(a.name.ko+'|'+a.group.ko)
+  ).sort((a,b)=>(_vidTagExactMatch(b,q,lower)?1:0)-(_vidTagExactMatch(a,q,lower)?1:0)).slice(0,limit);
+}
+function _vidTagMemberChoice(a,{checked=false,value=a.name.ko,onChange=null,showGroup=false}={}){
+  const label=document.createElement('label');label.className='vid-tag-mem';
+  const cb=document.createElement('input');cb.type='checkbox';cb.value=value;cb.checked=checked;cb.dataset.artistId=a.id;
+  if(onChange)cb.addEventListener('change',()=>onChange(cb.checked));
+  label.appendChild(cb);
+  const text=document.createElement('span');text.textContent=showGroup?_dispName(a):a.name.ko;
+  if(showGroup){const group=document.createElement('small');group.textContent=_dispGroupName(a);text.appendChild(group);}
+  label.appendChild(text);return label;
+}
 document.getElementById('vid-tag-with-search').addEventListener('input',e=>{
   const q=e.target.value.trim();
   const resultsEl=document.getElementById('vid-tag-with-results');
@@ -10996,11 +11008,7 @@ document.getElementById('vid-tag-with-search').addEventListener('input',e=>{
   // 완전히 일치하는 이름(특히 "혁"처럼 한 글자짜리 등록명)을 맨 앞으로 — 안 그러면 "도혁"/"준혁"처럼
   // 부분 일치하는 다른 이름들이 8개 상한을 먼저 채워버려서 정작 정확히 찾던 사람이 목록에서 밀려나
   // 안 보이는 문제가 있었음(2026-08-05, 사용자 제보 — "혁" 검색했는데 "혁(템페스트)"가 안 보임).
-  const matches=ARTISTS.filter(a=>
-    (a.name.ko.includes(q)||(a.name.en||'').toLowerCase().includes(qLower))&&
-    !_artistGroups(a).some(g=>g.ko===_vidTagTarget.ko)&&
-    !already.has(a.name.ko+'|'+a.group.ko)
-  ).sort((a,b)=>(_vidTagExactMatch(b,q,qLower)?1:0)-(_vidTagExactMatch(a,q,qLower)?1:0)).slice(0,8);
+  const matches=_vidTagFindMembers(q,{excludeGroup:_vidTagTarget.ko,already});
   matches.forEach(a=>{
     const opt=document.createElement('div');
     opt.className='vid-tag-with-opt';
@@ -11061,10 +11069,7 @@ document.getElementById('vid-tag-cover-search').addEventListener('input',e=>{
     });
     resultsEl.appendChild(opt);
   });
-  const matches=ARTISTS.filter(a=>
-    (a.name.ko.includes(q)||(a.name.en||'').toLowerCase().includes(qLower))&&
-    !already.has(a.name.ko+'|'+a.group.ko)
-  ).sort((a,b)=>(_vidTagExactMatch(b,q,qLower)?1:0)-(_vidTagExactMatch(a,q,qLower)?1:0)).slice(0,8);
+  const matches=_vidTagFindMembers(q,{already});
   matches.forEach(a=>{
     const opt=document.createElement('div');
     opt.className='vid-tag-with-opt';
@@ -12758,3 +12763,78 @@ _evEl('ev-venue-custom')?.addEventListener('input',e=>{
   const el=_evEl('ev-venue-near');
   if(el)el.textContent=near.length?('혹시 이거? — '+near.join(' / ')):'';
 });
+
+function _igTagEditorClose(){
+  const ov=document.getElementById('igv-overlay');
+  _igv?.tagEditor?.cleanup?.();
+  ov?.querySelector('#igv-tag-editor')?.remove();ov?.classList.remove('igv-editing');
+  if(_igv){_igv.tagEditor=null;_igvShow();ov?.querySelector('#igv-tag-edit')?.focus({preventScroll:true});}
+}
+function _igTagEditorOpen(){
+  if(!_isAdmin()||!_igv||_igv.tagEditor||_igv.tagLoad!=='ready')return;
+  const view=_igv,identity=_igPhotoIdentity(view.m,view.i);
+  if(!identity?.postKey||identity.type==='VIDEO')return;
+  const row=_igPhotoTagRow(view.tagRows,identity),ov=document.getElementById('igv-overlay');
+  ov.querySelector('#igv-tag-editor')?.remove();
+  const box=document.createElement('div');box.id='igv-tag-editor';
+  box.innerHTML='<div class="igv-edit-heading"></div><div class="igv-edit-selected"></div><input class="igv-edit-search" type="search" autocomplete="off"><div class="igv-edit-options"></div><div class="igv-edit-error" role="alert" hidden></div><div class="igv-edit-actions"><button type="button" data-action="clear"></button><span></span><button type="button" data-action="cancel"></button><button type="button" data-action="save"></button></div>';
+  const ko=currentLang==='ko',draft={identity,row,ids:new Set(row?.artist_ids||[]),saving:false,box};view.tagEditor=draft;
+  box.querySelector('.igv-edit-heading').textContent=ko?'이 사진에 나온 멤버':'Members in this photo';
+  const input=box.querySelector('input');input.placeholder=ko?'멤버·그룹 검색':'Search members or groups';input.setAttribute('aria-label',input.placeholder);
+  const buttons=Object.fromEntries([...box.querySelectorAll('[data-action]')].map(b=>[b.dataset.action,b]));
+  buttons.clear.textContent=ko?'전체 해제':'Clear';buttons.cancel.textContent=ko?'취소':'Cancel';buttons.save.textContent=ko?'저장':'Save';
+  buttons.cancel.addEventListener('click',()=>{if(!draft.saving)_igTagEditorClose();});
+  buttons.clear.addEventListener('click',()=>{draft.ids.clear();render();});
+  const ownerGroup=view.owner?.gko||view.owner?.art?.group?.ko;
+  const initial=view.owner?.art&&!GROUPS[ownerGroup]?[view.owner.art]:_vidTagGroupMembers(ownerGroup);
+  if(initial.length>1){const all=document.createElement('button');all.type='button';all.className='igv-edit-all';all.textContent=ko?ownerGroup+' 전체':'All '+(GROUPS[ownerGroup]?.en||ownerGroup);all.addEventListener('click',()=>{if(draft.saving)return;initial.forEach(a=>draft.ids.add(a.id));render();});box.querySelector('.igv-edit-heading').appendChild(all);}
+  function toggle(id){if(draft.saving)return;draft.ids.has(id)?draft.ids.delete(id):draft.ids.add(id);render();}
+  function render(){
+    if(_igv!==view||view.tagEditor!==draft)return;
+    const focusedId=document.activeElement?.dataset?.artistId;
+    const chosen=box.querySelector('.igv-edit-selected');chosen.replaceChildren();
+    for(const id of draft.ids){const a=ARTISTS.find(a=>a.id===id),b=document.createElement('button');b.type='button';b.className='igv-member-chip';b.textContent=(a?_dispName(a):id)+' ×';b.title=a?_dispGroupName(a):id;b.setAttribute('aria-label',(ko?'태그 해제: ':'Remove tag: ')+(a?_dispName(a):id));b.addEventListener('click',()=>toggle(id));chosen.appendChild(b);}chosen.hidden=!chosen.children.length;
+    const q=input.value.trim().toLowerCase();
+    const list=q?_vidTagFindMembers(input.value.trim(),{limit:30,includeGroupNames:true}):initial;
+    const options=box.querySelector('.igv-edit-options');options.replaceChildren();
+    for(const a of list){const choice=_vidTagMemberChoice(a,{value:a.id,checked:draft.ids.has(a.id),showGroup:true,onChange:()=>toggle(a.id)});choice.classList.add('igv-edit-member');options.appendChild(choice);}
+    if(focusedId)[...options.querySelectorAll('input')].find(el=>el.dataset.artistId===focusedId)?.focus({preventScroll:true});
+    buttons.save.disabled=!draft.ids.size&&!row;buttons.clear.disabled=!draft.ids.size;
+  }
+  input.addEventListener('input',render);
+  buttons.save.addEventListener('click',()=>_igTagEditorSave(view,draft));
+  const fit=()=>{if(_igv!==view||view.tagEditor!==draft||!isMob())return;const h=Math.round(Math.min(innerHeight,window.visualViewport?.height||innerHeight));ov.style.setProperty('--igv-edit-vh',h+'px');ov.style.setProperty('--igv-edit-photo-height',Math.max(60,Math.min(h*.34,h-520))+'px');};
+  draft.cleanup=()=>{window.removeEventListener('resize',fit);window.visualViewport?.removeEventListener('resize',fit);ov.style.removeProperty('--igv-edit-vh');ov.style.removeProperty('--igv-edit-photo-height');};
+  window.addEventListener('resize',fit);window.visualViewport?.addEventListener('resize',fit);
+  input.enterKeyHint='done';input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();input.blur();}});
+  ov.querySelector('#igv-cap').before(box);ov.classList.add('igv-editing');_igvShow();render();fit();if(!isMob())input.focus({preventScroll:true});
+}
+async function _igTagEditorSave(view,draft){
+  if(!_isAdmin()||_igv!==view||view.tagEditor!==draft||draft.saving||!sb)return;
+  const {identity,row,box}=draft,ids=[...draft.ids],errorBox=box.querySelector('.igv-edit-error'),ko=currentLang==='ko';
+  errorBox.hidden=true;
+  if(ids.length>50||ids.some(id=>!ARTISTS.some(a=>a.id===id))){errorBox.textContent=ko?'선택한 멤버를 확인해줘.':'Check the selected members.';errorBox.hidden=false;return;}
+  draft.saving=true;box.setAttribute('aria-busy','true');box.querySelectorAll('button,input').forEach(el=>el.disabled=true);
+  try{
+    let query;
+    if(!ids.length){
+      if(!row){_igTagEditorClose();return;}
+      query=sb.from('ig_photo_tags').delete().eq('post_key',row.post_key).eq('photo_key',row.photo_key).eq('revision',row.revision).select();
+    }else{
+      const record={post_key:identity.postKey,photo_key:row?.photo_key||identity.photoKey,handle:String(view.h||'').toLowerCase(),media_id:identity.mediaId||row?.media_id||null,image_key:identity.imageKey,artist_ids:ids,revision:row?Number(row.revision)+1:1};
+      query=row?sb.from('ig_photo_tags').update(record).eq('post_key',row.post_key).eq('photo_key',row.photo_key).eq('revision',row.revision).select():sb.from('ig_photo_tags').insert(record).select();
+    }
+    const{data,error}=await query;if(error)throw error;
+    if(data?.length!==1)throw new Error('tag revision conflict');
+    const key=row?.photo_key||identity.photoKey;
+    const rows=(view.tagRows||[]).filter(r=>r.photo_key!==key);if(ids.length)rows.push(data[0]);
+    _igPhotoTagsCache.set(identity.postKey,{rows,at:Date.now()});view.tagRows=rows;
+    if(_igv===view&&view.tagEditor===draft)_igTagEditorClose();
+    else if(_igv&&!_igv.tagEditor&&_igPostKey(_igv.m.p)===identity.postKey){_igv.tagRows=rows;_igvRenderTags();}
+  }catch(e){
+    if(e.message==='tag revision conflict'||e.code==='23505'){_igPhotoTagsCache.delete(identity.postKey);view.tagLoad='error';}
+    if(_igv===view&&view.tagEditor===draft){errorBox.textContent=(e.message==='tag revision conflict'||e.code==='23505')?(ko?'다른 창에서 변경됐어. 취소한 뒤 다시 열어줘.':'Changed elsewhere. Cancel and reopen the editor.'):(ko?'저장하지 못했어. 선택은 유지했으니 다시 시도해줘.':'Could not save. Your selection is kept; please retry.');errorBox.hidden=false;}
+  }finally{
+    draft.saving=false;box.removeAttribute('aria-busy');box.querySelectorAll('button,input').forEach(el=>el.disabled=false);
+  }
+}

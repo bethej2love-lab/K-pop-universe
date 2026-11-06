@@ -12,6 +12,7 @@ on:
       - 'vendor/**'
       - 'tests/smoke.test.js'
       - 'tests/vid-list-share.test.js'
+      - 'tests/ig-photo-tags-ui.test.js'
       - 'tests/desktop-close-layers.test.js'
       - 'tests/lb-every-entry.test.js'
       - 'tests/stage-venue-album.test.js'
@@ -35,6 +36,7 @@ on:
       - 'vendor/**'
       - 'tests/smoke.test.js'
       - 'tests/vid-list-share.test.js'
+      - 'tests/ig-photo-tags-ui.test.js'
       - 'tests/desktop-close-layers.test.js'
       - 'tests/lb-every-entry.test.js'
       - 'tests/stage-venue-album.test.js'
@@ -81,6 +83,7 @@ jobs:
       matrix:
         include:
           - suite: vid-list-share
+          - suite: ig-photo-tags-ui
           - suite: desktop-close-layers
           - suite: lb-every-entry
           - suite: stage-venue-album

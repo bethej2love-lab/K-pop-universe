@@ -23295,6 +23295,70 @@ const _FAV_ALBUM_DAYS=30;
 // 데이터는 이미 받아둔 것(ig_accounts.media: 사진 주소·여러 장 c·본문 cap·좋아요 lk·댓글 cm). 출처 계정과 원본 링크를 항상 같이 보여주고
 // 다운로드 기능은 두지 않는다. 메타 공식 표시 방식(oEmbed)은 앱 심사가 필요해서 보류. 영상은 재생 파일이 없어 여기 안 온다.
 let _igv=null,_igvDrag=false; // _igvDrag: 이번 터치가 아래로 쓸어 닫기로 정해졌는지(좌우 사진 넘기기와 겹치지 않게)
+const _igPhotoTagsCache=new Map();
+function _igPostKey(link){
+  try{const u=new URL(link);if(!/^(www\.)?instagram\.com$/i.test(u.hostname))return null;return /^\/(?:p|reel|tv)\/([A-Za-z0-9_-]{1,64})(?:\/|$)/.exec(u.pathname)?.[1]||null;}catch(e){return null;}
+}
+function _igPhotoIdentity(m,index){
+  const pics=Array.isArray(m.c)&&m.c.length?m.c:[m.u],src=pics[index];
+  if(!src)return null;
+  let imageKey;try{imageKey=new URL(src).pathname.split('/').pop();}catch(e){return null;}
+  if(!imageKey||imageKey.length>240)return null;
+  const metadata=Array.isArray(m.mi)?m.mi:[];
+  const meta=metadata[index]?.u===src?metadata[index]:metadata.find(x=>x.u===src),mediaId=meta?.id&&/^\d{1,64}$/.test(String(meta.id))?String(meta.id):null;
+  if(!mediaId&&pics.filter(u=>{try{return new URL(u).pathname.split('/').pop()===imageKey;}catch(e){return false;}}).length>1)return null;
+  return{postKey:_igPostKey(m.p),photoKey:mediaId?'id:'+mediaId:'img:'+imageKey,mediaId,imageKey,type:meta?.ty||'IMAGE'};
+}
+function _igPhotoTagRow(rows,identity){
+  if(!identity)return null;
+  if(identity.mediaId){const exact=(rows||[]).find(r=>r.media_id===identity.mediaId);if(exact)return exact;}
+  const matches=(rows||[]).filter(r=>r.image_key===identity.imageKey&&(!identity.mediaId||!r.media_id));
+  return matches.length===1?matches[0]:null; // Never borrow another photo's tags by position.
+}
+async function _igPhotoTagRows(postKey,force){
+  if(!postKey||!sb)return[];
+  const prior=_igPhotoTagsCache.get(postKey);
+  if(prior?.promise)return prior.promise;
+  if(!force&&prior&&Date.now()-prior.at<30000)return prior.rows;
+  const entry={at:0,rows:[]};
+  entry.promise=(async()=>{const{data,error}=await sb.from('ig_photo_tags').select('post_key,photo_key,handle,media_id,image_key,artist_ids,revision').eq('post_key',postKey);if(error)throw error;entry.rows=data||[];entry.at=Date.now();entry.promise=null;return entry.rows;})();
+  _igPhotoTagsCache.set(postKey,entry);
+  try{return await entry.promise;}catch(e){if(_igPhotoTagsCache.get(postKey)===entry)_igPhotoTagsCache.delete(postKey);throw e;}
+}
+function _igvOpenCard(target){
+  if(!_igv||_igv.tagEditor)return;
+  _closeIgViewer();
+  if(target.art)showT(target.art,window.innerWidth/2,window.innerHeight*0.4);
+  else if(target.gko&&GROUPS[target.gko])showGC(target.gko,window.innerWidth/2,window.innerHeight*0.4);
+}
+async function _igvOpenTagEditor(){
+  if(!_isAdmin()||!_igv)return;
+  const view=_igv;
+  try{
+    if(view.tagLoad!=='ready'){view.tagRows=await _igPhotoTagRows(_igPostKey(view.m.p),true);view.tagLoad='ready';}
+    if(typeof _igTagEditorOpen!=='function'){
+      _loadAdminScript();const script=document.getElementById('admin-js-script');
+      if(typeof _igTagEditorOpen!=='function')await new Promise((resolve,reject)=>{const t=setTimeout(()=>reject(new Error('editor load timeout')),8000);script?.addEventListener('load',()=>{clearTimeout(t);resolve();},{once:true});script?.addEventListener('error',()=>{clearTimeout(t);reject(new Error('editor load failed'));},{once:true});});
+    }
+    if(_igv===view&&_isAdmin()&&typeof _igTagEditorOpen==='function')_igTagEditorOpen();
+  }catch(e){_showShareToast(currentLang==='ko'?'편집을 열지 못했어. 다시 시도해줘.':'Could not open the editor. Please retry.');}
+}
+function _igvRenderTags(){
+  const ov=document.getElementById('igv-overlay');if(!ov||!_igv)return;
+  const box=ov.querySelector('#igv-tags');box.replaceChildren();
+  const identity=_igPhotoIdentity(_igv.m,_igv.i),row=_igPhotoTagRow(_igv.tagRows,identity);
+  for(const id of [...new Set(row?.artist_ids||[])]){
+    const a=ARTISTS.find(a=>a.id===id);if(!a)continue;
+    const chip=document.createElement('button');chip.type='button';chip.className='igv-member-chip';chip.textContent=_dispName(a);chip.title=_dispGroupName(a);chip.setAttribute('aria-label',_dispName(a)+' ('+_dispGroupName(a)+')');chip.addEventListener('click',()=>_igvOpenCard({art:a}));box.appendChild(chip);
+  }
+  box.hidden=!box.children.length;
+  let edit=ov.querySelector('#igv-tag-edit');
+  if(_isAdmin()&&identity?.postKey&&identity.type!=='VIDEO'){
+    if(!edit){edit=document.createElement('button');edit.id='igv-tag-edit';edit.type='button';edit.className='igv-edit-icon';edit.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m16 3 5 5-12 12H4v-5L16 3Zm-1 3L6 16v2h2l9-9-2-3Z"/></svg>';edit.addEventListener('click',_igvOpenTagEditor);ov.querySelector('#igv-hd').insertBefore(edit,ov.querySelector('.sw-to-lb'));}
+    edit.title=currentLang==='ko'?'이 사진 멤버 태그 편집':'Edit members in this photo';edit.setAttribute('aria-label',edit.title);edit.disabled=!!_igv.tagEditor;
+  }else{edit?.remove();if(_igv.tagEditor&&typeof _igTagEditorClose==='function')_igTagEditorClose();}
+  const author=ov.querySelector('#igv-author');author.disabled=!_igv.owner||!!_igv.tagEditor;
+}
 function _openIgViewer(m,handle,idx){
   const pics=Array.isArray(m.c)&&m.c.length?m.c:[m.u];
   let ov=document.getElementById('igv-overlay');
@@ -23302,9 +23366,10 @@ function _openIgViewer(m,handle,idx){
     ov=document.createElement('div');ov.id='igv-overlay';ov.setAttribute('data-modal','');
     ov.innerHTML='<div id="igv-panel"><button id="igv-close" type="button" aria-label="닫기">✕</button>'
       +'<div id="igv-media"><img id="igv-pv" class="igv-nb" alt=""><img id="igv-img" alt=""><img id="igv-nx" class="igv-nb" alt=""><button id="igv-prev" type="button" aria-label="이전 사진">‹</button><button id="igv-next" type="button" aria-label="다음 사진">›</button><div id="igv-dots"></div></div>'
-      +'<div id="igv-side"><div id="igv-hd"><img id="igv-av" alt=""><div class="igv-hd-txt"><div id="igv-name"></div><div id="igv-meta"></div></div><button class="sw-to-lb" type="button"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><span></span></button></div>'
+      +'<div id="igv-side"><div id="igv-hd"><button id="igv-author" type="button"><img id="igv-av" alt=""><span class="igv-hd-txt"><span id="igv-name"></span><span id="igv-meta"></span></span></button><button class="sw-to-lb" type="button"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><span></span></button></div><div id="igv-tags" hidden></div>'
       +'<div id="igv-cap"></div><button id="igv-capall" type="button" hidden></button><a id="igv-open" target="_blank" rel="noopener noreferrer"></a></div></div>';
     document.body.appendChild(ov);
+    ov.querySelector('#igv-author').addEventListener('click',()=>{if(_igv?.owner)_igvOpenCard(_igv.owner);});
     ov.addEventListener('click',e=>{if(e.target===ov)_closeIgViewer();});
     ov.querySelector('#igv-close').addEventListener('click',e=>{e.stopPropagation();_closeIgViewer();});
     ov.querySelector('#igv-prev').addEventListener('click',e=>{e.stopPropagation();_igvGo(-1);});
@@ -23314,7 +23379,7 @@ function _openIgViewer(m,handle,idx){
     // Interactive Swipe Transition"). 예전엔 손을 뗀 뒤 40px 넘었는지만 보고 사진을 툭 바꿨다. 처음 8px로 방향을 정해 아래로 쓸어 닫기와 안 싸운다.
     const md=ov.querySelector('#igv-media');let sx=null,sy=0,hx=null,hdx=0,hv=0,ht=0;
     md.addEventListener('touchstart',e=>{
-      if(!_igv||_igv.pics.length<2||_igv.anim||e.touches.length!==1){sx=null;return;}
+      if(!_igv||_igv.tagEditor||_igv.pics.length<2||_igv.anim||e.touches.length!==1){sx=null;return;}
       sx=e.touches[0].clientX;sy=e.touches[0].clientY;hx=null;hdx=0;hv=0;ht=performance.now();
     },{passive:true});
     md.addEventListener('touchmove',e=>{
@@ -23341,6 +23406,7 @@ function _openIgViewer(m,handle,idx){
     const pn=ov.querySelector('#igv-panel');let y0=null,x0=0,ax=null,dragY=0,vY=0,tY=0;
     pn.addEventListener('touchstart',e=>{
       _igvDrag=false;
+      if(_igv?.tagEditor){y0=null;return;}
       if(!isMob()||e.touches.length!==1){y0=null;return;}
       const cap=ov.querySelector('#igv-cap');if(cap.contains(e.target)&&cap.scrollTop>0){y0=null;return;}
       y0=e.touches[0].clientY;x0=e.touches[0].clientX;ax=null;dragY=0;vY=0;tY=performance.now();
@@ -23373,6 +23439,8 @@ function _openIgViewer(m,handle,idx){
     pn.addEventListener('touchcancel',pnEnd,{passive:true});
     document.addEventListener('keydown',e=>{
       if(!ov.classList.contains('open'))return;
+      if(_igv?.tagEditor){if(e.key==='ArrowLeft'||e.key==='ArrowRight')e.stopImmediatePropagation();return;}
+      if(e.target?.closest?.('input,textarea,select,[contenteditable="true"]'))return;
       // 사진 넘기기는 뷰어에서 끝낸다. 뒤 카드/재생 화면의 방향키로도 새면 안 된다.
       if(e.key!=='ArrowLeft'&&e.key!=='ArrowRight')return;
       e.preventDefault();e.stopImmediatePropagation();
@@ -23383,20 +23451,24 @@ function _openIgViewer(m,handle,idx){
   // API·공개 페이지 모두 본문 한 덩어리(장원영 20장 게시물 실측: 장별 필드는 자동 이미지 설명뿐). 그래서 빈 줄로 나눈 문단 수가
   // 사진 수와 **정확히 같을 때만** k번째 문단을 k번째 사진 글로 보여준다. 다르면 지금처럼 본문 전체. 아래 버튼으로 언제든 전체 보기.
   const paras=String(m.cap||'').split(/\n[ \t]*\n/).map(s=>s.trim()).filter(Boolean);
-  _igv={m,pics,i:Math.max(0,Math.min(idx||0,pics.length-1)),per:pics.length>1&&paras.length===pics.length?paras:null,full:false,anim:false};
+  _igv?.tagEditor?.cleanup?.();ov.querySelector('#igv-tag-editor')?.remove();ov.classList.remove('igv-editing');
+  _igv={m,pics,h:handle,i:Math.max(0,Math.min(idx||0,pics.length-1)),per:pics.length>1&&paras.length===pics.length?paras:null,full:false,anim:false,tagRows:[],tagLoad:'loading'};
   _igvPos(0,false);
   // 사진 틀 비율 = 첫 장 비율(인스타와 같게, 2026-10-30 사용자 "가로 사진은 위에 붙이지 말고 가운데"). 장마다 틀 높이가 바뀌면 가로 사진이
   // 위로 붙고 본문이 따라 올라왔다. 여러 장일 때만 — 한 장은 그 사진 비율 그대로. 인스타 허용 범위(1.91:1~3:4)로 자른다.
   {const md=ov.querySelector('#igv-media');md.classList.remove('igv-framed');md.style.removeProperty('--igv-ar');
    if(pics.length>1){const f=new Image();f.onload=()=>{if(!_igv||_igv.pics!==pics||!f.naturalWidth)return;md.style.setProperty('--igv-ar',String(Math.min(Math.max(f.naturalHeight/f.naturalWidth,0.52),1.34)));md.classList.add('igv-framed');};f.src=pics[0];}}
   const ko=currentLang==='ko',own=_igOwners().get(handle),ig=_igMap.get(handle);
+  _igv.owner=own||null;
   ov.querySelector('#igv-name').textContent=own?own.name:(_igMagNames.get(handle)||('@'+handle));
+  ov.querySelector('#igv-author').setAttribute('aria-label',own?(ko?own.name+' 카드 열기':'Open '+own.name+' card'):(_igMagNames.get(handle)||handle));
   ov.querySelector('#igv-meta').textContent=['@'+handle,_igAgo(m.t),m.lk!=null?(ko?'좋아요 ':'♥ ')+_fmtVC(m.lk):'',m.cm!=null?(ko?'댓글 ':'💬 ')+_fmtVC(m.cm):''].filter(Boolean).join(' · '); // 좋아요·댓글은 유튜브 조회수와 같은 표기(100+·1K+, 2026-10-21 사용자)
   const av=ov.querySelector('#igv-av');if(ig&&ig.pic){av.src=ig.pic;av.hidden=false;}else av.hidden=true;
   ov.querySelector('#igv-cap').hidden=!m.cap;
   const op=ov.querySelector('#igv-open');op.href=m.p;op.textContent=ko?'Instagram에서 보기 ↗':'View on Instagram ↗';
   ov.querySelector('.sw-to-lb span').textContent=ko?'재생 화면으로':'Back to player';
   _igvShow();
+  {const view=_igv;_igPhotoTagRows(_igPostKey(m.p)).then(rows=>{if(_igv!==view)return;view.tagRows=rows;view.tagLoad='ready';_igvRenderTags();}).catch(()=>{if(_igv===view){view.tagLoad='error';_igvRenderTags();}});}
   // 웹 무대 — 무대가 좁으면(카드+나침반 사이 520px 등) 사진 위·본문 아래로 쌓는다(igv-narrow)
   _swOpen('igv',ov,ov.querySelector('#igv-panel'),{onPlace:w=>ov.classList.toggle('igv-narrow',w<900)});
 }
@@ -23415,6 +23487,8 @@ function _igvShow(){
   const cap=ov.querySelector('#igv-cap'),all=ov.querySelector('#igv-capall'),ko=currentLang==='ko';
   cap.textContent=_igv.per&&!_igv.full?_igv.per[i]:(_igv.m.cap||'');cap.scrollTop=0;
   all.hidden=!_igv.per;all.textContent=_igv.full?(ko?'사진별 글 보기':'Per-photo text'):(ko?'본문 전체 보기':'Show full caption');
+  ov.querySelector('#igv-prev').disabled=ov.querySelector('#igv-next').disabled=!!_igv.tagEditor;
+  _igvRenderTags();
 }
 // 지금 장과 양옆 장을 dx만큼 옮긴다(anim이면 스르륵). 양옆 장은 사진 틀 폭만큼 떨어져 있다.
 function _igvPos(dx,anim){
@@ -23426,7 +23500,7 @@ function _igvPos(dx,anim){
 }
 // 넘기기 — 버튼·방향키·손 뗀 뒤 모두 같은 미끄러짐으로 끝낸다. 다 미끄러진 뒤 지금 장을 바꾸고(이미 받은 그림이라 decode 후 바로) 제자리로.
 function _igvGo(d){
-  if(!_igv||_igv.anim)return;const n=_igv.i+d;if(n<0||n>=_igv.pics.length)return;
+  if(!_igv||_igv.anim||_igv.tagEditor)return;const n=_igv.i+d;if(n<0||n>=_igv.pics.length)return;
   const ov=document.getElementById('igv-overlay'),md=ov&&ov.querySelector('#igv-media');
   const w=md?md.clientWidth:0;
   if(!w){_igv.i=n;_igvShow();return;}
@@ -23441,6 +23515,8 @@ function _igvGo(d){
 }
 function _closeIgViewer(){
   const ov=document.getElementById('igv-overlay');
+  _igv?.tagEditor?.cleanup?.();
+  if(ov){ov.querySelector('#igv-tag-editor')?.remove();ov.classList.remove('igv-editing');}
   if(ov){ov.style.background='';_swClose('igv',ov,ov.querySelector('#igv-panel'),{fin:()=>ov.classList.remove('igv-narrow')});}
   _igv=null;_igvDrag=false;
 }
@@ -30041,6 +30117,7 @@ function _updateAdminUI(){
   // 어드민이면 body에 표식 — 데스크톱에서 설정 패널(33버튼)이 오른쪽 카드를 통째로 가리던 문제 스톱갭:
   // CSS(body.is-admin #settings-panel)로 설정 패널을 왼쪽에 도킹해 카드는 오른쪽에 그대로 보이게 한다(2026-08-30).
   document.body.classList.toggle('is-admin',_isAdmin());
+  if(document.getElementById('igv-overlay')?.classList.contains('open'))_igvRenderTags();
   const memo=document.getElementById('sp-memo');
   if(memo&&!memo._bound){memo._bound=true;memo.value=localStorage.getItem('adm_memo')||'';memo.addEventListener('input',()=>localStorage.setItem('adm_memo',memo.value));}
 }

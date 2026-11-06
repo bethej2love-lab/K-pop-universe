@@ -32,4 +32,5 @@ for(const [key,d] of [['ArrowRight',1],['ArrowLeft',-1]]){
 check('closed viewer preserves member keys',()=>{const f=fixture({open:false});f.key('ArrowRight');assert.deepEqual(f.calls.member,[1]);assert.equal(f.box._igv.i,1);});
 check('closed viewer preserves video keys',()=>{const f=fixture({open:false,video:true});f.key('ArrowLeft');assert.deepEqual(f.calls.video,[-1]);});
 check('other keys are not captured',()=>{const f=fixture();assert.deepEqual(f.key('Tab'),{stopped:false,prevented:false});assert.equal(f.box._igv.i,1);});
+check('editing preserves native caret movement without navigating the photo or background',()=>{const f=fixture();f.box._igv.tagEditor={};const e=f.key('ArrowRight');assert(e.stopped&&!e.prevented);assert.equal(f.box._igv.i,1);assert.deepEqual(f.calls.member,[]);assert.equal(f.calls.render,0);});
 console.log(total+' checks / '+failed+' failed');if(failed)process.exitCode=1;

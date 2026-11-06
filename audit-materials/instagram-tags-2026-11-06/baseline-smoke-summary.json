@@ -1,0 +1,17 @@
+{
+  "date": "2026-11-06",
+  "baselineCommit": "a0953513abb",
+  "baselineSourceSubstitution": "app.js/admin.js/kpop_universe.css in memory; worktree not modified",
+  "baselineResult": "failed",
+  "observedBaselineFailures": [
+    "Supabase anonymous auth synchronization timeout on desktop and mobile",
+    "YouTube mqdefault thumbnail 404: NomXtCxN6D8"
+  ],
+  "changedSourceSmokeFailures": [
+    "auth synchronization timeout",
+    "one Yuju deeplink timed out"
+  ],
+  "featureUiChecks": 20,
+  "featureUiFailures": 0,
+  "remoteCi": "pending"
+}
