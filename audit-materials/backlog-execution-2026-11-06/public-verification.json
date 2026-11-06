@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-06T00:47:55.800Z",
+  "checkedAt": "2026-11-06T00:55:10.640Z",
   "status": 200,
   "rows": [
     {
@@ -25,6 +25,30 @@
       "content_flag": "보류"
     },
     {
+      "id": "2pXp4HkxlSo",
+      "group_ko": "에프엑스",
+      "members": [],
+      "with_groups": [],
+      "with_members": [],
+      "cover_of_groups": [],
+      "cover_of_members": [],
+      "tags_manual": true,
+      "content_flag": "무관"
+    },
+    {
+      "id": "3K4H_tnRdjY",
+      "group_ko": "에프엑스",
+      "members": [
+        "루나"
+      ],
+      "with_groups": [],
+      "with_members": [],
+      "cover_of_groups": [],
+      "cover_of_members": [],
+      "tags_manual": true,
+      "content_flag": null
+    },
+    {
       "id": "46PrVlOgifk",
       "group_ko": "여자친구",
       "members": [],
@@ -34,6 +58,46 @@
       "cover_of_members": [],
       "tags_manual": true,
       "content_flag": "보류"
+    },
+    {
+      "id": "5L9Xx1YKMkk",
+      "group_ko": "빅스",
+      "members": [
+        "레오"
+      ],
+      "with_groups": [],
+      "with_members": [],
+      "cover_of_groups": [],
+      "cover_of_members": [],
+      "tags_manual": true,
+      "content_flag": null
+    },
+    {
+      "id": "5xJPG952h-c",
+      "group_ko": "에프엑스",
+      "members": [
+        "앰버",
+        "루나"
+      ],
+      "with_groups": [],
+      "with_members": [],
+      "cover_of_groups": [],
+      "cover_of_members": [],
+      "tags_manual": true,
+      "content_flag": null
+    },
+    {
+      "id": "6vUuLdsuj0A",
+      "group_ko": "에프엑스",
+      "members": [
+        "루나"
+      ],
+      "with_groups": [],
+      "with_members": [],
+      "cover_of_groups": [],
+      "cover_of_members": [],
+      "tags_manual": true,
+      "content_flag": null
     },
     {
       "id": "8dpHl5Cs9Ew",
@@ -49,6 +113,17 @@
       "content_flag": "보류"
     },
     {
+      "id": "8JzXYA1pLpQ",
+      "group_ko": "에프엑스",
+      "members": [],
+      "with_groups": [],
+      "with_members": [],
+      "cover_of_groups": [],
+      "cover_of_members": [],
+      "tags_manual": true,
+      "content_flag": "무관"
+    },
+    {
       "id": "ADN86AMoMTw",
       "group_ko": "세븐틴",
       "members": [
@@ -61,6 +136,30 @@
       "cover_of_members": [],
       "tags_manual": true,
       "content_flag": null
+    },
+    {
+      "id": "AFmQYFsEi48",
+      "group_ko": "빅스",
+      "members": [
+        "레오"
+      ],
+      "with_groups": [],
+      "with_members": [],
+      "cover_of_groups": [],
+      "cover_of_members": [],
+      "tags_manual": true,
+      "content_flag": null
+    },
+    {
+      "id": "AJ1tRpKn9FM",
+      "group_ko": "에프엑스",
+      "members": [],
+      "with_groups": [],
+      "with_members": [],
+      "cover_of_groups": [],
+      "cover_of_members": [],
+      "tags_manual": true,
+      "content_flag": "무관"
     },
     {
       "id": "alHqoj-LM4g",
@@ -116,6 +215,19 @@
       "content_flag": null
     },
     {
+      "id": "fTOZU5QlMMM",
+      "group_ko": "에프엑스",
+      "members": [
+        "루나"
+      ],
+      "with_groups": [],
+      "with_members": [],
+      "cover_of_groups": [],
+      "cover_of_members": [],
+      "tags_manual": true,
+      "content_flag": null
+    },
+    {
       "id": "g_5n_8vkCG0",
       "group_ko": "르세라핌",
       "members": [
@@ -129,10 +241,37 @@
       "content_flag": null
     },
     {
+      "id": "GuUpFWeIoBk",
+      "group_ko": "에프엑스",
+      "members": [
+        "앰버",
+        "루나"
+      ],
+      "with_groups": [],
+      "with_members": [],
+      "cover_of_groups": [],
+      "cover_of_members": [],
+      "tags_manual": true,
+      "content_flag": null
+    },
+    {
       "id": "h5E-qf13XCk",
       "group_ko": "디아#a1897",
       "members": [
         "디아"
+      ],
+      "with_groups": [],
+      "with_members": [],
+      "cover_of_groups": [],
+      "cover_of_members": [],
+      "tags_manual": true,
+      "content_flag": null
+    },
+    {
+      "id": "HAv2ureYCMM",
+      "group_ko": "빅스",
+      "members": [
+        "레오"
       ],
       "with_groups": [],
       "with_members": [],
@@ -158,6 +297,34 @@
       "content_flag": null
     },
     {
+      "id": "iYt7uF2zwTo",
+      "group_ko": "에프엑스",
+      "members": [
+        "루나"
+      ],
+      "with_groups": [],
+      "with_members": [],
+      "cover_of_groups": [],
+      "cover_of_members": [],
+      "tags_manual": true,
+      "content_flag": null
+    },
+    {
+      "id": "jaZSWTYfpL0",
+      "group_ko": "에프엑스",
+      "members": [
+        "루나"
+      ],
+      "with_groups": [],
+      "with_members": [
+        "이민혁(비투비)"
+      ],
+      "cover_of_groups": [],
+      "cover_of_members": [],
+      "tags_manual": true,
+      "content_flag": null
+    },
+    {
       "id": "O-Fpg_FQv3A",
       "group_ko": "디아#a1897",
       "members": [
@@ -175,6 +342,19 @@
       "group_ko": "르세라핌",
       "members": [
         "홍은채"
+      ],
+      "with_groups": [],
+      "with_members": [],
+      "cover_of_groups": [],
+      "cover_of_members": [],
+      "tags_manual": true,
+      "content_flag": null
+    },
+    {
+      "id": "qAFDgFE26eI",
+      "group_ko": "에프엑스",
+      "members": [
+        "루나"
       ],
       "with_groups": [],
       "with_members": [],
@@ -282,10 +462,38 @@
       "content_flag": "보류"
     },
     {
+      "id": "WzcOTxBduCU",
+      "group_ko": "에프엑스",
+      "members": [
+        "루나"
+      ],
+      "with_groups": [],
+      "with_members": [
+        "이민혁(비투비)"
+      ],
+      "cover_of_groups": [],
+      "cover_of_members": [],
+      "tags_manual": true,
+      "content_flag": null
+    },
+    {
       "id": "XyZ5RjNG77w",
       "group_ko": "핑클",
       "members": [
         "이효리"
+      ],
+      "with_groups": [],
+      "with_members": [],
+      "cover_of_groups": [],
+      "cover_of_members": [],
+      "tags_manual": true,
+      "content_flag": null
+    },
+    {
+      "id": "y2w8dBSyDss",
+      "group_ko": "에프엑스",
+      "members": [
+        "루나"
       ],
       "with_groups": [],
       "with_members": [],

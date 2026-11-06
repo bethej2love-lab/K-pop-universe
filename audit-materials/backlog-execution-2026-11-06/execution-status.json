@@ -1,0 +1,210 @@
+{
+  "date": "2026-11-06",
+  "scope": "Audit195-245 and current verified corrections",
+  "statuses": {
+    "195": {
+      "status": "pending",
+      "result": "ONF Diggle false owner candidates need current row and actual guest scope recheck; do not strictSync whole group."
+    },
+    "196": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "197": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "198": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "199": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "200": {
+      "status": "preserved-normal-or-unproven",
+      "result": "No blanket deletion/reassignment. Multiple legitimate profiles, reunions and unavailable oEmbed are not proof of unrelated content."
+    },
+    "201": {
+      "status": "preserved-normal-or-unproven",
+      "result": "No blanket deletion/reassignment. Multiple legitimate profiles, reunions and unavailable oEmbed are not proof of unrelated content."
+    },
+    "202": {
+      "status": "preserved-normal-or-unproven",
+      "result": "No blanket deletion/reassignment. Multiple legitimate profiles, reunions and unavailable oEmbed are not proof of unrelated content."
+    },
+    "203": {
+      "status": "pending",
+      "result": "Luna mentions Krystal; actual clip participation not proven. Keep existing record pending playback, do not mark unrelated."
+    },
+    "204": {
+      "status": "executed",
+      "result": "3 explicit product videos marked unrelated; precise rollback SQL saved."
+    },
+    "205": {
+      "status": "executed-partial",
+      "result": "13 performer tags restored; YXRJTwpLRRo oEmbed401 not treated as deleted; needs player recheck."
+    },
+    "206": {
+      "status": "handoff",
+      "result": "Earlier notes ingested; verified5 credit owners/3maps/1 album transfer now executed."
+    },
+    "207": {
+      "status": "historical-start",
+      "result": "Earlier audit-only restriction superseded by explicit current code/DB/main authorization."
+    },
+    "208": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "209": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "210": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "211": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "212": {
+      "status": "executed-partial",
+      "result": "15 GOT7 corrections already done; 3 JYP/DAZED public false owners now held; previously hidden audition preserved."
+    },
+    "213": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "214": {
+      "status": "preserved-normal-or-unproven",
+      "result": "No blanket deletion/reassignment. Multiple legitimate profiles, reunions and unavailable oEmbed are not proof of unrelated content."
+    },
+    "215": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "216": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "217": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "218": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "219": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "220": {
+      "status": "executed-partial",
+      "result": "5 confirmed artist corrections already done; anonymous singer held rather than guessed."
+    },
+    "221": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "222": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "223": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "224": {
+      "status": "executed-partial",
+      "result": "Hyori2/Mimi2 corrected; other4 public false owner rows held for actual scope/identity."
+    },
+    "225": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "226": {
+      "status": "preserved-normal-or-unproven",
+      "result": "No blanket deletion/reassignment. Multiple legitimate profiles, reunions and unavailable oEmbed are not proof of unrelated content."
+    },
+    "227": {
+      "status": "preserved-normal-or-unproven",
+      "result": "No blanket deletion/reassignment. Multiple legitimate profiles, reunions and unavailable oEmbed are not proof of unrelated content."
+    },
+    "228": {
+      "status": "preserved-normal-or-unproven",
+      "result": "No blanket deletion/reassignment. Multiple legitimate profiles, reunions and unavailable oEmbed are not proof of unrelated content."
+    },
+    "229": {
+      "status": "executed-partial",
+      "result": "32 direct albums+7 legacy albums+7SMunit references restored; remaining HOTForever/BlockBJackpot unconfirmed edition mapping retained."
+    },
+    "230": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "231": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "232": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "233": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "234": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "235": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "236": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "237": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "238": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "239": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "240": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "241": {
+      "status": "executed-partial",
+      "result": "SungHanbin2 done earlier; Jaemin/Jeno2 added; not all episode guests inferred from hashtags."
+    },
+    "242": {
+      "status": "preserved-normal-or-unproven",
+      "result": "No blanket deletion/reassignment. Multiple legitimate profiles, reunions and unavailable oEmbed are not proof of unrelated content."
+    },
+    "243": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "244": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    },
+    "245": {
+      "status": "executed",
+      "result": "See current CHANGELOG and before/after proof files; normal control records preserved."
+    }
+  }
+}

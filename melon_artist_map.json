@@ -4072,13 +4072,12 @@
     "checkedAt": "2026-09-17"
   },
   "a:유정|브브걸": {
-    "aid": "784322",
-    "melonName": "유정(Kim Yujeong)",
-    "gubun": "대한민국/여성/솔로",
+    "aid": "946040",
+    "melonName": "남유정",
     "kind": "solo",
-    "confidence": "medium",
-    "overlap": 1,
-    "checkedAt": "2026-09-17"
+    "confidence": "identity",
+    "evidence": "공식 artist946040 브브걸/1991.05.02;784322 라붐 동명이인",
+    "checkedAt": "2026-11-06"
   },
   "a:윤두준|하이라이트": {
     "aid": "418201",
@@ -11050,12 +11049,12 @@
     "checkedAt": "2026-10-14"
   },
   "a:시안|유스피어": {
-    "aid": "2970911",
+    "aid": "4343027",
     "melonName": "시안",
     "kind": "solo",
-    "confidence": "high",
-    "evidence": "그룹(버가부) 멜론 상세의 멤버 목록",
-    "checkedAt": "2026-10-14"
+    "confidence": "identity",
+    "evidence": "공식 artist4343027=USPEER;2970911=bugAboo 동명이인",
+    "checkedAt": "2026-11-06"
   },
   "a:로라|픽시": {
     "aid": "2920029",
@@ -11128,5 +11127,13 @@
     "confidence": "high",
     "evidence": "그룹(아크) 멜론 상세의 멤버 목록",
     "checkedAt": "2026-10-15"
+  },
+  "a:시안|버가부": {
+    "aid": "2970911",
+    "melonName": "시안",
+    "kind": "solo",
+    "confidence": "identity",
+    "evidence": "공식 artist2970911=bugAboo 및 앨범11535511 가창자",
+    "checkedAt": "2026-11-06"
   }
 }

@@ -156314,33 +156314,7 @@
       }
     ],
     "id": "a0707",
-    "discography": [
-      {
-        "title": "너와의 하루가 다시 주어진다면",
-        "type": "싱글",
-        "isMain": true,
-        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/115/35/511/11535511_20240709135606_500.jpg",
-        "releaseDate": "2024.07.10",
-        "trackCount": 2,
-        "titleTrack": "너와의 하루가 다시 주어진다면",
-        "tracks": [
-          {
-            "no": 1,
-            "title": "너와의 하루가 다시 주어진다면",
-            "isTitle": true,
-            "songId": "37750054"
-          },
-          {
-            "no": 2,
-            "title": "너와의 하루가 다시 주어진다면 (Inst.)",
-            "isTitle": false,
-            "songId": "37750055"
-          }
-        ],
-        "src": "melon",
-        "melonAlbumId": "11535511"
-      }
-    ]
+    "discography": []
   },
   {
     "name": {
@@ -307869,7 +307843,34 @@
       190
     ],
     "bday": "2001.04.04",
-    "id": "a1891"
+    "id": "a1891",
+    "discography": [
+      {
+        "title": "너와의 하루가 다시 주어진다면",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/115/35/511/11535511_20240709135606_500.jpg",
+        "releaseDate": "2024.07.10",
+        "trackCount": 2,
+        "titleTrack": "너와의 하루가 다시 주어진다면",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "너와의 하루가 다시 주어진다면",
+            "isTitle": true,
+            "songId": "37750054"
+          },
+          {
+            "no": 2,
+            "title": "너와의 하루가 다시 주어진다면 (Inst.)",
+            "isTitle": false,
+            "songId": "37750055"
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11535511"
+      }
+    ]
   },
   {
     "name": {
