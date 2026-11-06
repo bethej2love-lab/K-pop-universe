@@ -1,12 +1,14 @@
 # CHANGELOG
 
 ## 2026-11-06 (Codex — 아이돌이슈 계정·수집 게시물 제거)
-- **[진행중] [artists.json·tools/ig_business_discovery.mjs·ig_excluded_accounts.json·DB]** 사용자 요청으로 @idolissue 계정/게시물 제거 및 이후 수집 차단. 매거진 목록이 아닌 파우 홍(a1465)의 개인 인스타 오등록으로 유입됨. 홍 본인/다른 링크는 유지하고 잘못된 계정 링크만 제거,파생자료 재생성,정확한 handle의 DB 계정(게시물6)/팔로워일별4/수동태그0 정리. 명시적 --only 실행도 제외목록을 우회하지 못하도록 검증.
+- **[완료·삭제/수집 차단/공개 반영] [artists.json·tools/ig_business_discovery.mjs·ig_excluded_accounts.json·DB]** 사용자 요청으로 @idolissue 계정/게시물 제거 및 이후 수집 차단. 매거진 목록이 아닌 파우 홍(a1465)의 개인 인스타 오등록으로 유입됨. 홍 본인/다른 링크는 유지하고 잘못된 계정 링크만 제거,파생자료 재생성,정확한 handle의 DB 계정(게시물6)/팔로워일별4/수동태그0 정리. 명시적 --only 실행도 제외목록을 우회하지 못하도록 검증.
 
 - **[완료·DB 삭제] [ig_accounts·ig_follower_daily·ig_photo_tags]** 정확한 handle=IDOLISSUE 소문자키 idolissue만 대상으로 계정1개(내부게시물6개)·일별팔로워4개 삭제,사진태그0개. 재조회3테이블 모두0건,다른계정/영상테이블 미변경. artist_pics에도 이 계정 출처/홍 별도등록사진 없음 확인.
 - **[완료·소스/검증] [artists.json·artists.slim.json·ig_excluded_accounts.json·tools/ig_business_discovery.mjs·tests/ig-account-exclusion.test.js]** 홍 개인링크1필드만 삭제(전체원본 객체 역대입 비교 일치),slim 정식재생성/43875트랙무결성 유지. 제외목록을 공식그룹/개인/매거진·본문멘션후보에 적용하고 --only=IDOLISSUE도 DB/Meta 호출 전0종료. 정상계정보존·오등록 재유입·수동우회 회귀검사/기존사진ID·이미지만료·문법 통과. 검증자료 audit-materials/instagram-exclusion-2026-11-06/.
 
 - **[완료·검색 페이지 링크 정정] [g/파우/홍/index.html·en/g/pow/hong/index.html]** 홍 한영 검색 페이지에 남은 잘못된 Instagram 링크와 JSON-LD sameAs 각1곳도 제거. 이2페이지의 계정URL만 좁게 정정했고 원본 링크를 지워 다음 자동생성에도 재등장하지 않음.
+
+- **[완료·운영 검증] [GitHub Actions·audit-materials/instagram-exclusion-2026-11-06/live-verification.json]** mainff6e32cb0b0 반영. 운영수집42175109375(--only=IDOLISSUE) success/수집제외로그 확인,Meta/DB호출 전종료. 시험후DB계정/일별기록/사진태그0건재확인. Pages42175077277 success,공개 artists.slim.json·g/파우/홍/·en/g/pow/hong/ 모두HTTP200/제외계정URL0. Node42175077252 전부success,파생물 재생성42175077326 success.
 
 ## 2026-11-06 (Codex — 인스타 게시자 카드 연결·사진별 수동 멤버 태그)
 - **[완료·배포] [app.js·admin.js·kpop_universe.css·tools/ig_business_discovery.mjs·sql/]** 사용자 구현 요청: 기존 뷰어 레이아웃을 유지하며 게시자 이름/프로필→아티스트카드,관리자 사진별 멤버 수동태그/공개표시·미태깅사진 기존유지. 태그는수집캐시와분리보존·DB관리자쓰기통제·사진별이동/기존카드전환/모바일검증. 영상임베드는기존메모만유지하고미구현.

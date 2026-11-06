@@ -1,0 +1,22 @@
+{
+  "at": "2026-11-06T06:34:59.300Z",
+  "collectorRun": 42175109375,
+  "collectorResult": "Excluded before DB/Meta calls",
+  "pages": [
+    {
+      "path": "artists.slim.json",
+      "status": 200,
+      "hasExcludedLink": false
+    },
+    {
+      "path": "g/%ED%8C%8C%EC%9A%B0/%ED%99%8D/index.html",
+      "status": 200,
+      "hasExcludedLink": false
+    },
+    {
+      "path": "en/g/pow/hong/index.html",
+      "status": 200,
+      "hasExcludedLink": false
+    }
+  ]
+}
