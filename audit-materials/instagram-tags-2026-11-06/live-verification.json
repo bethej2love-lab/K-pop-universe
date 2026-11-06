@@ -1,29 +1,31 @@
 {
-  "at": "2026-11-06T05:58:55.020Z",
+  "at": "2026-11-06T06:07:49.860Z",
   "root": 200,
   "app": {
-    "url": "app.js?v=20261106-0d24cae6",
+    "url": "app.js?v=20261106-60511ddd",
     "status": 200,
-    "identity": true,
-    "tags": true,
-    "paginated": true
+    "paginated": true,
+    "sourceMatchIgnoringAutomaticAdminVersion": true
   },
   "admin": {
+    "version": "20261106-d74b1a0a",
     "status": 200,
     "editor": true,
     "sharedVideoPicker": true,
-    "boundedWrite": true
+    "singularWrite": true,
+    "sourceSha256": "d74b1a0a12b5b180965ea1b4498653a73e102f6dcb00c64ea1ec0fd12c218fed",
+    "sourceMatch": true
   },
   "css": {
     "url": "kpop_universe.css?v=20261106-7b6e7d8a",
     "status": 200,
-    "publisher": true,
-    "editor": true
+    "sourceMatch": true
   },
   "cortis": {
     "posts": 6,
     "photoIds": 88,
     "manualTags": 0,
     "collectionRun": 42170391788
-  }
+  },
+  "pagesRun": 42172089198
 }

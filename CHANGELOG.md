@@ -1,9 +1,9 @@
 # CHANGELOG
 
 ## 2026-11-06 (Codex — 인스타 게시자 카드 연결·사진별 수동 멤버 태그)
-- **[진행중] [app.js·admin.js·kpop_universe.css·tools/ig_business_discovery.mjs·sql/]** 사용자 구현 요청: 기존 뷰어 레이아웃을 유지하며 게시자 이름/프로필→아티스트카드,관리자 사진별 멤버 수동태그/공개표시·미태깅사진 기존유지. 태그는수집캐시와분리보존·DB관리자쓰기통제·사진별이동/기존카드전환/모바일검증. 영상임베드는기존메모만유지하고미구현.
+- **[완료·배포] [app.js·admin.js·kpop_universe.css·tools/ig_business_discovery.mjs·sql/]** 사용자 구현 요청: 기존 뷰어 레이아웃을 유지하며 게시자 이름/프로필→아티스트카드,관리자 사진별 멤버 수동태그/공개표시·미태깅사진 기존유지. 태그는수집캐시와분리보존·DB관리자쓰기통제·사진별이동/기존카드전환/모바일검증. 영상임베드는기존메모만유지하고미구현.
 
-- **[구현 완료·배포 검증 대기] [app.js·admin.js·kpop_universe.css]** 게시자 기존이름/프로필을동일배치의버튼으로연결(등록그룹/아티스트만,매거진등미등록계정은클릭비활성). 사진뷰어의태그행은수동저장된멤버가있을때만노출,칩→정확한아티스트ID카드. 어드민전용연필→현재계정그룹멤버체크/타그룹검색/명시적그룹전체선택/저장·해제. 기본자동선택없음,일반방문자에게편집마크업미생성. 모바일편집중사진만줄이고키보드/짧은뷰포트에서도저장버튼표시,사진넘김/키입력/편집취소정리검증.
+- **[완료·배포 확인] [app.js·admin.js·kpop_universe.css]** 게시자 기존이름/프로필을동일배치의버튼으로연결(등록그룹/아티스트만,매거진등미등록계정은클릭비활성). 사진뷰어의태그행은수동저장된멤버가있을때만노출,칩→정확한아티스트ID카드. 어드민전용연필→현재계정그룹멤버체크/타그룹검색/명시적그룹전체선택/저장·해제. 기본자동선택없음,일반방문자에게편집마크업미생성. 모바일편집중사진만줄이고키보드/짧은뷰포트에서도저장버튼표시,사진넘김/키입력/편집취소정리검증.
 - **[완료·기존 영상 로직 공유] [admin.js _vidTagGroupMembers/_vidTagFindMembers/_vidTagMemberChoice]** 사용자추가요청대로영상태깅의멤버명부·한영검색/정확일치우선/기존그룹·선택제외/체크박스렌더를사진편집과공유. 영상의출연·원곡검색기준및이름저장값/멤버오태깅규칙버튼은보존. 사진저장은유튜브테이블/모달저장상태와분리해다른영상을수정하지않음. 솔로계정은해당본인1명만제안(솔로전원선택방지).
 - **[완료·운영 DB 적용] [sql/2026-11-06_ig_photo_tags.sql·tests/ig-photo-tags-rls.sql]** ig_photo_tags 신규독립테이블(PK post_key/photo_key,멤버artist_ids,사진ID/이미지식별자,revision). 회전형ig_accounts.media와FK삭제연동없어최근목록에서빠져도수동태그보존. 공개읽기/어드민JWT이메일+비익명검사로insert/update/delete제한,RLS활성·최소grant·낡은revision덮어쓰기차단. anon/일반로그인/user_metadata위조/익명admin이메일거부·관리자CRUD허용·유효ID제약을실제DB역할로시험후전량ROLLBACK. 실제HTTP공개읽기200/anon쓰기401,신규테이블보안권고0. 운영사진태그는0건으로유지(사용자가코르티스부터직접작업).
 - **[완료·수집 형식] [tools/ig_business_discovery.mjs]** 기존사진URL/20장캐러셀/2200본문/영상원본이동행동은보존하고게시물id·장별id/종류(mi)를추가보존. 기존자료도게시물shortcode+사진파일식별자로편집가능;새자료는장ID우선. URL서명/호스트변경·앞장삭제·장ID도입·파일명교체에서태그가다른사진으로이동하지않게검사;정체성불명/동일파일명중복은추정연결안함. 영상재생주소/임베드추가없음(메모만유지).
@@ -15,6 +15,11 @@
 - **[완료·검사 동기화] [tests/ig-photo-tags-ui.test.js]** 원격 첫 UI 시험은9항목 통과 후 사진전환260ms+decode를700ms 고정대기로 판단해 실패. 사진번호/anim 해제를 실제로 기다리는 제한5초 상태검증으로 변경(태그행 비표시 단언 유지),실패시뷰어상태출력. 앱 애니메이션/저장/사진동작 변경 없이 로컬20/20 재통과. 최종 원격 결과 아래에 기록.
 
 - **[완료·쓰기 API 호환성] [admin.js·tests/ig-photo-tags-ui.test.js]** 최종 검토에서 PostgREST 버전별 UPDATE/DELETE limit의 order 요구/비지원 위험을 확인해 앞선 limit(1)을 select().maybeSingle() 단일응답으로 교체. PK+revision 필터는 유지,0행이면 동시편집충돌 처리. 모의 API도 실제 단일객체/null 계약으로 맞춰 저장·수정·삭제·충돌·모바일 포함20/20,select-pagination88/88·문법 통과. 운영사진 선태깅 없음. 근거 https://docs.postgrest.org/en/v12/references/api/tables_views.html#limited-update-delete
+
+- **[완료·공개 파일 대조] [GitHub Pages·audit-materials/instagram-tags-2026-11-06/live-verification.json]** 최종 소스 main0ff553df02a→자동캐시49313f908e8/Pages42172089198 success. 공개 app.js?v=20261106-60511ddd·admin.js?v=20261106-d74b1a0a·CSS?v=20261106-7b6e7d8a 모두200. app은 자동관리자버전값만 정규화해 본문일치,admin/CSS는 전체SHA256 일치. maybeSingle 최종저장/공유영상검색/페이지네이션 함수 존재 확인. Node42172039555 전부success.
+- **[사용법] [Instagram 사진 창]** 새로고침 후 관리자 계정에서 사진을 열고 연필→멤버 선택→저장. 공개 이름칩은 해당 사진에만 표시되고 누르면 멤버카드. 게시자 프로필/이름은 기존계정 소유자 카드로 이동. 코르티스5명 명부/최근6게시물 장ID88개 준비완료,실제사진태그0건(사용자가 직접 시작). 영상임베드는지시대로메모만/미구현.
+
+- **[완료·원격 전체 검사] [GitHub Actions·audit-materials/instagram-tags-2026-11-06/remote-browser-ci.json]** 최종 main0ff553df02a의 Node42172039555 전부success,Browser42172039682 13/13 success(새 사진태그UI20/20·기본desktop/mobile·공유·카드닫기·영상진입·곡딥링크·폰회전·첫방문·나침반·커서·프로그램한영). 앞선 로컬네트워크/원격고정대기실패 기록은 원인/한계로 보존하되 최종원격모두통과로 검증완료. 운영계정 실제로그인 클릭/실기기까지 수행했다고 주장하지 않으며,운영태그0건·권한은실제DB롤로검증. 남은 구현작업 없음;영상임베드만요청대로보류.
 
 ## 2026-11-06 (Codex — 인스타 사진별 태그·카드 연결·영상 표시 검토)
 - **[완료·현행 확인/코드 미변경] [app.js·tools/ig_business_discovery.mjs]** 사진은 공식oEmbed가 아닌 CDN이미지+자체뷰어(_openIgViewer). VIDEO는수집시thumbnail_url만저장하고재생media_url은버리며클릭시원본으로나감. 캐러셀c도이미지URL배열로저장하여장별영상/안정ID를보존하지않음. 발견공식사진선반은IMAGE/CAROUSEL만선별. '영상은기술적으로사이트재생불가'가아니라현재구현/수집정책의한계.
