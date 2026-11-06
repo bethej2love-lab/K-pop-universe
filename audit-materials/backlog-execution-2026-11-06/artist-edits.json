@@ -1,0 +1,1678 @@
+[
+  {
+    "id": "a0513",
+    "before": {
+      "name": {
+        "ko": "허영지",
+        "en": "Heo Youngji"
+      },
+      "group": {
+        "ko": "카라",
+        "en": "KARA"
+      },
+      "co": "DSP미디어",
+      "active": true,
+      "color": [
+        235,
+        185,
+        175
+      ],
+      "bday": "1994.08.30",
+      "nat": {
+        "ko": "한국",
+        "en": "KR"
+      },
+      "links": {
+        "instagram": "https://www.instagram.com/young_g_hur",
+        "namu": "https://namu.wiki/w/허영지"
+      },
+      "discography": [
+        {
+          "title": "체인지스트릿 (Change Street) Episode 11",
+          "type": "싱글",
+          "isMain": true,
+          "cover": "https://cdnimg.melon.co.kr/cm2/album/images/129/17/524/12917524_20260312183520_500.jpg",
+          "releaseDate": "2026.03.14",
+          "trackCount": 2,
+          "titleTrack": "겨울아이 (Change Street Ver.)",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "겨울아이 (Change Street Ver.)",
+              "isTitle": true,
+              "songId": "601511197"
+            },
+            {
+              "no": 2,
+              "title": "겨울사랑 (Change Street Ver.)",
+              "isTitle": true,
+              "songId": "601511198"
+            }
+          ],
+          "src": "melon",
+          "melonAlbumId": "12917524",
+          "byline": [
+            {
+              "n": "허영지",
+              "aid": "778238",
+              "en": "Heo Youngji",
+              "ako": "허영지",
+              "ag": "카라"
+            },
+            {
+              "n": "윤산하",
+              "aid": "946274",
+              "en": "Yoon Sanha",
+              "ako": "윤산하",
+              "ag": "아스트로"
+            }
+          ]
+        },
+        {
+          "title": "Toi Toi Toi",
+          "type": "싱글",
+          "releaseDate": "2023.09.12",
+          "trackCount": 3,
+          "isMain": true,
+          "titleTrack": "L.O.V.E",
+          "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/24/064/11324064_20230911154224_500.jpg?c25e1b3289f5c2a1bc33b42e68d04b3f",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "L.O.V.E",
+              "isTitle": true,
+              "songId": "36783439"
+            },
+            {
+              "no": 2,
+              "title": "Focus",
+              "isTitle": false,
+              "songId": "36783440"
+            },
+            {
+              "no": 3,
+              "title": "Climax",
+              "isTitle": false,
+              "songId": "36783441"
+            }
+          ],
+          "melonAlbumId": "11324064"
+        },
+        {
+          "title": "함께할개 Part.2",
+          "type": "싱글",
+          "releaseDate": "2017.12.15",
+          "trackCount": 2,
+          "isMain": true,
+          "titleTrack": "그리움",
+          "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/20/330/10120330_500.jpg?a5355e34a7ec1359cd6c5bd75444c369",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "그리움",
+              "isTitle": true,
+              "songId": "30790904"
+            },
+            {
+              "no": 2,
+              "title": "그리움 (Inst.)",
+              "isTitle": false,
+              "songId": "30790905"
+            }
+          ],
+          "melonAlbumId": "10120330"
+        },
+        {
+          "title": "추억시계",
+          "type": "싱글",
+          "releaseDate": "2017.08.25",
+          "trackCount": 2,
+          "isMain": true,
+          "titleTrack": "추억시계",
+          "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/90/105/10090105_500.jpg?784a9418107adbdf1cbb06416482760c",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "추억시계",
+              "isTitle": true,
+              "songId": "30594641"
+            },
+            {
+              "no": 2,
+              "title": "추억시계 (Inst.)",
+              "isTitle": false,
+              "songId": "30600568"
+            }
+          ],
+          "melonAlbumId": "10090105"
+        }
+      ],
+      "id": "a0513"
+    },
+    "after": {
+      "name": {
+        "ko": "허영지",
+        "en": "Heo Youngji"
+      },
+      "group": {
+        "ko": "카라",
+        "en": "KARA"
+      },
+      "co": "DSP미디어",
+      "active": true,
+      "color": [
+        235,
+        185,
+        175
+      ],
+      "bday": "1994.08.30",
+      "nat": {
+        "ko": "한국",
+        "en": "KR"
+      },
+      "links": {
+        "instagram": "https://www.instagram.com/young_g_hur",
+        "namu": "https://namu.wiki/w/허영지"
+      },
+      "discography": [
+        {
+          "title": "체인지스트릿 (Change Street) Episode 11",
+          "type": "싱글",
+          "isMain": true,
+          "cover": "https://cdnimg.melon.co.kr/cm2/album/images/129/17/524/12917524_20260312183520_500.jpg",
+          "releaseDate": "2026.03.14",
+          "trackCount": 2,
+          "titleTrack": "겨울아이 (Change Street Ver.)",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "겨울아이 (Change Street Ver.)",
+              "isTitle": true,
+              "songId": "601511197"
+            },
+            {
+              "no": 2,
+              "title": "겨울사랑 (Change Street Ver.)",
+              "isTitle": true,
+              "songId": "601511198"
+            }
+          ],
+          "src": "melon",
+          "melonAlbumId": "12917524",
+          "byline": [
+            {
+              "n": "허영지",
+              "aid": "778238",
+              "en": "Heo Youngji",
+              "ako": "허영지",
+              "ag": "카라"
+            },
+            {
+              "n": "윤산하",
+              "aid": "946274",
+              "en": "Yoon Sanha",
+              "ako": "윤산하",
+              "ag": "아스트로"
+            }
+          ]
+        },
+        {
+          "title": "Toi Toi Toi",
+          "type": "싱글",
+          "releaseDate": "2023.09.12",
+          "trackCount": 3,
+          "isMain": true,
+          "titleTrack": "L.O.V.E",
+          "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/24/064/11324064_20230911154224_500.jpg?c25e1b3289f5c2a1bc33b42e68d04b3f",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "L.O.V.E",
+              "isTitle": true,
+              "songId": "36783439"
+            },
+            {
+              "no": 2,
+              "title": "Focus",
+              "isTitle": false,
+              "songId": "36783440"
+            },
+            {
+              "no": 3,
+              "title": "Climax",
+              "isTitle": false,
+              "songId": "36783441"
+            }
+          ],
+          "melonAlbumId": "11324064"
+        },
+        {
+          "title": "함께할개 Part.2",
+          "type": "싱글",
+          "releaseDate": "2017.12.15",
+          "trackCount": 2,
+          "isMain": true,
+          "titleTrack": "그리움",
+          "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/20/330/10120330_500.jpg?a5355e34a7ec1359cd6c5bd75444c369",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "그리움",
+              "isTitle": true,
+              "songId": "30790904"
+            },
+            {
+              "no": 2,
+              "title": "그리움 (Inst.)",
+              "isTitle": false,
+              "songId": "30790905"
+            }
+          ],
+          "melonAlbumId": "10120330"
+        },
+        {
+          "title": "추억시계",
+          "type": "싱글",
+          "releaseDate": "2017.08.25",
+          "trackCount": 2,
+          "isMain": true,
+          "titleTrack": "추억시계",
+          "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/90/105/10090105_500.jpg?784a9418107adbdf1cbb06416482760c",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "추억시계",
+              "isTitle": true,
+              "songId": "30594641"
+            },
+            {
+              "no": 2,
+              "title": "추억시계 (Inst.)",
+              "isTitle": false,
+              "songId": "30600568"
+            }
+          ],
+          "melonAlbumId": "10090105"
+        }
+      ],
+      "id": "a0513",
+      "joined": "2014.08.18"
+    },
+    "source": "Existing _MX_JOINED project corrections moved into normal affiliation metadata"
+  },
+  {
+    "id": "a0512",
+    "before": {
+      "name": {
+        "ko": "강지영",
+        "en": "Kang Jiyoung"
+      },
+      "group": {
+        "ko": "카라",
+        "en": "KARA"
+      },
+      "co": "DSP미디어",
+      "active": true,
+      "color": [
+        235,
+        185,
+        175
+      ],
+      "bday": "1994.01.18",
+      "nat": {
+        "ko": "한국",
+        "en": "KR"
+      },
+      "links": {
+        "instagram": "https://www.instagram.com/kkangjji_",
+        "namu": "https://namu.wiki/w/강지영"
+      },
+      "discography": [
+        {
+          "title": "LUCID DREAM",
+          "type": "싱글",
+          "releaseDate": "2022.07.07",
+          "trackCount": 1,
+          "isMain": true,
+          "titleTrack": "LUCID DREAM",
+          "cover": "https://cdnimg.melon.co.kr/cm2/album/images/109/99/024/10999024_20220707101258_500.jpg",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "LUCID DREAM",
+              "isTitle": true,
+              "songId": "35378762"
+            }
+          ],
+          "melonAlbumId": "10999024"
+        },
+        {
+          "title": "Suki Na Hito Ga Iru Koto -Seiho Remix",
+          "type": "싱글",
+          "releaseDate": "2017.08.16",
+          "trackCount": 1,
+          "isMain": true,
+          "titleTrack": "Sukina Hitoga Irukoto (Seiho Remix)",
+          "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/92/696/10092696_500.jpg?a51f06627895d6633ce68e5fd511df1b",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Sukina Hitoga Irukoto (Seiho Remix)",
+              "isTitle": true,
+              "songId": "30609752"
+            }
+          ],
+          "melonAlbumId": "10092696"
+        },
+        {
+          "title": "Goldmine",
+          "type": "싱글",
+          "releaseDate": "2017.08.09",
+          "trackCount": 1,
+          "isMain": true,
+          "titleTrack": "Goldmine",
+          "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/92/697/10092697_500.jpg?2e92c5459fc1c8280f69ea2d0c5d3601",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Goldmine",
+              "isTitle": true,
+              "songId": "30609753"
+            }
+          ],
+          "melonAlbumId": "10092697"
+        },
+        {
+          "title": "Many Faces -多面性- / Many Faces -Tamense- (Many Faces -다면성-)",
+          "type": "정규",
+          "releaseDate": "2017.05.03",
+          "trackCount": 12,
+          "isMain": true,
+          "titleTrack": "Jyoshimodoki",
+          "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/65/693/10065693_500.jpg?d8f433f1d78fdfa64496538ac7d58468",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Sukina Hitoga Irukoto",
+              "isTitle": false,
+              "songId": "30436455"
+            },
+            {
+              "no": 2,
+              "title": "Koiwo Shiteitakoto",
+              "isTitle": false,
+              "songId": "30436456"
+            },
+            {
+              "no": 3,
+              "title": "Konomamade",
+              "isTitle": false,
+              "songId": "30436457"
+            },
+            {
+              "no": 4,
+              "title": "Kimini Kisswo Kimini Hugwo Kimini Aiwo",
+              "isTitle": false,
+              "songId": "30436458"
+            },
+            {
+              "no": 5,
+              "title": "Fake",
+              "isTitle": false,
+              "songId": "30436459"
+            },
+            {
+              "no": 6,
+              "title": "Come Back",
+              "isTitle": false,
+              "songId": "30436460"
+            },
+            {
+              "no": 7,
+              "title": "Jyoshimodoki",
+              "isTitle": true,
+              "songId": "30436461"
+            },
+            {
+              "no": 8,
+              "title": "Many Faces",
+              "isTitle": false,
+              "songId": "30436462"
+            },
+            {
+              "no": 9,
+              "title": "Boogie Woogie",
+              "isTitle": false,
+              "songId": "30436463"
+            },
+            {
+              "no": 10,
+              "title": "Taisetsuna Toki",
+              "isTitle": false,
+              "songId": "30436464"
+            },
+            {
+              "no": 11,
+              "title": "Saigono Sayonara",
+              "isTitle": false,
+              "songId": "30436465"
+            },
+            {
+              "no": 12,
+              "title": "Letter",
+              "isTitle": false,
+              "songId": "30436466"
+            }
+          ],
+          "melonAlbumId": "10065693",
+          "region": "jp"
+        },
+        {
+          "title": "Fake",
+          "type": "미니",
+          "releaseDate": "2016.12.07",
+          "trackCount": 4,
+          "isMain": true,
+          "titleTrack": "Fake",
+          "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/23/660/10023660_500.jpg?d06f5ef9d27142321dcaa39b1c1ccbd8",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Fake",
+              "isTitle": true,
+              "songId": "30154619"
+            },
+            {
+              "no": 2,
+              "title": "Boogie Woogie",
+              "isTitle": false,
+              "songId": "30154620"
+            },
+            {
+              "no": 3,
+              "title": "Crazy Love",
+              "isTitle": false,
+              "songId": "30154621"
+            },
+            {
+              "no": 4,
+              "title": "Fake (Instrumental)",
+              "isTitle": false,
+              "songId": "30154622"
+            }
+          ],
+          "melonAlbumId": "10023660",
+          "region": "jp"
+        },
+        {
+          "title": "Koio Shiteitakoto",
+          "type": "미니",
+          "releaseDate": "2016.12.07",
+          "trackCount": 4,
+          "isMain": true,
+          "titleTrack": "Koiwo Shiteitakoto",
+          "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/23/652/10023652_500.jpg?a8138feeec3fa5c2b53f6b3cba370ada",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Koiwo Shiteitakoto",
+              "isTitle": true,
+              "songId": "30154602"
+            },
+            {
+              "no": 2,
+              "title": "My Standard",
+              "isTitle": false,
+              "songId": "30154603"
+            },
+            {
+              "no": 3,
+              "title": "Up In The Air",
+              "isTitle": false,
+              "songId": "30154604"
+            },
+            {
+              "no": 4,
+              "title": "Koiwo Shiteitakoto (Instrumental)",
+              "isTitle": false,
+              "songId": "30154605"
+            }
+          ],
+          "melonAlbumId": "10023652",
+          "region": "jp"
+        },
+        {
+          "title": "SukinaHitoga Irukoto",
+          "type": "싱글",
+          "releaseDate": "2016.08.15",
+          "trackCount": 4,
+          "isMain": true,
+          "titleTrack": "Sukina Hitoga Irukoto",
+          "cover": "https://cdnimg.melon.co.kr/cm/album/images/027/09/921/2709921_500.jpg?a4ec2e8044a915a2ff3191336f6d046a",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Sukina Hitoga Irukoto",
+              "isTitle": true,
+              "songId": "9637214"
+            },
+            {
+              "no": 2,
+              "title": "Hello Mr.",
+              "isTitle": false,
+              "songId": "9637215"
+            },
+            {
+              "no": 3,
+              "title": "Yumesakiannainin",
+              "isTitle": false,
+              "songId": "9637216"
+            },
+            {
+              "no": 4,
+              "title": "Sukina Hitoga Irukoto (Piano Slow Edit)",
+              "isTitle": false,
+              "songId": "9637217"
+            }
+          ],
+          "melonAlbumId": "2709921"
+        },
+        {
+          "title": "Radio",
+          "type": "싱글",
+          "releaseDate": "2016.03.21",
+          "trackCount": 3,
+          "isMain": true,
+          "titleTrack": "Radio",
+          "cover": "https://cdnimg.melon.co.kr/cm/album/images/026/74/181/2674181_500.jpg",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Radio",
+              "isTitle": true,
+              "songId": "8104381"
+            },
+            {
+              "no": 2,
+              "title": "I'm Just Not Into You",
+              "isTitle": false,
+              "songId": "8104382"
+            },
+            {
+              "no": 3,
+              "title": "Up In The Air",
+              "isTitle": false,
+              "songId": "8104383"
+            }
+          ],
+          "melonAlbumId": "2674181"
+        },
+        {
+          "title": "最後のサヨナラ / Saigono Sayonara (마지막 이별)",
+          "type": "미니",
+          "releaseDate": "2016.03.16",
+          "trackCount": 4,
+          "isMain": true,
+          "titleTrack": "Saigono Sayonara",
+          "cover": "https://cdnimg.melon.co.kr/cm/album/images/026/74/475/2674475_500.jpg",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Saigono Sayonara",
+              "isTitle": true,
+              "songId": "8106690"
+            },
+            {
+              "no": 2,
+              "title": "Sayonara Watashino Shojyo",
+              "isTitle": false,
+              "songId": "8106691"
+            },
+            {
+              "no": 3,
+              "title": "Oliviao Kikinagara",
+              "isTitle": false,
+              "songId": "8106692"
+            },
+            {
+              "no": 4,
+              "title": "Saigono Sayonara (Instrumental)",
+              "isTitle": false,
+              "songId": "8106693"
+            }
+          ],
+          "melonAlbumId": "2674475",
+          "region": "jp"
+        },
+        {
+          "title": "레인보우 로즈 OST Part.1",
+          "type": "싱글",
+          "releaseDate": "2012.09.19",
+          "trackCount": 1,
+          "isMain": true,
+          "titleTrack": "Rainbow Rose",
+          "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/50/606/2150606_500.jpg",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Rainbow Rose",
+              "isTitle": true,
+              "songId": "3908034"
+            }
+          ],
+          "melonAlbumId": "2150606"
+        }
+      ],
+      "id": "a0512"
+    },
+    "after": {
+      "name": {
+        "ko": "강지영",
+        "en": "Kang Jiyoung"
+      },
+      "group": {
+        "ko": "카라",
+        "en": "KARA"
+      },
+      "co": "DSP미디어",
+      "active": true,
+      "color": [
+        235,
+        185,
+        175
+      ],
+      "bday": "1994.01.18",
+      "nat": {
+        "ko": "한국",
+        "en": "KR"
+      },
+      "links": {
+        "instagram": "https://www.instagram.com/kkangjji_",
+        "namu": "https://namu.wiki/w/강지영"
+      },
+      "discography": [
+        {
+          "title": "LUCID DREAM",
+          "type": "싱글",
+          "releaseDate": "2022.07.07",
+          "trackCount": 1,
+          "isMain": true,
+          "titleTrack": "LUCID DREAM",
+          "cover": "https://cdnimg.melon.co.kr/cm2/album/images/109/99/024/10999024_20220707101258_500.jpg",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "LUCID DREAM",
+              "isTitle": true,
+              "songId": "35378762"
+            }
+          ],
+          "melonAlbumId": "10999024"
+        },
+        {
+          "title": "Suki Na Hito Ga Iru Koto -Seiho Remix",
+          "type": "싱글",
+          "releaseDate": "2017.08.16",
+          "trackCount": 1,
+          "isMain": true,
+          "titleTrack": "Sukina Hitoga Irukoto (Seiho Remix)",
+          "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/92/696/10092696_500.jpg?a51f06627895d6633ce68e5fd511df1b",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Sukina Hitoga Irukoto (Seiho Remix)",
+              "isTitle": true,
+              "songId": "30609752"
+            }
+          ],
+          "melonAlbumId": "10092696"
+        },
+        {
+          "title": "Goldmine",
+          "type": "싱글",
+          "releaseDate": "2017.08.09",
+          "trackCount": 1,
+          "isMain": true,
+          "titleTrack": "Goldmine",
+          "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/92/697/10092697_500.jpg?2e92c5459fc1c8280f69ea2d0c5d3601",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Goldmine",
+              "isTitle": true,
+              "songId": "30609753"
+            }
+          ],
+          "melonAlbumId": "10092697"
+        },
+        {
+          "title": "Many Faces -多面性- / Many Faces -Tamense- (Many Faces -다면성-)",
+          "type": "정규",
+          "releaseDate": "2017.05.03",
+          "trackCount": 12,
+          "isMain": true,
+          "titleTrack": "Jyoshimodoki",
+          "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/65/693/10065693_500.jpg?d8f433f1d78fdfa64496538ac7d58468",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Sukina Hitoga Irukoto",
+              "isTitle": false,
+              "songId": "30436455"
+            },
+            {
+              "no": 2,
+              "title": "Koiwo Shiteitakoto",
+              "isTitle": false,
+              "songId": "30436456"
+            },
+            {
+              "no": 3,
+              "title": "Konomamade",
+              "isTitle": false,
+              "songId": "30436457"
+            },
+            {
+              "no": 4,
+              "title": "Kimini Kisswo Kimini Hugwo Kimini Aiwo",
+              "isTitle": false,
+              "songId": "30436458"
+            },
+            {
+              "no": 5,
+              "title": "Fake",
+              "isTitle": false,
+              "songId": "30436459"
+            },
+            {
+              "no": 6,
+              "title": "Come Back",
+              "isTitle": false,
+              "songId": "30436460"
+            },
+            {
+              "no": 7,
+              "title": "Jyoshimodoki",
+              "isTitle": true,
+              "songId": "30436461"
+            },
+            {
+              "no": 8,
+              "title": "Many Faces",
+              "isTitle": false,
+              "songId": "30436462"
+            },
+            {
+              "no": 9,
+              "title": "Boogie Woogie",
+              "isTitle": false,
+              "songId": "30436463"
+            },
+            {
+              "no": 10,
+              "title": "Taisetsuna Toki",
+              "isTitle": false,
+              "songId": "30436464"
+            },
+            {
+              "no": 11,
+              "title": "Saigono Sayonara",
+              "isTitle": false,
+              "songId": "30436465"
+            },
+            {
+              "no": 12,
+              "title": "Letter",
+              "isTitle": false,
+              "songId": "30436466"
+            }
+          ],
+          "melonAlbumId": "10065693",
+          "region": "jp"
+        },
+        {
+          "title": "Fake",
+          "type": "미니",
+          "releaseDate": "2016.12.07",
+          "trackCount": 4,
+          "isMain": true,
+          "titleTrack": "Fake",
+          "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/23/660/10023660_500.jpg?d06f5ef9d27142321dcaa39b1c1ccbd8",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Fake",
+              "isTitle": true,
+              "songId": "30154619"
+            },
+            {
+              "no": 2,
+              "title": "Boogie Woogie",
+              "isTitle": false,
+              "songId": "30154620"
+            },
+            {
+              "no": 3,
+              "title": "Crazy Love",
+              "isTitle": false,
+              "songId": "30154621"
+            },
+            {
+              "no": 4,
+              "title": "Fake (Instrumental)",
+              "isTitle": false,
+              "songId": "30154622"
+            }
+          ],
+          "melonAlbumId": "10023660",
+          "region": "jp"
+        },
+        {
+          "title": "Koio Shiteitakoto",
+          "type": "미니",
+          "releaseDate": "2016.12.07",
+          "trackCount": 4,
+          "isMain": true,
+          "titleTrack": "Koiwo Shiteitakoto",
+          "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/23/652/10023652_500.jpg?a8138feeec3fa5c2b53f6b3cba370ada",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Koiwo Shiteitakoto",
+              "isTitle": true,
+              "songId": "30154602"
+            },
+            {
+              "no": 2,
+              "title": "My Standard",
+              "isTitle": false,
+              "songId": "30154603"
+            },
+            {
+              "no": 3,
+              "title": "Up In The Air",
+              "isTitle": false,
+              "songId": "30154604"
+            },
+            {
+              "no": 4,
+              "title": "Koiwo Shiteitakoto (Instrumental)",
+              "isTitle": false,
+              "songId": "30154605"
+            }
+          ],
+          "melonAlbumId": "10023652",
+          "region": "jp"
+        },
+        {
+          "title": "SukinaHitoga Irukoto",
+          "type": "싱글",
+          "releaseDate": "2016.08.15",
+          "trackCount": 4,
+          "isMain": true,
+          "titleTrack": "Sukina Hitoga Irukoto",
+          "cover": "https://cdnimg.melon.co.kr/cm/album/images/027/09/921/2709921_500.jpg?a4ec2e8044a915a2ff3191336f6d046a",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Sukina Hitoga Irukoto",
+              "isTitle": true,
+              "songId": "9637214"
+            },
+            {
+              "no": 2,
+              "title": "Hello Mr.",
+              "isTitle": false,
+              "songId": "9637215"
+            },
+            {
+              "no": 3,
+              "title": "Yumesakiannainin",
+              "isTitle": false,
+              "songId": "9637216"
+            },
+            {
+              "no": 4,
+              "title": "Sukina Hitoga Irukoto (Piano Slow Edit)",
+              "isTitle": false,
+              "songId": "9637217"
+            }
+          ],
+          "melonAlbumId": "2709921"
+        },
+        {
+          "title": "Radio",
+          "type": "싱글",
+          "releaseDate": "2016.03.21",
+          "trackCount": 3,
+          "isMain": true,
+          "titleTrack": "Radio",
+          "cover": "https://cdnimg.melon.co.kr/cm/album/images/026/74/181/2674181_500.jpg",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Radio",
+              "isTitle": true,
+              "songId": "8104381"
+            },
+            {
+              "no": 2,
+              "title": "I'm Just Not Into You",
+              "isTitle": false,
+              "songId": "8104382"
+            },
+            {
+              "no": 3,
+              "title": "Up In The Air",
+              "isTitle": false,
+              "songId": "8104383"
+            }
+          ],
+          "melonAlbumId": "2674181"
+        },
+        {
+          "title": "最後のサヨナラ / Saigono Sayonara (마지막 이별)",
+          "type": "미니",
+          "releaseDate": "2016.03.16",
+          "trackCount": 4,
+          "isMain": true,
+          "titleTrack": "Saigono Sayonara",
+          "cover": "https://cdnimg.melon.co.kr/cm/album/images/026/74/475/2674475_500.jpg",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Saigono Sayonara",
+              "isTitle": true,
+              "songId": "8106690"
+            },
+            {
+              "no": 2,
+              "title": "Sayonara Watashino Shojyo",
+              "isTitle": false,
+              "songId": "8106691"
+            },
+            {
+              "no": 3,
+              "title": "Oliviao Kikinagara",
+              "isTitle": false,
+              "songId": "8106692"
+            },
+            {
+              "no": 4,
+              "title": "Saigono Sayonara (Instrumental)",
+              "isTitle": false,
+              "songId": "8106693"
+            }
+          ],
+          "melonAlbumId": "2674475",
+          "region": "jp"
+        },
+        {
+          "title": "레인보우 로즈 OST Part.1",
+          "type": "싱글",
+          "releaseDate": "2012.09.19",
+          "trackCount": 1,
+          "isMain": true,
+          "titleTrack": "Rainbow Rose",
+          "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/50/606/2150606_500.jpg",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Rainbow Rose",
+              "isTitle": true,
+              "songId": "3908034"
+            }
+          ],
+          "melonAlbumId": "2150606"
+        }
+      ],
+      "id": "a0512",
+      "joined": "2008.02.01"
+    },
+    "source": "Existing _MX_JOINED project corrections moved into normal affiliation metadata"
+  },
+  {
+    "id": "a1031",
+    "before": {
+      "name": {
+        "ko": "준",
+        "en": "Jun"
+      },
+      "group": {
+        "ko": "유키스",
+        "en": "U-KISS"
+      },
+      "co": "탱고뮤직",
+      "active": false,
+      "color": [
+        220,
+        100,
+        120
+      ],
+      "bday": "1997.01.22",
+      "nat": {
+        "ko": "한국",
+        "en": "KR"
+      },
+      "sparkle": false,
+      "songs": [],
+      "links": {
+        "namu": "https://namu.wiki/w/%EC%A4%80(%EC%9C%A0%ED%82%A4%EC%8A%A4)",
+        "instagram": "https://www.instagram.com/real_2junyoung"
+      },
+      "left": "2022.01.29",
+      "groups": [
+        {
+          "ko": "유키스",
+          "en": "U-KISS"
+        },
+        {
+          "ko": "유앤비",
+          "en": "UNB"
+        }
+      ],
+      "id": "a1031"
+    },
+    "after": {
+      "name": {
+        "ko": "준",
+        "en": "Jun"
+      },
+      "group": {
+        "ko": "유키스",
+        "en": "U-KISS"
+      },
+      "co": "탱고뮤직",
+      "active": false,
+      "color": [
+        220,
+        100,
+        120
+      ],
+      "bday": "1997.01.22",
+      "nat": {
+        "ko": "한국",
+        "en": "KR"
+      },
+      "sparkle": false,
+      "songs": [],
+      "links": {
+        "namu": "https://namu.wiki/w/%EC%A4%80(%EC%9C%A0%ED%82%A4%EC%8A%A4)",
+        "instagram": "https://www.instagram.com/real_2junyoung"
+      },
+      "left": "2022.01.29",
+      "groups": [
+        {
+          "ko": "유키스",
+          "en": "U-KISS"
+        },
+        {
+          "ko": "유앤비",
+          "en": "UNB"
+        }
+      ],
+      "id": "a1031",
+      "joined": "2014.06.02"
+    },
+    "source": "Existing _MX_JOINED project corrections moved into normal affiliation metadata"
+  },
+  {
+    "id": "a0852",
+    "before": {
+      "name": {
+        "ko": "윤은혜",
+        "en": "Yoon Eunhye"
+      },
+      "group": {
+        "ko": "베이비복스",
+        "en": "Baby V.O.X"
+      },
+      "co": "베비복스 컴퍼니",
+      "active": true,
+      "color": [
+        220,
+        90,
+        70
+      ],
+      "bday": "1984.10.03",
+      "nat": {
+        "ko": "한국",
+        "en": "KR"
+      },
+      "sparkle": false,
+      "songs": [],
+      "links": {
+        "instagram": "https://www.instagram.com/y1003_grace",
+        "namu": "https://namu.wiki/w/윤은혜"
+      },
+      "discography": [
+        {
+          "title": "마이 블랙 미니드레스 OST",
+          "type": "싱글",
+          "releaseDate": "2011.03.31",
+          "trackCount": 2,
+          "isMain": true,
+          "titleTrack": "마.블.미 (마이 블랙 미니드레스)",
+          "cover": "https://cdnimg.melon.co.kr/cm/album/images/011/98/957/1198957_500.jpg",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "마.블.미 (마이 블랙 미니드레스)",
+              "isTitle": true,
+              "songId": "3173615"
+            },
+            {
+              "no": 2,
+              "title": "Love Is Blind",
+              "isTitle": false,
+              "songId": "3345448"
+            }
+          ],
+          "melonAlbumId": "1198957"
+        },
+        {
+          "title": "샐러드 기념일",
+          "type": "싱글",
+          "releaseDate": "2008.09.04",
+          "trackCount": 4,
+          "isMain": true,
+          "titleTrack": "윤은혜 샐러드송 (샐러드기념일) '지펠 CF'",
+          "cover": "https://cdnimg.melon.co.kr/cm/album/images/003/96/312/396312_500.jpg",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "윤은혜 샐러드송 (샐러드기념일) '지펠 CF'",
+              "isTitle": true,
+              "songId": "1923387"
+            },
+            {
+              "no": 2,
+              "title": "이동건 샐러드송 (샐러드기념일) '지펠 CF'",
+              "isTitle": false,
+              "songId": "1923388"
+            },
+            {
+              "no": 3,
+              "title": "윤은혜 샐러드송 (샐러드기념일) (Inst.)",
+              "isTitle": false,
+              "songId": "1923389"
+            },
+            {
+              "no": 4,
+              "title": "이동건 샐러드송 (샐러드기념일) (Inst.)",
+              "isTitle": false,
+              "songId": "1923390"
+            }
+          ],
+          "melonAlbumId": "396312",
+          "byline": [
+            {
+              "n": "윤은혜",
+              "aid": "1639",
+              "en": "Yoon Eunhye",
+              "ako": "윤은혜",
+              "ag": "베이비복스"
+            },
+            {
+              "n": "이동건",
+              "aid": "924"
+            }
+          ]
+        }
+      ],
+      "id": "a0852"
+    },
+    "after": {
+      "name": {
+        "ko": "윤은혜",
+        "en": "Yoon Eunhye"
+      },
+      "group": {
+        "ko": "베이비복스",
+        "en": "Baby V.O.X"
+      },
+      "co": "베비복스 컴퍼니",
+      "active": true,
+      "color": [
+        220,
+        90,
+        70
+      ],
+      "bday": "1984.10.03",
+      "nat": {
+        "ko": "한국",
+        "en": "KR"
+      },
+      "sparkle": false,
+      "songs": [],
+      "links": {
+        "instagram": "https://www.instagram.com/y1003_grace",
+        "namu": "https://namu.wiki/w/윤은혜"
+      },
+      "discography": [
+        {
+          "title": "마이 블랙 미니드레스 OST",
+          "type": "싱글",
+          "releaseDate": "2011.03.31",
+          "trackCount": 2,
+          "isMain": true,
+          "titleTrack": "마.블.미 (마이 블랙 미니드레스)",
+          "cover": "https://cdnimg.melon.co.kr/cm/album/images/011/98/957/1198957_500.jpg",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "마.블.미 (마이 블랙 미니드레스)",
+              "isTitle": true,
+              "songId": "3173615"
+            },
+            {
+              "no": 2,
+              "title": "Love Is Blind",
+              "isTitle": false,
+              "songId": "3345448"
+            }
+          ],
+          "melonAlbumId": "1198957"
+        },
+        {
+          "title": "샐러드 기념일",
+          "type": "싱글",
+          "releaseDate": "2008.09.04",
+          "trackCount": 4,
+          "isMain": true,
+          "titleTrack": "윤은혜 샐러드송 (샐러드기념일) '지펠 CF'",
+          "cover": "https://cdnimg.melon.co.kr/cm/album/images/003/96/312/396312_500.jpg",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "윤은혜 샐러드송 (샐러드기념일) '지펠 CF'",
+              "isTitle": true,
+              "songId": "1923387"
+            },
+            {
+              "no": 2,
+              "title": "이동건 샐러드송 (샐러드기념일) '지펠 CF'",
+              "isTitle": false,
+              "songId": "1923388"
+            },
+            {
+              "no": 3,
+              "title": "윤은혜 샐러드송 (샐러드기념일) (Inst.)",
+              "isTitle": false,
+              "songId": "1923389"
+            },
+            {
+              "no": 4,
+              "title": "이동건 샐러드송 (샐러드기념일) (Inst.)",
+              "isTitle": false,
+              "songId": "1923390"
+            }
+          ],
+          "melonAlbumId": "396312",
+          "byline": [
+            {
+              "n": "윤은혜",
+              "aid": "1639",
+              "en": "Yoon Eunhye",
+              "ako": "윤은혜",
+              "ag": "베이비복스"
+            },
+            {
+              "n": "이동건",
+              "aid": "924"
+            }
+          ]
+        }
+      ],
+      "id": "a0852",
+      "joined": "1999.01.01"
+    },
+    "source": "Existing _MX_JOINED project corrections moved into normal affiliation metadata"
+  },
+  {
+    "id": "a0261",
+    "before": {
+      "name": {
+        "ko": "서아",
+        "en": "SeoAh"
+      },
+      "group": {
+        "ko": "트리플에스",
+        "en": "tripleS"
+      },
+      "co": "Modhaus",
+      "active": true,
+      "color": [
+        168,
+        142,
+        216
+      ],
+      "bday": "2010.06.11",
+      "nat": {
+        "ko": "한국",
+        "en": "KR"
+      },
+      "links": {
+        "namu": "https://namu.wiki/w/서아(tripleS)"
+      },
+      "unitDiscography": [
+        {
+          "unitName": "Glow",
+          "albums": [
+            {
+              "title": "Glow <Inner Dance>",
+              "type": "싱글",
+              "cover": "https://cdnimg.melon.co.kr/cm/album/images/115/17/804/11517804_500.jpg",
+              "releaseDate": "2024.06.21",
+              "trackCount": 1,
+              "titleTrack": "내적 댄스 (Inner Dance)",
+              "tracks": [
+                {
+                  "no": 1,
+                  "title": "내적 댄스 (Inner Dance)",
+                  "isTitle": true
+                }
+              ],
+              "isMain": true
+            }
+          ]
+        }
+      ],
+      "id": "a0261"
+    },
+    "after": {
+      "name": {
+        "ko": "서아",
+        "en": "SeoAh"
+      },
+      "group": {
+        "ko": "트리플에스",
+        "en": "tripleS"
+      },
+      "co": "Modhaus",
+      "active": true,
+      "color": [
+        168,
+        142,
+        216
+      ],
+      "bday": "2010.06.11",
+      "nat": {
+        "ko": "한국",
+        "en": "KR"
+      },
+      "links": {
+        "namu": "https://namu.wiki/w/서아(tripleS)"
+      },
+      "unitDiscography": [
+        {
+          "unitName": "Glow",
+          "albums": [
+            {
+              "title": "Glow <Inner Dance>",
+              "type": "싱글",
+              "cover": "https://cdnimg.melon.co.kr/cm/album/images/115/17/804/11517804_500.jpg",
+              "releaseDate": "2024.06.21",
+              "trackCount": 1,
+              "titleTrack": "내적 댄스 (Inner Dance)",
+              "tracks": [
+                {
+                  "no": 1,
+                  "title": "내적 댄스 (Inner Dance)",
+                  "isTitle": true
+                }
+              ],
+              "isMain": true
+            }
+          ]
+        }
+      ],
+      "id": "a0261",
+      "joined": "2024.05.08"
+    },
+    "source": "Existing _MX_JOINED project corrections moved into normal affiliation metadata"
+  },
+  {
+    "id": "a0256",
+    "before": {
+      "name": {
+        "ko": "주빈",
+        "en": "JooBin"
+      },
+      "group": {
+        "ko": "트리플에스",
+        "en": "tripleS"
+      },
+      "co": "Modhaus",
+      "active": true,
+      "color": [
+        166,
+        140,
+        214
+      ],
+      "bday": "2009.01.16",
+      "nat": {
+        "ko": "한국",
+        "en": "KR"
+      },
+      "links": {
+        "namu": "https://namu.wiki/w/주빈"
+      },
+      "unitDiscography": [
+        {
+          "unitName": "NXT",
+          "albums": [
+            {
+              "title": "NXT <Just Do It>",
+              "type": "싱글",
+              "cover": "https://cdnimg.melon.co.kr/cm/album/images/113/88/823/11388823_500.jpg",
+              "releaseDate": "2023.12.23",
+              "trackCount": 1,
+              "titleTrack": "Just Do It",
+              "tracks": [
+                {
+                  "no": 1,
+                  "title": "Just Do It",
+                  "isTitle": true
+                }
+              ],
+              "isMain": true
+            }
+          ]
+        }
+      ],
+      "id": "a0256"
+    },
+    "after": {
+      "name": {
+        "ko": "주빈",
+        "en": "JooBin"
+      },
+      "group": {
+        "ko": "트리플에스",
+        "en": "tripleS"
+      },
+      "co": "Modhaus",
+      "active": true,
+      "color": [
+        166,
+        140,
+        214
+      ],
+      "bday": "2009.01.16",
+      "nat": {
+        "ko": "한국",
+        "en": "KR"
+      },
+      "links": {
+        "namu": "https://namu.wiki/w/주빈"
+      },
+      "unitDiscography": [
+        {
+          "unitName": "NXT",
+          "albums": [
+            {
+              "title": "NXT <Just Do It>",
+              "type": "싱글",
+              "cover": "https://cdnimg.melon.co.kr/cm/album/images/113/88/823/11388823_500.jpg",
+              "releaseDate": "2023.12.23",
+              "trackCount": 1,
+              "titleTrack": "Just Do It",
+              "tracks": [
+                {
+                  "no": 1,
+                  "title": "Just Do It",
+                  "isTitle": true
+                }
+              ],
+              "isMain": true
+            }
+          ]
+        }
+      ],
+      "id": "a0256",
+      "joined": "2023.12.23"
+    },
+    "source": "Existing _MX_JOINED project corrections moved into normal affiliation metadata"
+  },
+  {
+    "id": "a1011",
+    "before": {
+      "name": {
+        "ko": "예빈",
+        "en": "Yebin"
+      },
+      "group": {
+        "ko": "시크릿",
+        "en": "Secret"
+      },
+      "co": "RBW",
+      "active": true,
+      "color": [
+        130,
+        80,
+        150
+      ],
+      "bday": "2002.09.01",
+      "nat": {
+        "ko": "한국",
+        "en": "KR"
+      },
+      "sparkle": false,
+      "songs": [],
+      "links": {
+        "instagram": "https://www.instagram.com/doqdlsdl",
+        "namu": "https://namu.wiki/w/%EC%98%88%EB%B9%88(%EC%8B%9C%ED%81%AC%EB%A6%BF)"
+      },
+      "discography": [
+        {
+          "title": "Shape of Me",
+          "type": "싱글",
+          "releaseDate": "2025.04.16",
+          "trackCount": 1,
+          "isMain": true,
+          "titleTrack": "Shape of Me",
+          "cover": "https://cdnimg.melon.co.kr/cm2/album/images/117/75/003/11775003_20250415144246_500.jpg",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Shape of Me",
+              "isTitle": true,
+              "songId": "38802694"
+            }
+          ],
+          "melonAlbumId": "11775003"
+        },
+        {
+          "title": "Kill the Pain",
+          "type": "싱글",
+          "releaseDate": "2024.12.20",
+          "trackCount": 1,
+          "isMain": true,
+          "titleTrack": "Kill the Pain",
+          "cover": "https://cdnimg.melon.co.kr/cm2/album/images/116/71/049/11671049_20241219115130_500.jpg",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Kill the Pain",
+              "isTitle": true,
+              "songId": "38353474"
+            }
+          ],
+          "melonAlbumId": "11671049"
+        }
+      ],
+      "id": "a1011"
+    },
+    "after": {
+      "name": {
+        "ko": "예빈",
+        "en": "Yebin"
+      },
+      "group": {
+        "ko": "시크릿",
+        "en": "Secret"
+      },
+      "co": "RBW",
+      "active": true,
+      "color": [
+        130,
+        80,
+        150
+      ],
+      "bday": "2002.09.01",
+      "nat": {
+        "ko": "한국",
+        "en": "KR"
+      },
+      "sparkle": false,
+      "songs": [],
+      "links": {
+        "instagram": "https://www.instagram.com/doqdlsdl",
+        "namu": "https://namu.wiki/w/%EC%98%88%EB%B9%88(%EC%8B%9C%ED%81%AC%EB%A6%BF)"
+      },
+      "discography": [
+        {
+          "title": "Shape of Me",
+          "type": "싱글",
+          "releaseDate": "2025.04.16",
+          "trackCount": 1,
+          "isMain": true,
+          "titleTrack": "Shape of Me",
+          "cover": "https://cdnimg.melon.co.kr/cm2/album/images/117/75/003/11775003_20250415144246_500.jpg",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Shape of Me",
+              "isTitle": true,
+              "songId": "38802694"
+            }
+          ],
+          "melonAlbumId": "11775003"
+        },
+        {
+          "title": "Kill the Pain",
+          "type": "싱글",
+          "releaseDate": "2024.12.20",
+          "trackCount": 1,
+          "isMain": true,
+          "titleTrack": "Kill the Pain",
+          "cover": "https://cdnimg.melon.co.kr/cm2/album/images/116/71/049/11671049_20241219115130_500.jpg",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Kill the Pain",
+              "isTitle": true,
+              "songId": "38353474"
+            }
+          ],
+          "melonAlbumId": "11671049"
+        }
+      ],
+      "id": "a1011",
+      "joined": "2026",
+      "debut": "2024.12.20"
+    },
+    "source": "2026 official new-member introduction okAzuOSRMmI; exact join day unknown. Solo 2024 and first release 2024-12-20: Bugs artist 80395454."
+  }
+]

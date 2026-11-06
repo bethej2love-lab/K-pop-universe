@@ -1,0 +1,19 @@
+{
+  "groupsOnlyIntendedEdits": true,
+  "artistsOnlyIntendedEdits": true,
+  "albumChanges": 3,
+  "updatedArtists": 7,
+  "newArtists": 1,
+  "groupStatusCorrection": {
+    "gko": "시크릿",
+    "before": true,
+    "after": "absent"
+  },
+  "unchangedArtistCredits": true,
+  "sourceUrls": [
+    "https://music.bugs.co.kr/artist/80060294",
+    "https://music.bugs.co.kr/artist/80395454",
+    "https://www.youtube.com/watch?v=okAzuOSRMmI"
+  ],
+  "joinPrecision": "Yebin join YEAR 2026 only; exact day not inferred; solo debut 2024-12-20 from Bugs."
+}

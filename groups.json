@@ -168808,42 +168808,36 @@
     "type": "미니 1집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/04/986/2104986_500.jpg",
-    "releaseDate": "2012.03.21",
-    "trackCount": 6,
-    "titleTrack": "Insane",
+    "releaseDate": "2012.04.03",
+    "trackCount": 4,
+    "titleTrack": "비밀 (Insane) / Imagine",
     "tracks": [
      {
       "no": 1,
-      "title": "Insane",
-      "isTitle": true
+      "title": "Born TO Beat",
+      "isTitle": false,
+      "songId": "3758033"
      },
      {
       "no": 2,
-      "title": "BTOB",
-      "isTitle": false
+      "title": "비밀 (Insane)",
+      "isTitle": true,
+      "songId": "3758034"
      },
      {
       "no": 3,
-      "title": "I Only Know Love",
-      "isTitle": false
+      "title": "Imagine",
+      "isTitle": true,
+      "songId": "3758035"
      },
      {
       "no": 4,
-      "title": "넌 내 것 (You're My only thing)",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "Like That",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "Insane (Inst.)",
-      "isTitle": false
+      "title": "Monday To Sunday",
+      "isTitle": false,
+      "songId": "3758036"
      }
     ],
-    "melonAlbumId": "2096628"
+    "melonAlbumId": "2104986"
    }
   ],
   "pri": 4,
@@ -203334,7 +203328,6 @@
  },
  "시크릿": {
   "en": "Secret",
-  "disbanded": true,
   "debut": "2009.10.13",
   "co": "RBW",
   "strictSync": true,
@@ -217296,44 +217289,55 @@
     "melonAlbumId": "11337112"
    },
    {
+    "title": "LET IT SHINE",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/110/81/490/11081490_20221020105300_500.jpg",
+    "releaseDate": "2022.10.19",
+    "trackCount": 3,
+    "titleTrack": "LET IT SHINE",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "LET IT SHINE",
+      "isTitle": true,
+      "songId": "35741280"
+     },
+     {
+      "no": 2,
+      "title": "TRIGGER",
+      "isTitle": false,
+      "songId": "35741281"
+     },
+     {
+      "no": 3,
+      "title": "MOON",
+      "isTitle": false,
+      "songId": "35741282"
+     }
+    ],
+    "region": "jp",
+    "melonAlbumId": "11081490",
+    "src": "melon"
+   },
+   {
     "title": "TRIGGER",
-    "type": "미니",
+    "type": "싱글",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/110/78/855/11078855_20221017104806_500.jpg",
-    "releaseDate": "2022.10.19",
-    "trackCount": 5,
+    "releaseDate": "2022.10.14",
+    "trackCount": 1,
     "titleTrack": "TRIGGER",
     "tracks": [
      {
       "no": 1,
       "title": "TRIGGER",
       "isTitle": true,
-      "songId": "35741281"
-     },
-     {
-      "no": 2,
-      "title": "Tic Tic",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "Different",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "Run",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "TRIGGER (Inst.)",
-      "isTitle": false,
-      "songId": "35741281"
+      "songId": "35730576"
      }
     ],
     "region": "jp",
-    "melonAlbumId": "11081490"
+    "melonAlbumId": "11078855"
    },
    {
     "title": "LET IT SHINE",

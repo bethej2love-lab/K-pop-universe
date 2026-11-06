@@ -14,6 +14,39 @@
 
 function _artistGroups(a){return a.groups||[a.group];}
 
+// 소속 항목에 명시된 값이 우선이며, 주 소속에만 루트의 기간/상태를 보충한다.
+function _artistAffiliation(a,ko){
+  if(!a||!ko)return null;
+  const source=_artistGroups(a).find(g=>g&&g.ko===ko)||(a.group&&a.group.ko===ko?a.group:null);
+  if(!source)return null;
+  const entry={...source};
+  if(a.group&&a.group.ko===ko){
+    for(const key of ['joined','left','pausedFrom','active'])if(entry[key]===undefined&&a[key]!==undefined)entry[key]=a[key];
+  }
+  return entry;
+}
+function _artistMembershipStatus(a,ko,info){
+  const entry=_artistAffiliation(a,ko)||{};
+  if((info&&info.disbanded)||entry.left)return 'former';
+  if(entry.pausedFrom)return 'paused';
+  return (entry.active!==undefined?entry.active:a.active)===false?'former':'current';
+}
+// 합류일은 알려진 정밀도를 유지한다. 영상 하한에서 연/월만 있으면 그 기간 첫날부터 보존한다.
+function _joinedStartDate(value){
+  const m=String(value||'').match(/^(\d{4})(?:[.-](\d{1,2}))?(?:[.-](\d{1,2}))?$/);
+  if(!m)return null;
+  const y=+m[1],month=+(m[2]||1),day=+(m[3]||1),date=new Date(Date.UTC(y,month-1,day));
+  return date.getUTCFullYear()===y&&date.getUTCMonth()===month-1&&date.getUTCDate()===day?date.toISOString().slice(0,10):null;
+}
+function _groupJoinOrDebut(joined,debut){
+  const j=_joinedStartDate(joined),d=_joinedStartDate(debut);
+  return j&&(!d||j>d)?joined:(debut||joined||null);
+}
+function _artistDebutDate(a,groups){
+  const dates=[a.debut,..._artistGroups(a).map(g=>g&&groups[g.ko]&&_groupJoinOrDebut(_artistAffiliation(a,g.ko)?.joined,groups[g.ko].debut))].filter(d=>_joinedStartDate(d));
+  return dates.sort((x,y)=>_joinedStartDate(x).localeCompare(_joinedStartDate(y)))[0]||null;
+}
+
 // ── 탈퇴일 → 컷오프 날짜 (2026-09-04 shared로 이전) ────────────────────────────
 // 'YYYY.MM.DD'가 기본이고, **연도만/연·월만 알면 그 해(달)의 마지막 날까지 쳐준다** — 그 구간 안의
 // 영상을 잘라낼 근거가 없으므로 보수적으로 늦게 자르는 쪽(2026-09-02 admin.js에서 확장된 관례).
@@ -186,7 +219,7 @@ const _PROJECT_UNITS={
   '부석순':{names:['부석순','BSS'],members:[{mko:'호시',gko:'세븐틴'},{mko:'도겸',gko:'세븐틴'},{mko:'승관',gko:'세븐틴'}]},
   '정한X원우':{names:['정한X원우','JeongWon'],members:[{mko:'정한',gko:'세븐틴'},{mko:'원우',gko:'세븐틴'}]},
   '호시X우지':{names:['호시X우지'],members:[{mko:'호시',gko:'세븐틴'},{mko:'우지',gko:'세븐틴'}]},
-  '에스쿱스X민규':{names:['에스쿱스X민규'],members:[{mko:'에스쿱스',gko:'세븐틴'},{mko:'민규',gko:'세븐틴'}]},
+  '에스쿱스X민규':{names:['에스쿱스X민규','CxM','쿱스민규'],members:[{mko:'에스쿱스',gko:'세븐틴'},{mko:'민규',gko:'세븐틴'}]},
   '도겸X승관':{names:['도겸X승관','DK X SEUNGKWAN'],members:[{mko:'도겸',gko:'세븐틴'},{mko:'승관',gko:'세븐틴'}]},
   '아이린&슬기':{names:['아이린&슬기','레드벨벳 아이린&슬기','IRENE & SEULGI'],members:[{mko:'아이린',gko:'레드벨벳'},{mko:'슬기',gko:'레드벨벳'}]},
   'SM THE BALLAD':{names:['SM THE BALLAD','에스엠 더 발라드'],members:[{mko:'규현',gko:'슈퍼주니어'},{mko:'종현',gko:'샤이니'},{mko:'예성',gko:'슈퍼주니어'},{mko:'최강창민',gko:'동방신기'},{mko:'태연',gko:'소녀시대'},{mko:'첸',gko:'엑소'},{mko:'크리스탈',gko:'에프엑스'}]},

@@ -7837,6 +7837,11 @@ const _ATM_BRAND_PHRASES=/\basahi\s*super\s*dry\b|\basahi\s*beer\b|\basahibeer\b
 const _ATM_INITIAL_WORDS=new Set(['in','is','it','on','up','at','an','as','be','by','do','go','he','me','my','no','of','or','so','to','us','we','if','am']);
 function _atmStripCommonNounCtx(title){
   let t=title||'';
+  // 관계/상황극 문맥의 '여자친구'는 그룹명이 아니다. 공식 영문 그룹 표기는 보존한다.
+  if(!/\bGFRIEND\b/i.test(t)){
+    t=t.replace(/여자친구(?=\s*(?:앞에서|연기))/g,'    ')
+      .replace(/(남자친구.{0,40}?)여자친구/g,'$1    ');
+  }
   // 가수 JUHO(주호)와 HAWW 주호는 SF9 ZUHO가 아니다. 명시 SF9/ZUHO 표기는 보존한다.
   // 공통 전처리라 외부 수집·멤버 자동 태깅·제목 재검증이 같은 동명이인 방어를 쓴다.
   if(!/\bSF9\b|에스에프나인|\bZU\s*HO\b/i.test(t)){
@@ -8462,6 +8467,8 @@ function _m2FullNameShadowed(tok,a,text){
 // 그룹 키가 2026-08-10에 "슈퍼노바(초신성)"→"슈퍼노바"로 바뀜(괄호 있는 그룹명이 "이름(그룹)" 태그
 // 문자열 파싱을 깨는 별도 문제 때문 — 초신성은 altNames로 이동, 검색은 그쪽에서 여전히 걸림).
 const _GROUP_TITLE_CONFLICT_EXCLUDE={
+  // CxM 팬파티의 곡명 Fiesta는 동명의 걸그룹이 아니다. 실제 FIESTAR 공연 제목은 유지한다.
+  '피에스타':[/\bC[x×]M\s+유닛\s+팬파티\s+(?:피에스타|Fiesta)(?![가-힣a-z0-9])/i],
   '슈퍼노바':[/aespa/i,/에스파/,/david\s*guetta/i,/데이비드\s*게타/,/supernova\s*love/i,/아이브|\bIVE\b/i],
   // 2PM·2AM: 라디오/방송 시간표기(2PM-4PM, 2AM~4AM 등)가 그룹명으로 오매칭됨(2026-08-23 Fable/사용자
   // 제보 — "⏰ RYO : 2PM-4PM"이 그룹 2PM으로, "원곡: 2PM" 오태깅까지). 숫자+AM/PM이 "다른 시각과 대시/
@@ -8476,7 +8483,7 @@ const _GROUP_TITLE_CONFLICT_EXCLUDE={
   '에이프릴':[/april\s*(fool|issue)/i],
   // 보석 다이아(2026-10-26 Codex 감사: 한채영·추성훈·홍윤화·여에스더·아이키·SMTM 등 10건이 그룹 다이아로) — "8캐럿 다이아"·
   // "다이아 반지/귀걸이/수저/테스터기"·"진짜 다이아"·"5부 다이아". 그룹 다이아 영상은 이런 낱말과 붙어 나오지 않는다.
-  '다이아':[/다이아\s*버튼|diamond\s*(play\s*)?button/i,/\d\s*(캐럿|부)\s*다이아/,/다이아\s*(반지|귀걸이|목걸이|팔찌|수저|테스터기|몬드|플렉스|FLEX|도난|보석)/i,/(진짜|가짜|명품|보석)\s*다이아/],
+  '다이아':[/^(?!.*다이아)(?=.*\bDIA\b)(?=.*디아)/i,/다이아\s*버튼|diamond\s*(play\s*)?button/i,/\d\s*(캐럿|부)\s*다이아/,/다이아\s*(반지|귀걸이|목걸이|팔찌|수저|테스터기|몬드|플렉스|FLEX|도난|보석)/i,/(진짜|가짜|명품|보석)\s*다이아/],
   '아이들':[/서태지\s*와\s*아이들/],
   // 2026-10-12: 곡·작품명 속 Beast — 티오원 'Son of Beast'(선 오브 비스트)·'Beauty and the Beast'(미녀와 야수)가 하이라이트 옛 이름
   // 비스트로 잡혀 함께한 그룹이 됐다(티오원 쇼챔·음중 5건, 존박X벨, 스테이씨 미녀와야수 챌린지).
@@ -8732,6 +8739,8 @@ function _m2KoreaSingsPerformer(rawTitle){
   return{title:performer.replace(/^초대\s*가수\s*/,''),structured:!!role,guest:/^초대\s*가수\s*/.test(performer)};
 }
 function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
+  // 완전한 복합 그룹명 안의 Secret을 별도 출연 그룹으로 세지 않는다. 원본 저장 제목은 바꾸지 않는다.
+  if(typeof rawTitle==='string'&&GROUPS['시크릿넘버'])rawTitle=rawTitle.replace(/시크릿\s+넘버/g,'시크릿넘버').replace(/(^|[^a-z0-9])SECRET[\s_-]*NUMBER(?=$|[^a-z0-9])/gi,'$1시크릿넘버');
   const _ks=_m2KoreaSingsPerformer(rawTitle);
   if(_ks){
     // 프로그램 괄호·소개말·곡명을 뺀 출연자 구간으로 한 번만 재진입한다.

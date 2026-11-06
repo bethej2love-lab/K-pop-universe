@@ -42,6 +42,8 @@ function load(){
   const GROUPS=JSON.parse(fs.readFileSync(path.join(ROOT,'groups.json'),'utf8'));
   const ARTISTS=JSON.parse(fs.readFileSync(path.join(ROOT,'artists.json'),'utf8'));
   const pieces=[];
+  pieces.push(extractByBraces(fs.readFileSync(path.join(ROOT,'app.js'),'utf8'),/^function _groupEndDate\(/m,'_groupEndDate'));
+  pieces.push(extractByBraces(adminSrc,/^function _disbandCutoffDate\(/m,'_disbandCutoffDate'));
   const S=(re,l)=>pieces.push(extractStatement(adminSrc,re,l));
   const F=(re,l)=>pieces.push(extractByBraces(adminSrc,re,l));
   S(/^const _WONKOK_BRACKETS\s*=/m,'_WONKOK_BRACKETS');

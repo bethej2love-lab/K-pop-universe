@@ -57,6 +57,9 @@ const agencyBlock = agencySource(indexSrc);
 const AGENCY_EN = agencyBlock ? new Function('return ' + agencyBlock.replace(/^const _AGENCY_EN=/, ''))() : {};
 // 페이지 보강(2026-10-16) — 음방 1위·인기 직캠(DB)과 투어·대상·밀리언·작사작곡(정적 파일). tools/seo_extra.js 주석 참고.
 const SEO = require('./tools/seo_extra.js');
+const membershipLib = (() => { const vm = require('vm'), ctx = {}; vm.createContext(ctx); vm.runInContext(fs.readFileSync(path.join(ROOT, 'shared.js'), 'utf8') + '\nthis.aff=_artistAffiliation;this.status=_artistMembershipStatus;', ctx); return ctx; })();
+const affiliationFor = (a,ko) => membershipLib.aff(a,ko);
+const membershipStatus = (a,ko) => membershipLib.status(a,ko,groups[ko]);
 // 동명이인 솔로 주소 규칙은 앱과 같은 함수(shared.js _soloPageSuffix)를 쓴다(2026-10-19)
 const _soloPageSuffix = (() => { const vm = require('vm'); const ctx = {}; vm.createContext(ctx); vm.runInContext(fs.readFileSync(path.join(ROOT, 'shared.js'), 'utf8') + '\nthis.f=_soloPageSuffix;', ctx); return ctx.f; })();
 const _suffixCache = new Map();
@@ -231,7 +234,8 @@ function ogImageFor(info) {
 function groupIntroHtml(ko, info, members, discogItems, lang) {
   const isEn = lang === 'en';
   const name = isEn ? (info.en || ko) : ko;
-  const memCount = members.length;
+  // 추모 멤버가 있는 그룹은 활동 인원과 공식 멤버 정의가 다를 수 있어 단정적인 N인조 문구를 생략한다.
+  const memCount = members.some(a => a.died) ? 0 : members.filter(a => membershipStatus(a,ko) !== 'former').length;
   const gender = info.gender === 'f' ? (isEn ? 'girl group' : '걸그룹') : info.gender === 'm' ? (isEn ? 'boy group' : '보이그룹') : (isEn ? 'K-pop group' : '케이팝 그룹');
   const agency = isEn ? agencyEn(info.co) : info.co;
   const debutYear = String(info.debut || '').slice(0, 4);
@@ -272,7 +276,9 @@ function memberIntroHtml(a, affiliations, lang) {
   const nat = (isEn && natRaw) ? (ISO_COUNTRY[natRaw] || natRaw) : natRaw;
   const bdayYear = String(a.bday || '').slice(0, 4);
   const grpNames = affiliations.map(g => isEn ? (groups[g.ko] && (groups[g.ko].en || g.ko)) : g.ko).filter(Boolean);
-  const active = a.active !== false;
+  const entry = affiliationFor(a,a.group.ko) || {};
+  const paused = !!entry.pausedFrom && !entry.left;
+  const active = a.active !== false || paused;
   let text;
   if (isEn) {
     let s = `${name} is a${active ? '' : ' former'} K-pop idol`;
@@ -280,13 +286,14 @@ function memberIntroHtml(a, affiliations, lang) {
     if (bdayYear) s += `, born in ${bdayYear}`;
     s += '.';
     if (grpNames.length) s += ` Member of ${grpNames.join(', ')}.`;
+    if (paused) s += ' Currently on hiatus.';
     text = s;
   } else {
     const parts = [];
     if (grpNames.length) parts.push(grpNames.join(', ') + ' 멤버');
     if (nat) parts.push(`${nat} 출신`);
     if (bdayYear) parts.push(`${bdayYear}년생`);
-    if (!active) parts.push('활동 종료');
+    if (paused) parts.push('활동 중단'); else if (!active) parts.push('활동 종료');
     text = parts.join('. ') + '.';
   }
   return `<p class="intro">${escHtml(text)}</p>`;
@@ -332,13 +339,11 @@ groupKos.forEach(ko => {
       // active는 true라 ③으로 안 잡힘) ③최상위 active:false(옛 기준, 겸임 그룹 페이지까지 덮음)
       // ④주 소속+최상위 left. 실측으로 ②를 추가하면 437건이 새로 붙고 잃는 건 0건이다.
       const ge = (a.groups || []).find(g => g && g.ko === ko);
-      const former = !!info.disbanded
-                  || !!(ge && (ge.left || ge.active === false))
-                  || a.active === false
-                  || (a.group && a.group.ko === ko && !!a.left);
+      const status = membershipStatus(a,ko);
+      const former = status === 'former';
       const name = lang === 'en' ? (a.name.en || a.name.ko) : ((ge && ge.name) || a.name.ko);
       const mPath = memberPagePath(a, lang); // 해시 딥링크가 아니라 그 멤버의 정적 페이지로
-      const activeTag = former ? (lang === 'en' ? ' <span class="tag">former</span>' : ' <span class="tag">전멤버</span>') : '';
+      const activeTag = former ? (lang === 'en' ? ' <span class="tag">former</span>' : ' <span class="tag">전멤버</span>') : status === 'paused' ? (lang === 'en' ? ' <span class="tag">on hiatus</span>' : ' <span class="tag">활동 중단</span>') : '';
       return `<li><a href="${SITE}/${mPath}">${escHtml(name)}</a>${activeTag}</li>`;
     }).join('\n      ');
     return `
@@ -374,9 +379,9 @@ groupKos.forEach(ko => {
     const xg = SEO.groupExtra(ko, lang, EX, ST);
     const bits = isEn ? ['Members', ...xg.titleBits] : ['멤버', ...xg.titleBits];
     // 현재 멤버 이름(2026-10-30 사용자 — '멤버'라는 일반어 대신 실제 이름이 검색에 걸린다). 6명 이하면 제목에, 넘으면 '멤버 N명'+설명에
-    const curMembers = members.filter(a => { const e = (a.groups && a.groups.length ? a.groups : [a.group]).find(g => g && g.ko === ko) || {}; return e.active !== false && !e.left && !(a.group.ko === ko && a.active === false); })
+    const curMembers = members.filter(a => membershipStatus(a,ko) !== 'former')
       .map(a => { const e = (a.groups || []).find(g => g && g.ko === ko) || {}; return isEn ? (e.nameEn || a.name.en || a.name.ko) : (e.name || a.displayName || a.name.ko); });
-    const memTitle = curMembers.length && curMembers.length <= 6 ? curMembers.join('·') : [curMembers.length ? (isEn ? `${curMembers.length} members` : `멤버 ${curMembers.length}명`) : '', ...bits.filter(b => !['멤버', 'Members', '직캠', 'Fancams'].includes(b))].filter(Boolean).join(isEn ? ', ' : '·');
+    const memTitle = curMembers.length && curMembers.length <= 6 ? curMembers.join('·') : ([curMembers.length ? (isEn ? `${curMembers.length} members` : `멤버 ${curMembers.length}명`) : '', ...bits.filter(b => !['멤버', 'Members', '직캠', 'Fancams'].includes(b))].filter(Boolean).join(isEn ? ', ' : '·') || (isEn ? 'Members' : '멤버'));
     const stageVids = groupStageVids(ko);
     const hasStage = stageVids.length >= GROUP_STAGE_MIN;
     const title = hasStage
@@ -609,7 +614,9 @@ artists.forEach(a => {
     const subName = isEn ? (ko !== en ? ko : '') : (a.name.en && a.name.en !== ko ? a.name.en : '');
     const groupDisplay = isSolo ? '' : (isEn ? (groupInfo.en || primaryGko) : primaryGko);
     const agency = isEn ? agencyEn(a.co) : a.co;
-    const statusLabel = a.active === false
+    const primaryEntry = affiliationFor(a,a.group.ko) || {};
+    const onHiatus = primaryEntry.pausedFrom && !primaryEntry.left;
+    const statusLabel = onHiatus ? (isEn ? 'On hiatus' : '활동 중단') : a.active === false
       ? (isEn ? (a.left ? `Inactive (left ${a.left})` : 'Inactive') : (a.left ? `활동종료(${a.left} 탈퇴)` : '활동종료'))
       : (isEn ? 'Active' : '활동중');
     const debutLabel = isEn ? 'Birthday' : '생일';
@@ -617,8 +624,8 @@ artists.forEach(a => {
     const agencyLabel = isEn ? 'Agency' : '소속사';
     const statusLbl = isEn ? 'Status' : '상태';
     // 제목·설명(2026-10-16) — '장원영(아이브) 프로필·나이·직캠'. 설명엔 생년·데뷔 나이·작사작곡·솔로 1위 같은 이 사람만의 숫자
-    const xm = SEO.memberExtra(a, isSolo ? ko : primaryGko, lang, EX, ST);
-    const ag = SEO.ages(a, (a.groups && a.groups.length ? a.groups : [a.group]).map(g => groups[g.ko]));
+    const xm = SEO.memberExtra(a, isSolo ? ko : primaryGko, lang, EX, ST, creditsFor(a));
+    const ag = SEO.ages(a, (a.groups && a.groups.length ? a.groups : [a.group]).map(g => groups[g.ko] ? ({...groups[g.ko],joined:affiliationFor(a,g.ko)?.joined}) : null));
     const who = isEn ? `${en}${groupDisplay ? ` (${groupDisplay})` : ''}` : `${ko}${groupDisplay ? `(${groupDisplay})` : ''}`;
     // 개인 직캠이 MEMBER_FANCAM_MIN개 이상이면 제목 맨 앞을 '성현 직캠 모음'으로(2026-10-30) — 동명이인이 많아 그룹 이름도 같이
     const fancams = isSolo ? [] : memberFancams(a, primaryGko);
@@ -2018,7 +2025,7 @@ function creditsFor(a) {
       const [n, g] = k.split(String.fromCharCode(0));
       const who = artists.find(x => x && x.name && x.name.ko === n && (x.group && x.group.ko === g || (x.groups || []).some(y => y && y.ko === g)));
       if (!who) continue;
-      const pack = list => { const by = new Map(); for (const s of list || []) { const b = _CRED_SB(s.title || ''); if (!b) continue; const cur = by.get(b); if (!cur || String(s.title).length < String(cur.title).length) by.set(b, { b, title: s.title }); } return [...by.values()]; };
+      const pack = list => SEO.packCredits(list,_CRED_SB);
       const ly = pack(v.lyrics), co = pack(v.compose);
       if (ly.length + co.length >= CREDIT_MIN) _CREDITS.set(who, { ly, co });
     }

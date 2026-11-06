@@ -1,0 +1,40 @@
+{
+  "artist": {
+    "name": {
+      "ko": "디아",
+      "en": "DIA"
+    },
+    "group": {
+      "ko": "솔로",
+      "en": "Solo"
+    },
+    "active": true,
+    "color": [
+      180,
+      160,
+      240
+    ],
+    "debut": "2009",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "songs": [],
+    "links": {
+      "bugs": "https://music.bugs.co.kr/artist/80053703"
+    },
+    "id": "a1897"
+  },
+  "videoKey": "디아#a1897",
+  "sources": [
+    {
+      "url": "https://music.bugs.co.kr/artist/80053703",
+      "facts": "Female Korean solo debut 2009; Kiss & Cry affiliation; Neverland and The Isle of Oblivion belong to this singer."
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=MpF9ScmG5zo",
+      "facts": "MBCkpop official Music Core 2014-01-25 Kiss&Cry stage; group membership verified by Bugs artist catalog."
+    }
+  ],
+  "omitted": "Birth date, exact debut day, agency and unregistered group roster not inferred. PIXY Dia a1798 retained; plain 디아 video key had 0 rows."
+}

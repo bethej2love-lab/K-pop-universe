@@ -38,7 +38,7 @@ const WAIT_GRID=sel=>`(async()=>{const S=ms=>new Promise(r=>setTimeout(r,ms));fo
     await waitForBrowserCdp(proc,CDP_PORT);
     const{webSocketDebuggerUrl}=await (await fetch(`http://127.0.0.1:${CDP_PORT}/json/new?about:blank`,{method:'PUT'})).json();
     const c=await conn(webSocketDebuggerUrl);await c.send('Page.enable');await c.send('Runtime.enable');
-    await c.send('Page.addScriptToEvaluateOnNewDocument',{source:`window.__shareErrors=[];addEventListener('error',e=>window.__shareErrors.push(e.message));addEventListener('unhandledrejection',e=>window.__shareErrors.push(String(e.reason)));`});
+    await c.send('Page.addScriptToEvaluateOnNewDocument',{source:`window.__shareErrors=[];window.__videoRequests=[];const originalFetch=window.fetch;window.fetch=function(input,options){const u=String(input?.url||input);if(u.includes('/rest/v1/yt_channel_videos'))window.__videoRequests.push(u);return originalFetch.apply(this,arguments);};addEventListener('error',e=>window.__shareErrors.push(e.message));addEventListener('unhandledrejection',e=>window.__shareErrors.push(String(e.reason)));`});
     // ① 보내는 쪽
     await open(c,'#g=코르티스&m=성현');
     await ev(c,WAIT_GRID('#tv'));
@@ -95,6 +95,15 @@ const WAIT_GRID=sel=>`(async()=>{const S=ms=>new Promise(r=>setTimeout(r,ms));fo
     await ev(c,WAIT_GRID('#gc-ch-vid'));
     const snowy=await ev(c,`(async()=>{const cont=document.getElementById('gc-ch-vid');for(let i=0;i<40&&cont.querySelector('.gc-ch-share-item')?.disabled;i++)await new Promise(r=>setTimeout(r,150));let result=null;const orig=window._shareCurrentView;window._shareCurrentView=(u,t,k,text)=>{result={u,t,text};};cont.querySelector('.gc-ch-share-item')?.click();window._shareCurrentView=orig;return result;})()`);
     if(snowy&&/\/s\/snowysummer\/#/.test(snowy.u)&&/Snowy Summer.*(모음|fancams & stages)/i.test(snowy.t)&&snowy.text===snowy.t)ok('Snowy Summer: 곡 주소·제목·설명');else bad('Snowy Summer 공유 '+JSON.stringify(snowy));
+    // ⑥ Stored root joined must reach the real member-card REST query, not just a helper test.
+    await open(c,'#g=시크릿넘버&m=민씨');await ev(c,WAIT_GRID('#tv'));
+    const joined=await ev(c,`(()=>{const requests=(window.__videoRequests||[]).map(u=>decodeURIComponent(u).replace(/"/g,''));const grid=document.querySelector('#tv .gc-ch-grid');const html=grid?.innerHTML||'';return {bound:requests.some(u=>u.includes('group_ko.eq.시크릿넘버')&&u.includes('published_at.gte.2025-08-14')),n:grid?.querySelectorAll('.gc-ch-item').length||0,old:['d_DiV_Rh3fE','Yfq39YKb4vE','cYBDbMDeIXE','9cJjJZq8xGU','X9JaQ7tA5hc','UQaFzXuq-7M','UTecy0CNuAc','QWe5hTS9FFY','XZJD2dBb4LU','ZJzintmZ3mM','jTL1tHzdio4','CaJxWDkHxvA'].filter(id=>html.includes(id))};})()`);
+    if(joined.bound&&joined.n>0&&!joined.old.length)ok('민씨: 합류일이 실제 API 조건에 전달되고 합류 전12영상 제외·정상영상 유지');else bad('민씨 합류일 조회 '+JSON.stringify(joined));
+    for(const spec of [{hash:'#g=솔로&m=디아',id:'a1897',key:'디아#a1897'},{hash:'#g=픽시&m=디아',id:'a1798',key:'픽시'}]){
+      await open(c,spec.hash);
+      const identity=await ev(c,`(async()=>{for(let i=0;i<60;i++){const urls=(window.__videoRequests||[]).map(u=>decodeURIComponent(u));if(_openTArtist?.id===${JSON.stringify(spec.id)}&&urls.some(u=>u.includes(${JSON.stringify(spec.key)})))break;await new Promise(r=>setTimeout(r,250));}return {id:_openTArtist?.id,scoped:(window.__videoRequests||[]).some(u=>decodeURIComponent(u).includes(${JSON.stringify(spec.key)})),errors:window.__shareErrors};})()`);
+      if(identity.id===spec.id&&identity.scoped&&!identity.errors.length)ok('디아 동명이인 카드 신원·조회 키 분리 '+spec.id);else bad('디아 카드 '+JSON.stringify(identity));
+    }
     c.close();
   }catch(e){bad('예외: '+e.message);}
   finally{try{proc.kill();}catch(e){}server.close();}

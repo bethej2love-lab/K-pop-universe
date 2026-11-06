@@ -7,7 +7,7 @@ const a=src.indexOf('// ── 작사·작곡 페이지'),b=src.indexOf('// ─�
 if(a<0||b<a){bad('작사·작곡 블록을 못 찾음');process.exit(1);}
 const pick=name=>{const i=src.indexOf('function '+name+'(');let d=0,j=src.indexOf('{',i);for(let k=j;k<src.length;k++){if(src[k]==='{')d++;else if(src[k]==='}'){d--;if(!d)return src.slice(i,k+1);}}};
 const pages=[];
-const ctx={require,fs,path,ROOT,console:{log(){}},
+const ctx={require,fs,path,ROOT,SEO:require('../tools/seo_extra.js'),console:{log(){}},
   artists:JSON.parse(fs.readFileSync(path.join(ROOT,'artists.json'),'utf8')),groups:JSON.parse(fs.readFileSync(path.join(ROOT,'groups.json'),'utf8')),
   SONGS:{},SITE:'https://kpop-universe.kr',escHtml:s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'),
   simplePageHtml:o=>o,writeSimple:(rel,o)=>pages.push({rel,...o}),ogImageForMember:()=>'',songPagePath:(g,b,l)=>`g/${g}/s/${b}/`};
@@ -16,6 +16,16 @@ const jA=src.indexOf('const JOSA_READ_AS_WORD'),jB=src.indexOf('\n}',src.indexOf
 ctx.soloSuffix=()=>({ko:'',en:''}); // 솔로 동명이인 꼬리는 이 검사 범위 밖
 vm.runInContext(src.slice(jA,jB)+'\n'+['urlSafeKo','slugify','memberPagePath'].map(pick).join('\n')+'\n'+src.slice(a,b),ctx);
 vm.runInContext('buildCreditPages()',ctx);
+// Profile facts and detailed collections must use the exact same catalog for every generated artist.
+const seo=require('../tools/seo_extra.js'),staticData=seo.loadStatic(ROOT);
+let compared=0;
+for(const artist of ctx.artists){
+  const catalog=ctx.creditsFor(artist);if(!catalog)continue;
+  const facts=seo.memberExtra(artist,artist.group.ko,'ko',{top:{},memberWins:{}},staticData,catalog).facts.join(' ');
+  if((catalog.ly.length&&!facts.includes(`작사 ${catalog.ly.length}곡`))||(catalog.co.length&&!facts.includes(`작곡 ${catalog.co.length}곡`)))bad('프로필/상세 곡수 '+artist.name.ko);
+  compared++;
+}
+if(compared>500)ok('프로필·상세 크레딧 공통 집계 '+compared+'명');else bad('집계 대조 대상 부족 '+compared);
 const ko=pages.filter(p=>p.lang==='ko'),en=pages.filter(p=>p.lang==='en');
 if(ko.length>300&&ko.length===en.length)ok(`작사·작곡 페이지 ${ko.length}명 × 2개 언어`);else bad(`페이지 수 ko ${ko.length} en ${en.length}`);
 const w=ko.find(p=>p.rel==='g/스트레이키즈/방찬/credits/');

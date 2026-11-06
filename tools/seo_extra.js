@@ -9,12 +9,17 @@ const path = require('path');
 const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 const readJson = p => { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch (e) { return null; } };
 
+function packCredits(list,base) {
+  const by=new Map();
+  for(const song of list||[]){const b=base(song.title||'');if(!b)continue;const current=by.get(b);if(!current||String(song.title).length<String(current.title).length)by.set(b,{b,title:song.title});}
+  return [...by.values()];
+}
 function loadStatic(ROOT) {
   const credits = {};
   const raw = readJson(path.join(ROOT, 'artist_credits.json')) || {};
   for (const k of Object.keys(raw)) { // 키 = '이름\0그룹'(널 문자 구분 — 메모리: artist_credits 키 포맷)
     const [nm, g] = k.split(String.fromCharCode(0));
-    credits[nm + '|' + (g || '')] = { lyrics: (raw[k].lyrics || []).length, compose: (raw[k].compose || []).length };
+    credits[nm + '|' + (g || '')] = { lyrics: packCredits(raw[k].lyrics,songLib(ROOT).B).length, compose: packCredits(raw[k].compose,songLib(ROOT).B).length };
   }
   return {
     awards: readJson(path.join(ROOT, 'group_awards.json')) || {},
@@ -146,7 +151,7 @@ function groupExtra(ko, lang, EX, ST) {
 }
 
 // ── 멤버 페이지 보강 ──
-function memberExtra(a, primaryGko, lang, EX, ST) {
+function memberExtra(a, primaryGko, lang, EX, ST, catalog) {
   const en = lang === 'en';
   const out = { html: '', facts: [], titleBits: [] };
   const nm = a.name.ko;
@@ -159,7 +164,7 @@ function memberExtra(a, primaryGko, lang, EX, ST) {
       ${top.map(v => `<li><a href="${ytUrl(v.id)}" target="_blank" rel="noopener">${esc(v.title)}</a> <span class="yr">${fmtViews(v.view_count, en)}</span></li>`).join('\n      ')}
     </ol>`;
   }
-  const cr = ST.credits[nm + '|' + (primaryGko || '')] || ST.credits[nm + '|'];
+  const cr = catalog ? {lyrics:catalog.ly.length,compose:catalog.co.length} : ST.credits[nm + '|' + (primaryGko || '')] || ST.credits[nm + '|'];
   if (cr && (cr.lyrics || cr.compose)) {
     // 0인 쪽은 말하지 않는다('작곡 0곡 참여'는 정보가 아니라 어색함)
     const partsKo = [cr.lyrics ? `작사 ${cr.lyrics}곡` : '', cr.compose ? `작곡 ${cr.compose}곡` : ''].filter(Boolean);
@@ -189,7 +194,7 @@ function ages(a, groupInfos) {
   const b = Date.UTC(+m[1], (+m[2] || 7) - 1, +m[3] || 1);
   const age = Math.floor((Date.now() - b) / (365.2425 * 864e5));
   let debutAge = null;
-  const ds = (groupInfos || []).filter(Boolean).map(g => String(g.debut || '').match(/(\d{4})\D?(\d{1,2})?\D?(\d{1,2})?/)).filter(Boolean)
+  const ds = [...(groupInfos || []).filter(Boolean).map(g => songLib(path.join(__dirname,'..')).D(g.joined,g.debut)), a.debut].filter(Boolean).map(date => String(date).match(/(\d{4})\D?(\d{1,2})?\D?(\d{1,2})?/)).filter(Boolean)
     .map(d => Date.UTC(+d[1], (+d[2] || 7) - 1, +d[3] || 1));
   if (ds.length) { const v = (Math.min(...ds) - b) / (365.2425 * 864e5); if (v > 10 && v < 40) debutAge = Math.floor(v); }
   return { age: age > 8 && age < 90 ? age : null, debutAge };
@@ -203,7 +208,7 @@ let _SL = null;
 function songLib(ROOT) {
   if (_SL) return _SL;
   const ctx = {}; vm.createContext(ctx);
-  vm.runInContext(fs.readFileSync(path.join(ROOT, 'shared.js'), 'utf8') + ';this.f=_songLinkBases;this.L=_songListFromDisco;this.B=_songBase;this.N=_songNorm;', ctx);
+  vm.runInContext(fs.readFileSync(path.join(ROOT, 'shared.js'), 'utf8') + ';this.f=_songLinkBases;this.L=_songListFromDisco;this.B=_songBase;this.N=_songNorm;this.D=_groupJoinOrDebut;', ctx);
   return (_SL = ctx);
 }
 // 그룹별 영상 전부(가로 영상, 노출 가능한 것만) — id 순 페이지 넘김(정렬 없는 페이지 나눔은 중복·누락 — 메모리)
@@ -270,4 +275,4 @@ const roundViews = n => { if (!n) return 0; const p = Math.pow(10, Math.max(0, M
 
 const EXTRA_CSS =`.vid-list{padding-left:20px;margin:0;}.vid-list li{font-size:13.5px;margin-bottom:7px;}.vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}.note{font-size:11px;color:rgba(150,170,210,0.55);margin:6px 0 0;}.rel a{color:rgba(210,225,255,0.95);text-decoration:none;}.sp-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 10px;}@media(min-width:620px){.sp-tiles{grid-template-columns:repeat(5,minmax(0,1fr));}}.sp-tile{display:block;text-decoration:none;min-width:0;}.sp-tile img,.sp-tile-ph{display:block;width:100%;aspect-ratio:1;border-radius:10px;object-fit:cover;background:#1a1d33;}.sp-tile-t{display:block;font-size:12.5px;margin-top:6px;color:rgba(228,236,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.sp-tile-n{display:block;font-size:11px;color:rgba(160,180,230,0.6);}.mf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;margin-bottom:6px;}@media(min-width:620px){.mf-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}.mf-card{display:block;min-width:0;text-decoration:none;}.mf-th{display:block;position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#14162c;}.mf-th img{width:100%;height:100%;object-fit:cover;display:block;}.mf-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.38;margin-top:7px;color:rgba(228,236,255,0.94);}.mf-y{display:block;font-size:11.5px;color:rgba(160,180,230,0.6);margin-top:2px;}`;
 
-module.exports = { loadStatic, prefetch, groupExtra, memberExtra, ages, EXTRA_CSS, fmtViews, prefetchGroupVideos, buildSongs, roundViews, esc };
+module.exports = { loadStatic, packCredits, prefetch, groupExtra, memberExtra, ages, EXTRA_CSS, fmtViews, prefetchGroupVideos, buildSongs, roundViews, esc };

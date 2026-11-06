@@ -472,11 +472,7 @@ function _gLabelKo(ko){
 //      ④ 주 소속 + 최상위 left
 function _isFormerOf(a,gko){
   if(!a||!gko)return false;
-  if(GROUPS[gko]&&GROUPS[gko].disbanded)return true;
-  const g=(a.groups||[]).find(x=>x&&x.ko===gko);
-  if(g&&(g.left||g.active===false))return true;
-  if(a.active===false)return true;
-  return gko===(a.group&&a.group.ko)&&!!a.left;
+  return _artistMembershipStatus(a,gko,GROUPS[gko])==='former';
 }
 // 멤버 옆에 붙일 그룹 표기용 group 객체 — 솔로 취급이면 실제 소속 대신 "솔로".
 function _dispGroup(a){return a?(_isSoloDisp(a)?_SOLO_GROUP:a.group):null;}
@@ -16480,7 +16476,6 @@ function _mxSyncChips(){
 let _mxFig=null;
 // 나중에 합류한 멤버의 합류(첫 활동)일 — 그룹 데뷔일로 재면 실제보다 몇 년 어리게 찍혀 "최연소" 주석을 차지했다(첫 구현 실측:
 // 허영지 12세·강지영 13세·준 11세). 확인된 것만 적는다(카라 프로젝트 우승 후 첫 앨범 2014.08.18 등).
-const _MX_JOINED={'허영지|카라':'2014.08.18','강지영|카라':'2008.02.01','준|유키스':'2014.06.02','윤은혜|베이비복스':'1999.01.01','서아|트리플에스':'2024.05.08','주빈|트리플에스':'2023.12.23'};
 function _mxAgeAt(bday,debut){
   const re=/(\d{4})\D?(\d{1,2})?\D?(\d{1,2})?/;
   const b=String(bday||'').match(re),d=String(debut||'').match(re);
@@ -16496,7 +16491,7 @@ function _mxFigBuild(){
     if(!a.name?.ko||!a.group?.ko)continue;
     const g=GROUPS[a.group.ko];if(!g)continue;
     const key=a.name.ko+'|'+(a.bday||'');if(seen.has(key))continue;
-    const r=_mxAgeAt(a.bday,_MX_JOINED[a.name.ko+'|'+a.group.ko]||g.debut);if(!r||r.age<12||r.age>32)continue;
+    const r=_mxAgeAt(a.bday,_artistDebutDate(a,GROUPS));if(!r||r.age<12||r.age>32)continue;
     seen.add(key);pts.push({a,age:r.age,year:r.year,gender:g.gender||''});
   }
   const wrap=document.createElement('div');wrap.className='mx-fig';
@@ -21526,7 +21521,7 @@ async function _showMemberFallback(a){
   }
   if(!html&&!a.died){
     // 데뷔 = 소속 그룹(이력 포함) 데뷔·본인 debut 중 가장 이른 해
-    const ys=[a.debut,...(_artistGroups(a)||[]).map(g=>g&&GROUPS[g.ko]&&GROUPS[g.ko].debut)].map(v=>+String(v||'').slice(0,4)).filter(y=>y>1900);
+    const ys=[_artistDebutDate(a,GROUPS)].map(v=>+String(v||'').slice(0,4)).filter(y=>y>1900);
     if(ys.length){const n=new Date().getFullYear()-Math.min(...ys)+1;if(n>=1)html=dot+(ko?`데뷔 ${n}년차`:`Year ${n} since debut`);}
   }
   _gcStatusState.member.fallback=html;
@@ -27240,15 +27235,15 @@ function _makeChVidController(contId){
     if(!memberKo)return{active:true};
     const a=ARTISTS.find(x=>x.name.ko===memberKo&&_artistGroups(x).some(g=>g.ko===ko));
     if(!a)return{active:true};
-    const gEntry=_artistGroups(a).find(g=>g.ko===ko)||{};
+    const gEntry=_artistAffiliation(a,ko)||{};
     const activeHere=gEntry.active!==undefined?gEntry.active:a.active;
     // joined(그 그룹 합류일, 2026-10-12 — 티오원 여정·다이고·렌타 2022.06.17): 있으면 미태깅 그룹 영상을 그날 이후로만.
     const r=_memberVideoCutoffCore(a,gEntry,activeHere,ko);
-    if(gEntry.joined)r.joined=String(gEntry.joined).replace(/\./g,'-').slice(0,10);
+    if(gEntry.joined)r.joined=_joinedStartDate(gEntry.joined);
     // pausedFrom(그룹 활동 중단일, 2026-10-22 — 펜타곤 옌안·유토: 2023.10 계약 종료, 탈퇴 발표는 없음, 2026 10주년 싱글은 7인).
     // 멤버 표기는 현역 그대로 두고, 미태깅 그룹 전체 영상만 그날까지로 자른다(사용자: "옌안 카드에 옌안이 안 한 펜타곤 영상이 나오면 안 된다").
     const _pz=_memberPausedCutoff(a,ko);
-    if(_pz&&r.active)return Object.assign(r,{active:false,left:_pz});
+    if(_pz&&(r.active||_artistMembershipStatus(a,ko,GROUPS[ko])==='paused'))return Object.assign(r,{active:false,left:_pz});
     return r;
   }
   function _memberVideoCutoffCore(a,gEntry,activeHere,ko){
@@ -29581,7 +29576,7 @@ function _tlDebutAlbum(gko){
 function _tlOpenAlbum(alb){return()=>{_gcDiscogList=[alb];_openGcDiscogDetail(alb,0);};}
 // 히스토리 데뷔 줄(🎤, gko 표시)에 데뷔 앨범을 붙인다 — 붙였으면 true(다시 그리기)
 function _tlAttachDebutAlbum(ev,gko){
-  const e=ev.find(x=>x.icon==='🎤'&&x.gko===gko&&!x.title);if(!e)return false;
+  const e=ev.find(x=>x.icon==='🎤'&&x.gko===gko&&!x.joined&&!x.title);if(!e)return false;
   const alb=_tlDebutAlbum(gko);if(!alb||!alb.title)return false;
   e.title=alb.title;e.onClick=_tlOpenAlbum(alb);return true;
 }
@@ -29603,20 +29598,23 @@ function _buildMemberTimeline(a){
   const hd=sec.querySelector('.tt-timeline-hd');if(hd)hd.textContent='History';
   // 실존 그룹 수집(현 소속 + 이력) — 현멤버는 a.group.ko, 옛멤버는 groups[]에서.
   const realGroups=[];
-  if(GROUPS[a.group.ko]&&a.group.ko!=='솔로')realGroups.push({ko:a.group.ko,left:null});
-  (a.groups||[]).forEach(g=>{if(g&&g.ko&&g.ko!=='솔로'&&GROUPS[g.ko]&&!realGroups.some(r=>r.ko===g.ko))realGroups.push({ko:g.ko,left:g.left||null});});
+  if(GROUPS[a.group.ko]&&a.group.ko!=='솔로')realGroups.push(_artistAffiliation(a,a.group.ko));
+  (a.groups||[]).forEach(g=>{if(g&&g.ko&&g.ko!=='솔로'&&GROUPS[g.ko]&&!realGroups.some(r=>r.ko===g.ko))realGroups.push(_artistAffiliation(a,g.ko));});
   const ev=[];
   realGroups.forEach(rg=>{
     const info=GROUPS[rg.ko];const gname=isKo?rg.ko:(info.en||rg.ko);
-    if(info.debut){const k=_tlKey(info.debut);if(k)ev.push({key:k,date:_tlDate(info.debut),label:isKo?`${gname} 데뷔`:`${gname} debut`,icon:'🎤',gko:rg.ko});}
+    const start=_groupJoinOrDebut(rg.joined,info.debut);
+    const joined=rg.joined&&_tlKey(rg.joined)>_tlKey(info.debut);
+    if(start){const k=_tlKey(start);if(k)ev.push({key:k,date:_tlDate(start),label:joined?(isKo?`${gname} 합류`:`Joined ${gname}`):(isKo?`${gname} 데뷔`:`${gname} debut`),icon:'🎤',gko:rg.ko,joined:!!joined});}
     if(rg.left){const k=_tlKey(rg.left);if(k){
       // 그룹이 해체됐고 멤버가 그 전에 미리 나간 게 아니면(연도 기준) '탈퇴'가 아니라 '해체'로 표기
       // (2026-09-13 사용자 요청 — 아이즈원처럼 해체까지 함께한 멤버는 '탈퇴'가 아니라 '해체').
       const _dis=(typeof _disbandCutoffDate==='function')?_disbandCutoffDate(rg.ko):null;
-      let _ended=!!info.disbanded;
-      if(_ended&&_dis){const ly=+String(rg.left).slice(0,4),dy=+String(_dis).slice(0,4);if(ly&&dy&&ly<dy)_ended=false;} // 해체 전에 미리 나감 = 진짜 탈퇴
+      let _ended=!!info.disbanded&&!!_dis;
+      if(_ended&&_dis&&_leftCutoffDate(rg.left)<_leftCutoffDate(_dis))_ended=false;
       ev.push({key:k,date:_tlDate(rg.left),label:_ended?(isKo?`${gname} 해체`:`${gname} disbanded`):(isKo?`${gname} 탈퇴`:`Left ${gname}`),icon:_ended?'🏁':'👋'});
     }}
+    if(rg.pausedFrom&&!rg.left){const k=_tlKey(rg.pausedFrom);if(k)ev.push({key:k,date:_tlDate(rg.pausedFrom),label:isKo?`${gname} 활동 중단`:`${gname} hiatus`,icon:'⏸️'});}
   });
   // 솔로 데뷔 + 각 소속 그룹 데뷔 앨범 — 디스코가 lazy라 로드 후 붙인다. ⚠️ 예전엔 없는 필드 a.soloDiscography를 읽어
   // 그룹 멤버(백현·설리 등)는 솔로 데뷔가 한 번도 안 떴다(2026-10-15 발견). 멤버 본인 앨범은 로드 후 a.discography.
@@ -29643,33 +29641,35 @@ function _buildMemberTimeline(a){
   // 첫 1위(비동기) — 주 그룹 music_show_wins 최소 win_date + "데뷔 N일 후"
   const primary=realGroups[0];
   if(sb&&primary){
+    const end=primary.left||primary.pausedFrom;
+    const inPeriod=date=>(!primary.joined||_tlKey(date)>=_tlKey(primary.joined))&&(!end||_tlKey(date)<=_tlKey(end));
     sb.from('music_show_wins').select('win_date,song_title,show').eq('group_ko',primary.ko).order('win_date',{ascending:true})
       .then(({data})=>{
         if(_openTArtist!==a)return;
         if(ev.some(e=>e.icon==='🏆'))return;
         const pInfo=GROUPS[primary.ko];
-        for(const e of _mswWinEntries(data,isKo,pInfo&&pInfo.debut,primary.ko))ev.push(e);
+        for(const e of _mswWinEntries((data||[]).filter(w=>inPeriod(w.win_date)),isKo,pInfo&&pInfo.debut,primary.ko))ev.push(e);
         if(ev.length>=2)_renderTimeline(sec,list,ev);
       }).catch(()=>{});
     // 첫 콘서트/투어(비동기) — kpop_events 최소 date_start. 활동 그룹 멤버 시간축을 데뷔·첫1위에 이어 채운다.
     _tlFirstConcert(primary.ko)
       .then(fc=>{
-        if(_openTArtist!==a||!fc)return;
+        if(_openTArtist!==a||!fc||!inPeriod(fc.date_start))return;
         const k=_tlKey(fc.date_start);if(!k||ev.some(e=>e.icon==='🎫'))return;
         ev.push({key:k,date:_tlDate(fc.date_start),label:isKo?'첫 콘서트/투어':'First concert/tour',title:String(fc.title||'').trim(),icon:'🎫',onClick:()=>_tlOpenConcert(fc)});
         if(ev.length>=2)_renderTimeline(sec,list,ev);
       }).catch(()=>{});
     // 이정표(첫 1억 뷰 영상·첫 멜론 연간 TOP100) — 주 소속 그룹 기준
-    _tlMilestones(primary.ko,isKo).then(ms=>{if(_openTArtist!==a)return;ms.forEach(m=>{if(!ev.some(e=>e.icon===m.icon))ev.push(m);});if(ev.length>=2)_renderTimeline(sec,list,ev);});
+    _tlMilestones(primary.ko,isKo).then(ms=>{if(_openTArtist!==a)return;ms.filter(m=>inPeriod(m.date)).forEach(m=>{if(!ev.some(e=>e.icon===m.icon))ev.push(m);});if(ev.length>=2)_renderTimeline(sec,list,ev);});
     // 정규 1집(비동기) — 그룹 디스코 로드 후 type이 "정규…"인 것 중 최소 releaseDate(첫 정규앨범).
     _ensureGroupDisco(primary.ko).then(()=>{
       if(_openTArtist!==a)return;
-      {const jd=_tlJpDebut(primary.ko,isKo);if(jd&&!ev.some(e=>e.icon==='🗾')){ev.push(jd);if(ev.length>=2)_renderTimeline(sec,list,ev);}}
-      const full=((GROUPS[primary.ko]||{}).discography||[]).filter(x=>x&&x.releaseDate&&/^정규/.test(String(x.type||''))&&!x.variant&&!_isJpRelease(x,primary.ko)); // 일본 정규·변형판 제외
+      {const jd=_tlJpDebut(primary.ko,isKo);if(jd&&inPeriod(jd.date)&&!ev.some(e=>e.icon==='🗾')){ev.push(jd);if(ev.length>=2)_renderTimeline(sec,list,ev);}}
+      const full=((GROUPS[primary.ko]||{}).discography||[]).filter(x=>x&&x.releaseDate&&inPeriod(x.releaseDate)&&/^정규/.test(String(x.type||''))&&!x.variant&&!_isJpRelease(x,primary.ko)); // 일본 정규·변형판 제외
       if(!full.length||ev.some(e=>e.icon==='💿'))return;
       full.sort((x,y)=>String(x.releaseDate).localeCompare(String(y.releaseDate)));
       const k2=_tlKey(full[0].releaseDate);if(!k2)return;
-      ev.push({key:k2,date:_tlDate(full[0].releaseDate),label:isKo?'정규 1집':'1st full album',title:full[0].title||'',icon:'💿',onClick:()=>{_gcDiscogList=[full[0]];_openGcDiscogDetail(full[0],0);}});
+      ev.push({key:k2,date:_tlDate(full[0].releaseDate),label:primary.joined?(isKo?'첫 참여 정규앨범':'First full album after joining'):(isKo?'정규 1집':'1st full album'),title:full[0].title||'',icon:'💿',onClick:()=>{_gcDiscogList=[full[0]];_openGcDiscogDetail(full[0],0);}});
       if(ev.length>=2)_renderTimeline(sec,list,ev);
     }).catch(()=>{});
   }

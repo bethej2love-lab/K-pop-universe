@@ -1,0 +1,90 @@
+[
+  {
+    "group": "비투비",
+    "album": {
+      "title": "Born to Beat",
+      "type": "미니 1집",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/04/986/2104986_500.jpg",
+      "releaseDate": "2012.03.21",
+      "trackCount": 6,
+      "titleTrack": "Insane",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Insane",
+          "isTitle": true
+        },
+        {
+          "no": 2,
+          "title": "BTOB",
+          "isTitle": false
+        },
+        {
+          "no": 3,
+          "title": "I Only Know Love",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "넌 내 것 (You're My only thing)",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "Like That",
+          "isTitle": false
+        },
+        {
+          "no": 6,
+          "title": "Insane (Inst.)",
+          "isTitle": false
+        }
+      ],
+      "melonAlbumId": "2096628"
+    }
+  },
+  {
+    "group": "씨엔블루",
+    "album": {
+      "title": "TRIGGER",
+      "type": "미니",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/110/78/855/11078855_20221017104806_500.jpg",
+      "releaseDate": "2022.10.19",
+      "trackCount": 5,
+      "titleTrack": "TRIGGER",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "TRIGGER",
+          "isTitle": true,
+          "songId": "35741281"
+        },
+        {
+          "no": 2,
+          "title": "Tic Tic",
+          "isTitle": false
+        },
+        {
+          "no": 3,
+          "title": "Different",
+          "isTitle": false
+        },
+        {
+          "no": 4,
+          "title": "Run",
+          "isTitle": false
+        },
+        {
+          "no": 5,
+          "title": "TRIGGER (Inst.)",
+          "isTitle": false,
+          "songId": "35741281"
+        }
+      ],
+      "region": "jp",
+      "melonAlbumId": "11081490"
+    }
+  }
+]

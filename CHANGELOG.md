@@ -3,6 +3,14 @@
 ## 2026-11-06 (Codex — 누적 검수 미실행 항목 일괄 정정)
 - **[진행중] [groups.json·artists.json·app.js·shared.js·build_group_pages.js·tools/seo_extra.js·sql/]** 사용자: Claude 작업 중단 상태에서 누적 검수 메모 실행까지 전담 요청. 207~245차/이후 인수인계와 최신 main을 대조해 이미 적용한 영상/15앨범은 재실행하지 않고,남은 발매본 혼합·소개 인원/활동중단·크레딧 집계·합류일 소비·확정 오태깅을 순차 실행한다. 항목별 근거·정정·검증·판단 불가 사유를 별도 목록에 유지하고 관련 SEO는 입력 변경을 모은 뒤 한 번만 재생성한다. iPad 실기기 미확정 증상은 추측 수정하지 않음.
 
+- **[완료·소스/로컬 검증] [shared.js·app.js·artists.json]** 합류일의 프로필 루트/그룹별 메타데이터를 공통으로 소비. 기존 하드코딩6명은 데이터로 이전,예빈은 확인 가능한2026년 합류/2024.12.20 솔로데뷔를 분리. 민씨 등 합류 전 그룹 영상 노출을 실제 REST 하한으로 차단; 그룹 결성보다 빠른 합류일로 데뷔를 앞당기지 않음. 타임라인은 합류/탈퇴/활동중단을 구분하고 합류 전·탈퇴/중단 후 그룹 수상·앨범 이력을 개인 이력으로 붙이지 않음. 건우 활동중단을 탈퇴로 바꾸지 않음.
+- **[완료·소스/로컬 검증] [groups.json·build_group_pages.js·tools/seo_extra.js]** 시크릿의 boolean 해체 오표시 제거. SEO 현 멤버 수/활동중단 표기와 개인 데뷔나이 기준 통일; 사망 멤버가 있는 그룹은 근거 없는 N인조 표현 생략. 585명 프로필·크레딧 상세는 동일 곡 중복 제거/동일 주인 카탈로그로 계산하며 artist_credits.json 원문은 변경하지 않음.
+- **[완료·소스/로컬 검증] [groups.json·disco/g/·tracks_index.json]** 공식 Melon 재대조: 비투비 Born to Beat는2012.04.03/2104986/4곡으로 발매본 복원. 씨엔블루 TRIGGER는2022.10.14/11078855/1곡,별도 LET IT SHINE 2022.10.19/11081490/3곡 복원,9월 선공개본 보존. 원본 백업·공식 목록·의도 외 변화0 역대입 검증은 audit-materials/backlog-execution-2026-11-06/. 파생물43866트랙 일치.
+- **[완료·소스/로컬 검증] [artists.json·admin.js·shared.js]** 공식 Bugs 프로필/2009데뷔·MBC 음방 출연을 확인한 솔로 디아 a1897 등록. 다이아/픽시 디아와 분리한 영상키 디아#a1897 사용; 생년월일·정확 데뷔일·미등록 이전 그룹은 추정하지 않음. 시크릿 넘버 띄어쓰기/영문명 중복, CxM 팬파티 곡 Fiesta→피에스타,상황극 여자친구→그룹,명시적 DIA(디아)→다이아 오매칭을 좁게 차단. 정상 그룹 영상·실제 협업·개인 직캠 보존 검사 포함.
+- **[완료·검증] [tests/audit-membership.test.js·audit-title-collisions.test.js·credit-pages.test.js·vid-list-share.test.js]** 합류/타임라인/SEO·충돌 회귀·585명 크레딧 일치·실제 공유/민씨 하한/솔로 디아 분리16항목 통과. 데스크톱+390px 스모크·매칭246·문법·파생물 통과,데이터 오류0/경고150(신규 솔로의 이전 그룹 구조 부재 경고1 증가). m2_harness는 이번 검사에서 노출된 기존 누락 의존함수2개를 실제 소스에서 로드하도록 보완.
+- **[준비·DB 미실행] [sql/codex_backlog_2026-11-06*.sql]** 공식 근거 확정15행의 전필드 스냅샷 guard/원자 적용/복원 준비: 솔로 디아4,냉터뷰 홍은채3,CxM2,JTBC 이효리2·미미1,집대성 NCT DREAM 게스트2,시크릿 챌린지 은정1. a1897 공개 배포 확인 후 적용·복원 ROLLBACK 시험/공개 조회를 수행해야 완료. 미확정 참가자/게스트는 추가하지 않음.
+- **⏳ 덜 된 일** 위15행 DB 실행 및 main/Pages/SEO 최종 검증을 이어서 한다. 검수229차 동일 음원ID 중복 앨범 잔여41건은 remaining-duplicate-albums.json을 공식 발매본과 대조한 뒤 확정분만 정정(모두 오류로 단정 금지). 정적 SEO는 입력 변경을 모아 rebuild-seo-pages.yml 1회,실행 중 소스 변경 금지. 미등록 배우/익명 가창자/원곡자·경연 참가자 혼동은 추측 귀속하지 말 것.
+
 ## 2026-11-06 (Codex — 남은 투피엠 오귀속 검수 실행)
 - **[완료] [yt_channel_videos·sql/codex_attribution_2026-11-06*.sql]** 공식 Mnet/MBC4영상: bDpWUAvDfnI·8vabGtI72xE는 갓세븐/JAY B(a0598),z1eFI6wSr4U는 브라운아이드걸스/가인(a0981),X3nUZxdnwtU는 원어스/레이븐(a0435)으로 2PM 오귀속 정정. 레이븐의 2019커버는 탈퇴 전 원어스 활동이고 박재범은 원곡자이므로 cover_of_members=['박재범(2PM)']만 추가(기존 신원 키를 재사용,cover_of_groups=2PM 추가 아님). Feat.표기만으로 박재범의 실제 동반 출연을 추정하지 않아 with_*는 유지.
 - **[완료] [yt_channel_videos·sql/codex_namesake_2026-11-06*.sql]** KaWiUJigSbM·QIQl3MrERw0: 공식 MBC WORLD/KBS 제목의 격투기 선수 정찬성은 2PM 찬성이 아님. 영상에 명시된 박재범의 솔로 키 group_ko=박재범/members=[박재범]으로 한정 재귀속. 정찬성을 새 아이돌/친분/게스트로 등록하지 않고 기존 with_*/원곡 칸 유지.
