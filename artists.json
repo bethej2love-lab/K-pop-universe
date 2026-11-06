@@ -50501,6 +50501,24 @@
     },
     "discography": [
       {
+        "title": "Someone to Hold (from the Netflix Film “Steps”)",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/30/756/15130756_20261105154442_500.jpg",
+        "releaseDate": "2026.11.06",
+        "trackCount": 1,
+        "titleTrack": "Someone to Hold (from the Netflix Film “Steps”)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Someone to Hold (from the Netflix Film “Steps”)",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15130756"
+      },
+      {
         "title": "Fallen Angel (Digital EP)",
         "type": "미니 1집",
         "isMain": true,

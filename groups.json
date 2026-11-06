@@ -56570,6 +56570,55 @@
   },
   "discography": [
    {
+    "title": "체포하겠어 (Remixes)",
+    "type": "미니",
+    "isMain": false,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/30/938/15130938_20261105164950_500.jpg",
+    "releaseDate": "2026.11.06",
+    "trackCount": 7,
+    "titleTrack": "체포하겠어",
+    "variant": true,
+    "tracks": [
+     {
+      "no": 1,
+      "title": "체포하겠어",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "체포하겠어 (Kids Remix)",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "체포하겠어 (Whistle Remix)",
+      "isTitle": false
+     },
+     {
+      "no": 4,
+      "title": "체포하겠어 (Club Remix)",
+      "isTitle": false
+     },
+     {
+      "no": 5,
+      "title": "체포하겠어 (Hyper Remix)",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "체포하겠어 (Sped Up)",
+      "isTitle": false
+     },
+     {
+      "no": 7,
+      "title": "체포하겠어 (Slowed+Reverb)",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15130938"
+   },
+   {
     "title": "BREAK EVEN",
     "type": "미니 5집",
     "isMain": true,
@@ -117220,6 +117269,49 @@
    "namu": "https://namu.wiki/w/P1Harmony"
   },
   "discography": [
+   {
+    "title": "BLOW UP",
+    "type": "미니",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/29/746/15129746_20261105103550_500.jpg",
+    "releaseDate": "2026.11.06",
+    "trackCount": 6,
+    "titleTrack": "BLOW UP",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "BLOW UP",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "element",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "How To",
+      "isTitle": false
+     },
+     {
+      "no": 4,
+      "title": "MOMENTUM",
+      "isTitle": false
+     },
+     {
+      "no": 5,
+      "title": "t.o.t.y.",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "Talk That",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15129746"
+   },
    {
     "title": "UNIQUE Japan Edition (Selected Version)",
     "type": "싱글",
@@ -227194,6 +227286,35 @@
    "namu": "https://namu.wiki/w/xikers"
   },
   "discography": [
+   {
+    "title": "DIENAMITE (Remix)",
+    "type": "싱글",
+    "isMain": false,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/30/754/15130754_20261105154411_500.jpg",
+    "releaseDate": "2026.11.06",
+    "trackCount": 3,
+    "titleTrack": "DIENAMITE (Rico Ver.)",
+    "variant": true,
+    "tracks": [
+     {
+      "no": 1,
+      "title": "DIENAMITE (Rico Ver.)",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "DIENAMITE (Speed Up Ver.)",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "DIENAMITE (Speed Down Ver.)",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15130754"
+   },
    {
     "title": "ROUTE ZERO : The CALLING",
     "type": "미니 8집",
