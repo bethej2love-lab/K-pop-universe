@@ -35,6 +35,7 @@ const ctx={SITE:'https://example.test',SONG_CSS_V:4,FANCAM_RE:/직캠|fancam|fac
   hashEsc:encodeURIComponent,ogImageForGroup:()=>'/default.jpg',
   SEO:{fmtViews:String},languageNav:()=>'',LIST_FWD:'<script>FORWARD_LIST_HASH</script>'};
 vm.createContext(ctx);
+vm.runInContext(block('function bilingualLabel(', '// 앱의 _hashEsc'),ctx);
 vm.runInContext(block('function songShareVideo(vids)','// ── 직캠 조회수 순위 페이지'),ctx);
 const vids=[{id:'mv',title:'Snowy Summer MV',category:'mv'},
   {id:'teaser',title:'Snowy Summer Teaser',category:'live'},
@@ -54,3 +55,11 @@ assert.match(memberHtml,/og:title" content="멤버 Snowy Summer 직캠 모음/);
 assert.match(memberHtml,/og:image" content="https:\/\/i.ytimg.com\/vi\/cam\//);
 
 console.log('✅ Published song routes, song/member OG and unchanged hero');
+
+const bilingual=ctx.songLikePageHtml({gko:'코르티스',info:{en:'CORTIS'},s:{...s,bilingualTitle:'아름다워 (Beautiful)'},lang:'en',others:[],member:{a:{id:'member',name:{ko:'성현'}},nm:'성현',nmEn:'SEONGHYEON',vids:[{id:'cam',title:'Beautiful fancam'}]}});
+assert.ok(bilingual.includes('SEONGHYEON / 성현'));assert.ok(bilingual.includes('CORTIS / 코르티스'));assert.ok(bilingual.includes('아름다워 (Beautiful)'));
+const labels=require('../tools/seo_extra.js').bilingualSongTitle;
+assert.equal(labels('청개구리 (Naughty Boy)','청개구리'),'청개구리 (Naughty Boy)');
+assert.equal(labels('CRUSH (가시)','CRUSH'),'CRUSH (가시)');
+for(const t of ['Snowy Summer','FRI(END)S','청개구리 (Inst.)','청개구리 (Japanese Ver.)','청개구리 (Feat. Somebody)','청개구리 (CD Only)'])assert.equal(labels(t,'fallback'),'fallback');
+console.log('✅ bilingual registered names/titles; no invented translations or version aliases');

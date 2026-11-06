@@ -233,6 +233,12 @@ async function prefetchGroupVideos({ SB_URL, SB_KEY, groupKos }) {
   return out;
 }
 // 곡 목록 + 영상 묶기. 반환: { [gko]: [{b, title, album, date, isTitle, cr, vids:[…], wins}] } — 영상 minVids개 이상인 곡만
+function bilingualSongTitle(raw, fallback) {
+  const value=String(raw||'').trim(),m=/^([^()[\]]+?)\s*\(([^()]+)\)$/.exec(value);
+  if(!m||/\b(?:feat|ft|inst|instrumental|ver|version|remix|live|edit|CD Only)\b/i.test(m[2]))return fallback;
+  const ko=s=>/[가-힣]/.test(s),en=s=>/[a-z]/i.test(s);
+  return (ko(m[1])&&!en(m[1])&&en(m[2])&&!ko(m[2]))||(en(m[1])&&!ko(m[1])&&ko(m[2])&&!en(m[2])) ? value : fallback;
+}
 function buildSongs({ ROOT, groups, artists, EX, vids, minVids = 4 }) {
   const S = songLib(ROOT);
   const persons = new Set();
@@ -252,6 +258,7 @@ function buildSongs({ ROOT, groups, artists, EX, vids, minVids = 4 }) {
       const b = S.B(tr.title); if (!b) return;
       // 표시 이름은 가장 먼저 나온 원곡 제목(띄어 쓴 첫 괄호 앞 — 붙은 괄호는 이름의 일부: FRI(END)S) — 곡 목록 순서대로 쓰면 'LOVE DIVE -Japanese version-'이 이름이 됐다
       const m = meta[b] || (meta[b] = { name: String(tr.title).replace(/\s*-[^-]*\bver(?:sion)?\b\.?[^-]*-\s*$/i, '').split(/\s+[\(\[]/)[0].trim(), album: al.title, date: al.releaseDate || '', isTitle: false, cr: null, melonId: null, cover: al.cover || null });
+      if(!m.bilingualTitle)m.bilingualTitle=bilingualSongTitle(tr.title,null);
       if (tr.isTitle) m.isTitle = true;
       if (!m.cr && tr.cr) m.cr = tr.cr;
       if (!m.melonId && tr.songId) m.melonId = tr.songId;
@@ -275,4 +282,4 @@ const roundViews = n => { if (!n) return 0; const p = Math.pow(10, Math.max(0, M
 
 const EXTRA_CSS =`.vid-list{padding-left:20px;margin:0;}.vid-list li{font-size:13.5px;margin-bottom:7px;}.vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}.note{font-size:11px;color:rgba(150,170,210,0.55);margin:6px 0 0;}.rel a{color:rgba(210,225,255,0.95);text-decoration:none;}.sp-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 10px;}@media(min-width:620px){.sp-tiles{grid-template-columns:repeat(5,minmax(0,1fr));}}.sp-tile{display:block;text-decoration:none;min-width:0;}.sp-tile img,.sp-tile-ph{display:block;width:100%;aspect-ratio:1;border-radius:10px;object-fit:cover;background:#1a1d33;}.sp-tile-t{display:block;font-size:12.5px;margin-top:6px;color:rgba(228,236,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.sp-tile-n{display:block;font-size:11px;color:rgba(160,180,230,0.6);}.mf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;margin-bottom:6px;}@media(min-width:620px){.mf-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}.mf-card{display:block;min-width:0;text-decoration:none;}.mf-th{display:block;position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#14162c;}.mf-th img{width:100%;height:100%;object-fit:cover;display:block;}.mf-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.38;margin-top:7px;color:rgba(228,236,255,0.94);}.mf-y{display:block;font-size:11.5px;color:rgba(160,180,230,0.6);margin-top:2px;}`;
 
-module.exports = { loadStatic, packCredits, prefetch, groupExtra, memberExtra, ages, EXTRA_CSS, fmtViews, prefetchGroupVideos, buildSongs, roundViews, esc };
+module.exports = { loadStatic, packCredits, bilingualSongTitle, prefetch, groupExtra, memberExtra, ages, EXTRA_CSS, fmtViews, prefetchGroupVideos, buildSongs, roundViews, esc };

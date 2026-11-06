@@ -83,6 +83,10 @@ function agencyEn(co) {
 function escHtml(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
+function bilingualLabel(primary, alternate) {
+  const a=String(primary||'').trim(),b=String(alternate||'').trim();
+  return a && b && a.toLocaleLowerCase()!==b.toLocaleLowerCase() ? `${a} / ${b}` : (a||b);
+}
 // 앱의 _hashEsc와 동일 규칙(index.html 참고) — 해시 구분자로 실제 쓰이는 문자만 최소 이스케이프,
 // 한글은 그대로 둬서 딥링크가 지저분해지지 않게 함.
 function hashEsc(s) { return String(s).replace(/[ &=#%+]/g, encodeURIComponent); }
@@ -472,8 +476,7 @@ ${LIST_FWD}
   ${languageNav(isEn, altUrl)}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
   <a class="brand" href="${SITE}/${isEn ? 'en/g/' : 'g/'}" style="margin-left:10px;">${isEn ? 'All groups' : '그룹 전체'}</a>
-  <h1>${escHtml(displayName)}</h1>
-  ${subName ? `<div class="sub">${escHtml(subName)}</div>` : ''}
+  <h1>${escHtml(bilingualLabel(displayName,subName))}</h1>
   <img class="cover" src="${ogImage}" alt="${escHtml(displayName)}" loading="lazy">
   <div class="meta">
     ${debutIso ? `<span><b>${debutLabel}</b> ${escHtml(info.debut)}</span>` : ''}
@@ -626,12 +629,13 @@ artists.forEach(a => {
     // 제목·설명(2026-10-16) — '장원영(아이브) 프로필·나이·직캠'. 설명엔 생년·데뷔 나이·작사작곡·솔로 1위 같은 이 사람만의 숫자
     const xm = SEO.memberExtra(a, isSolo ? ko : primaryGko, lang, EX, ST, creditsFor(a));
     const ag = SEO.ages(a, (a.groups && a.groups.length ? a.groups : [a.group]).map(g => groups[g.ko] ? ({...groups[g.ko],joined:affiliationFor(a,g.ko)?.joined}) : null));
-    const who = isEn ? `${en}${groupDisplay ? ` (${groupDisplay})` : ''}` : `${ko}${groupDisplay ? `(${groupDisplay})` : ''}`;
+    const identityKo=[isSolo?'':primaryGko,ko].filter(Boolean).join(' '),identityEn=[isSolo?'':(groupInfo.en||primaryGko),en].filter(Boolean).join(' ');
+    const who = isEn ? bilingualLabel(identityEn,identityKo) : bilingualLabel(identityKo,identityEn);
     // 개인 직캠이 MEMBER_FANCAM_MIN개 이상이면 제목 맨 앞을 '성현 직캠 모음'으로(2026-10-30) — 동명이인이 많아 그룹 이름도 같이
     const fancams = isSolo ? [] : memberFancams(a, primaryGko);
     const hasFancams = fancams.length >= MEMBER_FANCAM_MIN;
     const title = hasFancams
-      ? (isEn ? `${en} Fancams & Profile - ${groupInfo.en || primaryGko} ${en} | K-POP UNIVERSE` : `${ko} 직캠 모음·프로필 - ${primaryGko} ${ko}(${groupInfo.en || primaryGko} ${en}) | K-POP UNIVERSE`)
+      ? `${who} ${isEn ? 'Fancams & Profile' : '직캠 모음·프로필'} | K-POP UNIVERSE`
       : isEn
       ? `${who} Profile, Age, ${xm.titleBits.length ? 'Fancams, ' : ''}Birthday | K-POP UNIVERSE`
       : `${who} 프로필·나이·${xm.titleBits.length ? '직캠·' : ''}생일 | K-POP UNIVERSE`;
@@ -716,11 +720,10 @@ ${LIST_FWD}
   ${languageNav(isEn, altUrl)}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
   <a class="brand" href="${SITE}/${isEn ? 'en/g/' : 'g/'}" style="margin-left:10px;">${isEn ? 'All groups' : '그룹 전체'}</a>
-  <h1>${escHtml(displayName)}</h1>
-  ${subName ? `<div class="sub">${escHtml(subName)}</div>` : ''}
+  <h1>${escHtml(bilingualLabel(displayName,subName))}</h1>
   <img class="cover" src="${ogImage}" alt="${escHtml(displayName)}" loading="lazy">
   <div class="meta">
-    ${groupDisplay ? `<span><b>${groupLabel}</b> ${escHtml(groupDisplay)}</span>` : ''}
+    ${groupDisplay ? `<span><b>${groupLabel}</b> ${escHtml(bilingualLabel(groupDisplay,isEn?primaryGko:groupInfo.en))}</span>` : ''}
     ${bdayIso ? `<span><b>${debutLabel}</b> ${escHtml(a.bday)}${ag.age && a.active !== false ? (isEn ? ` (age ${ag.age})` : ` (만 ${ag.age}세)`) : ''}</span>` : ''}
     ${ag.debutAge ? `<span><b>${isEn ? 'Debut age' : '데뷔 나이'}</b> ${isEn ? ag.debutAge : ag.debutAge + '세'}</span>` : ''}
     ${agency ? `<span><b>${agencyLabel}</b> ${escHtml(agency)}</span>` : ''}
@@ -1299,7 +1302,7 @@ function songLinksHtml(gko, lang) {
   return `
     <h2>${isEn ? 'Fancams & stages by song' : '곡별 직캠·무대'}</h2>
     <ul class="member-list rel">
-      ${list.slice(0, 40).map(s => `<li><a href="${SITE}/${songPagePath(gko, s.b, lang)}">${escHtml(s.title)}</a></li>`).join('\n      ')}
+      ${list.slice(0, 40).map(s => `<li><a href="${SITE}/${songPagePath(gko, s.b, lang)}">${escHtml(s.bilingualTitle || s.title)}</a></li>`).join('\n      ')}
     </ul>`;
 }
 function buildSongPages() {
@@ -1408,7 +1411,7 @@ function memberSongLinksHtml(a, lang) {
   return `
     <h2>${isEn ? 'Fancams by song' : '곡별 직캠'}</h2>
     <div class="sp-tiles">
-      ${list.slice(0, 24).map(x => `<a class="sp-tile" href="${SITE}/${memberSongPagePath(a, x.s.b, lang)}">${x.s.cover ? `<img src="${escHtml(x.s.cover)}" alt="" loading="lazy">` : `<span class="sp-tile-ph"></span>`}<span class="sp-tile-t">${escHtml(x.s.title)}</span><span class="sp-tile-n">${isEn ? `${x.n} fancams` : `직캠 ${x.n}`}</span></a>`).join('\n      ')}
+      ${list.slice(0, 24).map(x => `<a class="sp-tile" href="${SITE}/${memberSongPagePath(a, x.s.b, lang)}">${x.s.cover ? `<img src="${escHtml(x.s.cover)}" alt="" loading="lazy">` : `<span class="sp-tile-ph"></span>`}<span class="sp-tile-t">${escHtml(x.s.bilingualTitle || x.s.title)}</span><span class="sp-tile-n">${isEn ? `${x.n} fancams` : `직캠 ${x.n}`}</span></a>`).join('\n      ')}
     </div>`;
 }
 
@@ -1433,11 +1436,13 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
   const date = String(s.date || '').replace(/-/g, '.');
   const yr = date.slice(0, 4);
   const gName = isEn ? (info.en || gko) : gko;
-  const gFull = isEn ? gName : `${gko}${info.en && info.en !== gko ? `(${info.en})` : ''}`;
+  const gFull = isEn ? bilingualLabel(gName,gko) : bilingualLabel(gko,info.en);
+  const songLabel = s.bilingualTitle || s.title;
   const cr = s.cr || {};
   const L = credit(cr.l), C = credit(cr.c), A = credit(cr.a);
   const ms = member || null;
   const mName = ms ? (isEn ? ms.nmEn : ms.nm) : '';
+  const mFull = ms ? (isEn ? bilingualLabel(ms.nmEn,ms.nm) : bilingualLabel(ms.nm,ms.nmEn)) : '';
   const vids = ms ? ms.vids : s.vids;
   const top = vids.slice(0, 30);
   const selfPath = ms ? memberSongPagePath(ms.a, s.b, lang) : songPagePath(gko, s.b, lang);
@@ -1451,28 +1456,28 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
   if (s.wins) facts.push(isEn ? `${s.wins} music show wins` : `음악방송 1위 ${s.wins}회`);
   let title, desc, h1, sub;
   if (ms) {
-    title = isEn ? `${mName} "${s.title}" Fancams - ${gName} ${mName} | K-POP UNIVERSE` : `${mName} ${s.title} 직캠 모음 - ${gko} ${mName}(${info.en || gko} ${ms.nmEn}) | K-POP UNIVERSE`;
-    desc = isEn ? `${gName} ${mName} "${s.title}" fancams and face cams — ${vids.length} videos, most viewed first. ${facts.join(', ')}.`
-                : `${gko} ${mName} '${s.title}' 직캠·페이스캠 ${vids.length}개를 조회수 순으로 모았어요. ${facts.join(', ')}.`;
-    h1 = isEn ? `${mName} "${s.title}" Fancams` : `${mName} '${s.title}' 직캠`;
-    sub = isEn ? `${gName} · ${vids.length} fancams` : `${gko} · 직캠 ${vids.length}개`;
+    title = isEn ? `${mName} "${songLabel}" Fancams - ${gFull} ${mFull} | K-POP UNIVERSE` : `${mName} ${songLabel} 직캠 모음 - ${gFull} ${mFull} | K-POP UNIVERSE`;
+    desc = isEn ? `${gName} ${mName} "${songLabel}" fancams and face cams — ${vids.length} videos, most viewed first. ${facts.join(', ')}.`
+                : `${gko} ${mName} '${songLabel}' 직캠·페이스캠 ${vids.length}개를 조회수 순으로 모았어요. ${facts.join(', ')}.`;
+    h1 = isEn ? `${mFull} "${songLabel}" Fancams` : `${mFull} '${songLabel}' 직캠`;
+    sub = isEn ? `${gFull} · ${vids.length} fancams` : `${gFull} · 직캠 ${vids.length}개`;
   } else {
-    title = isEn ? `${s.title} Fancams & Stages - ${gName} | K-POP UNIVERSE` : `${s.title} 직캠·무대 모음 - ${gFull} | K-POP UNIVERSE`;
+    title = isEn ? `${songLabel} Fancams & Stages - ${gFull} | K-POP UNIVERSE` : `${songLabel} 직캠·무대 모음 - ${gFull} | K-POP UNIVERSE`;
     desc = isEn
-      ? `${gName} "${s.title}" — ${facts.join(', ')}. ${s.vids.length} fancams and stage videos, most viewed first${L.length ? `, lyrics by ${L.slice(0, 3).join(', ')}` : ''}.`
-      : `${gko} '${s.title}' — ${facts.join(', ')}. 직캠·무대 영상 ${s.vids.length}개를 조회수 순으로${L.length ? `, 작사 ${L.slice(0, 3).join(', ')}` : ''}.`;
-    h1 = s.title;
-    sub = `${gName}${s.isTitle ? (isEn ? ' · Title track' : ' · 타이틀곡') : ''}`;
+      ? `${gName} "${songLabel}" — ${facts.join(', ')}. ${s.vids.length} fancams and stage videos, most viewed first${L.length ? `, lyrics by ${L.slice(0, 3).join(', ')}` : ''}.`
+      : `${gko} '${songLabel}' — ${facts.join(', ')}. 직캠·무대 영상 ${s.vids.length}개를 조회수 순으로${L.length ? `, 작사 ${L.slice(0, 3).join(', ')}` : ''}.`;
+    h1 = songLabel;
+    sub = `${gFull}${s.isTitle ? (isEn ? ' · Title track' : ' · 타이틀곡') : ''}`;
   }
   const heroImage = top[0] ? ytThumb(top[0].id) : ogImageForGroup(gko, info);
   const preview = songShareVideo(vids);
   const ogImage = preview ? ytThumb(preview.id) : heroImage;
   const jsonLd = ms ? {
     '@context': 'https://schema.org', '@type': 'CollectionPage', name: h1, url: selfUrl, description: desc,
-    about: [{ '@type': 'Person', name: mName, url: `${SITE}/${memberPagePath(ms.a, lang)}` }, { '@type': 'MusicRecording', name: s.title, url: songUrl, byArtist: { '@type': 'MusicGroup', name: gName } }],
+    about: [{ '@type': 'Person', name: mName, url: `${SITE}/${memberPagePath(ms.a, lang)}` }, { '@type': 'MusicRecording', name: songLabel, url: songUrl, byArtist: { '@type': 'MusicGroup', name: gName } }],
     mainEntity: { '@type': 'ItemList', itemListElement: top.slice(0, 10).map((v, i) => ({ '@type': 'ListItem', position: i + 1, url: `https://www.youtube.com/watch?v=${v.id}`, name: v.title })) },
   } : {
-    '@context': 'https://schema.org', '@type': 'MusicRecording', name: s.title, url: selfUrl,
+    '@context': 'https://schema.org', '@type': 'MusicRecording', name: songLabel, url: selfUrl,
     byArtist: { '@type': 'MusicGroup', name: gName, url: `${SITE}/${groupPagePath(gko, lang)}` },
     inAlbum: s.album ? { '@type': 'MusicAlbum', name: s.album } : undefined,
     datePublished: s.date ? String(s.date).replace(/\./g, '-').slice(0, 10) : undefined,
@@ -1491,7 +1496,7 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
       return { a, nm: isEn ? ((ge && ge.nameEn) || a.name.en || a.name.ko) : ((ge && ge.name) || a.name.ko), href: x ? `${SITE}/${memberSongPagePath(a, s.b, lang)}` : `${SITE}/${memberPagePath(a, lang)}`, n: x ? x.vids.length : 0 }; });
   }
   const facesHtml = faces.length ? `
-  <h2>${ms ? (isEn ? `Other members' "${s.title}" fancams` : `다른 멤버 '${s.title}' 직캠`) : (isEn ? 'Members in these videos' : '영상에 나온 멤버')}</h2>
+  <h2>${ms ? (isEn ? `Other members' "${songLabel}" fancams` : `다른 멤버 '${songLabel}' 직캠`) : (isEn ? 'Members in these videos' : '영상에 나온 멤버')}</h2>
   <div class="faces">
     ${faces.map(f => { const img = memberFaceUrl(f.a, gko); return `<a class="face" href="${f.href}"><span class="face-img">${img ? `<img src="${img}" alt="${escHtml(f.nm)}" loading="lazy">` : ''}</span><span class="face-nm">${escHtml(f.nm)}</span>${f.n ? `<span class="face-n">${isEn ? `${f.n} fancams` : `직캠 ${f.n}`}</span>` : ''}</a>`; }).join('\n    ')}
   </div>` : '';
@@ -1509,10 +1514,10 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
     ${others.map(o => `<a class="sp-tile" href="${SITE}/${songPagePath(gko, o.b, lang)}">${o.cover ? `<img src="${escHtml(o.cover)}" alt="" loading="lazy">` : `<span class="sp-tile-ph"></span>`}<span class="sp-tile-t">${escHtml(o.title)}</span><span class="sp-tile-n">${isEn ? `${o.vids.length} videos` : `영상 ${o.vids.length}`}</span></a>`).join('\n    ')}
   </div>` : '';
   const crumbs = ms
-    ? `<div class="crumbs"><a href="${SITE}/${groupPagePath(gko, lang)}">${escHtml(gName)}</a> › <a href="${SITE}/${memberPagePath(ms.a, lang)}">${escHtml(mName)}</a> › <a href="${songUrl}">${escHtml(s.title)}</a></div>`
+    ? `<div class="crumbs"><a href="${SITE}/${groupPagePath(gko, lang)}">${escHtml(gName)}</a> › <a href="${SITE}/${memberPagePath(ms.a, lang)}">${escHtml(mName)}</a> › <a href="${songUrl}">${escHtml(s.bilingualTitle || s.title)}</a></div>`
     : `<div class="crumbs"><a href="${SITE}/${groupPagePath(gko, lang)}">${escHtml(gName)}</a> › ${escHtml(s.title)}</div>`;
   const lead = ms
-    ? (isEn ? `${gName} ${mName}'s individual fancams and face cams of "${s.title}", most viewed first.` : `${gko} ${mName}의 '${s.title}' 개인 직캠·페이스캠을 조회수 순으로 모았어요.`)
+    ? (isEn ? `${gName} ${mName}'s individual fancams and face cams of "${songLabel}", most viewed first.` : `${gko} ${mName}의 '${songLabel}' 개인 직캠·페이스캠을 조회수 순으로 모았어요.`)
     : '';
   return `<!DOCTYPE html>
 <html lang="${isEn ? 'en' : 'ko'}">
@@ -1559,8 +1564,8 @@ ${LIST_FWD}
   ${vids.length > top.length ? `<p class="note">${isEn ? `Top ${top.length} of ${vids.length} videos` : `영상 ${vids.length}개 중 상위 ${top.length}개`}</p>` : ''}
   ${facesHtml}
   ${ms ? `
-  <h2>${isEn ? `All "${s.title}" videos` : `'${s.title}' 전체 영상`}</h2>
-  <p class="lead"><a href="${songUrl}">${escHtml(isEn ? `${gName} "${s.title}" fancams & stages (${s.vids.length})` : `${gko} '${s.title}' 직캠·무대 모음 (${s.vids.length}개)`)} ›</a></p>` : ''}
+  <h2>${isEn ? `All "${songLabel}" videos` : `'${songLabel}' 전체 영상`}</h2>
+  <p class="lead"><a href="${songUrl}">${escHtml(isEn ? `${gName} "${songLabel}" fancams & stages (${s.vids.length})` : `${gko} '${songLabel}' 직캠·무대 모음 (${s.vids.length}개)`)} ›</a></p>` : ''}
   ${otherTiles}
   ${creditsHtml}
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a> · <a href="${SITE}/about.html">${isEn ? 'About · removal requests' : '사이트 소개 · 삭제 요청'}</a></div>

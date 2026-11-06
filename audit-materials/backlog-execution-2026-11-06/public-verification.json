@@ -1,7 +1,53 @@
 {
-  "checkedAt": "2026-11-06T00:39:43.441Z",
+  "checkedAt": "2026-11-06T00:47:55.800Z",
   "status": 200,
   "rows": [
+    {
+      "id": "0aDg4Amd85I",
+      "group_ko": "여자친구",
+      "members": [],
+      "with_groups": [],
+      "with_members": [],
+      "cover_of_groups": [],
+      "cover_of_members": [],
+      "tags_manual": true,
+      "content_flag": "보류"
+    },
+    {
+      "id": "1rQmfYgy0OE",
+      "group_ko": "시크릿",
+      "members": [],
+      "with_groups": [],
+      "with_members": [],
+      "cover_of_groups": [],
+      "cover_of_members": [],
+      "tags_manual": true,
+      "content_flag": "보류"
+    },
+    {
+      "id": "46PrVlOgifk",
+      "group_ko": "여자친구",
+      "members": [],
+      "with_groups": [],
+      "with_members": [],
+      "cover_of_groups": [],
+      "cover_of_members": [],
+      "tags_manual": true,
+      "content_flag": "보류"
+    },
+    {
+      "id": "8dpHl5Cs9Ew",
+      "group_ko": "워너원",
+      "members": [
+        "배진영"
+      ],
+      "with_groups": [],
+      "with_members": [],
+      "cover_of_groups": [],
+      "cover_of_members": [],
+      "tags_manual": true,
+      "content_flag": "보류"
+    },
     {
       "id": "ADN86AMoMTw",
       "group_ko": "세븐틴",
@@ -15,6 +61,19 @@
       "cover_of_members": [],
       "tags_manual": true,
       "content_flag": null
+    },
+    {
+      "id": "alHqoj-LM4g",
+      "group_ko": "워너원",
+      "members": [
+        "배진영"
+      ],
+      "with_groups": [],
+      "with_members": [],
+      "cover_of_groups": [],
+      "cover_of_members": [],
+      "tags_manual": true,
+      "content_flag": "보류"
     },
     {
       "id": "CPD5M9pt8YY",
@@ -169,6 +228,19 @@
       "content_flag": null
     },
     {
+      "id": "VnbPo4FDafY",
+      "group_ko": "워너원",
+      "members": [
+        "배진영"
+      ],
+      "with_groups": [],
+      "with_members": [],
+      "cover_of_groups": [],
+      "cover_of_members": [],
+      "tags_manual": true,
+      "content_flag": "보류"
+    },
+    {
       "id": "VSN9EQ-j2yQ",
       "group_ko": "핑클",
       "members": [
@@ -199,10 +271,34 @@
       "content_flag": null
     },
     {
+      "id": "ws4SG3uhGi0",
+      "group_ko": "여자친구",
+      "members": [],
+      "with_groups": [],
+      "with_members": [],
+      "cover_of_groups": [],
+      "cover_of_members": [],
+      "tags_manual": true,
+      "content_flag": "보류"
+    },
+    {
       "id": "XyZ5RjNG77w",
       "group_ko": "핑클",
       "members": [
         "이효리"
+      ],
+      "with_groups": [],
+      "with_members": [],
+      "cover_of_groups": [],
+      "cover_of_members": [],
+      "tags_manual": true,
+      "content_flag": null
+    },
+    {
+      "id": "za0DT6qNY1w",
+      "group_ko": "오마이걸",
+      "members": [
+        "미미"
       ],
       "with_groups": [],
       "with_members": [],

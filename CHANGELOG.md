@@ -18,6 +18,9 @@
 
 - **[방향·미구현] [build_group_pages.js]** 사용자 한영 정적 페이지 통합 아이디어 검토. Google 공식 multilingual 지침은 언어별 URL/한 언어 중심 본문/상호 전환 링크를 권장하고 나란한 전체 번역을 피하도록 안내한다. 현재 hreflang·x-default·상단 language-nav 존재 확인. 언어별 주소 유지+인명/곡명 한영 병기 보완을 권장하며,통합/리다이렉트 등 새 구현은 승인된 범위에 추가하지 않았다. 근거 https://developers.google.com/search/docs/specialty/international/managing-multi-regional-sites
 
+- **[완료·DB 추가8행] [sql/codex_backlog_review_2026-11-06*.sql]** 식스센스 B사이드 za0DT6qNY1w는 공식 디글 키워드 미미/오마이걸 맥락으로 여자친구→오마이걸/미미 정정. 미확정 신원·클립 범위7개는 명확한 오주인 노출을 중단하되 삭제/무관으로 단정하지 않고 보류+수동잠금: 1rQmfYgy0OE 익명시크릿싱어,0aDg4Amd85I BIBI/Crush,46PrVlOgifk 이선빈,ws4SG3uhGi0 강하기드라마,VnbPo4FDafY JYP특집,alHqoj-LM4g 1998JYP무대,8dpHl5Cs9Ew DAZED ParkJinyoung. 기존주인/태그는 검수 추적용 보존(옳다는 뜻 아님),실제신원/등록아이돌 포함 범위 확인 뒤 재귀속/외부인 판단. 원본완전일치→적용/복원 ROLLBACK·실행후8행일치·전체두배치23/23 anon 필드 일치. 공개 정정16/보류7을 모두 올바른 주인으로 해결한23건으로 합산하지 않음.
+- **[완료·소스/검증] [build_group_pages.js·tools/seo_extra.js·tests/song-share-preview.test.js]** 사용자가 한영 이름/곡명 병기 동의 후 좁게 구현. 언어별URL/canonical/hreflang/설명·버튼 언어 유지,그룹/개인 제목·H1·곡페이지 주인 표기에 양언어 이름 사용. 곡은 원본에 '청개구리 (Naughty Boy)'처럼 실제 한영 병기가 있을 때만 복원해 title/OG/H1에 표시. 번역 생성/Feat·Inst·버전 괄호를 별칭으로 추가하지 않음,곡 기본키·URL·앱의 곡 필터·썸네일 선택은 그대로. 동일 영문명 중복표시 방지/HTML escaping/정상곡·버전보존 회귀 통과. 현재 승인에 따라 직전 미구현 방향을 실행으로 갱신한다.
+
 ## 2026-11-06 (Codex — 남은 투피엠 오귀속 검수 실행)
 - **[완료] [yt_channel_videos·sql/codex_attribution_2026-11-06*.sql]** 공식 Mnet/MBC4영상: bDpWUAvDfnI·8vabGtI72xE는 갓세븐/JAY B(a0598),z1eFI6wSr4U는 브라운아이드걸스/가인(a0981),X3nUZxdnwtU는 원어스/레이븐(a0435)으로 2PM 오귀속 정정. 레이븐의 2019커버는 탈퇴 전 원어스 활동이고 박재범은 원곡자이므로 cover_of_members=['박재범(2PM)']만 추가(기존 신원 키를 재사용,cover_of_groups=2PM 추가 아님). Feat.표기만으로 박재범의 실제 동반 출연을 추정하지 않아 with_*는 유지.
 - **[완료] [yt_channel_videos·sql/codex_namesake_2026-11-06*.sql]** KaWiUJigSbM·QIQl3MrERw0: 공식 MBC WORLD/KBS 제목의 격투기 선수 정찬성은 2PM 찬성이 아님. 영상에 명시된 박재범의 솔로 키 group_ko=박재범/members=[박재범]으로 한정 재귀속. 정찬성을 새 아이돌/친분/게스트로 등록하지 않고 기존 with_*/원곡 칸 유지.
