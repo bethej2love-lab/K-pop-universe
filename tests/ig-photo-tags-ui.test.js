@@ -13,6 +13,7 @@ function conn(url){return new Promise((res,rej)=>{const ws=new WebSocket(url);le
   ws.addEventListener('open',()=>res({send:(m,p)=>new Promise((a,b)=>{const i=++id;w.set(i,{a,b});ws.send(JSON.stringify({id:i,method:m,params:p}));}),close:()=>ws.close()}));
   ws.addEventListener('message',e=>{const m=JSON.parse(e.data);if(m.id&&w.has(m.id)){const{a,b}=w.get(m.id);w.delete(m.id);m.error?b(new Error(m.error.message)):a(m.result);}});ws.addEventListener('error',rej);});}
 async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw new Error(r.exceptionDetails.exception?.description||r.exceptionDetails.text);return r.result.value;}
+async function waitFor(c,expression){const end=Date.now()+5000;while(Date.now()<end){if(await ev(c,expression))return;await sleep(50);}throw new Error('Viewer state did not settle: '+expression+' '+JSON.stringify(await ev(c,"({i:_igv?.i,anim:_igv?.anim,editing:!!_igv?.tagEditor,img:document.getElementById('igv-img')?.currentSrc})")));}
 async function open(c,hash){
   await c.send('Page.navigate',{url:'about:blank'});await sleep(300);
   await c.send('Page.navigate',{url:`http://127.0.0.1:${PORT}/index.html${hash}`});
@@ -52,7 +53,7 @@ async function open(c,hash){
   assert(await ev(c,"!!document.querySelector('#igv-tag-editor input[data-artist-id=a0148]')&&!!document.querySelector('#igv-tag-editor input[data-artist-id=a0953]')"));ok('Shared member search distinguishes Hong Eunchae and DIA Eunchae');
   await ev(c,"document.querySelector('#igv-tag-editor input[data-artist-id=a0148]').click();document.querySelector('#igv-tag-editor [data-action=save]').click()");await sleep(100);
   assert.equal(await ev(c,"document.querySelectorAll('#igv-tags button').length"),2);assert.equal(await ev(c,'__igRows.length'),1);ok('Save publishes only this photo’s selected members');
-  await ev(c,"_igvGo(1)");await sleep(700);assert(await ev(c,"_igv.i===1&&document.querySelector('#igv-tags').hidden"));ok('Next untagged photo stays unchanged');
+  await waitFor(c,"!_igv.tagEditor");await ev(c,"_igvGo(1)");await waitFor(c,"_igv.i===1&&!_igv.anim");assert(await ev(c,"_igv.i===1&&document.querySelector('#igv-tags').hidden"));ok('Next untagged photo stays unchanged');
   await ev(c,"document.querySelector('#igv-tag-edit').click()");await sleep(100);await ev(c,"document.querySelector('#igv-tag-editor input[data-artist-id=\"'+__igMember.id+'\"]').click();window.__igFail=true;document.querySelector('#igv-tag-editor [data-action=save]').click()");await sleep(100);
   assert(await ev(c,"!!_igv.tagEditor&&_igv.tagEditor.ids.has(__igMember.id)&&!document.querySelector('.igv-edit-error').hidden&&__igRows.length===1"));ok('Failed save preserves the selection and existing public tags');
   await ev(c,"document.querySelector('#igv-tag-editor [data-action=save]').click()");await sleep(100);assert.equal(await ev(c,'__igRows.length'),2);
