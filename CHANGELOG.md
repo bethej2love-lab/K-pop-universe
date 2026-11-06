@@ -10,6 +10,8 @@
 - **[검증·로컬] [tests/ig-photo-tags.test.js·ig-photo-tags-ui.test.js·ig-viewer-keyboard.test.js]** 실제뷰어/편집UI20항목(영상체크박스보존·그룹/개인게시자카드·코르티스5명·동명이인·사진별저장/실패선택보존/공개숨김·태그카드·390px/짧은높이·동시편집충돌·1장해제의다른장보존·솔로제안·예외0)통과. UI의태그DB만메모리대체,운영태그쓰기0/권한은위실제DB별도검증. 사진ID/직렬화/기존영상검색동일성/중복읽기·기존사진본문/키보드12항목·문법통과. 새브라우저시험을전용CI매트릭스에추가,Node전용루프에서는해당브라우저파일만기존규칙대로제외.
 - **[검증·기존 대조] [audit-materials/instagram-tags-2026-11-06/baseline-smoke-source.cjs]** 로컬전체스모크는첫실행익명인증동기화시간초과,두번째유주딥링크대기실패. 새IG기능이없는a0953513abb의app/admin/CSS를메모리로서빙한대조도같은인증시간초과·별도피드썸네일NomXtCxN6D8/mqdefault404로실패. 원본파일/테스트스킵·인증로직·유튜브DB를고쳐서숨기지않고원격CI에서재확인. 기능UI검사20/20와전체스모크결과를구별.
 
+- **[완료·조회 규칙 보완] [app.js·admin.js·tests/ig-photo-tags*.test.js]** 원격 Node 검사42170323539가 신규 태그 조회/저장응답4곳의 상한 미명시를 발견. 게시물별 읽기는 기존 _sbSelectAll+photo_key 정렬로 전량 조회,PK/revision으로 사진1장에 제한된 쓰기 응답은 limit(1) 명시. 검사 예외/스킵 없이 select-pagination88/88·사진 로직·문법·실제 UI20/20 재통과. 운영 코르티스 전용 수집42170391788 success:최근6게시물/장ID88개/운영수동태그0건. 전체 계정 재수집 아님.
+
 ## 2026-11-06 (Codex — 인스타 사진별 태그·카드 연결·영상 표시 검토)
 - **[완료·현행 확인/코드 미변경] [app.js·tools/ig_business_discovery.mjs]** 사진은 공식oEmbed가 아닌 CDN이미지+자체뷰어(_openIgViewer). VIDEO는수집시thumbnail_url만저장하고재생media_url은버리며클릭시원본으로나감. 캐러셀c도이미지URL배열로저장하여장별영상/안정ID를보존하지않음. 발견공식사진선반은IMAGE/CAROUSEL만선별. '영상은기술적으로사이트재생불가'가아니라현재구현/수집정책의한계.
 - **[완료·카드연결 가능 지점] [app.js _igOwners·_openIgViewer]** 계정소유자에gko또는art객체가이미매핑되나뷰어의계정명은textContent뿐/카드클릭없음. 이름·프로필누르기→해당그룹/멤버카드가1순위권장. 게시계정과사진실제등장인물은구별하고사진넘김/뒤로복귀문맥보존.

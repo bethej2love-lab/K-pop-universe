@@ -12819,10 +12819,10 @@ async function _igTagEditorSave(view,draft){
     let query;
     if(!ids.length){
       if(!row){_igTagEditorClose();return;}
-      query=sb.from('ig_photo_tags').delete().eq('post_key',row.post_key).eq('photo_key',row.photo_key).eq('revision',row.revision).select();
+      query=sb.from('ig_photo_tags').delete().eq('post_key',row.post_key).eq('photo_key',row.photo_key).eq('revision',row.revision).select().limit(1);
     }else{
       const record={post_key:identity.postKey,photo_key:row?.photo_key||identity.photoKey,handle:String(view.h||'').toLowerCase(),media_id:identity.mediaId||row?.media_id||null,image_key:identity.imageKey,artist_ids:ids,revision:row?Number(row.revision)+1:1};
-      query=row?sb.from('ig_photo_tags').update(record).eq('post_key',row.post_key).eq('photo_key',row.photo_key).eq('revision',row.revision).select():sb.from('ig_photo_tags').insert(record).select();
+      query=row?sb.from('ig_photo_tags').update(record).eq('post_key',row.post_key).eq('photo_key',row.photo_key).eq('revision',row.revision).select().limit(1):sb.from('ig_photo_tags').insert(record).select().limit(1);
     }
     const{data,error}=await query;if(error)throw error;
     if(data?.length!==1)throw new Error('tag revision conflict');

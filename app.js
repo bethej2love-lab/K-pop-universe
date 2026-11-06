@@ -23321,7 +23321,7 @@ async function _igPhotoTagRows(postKey,force){
   if(prior?.promise)return prior.promise;
   if(!force&&prior&&Date.now()-prior.at<30000)return prior.rows;
   const entry={at:0,rows:[]};
-  entry.promise=(async()=>{const{data,error}=await sb.from('ig_photo_tags').select('post_key,photo_key,handle,media_id,image_key,artist_ids,revision').eq('post_key',postKey);if(error)throw error;entry.rows=data||[];entry.at=Date.now();entry.promise=null;return entry.rows;})();
+  entry.promise=(async()=>{const{data,error}=await _sbSelectAll(()=>sb.from('ig_photo_tags').select('post_key,photo_key,handle,media_id,image_key,artist_ids,revision').eq('post_key',postKey).order('photo_key'));if(error)throw error;entry.rows=data||[];entry.at=Date.now();entry.promise=null;return entry.rows;})();
   _igPhotoTagsCache.set(postKey,entry);
   try{return await entry.promise;}catch(e){if(_igPhotoTagsCache.get(postKey)===entry)_igPhotoTagsCache.delete(postKey);throw e;}
 }

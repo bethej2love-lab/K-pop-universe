@@ -40,7 +40,8 @@ assert(picker._vidTagFindMembers('은채',{limit:30}).some(a=>a.id==='a0953'));
 assert.equal(picker._vidTagFindMembers('CORTIS',{includeGroupNames:true,limit:30}).length,5);
 (async()=>{
  let calls=0,resolve;const wait=new Promise(r=>resolve=r);
- ctx.sb={from(){return{select(){return{eq:async()=>{calls++;await wait;return{data:[row],error:null};}};}};}};
+ vm.runInContext(app.slice(app.indexOf('async function _sbSelectAll('),app.indexOf('const _instaPicCache=')),ctx);
+ ctx.sb={from(){const q={select(){return q},eq(){return q},order(){return q},async range(){calls++;await wait;return{data:[row],error:null}}};return q;}};
  const p1=ctx._igPhotoTagRows('PostAbC_12'),p2=ctx._igPhotoTagRows('PostAbC_12'),p3=ctx._igPhotoTagRows('PostAbC_12',true);resolve();await Promise.all([p1,p2,p3]);assert.equal(calls,1,'deduplicate viewer reads');
  await ctx._igPhotoTagRows('PostAbC_12');assert.equal(calls,1);await ctx._igPhotoTagRows('PostAbC_12',true);assert.equal(calls,2);
  console.log('✅ Photo identity, renewal/removal safety, legacy IDs, shared video search and read deduplication');
