@@ -31,6 +31,8 @@
 - **[완료·후속 오사진 정정/재발 차단] [og_thumbs.json·tools/build_og_thumbs.mjs·member/디아/·en/member/dia/]** 새 솔로 디아 공유사진이 픽시DIA C48F3OEd_fU로 선택된 것을 최종 검사에서 발견(공식PIXY/oEmbed·DB그룹픽시 확인). 공식StoneMusic 솔로디아 망각의섬 UdDVIYATjtk/hqdefault(HTTP200)로 캐시1키와 생성된2페이지 각4참조만 정정,실제480×360메타 반영. 전체git검색상 해당솔로링크를 참조하는 HTML도이2개뿐. 캐시들여쓰기1칸/나머지키 보존. 미래주간갱신도 앱의 _ytGroupKoFor를 재사용해 디아#a1897로 조회하고,분리키 솔로는 다른그룹 동명이인폴백을 금지;누락표적조회도 동일키 사용. 실제공통함수로 솔로디아/픽시/아이유 분리·정상보존 검사 통과. 반복 전체SEO생성 대신 기존템플릿의 이미지값만2페이지 갱신하고 자동대기 실행은 취소한다.
 - **[완료·원격 브라우저] [Browser smoke42140386248]** 최종소스45dd70722d5의12개작업 전부success(스모크/모바일첫방문/닫기/한영프로그램/나침반/커서/모든영상진입/곡딥링크/회전/무대앨범/공유). 로컬 실제공유·민씨하한·디아구분16/16도통과. 공개데이터8파일 내용해시가 로컬정정본과일치(live-data-verification.json).
 
+- **[완료·옛앨범주소 정리] [g/씨엔블루/a/trigger/·en/g/cnblue/a/trigger/]** 최종배포대조에서 옛TRIGGER 5곡미니/2022.10.19정적페이지가 남은 것을 확인. 정정된TRIGGER는1곡싱글이므로 기존 albumsFor의 미니/정규3곡이상 발행조건에서 제외되어 빌더가 옛파일을 덮지 않았던 것. 본문을 다시 가짜미니로 만들거나 전체싱글발행정책을 늘리지 않고 해당양언어2옛주소를 같은언어CNBLUE정적페이지 canonical/noindex/즉시이동으로 전환. 현재그룹디스코의TRIGGER1곡/정식LETITSHINE3곡/9월선공개1곡은 보존. 전체재빌드 없이 이미발행중지된2파일만정리.
+
 ## 2026-11-06 (Codex — 남은 투피엠 오귀속 검수 실행)
 - **[완료] [yt_channel_videos·sql/codex_attribution_2026-11-06*.sql]** 공식 Mnet/MBC4영상: bDpWUAvDfnI·8vabGtI72xE는 갓세븐/JAY B(a0598),z1eFI6wSr4U는 브라운아이드걸스/가인(a0981),X3nUZxdnwtU는 원어스/레이븐(a0435)으로 2PM 오귀속 정정. 레이븐의 2019커버는 탈퇴 전 원어스 활동이고 박재범은 원곡자이므로 cover_of_members=['박재범(2PM)']만 추가(기존 신원 키를 재사용,cover_of_groups=2PM 추가 아님). Feat.표기만으로 박재범의 실제 동반 출연을 추정하지 않아 with_*는 유지.
 - **[완료] [yt_channel_videos·sql/codex_namesake_2026-11-06*.sql]** KaWiUJigSbM·QIQl3MrERw0: 공식 MBC WORLD/KBS 제목의 격투기 선수 정찬성은 2PM 찬성이 아님. 영상에 명시된 박재범의 솔로 키 group_ko=박재범/members=[박재범]으로 한정 재귀속. 정찬성을 새 아이돌/친분/게스트로 등록하지 않고 기존 with_*/원곡 칸 유지.

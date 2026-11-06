@@ -1,0 +1,14 @@
+[
+  {
+    "file": "g/씨엔블루/a/trigger/index.html",
+    "target": "https://kpop-universe.kr/g/씨엔블루/",
+    "oldState": "Incorrect 2022.10.19 Mini5 stale page",
+    "policy": "Corrected single excluded by existing album-page publication rules; retire stale article with same-language canonical redirect, not a newly invented mini or thin page"
+  },
+  {
+    "file": "en/g/cnblue/a/trigger/index.html",
+    "target": "https://kpop-universe.kr/en/g/cnblue/",
+    "oldState": "Incorrect 2022.10.19 Mini5 stale page",
+    "policy": "Corrected single excluded by existing album-page publication rules; retire stale article with same-language canonical redirect, not a newly invented mini or thin page"
+  }
+]
