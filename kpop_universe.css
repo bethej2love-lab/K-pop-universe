@@ -1676,6 +1676,11 @@
   .igv-edit-member small{display:block;font-size:10px;color:rgba(180,199,235,.65);margin-top:2px;}
   .igv-edit-member:has(input:checked){border-color:rgba(150,175,255,.75);background:rgba(126,156,255,.2);}
   .igv-edit-actions{display:flex;align-items:center;gap:7px;flex-shrink:0;}
+  .igv-edit-scope{display:flex;gap:4px;flex-shrink:0;}
+  .igv-edit-scope[hidden],.igv-edit-scope-note[hidden]{display:none;}
+  .igv-edit-scope button{flex:1;border:1px solid rgba(150,175,255,.2);border-radius:7px;padding:6px 8px;background:transparent;color:rgba(190,204,235,.7);font:inherit;font-size:11px;cursor:var(--kpu-cursor-pointer,pointer);}
+  .igv-edit-scope button[aria-pressed="true"]{background:rgba(126,156,255,.18);border-color:rgba(150,175,255,.6);color:#e4ecff;}
+  .igv-edit-scope-note{font-size:11px;line-height:1.4;color:#e7c798;flex-shrink:0;}
   .igv-edit-actions span{flex:1;}
   .igv-edit-actions button{min-height:36px;padding:6px 11px;border:1px solid rgba(150,175,235,.2);border-radius:8px;background:rgba(255,255,255,.05);color:#dce6ff;font:inherit;font-size:12px;cursor:var(--kpu-cursor-pointer,pointer);}
   .igv-edit-actions [data-action="save"]{background:rgba(126,156,255,.24);border-color:rgba(126,156,255,.5);}

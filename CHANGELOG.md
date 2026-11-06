@@ -3,6 +3,9 @@
 ## 2026-11-06 (Codex — 인스타 게시물 전체 사진 멤버 태그)
 - **[진행중] [admin.js·kpop_universe.css·sql/·tests/]** 사용자 요청: 같은 게시물20사진을 각각 누르지 않고 선택한 멤버를 전체 사진에 적용. 기존 멤버 검색/전체선택 및 사진별 편집 재사용,기본은 이사진/명시적으로 전체사진 선택,기존태그 변경범위 표시. 실제장ID/기존태그revision으로 대상사진만 원자저장/충돌시전량취소,다른게시물·영상 미변경.
 
+- **[완료·구현/로컬 검증] [admin.js·kpop_universe.css·tests/ig-photo-tags*.test.js]** 기존 사진 편집창에 이사진/전체사진N장 선택. 기본사진단위 유지,그룹전체선택 재사용·기존다른태그사진 변경장수 표시·전체저장/해제 버튼에대상장수 표기. 단일사진/공개/모바일 기존20항목+20장일괄저장/다음사진즉시표시/개별정정19장보존/기존태그안내/모바일버튼/실패·충돌전량보존/게시물전체해제 등29/29통과. 장별영상제외/중복불명식별자차단/기존사진키보존/20장초과차단 단위검증. 실제운영사진태깅없음.
+- **[완료·운영 DB] [sql/2026-11-06_ig_photo_tags_batch.sql·tests/ig-photo-tags-batch-rls.sql]** ig_photo_tags_apply_post 단일RPC/트랜잭션,SECURITY INVOKER·빈search_path·공개/anon실행회수·authenticated만실행+서버서명JWT 관리자/비익명검사+기존RLS. 장별expected_revision 비교/정렬행잠금,충돌·중간형식오류·동시신규삽입은전체롤백. 1~20장/중복키/형식검사. 실제DB에서20장생성→개별수정→전체변경/해제,다른게시물·대상아닌사진보존/중간실패롤백·anon/일반/위조metadata/익명admin차단 검증후전량ROLLBACK,fixture0건·새함수보안권고0 확인. 참고 https://supabase.com/docs/guides/database/functions
+
 ## 2026-11-06 (Codex — 아이돌이슈 계정·수집 게시물 제거)
 - **[완료·삭제/수집 차단/공개 반영] [artists.json·tools/ig_business_discovery.mjs·ig_excluded_accounts.json·DB]** 사용자 요청으로 @idolissue 계정/게시물 제거 및 이후 수집 차단. 매거진 목록이 아닌 파우 홍(a1465)의 개인 인스타 오등록으로 유입됨. 홍 본인/다른 링크는 유지하고 잘못된 계정 링크만 제거,파생자료 재생성,정확한 handle의 DB 계정(게시물6)/팔로워일별4/수동태그0 정리. 명시적 --only 실행도 제외목록을 우회하지 못하도록 검증.
 

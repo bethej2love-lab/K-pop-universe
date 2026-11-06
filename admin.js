@@ -12764,6 +12764,17 @@ _evEl('ev-venue-custom')?.addEventListener('input',e=>{
   if(el)el.textContent=near.length?('혹시 이거? — '+near.join(' / ')):'';
 });
 
+function _igTagPostTargets(m,rows){
+  if(m.ty==='VIDEO')return[];
+  const pics=Array.isArray(m.c)&&m.c.length?m.c:[m.u],targets=[],keys=new Set();
+  for(let i=0;i<pics.length;i++){
+    const identity=_igPhotoIdentity(m,i);if(!identity?.postKey)return[];
+    if(identity.type==='VIDEO')continue;
+    const row=_igPhotoTagRow(rows,identity),key=row?.photo_key||identity.photoKey;
+    if(keys.has(key))return[];keys.add(key);targets.push({identity,row});
+  }
+  return targets.length<=20?targets:[];
+}
 function _igTagEditorClose(){
   const ov=document.getElementById('igv-overlay');
   _igv?.tagEditor?.cleanup?.();
@@ -12777,12 +12788,14 @@ function _igTagEditorOpen(){
   const row=_igPhotoTagRow(view.tagRows,identity),ov=document.getElementById('igv-overlay');
   ov.querySelector('#igv-tag-editor')?.remove();
   const box=document.createElement('div');box.id='igv-tag-editor';
-  box.innerHTML='<div class="igv-edit-heading"></div><div class="igv-edit-selected"></div><input class="igv-edit-search" type="search" autocomplete="off"><div class="igv-edit-options"></div><div class="igv-edit-error" role="alert" hidden></div><div class="igv-edit-actions"><button type="button" data-action="clear"></button><span></span><button type="button" data-action="cancel"></button><button type="button" data-action="save"></button></div>';
-  const ko=currentLang==='ko',draft={identity,row,ids:new Set(row?.artist_ids||[]),saving:false,box};view.tagEditor=draft;
+  box.innerHTML='<div class="igv-edit-heading"></div><div class="igv-edit-scope" role="group"><button type="button" data-scope="photo"></button><button type="button" data-scope="post"></button></div><div class="igv-edit-scope-note" aria-live="polite" hidden></div><div class="igv-edit-selected"></div><input class="igv-edit-search" type="search" autocomplete="off"><div class="igv-edit-options"></div><div class="igv-edit-error" role="alert" hidden></div><div class="igv-edit-actions"><button type="button" data-action="clear"></button><span></span><button type="button" data-action="cancel"></button><button type="button" data-action="save"></button></div>';
+  const ko=currentLang==='ko',draft={identity,row,targets:_igTagPostTargets(view.m,view.tagRows),scope:'photo',ids:new Set(row?.artist_ids||[]),saving:false,box};view.tagEditor=draft;
   box.querySelector('.igv-edit-heading').textContent=ko?'이 사진에 나온 멤버':'Members in this photo';
   const input=box.querySelector('input');input.placeholder=ko?'멤버·그룹 검색':'Search members or groups';input.setAttribute('aria-label',input.placeholder);
   const buttons=Object.fromEntries([...box.querySelectorAll('[data-action]')].map(b=>[b.dataset.action,b]));
-  buttons.clear.textContent=ko?'전체 해제':'Clear';buttons.cancel.textContent=ko?'취소':'Cancel';buttons.save.textContent=ko?'저장':'Save';
+  buttons.clear.textContent=ko?'선택 해제':'Clear';buttons.cancel.textContent=ko?'취소':'Cancel';buttons.save.textContent=ko?'저장':'Save';
+  const scope=box.querySelector('.igv-edit-scope');scope.hidden=draft.targets.length<2;scope.setAttribute('aria-label',ko?'적용할 사진':'Apply to');
+  for(const b of scope.querySelectorAll('button')){b.textContent=b.dataset.scope==='photo'?(ko?'이 사진':'This photo'):(ko?'전체 사진 '+draft.targets.length+'장':'All '+draft.targets.length+' photos');b.addEventListener('click',()=>{if(draft.saving)return;draft.scope=b.dataset.scope;render();});}
   buttons.cancel.addEventListener('click',()=>{if(!draft.saving)_igTagEditorClose();});
   buttons.clear.addEventListener('click',()=>{draft.ids.clear();render();});
   const ownerGroup=view.owner?.gko||view.owner?.art?.group?.ko;
@@ -12799,7 +12812,12 @@ function _igTagEditorOpen(){
     const options=box.querySelector('.igv-edit-options');options.replaceChildren();
     for(const a of list){const choice=_vidTagMemberChoice(a,{value:a.id,checked:draft.ids.has(a.id),showGroup:true,onChange:()=>toggle(a.id)});choice.classList.add('igv-edit-member');options.appendChild(choice);}
     if(focusedId)[...options.querySelectorAll('input')].find(el=>el.dataset.artistId===focusedId)?.focus({preventScroll:true});
-    buttons.save.disabled=!draft.ids.size&&!row;buttons.clear.disabled=!draft.ids.size;
+    const bulk=draft.scope==='post',changed=bulk?draft.targets.filter(t=>t.row&&t.row.photo_key!==row?.photo_key&&(t.row.artist_ids.length!==draft.ids.size||t.row.artist_ids.some(id=>!draft.ids.has(id)))).length:0;
+    for(const b of scope.querySelectorAll('button'))b.setAttribute('aria-pressed',String(b.dataset.scope===draft.scope));
+    const note=box.querySelector('.igv-edit-scope-note');note.hidden=!changed;note.textContent=ko?'기존 태그가 있는 '+changed+'장도 변경돼.':changed+' photos with existing tags will also change.';
+    box.querySelector('.igv-edit-heading').firstChild.textContent=bulk?(ko?'게시물 전체 사진의 멤버':'Members in all post photos'):(ko?'이 사진에 나온 멤버':'Members in this photo');
+    buttons.save.textContent=bulk?(ko?'전체 '+draft.targets.length+'장 '+(draft.ids.size?'저장':'해제'):(draft.ids.size?'Save all ':'Clear all ')+draft.targets.length):(ko?'저장':'Save');
+    buttons.save.disabled=!draft.ids.size&&!(bulk?draft.targets.some(t=>t.row):row);buttons.clear.disabled=!draft.ids.size;
   }
   input.addEventListener('input',render);
   buttons.save.addEventListener('click',()=>_igTagEditorSave(view,draft));
@@ -12816,6 +12834,14 @@ async function _igTagEditorSave(view,draft){
   if(ids.length>50||ids.some(id=>!ARTISTS.some(a=>a.id===id))){errorBox.textContent=ko?'선택한 멤버를 확인해줘.':'Check the selected members.';errorBox.hidden=false;return;}
   draft.saving=true;box.setAttribute('aria-busy','true');box.querySelectorAll('button,input').forEach(el=>el.disabled=true);
   try{
+    if(draft.scope==='post'){
+      const{data,error}=await sb.rpc('ig_photo_tags_apply_post',{p_post_key:identity.postKey,p_handle:String(view.h||'').toLowerCase(),p_artist_ids:ids,p_photos:draft.targets.map(t=>({photo_key:t.row?.photo_key||t.identity.photoKey,media_id:t.identity.mediaId||t.row?.media_id||null,image_key:t.identity.imageKey,expected_revision:t.row?.revision??null}))});
+      if(error)throw error;
+      const rows=data||[];_igPhotoTagsCache.set(identity.postKey,{rows,at:Date.now()});view.tagRows=rows;
+      if(_igv===view&&view.tagEditor===draft)_igTagEditorClose();
+      else if(_igv&&!_igv.tagEditor&&_igPostKey(_igv.m.p)===identity.postKey){_igv.tagRows=rows;_igvRenderTags();}
+      return;
+    }
     let query;
     if(!ids.length){
       if(!row){_igTagEditorClose();return;}
@@ -12832,8 +12858,8 @@ async function _igTagEditorSave(view,draft){
     if(_igv===view&&view.tagEditor===draft)_igTagEditorClose();
     else if(_igv&&!_igv.tagEditor&&_igPostKey(_igv.m.p)===identity.postKey){_igv.tagRows=rows;_igvRenderTags();}
   }catch(e){
-    if(e.message==='tag revision conflict'||e.code==='23505'){_igPhotoTagsCache.delete(identity.postKey);view.tagLoad='error';}
-    if(_igv===view&&view.tagEditor===draft){errorBox.textContent=(e.message==='tag revision conflict'||e.code==='23505')?(ko?'다른 창에서 변경됐어. 취소한 뒤 다시 열어줘.':'Changed elsewhere. Cancel and reopen the editor.'):(ko?'저장하지 못했어. 선택은 유지했으니 다시 시도해줘.':'Could not save. Your selection is kept; please retry.');errorBox.hidden=false;}
+    if(e.message==='tag revision conflict'||e.code==='23505'||e.code==='40001'){_igPhotoTagsCache.delete(identity.postKey);view.tagLoad='error';}
+    if(_igv===view&&view.tagEditor===draft){errorBox.textContent=(e.message==='tag revision conflict'||e.code==='23505'||e.code==='40001')?(ko?'다른 창에서 변경됐어. 취소한 뒤 다시 열어줘.':'Changed elsewhere. Cancel and reopen the editor.'):(ko?'저장하지 못했어. 선택은 유지했으니 다시 시도해줘.':'Could not save. Your selection is kept; please retry.');errorBox.hidden=false;}
   }finally{
     draft.saving=false;box.removeAttribute('aria-busy');box.querySelectorAll('button,input').forEach(el=>el.disabled=false);
   }

@@ -38,6 +38,14 @@ assert.equal(picker._vidTagGroupMembers('코르티스').length,5);
 assert(picker._vidTagFindMembers('은채',{limit:30}).some(a=>a.id==='a0148'));
 assert(picker._vidTagFindMembers('은채',{limit:30}).some(a=>a.id==='a0953'));
 assert.equal(picker._vidTagFindMembers('CORTIS',{includeGroupNames:true,limit:30}).length,5);
+vm.runInContext(admin.slice(admin.indexOf('function _igTagPostTargets('),admin.indexOf('function _igTagEditorClose(')),ctx);
+const twenty={...source,c:Array.from({length:20},(_,i)=>source.c[i%2])};twenty.mi=twenty.c.map((u,i)=>({u,id:String(70000+i),ty:'IMAGE'}));
+assert.equal(ctx._igTagPostTargets(twenty,[]).length,20);
+const mixed={...twenty,mi:twenty.mi.map((m,i)=>({...m,ty:i===5?'VIDEO':'IMAGE'}))};assert.equal(ctx._igTagPostTargets(mixed,[]).length,19,'known video slides are not photo-tag targets');
+assert.equal(ctx._igTagPostTargets({...source,c:[source.c[0],source.c[0]]},[]).length,0,'ambiguous legacy identities never silently partially apply');
+assert.equal(ctx._igTagPostTargets({...source,ty:'VIDEO'},[]).length,0);
+assert.equal(ctx._igTagPostTargets(ids,[row])[0].row,row,'bulk applies retain a legacy key and its expected revision');
+assert.equal(ctx._igTagPostTargets({...source,c:Array(21).fill(source.c[0]),mi:Array.from({length:21},(_,i)=>({u:source.c[0],id:String(80000+i),ty:'IMAGE'}))},[]).length,0,'more than twenty photos is not silently truncated');
 (async()=>{
  let calls=0,resolve;const wait=new Promise(r=>resolve=r);
  vm.runInContext(app.slice(app.indexOf('async function _sbSelectAll('),app.indexOf('const _instaPicCache=')),ctx);
