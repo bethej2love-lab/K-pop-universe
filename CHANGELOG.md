@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-11-09 (Claude Code — 2PM 남은 오귀속 49건 마무리)
+- **[데이터] 47행 정정·잠금** sql/jaypark_2pm_rest_2026-11-09.sql(+undo, 백업 표 _bak_2pm_rest_20261109) — Codex 11-06 remaining-2pm.json 전부 검토. 2010 탈퇴 후 솔로 활동(심심타파·4가지쇼·댄싱9·박재범의 드라이브·더 시즌즈·짐종국·얼루어 등) 41행 → group_ko 박재범/members [박재범]. NS윤지 엠카(k0eW-RS3zDM) 외부인 표시 해제·솔로. 월간남친(mrbprkmmK-g) 주인만 박재범, 다그룹 with 유지. 박재범이 주제지만 실출연 미확정 3행(다나카 썰·짐종국 김동현/김종국 쇼츠)은 group_ko만 박재범, 멤버 비움 — p9qrNPkDRfY의 찬성 오태그(격투기 정찬성) 제거. I-LAND 입장 테스트 2행 → 엔하이픈/정원, JUN.K 제거, 원곡 cover_of_members 박재범(2PM).
+- **[유지 2]** WLC-UJL9pLk(나비 마음이 다쳐서 feat. 재범, 2009 2PM 시절 곡)는 2PM 그대로. SkSonfrO83Q(빌드업 보이스 실루엣 V10, 참가자 익명)는 보류 유지. 반영 확인: 45행 박재범·2행 엔하이픈, 전부 tags_manual=true.
+
 ## 2026-11-09 (Claude Code — 업데이트 소식 주간 갱신)
 - **[데이터] updates.json 2026-11-09 항목** — 11-04~08 사용자 눈에 보이는 변화 5줄(차트 통합·Rewind·For You 최애 새 영상·공연 정렬·데이터 정정). 실기기 검증 전인 휴대폰 전체화면 터치 수정은 제외.
 - **[확인] 11-06 Codex 인스타 전체사진 태그 배포 확인 완료** — Pages 42180428384는 cancelled(뒤 배포로 대체), 이후 Pages success. 공개 app.js `_ADMIN_JS_VER=20261106-5f81b1eb`의 admin.js에 ig_photo_tags_apply_post·data-scope 존재, 로컬 admin.js와 SHA256 일치. Browser 42180360817 success.
