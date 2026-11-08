@@ -2,6 +2,7 @@
 
 ## 2026-11-09 (Claude Code — 업데이트 소식 주간 갱신)
 - **[데이터] updates.json 2026-11-09 항목** — 11-04~08 사용자 눈에 보이는 변화 5줄(차트 통합·Rewind·For You 최애 새 영상·공연 정렬·데이터 정정). 실기기 검증 전인 휴대폰 전체화면 터치 수정은 제외.
+- **[확인] 11-06 Codex 인스타 전체사진 태그 배포 확인 완료** — Pages 42180428384는 cancelled(뒤 배포로 대체), 이후 Pages success. 공개 app.js `_ADMIN_JS_VER=20261106-5f81b1eb`의 admin.js에 ig_photo_tags_apply_post·data-scope 존재, 로컬 admin.js와 SHA256 일치. Browser 42180360817 success.
 
 ## 2026-11-06 (Codex — 인스타 게시물 전체 사진 멤버 태그)
 - **[구현 완료·배포 확인 중] [admin.js·kpop_universe.css·sql/·tests/]** 사용자 요청: 같은 게시물20사진을 각각 누르지 않고 선택한 멤버를 전체 사진에 적용. 기존 멤버 검색/전체선택 및 사진별 편집 재사용,기본은 이사진/명시적으로 전체사진 선택,기존태그 변경범위 표시. 실제장ID/기존태그revision으로 대상사진만 원자저장/충돌시전량취소,다른게시물·영상 미변경.
