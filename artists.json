@@ -29943,6 +29943,29 @@
     ],
     "discography": [
       {
+        "title": "100일의 거짓말 OST Part 5",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/34/644/15134644_20261106145440_500.jpg",
+        "releaseDate": "2026.11.08",
+        "trackCount": 2,
+        "titleTrack": "그마저도 사랑이라",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "그마저도 사랑이라",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "그마저도 사랑이라 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15134644"
+      },
+      {
         "title": "EMOTIONS",
         "type": "싱글",
         "isMain": true,
@@ -141449,6 +141472,29 @@
     },
     "left": "2021.05.22",
     "discography": [
+      {
+        "title": "라라라",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/30/797/15130797_20261105161754_500.jpg",
+        "releaseDate": "2026.11.08",
+        "trackCount": 2,
+        "titleTrack": "라라라",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "라라라",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "라라라 (inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15130797"
+      },
       {
         "title": "미워도 사랑하니까",
         "type": "싱글",
