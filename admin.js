@@ -12864,3 +12864,31 @@ async function _igTagEditorSave(view,draft){
     draft.saving=false;box.removeAttribute('aria-busy');box.querySelectorAll('button,input').forEach(el=>el.disabled=false);
   }
 }
+
+// ── 관리자 하루 요약 팝업(2026-11-09) — 그날 첫 접속 때 한 번, 최근 24시간 새 방문·즐겨찾기 수.
+// 숫자는 관리자 홈 지표 카드와 같은 get_app_metrics(자동 테스트 제외)를 p_days=1로 부른다.
+// 부팅 직후 DB 혼잡을 피하려고 몇 초 뒤에 조회. 조회 실패면 조용히 넘기고(다음 접속에 다시 시도) 표시한 날만 기록.
+async function _admDailyDigest(){
+  const day=new Date(Date.now()+9*3600e3).toISOString().slice(0,10); // KST 날짜
+  try{if(localStorage.getItem('kpu_adm_digest_day')===day)return;}catch(e){}
+  let m;
+  try{const{data,error}=await sb.rpc('get_app_metrics',{p_days:1});if(error)throw error;m=typeof data==='string'?JSON.parse(data):data;}catch(e){return;}
+  if(!m||document.getElementById('adm-digest'))return;
+  try{localStorage.setItem('kpu_adm_digest_day',day);}catch(e){}
+  const box=document.createElement('div');
+  box.id='adm-digest';box.setAttribute('role','status');
+  box.style.cssText='position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(320px,calc(100vw - 32px));box-sizing:border-box;padding:14px 16px 12px;border-radius:16px;background:rgba(14,18,34,0.94);border:1px solid rgba(150,175,225,0.25);box-shadow:0 10px 30px rgba(0,0,0,0.45);color:#e8edf8;font-size:13px;cursor:pointer;';
+  const row=(lbl,val)=>`<div style="display:flex;justify-content:space-between;gap:12px;padding:3px 0"><span style="color:rgba(200,212,240,0.75)">${lbl}</span><b>${val}</b></div>`;
+  box.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px"><b style="font-size:15px">Daily</b><span style="font-size:11px;color:rgba(150,175,225,0.75)">최근 24시간 · 자동 테스트 제외</span></div>`
+    +row('새 방문',`${m.new_visitors??0}명`)
+    +row('즐겨찾기 새로 한 사람',`${m.fav_users??0}명`+(m.fav_adds?` <span style="font-weight:400;color:rgba(200,212,240,0.6)">(${m.fav_adds}건)</span>`:''))
+    +row('방문자',`${m.visitors??0}명`)
+    +`<div style="display:flex;justify-content:flex-end;margin-top:8px"><button type="button" id="adm-digest-home" style="background:rgba(120,150,230,0.22);border:0;color:#dfe7ff;border-radius:999px;padding:6px 12px;font-size:12px;cursor:pointer">관리자 홈</button></div>`;
+  document.body.appendChild(box);
+  if(typeof _bringToFront==='function')_bringToFront(box);
+  box.addEventListener('click',ev=>{
+    box.remove();
+    if(ev.target.id==='adm-digest-home'&&typeof _admHomeOpen==='function')_admHomeOpen();
+  });
+}
+setTimeout(()=>{_admDailyDigest();},4000);

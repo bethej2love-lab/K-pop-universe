@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-11-09 (Claude Code — 관리자 하루 요약 팝업)
+- **[어드민] Daily 팝업** admin.js `_admDailyDigest` — 사용자 요청 "매일 즐겨찾기 새로 한 사람·새 유입자 수 팝업". 관리자가 그날(KST) 처음 앱을 열면 4초 뒤 한 번: 최근 24시간 새 방문·즐겨찾기 새로 한 사람(건수)·방문자. 누르면 닫힘, `관리자 홈` 버튼은 관리자 홈 열기. 조회 실패면 표시 안 하고 다음 접속에 재시도. 폰 너비 헤드리스 렌더 확인.
+- **[DB] get_app_metrics에 fav_users·fav_adds 추가** sql/2026-11-09_app_metrics_favs.sql(실행·반영 확인) — 기존 필드 그대로, app_events favorite_group/member k=add(자동 테스트 제외). 참고: 즐겨찾기 이벤트는 11-03 이후 0건이라 당분간 0명으로 나올 수 있음.
+
 ## 2026-11-09 (Claude Code — 2PM 남은 오귀속 49건 마무리)
 - **[데이터] 47행 정정·잠금** sql/jaypark_2pm_rest_2026-11-09.sql(+undo, 백업 표 _bak_2pm_rest_20261109) — Codex 11-06 remaining-2pm.json 전부 검토. 2010 탈퇴 후 솔로 활동(심심타파·4가지쇼·댄싱9·박재범의 드라이브·더 시즌즈·짐종국·얼루어 등) 41행 → group_ko 박재범/members [박재범]. NS윤지 엠카(k0eW-RS3zDM) 외부인 표시 해제·솔로. 월간남친(mrbprkmmK-g) 주인만 박재범, 다그룹 with 유지. 박재범이 주제지만 실출연 미확정 3행(다나카 썰·짐종국 김동현/김종국 쇼츠)은 group_ko만 박재범, 멤버 비움 — p9qrNPkDRfY의 찬성 오태그(격투기 정찬성) 제거. I-LAND 입장 테스트 2행 → 엔하이픈/정원, JUN.K 제거, 원곡 cover_of_members 박재범(2PM).
 - **[유지 2]** WLC-UJL9pLk(나비 마음이 다쳐서 feat. 재범, 2009 2PM 시절 곡)는 2PM 그대로. SkSonfrO83Q(빌드업 보이스 실루엣 V10, 참가자 익명)는 보류 유지. 반영 확인: 45행 박재범·2행 엔하이픈, 전부 tags_manual=true.
