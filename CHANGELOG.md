@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-11-09 (Claude Code — Codex 검수 152~160차 커버 역할 역전 26행)
+- **[데이터] sql/codex_audit152_160_2026-11-09.sql**(+undo, 백업 _bak_audit152_160_20261109) — "(원곡: X)" 커버가 원곡 그룹 영상으로 붙어 있던 것. 부른 그룹으로 옮기고 원곡은 cover_of로: 빌리 TOMBOY, 로켓펀치 Nobody, ATBO 2(동방신기&슈주 / 싸이), 시그니처 풍선, 티엔엑스 봄날, 씨아이엑스 Really Really(위너 이승훈 오태그 제거), 라잇썸 TT, 엑스디너리 히어로즈 2, 선예(나윤권X선예X벤 AKMU), 솔지·초아·설아(아이들), KEMIZ 미미·안유진·이영지(2NE1), 엠카 MC 성한빈(세븐틴 주인 → 제베원, 명재현·소희는 소속 미확인이라 안 붙임), 휘서 메들리에 원곡 아이들 추가.
+- 미등록 공연자 9행 무관(원곡만 기록): 배우 문상민 2, 에일리 O.O 4, 크리샤 츄, 정동환, 최유리. PROJECT 7 팀 무대 2행은 팀원 명단 미확인이라 보류. 전부 잠금. 154차 웬디 라디오(gnBFKwMjwPM)·158차 MJ 요리왕(GsEXrZlZcEE)은 DB에 없음.
+
 ## 2026-11-09 (Claude Code — 앨범 곡 수 불일치 30 → 12)
 - **[재스캔] 182·186~194차 현재값 대조** — 라이즈 Fame/RIIZING/Epilogue, 제베원 BLUE PARADISE, SM THE BALLAD 일본어 Blind ID는 11-06 Codex 정정으로 이미 맞음. 같은 songId에 다른 제목 붙은 것 0(트리플에스 일본어/영어 표기 5묶음은 같은 곡 표기).
 - **[데이터] 수록곡 보충 7앨범** tools/melon_track_refill.mjs를 melonVia 번호로도 읽게 한 임시 실행(앨범명 대조 유지) — H.O.T. Outside Castle 5집 9→14(정식 표시판, [3] variant는 그대로)·Age of Peace OST 0→10, 신화 We 11집 5→10·Unchanging Pt.1 3→5, NRG 7집 4→12, 샤크라 크리스마스 스페셜 4→13, 쥬얼리 3집 8→12. Unchanging·샤크라는 멜론 앨범명 표기만 달라(UNCHANGING PART1 / Chakra's Ringing Gingle Bells) 번호 지정 예외 허용. 기존 songId·크레딧 보존 병합.
