@@ -1,0 +1,26 @@
+-- Codex 검수 171~179차 정정 (2026-11-09 Claude Code). 20행. 백업 _bak_audit171_179_20261109
+create table if not exists public._bak_audit171_179_20261109 as select * from public.yt_channel_videos where id in ('AKHg2tvbXEs','Aayt9m08Rxg','l64vrYbVhd4','KBQ7kFvvNBk','woV6dkJq0Ss','HDz2k5ludt0','N_C9CAOn41k','PyVwt9nIouE','fUvesMJe5Z4','dCQPMxCM4ZA','quJlAw1qjBo','V6llFEguv84','MRJ1I88XqhM','fj8sk-b6NG4','7wDIh1BKzx8','EL4x-xttSeQ','ZyE7UH1DwVU','TdDxqEA4tR4','SkBlK21hp_A','7ZK1QSX7UN8');
+alter table public._bak_audit171_179_20261109 enable row level security;
+update public.yt_channel_videos set tags_manual=false where id in ('AKHg2tvbXEs','Aayt9m08Rxg','l64vrYbVhd4','KBQ7kFvvNBk','woV6dkJq0Ss','HDz2k5ludt0','N_C9CAOn41k','PyVwt9nIouE','fUvesMJe5Z4','dCQPMxCM4ZA','quJlAw1qjBo','V6llFEguv84','MRJ1I88XqhM','fj8sk-b6NG4','7wDIh1BKzx8','EL4x-xttSeQ','ZyE7UH1DwVU','TdDxqEA4tR4','SkBlK21hp_A','7ZK1QSX7UN8');
+update public.yt_channel_videos set group_ko='소녀시대', members=array['써니']::text[] where id='AKHg2tvbXEs' and group_ko='온앤오프';
+update public.yt_channel_videos set group_ko='소녀시대', members=array['써니']::text[] where id='Aayt9m08Rxg' and group_ko='온앤오프';
+update public.yt_channel_videos set group_ko='아이오아이', with_groups='{}'::text[] where id='l64vrYbVhd4' and group_ko='온앤오프';
+update public.yt_channel_videos set group_ko='아이오아이', members=array['정채연','강미나']::text[], content_flag=null where id='KBQ7kFvvNBk' and group_ko='온앤오프';
+update public.yt_channel_videos set group_ko='걸스데이', members=array['박소진']::text[] where id='woV6dkJq0Ss' and group_ko='온앤오프';
+update public.yt_channel_videos set group_ko='걸스데이', members=array['박소진']::text[], content_flag=null where id='HDz2k5ludt0' and group_ko='온앤오프';
+update public.yt_channel_videos set content_flag='무관' where id='N_C9CAOn41k' and group_ko='온앤오프';
+update public.yt_channel_videos set content_flag='무관' where id='PyVwt9nIouE' and group_ko='온앤오프';
+update public.yt_channel_videos set content_flag='무관' where id='fUvesMJe5Z4' and group_ko='온앤오프';
+update public.yt_channel_videos set members='{}'::text[], content_flag='무관' where id='dCQPMxCM4ZA' and group_ko='소진';
+update public.yt_channel_videos set group_ko='걸스데이', members=array['박소진']::text[] where id='quJlAw1qjBo' and group_ko='소진';
+update public.yt_channel_videos set group_ko='피원하모니', members=array['테오','기호','지웅','인탁','소울','종섭']::text[], with_groups='{}'::text[], with_members='{}'::text[] where id='V6llFEguv84' and group_ko='더보이즈';
+update public.yt_channel_videos set group_ko='르세라핌', members=array['홍은채']::text[] where id='MRJ1I88XqhM' and group_ko='더보이즈';
+update public.yt_channel_videos set members='{}'::text[], content_flag='무관' where id='fj8sk-b6NG4' and group_ko='더보이즈';
+update public.yt_channel_videos set members='{}'::text[], content_flag='무관' where id='7wDIh1BKzx8' and group_ko='더보이즈';
+update public.yt_channel_videos set members=array['상연','제이콥','뉴','큐']::text[] where id='EL4x-xttSeQ' and group_ko='더보이즈';
+update public.yt_channel_videos set group_ko='아이브', members=array['이서']::text[], with_groups=array['제로베이스원']::text[], with_members=array['한유진(제로베이스원)']::text[] where id='ZyE7UH1DwVU' and group_ko='스트레이키즈';
+update public.yt_channel_videos set members='{}'::text[], content_flag='무관' where id='TdDxqEA4tR4' and group_ko='위너';
+update public.yt_channel_videos set with_members='{}'::text[], content_flag='무관' where id='SkBlK21hp_A' and group_ko='나인뮤지스';
+update public.yt_channel_videos set members=array['금조','소진','혜미','경리']::text[] where id='7ZK1QSX7UN8' and group_ko='나인뮤지스';
+update public.yt_channel_videos set tags_manual=true where id in ('AKHg2tvbXEs','Aayt9m08Rxg','l64vrYbVhd4','KBQ7kFvvNBk','woV6dkJq0Ss','HDz2k5ludt0','N_C9CAOn41k','PyVwt9nIouE','fUvesMJe5Z4','dCQPMxCM4ZA','quJlAw1qjBo','V6llFEguv84','MRJ1I88XqhM','fj8sk-b6NG4','7wDIh1BKzx8','EL4x-xttSeQ','ZyE7UH1DwVU','TdDxqEA4tR4','SkBlK21hp_A','7ZK1QSX7UN8');
+select id, group_ko, members, with_groups, with_members, cover_of_groups, cover_of_members, content_flag, tags_manual from public.yt_channel_videos where id in ('AKHg2tvbXEs','Aayt9m08Rxg','l64vrYbVhd4','KBQ7kFvvNBk','woV6dkJq0Ss','HDz2k5ludt0','N_C9CAOn41k','PyVwt9nIouE','fUvesMJe5Z4','dCQPMxCM4ZA','quJlAw1qjBo','V6llFEguv84','MRJ1I88XqhM','fj8sk-b6NG4','7wDIh1BKzx8','EL4x-xttSeQ','ZyE7UH1DwVU','TdDxqEA4tR4','SkBlK21hp_A','7ZK1QSX7UN8');

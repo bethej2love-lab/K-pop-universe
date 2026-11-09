@@ -1,0 +1,3 @@
+update public.yt_channel_videos set tags_manual=false where id in ('AKHg2tvbXEs','Aayt9m08Rxg','l64vrYbVhd4','KBQ7kFvvNBk','woV6dkJq0Ss','HDz2k5ludt0','N_C9CAOn41k','PyVwt9nIouE','fUvesMJe5Z4','dCQPMxCM4ZA','quJlAw1qjBo','V6llFEguv84','MRJ1I88XqhM','fj8sk-b6NG4','7wDIh1BKzx8','EL4x-xttSeQ','ZyE7UH1DwVU','TdDxqEA4tR4','SkBlK21hp_A','7ZK1QSX7UN8');
+update public.yt_channel_videos v set group_ko=b.group_ko, members=b.members, with_groups=b.with_groups, with_members=b.with_members, cover_of_groups=b.cover_of_groups, cover_of_members=b.cover_of_members, content_flag=b.content_flag from public._bak_audit171_179_20261109 b where v.id=b.id;
+update public.yt_channel_videos v set tags_manual=b.tags_manual from public._bak_audit171_179_20261109 b where v.id=b.id;
