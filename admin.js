@@ -9640,7 +9640,8 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // key는 뺐다 — "SHINee Key's Glow-Up"처럼 대문자 시작 Key가 거의 항상 샤이니 키
     const _ROSTER_PLAIN_WORDS=new Set(['new','on','one','sun','star','king','boy','only','wave','soul','good','high','sky','blue','love','rise','baby','angel','fire','rain','moon','light','dream','gold','hero','lucky','summer','winter','spring','shine','glow','fan']); // ten·nine은 이름으로 대문자 시작 표기가 흔해 뺐다("Ten used the snow filter" = 웨이션브이 텐)
     const _rosterHit=t=>(/^[A-Za-z]/.test(t)&&_ROSTER_PLAIN_WORDS.has(String(t).toLowerCase().replace(/[^a-z]/g,'')))
-      ?(hitHashtag(t)||new RegExp('(^|[^A-Za-z])'+_atmEscRe(String(t).toUpperCase())+'(?![A-Za-z])').test(rawTitle||''))
+      // 소문자로만 쓰인 경우만 막는다 — "P1Harmony Soul"·"(Mill,Love,Nine ver.)"처럼 대문자로 시작하면 이름이다
+      ?(hitHashtag(t)||new RegExp('(^|[^A-Za-z])'+_atmEscRe(String(t)[0].toUpperCase())+'('+_atmEscRe(String(t).slice(1).toLowerCase())+'|'+_atmEscRe(String(t).slice(1).toUpperCase())+')(?![A-Za-z])').test(rawTitle||''))
       :(hit(t,normMinusUnits)||hitHashtagSubstring(t));
     const matched=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)&&!_atmLeftBefore(a,gko,publishedAt)&&(_m2NameVariants(a).some(_rosterHit)||(a.matchAliases||[]).some(_aliasHit)||_rosterTagHit(a)
       // 그 그룹 시절 활동명(제롬)·매칭 전용 이름(matchNames — 오마이걸 비니) — 그룹이 확정된 이 블록에서만(위 _atmRosterFor 주석과 같은 이유)
@@ -9772,7 +9773,9 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // 자체 채널 멤버 해시태그(2026-11-09) — 채널 그룹명이 제목에 없고 게스트 그룹만 잡히면(넥스지 채널 "#StrayKids #한 선배님 … #HYUI")
   // 역추론을 안 타서 채널 멤버 휴이가 빠졌다. 해시태그로 적힌 채널 그룹 현 멤버만 찾아 채널 그룹을 맨 앞에 넣는다(주인은 원래 채널이 정한다).
   if(selfGko&&GROUPS[selfGko]&&matchedGroupKos.length&&!matchedGroupKos.includes(selfGko)){
-    const _selfMs=ARTISTS.filter(a=>_artistGroups(a).some(g=>g&&g.ko===selfGko)&&!_atmLeftBefore(a,selfGko,publishedAt)&&(_m2NameVariants(a).some(v=>v&&hitHashtag(v))||_rosterTagHit(a))).map(a=>a.name.ko);
+    // 자기 채널이라 본문 표기도 인정("[재찬 JAECHAN] … #FANTASYBOYS") — 두 글자↑ 한글·네 글자↑ 영문만(한 글자·짧은 영문은 해시태그로만)
+    const _selfHit=v=>v&&(hitHashtag(v)||((/[가-힣]/.test(v)?[...v].length>=2:String(v).replace(/[^A-Za-z]/g,'').length>=4)&&hit(v,normMinusUnits)));
+    const _selfMs=ARTISTS.filter(a=>_artistGroups(a).some(g=>g&&g.ko===selfGko)&&!_atmLeftBefore(a,selfGko,publishedAt)&&(_m2NameVariants(a).some(_selfHit)||_rosterTagHit(a))).map(a=>a.name.ko);
     if(_selfMs.length){matchedGroupKos.unshift(selfGko);membersByGroup[selfGko]=_selfMs;_trace.push({rule:'self_roster_hashtag',token:selfGko,effect:_selfMs.join(',')});}
   }
   if(matchedGroupKos.length){
@@ -9814,6 +9817,8 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
       const _gone=g=>!!publishedAt&&(_atmLeftBefore(a,g,publishedAt)||(()=>{const e=_disbandCutoffDate(g);return e&&String(publishedAt).slice(0,10)>e;})());
       // 게스트 단계 **시작 시점**의 그룹으로 본다 — 루프 중에 게스트로 넣은 그룹까지 보면 같은 그룹 두 번째 사람이 빠졌다("(With. #신유 #도훈)"의 도훈)
       if(gs.some(g=>_preGuestGroups.has(g)&&!_gone(g))||_atmInferExcluded(a))continue;
+      // 이미 잡힌 그룹 멤버로 들어간 사람은 다시 안 붙인다 — 멤버 추출은 해체일을 안 보고 여기선 봐서 TFN 제로가 "티에프엔[제로] + 제로[제로]"로 두 번 붙었다
+      if(gs.some(g=>_preGuestGroups.has(g)&&(membersByGroup[g]||[]).includes(a.name.ko)))continue;
       toks.splice(0,toks.length,...toks.filter(t=>!_ATM_COMMON_KO_WORDS.has(t)&&_m2GuestNameIdx.get(String(t).toLowerCase())===1&&!_m2FullNameShadowed(t,a,title)&&!_m2IsGroupName(t)
         &&!(/^[가-힣]{2}$/.test(t)&&_m2FullNameOwnersCache&&[...(_m2FullNameOwnersCache.get(t)||[])].some(f=>f!==a.name.ko)))); // 2글자 한글이 다른 사람 성 뗀 이름이면(은채=홍은채) 동명이인 — 제외
       // 4만 제목 차분에서 나온 오탐을 막는 조건(2026-10-28): 해시태그는 태그 전체가 이름과 같을 때만(#TEN_The_Story·#은채의스타일기 ✗),

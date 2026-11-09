@@ -1,0 +1,1 @@
+update public.yt_channel_videos v set group_ko=b.group_ko, members=b.members, with_groups=b.with_groups, with_members=b.with_members from public._bak_chal_retag3_20261109 b where v.id=b.id and v.tags_manual=false;
