@@ -73,7 +73,8 @@ function merge(keep, drop) {
   // 차수: 멜론 타입이 '정규'뿐이고 지우는 쪽이 '정규 1집'이면 숫자를 살린다(도경수 BLISS)
   if (keep.type && drop.type && /^\D+$/.test(keep.type) && new RegExp(`^${keep.type}\\s*\\d+집$`).test(drop.type)) keep.type = drop.type;
   if ((drop.tracks || []).length > (keep.tracks || []).length && srcRank(keep) > 0) keep.tracks = drop.tracks;
-  else for (const t of keep.tracks || []) { if (t.songId) continue; const h = (drop.tracks || []).find(x => x.songId && tnorm(x.title) === tnorm(t.title)); if (h) t.songId = h.songId; }
+  // 빈 이름끼리는 같은 곡이 아니다 — 일본어·중국어 곡명은 tnorm이 빈 문자열이 돼 서로 다른 곡 번호를 옮겨 붙였다(Codex 193차와 같은 함정)
+  else for (const t of keep.tracks || []) { if (t.songId || !tnorm(t.title)) continue; const h = (drop.tracks || []).find(x => x.songId && tnorm(x.title) === tnorm(t.title)); if (h) t.songId = h.songId; }
   // 제목: 멜론 제목이 레거시 제목을 따옴표·괄호로 감싸기만 했으면 깔끔한 쪽
   const m = srcRank(keep) === 0 ? keep : drop, o = m === keep ? drop : keep;
   if (m !== o && o.title && core(o.title).length >= 2) {

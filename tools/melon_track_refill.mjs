@@ -14,6 +14,7 @@ import os from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
+import { mergeRefillTracks } from './melon_match_util.mjs';
 const execFileP = promisify(execFile);
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const P = f => path.join(ROOT, f);
@@ -86,12 +87,10 @@ async function fix(al, who) {
   const d = parse(html);
   if (!nameOk(al.title, d.albumName)) { st.nameMiss++; log.push(`  ✗ 앨범명 불일치 ${who} | ${al.title} ≠ 멜론 ${d.albumName} (#${id})`); return; }
   if (d.tracks.length <= cur.length) { st.notLonger++; return; }
-  const used = new Set();
-  al.tracks = d.tracks.map(p => {
-    const k = cur.findIndex((o, i) => !used.has(i) && ((o.songId && o.songId === p.songId) || tnorm(o.title) === tnorm(p.title)));
-    const o = k >= 0 ? (used.add(k), cur[k]) : {};
-    return { ...p, ...o, no: p.no, isTitle: !!(p.isTitle || o.isTitle), ...(p.songId || o.songId ? { songId: o.songId || p.songId } : {}) };
-  });
+  // 공용 규칙(melon_match_util) — 빈 이름끼리 안 붙이고, 같은 곡 번호인데 같은 문자 체계로 제목이 다르면 공식 제목(Codex 192·193차)
+  const mr = mergeRefillTracks(cur, d.tracks);
+  al.tracks = mr.tracks;
+  mr.retitled.forEach(x => log.push(`  ↺ 제목 정정 ${who} | ${al.title} | ${x.from} → ${x.to} (#${x.songId})`));
   if (!al.melonAlbumId) al.melonAlbumId = String(id);
   if (!al.titleTrack) { const t = al.tracks.find(x => x.isTitle); if (t) al.titleTrack = t.title; }
   st.filled++;

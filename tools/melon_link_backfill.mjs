@@ -20,6 +20,7 @@ import { promisify } from 'node:util';
 
 const execFileP = promisify(execFile);
 import { dedupKey, isVariant, detectRegion, parseTypeFromTitle } from './spotify_disco_lib.mjs';
+import { assignSongIds } from './melon_match_util.mjs';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const P = f => path.join(ROOT, f);
@@ -311,16 +312,11 @@ async function fixAlbum(al, kind, key) {
   if (!rows.length) { st.noDetail++; return; }
   // 옛 데이터 일부는 곡이 문자열 목록이다(인피니트H FLY HIGH 등 49장) — 객체로 바꿔야 songId를 단다(2026-10-15 크래시)
   al.tracks = al.tracks.map((t, i) => typeof t === 'string' ? { no: i + 1, title: t } : t);
-  const used = new Set();
-  al.tracks.forEach((t, i) => {
-    st.tracks++;
-    if (t.songId) return;
-    const tn = tnorm(t.title);
-    let r = rows.find(x => !used.has(x.songId) && tnorm(x.title) === tn);
-    // 제목 표기가 달라도 곡 수가 같으면 순서로(멜론에서 그대로 가져온 앨범이 대부분)
-    if (!r && rows.length === al.tracks.length && rows[i] && !used.has(rows[i].songId)) r = rows[i];
-    if (r) { t.songId = r.songId; used.add(r.songId); st.songFilled++; }
-  });
+  // 공용 규칙(melon_match_util) — 기존 번호 예약·빈 이름 비교 금지·순서 대조는 제목이 하나도 안 맞을 때만(Codex 191·193차)
+  st.tracks += al.tracks.length;
+  const r = assignSongIds(al.tracks, rows);
+  st.songFilled += r.filled; st.positional = (st.positional || 0) + r.positional;
+  if (r.unmatched.length && al.tracks.some(t => t.songId)) { st.unmatched = (st.unmatched || 0) + r.unmatched.length; if (process.env.DUMP) console.log('UNMATCHED', key, '|', al.title, '|', r.unmatched.join(' / ')); }
 }
 const seed = (key, list) => { for (const al of list || []) if (al.melonAlbumId) { if (!usedIds.has(key)) usedIds.set(key, new Set()); usedIds.get(key).add(al.melonAlbumId); } };
 for (const [ko, g] of Object.entries(GROUPS)) seed(ko, g.discography);
