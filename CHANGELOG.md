@@ -6,6 +6,8 @@
 - **[데이터] 곡 수 숫자 정정 12앨범** — 멜론 공식 곡 수 = 우리 곡 목록인데 trackCount만 1 많던 것: 엔시티 위시 WISH, 베몬 춤, 킥플립 4, 젝스키스 ANOTHER LIGHT, 나우즈 5. build_slim_data(트랙 43941 일치)·validate-data 오류 0.
 - **[데이터] 남은 12 중 10 처리** — 멜론 아티스트 앨범 목록(albumPaging)에서 진짜 앨범 번호 확인 후 melonAlbumId 지정·보충: 신화 Wedding 6집 6→13(멜론명 '너의 결혼식' #26431, 정식 순서로 — 183차 벅스 순서와 일치, 타이틀 너의 결혼식·중독 둘 다 유지), Only One 3집 #4249 8→14, T.O.P 2집 #4247 7→13, 핑클 Fin.K.L(멜론 '핑클 디지털 앨범' #308719) 1→3·영원 4집 #304202 8→15·White 2집 #5291 8→12·Blue Rain 1집 #3248 8→11, 베이비복스 Boyish Story 5집 #2463 10→16. 곡 수 숫자만: 핑클 Memories & Melodies 12→13, 쥬얼리 Sophisticated 9→11. 트랙 43982 일치·validate 오류 0.
 - **⏳ 남은 2(멜론에 해당 판 없음)** 베이비복스 Ya Ya Ya(1998 싱글 6곡 중 4곡), 나우즈 Fly to the youth 한국어판(멜론엔 중국어판만). 그대로 둠.
+- **[데이터] 중복 앨범 2 → variant** H.O.T. Forever 2001 Live Concert(멜론 #2251 Forever와 23곡 동일, 발매일은 멜론 2001.05.01 쪽 유지), A2O MAY B.B.B(같은 앨범 제목만 다른 비대표 쪽). 숨김 판본 제외 후 같은 주인·같은 멜론 번호 중복 0(온리원오프 chrOme arts 싱글/미니는 별개 발매). 미미 크레딧(184차)·BTOB Born to Beat·CNBLUE TRIGGER는 이미 정정돼 있음 확인.
+- **⏳ 블락비 Jackpot(2014, 10곡)** melonAlbumId 10758392가 2021 일본 앨범(Very Good 일본어판 등)을 가리킴 — 실제 어느 판인지 근거 부족해 보류(229차 미확정분).
 
 ## 2026-11-09 (Claude Code — Codex 검수 146~194차 기록 이관)
 - **[발견] 146~194차 검수 기록 49개가 main에 없었음** — Codex 작업 폴더 .audit-worktrees/seo-language-switch의 커밋 안 된 CHANGELOG(1,129줄)와 근거 폴더에만 존재. 195~245차는 11-06 Codex가 이관·실행 상태표(execution-status.json)를 남겼지만 146~194차는 누락. → audit-materials/backlog-146-194/original-audit-notes-146-194.md + 근거 폴더 content-audit-2026-11-04·05, youtube-quota-2026-11-04 복사.
