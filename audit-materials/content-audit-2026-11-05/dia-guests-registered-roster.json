@@ -1,0 +1,140 @@
+[
+  {
+    "id": "a0028",
+    "name": {
+      "ko": "제노",
+      "en": "Jeno"
+    },
+    "group": {
+      "ko": "엔시티 드림",
+      "en": "NCT Dream"
+    },
+    "bday": "2000.04.23"
+  },
+  {
+    "id": "a0029",
+    "name": {
+      "ko": "재민",
+      "en": "Jaemin"
+    },
+    "group": {
+      "ko": "엔시티 드림",
+      "en": "NCT Dream"
+    },
+    "bday": "2000.08.13"
+  },
+  {
+    "id": "a0128",
+    "name": {
+      "ko": "수빈",
+      "en": "Soobin"
+    },
+    "group": {
+      "ko": "투모로우바이투게더",
+      "en": "TOMORROW X TOGETHER"
+    },
+    "bday": "2000.12.05"
+  },
+  {
+    "id": "a0148",
+    "name": {
+      "ko": "홍은채",
+      "en": "Eunchae"
+    },
+    "group": {
+      "ko": "르세라핌",
+      "en": "LE SSERAFIM"
+    },
+    "bday": "2006.11.16"
+  },
+  {
+    "id": "a0338",
+    "name": {
+      "ko": "성한빈",
+      "en": "Hanbin"
+    },
+    "group": {
+      "ko": "제로베이스원",
+      "en": "ZEROBASEONE"
+    },
+    "bday": "2001.06.13"
+  },
+  {
+    "id": "a0658",
+    "name": {
+      "ko": "수빈",
+      "en": "Soobin"
+    },
+    "group": {
+      "ko": "우주소녀",
+      "en": "WJSN"
+    },
+    "bday": "1996.07.14"
+  },
+  {
+    "id": "a0953",
+    "name": {
+      "ko": "은채",
+      "en": "Eunchae"
+    },
+    "group": {
+      "ko": "다이아",
+      "en": "DIA"
+    },
+    "groups": [
+      {
+        "ko": "다이아",
+        "en": "DIA"
+      }
+    ],
+    "bday": "1999.05.26"
+  },
+  {
+    "id": "a1397",
+    "name": {
+      "ko": "수빈",
+      "en": "Subin"
+    },
+    "group": {
+      "ko": "솔로",
+      "en": "Solo"
+    },
+    "groups": [
+      {
+        "ko": "솔로",
+        "en": "Solo"
+      },
+      {
+        "ko": "달샤벳",
+        "en": "Dal Shabet",
+        "active": false,
+        "left": "2018.12.05"
+      }
+    ],
+    "bday": "1994.02.12"
+  },
+  {
+    "id": "a1892",
+    "name": {
+      "ko": "은채",
+      "en": "Eunchae"
+    },
+    "group": {
+      "ko": "버가부",
+      "en": "bugAboo"
+    },
+    "bday": "1999.10.06"
+  },
+  {
+    "id": "a1798",
+    "name": {
+      "ko": "디아",
+      "en": "Dia"
+    },
+    "group": {
+      "ko": "픽시",
+      "en": "PIXY"
+    },
+    "bday": "2001.07.16"
+  }
+]

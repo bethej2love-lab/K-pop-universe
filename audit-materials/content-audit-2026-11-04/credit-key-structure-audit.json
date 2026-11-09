@@ -1,0 +1,1592 @@
+{
+  "revision": "a213912575",
+  "keys": 1585,
+  "matched": 1572,
+  "orphans": [
+    {
+      "key": "김청하\u0000아이오아이",
+      "name": "김청하",
+      "group": "아이오아이",
+      "aid": "968265",
+      "lyrics": 24,
+      "compose": 4,
+      "matchIds": []
+    }
+  ],
+  "multiple": [
+    {
+      "key": "소희\u0000솔로\u0000a1142",
+      "name": "소희",
+      "group": "솔로",
+      "aid": "2741592",
+      "lyrics": 0,
+      "compose": 0,
+      "matchIds": [
+        "a0520",
+        "a1142",
+        "a1671"
+      ]
+    },
+    {
+      "key": "윤조\u0000솔로\u0000a1191",
+      "name": "윤조",
+      "group": "솔로",
+      "aid": "672259",
+      "lyrics": 0,
+      "compose": 0,
+      "matchIds": [
+        "a1191",
+        "a1663"
+      ]
+    },
+    {
+      "key": "유주\u0000솔로\u0000a1475",
+      "name": "유주",
+      "group": "솔로",
+      "aid": "2621357",
+      "lyrics": 0,
+      "compose": 0,
+      "matchIds": [
+        "a0607",
+        "a1475"
+      ]
+    },
+    {
+      "key": "키오\u0000솔로\u0000a1530",
+      "name": "키오",
+      "group": "솔로",
+      "aid": "868886",
+      "lyrics": 0,
+      "compose": 0,
+      "matchIds": [
+        "a1530",
+        "a1723"
+      ]
+    },
+    {
+      "key": "키오\u0000솔로\u0000a1723",
+      "name": "키오",
+      "group": "솔로",
+      "aid": "2900793",
+      "lyrics": 1,
+      "compose": 2,
+      "matchIds": [
+        "a1530",
+        "a1723"
+      ]
+    },
+    {
+      "key": "소희\u0000솔로\u0000a0520",
+      "name": "소희",
+      "group": "솔로",
+      "aid": "673289",
+      "lyrics": 0,
+      "compose": 0,
+      "matchIds": [
+        "a0520",
+        "a1142",
+        "a1671"
+      ]
+    },
+    {
+      "key": "가은\u0000솔로\u0000a1400",
+      "name": "가은",
+      "group": "솔로",
+      "aid": "672378",
+      "lyrics": 3,
+      "compose": 0,
+      "matchIds": [
+        "a1006",
+        "a1400"
+      ]
+    },
+    {
+      "key": "조아\u0000솔로\u0000a1698",
+      "name": "조아",
+      "group": "솔로",
+      "aid": "676934",
+      "lyrics": 0,
+      "compose": 0,
+      "matchIds": [
+        "a1268",
+        "a1698"
+      ]
+    },
+    {
+      "key": "레나\u0000솔로\u0000a0473",
+      "name": "레나",
+      "group": "솔로",
+      "aid": "2295763",
+      "lyrics": 8,
+      "compose": 5,
+      "matchIds": [
+        "a0473",
+        "a1047"
+      ]
+    },
+    {
+      "key": "현아\u0000솔로\u0000a0524",
+      "name": "현아",
+      "group": "솔로",
+      "aid": "449401",
+      "lyrics": 42,
+      "compose": 10,
+      "matchIds": [
+        "a0524",
+        "a1401"
+      ]
+    },
+    {
+      "key": "유주\u0000솔로\u0000a0607",
+      "name": "유주",
+      "group": "솔로",
+      "aid": "858238",
+      "lyrics": 32,
+      "compose": 19,
+      "matchIds": [
+        "a0607",
+        "a1475"
+      ]
+    },
+    {
+      "key": "가은\u0000솔로\u0000a1006",
+      "name": "가은",
+      "group": "솔로",
+      "aid": "675611",
+      "lyrics": 1,
+      "compose": 2,
+      "matchIds": [
+        "a1006",
+        "a1400"
+      ]
+    }
+  ],
+  "repeatPeople": [
+    {
+      "id": "a0305",
+      "keys": [
+        {
+          "key": "최예나\u0000아이즈원",
+          "name": "최예나",
+          "group": "아이즈원",
+          "aid": "2399724",
+          "lyrics": 15,
+          "compose": 7,
+          "matchIds": [
+            "a0305"
+          ]
+        },
+        {
+          "key": "최예나\u0000솔로",
+          "name": "최예나",
+          "group": "솔로",
+          "aid": "2399724",
+          "lyrics": 15,
+          "compose": 7,
+          "matchIds": [
+            "a0305"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a0308",
+      "keys": [
+        {
+          "key": "이채연\u0000아이즈원",
+          "name": "이채연",
+          "group": "아이즈원",
+          "aid": "2399731",
+          "lyrics": 6,
+          "compose": 0,
+          "matchIds": [
+            "a0308"
+          ]
+        },
+        {
+          "key": "이채연\u0000솔로",
+          "name": "이채연",
+          "group": "솔로",
+          "aid": "2399731",
+          "lyrics": 6,
+          "compose": 0,
+          "matchIds": [
+            "a0308"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a0309",
+      "keys": [
+        {
+          "key": "권은비\u0000아이즈원",
+          "name": "권은비",
+          "group": "아이즈원",
+          "aid": "2399727",
+          "lyrics": 7,
+          "compose": 8,
+          "matchIds": [
+            "a0309"
+          ]
+        },
+        {
+          "key": "권은비\u0000솔로",
+          "name": "권은비",
+          "group": "솔로",
+          "aid": "2399727",
+          "lyrics": 7,
+          "compose": 8,
+          "matchIds": [
+            "a0309"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a0310",
+      "keys": [
+        {
+          "key": "조유리\u0000아이즈원",
+          "name": "조유리",
+          "group": "아이즈원",
+          "aid": "2399719",
+          "lyrics": 4,
+          "compose": 2,
+          "matchIds": [
+            "a0310"
+          ]
+        },
+        {
+          "key": "조유리\u0000솔로",
+          "name": "조유리",
+          "group": "솔로",
+          "aid": "2399719",
+          "lyrics": 4,
+          "compose": 2,
+          "matchIds": [
+            "a0310"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a0474",
+      "keys": [
+        {
+          "key": "지수연\u0000위키미키",
+          "name": "지수연",
+          "group": "위키미키",
+          "aid": "1866213",
+          "lyrics": 6,
+          "compose": 10,
+          "matchIds": [
+            "a0474"
+          ]
+        },
+        {
+          "key": "지수연\u0000솔로",
+          "name": "지수연",
+          "group": "솔로",
+          "aid": "1866213",
+          "lyrics": 6,
+          "compose": 10,
+          "matchIds": [
+            "a0474"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a0515",
+      "keys": [
+        {
+          "key": "유빈\u0000원더걸스",
+          "name": "유빈",
+          "group": "원더걸스",
+          "aid": "673291",
+          "lyrics": 32,
+          "compose": 16,
+          "matchIds": [
+            "a0515"
+          ]
+        },
+        {
+          "key": "유빈\u0000솔로",
+          "name": "유빈",
+          "group": "솔로",
+          "aid": "673291",
+          "lyrics": 32,
+          "compose": 16,
+          "matchIds": [
+            "a0515"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a0517",
+      "keys": [
+        {
+          "key": "선미\u0000원더걸스",
+          "name": "선미",
+          "group": "원더걸스",
+          "aid": "22938",
+          "lyrics": 55,
+          "compose": 47,
+          "matchIds": [
+            "a0517"
+          ]
+        },
+        {
+          "key": "선미\u0000솔로",
+          "name": "선미",
+          "group": "솔로",
+          "aid": "22938",
+          "lyrics": 55,
+          "compose": 47,
+          "matchIds": [
+            "a0517"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a0519",
+      "keys": [
+        {
+          "key": "선예\u0000원더걸스",
+          "name": "선예",
+          "group": "원더걸스",
+          "aid": "227506",
+          "lyrics": 8,
+          "compose": 4,
+          "matchIds": [
+            "a0519"
+          ]
+        },
+        {
+          "key": "선예\u0000솔로",
+          "name": "선예",
+          "group": "솔로",
+          "aid": "227506",
+          "lyrics": 8,
+          "compose": 4,
+          "matchIds": [
+            "a0519"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a0523",
+      "keys": [
+        {
+          "key": "전지윤\u0000포미닛",
+          "name": "전지윤",
+          "group": "포미닛",
+          "aid": "520282",
+          "lyrics": 48,
+          "compose": 46,
+          "matchIds": [
+            "a0523"
+          ]
+        },
+        {
+          "key": "전지윤\u0000솔로",
+          "name": "전지윤",
+          "group": "솔로",
+          "aid": "520282",
+          "lyrics": 48,
+          "compose": 46,
+          "matchIds": [
+            "a0523"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a0545",
+      "keys": [
+        {
+          "key": "조현영\u0000레인보우",
+          "name": "조현영",
+          "group": "레인보우",
+          "lyrics": 0,
+          "compose": 0,
+          "matchIds": [
+            "a0545"
+          ]
+        },
+        {
+          "key": "조현영\u0000솔로",
+          "name": "조현영",
+          "group": "솔로",
+          "aid": "471744",
+          "lyrics": 5,
+          "compose": 1,
+          "matchIds": [
+            "a0545"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a0556",
+      "keys": [
+        {
+          "key": "여진\u0000루셈블",
+          "name": "여진",
+          "group": "루셈블",
+          "aid": "1383168",
+          "lyrics": 4,
+          "compose": 0,
+          "matchIds": [
+            "a0556"
+          ]
+        },
+        {
+          "key": "여진\u0000솔로",
+          "name": "여진",
+          "group": "솔로",
+          "aid": "1383168",
+          "lyrics": 4,
+          "compose": 0,
+          "matchIds": [
+            "a0556"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a0571",
+      "keys": [
+        {
+          "key": "SORN\u0000씨엘씨",
+          "name": "SORN",
+          "group": "씨엘씨",
+          "aid": "868641",
+          "lyrics": 0,
+          "compose": 0,
+          "matchIds": [
+            "a0571"
+          ]
+        },
+        {
+          "key": "SORN\u0000솔로",
+          "name": "SORN",
+          "group": "솔로",
+          "aid": "868641",
+          "lyrics": 0,
+          "compose": 0,
+          "matchIds": [
+            "a0571"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a0606",
+      "keys": [
+        {
+          "key": "예린\u0000여자친구",
+          "name": "예린",
+          "group": "여자친구",
+          "aid": "858236",
+          "lyrics": 2,
+          "compose": 1,
+          "matchIds": [
+            "a0606"
+          ]
+        },
+        {
+          "key": "예린\u0000솔로",
+          "name": "예린",
+          "group": "솔로",
+          "aid": "858236",
+          "lyrics": 2,
+          "compose": 1,
+          "matchIds": [
+            "a0606"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a0608",
+      "keys": [
+        {
+          "key": "한승우\u0000빅톤",
+          "name": "한승우",
+          "group": "빅톤",
+          "aid": "1229244",
+          "lyrics": 49,
+          "compose": 27,
+          "matchIds": [
+            "a0608"
+          ]
+        },
+        {
+          "key": "한승우\u0000솔로",
+          "name": "한승우",
+          "group": "솔로",
+          "aid": "1229244",
+          "lyrics": 49,
+          "compose": 27,
+          "matchIds": [
+            "a0608"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a0609",
+      "keys": [
+        {
+          "key": "우즈\u0000엑스원",
+          "name": "우즈",
+          "group": "엑스원",
+          "aid": "2086047",
+          "lyrics": 88,
+          "compose": 82,
+          "matchIds": [
+            "a0609"
+          ]
+        },
+        {
+          "key": "우즈\u0000솔로",
+          "name": "우즈",
+          "group": "솔로",
+          "aid": "2086047",
+          "lyrics": 89,
+          "compose": 84,
+          "matchIds": [
+            "a0609"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a0614",
+      "keys": [
+        {
+          "key": "손동표\u0000미래소년",
+          "name": "손동표",
+          "group": "미래소년",
+          "aid": "2743585",
+          "lyrics": 2,
+          "compose": 2,
+          "matchIds": [
+            "a0614"
+          ]
+        },
+        {
+          "key": "손동표\u0000솔로",
+          "name": "손동표",
+          "group": "솔로",
+          "aid": "2743585",
+          "lyrics": 2,
+          "compose": 2,
+          "matchIds": [
+            "a0614"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a0625",
+      "keys": [
+        {
+          "key": "임시완\u0000제국의아이들",
+          "name": "임시완",
+          "group": "제국의아이들",
+          "aid": "672788",
+          "lyrics": 7,
+          "compose": 3,
+          "matchIds": [
+            "a0625"
+          ]
+        },
+        {
+          "key": "임시완\u0000솔로",
+          "name": "임시완",
+          "group": "솔로",
+          "aid": "672788",
+          "lyrics": 7,
+          "compose": 3,
+          "matchIds": [
+            "a0625"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a0626",
+      "keys": [
+        {
+          "key": "문준영\u0000제국의아이들",
+          "name": "문준영",
+          "group": "제국의아이들",
+          "aid": "672786",
+          "lyrics": 3,
+          "compose": 0,
+          "matchIds": [
+            "a0626"
+          ]
+        },
+        {
+          "key": "문준영\u0000솔로",
+          "name": "문준영",
+          "group": "솔로",
+          "aid": "672786",
+          "lyrics": 3,
+          "compose": 0,
+          "matchIds": [
+            "a0626"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a0629",
+      "keys": [
+        {
+          "key": "하민우\u0000제국의아이들",
+          "name": "하민우",
+          "group": "제국의아이들",
+          "lyrics": 0,
+          "compose": 0,
+          "matchIds": [
+            "a0629"
+          ]
+        },
+        {
+          "key": "하민우\u0000솔로",
+          "name": "하민우",
+          "group": "솔로",
+          "aid": "672795",
+          "lyrics": 5,
+          "compose": 1,
+          "matchIds": [
+            "a0629"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a0630",
+      "keys": [
+        {
+          "key": "박형식\u0000제국의아이들",
+          "name": "박형식",
+          "group": "제국의아이들",
+          "aid": "672796",
+          "lyrics": 0,
+          "compose": 3,
+          "matchIds": [
+            "a0630"
+          ]
+        },
+        {
+          "key": "박형식\u0000솔로",
+          "name": "박형식",
+          "group": "솔로",
+          "aid": "672796",
+          "lyrics": 0,
+          "compose": 3,
+          "matchIds": [
+            "a0630"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a0631",
+      "keys": [
+        {
+          "key": "김동준\u0000제국의아이들",
+          "name": "김동준",
+          "group": "제국의아이들",
+          "lyrics": 0,
+          "compose": 0,
+          "matchIds": [
+            "a0631"
+          ]
+        },
+        {
+          "key": "김동준\u0000솔로",
+          "name": "김동준",
+          "group": "솔로",
+          "aid": "672797",
+          "lyrics": 2,
+          "compose": 0,
+          "matchIds": [
+            "a0631"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a0753",
+      "keys": [
+        {
+          "key": "이지함\u0000에이스",
+          "name": "이지함",
+          "group": "에이스",
+          "aid": "1705384",
+          "lyrics": 15,
+          "compose": 11,
+          "matchIds": [
+            "a0753"
+          ]
+        },
+        {
+          "key": "이지함\u0000솔로",
+          "name": "이지함",
+          "group": "솔로",
+          "aid": "1705384",
+          "lyrics": 15,
+          "compose": 11,
+          "matchIds": [
+            "a0753"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a0755",
+      "keys": [
+        {
+          "key": "박준희\u0000에이스",
+          "name": "박준희",
+          "group": "에이스",
+          "lyrics": 0,
+          "compose": 0,
+          "matchIds": [
+            "a0755"
+          ]
+        },
+        {
+          "key": "박준희\u0000솔로",
+          "name": "박준희",
+          "group": "솔로",
+          "aid": "1705387",
+          "lyrics": 13,
+          "compose": 8,
+          "matchIds": [
+            "a0755"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a0886",
+      "keys": [
+        {
+          "key": "JR\u0000뉴이스트",
+          "name": "JR",
+          "group": "뉴이스트",
+          "lyrics": 0,
+          "compose": 0,
+          "matchIds": [
+            "a0886"
+          ]
+        },
+        {
+          "key": "JR\u0000솔로",
+          "name": "JR",
+          "group": "솔로",
+          "aid": "672800",
+          "lyrics": 78,
+          "compose": 5,
+          "matchIds": [
+            "a0886"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a0888",
+      "keys": [
+        {
+          "key": "백호\u0000뉴이스트",
+          "name": "백호",
+          "group": "뉴이스트",
+          "aid": "672808",
+          "lyrics": 81,
+          "compose": 73,
+          "matchIds": [
+            "a0888"
+          ]
+        },
+        {
+          "key": "백호\u0000솔로",
+          "name": "백호",
+          "group": "솔로",
+          "aid": "672808",
+          "lyrics": 81,
+          "compose": 73,
+          "matchIds": [
+            "a0888"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1002",
+      "keys": [
+        {
+          "key": "레이나\u0000애프터스쿨",
+          "name": "레이나",
+          "group": "애프터스쿨",
+          "aid": "672337",
+          "lyrics": 12,
+          "compose": 10,
+          "matchIds": [
+            "a1002"
+          ]
+        },
+        {
+          "key": "레이나\u0000솔로",
+          "name": "레이나",
+          "group": "솔로",
+          "aid": "672337",
+          "lyrics": 12,
+          "compose": 10,
+          "matchIds": [
+            "a1002"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1003",
+      "keys": [
+        {
+          "key": "나나\u0000애프터스쿨",
+          "name": "나나",
+          "group": "애프터스쿨",
+          "aid": "672334",
+          "lyrics": 5,
+          "compose": 4,
+          "matchIds": [
+            "a1003"
+          ]
+        },
+        {
+          "key": "나나\u0000솔로",
+          "name": "나나",
+          "group": "솔로",
+          "aid": "672334",
+          "lyrics": 6,
+          "compose": 4,
+          "matchIds": [
+            "a1003"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1004",
+      "keys": [
+        {
+          "key": "리지\u0000애프터스쿨",
+          "name": "리지",
+          "group": "애프터스쿨",
+          "aid": "539120",
+          "lyrics": 0,
+          "compose": 0,
+          "matchIds": [
+            "a1004"
+          ]
+        },
+        {
+          "key": "리지\u0000솔로",
+          "name": "리지",
+          "group": "솔로",
+          "aid": "539120",
+          "lyrics": 0,
+          "compose": 0,
+          "matchIds": [
+            "a1004"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1130",
+      "keys": [
+        {
+          "key": "YEL\u0000피에스타",
+          "name": "YEL",
+          "group": "피에스타",
+          "aid": "695333",
+          "lyrics": 21,
+          "compose": 35,
+          "matchIds": [
+            "a1130"
+          ]
+        },
+        {
+          "key": "YEL\u0000솔로",
+          "name": "YEL",
+          "group": "솔로",
+          "aid": "695333",
+          "lyrics": 21,
+          "compose": 35,
+          "matchIds": [
+            "a1130"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1131",
+      "keys": [
+        {
+          "key": "예지\u0000피에스타",
+          "name": "예지",
+          "group": "피에스타",
+          "aid": "695332",
+          "lyrics": 48,
+          "compose": 8,
+          "matchIds": [
+            "a1131"
+          ]
+        },
+        {
+          "key": "예지\u0000솔로",
+          "name": "예지",
+          "group": "솔로",
+          "aid": "695332",
+          "lyrics": 48,
+          "compose": 8,
+          "matchIds": [
+            "a1131"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1145",
+      "keys": [
+        {
+          "key": "나고은\u0000퍼플키스",
+          "name": "나고은",
+          "group": "퍼플키스",
+          "aid": "2638028",
+          "lyrics": 14,
+          "compose": 11,
+          "matchIds": [
+            "a1145"
+          ]
+        },
+        {
+          "key": "나고은\u0000솔로",
+          "name": "나고은",
+          "group": "솔로",
+          "aid": "2638028",
+          "lyrics": 14,
+          "compose": 11,
+          "matchIds": [
+            "a1145"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1150",
+      "keys": [
+        {
+          "key": "수안\u0000퍼플키스",
+          "name": "수안",
+          "group": "퍼플키스",
+          "aid": "2904144",
+          "lyrics": 12,
+          "compose": 3,
+          "matchIds": [
+            "a1150"
+          ]
+        },
+        {
+          "key": "수안\u0000솔로",
+          "name": "수안",
+          "group": "솔로",
+          "aid": "2904144",
+          "lyrics": 12,
+          "compose": 3,
+          "matchIds": [
+            "a1150"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1193",
+      "keys": [
+        {
+          "key": "백예빈\u0000유니티",
+          "name": "백예빈",
+          "group": "유니티",
+          "aid": "896283",
+          "lyrics": 24,
+          "compose": 23,
+          "matchIds": [
+            "a1193"
+          ]
+        },
+        {
+          "key": "백예빈\u0000솔로",
+          "name": "백예빈",
+          "group": "솔로",
+          "aid": "896283",
+          "lyrics": 24,
+          "compose": 23,
+          "matchIds": [
+            "a1193"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1212",
+      "keys": [
+        {
+          "key": "재찬\u0000동키즈",
+          "name": "재찬",
+          "group": "동키즈",
+          "aid": "2402493",
+          "lyrics": 22,
+          "compose": 14,
+          "matchIds": [
+            "a1212"
+          ]
+        },
+        {
+          "key": "재찬\u0000솔로",
+          "name": "재찬",
+          "group": "솔로",
+          "aid": "2402493",
+          "lyrics": 22,
+          "compose": 14,
+          "matchIds": [
+            "a1212"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1294",
+      "keys": [
+        {
+          "key": "윤채경\u0000에이프릴",
+          "name": "윤채경",
+          "group": "에이프릴",
+          "aid": "980812",
+          "lyrics": 1,
+          "compose": 2,
+          "matchIds": [
+            "a1294"
+          ]
+        },
+        {
+          "key": "윤채경\u0000솔로",
+          "name": "윤채경",
+          "group": "솔로",
+          "aid": "980812",
+          "lyrics": 1,
+          "compose": 2,
+          "matchIds": [
+            "a1294"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1295",
+      "keys": [
+        {
+          "key": "김채원\u0000에이프릴",
+          "name": "김채원",
+          "group": "에이프릴",
+          "aid": "882816",
+          "lyrics": 7,
+          "compose": 13,
+          "matchIds": [
+            "a1295"
+          ]
+        },
+        {
+          "key": "김채원\u0000솔로",
+          "name": "김채원",
+          "group": "솔로",
+          "aid": "882816",
+          "lyrics": 7,
+          "compose": 13,
+          "matchIds": [
+            "a1295"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1296",
+      "keys": [
+        {
+          "key": "이나은\u0000에이프릴",
+          "name": "이나은",
+          "group": "에이프릴",
+          "aid": "882812",
+          "lyrics": 0,
+          "compose": 0,
+          "matchIds": [
+            "a1296"
+          ]
+        },
+        {
+          "key": "이나은\u0000솔로",
+          "name": "이나은",
+          "group": "솔로",
+          "aid": "882812",
+          "lyrics": 0,
+          "compose": 0,
+          "matchIds": [
+            "a1296"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1299",
+      "keys": [
+        {
+          "key": "이진솔\u0000에이프릴",
+          "name": "이진솔",
+          "group": "에이프릴",
+          "aid": "882815",
+          "lyrics": 19,
+          "compose": 10,
+          "matchIds": [
+            "a1299"
+          ]
+        },
+        {
+          "key": "이진솔\u0000솔로",
+          "name": "이진솔",
+          "group": "솔로",
+          "aid": "882815",
+          "lyrics": 19,
+          "compose": 10,
+          "matchIds": [
+            "a1299"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1359",
+      "keys": [
+        {
+          "key": "강승식\u0000빅톤",
+          "name": "강승식",
+          "group": "빅톤",
+          "aid": "1229243",
+          "lyrics": 16,
+          "compose": 3,
+          "matchIds": [
+            "a1359"
+          ]
+        },
+        {
+          "key": "강승식\u0000솔로",
+          "name": "강승식",
+          "group": "솔로",
+          "aid": "1229243",
+          "lyrics": 16,
+          "compose": 3,
+          "matchIds": [
+            "a1359"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1392",
+      "keys": [
+        {
+          "key": "김시훈\u0000비디씨",
+          "name": "김시훈",
+          "group": "비디씨",
+          "aid": "2751873",
+          "lyrics": 16,
+          "compose": 7,
+          "matchIds": [
+            "a1392"
+          ]
+        },
+        {
+          "key": "김시훈\u0000솔로",
+          "name": "김시훈",
+          "group": "솔로",
+          "aid": "2751873",
+          "lyrics": 16,
+          "compose": 7,
+          "matchIds": [
+            "a1392"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1393",
+      "keys": [
+        {
+          "key": "윤정환\u0000비디씨",
+          "name": "윤정환",
+          "group": "비디씨",
+          "aid": "2751874",
+          "lyrics": 19,
+          "compose": 22,
+          "matchIds": [
+            "a1393"
+          ]
+        },
+        {
+          "key": "윤정환\u0000솔로",
+          "name": "윤정환",
+          "group": "솔로",
+          "aid": "2751874",
+          "lyrics": 20,
+          "compose": 24,
+          "matchIds": [
+            "a1393"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1394",
+      "keys": [
+        {
+          "key": "세리\u0000달샤벳",
+          "name": "세리",
+          "group": "달샤벳",
+          "aid": "548660",
+          "lyrics": 10,
+          "compose": 0,
+          "matchIds": [
+            "a1394"
+          ]
+        },
+        {
+          "key": "세리\u0000솔로",
+          "name": "세리",
+          "group": "솔로",
+          "aid": "548660",
+          "lyrics": 10,
+          "compose": 0,
+          "matchIds": [
+            "a1394"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1396",
+      "keys": [
+        {
+          "key": "우희\u0000달샤벳",
+          "name": "우희",
+          "group": "달샤벳",
+          "aid": "711336",
+          "lyrics": 2,
+          "compose": 3,
+          "matchIds": [
+            "a1396"
+          ]
+        },
+        {
+          "key": "우희\u0000솔로",
+          "name": "우희",
+          "group": "솔로",
+          "aid": "711336",
+          "lyrics": 2,
+          "compose": 3,
+          "matchIds": [
+            "a1396"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1404",
+      "keys": [
+        {
+          "key": "경리\u0000나인뮤지스",
+          "name": "경리",
+          "group": "나인뮤지스",
+          "aid": "673737",
+          "lyrics": 1,
+          "compose": 0,
+          "matchIds": [
+            "a1404"
+          ]
+        },
+        {
+          "key": "경리\u0000솔로",
+          "name": "경리",
+          "group": "솔로",
+          "aid": "673737",
+          "lyrics": 1,
+          "compose": 0,
+          "matchIds": [
+            "a1404"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1408",
+      "keys": [
+        {
+          "key": "금조\u0000나인뮤지스",
+          "name": "금조",
+          "group": "나인뮤지스",
+          "aid": "673733",
+          "lyrics": 1,
+          "compose": 0,
+          "matchIds": [
+            "a1408"
+          ]
+        },
+        {
+          "key": "금조\u0000솔로",
+          "name": "금조",
+          "group": "솔로",
+          "aid": "830460",
+          "lyrics": 0,
+          "compose": 0,
+          "matchIds": [
+            "a1408"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1466",
+      "keys": [
+        {
+          "key": "여은\u0000멜로디데이",
+          "name": "여은",
+          "group": "멜로디데이",
+          "aid": "758847",
+          "lyrics": 1,
+          "compose": 0,
+          "matchIds": [
+            "a1466"
+          ]
+        },
+        {
+          "key": "여은\u0000솔로",
+          "name": "여은",
+          "group": "솔로",
+          "aid": "758847",
+          "lyrics": 1,
+          "compose": 0,
+          "matchIds": [
+            "a1466"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1469",
+      "keys": [
+        {
+          "key": "차희\u0000멜로디데이",
+          "name": "차희",
+          "group": "멜로디데이",
+          "aid": "758850",
+          "lyrics": 2,
+          "compose": 2,
+          "matchIds": [
+            "a1469"
+          ]
+        },
+        {
+          "key": "차희\u0000솔로",
+          "name": "차희",
+          "group": "솔로",
+          "aid": "758850",
+          "lyrics": 2,
+          "compose": 2,
+          "matchIds": [
+            "a1469"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1567",
+      "keys": [
+        {
+          "key": "서성혁\u0000티에이엔",
+          "name": "서성혁",
+          "group": "티에이엔",
+          "aid": "1908099",
+          "lyrics": 4,
+          "compose": 2,
+          "matchIds": [
+            "a1567"
+          ]
+        },
+        {
+          "key": "서성혁\u0000솔로",
+          "name": "서성혁",
+          "group": "솔로",
+          "aid": "1908099",
+          "lyrics": 4,
+          "compose": 2,
+          "matchIds": [
+            "a1567"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1587",
+      "keys": [
+        {
+          "key": "김보아\u0000스피카",
+          "name": "김보아",
+          "group": "스피카",
+          "aid": "669975",
+          "lyrics": 48,
+          "compose": 30,
+          "matchIds": [
+            "a1587"
+          ]
+        },
+        {
+          "key": "김보아\u0000솔로",
+          "name": "김보아",
+          "group": "솔로",
+          "aid": "669975",
+          "lyrics": 48,
+          "compose": 30,
+          "matchIds": [
+            "a1587"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1694",
+      "keys": [
+        {
+          "key": "효은\u0000스텔라",
+          "name": "효은",
+          "group": "스텔라",
+          "aid": "672872",
+          "lyrics": 4,
+          "compose": 6,
+          "matchIds": [
+            "a1694"
+          ]
+        },
+        {
+          "key": "효은\u0000솔로",
+          "name": "효은",
+          "group": "솔로",
+          "aid": "672872",
+          "lyrics": 4,
+          "compose": 6,
+          "matchIds": [
+            "a1694"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1699",
+      "keys": [
+        {
+          "key": "가영\u0000스텔라",
+          "name": "가영",
+          "group": "스텔라",
+          "aid": "672870",
+          "lyrics": 3,
+          "compose": 1,
+          "matchIds": [
+            "a1699"
+          ]
+        },
+        {
+          "key": "가영\u0000솔로",
+          "name": "가영",
+          "group": "솔로",
+          "aid": "672870",
+          "lyrics": 3,
+          "compose": 1,
+          "matchIds": [
+            "a1699"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1700",
+      "keys": [
+        {
+          "key": "전율\u0000스텔라",
+          "name": "전율",
+          "group": "스텔라",
+          "aid": "672871",
+          "lyrics": 4,
+          "compose": 3,
+          "matchIds": [
+            "a1700"
+          ]
+        },
+        {
+          "key": "전율\u0000솔로",
+          "name": "전율",
+          "group": "솔로",
+          "aid": "672871",
+          "lyrics": 4,
+          "compose": 3,
+          "matchIds": [
+            "a1700"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1726",
+      "keys": [
+        {
+          "key": "김용국\u0000JBJ",
+          "name": "김용국",
+          "group": "JBJ",
+          "aid": "1865261",
+          "lyrics": 6,
+          "compose": 0,
+          "matchIds": [
+            "a1726"
+          ]
+        },
+        {
+          "key": "김용국\u0000솔로",
+          "name": "김용국",
+          "group": "솔로",
+          "aid": "1865261",
+          "lyrics": 6,
+          "compose": 0,
+          "matchIds": [
+            "a1726"
+          ]
+        }
+      ]
+    }
+  ]
+}

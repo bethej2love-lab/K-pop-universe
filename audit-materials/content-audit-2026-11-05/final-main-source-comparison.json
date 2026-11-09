@@ -1,0 +1,72 @@
+{
+  "baseline": "e64f24f9cd",
+  "latestMain": "efbbdbceac96cefe1300ffd810f92ec29e04b0c0",
+  "files": [
+    {
+      "file": "admin.js",
+      "base": "92f72ab237ff1b4c63651f166ae4bb2bb7a70bf7",
+      "main": "92f72ab237ff1b4c63651f166ae4bb2bb7a70bf7",
+      "same": true
+    },
+    {
+      "file": "shared.js",
+      "base": "931ce882679b5be3e1eda39ec439436943d3e9e0",
+      "main": "931ce882679b5be3e1eda39ec439436943d3e9e0",
+      "same": true
+    },
+    {
+      "file": "artists.json",
+      "base": "7e2b95eb5db757de76c670662446a8a9e9d7bdf9",
+      "main": "7e2b95eb5db757de76c670662446a8a9e9d7bdf9",
+      "same": true
+    },
+    {
+      "file": "groups.json",
+      "base": "4ca57db9539ea6a3a22a20c764bda7c5e3e0d761",
+      "main": "4ca57db9539ea6a3a22a20c764bda7c5e3e0d761",
+      "same": true
+    },
+    {
+      "file": "build_group_pages.js",
+      "base": "56fdc963f01dabac05e993b1cbd5f58e1be63ff2",
+      "main": "56fdc963f01dabac05e993b1cbd5f58e1be63ff2",
+      "same": true
+    },
+    {
+      "file": "tools/seo_extra.js",
+      "base": "fc9544480da6340ffb380b62283fcec6743985d9",
+      "main": "fc9544480da6340ffb380b62283fcec6743985d9",
+      "same": true
+    }
+  ],
+  "appFunctions": [
+    {
+      "name": "_isFormerOf",
+      "same": true
+    },
+    {
+      "name": "_groupEndDate",
+      "same": true
+    },
+    {
+      "name": "_memberVideoCutoffCore",
+      "same": true
+    },
+    {
+      "name": "_memberVideoCutoff",
+      "same": true
+    },
+    {
+      "name": "_buildMemberTimeline",
+      "same": true
+    },
+    {
+      "name": "_mxAgeAt",
+      "same": true
+    },
+    {
+      "name": "_mxFigBuild",
+      "same": true
+    }
+  ]
+}

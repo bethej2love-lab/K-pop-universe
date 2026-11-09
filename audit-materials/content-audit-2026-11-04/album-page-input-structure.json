@@ -1,0 +1,523 @@
+{
+  "revision": "a213912575",
+  "eligible": 2086,
+  "generated": 2086,
+  "skipped": [],
+  "bad": [
+    {
+      "g": "세븐틴",
+      "title": "ALWAYS YOURS",
+      "date": "2023.08.23",
+      "albumId": "11310103",
+      "trackCount": 27,
+      "tracks": 27,
+      "issues": [
+        "duplicate_track_number"
+      ]
+    },
+    {
+      "g": "엔시티 위시",
+      "title": "WISH",
+      "date": "2024.02.28",
+      "albumId": "11429630",
+      "trackCount": 5,
+      "tracks": 4,
+      "issues": [
+        "trackcount_mismatch"
+      ]
+    },
+    {
+      "g": "방탄소년단",
+      "title": "화양연화 Young Forever",
+      "date": "2016.05.02",
+      "albumId": "2680573",
+      "trackCount": 23,
+      "tracks": 23,
+      "issues": [
+        "duplicate_track_number"
+      ]
+    },
+    {
+      "g": "샤이니",
+      "title": "1 and 1 - The 5th Album Repackage",
+      "date": "2016.11.15",
+      "albumId": "10015244",
+      "trackCount": 19,
+      "tracks": 19,
+      "issues": [
+        "duplicate_track_number"
+      ]
+    },
+    {
+      "g": "샤이니",
+      "title": "SHINee The 3rd Album 'The Misconceptions Of Us'",
+      "date": "2013.08.08",
+      "albumId": "2196165",
+      "trackCount": 20,
+      "tracks": 20,
+      "issues": [
+        "duplicate_track_number"
+      ]
+    },
+    {
+      "g": "베이비몬스터",
+      "title": "춤 (CHOOM)",
+      "date": "2026.05.04",
+      "albumId": "13367837",
+      "trackCount": 5,
+      "tracks": 4,
+      "issues": [
+        "trackcount_mismatch"
+      ]
+    },
+    {
+      "g": "엑소",
+      "title": "The Power of Music",
+      "date": "2017.09.05",
+      "albumId": "10093773",
+      "trackCount": 24,
+      "tracks": 24,
+      "issues": [
+        "duplicate_track_number"
+      ]
+    },
+    {
+      "g": "엑소",
+      "title": "For Life - 겨울 스페셜 앨범, 2016",
+      "date": "2016.12.19",
+      "albumId": "10024125",
+      "trackCount": 10,
+      "tracks": 10,
+      "issues": [
+        "duplicate_track_number"
+      ]
+    },
+    {
+      "g": "엑소",
+      "title": "LOTTO - The 3rd Album Repackage",
+      "date": "2016.08.18",
+      "albumId": "2704940",
+      "trackCount": 26,
+      "tracks": 26,
+      "issues": [
+        "duplicate_track_number"
+      ]
+    },
+    {
+      "g": "엑소",
+      "title": "SING FOR YOU - 겨울 스페셜 앨범, 2015",
+      "date": "2015.12.10",
+      "albumId": "2655828",
+      "trackCount": 10,
+      "tracks": 10,
+      "issues": [
+        "duplicate_track_number"
+      ]
+    },
+    {
+      "g": "엑소",
+      "title": "LOVE ME RIGHT - The 2nd Album Repackage",
+      "date": "2015.06.03",
+      "albumId": "2321827",
+      "trackCount": 28,
+      "tracks": 28,
+      "issues": [
+        "duplicate_track_number"
+      ]
+    },
+    {
+      "g": "엑소",
+      "title": "Miracles in December",
+      "date": "2013.12.09",
+      "albumId": "2219671",
+      "trackCount": 11,
+      "tracks": 11,
+      "issues": [
+        "duplicate_track_number"
+      ]
+    },
+    {
+      "g": "슈퍼주니어",
+      "title": "Star",
+      "date": "2021.01.27",
+      "albumId": "10553477",
+      "trackCount": 30,
+      "tracks": 30,
+      "issues": [
+        "duplicate_track_number"
+      ]
+    },
+    {
+      "g": "슈퍼주니어",
+      "title": "Hero",
+      "date": "2013.08.14",
+      "albumId": "2196766",
+      "trackCount": 23,
+      "tracks": 23,
+      "issues": [
+        "duplicate_track_number"
+      ]
+    },
+    {
+      "g": "킥플립",
+      "title": "My First Kick",
+      "date": "2026.04.06",
+      "albumId": "12905043",
+      "trackCount": 8,
+      "tracks": 7,
+      "issues": [
+        "trackcount_mismatch"
+      ]
+    },
+    {
+      "g": "킥플립",
+      "title": "My First Flip",
+      "date": "2025.09.22",
+      "albumId": "12091187",
+      "trackCount": 8,
+      "tracks": 7,
+      "issues": [
+        "trackcount_mismatch"
+      ]
+    },
+    {
+      "g": "킥플립",
+      "title": "Kick Out, Flip Now!",
+      "date": "2025.05.26",
+      "albumId": "11825708",
+      "trackCount": 8,
+      "tracks": 7,
+      "issues": [
+        "trackcount_mismatch"
+      ]
+    },
+    {
+      "g": "킥플립",
+      "title": "Flip it, Kick it!",
+      "date": "2025.01.20",
+      "albumId": "11683497",
+      "trackCount": 7,
+      "tracks": 6,
+      "issues": [
+        "trackcount_mismatch"
+      ]
+    },
+    {
+      "g": "인피니트",
+      "title": "The Origin",
+      "date": "2014.04.10",
+      "albumId": "2250447",
+      "trackCount": 30,
+      "tracks": 30,
+      "issues": [
+        "duplicate_track_number"
+      ]
+    },
+    {
+      "g": "동방신기",
+      "title": "FINE COLLECTION ～Begin Again～",
+      "date": "2017.11.08",
+      "albumId": "10109566",
+      "trackCount": 40,
+      "tracks": 40,
+      "issues": [
+        "duplicate_track_number"
+      ]
+    },
+    {
+      "g": "동방신기",
+      "title": "The Secret Code",
+      "date": "2009.03.25",
+      "albumId": "537756",
+      "trackCount": 42,
+      "tracks": 42,
+      "issues": [
+        "duplicate_track_number"
+      ]
+    },
+    {
+      "g": "갓세븐",
+      "title": "'Present : YOU' &ME Edition",
+      "date": "2018.12.03",
+      "albumId": "10228521",
+      "trackCount": 28,
+      "tracks": 28,
+      "issues": [
+        "duplicate_track_number"
+      ]
+    },
+    {
+      "g": "에프티아일랜드",
+      "title": "Double Date",
+      "date": "2009.10.26",
+      "albumId": "703553",
+      "trackCount": 17,
+      "tracks": 17,
+      "issues": [
+        "duplicate_track_number"
+      ]
+    },
+    {
+      "g": "러블리즈",
+      "title": "Muse on Music",
+      "date": "2018.09.10",
+      "albumId": "10202702",
+      "trackCount": 33,
+      "tracks": 33,
+      "issues": [
+        "duplicate_track_number"
+      ]
+    },
+    {
+      "g": "H.O.T.",
+      "title": "Outside Castle - 5집",
+      "date": "2000.09.01",
+      "trackCount": 14,
+      "tracks": 9,
+      "issues": [
+        "trackcount_mismatch"
+      ]
+    },
+    {
+      "g": "젝스키스",
+      "title": "ANOTHER LIGHT",
+      "date": "2017.09.21",
+      "albumId": "10098207",
+      "trackCount": 10,
+      "tracks": 9,
+      "issues": [
+        "trackcount_mismatch"
+      ]
+    },
+    {
+      "g": "젝스키스",
+      "title": "Com' Back",
+      "date": "1999.09",
+      "albumId": "5362",
+      "trackCount": 18,
+      "tracks": 18,
+      "issues": [
+        "date_format"
+      ]
+    },
+    {
+      "g": "신화",
+      "title": "Unchanging, Pt. 1",
+      "date": "2016.11.29",
+      "albumId": "10019045",
+      "trackCount": 5,
+      "tracks": 3,
+      "issues": [
+        "trackcount_mismatch"
+      ]
+    },
+    {
+      "g": "신화",
+      "title": "Winter Story 2006~2007",
+      "date": "2007.01.25",
+      "albumId": "342795",
+      "trackCount": 17,
+      "tracks": 17,
+      "issues": [
+        "duplicate_track_number"
+      ]
+    },
+    {
+      "g": "신화",
+      "title": "Wedding - 6집",
+      "date": "2002.12.27",
+      "albumId": "26431",
+      "trackCount": 13,
+      "tracks": 6,
+      "issues": [
+        "trackcount_mismatch"
+      ]
+    },
+    {
+      "g": "신화",
+      "title": "Only One - 3집",
+      "date": "2000.12.14",
+      "trackCount": 14,
+      "tracks": 8,
+      "issues": [
+        "trackcount_mismatch"
+      ]
+    },
+    {
+      "g": "신화",
+      "title": "T.O.P - 2집",
+      "date": "1999.04.01",
+      "trackCount": 13,
+      "tracks": 7,
+      "issues": [
+        "trackcount_mismatch"
+      ]
+    },
+    {
+      "g": "신화",
+      "title": "해결사 - 1집",
+      "date": "1998.05.01",
+      "trackCount": 10,
+      "tracks": 7,
+      "issues": [
+        "trackcount_mismatch"
+      ]
+    },
+    {
+      "g": "핑클",
+      "title": "영원 - 4집",
+      "date": "2002.03.03",
+      "trackCount": 15,
+      "tracks": 8,
+      "issues": [
+        "trackcount_mismatch"
+      ]
+    },
+    {
+      "g": "핑클",
+      "title": "White - 2집",
+      "date": "1999.05.05",
+      "trackCount": 12,
+      "tracks": 8,
+      "issues": [
+        "trackcount_mismatch"
+      ]
+    },
+    {
+      "g": "핑클",
+      "title": "Fine Killing Liberty : Blue Rain - 1집",
+      "date": "1998.05.25",
+      "trackCount": 11,
+      "tracks": 8,
+      "issues": [
+        "trackcount_mismatch"
+      ]
+    },
+    {
+      "g": "베이비복스",
+      "title": "Boyish Story - 5집",
+      "date": "2001.06.04",
+      "trackCount": 16,
+      "tracks": 10,
+      "issues": [
+        "trackcount_mismatch"
+      ]
+    },
+    {
+      "g": "NRG",
+      "title": "One of Five - 7집",
+      "date": "2005.11.15",
+      "trackCount": 12,
+      "tracks": 4,
+      "issues": [
+        "trackcount_mismatch"
+      ]
+    },
+    {
+      "g": "NRG",
+      "title": "비 (Sorrow) - 4집",
+      "date": "2001.06.01",
+      "trackCount": 14,
+      "tracks": 11,
+      "issues": [
+        "trackcount_mismatch"
+      ]
+    },
+    {
+      "g": "샤크라",
+      "title": "Ringing Gingle Bells - 크리스마스 스페셜",
+      "date": "2000.12.06",
+      "albumId": "813",
+      "trackCount": 13,
+      "tracks": 4,
+      "issues": [
+        "trackcount_mismatch"
+      ]
+    },
+    {
+      "g": "크레용팝",
+      "title": "Evolution Pop_Vol.1",
+      "date": "2016.09.26",
+      "albumId": "10000727",
+      "trackCount": 17,
+      "tracks": 17,
+      "issues": [
+        "duplicate_track_number"
+      ]
+    },
+    {
+      "g": "2PM",
+      "title": "2PM 3rd Album Grown_Grand Edition",
+      "date": "2013.06.19",
+      "albumId": "2189485",
+      "trackCount": 22,
+      "tracks": 22,
+      "issues": [
+        "duplicate_track_number"
+      ]
+    },
+    {
+      "g": "쥬얼리",
+      "title": "Sophisticated - 6집",
+      "date": "2009.08.27",
+      "albumId": "634254",
+      "trackCount": 9,
+      "tracks": 11,
+      "issues": [
+        "trackcount_mismatch"
+      ]
+    },
+    {
+      "g": "쥬얼리",
+      "title": "Beloved - 3집",
+      "date": "2003.07.04",
+      "trackCount": 12,
+      "tracks": 8,
+      "issues": [
+        "trackcount_mismatch"
+      ]
+    },
+    {
+      "g": "쥬얼리",
+      "title": "Discovery - 1집",
+      "date": "2001.03.13",
+      "trackCount": 12,
+      "tracks": 10,
+      "issues": [
+        "trackcount_mismatch"
+      ]
+    },
+    {
+      "g": "동키즈",
+      "title": "DKZ 1st Repackage Album 'HARMONY'",
+      "date": "2023.04.24",
+      "albumId": "11229684",
+      "trackCount": 13,
+      "tracks": 13,
+      "issues": [
+        "duplicate_track_number"
+      ]
+    },
+    {
+      "g": "나우즈",
+      "title": "IGNITION",
+      "date": "2025.07.09",
+      "albumId": "11856899",
+      "trackCount": 6,
+      "tracks": 5,
+      "issues": [
+        "trackcount_mismatch"
+      ]
+    }
+  ],
+  "checkCounts": {
+    "duplicate_track_number": 22,
+    "trackcount_mismatch": 24,
+    "date_format": 1
+  },
+  "limitations": [
+    "duplicate track numbers may be multi-disc/language editions, not confirmed errors",
+    "partial YYYY.MM dates are valid source precision, not automatic errors",
+    "trackCount mismatch may be wrong scalar or partial list; verify original catalog"
+  ]
+}

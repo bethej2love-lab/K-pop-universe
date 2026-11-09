@@ -1,0 +1,178 @@
+{
+  "revision": "e64f24f9cd",
+  "rows": [
+    {
+      "ko": "시크릿",
+      "allMembers": [
+        {
+          "id": "a1009",
+          "name": "전효성",
+          "active": true
+        },
+        {
+          "id": "a1010",
+          "name": "징거",
+          "active": true
+        },
+        {
+          "id": "a1011",
+          "name": "예빈",
+          "active": true
+        },
+        {
+          "id": "a1012",
+          "name": "한선화",
+          "active": false,
+          "left": "2016.10.13"
+        },
+        {
+          "id": "a1013",
+          "name": "송지은",
+          "active": false,
+          "left": "2018.02.28"
+        }
+      ],
+      "actualIntro": "<p class=\"intro\">5인조 걸그룹. RBW. 2009년 데뷔. 해체.</p>",
+      "memoryDisbandedFalseControl": "<p class=\"intro\">5인조 걸그룹. RBW. 2009년 데뷔. 팬덤명 시크릿타임.</p>"
+    },
+    {
+      "ko": "시크릿넘버",
+      "allMembers": [
+        {
+          "id": "a1484",
+          "name": "데니스",
+          "active": false,
+          "left": "2022.02.01"
+        },
+        {
+          "id": "a1485",
+          "name": "레아",
+          "active": false,
+          "left": "2025.04.02"
+        },
+        {
+          "id": "a1486",
+          "name": "디타",
+          "active": false,
+          "left": "2025.04.04"
+        },
+        {
+          "id": "a1487",
+          "name": "진희",
+          "active": false,
+          "left": "2025.04"
+        },
+        {
+          "id": "a1488",
+          "name": "민지",
+          "active": false,
+          "left": "2025.04"
+        },
+        {
+          "id": "a1489",
+          "name": "수담",
+          "active": false,
+          "left": "2025.12.12"
+        },
+        {
+          "id": "a1490",
+          "name": "주",
+          "active": false,
+          "left": "2026.04.08"
+        },
+        {
+          "id": "a1893",
+          "name": "나비",
+          "active": true
+        },
+        {
+          "id": "a1894",
+          "name": "딘다",
+          "active": true
+        },
+        {
+          "id": "a1895",
+          "name": "에빈",
+          "active": true
+        },
+        {
+          "id": "a1896",
+          "name": "민씨",
+          "active": true
+        }
+      ],
+      "actualIntro": "<p class=\"intro\">11인조 걸그룹. 바인엔터테인먼트. 2020년 데뷔. 팬덤명 LOCKEY.</p>",
+      "memoryDisbandedFalseControl": null
+    },
+    {
+      "ko": "알파드라이브원",
+      "allMembers": [
+        {
+          "id": "a0347",
+          "name": "리오",
+          "active": true
+        },
+        {
+          "id": "a0348",
+          "name": "준서",
+          "active": true,
+          "groups": [
+            {
+              "ko": "알파드라이브원",
+              "en": "ALPHA DRIVE ONE"
+            },
+            {
+              "ko": "위아이",
+              "en": "WEi"
+            },
+            {
+              "ko": "원더나인",
+              "en": "1THE9",
+              "active": false,
+              "left": "2020.08.08"
+            }
+          ]
+        },
+        {
+          "id": "a0349",
+          "name": "아르노",
+          "active": true
+        },
+        {
+          "id": "a0350",
+          "name": "건우",
+          "active": false,
+          "pausedFrom": "2026.04.08"
+        },
+        {
+          "id": "a0351",
+          "name": "상원",
+          "active": true
+        },
+        {
+          "id": "a0352",
+          "name": "씬롱",
+          "active": true
+        },
+        {
+          "id": "a0353",
+          "name": "안신",
+          "active": true
+        },
+        {
+          "id": "a0354",
+          "name": "상현",
+          "active": true
+        }
+      ],
+      "actualIntro": "<p class=\"intro\">8인조 보이그룹. 웨이크원. 2026년 데뷔. 팬덤명 앨리즈.</p>",
+      "memoryDisbandedFalseControl": null
+    },
+    {
+      "name": "건우",
+      "id": "a0350",
+      "currentIsFormer": true
+    }
+  ],
+  "actualIntroFunction": "function groupIntroHtml(ko, info, members, discogItems, lang) {\n  const isEn = lang === 'en';\n  const name = isEn ? (info.en || ko) : ko;\n  const memCount = members.length;\n  const gender = info.gender === 'f' ? (isEn ? 'girl group' : '걸그룹') : info.gender === 'm' ? (isEn ? 'boy group' : '보이그룹') : (isEn ? 'K-pop group' : '케이팝 그룹');\n  const agency = isEn ? agencyEn(info.co) : info.co;\n  const debutYear = String(info.debut || '').slice(0, 4);\n  const recent = discogItems.slice(0, 3);\n  const disbanded = !!info.disbanded;\n  let text;\n  if (isEn) {\n    let s = `${name} is`;\n    if (disbanded) s = `${name} was`;\n    if (memCount) s += ` a ${memCount}-member`;\n    s += ` K-pop ${gender}`;\n    if (agency) s += ` under ${agency}`;\n    if (debutYear) s += `, debuting in ${debutYear}`;\n    s += '.';\n    if (!disbanded && info.fandom && (info.fandom.en || info.fandom.ko)) s += ` Fan club: ${info.fandom.en || info.fandom.ko}.`;\n    if (recent.length) s += ` Recent releases: ${recent.map(a => `${a.title} (${String(a.releaseDate||'').slice(0,4)})`).join(', ')}.`;\n    text = s;\n  } else {\n    const parts = [];\n    if (memCount) parts.push(`${memCount}인조 ${gender}`); else parts.push(gender);\n    if (agency) parts.push(agency);\n    if (debutYear) parts.push(`${debutYear}년 데뷔`);\n    if (disbanded) parts.push('해체');\n    if (!disbanded && info.fandom && info.fandom.ko) parts.push(`팬덤명 ${info.fandom.ko}`);\n    if (recent.length) parts.push(`대표 앨범 ${recent.map(a => `${a.title}(${String(a.releaseDate||'').slice(0,4)})`).join(', ')}`);\n    text = parts.join('. ') + '.';\n  }\n  return `<p class=\"intro\">${escHtml(text)}</p>`;\n}"
+}

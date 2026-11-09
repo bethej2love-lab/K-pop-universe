@@ -1,0 +1,158 @@
+[
+  {
+    "title": "Fame",
+    "type": "싱글",
+    "isMain": false,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/124/02/759/12402759_20251121172323_500.jpg",
+    "releaseDate": "2025.11.24",
+    "trackCount": 3,
+    "titleTrack": "Fame",
+    "tracks": [
+      {
+        "no": 1,
+        "title": "Fame",
+        "isTitle": true,
+        "songId": "600552360"
+      },
+      {
+        "no": 2,
+        "title": "Love Song",
+        "isTitle": false,
+        "songId": "600552360"
+      },
+      {
+        "no": 3,
+        "title": "Fame (Inst.)",
+        "isTitle": false,
+        "songId": "600552361"
+      }
+    ],
+    "melonAlbumId": "12402759"
+  },
+  {
+    "title": "RIIZING : Epilogue",
+    "type": "미니 1집 리패키지",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/115/82/670/11582670_20240903103809_500.jpg",
+    "releaseDate": "2024.09.04",
+    "trackCount": 9,
+    "titleTrack": "Combo",
+    "tracks": [
+      {
+        "no": 1,
+        "title": "Boom Boom Bass",
+        "isTitle": false,
+        "songId": "37956037"
+      },
+      {
+        "no": 2,
+        "title": "Impossible",
+        "isTitle": false,
+        "songId": "37956039"
+      },
+      {
+        "no": 3,
+        "title": "Love 119",
+        "isTitle": false,
+        "songId": "37956044"
+      },
+      {
+        "no": 4,
+        "title": "Talk Saxy",
+        "isTitle": false,
+        "songId": "37956043"
+      },
+      {
+        "no": 5,
+        "title": "Siren",
+        "isTitle": false,
+        "songId": "37956038"
+      },
+      {
+        "no": 6,
+        "title": "Breathe Easy",
+        "isTitle": false,
+        "songId": "37956041"
+      },
+      {
+        "no": 7,
+        "title": "Run to You",
+        "isTitle": false,
+        "songId": "37956042"
+      },
+      {
+        "no": 8,
+        "title": "Get A Guitar",
+        "isTitle": false,
+        "songId": "37956043"
+      },
+      {
+        "no": 9,
+        "title": "Combo",
+        "isTitle": true,
+        "songId": "37956036"
+      }
+    ],
+    "melonAlbumId": "11582670"
+  },
+  {
+    "title": "RIIZING",
+    "type": "미니 1집",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/114/56/179/11456179_20240617152303_500.jpg",
+    "releaseDate": "2024.06.17",
+    "trackCount": 8,
+    "titleTrack": "Boom Boom Bass",
+    "tracks": [
+      {
+        "no": 1,
+        "title": "Boom Boom Bass",
+        "isTitle": true,
+        "songId": "37640352"
+      },
+      {
+        "no": 2,
+        "title": "Impossible",
+        "isTitle": false,
+        "songId": "37431365"
+      },
+      {
+        "no": 3,
+        "title": "Love 119",
+        "isTitle": false,
+        "songId": "37640354"
+      },
+      {
+        "no": 4,
+        "title": "Talk Saxy",
+        "isTitle": false,
+        "songId": "37640353"
+      },
+      {
+        "no": 5,
+        "title": "Siren",
+        "isTitle": false,
+        "songId": "37378932"
+      },
+      {
+        "no": 6,
+        "title": "Breathe Easy",
+        "isTitle": false,
+        "songId": "37463421"
+      },
+      {
+        "no": 7,
+        "title": "Run to You",
+        "isTitle": false,
+        "songId": "37640353"
+      },
+      {
+        "no": 8,
+        "title": "Get A Guitar",
+        "isTitle": false,
+        "songId": "37640354"
+      }
+    ],
+    "melonAlbumId": "11456179"
+  }
+]

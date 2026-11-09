@@ -1,0 +1,6027 @@
+{
+  "revision": "efbbdbceac96cefe1300ffd810f92ec29e04b0c0",
+  "eligible": 585,
+  "mismatchingPrimaryCounts": 463,
+  "scope": "Local actual creditsFor versus seo_extra loadStatic raw lengths; public HTTP verified only for Eunchae in a separate file.",
+  "rows": [
+    {
+      "id": "a0020",
+      "name": "태용",
+      "group": "엔시티 127",
+      "rawCount": {
+        "lyrics": 110,
+        "compose": 44
+      },
+      "packed": {
+        "lyrics": 75,
+        "compose": 38
+      }
+    },
+    {
+      "id": "a0021",
+      "name": "유타",
+      "group": "엔시티 127",
+      "rawCount": {
+        "lyrics": 19,
+        "compose": 7
+      },
+      "packed": {
+        "lyrics": 16,
+        "compose": 6
+      }
+    },
+    {
+      "id": "a0023",
+      "name": "재현",
+      "group": "엔시티 127",
+      "rawCount": {
+        "lyrics": 15,
+        "compose": 5
+      },
+      "packed": {
+        "lyrics": 11,
+        "compose": 5
+      }
+    },
+    {
+      "id": "a0028",
+      "name": "제노",
+      "group": "엔시티 드림",
+      "rawCount": {
+        "lyrics": 23,
+        "compose": 3
+      },
+      "packed": {
+        "lyrics": 15,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a0029",
+      "name": "재민",
+      "group": "엔시티 드림",
+      "rawCount": {
+        "lyrics": 17,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 11,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a0031",
+      "name": "지성",
+      "group": "엔시티 드림",
+      "rawCount": {
+        "lyrics": 15,
+        "compose": 1
+      },
+      "packed": {
+        "lyrics": 9,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0032",
+      "name": "쿤",
+      "group": "웨이션브이",
+      "rawCount": {
+        "lyrics": 6,
+        "compose": 6
+      },
+      "packed": {
+        "lyrics": 6,
+        "compose": 5
+      }
+    },
+    {
+      "id": "a0038",
+      "name": "방찬",
+      "group": "스트레이키즈",
+      "rawCount": {
+        "lyrics": 303,
+        "compose": 348
+      },
+      "packed": {
+        "lyrics": 176,
+        "compose": 200
+      }
+    },
+    {
+      "id": "a0039",
+      "name": "리노",
+      "group": "스트레이키즈",
+      "rawCount": {
+        "lyrics": 24,
+        "compose": 16
+      },
+      "packed": {
+        "lyrics": 19,
+        "compose": 12
+      }
+    },
+    {
+      "id": "a0040",
+      "name": "창빈",
+      "group": "스트레이키즈",
+      "rawCount": {
+        "lyrics": 303,
+        "compose": 303
+      },
+      "packed": {
+        "lyrics": 176,
+        "compose": 164
+      }
+    },
+    {
+      "id": "a0041",
+      "name": "현진",
+      "group": "스트레이키즈",
+      "rawCount": {
+        "lyrics": 30,
+        "compose": 25
+      },
+      "packed": {
+        "lyrics": 26,
+        "compose": 22
+      }
+    },
+    {
+      "id": "a0042",
+      "name": "한",
+      "group": "스트레이키즈",
+      "rawCount": {
+        "lyrics": 301,
+        "compose": 308
+      },
+      "packed": {
+        "lyrics": 172,
+        "compose": 167
+      }
+    },
+    {
+      "id": "a0043",
+      "name": "필릭스",
+      "group": "스트레이키즈",
+      "rawCount": {
+        "lyrics": 31,
+        "compose": 22
+      },
+      "packed": {
+        "lyrics": 26,
+        "compose": 19
+      }
+    },
+    {
+      "id": "a0044",
+      "name": "승민",
+      "group": "스트레이키즈",
+      "rawCount": {
+        "lyrics": 27,
+        "compose": 22
+      },
+      "packed": {
+        "lyrics": 22,
+        "compose": 18
+      }
+    },
+    {
+      "id": "a0045",
+      "name": "아이엔",
+      "group": "스트레이키즈",
+      "rawCount": {
+        "lyrics": 26,
+        "compose": 20
+      },
+      "packed": {
+        "lyrics": 21,
+        "compose": 16
+      }
+    },
+    {
+      "id": "a0057",
+      "name": "에스쿱스",
+      "group": "세븐틴",
+      "rawCount": {
+        "lyrics": 107,
+        "compose": 14
+      },
+      "packed": {
+        "lyrics": 72,
+        "compose": 12
+      }
+    },
+    {
+      "id": "a0058",
+      "name": "정한",
+      "group": "세븐틴",
+      "rawCount": {
+        "lyrics": 13,
+        "compose": 1
+      },
+      "packed": {
+        "lyrics": 7,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0059",
+      "name": "조슈아",
+      "group": "세븐틴",
+      "rawCount": {
+        "lyrics": 10,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 7,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a0060",
+      "name": "준",
+      "group": "세븐틴",
+      "rawCount": {
+        "lyrics": 11,
+        "compose": 3
+      },
+      "packed": {
+        "lyrics": 8,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a0061",
+      "name": "호시",
+      "group": "세븐틴",
+      "rawCount": {
+        "lyrics": 52,
+        "compose": 11
+      },
+      "packed": {
+        "lyrics": 41,
+        "compose": 10
+      }
+    },
+    {
+      "id": "a0062",
+      "name": "원우",
+      "group": "세븐틴",
+      "rawCount": {
+        "lyrics": 44,
+        "compose": 4
+      },
+      "packed": {
+        "lyrics": 33,
+        "compose": 4
+      }
+    },
+    {
+      "id": "a0063",
+      "name": "우지",
+      "group": "세븐틴",
+      "rawCount": {
+        "lyrics": 250,
+        "compose": 244
+      },
+      "packed": {
+        "lyrics": 170,
+        "compose": 163
+      }
+    },
+    {
+      "id": "a0064",
+      "name": "도겸",
+      "group": "세븐틴",
+      "rawCount": {
+        "lyrics": 23,
+        "compose": 5
+      },
+      "packed": {
+        "lyrics": 16,
+        "compose": 4
+      }
+    },
+    {
+      "id": "a0065",
+      "name": "민규",
+      "group": "세븐틴",
+      "rawCount": {
+        "lyrics": 72,
+        "compose": 12
+      },
+      "packed": {
+        "lyrics": 52,
+        "compose": 11
+      }
+    },
+    {
+      "id": "a0066",
+      "name": "디에잇",
+      "group": "세븐틴",
+      "rawCount": {
+        "lyrics": 32,
+        "compose": 17
+      },
+      "packed": {
+        "lyrics": 28,
+        "compose": 17
+      }
+    },
+    {
+      "id": "a0067",
+      "name": "승관",
+      "group": "세븐틴",
+      "rawCount": {
+        "lyrics": 35,
+        "compose": 6
+      },
+      "packed": {
+        "lyrics": 24,
+        "compose": 5
+      }
+    },
+    {
+      "id": "a0068",
+      "name": "버논",
+      "group": "세븐틴",
+      "rawCount": {
+        "lyrics": 138,
+        "compose": 35
+      },
+      "packed": {
+        "lyrics": 91,
+        "compose": 29
+      }
+    },
+    {
+      "id": "a0069",
+      "name": "디노",
+      "group": "세븐틴",
+      "rawCount": {
+        "lyrics": 41,
+        "compose": 9
+      },
+      "packed": {
+        "lyrics": 33,
+        "compose": 8
+      }
+    },
+    {
+      "id": "a0081",
+      "name": "마틴",
+      "group": "코르티스",
+      "rawCount": {
+        "lyrics": 43,
+        "compose": 43
+      },
+      "packed": {
+        "lyrics": 21,
+        "compose": 21
+      }
+    },
+    {
+      "id": "a0082",
+      "name": "제임스",
+      "group": "코르티스",
+      "rawCount": {
+        "lyrics": 29,
+        "compose": 29
+      },
+      "packed": {
+        "lyrics": 13,
+        "compose": 13
+      }
+    },
+    {
+      "id": "a0083",
+      "name": "주훈",
+      "group": "코르티스",
+      "rawCount": {
+        "lyrics": 18,
+        "compose": 18
+      },
+      "packed": {
+        "lyrics": 12,
+        "compose": 12
+      }
+    },
+    {
+      "id": "a0084",
+      "name": "성현",
+      "group": "코르티스",
+      "rawCount": {
+        "lyrics": 19,
+        "compose": 19
+      },
+      "packed": {
+        "lyrics": 13,
+        "compose": 13
+      }
+    },
+    {
+      "id": "a0085",
+      "name": "건호",
+      "group": "코르티스",
+      "rawCount": {
+        "lyrics": 16,
+        "compose": 16
+      },
+      "packed": {
+        "lyrics": 11,
+        "compose": 11
+      }
+    },
+    {
+      "id": "a0102",
+      "name": "쥴리",
+      "group": "키스오브라이프",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 1
+      },
+      "packed": {
+        "lyrics": 6,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0104",
+      "name": "벨",
+      "group": "키스오브라이프",
+      "rawCount": {
+        "lyrics": 17,
+        "compose": 24
+      },
+      "packed": {
+        "lyrics": 15,
+        "compose": 16
+      }
+    },
+    {
+      "id": "a0106",
+      "name": "홍중",
+      "group": "에이티즈",
+      "rawCount": {
+        "lyrics": 215,
+        "compose": 37
+      },
+      "packed": {
+        "lyrics": 146,
+        "compose": 34
+      }
+    },
+    {
+      "id": "a0111",
+      "name": "민기",
+      "group": "에이티즈",
+      "rawCount": {
+        "lyrics": 201,
+        "compose": 18
+      },
+      "packed": {
+        "lyrics": 126,
+        "compose": 8
+      }
+    },
+    {
+      "id": "a0114",
+      "name": "소연",
+      "group": "아이들",
+      "rawCount": {
+        "lyrics": 137,
+        "compose": 94
+      },
+      "packed": {
+        "lyrics": 101,
+        "compose": 62
+      }
+    },
+    {
+      "id": "a0116",
+      "name": "민니",
+      "group": "아이들",
+      "rawCount": {
+        "lyrics": 23,
+        "compose": 22
+      },
+      "packed": {
+        "lyrics": 22,
+        "compose": 21
+      }
+    },
+    {
+      "id": "a0118",
+      "name": "우기",
+      "group": "아이들",
+      "rawCount": {
+        "lyrics": 27,
+        "compose": 28
+      },
+      "packed": {
+        "lyrics": 26,
+        "compose": 27
+      }
+    },
+    {
+      "id": "a0127",
+      "name": "연준",
+      "group": "투모로우바이투게더",
+      "rawCount": {
+        "lyrics": 61,
+        "compose": 64
+      },
+      "packed": {
+        "lyrics": 39,
+        "compose": 40
+      }
+    },
+    {
+      "id": "a0128",
+      "name": "수빈",
+      "group": "투모로우바이투게더",
+      "rawCount": {
+        "lyrics": 20,
+        "compose": 20
+      },
+      "packed": {
+        "lyrics": 14,
+        "compose": 14
+      }
+    },
+    {
+      "id": "a0129",
+      "name": "범규",
+      "group": "투모로우바이투게더",
+      "rawCount": {
+        "lyrics": 18,
+        "compose": 18
+      },
+      "packed": {
+        "lyrics": 13,
+        "compose": 13
+      }
+    },
+    {
+      "id": "a0130",
+      "name": "태현",
+      "group": "투모로우바이투게더",
+      "rawCount": {
+        "lyrics": 39,
+        "compose": 43
+      },
+      "packed": {
+        "lyrics": 27,
+        "compose": 29
+      }
+    },
+    {
+      "id": "a0131",
+      "name": "휴닝카이",
+      "group": "투모로우바이투게더",
+      "rawCount": {
+        "lyrics": 27,
+        "compose": 31
+      },
+      "packed": {
+        "lyrics": 20,
+        "compose": 22
+      }
+    },
+    {
+      "id": "a0132",
+      "name": "에반",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 25,
+        "compose": 25
+      },
+      "packed": {
+        "lyrics": 11,
+        "compose": 11
+      }
+    },
+    {
+      "id": "a0133",
+      "name": "제이",
+      "group": "엔하이픈",
+      "rawCount": {
+        "lyrics": 8,
+        "compose": 7
+      },
+      "packed": {
+        "lyrics": 5,
+        "compose": 4
+      }
+    },
+    {
+      "id": "a0134",
+      "name": "제이크",
+      "group": "엔하이픈",
+      "rawCount": {
+        "lyrics": 28,
+        "compose": 28
+      },
+      "packed": {
+        "lyrics": 8,
+        "compose": 8
+      }
+    },
+    {
+      "id": "a0137",
+      "name": "정원",
+      "group": "엔하이픈",
+      "rawCount": {
+        "lyrics": 6,
+        "compose": 6
+      },
+      "packed": {
+        "lyrics": 3,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a0139",
+      "name": "윤아",
+      "group": "아일릿",
+      "rawCount": {
+        "lyrics": 10,
+        "compose": 11
+      },
+      "packed": {
+        "lyrics": 3,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a0144",
+      "name": "사쿠라",
+      "group": "르세라핌",
+      "rawCount": {
+        "lyrics": 40,
+        "compose": 40
+      },
+      "packed": {
+        "lyrics": 8,
+        "compose": 7
+      }
+    },
+    {
+      "id": "a0145",
+      "name": "김채원",
+      "group": "르세라핌",
+      "rawCount": {
+        "lyrics": 16,
+        "compose": 18
+      },
+      "packed": {
+        "lyrics": 8,
+        "compose": 8
+      }
+    },
+    {
+      "id": "a0146",
+      "name": "허윤진",
+      "group": "르세라핌",
+      "rawCount": {
+        "lyrics": 115,
+        "compose": 119
+      },
+      "packed": {
+        "lyrics": 35,
+        "compose": 34
+      }
+    },
+    {
+      "id": "a0151",
+      "name": "아사",
+      "group": "베이비몬스터",
+      "rawCount": {
+        "lyrics": 5,
+        "compose": 3
+      },
+      "packed": {
+        "lyrics": 4,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a0157",
+      "name": "가원",
+      "group": "미야오",
+      "rawCount": {
+        "lyrics": 10,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 8,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a0159",
+      "name": "나린",
+      "group": "미야오",
+      "rawCount": {
+        "lyrics": 9,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 7,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a0164",
+      "name": "조이",
+      "group": "레드벨벳",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 5,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a0165",
+      "name": "예리",
+      "group": "레드벨벳",
+      "rawCount": {
+        "lyrics": 4,
+        "compose": 5
+      },
+      "packed": {
+        "lyrics": 3,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a0166",
+      "name": "태연",
+      "group": "소녀시대",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 1
+      },
+      "packed": {
+        "lyrics": 4,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0170",
+      "name": "수영",
+      "group": "소녀시대",
+      "rawCount": {
+        "lyrics": 12,
+        "compose": 3
+      },
+      "packed": {
+        "lyrics": 11,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a0173",
+      "name": "온유",
+      "group": "샤이니",
+      "rawCount": {
+        "lyrics": 37,
+        "compose": 4
+      },
+      "packed": {
+        "lyrics": 32,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a0174",
+      "name": "키",
+      "group": "샤이니",
+      "rawCount": {
+        "lyrics": 33,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 20,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a0175",
+      "name": "민호",
+      "group": "샤이니",
+      "rawCount": {
+        "lyrics": 19,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 13,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a0176",
+      "name": "태민",
+      "group": "샤이니",
+      "rawCount": {
+        "lyrics": 21,
+        "compose": 15
+      },
+      "packed": {
+        "lyrics": 19,
+        "compose": 14
+      }
+    },
+    {
+      "id": "a0177",
+      "name": "종현",
+      "group": "샤이니",
+      "rawCount": {
+        "lyrics": 116,
+        "compose": 84
+      },
+      "packed": {
+        "lyrics": 72,
+        "compose": 53
+      }
+    },
+    {
+      "id": "a0179",
+      "name": "앰버",
+      "group": "에프엑스",
+      "rawCount": {
+        "lyrics": 20,
+        "compose": 22
+      },
+      "packed": {
+        "lyrics": 18,
+        "compose": 19
+      }
+    },
+    {
+      "id": "a0183",
+      "name": "알엠",
+      "group": "방탄소년단",
+      "rawCount": {
+        "lyrics": 403,
+        "compose": 409
+      },
+      "packed": {
+        "lyrics": 228,
+        "compose": 221
+      }
+    },
+    {
+      "id": "a0184",
+      "name": "진",
+      "group": "방탄소년단",
+      "rawCount": {
+        "lyrics": 46,
+        "compose": 46
+      },
+      "packed": {
+        "lyrics": 21,
+        "compose": 21
+      }
+    },
+    {
+      "id": "a0185",
+      "name": "슈가",
+      "group": "방탄소년단",
+      "rawCount": {
+        "lyrics": 262,
+        "compose": 272
+      },
+      "packed": {
+        "lyrics": 161,
+        "compose": 163
+      }
+    },
+    {
+      "id": "a0186",
+      "name": "제이홉",
+      "group": "방탄소년단",
+      "rawCount": {
+        "lyrics": 285,
+        "compose": 289
+      },
+      "packed": {
+        "lyrics": 151,
+        "compose": 149
+      }
+    },
+    {
+      "id": "a0187",
+      "name": "지민",
+      "group": "방탄소년단",
+      "rawCount": {
+        "lyrics": 45,
+        "compose": 48
+      },
+      "packed": {
+        "lyrics": 20,
+        "compose": 21
+      }
+    },
+    {
+      "id": "a0188",
+      "name": "뷔",
+      "group": "방탄소년단",
+      "rawCount": {
+        "lyrics": 32,
+        "compose": 35
+      },
+      "packed": {
+        "lyrics": 19,
+        "compose": 19
+      }
+    },
+    {
+      "id": "a0189",
+      "name": "정국",
+      "group": "방탄소년단",
+      "rawCount": {
+        "lyrics": 36,
+        "compose": 37
+      },
+      "packed": {
+        "lyrics": 23,
+        "compose": 24
+      }
+    },
+    {
+      "id": "a0190",
+      "name": "나연",
+      "group": "트와이스",
+      "rawCount": {
+        "lyrics": 11,
+        "compose": 1
+      },
+      "packed": {
+        "lyrics": 10,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0191",
+      "name": "정연",
+      "group": "트와이스",
+      "rawCount": {
+        "lyrics": 9,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 6,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a0194",
+      "name": "지효",
+      "group": "트와이스",
+      "rawCount": {
+        "lyrics": 21,
+        "compose": 7
+      },
+      "packed": {
+        "lyrics": 18,
+        "compose": 6
+      }
+    },
+    {
+      "id": "a0196",
+      "name": "다현",
+      "group": "트와이스",
+      "rawCount": {
+        "lyrics": 22,
+        "compose": 4
+      },
+      "packed": {
+        "lyrics": 20,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a0197",
+      "name": "채영",
+      "group": "트와이스",
+      "rawCount": {
+        "lyrics": 27,
+        "compose": 12
+      },
+      "packed": {
+        "lyrics": 23,
+        "compose": 11
+      }
+    },
+    {
+      "id": "a0199",
+      "name": "지디",
+      "group": "빅뱅",
+      "rawCount": {
+        "lyrics": 361,
+        "compose": 307
+      },
+      "packed": {
+        "lyrics": 147,
+        "compose": 118
+      }
+    },
+    {
+      "id": "a0200",
+      "name": "태양",
+      "group": "빅뱅",
+      "rawCount": {
+        "lyrics": 35,
+        "compose": 32
+      },
+      "packed": {
+        "lyrics": 31,
+        "compose": 21
+      }
+    },
+    {
+      "id": "a0201",
+      "name": "탑",
+      "group": "빅뱅",
+      "rawCount": {
+        "lyrics": 85,
+        "compose": 43
+      },
+      "packed": {
+        "lyrics": 49,
+        "compose": 28
+      }
+    },
+    {
+      "id": "a0202",
+      "name": "대성",
+      "group": "빅뱅",
+      "rawCount": {
+        "lyrics": 19,
+        "compose": 6
+      },
+      "packed": {
+        "lyrics": 18,
+        "compose": 6
+      }
+    },
+    {
+      "id": "a0203",
+      "name": "지수",
+      "group": "블랙핑크",
+      "rawCount": {
+        "lyrics": 9,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 7,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a0204",
+      "name": "제니",
+      "group": "블랙핑크",
+      "rawCount": {
+        "lyrics": 38,
+        "compose": 38
+      },
+      "packed": {
+        "lyrics": 16,
+        "compose": 16
+      }
+    },
+    {
+      "id": "a0205",
+      "name": "로제",
+      "group": "블랙핑크",
+      "rawCount": {
+        "lyrics": 19,
+        "compose": 17
+      },
+      "packed": {
+        "lyrics": 16,
+        "compose": 14
+      }
+    },
+    {
+      "id": "a0206",
+      "name": "리사",
+      "group": "블랙핑크",
+      "rawCount": {
+        "lyrics": 24,
+        "compose": 23
+      },
+      "packed": {
+        "lyrics": 15,
+        "compose": 14
+      }
+    },
+    {
+      "id": "a0207",
+      "name": "아이유",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 93,
+        "compose": 37
+      },
+      "packed": {
+        "lyrics": 74,
+        "compose": 27
+      }
+    },
+    {
+      "id": "a0208",
+      "name": "재현",
+      "group": "보이넥스트도어",
+      "rawCount": {
+        "lyrics": 46,
+        "compose": 46
+      },
+      "packed": {
+        "lyrics": 21,
+        "compose": 25
+      }
+    },
+    {
+      "id": "a0211",
+      "name": "태산",
+      "group": "보이넥스트도어",
+      "rawCount": {
+        "lyrics": 49,
+        "compose": 50
+      },
+      "packed": {
+        "lyrics": 28,
+        "compose": 29
+      }
+    },
+    {
+      "id": "a0213",
+      "name": "운학",
+      "group": "보이넥스트도어",
+      "rawCount": {
+        "lyrics": 54,
+        "compose": 54
+      },
+      "packed": {
+        "lyrics": 28,
+        "compose": 32
+      }
+    },
+    {
+      "id": "a0226",
+      "name": "뉴",
+      "group": "더보이즈",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 1
+      },
+      "packed": {
+        "lyrics": 6,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0227",
+      "name": "큐",
+      "group": "더보이즈",
+      "rawCount": {
+        "lyrics": 12,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 11,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a0228",
+      "name": "선우",
+      "group": "더보이즈",
+      "rawCount": {
+        "lyrics": 50,
+        "compose": 7
+      },
+      "packed": {
+        "lyrics": 47,
+        "compose": 5
+      }
+    },
+    {
+      "id": "a0229",
+      "name": "에릭",
+      "group": "더보이즈",
+      "rawCount": {
+        "lyrics": 27,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 26,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a0235",
+      "name": "와이엇",
+      "group": "온앤오프",
+      "rawCount": {
+        "lyrics": 67,
+        "compose": 9
+      },
+      "packed": {
+        "lyrics": 52,
+        "compose": 7
+      }
+    },
+    {
+      "id": "a0236",
+      "name": "민균",
+      "group": "온앤오프",
+      "rawCount": {
+        "lyrics": 15,
+        "compose": 31
+      },
+      "packed": {
+        "lyrics": 12,
+        "compose": 23
+      }
+    },
+    {
+      "id": "a0252",
+      "name": "박소현",
+      "group": "트리플에스",
+      "rawCount": {
+        "lyrics": 13,
+        "compose": 12
+      },
+      "packed": {
+        "lyrics": 13,
+        "compose": 7
+      }
+    },
+    {
+      "id": "a0263",
+      "name": "하영",
+      "group": "프로미스나인",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 4
+      },
+      "packed": {
+        "lyrics": 6,
+        "compose": 4
+      }
+    },
+    {
+      "id": "a0264",
+      "name": "지원",
+      "group": "프로미스나인",
+      "rawCount": {
+        "lyrics": 13,
+        "compose": 4
+      },
+      "packed": {
+        "lyrics": 12,
+        "compose": 4
+      }
+    },
+    {
+      "id": "a0281",
+      "name": "은하",
+      "group": "비비지",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 6
+      },
+      "packed": {
+        "lyrics": 6,
+        "compose": 5
+      }
+    },
+    {
+      "id": "a0284",
+      "name": "현석",
+      "group": "트레저",
+      "rawCount": {
+        "lyrics": 47,
+        "compose": 10
+      },
+      "packed": {
+        "lyrics": 39,
+        "compose": 10
+      }
+    },
+    {
+      "id": "a0286",
+      "name": "요시",
+      "group": "트레저",
+      "rawCount": {
+        "lyrics": 39,
+        "compose": 8
+      },
+      "packed": {
+        "lyrics": 32,
+        "compose": 8
+      }
+    },
+    {
+      "id": "a0287",
+      "name": "준규",
+      "group": "트레저",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 5
+      },
+      "packed": {
+        "lyrics": 6,
+        "compose": 4
+      }
+    },
+    {
+      "id": "a0289",
+      "name": "아사히",
+      "group": "트레저",
+      "rawCount": {
+        "lyrics": 8,
+        "compose": 6
+      },
+      "packed": {
+        "lyrics": 6,
+        "compose": 5
+      }
+    },
+    {
+      "id": "a0292",
+      "name": "하루토",
+      "group": "트레저",
+      "rawCount": {
+        "lyrics": 42,
+        "compose": 7
+      },
+      "packed": {
+        "lyrics": 34,
+        "compose": 7
+      }
+    },
+    {
+      "id": "a0294",
+      "name": "디모렉스",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 40,
+        "compose": 41
+      },
+      "packed": {
+        "lyrics": 40,
+        "compose": 40
+      }
+    },
+    {
+      "id": "a0296",
+      "name": "세림",
+      "group": "크래비티",
+      "rawCount": {
+        "lyrics": 46,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 39,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0297",
+      "name": "앨런",
+      "group": "크래비티",
+      "rawCount": {
+        "lyrics": 53,
+        "compose": 3
+      },
+      "packed": {
+        "lyrics": 44,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a0299",
+      "name": "우빈",
+      "group": "크래비티",
+      "rawCount": {
+        "lyrics": 9,
+        "compose": 6
+      },
+      "packed": {
+        "lyrics": 7,
+        "compose": 5
+      }
+    },
+    {
+      "id": "a0300",
+      "name": "원진",
+      "group": "크래비티",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 3
+      },
+      "packed": {
+        "lyrics": 5,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a0305",
+      "name": "최예나",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 15,
+        "compose": 7
+      },
+      "packed": {
+        "lyrics": 14,
+        "compose": 7
+      }
+    },
+    {
+      "id": "a0308",
+      "name": "이채연",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 6,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 5,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a0309",
+      "name": "권은비",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 8
+      },
+      "packed": {
+        "lyrics": 7,
+        "compose": 7
+      }
+    },
+    {
+      "id": "a0312",
+      "name": "임나영",
+      "group": "아이오아이",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 6,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a0313",
+      "name": "청하",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 27,
+        "compose": 4
+      },
+      "packed": {
+        "lyrics": 25,
+        "compose": 4
+      }
+    },
+    {
+      "id": "a0314",
+      "name": "김세정",
+      "group": "아이오아이",
+      "rawCount": {
+        "lyrics": 24,
+        "compose": 23
+      },
+      "packed": {
+        "lyrics": 23,
+        "compose": 20
+      }
+    },
+    {
+      "id": "a0315",
+      "name": "정채연",
+      "group": "아이오아이",
+      "rawCount": {
+        "lyrics": 12,
+        "compose": 5
+      },
+      "packed": {
+        "lyrics": 6,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a0318",
+      "name": "최유정",
+      "group": "아이오아이",
+      "rawCount": {
+        "lyrics": 15,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 14,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a0321",
+      "name": "전소미",
+      "group": "아이오아이",
+      "rawCount": {
+        "lyrics": 22,
+        "compose": 14
+      },
+      "packed": {
+        "lyrics": 18,
+        "compose": 11
+      }
+    },
+    {
+      "id": "a0322",
+      "name": "윤지성",
+      "group": "워너원",
+      "rawCount": {
+        "lyrics": 9,
+        "compose": 4
+      },
+      "packed": {
+        "lyrics": 8,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a0323",
+      "name": "옹성우",
+      "group": "워너원",
+      "rawCount": {
+        "lyrics": 8,
+        "compose": 7
+      },
+      "packed": {
+        "lyrics": 7,
+        "compose": 6
+      }
+    },
+    {
+      "id": "a0324",
+      "name": "김재환",
+      "group": "워너원",
+      "rawCount": {
+        "lyrics": 32,
+        "compose": 44
+      },
+      "packed": {
+        "lyrics": 31,
+        "compose": 38
+      }
+    },
+    {
+      "id": "a0325",
+      "name": "강다니엘",
+      "group": "워너원",
+      "rawCount": {
+        "lyrics": 76,
+        "compose": 18
+      },
+      "packed": {
+        "lyrics": 60,
+        "compose": 16
+      }
+    },
+    {
+      "id": "a0327",
+      "name": "박우진",
+      "group": "워너원",
+      "rawCount": {
+        "lyrics": 91,
+        "compose": 9
+      },
+      "packed": {
+        "lyrics": 73,
+        "compose": 5
+      }
+    },
+    {
+      "id": "a0329",
+      "name": "이대휘",
+      "group": "워너원",
+      "rawCount": {
+        "lyrics": 87,
+        "compose": 91
+      },
+      "packed": {
+        "lyrics": 74,
+        "compose": 64
+      }
+    },
+    {
+      "id": "a0347",
+      "name": "리오",
+      "group": "알파드라이브원",
+      "rawCount": {
+        "lyrics": 4,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 3,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a0352",
+      "name": "씬롱",
+      "group": "알파드라이브원",
+      "rawCount": {
+        "lyrics": 12,
+        "compose": 3
+      },
+      "packed": {
+        "lyrics": 11,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a0370",
+      "name": "수호",
+      "group": "엑소",
+      "rawCount": {
+        "lyrics": 23,
+        "compose": 1
+      },
+      "packed": {
+        "lyrics": 22,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0371",
+      "name": "레이",
+      "group": "엑소",
+      "rawCount": {
+        "lyrics": 51,
+        "compose": 100
+      },
+      "packed": {
+        "lyrics": 42,
+        "compose": 81
+      }
+    },
+    {
+      "id": "a0372",
+      "name": "백현",
+      "group": "엑소",
+      "rawCount": {
+        "lyrics": 10,
+        "compose": 3
+      },
+      "packed": {
+        "lyrics": 8,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a0373",
+      "name": "첸",
+      "group": "엑소",
+      "rawCount": {
+        "lyrics": 31,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 23,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a0374",
+      "name": "찬열",
+      "group": "엑소",
+      "rawCount": {
+        "lyrics": 67,
+        "compose": 9
+      },
+      "packed": {
+        "lyrics": 42,
+        "compose": 6
+      }
+    },
+    {
+      "id": "a0377",
+      "name": "세훈",
+      "group": "엑소",
+      "rawCount": {
+        "lyrics": 17,
+        "compose": 6
+      },
+      "packed": {
+        "lyrics": 13,
+        "compose": 5
+      }
+    },
+    {
+      "id": "a0380",
+      "name": "이특",
+      "group": "슈퍼주니어",
+      "rawCount": {
+        "lyrics": 19,
+        "compose": 19
+      },
+      "packed": {
+        "lyrics": 13,
+        "compose": 13
+      }
+    },
+    {
+      "id": "a0381",
+      "name": "희철",
+      "group": "슈퍼주니어",
+      "rawCount": {
+        "lyrics": 37,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 26,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a0382",
+      "name": "예성",
+      "group": "슈퍼주니어",
+      "rawCount": {
+        "lyrics": 44,
+        "compose": 28
+      },
+      "packed": {
+        "lyrics": 38,
+        "compose": 20
+      }
+    },
+    {
+      "id": "a0383",
+      "name": "신동",
+      "group": "슈퍼주니어",
+      "rawCount": {
+        "lyrics": 12,
+        "compose": 9
+      },
+      "packed": {
+        "lyrics": 10,
+        "compose": 5
+      }
+    },
+    {
+      "id": "a0384",
+      "name": "은혁",
+      "group": "슈퍼주니어",
+      "rawCount": {
+        "lyrics": 56,
+        "compose": 5
+      },
+      "packed": {
+        "lyrics": 36,
+        "compose": 4
+      }
+    },
+    {
+      "id": "a0386",
+      "name": "동해",
+      "group": "슈퍼주니어",
+      "rawCount": {
+        "lyrics": 89,
+        "compose": 100
+      },
+      "packed": {
+        "lyrics": 64,
+        "compose": 68
+      }
+    },
+    {
+      "id": "a0388",
+      "name": "규현",
+      "group": "슈퍼주니어",
+      "rawCount": {
+        "lyrics": 2,
+        "compose": 6
+      },
+      "packed": {
+        "lyrics": 2,
+        "compose": 4
+      }
+    },
+    {
+      "id": "a0389",
+      "name": "성민",
+      "group": "슈퍼주니어",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 3
+      },
+      "packed": {
+        "lyrics": 6,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a0393",
+      "name": "MJ",
+      "group": "아스트로",
+      "rawCount": {
+        "lyrics": 8,
+        "compose": 7
+      },
+      "packed": {
+        "lyrics": 8,
+        "compose": 6
+      }
+    },
+    {
+      "id": "a0394",
+      "name": "진진",
+      "group": "아스트로",
+      "rawCount": {
+        "lyrics": 92,
+        "compose": 33
+      },
+      "packed": {
+        "lyrics": 90,
+        "compose": 30
+      }
+    },
+    {
+      "id": "a0398",
+      "name": "라키",
+      "group": "아스트로",
+      "rawCount": {
+        "lyrics": 90,
+        "compose": 38
+      },
+      "packed": {
+        "lyrics": 86,
+        "compose": 30
+      }
+    },
+    {
+      "id": "a0402",
+      "name": "형원",
+      "group": "몬스타엑스",
+      "rawCount": {
+        "lyrics": 27,
+        "compose": 26
+      },
+      "packed": {
+        "lyrics": 21,
+        "compose": 22
+      }
+    },
+    {
+      "id": "a0403",
+      "name": "주헌",
+      "group": "몬스타엑스",
+      "rawCount": {
+        "lyrics": 206,
+        "compose": 64
+      },
+      "packed": {
+        "lyrics": 159,
+        "compose": 53
+      }
+    },
+    {
+      "id": "a0404",
+      "name": "아이엠",
+      "group": "몬스타엑스",
+      "rawCount": {
+        "lyrics": 190,
+        "compose": 42
+      },
+      "packed": {
+        "lyrics": 149,
+        "compose": 40
+      }
+    },
+    {
+      "id": "a0405",
+      "name": "원호",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 50,
+        "compose": 45
+      },
+      "packed": {
+        "lyrics": 45,
+        "compose": 41
+      }
+    },
+    {
+      "id": "a0406",
+      "name": "영빈",
+      "group": "에스에프나인",
+      "rawCount": {
+        "lyrics": 68,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 66,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a0410",
+      "name": "주호",
+      "group": "에스에프나인",
+      "rawCount": {
+        "lyrics": 66,
+        "compose": 17
+      },
+      "packed": {
+        "lyrics": 64,
+        "compose": 13
+      }
+    },
+    {
+      "id": "a0412",
+      "name": "휘영",
+      "group": "에스에프나인",
+      "rawCount": {
+        "lyrics": 84,
+        "compose": 13
+      },
+      "packed": {
+        "lyrics": 79,
+        "compose": 10
+      }
+    },
+    {
+      "id": "a0413",
+      "name": "찬희",
+      "group": "에스에프나인",
+      "rawCount": {
+        "lyrics": 34,
+        "compose": 1
+      },
+      "packed": {
+        "lyrics": 33,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0421",
+      "name": "동현",
+      "group": "킥플립",
+      "rawCount": {
+        "lyrics": 5,
+        "compose": 6
+      },
+      "packed": {
+        "lyrics": 5,
+        "compose": 5
+      }
+    },
+    {
+      "id": "a0430",
+      "name": "서호",
+      "group": "원어스",
+      "rawCount": {
+        "lyrics": 8,
+        "compose": 4
+      },
+      "packed": {
+        "lyrics": 7,
+        "compose": 4
+      }
+    },
+    {
+      "id": "a0431",
+      "name": "이도",
+      "group": "원어스",
+      "rawCount": {
+        "lyrics": 77,
+        "compose": 16
+      },
+      "packed": {
+        "lyrics": 57,
+        "compose": 13
+      }
+    },
+    {
+      "id": "a0433",
+      "name": "환웅",
+      "group": "원어스",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 6,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a0436",
+      "name": "효정",
+      "group": "오마이걸",
+      "rawCount": {
+        "lyrics": 6,
+        "compose": 5
+      },
+      "packed": {
+        "lyrics": 5,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a0437",
+      "name": "미미",
+      "group": "오마이걸",
+      "rawCount": {
+        "lyrics": 6,
+        "compose": 5
+      },
+      "packed": {
+        "lyrics": 5,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a0452",
+      "name": "지웅",
+      "group": "피원하모니",
+      "rawCount": {
+        "lyrics": 27,
+        "compose": 8
+      },
+      "packed": {
+        "lyrics": 26,
+        "compose": 8
+      }
+    },
+    {
+      "id": "a0453",
+      "name": "인탁",
+      "group": "피원하모니",
+      "rawCount": {
+        "lyrics": 61,
+        "compose": 1
+      },
+      "packed": {
+        "lyrics": 58,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0455",
+      "name": "종섭",
+      "group": "피원하모니",
+      "rawCount": {
+        "lyrics": 63,
+        "compose": 3
+      },
+      "packed": {
+        "lyrics": 59,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a0456",
+      "name": "동헌",
+      "group": "베리베리",
+      "rawCount": {
+        "lyrics": 24,
+        "compose": 19
+      },
+      "packed": {
+        "lyrics": 22,
+        "compose": 18
+      }
+    },
+    {
+      "id": "a0457",
+      "name": "호영",
+      "group": "베리베리",
+      "rawCount": {
+        "lyrics": 9,
+        "compose": 1
+      },
+      "packed": {
+        "lyrics": 8,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0459",
+      "name": "계현",
+      "group": "베리베리",
+      "rawCount": {
+        "lyrics": 14,
+        "compose": 16
+      },
+      "packed": {
+        "lyrics": 13,
+        "compose": 15
+      }
+    },
+    {
+      "id": "a0460",
+      "name": "연호",
+      "group": "베리베리",
+      "rawCount": {
+        "lyrics": 15,
+        "compose": 16
+      },
+      "packed": {
+        "lyrics": 14,
+        "compose": 15
+      }
+    },
+    {
+      "id": "a0461",
+      "name": "용승",
+      "group": "베리베리",
+      "rawCount": {
+        "lyrics": 8,
+        "compose": 8
+      },
+      "packed": {
+        "lyrics": 7,
+        "compose": 7
+      }
+    },
+    {
+      "id": "a0463",
+      "name": "장대현",
+      "group": "위아이",
+      "rawCount": {
+        "lyrics": 28,
+        "compose": 18
+      },
+      "packed": {
+        "lyrics": 27,
+        "compose": 16
+      }
+    },
+    {
+      "id": "a0465",
+      "name": "유용하",
+      "group": "위아이",
+      "rawCount": {
+        "lyrics": 6,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 5,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0474",
+      "name": "지수연",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 6,
+        "compose": 10
+      },
+      "packed": {
+        "lyrics": 6,
+        "compose": 8
+      }
+    },
+    {
+      "id": "a0480",
+      "name": "김성규",
+      "group": "인피니트",
+      "rawCount": {
+        "lyrics": 16,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 13,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a0481",
+      "name": "장동우",
+      "group": "인피니트",
+      "rawCount": {
+        "lyrics": 22,
+        "compose": 3
+      },
+      "packed": {
+        "lyrics": 20,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a0482",
+      "name": "남우현",
+      "group": "인피니트",
+      "rawCount": {
+        "lyrics": 40,
+        "compose": 39
+      },
+      "packed": {
+        "lyrics": 32,
+        "compose": 27
+      }
+    },
+    {
+      "id": "a0486",
+      "name": "호야",
+      "group": "인피니트",
+      "rawCount": {
+        "lyrics": 36,
+        "compose": 8
+      },
+      "packed": {
+        "lyrics": 26,
+        "compose": 8
+      }
+    },
+    {
+      "id": "a0491",
+      "name": "문수아",
+      "group": "빌리",
+      "rawCount": {
+        "lyrics": 14,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 11,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a0496",
+      "name": "시윤",
+      "group": "빌리",
+      "rawCount": {
+        "lyrics": 8,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 7,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a0498",
+      "name": "전웅",
+      "group": "에이비식스",
+      "rawCount": {
+        "lyrics": 11,
+        "compose": 10
+      },
+      "packed": {
+        "lyrics": 10,
+        "compose": 9
+      }
+    },
+    {
+      "id": "a0499",
+      "name": "김동현",
+      "group": "에이비식스",
+      "rawCount": {
+        "lyrics": 26,
+        "compose": 24
+      },
+      "packed": {
+        "lyrics": 22,
+        "compose": 19
+      }
+    },
+    {
+      "id": "a0505",
+      "name": "양요섭",
+      "group": "하이라이트",
+      "rawCount": {
+        "lyrics": 23,
+        "compose": 21
+      },
+      "packed": {
+        "lyrics": 21,
+        "compose": 18
+      }
+    },
+    {
+      "id": "a0506",
+      "name": "이기광",
+      "group": "하이라이트",
+      "rawCount": {
+        "lyrics": 57,
+        "compose": 52
+      },
+      "packed": {
+        "lyrics": 55,
+        "compose": 49
+      }
+    },
+    {
+      "id": "a0507",
+      "name": "손동운",
+      "group": "하이라이트",
+      "rawCount": {
+        "lyrics": 36,
+        "compose": 35
+      },
+      "packed": {
+        "lyrics": 34,
+        "compose": 30
+      }
+    },
+    {
+      "id": "a0508",
+      "name": "장현승",
+      "group": "하이라이트",
+      "rawCount": {
+        "lyrics": 20,
+        "compose": 20
+      },
+      "packed": {
+        "lyrics": 19,
+        "compose": 18
+      }
+    },
+    {
+      "id": "a0511",
+      "name": "니콜",
+      "group": "카라",
+      "rawCount": {
+        "lyrics": 6,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 5,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a0512",
+      "name": "강지영",
+      "group": "카라",
+      "rawCount": {
+        "lyrics": 6,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 5,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0513",
+      "name": "허영지",
+      "group": "카라",
+      "rawCount": {
+        "lyrics": 4,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 4,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0515",
+      "name": "유빈",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 32,
+        "compose": 16
+      },
+      "packed": {
+        "lyrics": 25,
+        "compose": 13
+      }
+    },
+    {
+      "id": "a0517",
+      "name": "선미",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 55,
+        "compose": 47
+      },
+      "packed": {
+        "lyrics": 45,
+        "compose": 39
+      }
+    },
+    {
+      "id": "a0518",
+      "name": "혜림",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 12,
+        "compose": 8
+      },
+      "packed": {
+        "lyrics": 10,
+        "compose": 6
+      }
+    },
+    {
+      "id": "a0519",
+      "name": "선예",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 8,
+        "compose": 4
+      },
+      "packed": {
+        "lyrics": 6,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0523",
+      "name": "전지윤",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 48,
+        "compose": 46
+      },
+      "packed": {
+        "lyrics": 43,
+        "compose": 40
+      }
+    },
+    {
+      "id": "a0527",
+      "name": "산다라박",
+      "group": "투애니원",
+      "rawCount": {
+        "lyrics": 5,
+        "compose": 4
+      },
+      "packed": {
+        "lyrics": 4,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a0528",
+      "name": "CL",
+      "group": "투애니원",
+      "rawCount": {
+        "lyrics": 35,
+        "compose": 10
+      },
+      "packed": {
+        "lyrics": 30,
+        "compose": 10
+      }
+    },
+    {
+      "id": "a0529",
+      "name": "공민지",
+      "group": "투애니원",
+      "rawCount": {
+        "lyrics": 9,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 8,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a0538",
+      "name": "솔지",
+      "group": "이엑스아이디",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 6,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a0539",
+      "name": "ELLY",
+      "group": "이엑스아이디",
+      "rawCount": {
+        "lyrics": 120,
+        "compose": 77
+      },
+      "packed": {
+        "lyrics": 91,
+        "compose": 51
+      }
+    },
+    {
+      "id": "a0541",
+      "name": "혜린",
+      "group": "이엑스아이디",
+      "rawCount": {
+        "lyrics": 5,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 4,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0542",
+      "name": "정화",
+      "group": "이엑스아이디",
+      "rawCount": {
+        "lyrics": 5,
+        "compose": 4
+      },
+      "packed": {
+        "lyrics": 5,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a0550",
+      "name": "희진",
+      "group": "아르테미스",
+      "rawCount": {
+        "lyrics": 9,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 7,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a0563",
+      "name": "윤채원",
+      "group": "클라씨",
+      "rawCount": {
+        "lyrics": 14,
+        "compose": 1
+      },
+      "packed": {
+        "lyrics": 11,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0584",
+      "name": "J.seph",
+      "group": "카드",
+      "rawCount": {
+        "lyrics": 64,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 48,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0585",
+      "name": "BM",
+      "group": "카드",
+      "rawCount": {
+        "lyrics": 102,
+        "compose": 57
+      },
+      "packed": {
+        "lyrics": 83,
+        "compose": 44
+      }
+    },
+    {
+      "id": "a0586",
+      "name": "전소민",
+      "group": "카드",
+      "rawCount": {
+        "lyrics": 10,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 9,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0587",
+      "name": "전지우",
+      "group": "카드",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 7,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0588",
+      "name": "애니",
+      "group": "올데이프로젝트",
+      "rawCount": {
+        "lyrics": 8,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 7,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a0590",
+      "name": "베일리",
+      "group": "올데이프로젝트",
+      "rawCount": {
+        "lyrics": 12,
+        "compose": 1
+      },
+      "packed": {
+        "lyrics": 11,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0591",
+      "name": "우찬",
+      "group": "올데이프로젝트",
+      "rawCount": {
+        "lyrics": 39,
+        "compose": 11
+      },
+      "packed": {
+        "lyrics": 35,
+        "compose": 11
+      }
+    },
+    {
+      "id": "a0592",
+      "name": "영서",
+      "group": "올데이프로젝트",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 6,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a0594",
+      "name": "최강창민",
+      "group": "동방신기",
+      "rawCount": {
+        "lyrics": 34,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 25,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a0595",
+      "name": "김재중",
+      "group": "동방신기",
+      "rawCount": {
+        "lyrics": 92,
+        "compose": 37
+      },
+      "packed": {
+        "lyrics": 65,
+        "compose": 22
+      }
+    },
+    {
+      "id": "a0596",
+      "name": "박유천",
+      "group": "동방신기",
+      "rawCount": {
+        "lyrics": 20,
+        "compose": 14
+      },
+      "packed": {
+        "lyrics": 18,
+        "compose": 10
+      }
+    },
+    {
+      "id": "a0598",
+      "name": "JAY B",
+      "group": "갓세븐",
+      "rawCount": {
+        "lyrics": 136,
+        "compose": 135
+      },
+      "packed": {
+        "lyrics": 127,
+        "compose": 124
+      }
+    },
+    {
+      "id": "a0599",
+      "name": "마크",
+      "group": "갓세븐",
+      "rawCount": {
+        "lyrics": 16,
+        "compose": 9
+      },
+      "packed": {
+        "lyrics": 15,
+        "compose": 8
+      }
+    },
+    {
+      "id": "a0600",
+      "name": "잭슨",
+      "group": "갓세븐",
+      "rawCount": {
+        "lyrics": 30,
+        "compose": 21
+      },
+      "packed": {
+        "lyrics": 27,
+        "compose": 18
+      }
+    },
+    {
+      "id": "a0601",
+      "name": "진영",
+      "group": "갓세븐",
+      "rawCount": {
+        "lyrics": 34,
+        "compose": 24
+      },
+      "packed": {
+        "lyrics": 31,
+        "compose": 21
+      }
+    },
+    {
+      "id": "a0602",
+      "name": "영재",
+      "group": "갓세븐",
+      "rawCount": {
+        "lyrics": 45,
+        "compose": 44
+      },
+      "packed": {
+        "lyrics": 43,
+        "compose": 41
+      }
+    },
+    {
+      "id": "a0603",
+      "name": "뱀뱀",
+      "group": "갓세븐",
+      "rawCount": {
+        "lyrics": 46,
+        "compose": 32
+      },
+      "packed": {
+        "lyrics": 43,
+        "compose": 29
+      }
+    },
+    {
+      "id": "a0604",
+      "name": "유겸",
+      "group": "갓세븐",
+      "rawCount": {
+        "lyrics": 50,
+        "compose": 44
+      },
+      "packed": {
+        "lyrics": 45,
+        "compose": 40
+      }
+    },
+    {
+      "id": "a0609",
+      "name": "우즈",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 89,
+        "compose": 84
+      },
+      "packed": {
+        "lyrics": 84,
+        "compose": 81
+      }
+    },
+    {
+      "id": "a0610",
+      "name": "김우석",
+      "group": "엑스원",
+      "rawCount": {
+        "lyrics": 24,
+        "compose": 24
+      },
+      "packed": {
+        "lyrics": 24,
+        "compose": 23
+      }
+    },
+    {
+      "id": "a0611",
+      "name": "김요한",
+      "group": "위아이",
+      "rawCount": {
+        "lyrics": 10,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 8,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a0615",
+      "name": "이은상",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 11,
+        "compose": 10
+      },
+      "packed": {
+        "lyrics": 11,
+        "compose": 9
+      }
+    },
+    {
+      "id": "a0616",
+      "name": "남도현",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 19,
+        "compose": 12
+      },
+      "packed": {
+        "lyrics": 16,
+        "compose": 9
+      }
+    },
+    {
+      "id": "a0617",
+      "name": "도하",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 9,
+        "compose": 8
+      },
+      "packed": {
+        "lyrics": 7,
+        "compose": 6
+      }
+    },
+    {
+      "id": "a0623",
+      "name": "Kevin",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 9,
+        "compose": 11
+      },
+      "packed": {
+        "lyrics": 5,
+        "compose": 5
+      }
+    },
+    {
+      "id": "a0625",
+      "name": "임시완",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 3
+      },
+      "packed": {
+        "lyrics": 4,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0633",
+      "name": "니엘",
+      "group": "틴탑",
+      "rawCount": {
+        "lyrics": 18,
+        "compose": 18
+      },
+      "packed": {
+        "lyrics": 16,
+        "compose": 16
+      }
+    },
+    {
+      "id": "a0635",
+      "name": "창조",
+      "group": "틴탑",
+      "rawCount": {
+        "lyrics": 40,
+        "compose": 29
+      },
+      "packed": {
+        "lyrics": 35,
+        "compose": 26
+      }
+    },
+    {
+      "id": "a0636",
+      "name": "엘조",
+      "group": "틴탑",
+      "rawCount": {
+        "lyrics": 12,
+        "compose": 3
+      },
+      "packed": {
+        "lyrics": 10,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a0637",
+      "name": "C.A.P",
+      "group": "틴탑",
+      "rawCount": {
+        "lyrics": 27,
+        "compose": 3
+      },
+      "packed": {
+        "lyrics": 22,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a0638",
+      "name": "이홍기",
+      "group": "에프티아일랜드",
+      "rawCount": {
+        "lyrics": 46,
+        "compose": 37
+      },
+      "packed": {
+        "lyrics": 43,
+        "compose": 32
+      }
+    },
+    {
+      "id": "a0639",
+      "name": "이재진",
+      "group": "에프티아일랜드",
+      "rawCount": {
+        "lyrics": 31,
+        "compose": 8
+      },
+      "packed": {
+        "lyrics": 23,
+        "compose": 6
+      }
+    },
+    {
+      "id": "a0640",
+      "name": "최민환",
+      "group": "에프티아일랜드",
+      "rawCount": {
+        "lyrics": 5,
+        "compose": 11
+      },
+      "packed": {
+        "lyrics": 5,
+        "compose": 8
+      }
+    },
+    {
+      "id": "a0644",
+      "name": "이승훈",
+      "group": "위너",
+      "rawCount": {
+        "lyrics": 53,
+        "compose": 8
+      },
+      "packed": {
+        "lyrics": 49,
+        "compose": 8
+      }
+    },
+    {
+      "id": "a0645",
+      "name": "송민호",
+      "group": "위너",
+      "rawCount": {
+        "lyrics": 134,
+        "compose": 76
+      },
+      "packed": {
+        "lyrics": 125,
+        "compose": 71
+      }
+    },
+    {
+      "id": "a0646",
+      "name": "강승윤",
+      "group": "위너",
+      "rawCount": {
+        "lyrics": 72,
+        "compose": 71
+      },
+      "packed": {
+        "lyrics": 64,
+        "compose": 65
+      }
+    },
+    {
+      "id": "a0647",
+      "name": "남태현",
+      "group": "위너",
+      "rawCount": {
+        "lyrics": 38,
+        "compose": 41
+      },
+      "packed": {
+        "lyrics": 33,
+        "compose": 32
+      }
+    },
+    {
+      "id": "a0650",
+      "name": "BOBBY",
+      "group": "아이콘",
+      "rawCount": {
+        "lyrics": 163,
+        "compose": 63
+      },
+      "packed": {
+        "lyrics": 130,
+        "compose": 56
+      }
+    },
+    {
+      "id": "a0651",
+      "name": "김동혁",
+      "group": "아이콘",
+      "rawCount": {
+        "lyrics": 24,
+        "compose": 24
+      },
+      "packed": {
+        "lyrics": 23,
+        "compose": 23
+      }
+    },
+    {
+      "id": "a0652",
+      "name": "구준회",
+      "group": "아이콘",
+      "rawCount": {
+        "lyrics": 8,
+        "compose": 12
+      },
+      "packed": {
+        "lyrics": 8,
+        "compose": 9
+      }
+    },
+    {
+      "id": "a0654",
+      "name": "B.I",
+      "group": "아이콘",
+      "rawCount": {
+        "lyrics": 182,
+        "compose": 166
+      },
+      "packed": {
+        "lyrics": 137,
+        "compose": 122
+      }
+    },
+    {
+      "id": "a0657",
+      "name": "엑시",
+      "group": "우주소녀",
+      "rawCount": {
+        "lyrics": 107,
+        "compose": 16
+      },
+      "packed": {
+        "lyrics": 94,
+        "compose": 14
+      }
+    },
+    {
+      "id": "a0661",
+      "name": "다영",
+      "group": "우주소녀",
+      "rawCount": {
+        "lyrics": 5,
+        "compose": 5
+      },
+      "packed": {
+        "lyrics": 4,
+        "compose": 4
+      }
+    },
+    {
+      "id": "a0712",
+      "name": "신우",
+      "group": "비원에이포",
+      "rawCount": {
+        "lyrics": 37,
+        "compose": 28
+      },
+      "packed": {
+        "lyrics": 35,
+        "compose": 28
+      }
+    },
+    {
+      "id": "a0713",
+      "name": "산들",
+      "group": "비원에이포",
+      "rawCount": {
+        "lyrics": 25,
+        "compose": 21
+      },
+      "packed": {
+        "lyrics": 22,
+        "compose": 18
+      }
+    },
+    {
+      "id": "a0715",
+      "name": "진영",
+      "group": "비원에이포",
+      "rawCount": {
+        "lyrics": 71,
+        "compose": 87
+      },
+      "packed": {
+        "lyrics": 56,
+        "compose": 61
+      }
+    },
+    {
+      "id": "a0716",
+      "name": "바로",
+      "group": "비원에이포",
+      "rawCount": {
+        "lyrics": 70,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 59,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0717",
+      "name": "방용국",
+      "group": "비에이피",
+      "rawCount": {
+        "lyrics": 145,
+        "compose": 90
+      },
+      "packed": {
+        "lyrics": 135,
+        "compose": 74
+      }
+    },
+    {
+      "id": "a0718",
+      "name": "정대현",
+      "group": "비에이피",
+      "rawCount": {
+        "lyrics": 10,
+        "compose": 9
+      },
+      "packed": {
+        "lyrics": 9,
+        "compose": 7
+      }
+    },
+    {
+      "id": "a0720",
+      "name": "문종업",
+      "group": "비에이피",
+      "rawCount": {
+        "lyrics": 18,
+        "compose": 13
+      },
+      "packed": {
+        "lyrics": 17,
+        "compose": 12
+      }
+    },
+    {
+      "id": "a0721",
+      "name": "젤로",
+      "group": "비에이피",
+      "rawCount": {
+        "lyrics": 56,
+        "compose": 38
+      },
+      "packed": {
+        "lyrics": 53,
+        "compose": 36
+      }
+    },
+    {
+      "id": "a0739",
+      "name": "마시로",
+      "group": "메이딘",
+      "rawCount": {
+        "lyrics": 8,
+        "compose": 4
+      },
+      "packed": {
+        "lyrics": 8,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a0753",
+      "name": "이지함",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 15,
+        "compose": 11
+      },
+      "packed": {
+        "lyrics": 12,
+        "compose": 9
+      }
+    },
+    {
+      "id": "a0754",
+      "name": "와우",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 8,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 7,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a0755",
+      "name": "박준희",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 13,
+        "compose": 8
+      },
+      "packed": {
+        "lyrics": 12,
+        "compose": 8
+      }
+    },
+    {
+      "id": "a0757",
+      "name": "강유찬",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 11,
+        "compose": 7
+      },
+      "packed": {
+        "lyrics": 9,
+        "compose": 5
+      }
+    },
+    {
+      "id": "a0765",
+      "name": "재한",
+      "group": "오메가엑스",
+      "rawCount": {
+        "lyrics": 27,
+        "compose": 29
+      },
+      "packed": {
+        "lyrics": 26,
+        "compose": 24
+      }
+    },
+    {
+      "id": "a0768",
+      "name": "한겸",
+      "group": "오메가엑스",
+      "rawCount": {
+        "lyrics": 29,
+        "compose": 16
+      },
+      "packed": {
+        "lyrics": 26,
+        "compose": 15
+      }
+    },
+    {
+      "id": "a0774",
+      "name": "예찬",
+      "group": "오메가엑스",
+      "rawCount": {
+        "lyrics": 16,
+        "compose": 15
+      },
+      "packed": {
+        "lyrics": 16,
+        "compose": 14
+      }
+    },
+    {
+      "id": "a0794",
+      "name": "성진",
+      "group": "데이식스",
+      "rawCount": {
+        "lyrics": 27,
+        "compose": 106
+      },
+      "packed": {
+        "lyrics": 25,
+        "compose": 81
+      }
+    },
+    {
+      "id": "a0795",
+      "name": "Young K",
+      "group": "데이식스",
+      "rawCount": {
+        "lyrics": 232,
+        "compose": 192
+      },
+      "packed": {
+        "lyrics": 190,
+        "compose": 150
+      }
+    },
+    {
+      "id": "a0796",
+      "name": "원필",
+      "group": "데이식스",
+      "rawCount": {
+        "lyrics": 55,
+        "compose": 162
+      },
+      "packed": {
+        "lyrics": 49,
+        "compose": 119
+      }
+    },
+    {
+      "id": "a0797",
+      "name": "도운",
+      "group": "데이식스",
+      "rawCount": {
+        "lyrics": 3,
+        "compose": 11
+      },
+      "packed": {
+        "lyrics": 3,
+        "compose": 10
+      }
+    },
+    {
+      "id": "a0799",
+      "name": "서은광",
+      "group": "비투비",
+      "rawCount": {
+        "lyrics": 13,
+        "compose": 11
+      },
+      "packed": {
+        "lyrics": 12,
+        "compose": 10
+      }
+    },
+    {
+      "id": "a0800",
+      "name": "이민혁",
+      "group": "비투비",
+      "rawCount": {
+        "lyrics": 163,
+        "compose": 73
+      },
+      "packed": {
+        "lyrics": 141,
+        "compose": 62
+      }
+    },
+    {
+      "id": "a0801",
+      "name": "이창섭",
+      "group": "비투비",
+      "rawCount": {
+        "lyrics": 15,
+        "compose": 5
+      },
+      "packed": {
+        "lyrics": 14,
+        "compose": 5
+      }
+    },
+    {
+      "id": "a0802",
+      "name": "임현식",
+      "group": "비투비",
+      "rawCount": {
+        "lyrics": 78,
+        "compose": 91
+      },
+      "packed": {
+        "lyrics": 62,
+        "compose": 67
+      }
+    },
+    {
+      "id": "a0803",
+      "name": "프니엘",
+      "group": "비투비",
+      "rawCount": {
+        "lyrics": 100,
+        "compose": 7
+      },
+      "packed": {
+        "lyrics": 88,
+        "compose": 6
+      }
+    },
+    {
+      "id": "a0804",
+      "name": "육성재",
+      "group": "비투비",
+      "rawCount": {
+        "lyrics": 9,
+        "compose": 5
+      },
+      "packed": {
+        "lyrics": 7,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a0806",
+      "name": "용훈",
+      "group": "원위",
+      "rawCount": {
+        "lyrics": 49,
+        "compose": 52
+      },
+      "packed": {
+        "lyrics": 36,
+        "compose": 36
+      }
+    },
+    {
+      "id": "a0807",
+      "name": "하린",
+      "group": "원위",
+      "rawCount": {
+        "lyrics": 17,
+        "compose": 16
+      },
+      "packed": {
+        "lyrics": 13,
+        "compose": 12
+      }
+    },
+    {
+      "id": "a0808",
+      "name": "강현",
+      "group": "원위",
+      "rawCount": {
+        "lyrics": 32,
+        "compose": 50
+      },
+      "packed": {
+        "lyrics": 22,
+        "compose": 31
+      }
+    },
+    {
+      "id": "a0809",
+      "name": "동명",
+      "group": "원위",
+      "rawCount": {
+        "lyrics": 17,
+        "compose": 15
+      },
+      "packed": {
+        "lyrics": 11,
+        "compose": 9
+      }
+    },
+    {
+      "id": "a0810",
+      "name": "기욱",
+      "group": "원위",
+      "rawCount": {
+        "lyrics": 128,
+        "compose": 97
+      },
+      "packed": {
+        "lyrics": 101,
+        "compose": 72
+      }
+    },
+    {
+      "id": "a0818",
+      "name": "정예인",
+      "group": "러블리즈",
+      "rawCount": {
+        "lyrics": 11,
+        "compose": 11
+      },
+      "packed": {
+        "lyrics": 10,
+        "compose": 7
+      }
+    },
+    {
+      "id": "a0819",
+      "name": "문희준",
+      "group": "H.O.T.",
+      "rawCount": {
+        "lyrics": 127,
+        "compose": 136
+      },
+      "packed": {
+        "lyrics": 70,
+        "compose": 74
+      }
+    },
+    {
+      "id": "a0820",
+      "name": "장우혁",
+      "group": "H.O.T.",
+      "rawCount": {
+        "lyrics": 31,
+        "compose": 24
+      },
+      "packed": {
+        "lyrics": 20,
+        "compose": 14
+      }
+    },
+    {
+      "id": "a0821",
+      "name": "토니안",
+      "group": "H.O.T.",
+      "rawCount": {
+        "lyrics": 24,
+        "compose": 19
+      },
+      "packed": {
+        "lyrics": 19,
+        "compose": 12
+      }
+    },
+    {
+      "id": "a0822",
+      "name": "강타",
+      "group": "H.O.T.",
+      "rawCount": {
+        "lyrics": 131,
+        "compose": 149
+      },
+      "packed": {
+        "lyrics": 80,
+        "compose": 78
+      }
+    },
+    {
+      "id": "a0823",
+      "name": "이재원",
+      "group": "H.O.T.",
+      "rawCount": {
+        "lyrics": 34,
+        "compose": 35
+      },
+      "packed": {
+        "lyrics": 23,
+        "compose": 25
+      }
+    },
+    {
+      "id": "a0824",
+      "name": "은지원",
+      "group": "젝스키스",
+      "rawCount": {
+        "lyrics": 29,
+        "compose": 30
+      },
+      "packed": {
+        "lyrics": 26,
+        "compose": 26
+      }
+    },
+    {
+      "id": "a0826",
+      "name": "김재덕",
+      "group": "젝스키스",
+      "rawCount": {
+        "lyrics": 11,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 10,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a0827",
+      "name": "강성훈",
+      "group": "젝스키스",
+      "rawCount": {
+        "lyrics": 14,
+        "compose": 14
+      },
+      "packed": {
+        "lyrics": 14,
+        "compose": 13
+      }
+    },
+    {
+      "id": "a0830",
+      "name": "에릭",
+      "group": "신화",
+      "rawCount": {
+        "lyrics": 65,
+        "compose": 10
+      },
+      "packed": {
+        "lyrics": 36,
+        "compose": 8
+      }
+    },
+    {
+      "id": "a0831",
+      "name": "이민우",
+      "group": "신화",
+      "rawCount": {
+        "lyrics": 75,
+        "compose": 28
+      },
+      "packed": {
+        "lyrics": 54,
+        "compose": 23
+      }
+    },
+    {
+      "id": "a0832",
+      "name": "김동완",
+      "group": "신화",
+      "rawCount": {
+        "lyrics": 9,
+        "compose": 9
+      },
+      "packed": {
+        "lyrics": 7,
+        "compose": 6
+      }
+    },
+    {
+      "id": "a0833",
+      "name": "신혜성",
+      "group": "신화",
+      "rawCount": {
+        "lyrics": 23,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 18,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a0834",
+      "name": "전진",
+      "group": "신화",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 3
+      },
+      "packed": {
+        "lyrics": 4,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a0838",
+      "name": "데니안",
+      "group": "god",
+      "rawCount": {
+        "lyrics": 31,
+        "compose": 10
+      },
+      "packed": {
+        "lyrics": 23,
+        "compose": 9
+      }
+    },
+    {
+      "id": "a0839",
+      "name": "손호영",
+      "group": "god",
+      "rawCount": {
+        "lyrics": 24,
+        "compose": 6
+      },
+      "packed": {
+        "lyrics": 15,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a0840",
+      "name": "김태우",
+      "group": "god",
+      "rawCount": {
+        "lyrics": 98,
+        "compose": 33
+      },
+      "packed": {
+        "lyrics": 50,
+        "compose": 18
+      }
+    },
+    {
+      "id": "a0841",
+      "name": "바다",
+      "group": "S.E.S.",
+      "rawCount": {
+        "lyrics": 55,
+        "compose": 16
+      },
+      "packed": {
+        "lyrics": 45,
+        "compose": 12
+      }
+    },
+    {
+      "id": "a0844",
+      "name": "이효리",
+      "group": "핑클",
+      "rawCount": {
+        "lyrics": 66,
+        "compose": 29
+      },
+      "packed": {
+        "lyrics": 46,
+        "compose": 18
+      }
+    },
+    {
+      "id": "a0845",
+      "name": "옥주현",
+      "group": "핑클",
+      "rawCount": {
+        "lyrics": 28,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 23,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a0847",
+      "name": "성유리",
+      "group": "핑클",
+      "rawCount": {
+        "lyrics": 4,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 4,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0854",
+      "name": "천명훈",
+      "group": "NRG",
+      "rawCount": {
+        "lyrics": 33,
+        "compose": 32
+      },
+      "packed": {
+        "lyrics": 23,
+        "compose": 18
+      }
+    },
+    {
+      "id": "a0855",
+      "name": "노유민",
+      "group": "NRG",
+      "rawCount": {
+        "lyrics": 6,
+        "compose": 3
+      },
+      "packed": {
+        "lyrics": 5,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a0858",
+      "name": "우연석",
+      "group": "클릭비",
+      "rawCount": {
+        "lyrics": 9,
+        "compose": 5
+      },
+      "packed": {
+        "lyrics": 7,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a0860",
+      "name": "오종혁",
+      "group": "클릭비",
+      "rawCount": {
+        "lyrics": 11,
+        "compose": 8
+      },
+      "packed": {
+        "lyrics": 6,
+        "compose": 4
+      }
+    },
+    {
+      "id": "a0862",
+      "name": "하현곤",
+      "group": "클릭비",
+      "rawCount": {
+        "lyrics": 114,
+        "compose": 194
+      },
+      "packed": {
+        "lyrics": 73,
+        "compose": 80
+      }
+    },
+    {
+      "id": "a0863",
+      "name": "유호석",
+      "group": "클릭비",
+      "rawCount": {
+        "lyrics": 17,
+        "compose": 14
+      },
+      "packed": {
+        "lyrics": 14,
+        "compose": 10
+      }
+    },
+    {
+      "id": "a0864",
+      "name": "노민혁",
+      "group": "클릭비",
+      "rawCount": {
+        "lyrics": 23,
+        "compose": 26
+      },
+      "packed": {
+        "lyrics": 19,
+        "compose": 19
+      }
+    },
+    {
+      "id": "a0874",
+      "name": "하성운",
+      "group": "핫샷",
+      "rawCount": {
+        "lyrics": 35,
+        "compose": 28
+      },
+      "packed": {
+        "lyrics": 28,
+        "compose": 20
+      }
+    },
+    {
+      "id": "a0886",
+      "name": "JR",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 78,
+        "compose": 5
+      },
+      "packed": {
+        "lyrics": 62,
+        "compose": 5
+      }
+    },
+    {
+      "id": "a0887",
+      "name": "아론",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 10,
+        "compose": 1
+      },
+      "packed": {
+        "lyrics": 9,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0888",
+      "name": "백호",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 81,
+        "compose": 73
+      },
+      "packed": {
+        "lyrics": 65,
+        "compose": 58
+      }
+    },
+    {
+      "id": "a0889",
+      "name": "민현",
+      "group": "뉴이스트",
+      "rawCount": {
+        "lyrics": 18,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 13,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a0890",
+      "name": "렌",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 12,
+        "compose": 3
+      },
+      "packed": {
+        "lyrics": 11,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a0897",
+      "name": "지유",
+      "group": "드림캐쳐",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 4
+      },
+      "packed": {
+        "lyrics": 6,
+        "compose": 4
+      }
+    },
+    {
+      "id": "a0899",
+      "name": "시연",
+      "group": "드림캐쳐",
+      "rawCount": {
+        "lyrics": 17,
+        "compose": 15
+      },
+      "packed": {
+        "lyrics": 15,
+        "compose": 13
+      }
+    },
+    {
+      "id": "a0902",
+      "name": "다미",
+      "group": "드림캐쳐",
+      "rawCount": {
+        "lyrics": 11,
+        "compose": 3
+      },
+      "packed": {
+        "lyrics": 10,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a0932",
+      "name": "진호",
+      "group": "펜타곤",
+      "rawCount": {
+        "lyrics": 30,
+        "compose": 31
+      },
+      "packed": {
+        "lyrics": 26,
+        "compose": 24
+      }
+    },
+    {
+      "id": "a0933",
+      "name": "후이",
+      "group": "펜타곤",
+      "rawCount": {
+        "lyrics": 95,
+        "compose": 96
+      },
+      "packed": {
+        "lyrics": 75,
+        "compose": 73
+      }
+    },
+    {
+      "id": "a0939",
+      "name": "키노",
+      "group": "펜타곤",
+      "rawCount": {
+        "lyrics": 80,
+        "compose": 81
+      },
+      "packed": {
+        "lyrics": 74,
+        "compose": 68
+      }
+    },
+    {
+      "id": "a0940",
+      "name": "우석",
+      "group": "펜타곤",
+      "rawCount": {
+        "lyrics": 142,
+        "compose": 61
+      },
+      "packed": {
+        "lyrics": 123,
+        "compose": 56
+      }
+    },
+    {
+      "id": "a0941",
+      "name": "던",
+      "group": "펜타곤",
+      "rawCount": {
+        "lyrics": 67,
+        "compose": 39
+      },
+      "packed": {
+        "lyrics": 61,
+        "compose": 33
+      }
+    },
+    {
+      "id": "a0942",
+      "name": "쿤",
+      "group": "업텐션",
+      "rawCount": {
+        "lyrics": 47,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 46,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a0944",
+      "name": "비토",
+      "group": "업텐션",
+      "rawCount": {
+        "lyrics": 50,
+        "compose": 6
+      },
+      "packed": {
+        "lyrics": 49,
+        "compose": 6
+      }
+    },
+    {
+      "id": "a0948",
+      "name": "이동열",
+      "group": "업텐션",
+      "rawCount": {
+        "lyrics": 9,
+        "compose": 13
+      },
+      "packed": {
+        "lyrics": 9,
+        "compose": 12
+      }
+    },
+    {
+      "id": "a0949",
+      "name": "유니스",
+      "group": "다이아",
+      "rawCount": {
+        "lyrics": 24,
+        "compose": 28
+      },
+      "packed": {
+        "lyrics": 14,
+        "compose": 13
+      }
+    },
+    {
+      "id": "a0950",
+      "name": "주은",
+      "group": "다이아",
+      "rawCount": {
+        "lyrics": 15,
+        "compose": 36
+      },
+      "packed": {
+        "lyrics": 12,
+        "compose": 21
+      }
+    },
+    {
+      "id": "a0951",
+      "name": "기희현",
+      "group": "다이아",
+      "rawCount": {
+        "lyrics": 37,
+        "compose": 19
+      },
+      "packed": {
+        "lyrics": 29,
+        "compose": 15
+      }
+    },
+    {
+      "id": "a0953",
+      "name": "은채",
+      "group": "다이아",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 5,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0954",
+      "name": "이소율",
+      "group": "다이아",
+      "rawCount": {
+        "lyrics": 12,
+        "compose": 12
+      },
+      "packed": {
+        "lyrics": 7,
+        "compose": 7
+      }
+    },
+    {
+      "id": "a0956",
+      "name": "JUN.K",
+      "group": "2PM",
+      "rawCount": {
+        "lyrics": 117,
+        "compose": 108
+      },
+      "packed": {
+        "lyrics": 83,
+        "compose": 74
+      }
+    },
+    {
+      "id": "a0957",
+      "name": "닉쿤",
+      "group": "2PM",
+      "rawCount": {
+        "lyrics": 14,
+        "compose": 12
+      },
+      "packed": {
+        "lyrics": 13,
+        "compose": 11
+      }
+    },
+    {
+      "id": "a0958",
+      "name": "택연",
+      "group": "2PM",
+      "rawCount": {
+        "lyrics": 22,
+        "compose": 18
+      },
+      "packed": {
+        "lyrics": 21,
+        "compose": 17
+      }
+    },
+    {
+      "id": "a0959",
+      "name": "우영",
+      "group": "2PM",
+      "rawCount": {
+        "lyrics": 53,
+        "compose": 52
+      },
+      "packed": {
+        "lyrics": 42,
+        "compose": 38
+      }
+    },
+    {
+      "id": "a0960",
+      "name": "준호",
+      "group": "2PM",
+      "rawCount": {
+        "lyrics": 58,
+        "compose": 59
+      },
+      "packed": {
+        "lyrics": 49,
+        "compose": 48
+      }
+    },
+    {
+      "id": "a0961",
+      "name": "찬성",
+      "group": "2PM",
+      "rawCount": {
+        "lyrics": 14,
+        "compose": 11
+      },
+      "packed": {
+        "lyrics": 13,
+        "compose": 11
+      }
+    },
+    {
+      "id": "a0962",
+      "name": "박재범",
+      "group": "2PM",
+      "rawCount": {
+        "lyrics": 492,
+        "compose": 352
+      },
+      "packed": {
+        "lyrics": 398,
+        "compose": 262
+      }
+    },
+    {
+      "id": "a0963",
+      "name": "이창민",
+      "group": "2AM",
+      "rawCount": {
+        "lyrics": 35,
+        "compose": 54
+      },
+      "packed": {
+        "lyrics": 30,
+        "compose": 29
+      }
+    },
+    {
+      "id": "a0964",
+      "name": "임슬옹",
+      "group": "2AM",
+      "rawCount": {
+        "lyrics": 20,
+        "compose": 21
+      },
+      "packed": {
+        "lyrics": 19,
+        "compose": 13
+      }
+    },
+    {
+      "id": "a0968",
+      "name": "비범",
+      "group": "블락비",
+      "rawCount": {
+        "lyrics": 10,
+        "compose": 12
+      },
+      "packed": {
+        "lyrics": 9,
+        "compose": 10
+      }
+    },
+    {
+      "id": "a0970",
+      "name": "유권",
+      "group": "블락비",
+      "rawCount": {
+        "lyrics": 10,
+        "compose": 11
+      },
+      "packed": {
+        "lyrics": 9,
+        "compose": 6
+      }
+    },
+    {
+      "id": "a0971",
+      "name": "박경",
+      "group": "블락비",
+      "rawCount": {
+        "lyrics": 78,
+        "compose": 50
+      },
+      "packed": {
+        "lyrics": 60,
+        "compose": 31
+      }
+    },
+    {
+      "id": "a0972",
+      "name": "지코",
+      "group": "블락비",
+      "rawCount": {
+        "lyrics": 272,
+        "compose": 221
+      },
+      "packed": {
+        "lyrics": 176,
+        "compose": 126
+      }
+    },
+    {
+      "id": "a0973",
+      "name": "피오",
+      "group": "블락비",
+      "rawCount": {
+        "lyrics": 34,
+        "compose": 14
+      },
+      "packed": {
+        "lyrics": 28,
+        "compose": 12
+      }
+    },
+    {
+      "id": "a0974",
+      "name": "솔라",
+      "group": "마마무",
+      "rawCount": {
+        "lyrics": 70,
+        "compose": 34
+      },
+      "packed": {
+        "lyrics": 44,
+        "compose": 24
+      }
+    },
+    {
+      "id": "a0975",
+      "name": "문별",
+      "group": "마마무",
+      "rawCount": {
+        "lyrics": 158,
+        "compose": 30
+      },
+      "packed": {
+        "lyrics": 119,
+        "compose": 27
+      }
+    },
+    {
+      "id": "a0977",
+      "name": "화사",
+      "group": "마마무",
+      "rawCount": {
+        "lyrics": 68,
+        "compose": 52
+      },
+      "packed": {
+        "lyrics": 46,
+        "compose": 28
+      }
+    },
+    {
+      "id": "a0978",
+      "name": "제아",
+      "group": "브라운아이드걸스",
+      "rawCount": {
+        "lyrics": 16,
+        "compose": 78
+      },
+      "packed": {
+        "lyrics": 10,
+        "compose": 46
+      }
+    },
+    {
+      "id": "a0979",
+      "name": "미료",
+      "group": "브라운아이드걸스",
+      "rawCount": {
+        "lyrics": 138,
+        "compose": 8
+      },
+      "packed": {
+        "lyrics": 83,
+        "compose": 8
+      }
+    },
+    {
+      "id": "a0992",
+      "name": "지민",
+      "group": "에이오에이",
+      "rawCount": {
+        "lyrics": 44,
+        "compose": 9
+      },
+      "packed": {
+        "lyrics": 39,
+        "compose": 8
+      }
+    },
+    {
+      "id": "a0994",
+      "name": "박초롱",
+      "group": "에이핑크",
+      "rawCount": {
+        "lyrics": 21,
+        "compose": 1
+      },
+      "packed": {
+        "lyrics": 18,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0995",
+      "name": "윤보미",
+      "group": "에이핑크",
+      "rawCount": {
+        "lyrics": 6,
+        "compose": 1
+      },
+      "packed": {
+        "lyrics": 4,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0996",
+      "name": "정은지",
+      "group": "에이핑크",
+      "rawCount": {
+        "lyrics": 39,
+        "compose": 28
+      },
+      "packed": {
+        "lyrics": 33,
+        "compose": 20
+      }
+    },
+    {
+      "id": "a0997",
+      "name": "김남주",
+      "group": "에이핑크",
+      "rawCount": {
+        "lyrics": 9,
+        "compose": 1
+      },
+      "packed": {
+        "lyrics": 8,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a0998",
+      "name": "오하영",
+      "group": "에이핑크",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 1
+      },
+      "packed": {
+        "lyrics": 6,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a1002",
+      "name": "레이나",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 12,
+        "compose": 10
+      },
+      "packed": {
+        "lyrics": 10,
+        "compose": 7
+      }
+    },
+    {
+      "id": "a1003",
+      "name": "나나",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 6,
+        "compose": 4
+      },
+      "packed": {
+        "lyrics": 6,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a1007",
+      "name": "가희",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 6,
+        "compose": 1
+      },
+      "packed": {
+        "lyrics": 5,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a1009",
+      "name": "전효성",
+      "group": "시크릿",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 7,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a1013",
+      "name": "송지은",
+      "group": "시크릿",
+      "rawCount": {
+        "lyrics": 3,
+        "compose": 5
+      },
+      "packed": {
+        "lyrics": 3,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a1017",
+      "name": "수지",
+      "group": "미쓰에이",
+      "rawCount": {
+        "lyrics": 11,
+        "compose": 6
+      },
+      "packed": {
+        "lyrics": 10,
+        "compose": 4
+      }
+    },
+    {
+      "id": "a1018",
+      "name": "승호",
+      "group": "엠블랙",
+      "rawCount": {
+        "lyrics": 1,
+        "compose": 5
+      },
+      "packed": {
+        "lyrics": 1,
+        "compose": 4
+      }
+    },
+    {
+      "id": "a1019",
+      "name": "지오",
+      "group": "엠블랙",
+      "rawCount": {
+        "lyrics": 15,
+        "compose": 25
+      },
+      "packed": {
+        "lyrics": 13,
+        "compose": 15
+      }
+    },
+    {
+      "id": "a1020",
+      "name": "미르",
+      "group": "엠블랙",
+      "rawCount": {
+        "lyrics": 24,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 19,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a1025",
+      "name": "기섭",
+      "group": "유키스",
+      "rawCount": {
+        "lyrics": 4,
+        "compose": 9
+      },
+      "packed": {
+        "lyrics": 4,
+        "compose": 6
+      }
+    },
+    {
+      "id": "a1034",
+      "name": "효린",
+      "group": "씨스타",
+      "rawCount": {
+        "lyrics": 46,
+        "compose": 35
+      },
+      "packed": {
+        "lyrics": 36,
+        "compose": 27
+      }
+    },
+    {
+      "id": "a1035",
+      "name": "소유",
+      "group": "씨스타",
+      "rawCount": {
+        "lyrics": 8,
+        "compose": 3
+      },
+      "packed": {
+        "lyrics": 8,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a1037",
+      "name": "보아",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 90,
+        "compose": 71
+      },
+      "packed": {
+        "lyrics": 66,
+        "compose": 48
+      }
+    },
+    {
+      "id": "a1038",
+      "name": "이영지",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 81,
+        "compose": 42
+      },
+      "packed": {
+        "lyrics": 69,
+        "compose": 30
+      }
+    },
+    {
+      "id": "a1039",
+      "name": "비",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 73,
+        "compose": 59
+      },
+      "packed": {
+        "lyrics": 31,
+        "compose": 24
+      }
+    },
+    {
+      "id": "a1041",
+      "name": "싸이",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 277,
+        "compose": 235
+      },
+      "packed": {
+        "lyrics": 179,
+        "compose": 144
+      }
+    },
+    {
+      "id": "a1042",
+      "name": "티파니",
+      "group": "소녀시대",
+      "rawCount": {
+        "lyrics": 12,
+        "compose": 11
+      },
+      "packed": {
+        "lyrics": 10,
+        "compose": 9
+      }
+    },
+    {
+      "id": "a1046",
+      "name": "은우",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 4,
+        "compose": 4
+      },
+      "packed": {
+        "lyrics": 3,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a1051",
+      "name": "시연",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 6,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 5,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a1054",
+      "name": "레오",
+      "group": "빅스",
+      "rawCount": {
+        "lyrics": 33,
+        "compose": 26
+      },
+      "packed": {
+        "lyrics": 31,
+        "compose": 25
+      }
+    },
+    {
+      "id": "a1055",
+      "name": "켄",
+      "group": "빅스",
+      "rawCount": {
+        "lyrics": 3,
+        "compose": 4
+      },
+      "packed": {
+        "lyrics": 3,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a1056",
+      "name": "혁",
+      "group": "빅스",
+      "rawCount": {
+        "lyrics": 16,
+        "compose": 17
+      },
+      "packed": {
+        "lyrics": 12,
+        "compose": 13
+      }
+    },
+    {
+      "id": "a1059",
+      "name": "김현중",
+      "group": "SS501",
+      "rawCount": {
+        "lyrics": 52,
+        "compose": 52
+      },
+      "packed": {
+        "lyrics": 51,
+        "compose": 48
+      }
+    },
+    {
+      "id": "a1060",
+      "name": "허영생",
+      "group": "SS501",
+      "rawCount": {
+        "lyrics": 15,
+        "compose": 7
+      },
+      "packed": {
+        "lyrics": 14,
+        "compose": 5
+      }
+    },
+    {
+      "id": "a1061",
+      "name": "김규종",
+      "group": "SS501",
+      "rawCount": {
+        "lyrics": 12,
+        "compose": 18
+      },
+      "packed": {
+        "lyrics": 12,
+        "compose": 10
+      }
+    },
+    {
+      "id": "a1062",
+      "name": "박정민",
+      "group": "SS501",
+      "rawCount": {
+        "lyrics": 52,
+        "compose": 7
+      },
+      "packed": {
+        "lyrics": 38,
+        "compose": 7
+      }
+    },
+    {
+      "id": "a1063",
+      "name": "김형준",
+      "group": "SS501",
+      "rawCount": {
+        "lyrics": 21,
+        "compose": 31
+      },
+      "packed": {
+        "lyrics": 16,
+        "compose": 25
+      }
+    },
+    {
+      "id": "a1097",
+      "name": "마젠타",
+      "group": "큐더블유이알",
+      "rawCount": {
+        "lyrics": 12,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 11,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a1099",
+      "name": "시연",
+      "group": "큐더블유이알",
+      "rawCount": {
+        "lyrics": 9,
+        "compose": 8
+      },
+      "packed": {
+        "lyrics": 9,
+        "compose": 4
+      }
+    },
+    {
+      "id": "a1100",
+      "name": "토모야",
+      "group": "넥스지",
+      "rawCount": {
+        "lyrics": 9,
+        "compose": 3
+      },
+      "packed": {
+        "lyrics": 6,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a1105",
+      "name": "휴이",
+      "group": "넥스지",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 1
+      },
+      "packed": {
+        "lyrics": 4,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a1122",
+      "name": "정수",
+      "group": "엑스디너리 히어로즈",
+      "rawCount": {
+        "lyrics": 11,
+        "compose": 16
+      },
+      "packed": {
+        "lyrics": 11,
+        "compose": 15
+      }
+    },
+    {
+      "id": "a1123",
+      "name": "가온",
+      "group": "엑스디너리 히어로즈",
+      "rawCount": {
+        "lyrics": 9,
+        "compose": 12
+      },
+      "packed": {
+        "lyrics": 9,
+        "compose": 11
+      }
+    },
+    {
+      "id": "a1130",
+      "name": "YEL",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 21,
+        "compose": 35
+      },
+      "packed": {
+        "lyrics": 21,
+        "compose": 27
+      }
+    },
+    {
+      "id": "a1131",
+      "name": "예지",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 48,
+        "compose": 8
+      },
+      "packed": {
+        "lyrics": 39,
+        "compose": 5
+      }
+    },
+    {
+      "id": "a1132",
+      "name": "체스카",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 5,
+        "compose": 10
+      },
+      "packed": {
+        "lyrics": 5,
+        "compose": 8
+      }
+    },
+    {
+      "id": "a1145",
+      "name": "나고은",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 14,
+        "compose": 11
+      },
+      "packed": {
+        "lyrics": 9,
+        "compose": 8
+      }
+    },
+    {
+      "id": "a1149",
+      "name": "채인",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 14,
+        "compose": 26
+      },
+      "packed": {
+        "lyrics": 12,
+        "compose": 20
+      }
+    },
+    {
+      "id": "a1150",
+      "name": "수안",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 12,
+        "compose": 3
+      },
+      "packed": {
+        "lyrics": 7,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a1175",
+      "name": "정용화",
+      "group": "씨엔블루",
+      "rawCount": {
+        "lyrics": 210,
+        "compose": 217
+      },
+      "packed": {
+        "lyrics": 127,
+        "compose": 129
+      }
+    },
+    {
+      "id": "a1176",
+      "name": "강민혁",
+      "group": "씨엔블루",
+      "rawCount": {
+        "lyrics": 5,
+        "compose": 3
+      },
+      "packed": {
+        "lyrics": 4,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a1177",
+      "name": "이정신",
+      "group": "씨엔블루",
+      "rawCount": {
+        "lyrics": 9,
+        "compose": 8
+      },
+      "packed": {
+        "lyrics": 8,
+        "compose": 7
+      }
+    },
+    {
+      "id": "a1185",
+      "name": "윤예찬",
+      "group": "82메이저",
+      "rawCount": {
+        "lyrics": 18,
+        "compose": 15
+      },
+      "packed": {
+        "lyrics": 17,
+        "compose": 14
+      }
+    },
+    {
+      "id": "a1186",
+      "name": "남성모",
+      "group": "82메이저",
+      "rawCount": {
+        "lyrics": 21,
+        "compose": 12
+      },
+      "packed": {
+        "lyrics": 19,
+        "compose": 12
+      }
+    },
+    {
+      "id": "a1187",
+      "name": "황성빈",
+      "group": "82메이저",
+      "rawCount": {
+        "lyrics": 18,
+        "compose": 11
+      },
+      "packed": {
+        "lyrics": 17,
+        "compose": 11
+      }
+    },
+    {
+      "id": "a1193",
+      "name": "백예빈",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 24,
+        "compose": 23
+      },
+      "packed": {
+        "lyrics": 16,
+        "compose": 15
+      }
+    },
+    {
+      "id": "a1201",
+      "name": "백예린",
+      "group": "피프틴앤드",
+      "rawCount": {
+        "lyrics": 131,
+        "compose": 96
+      },
+      "packed": {
+        "lyrics": 116,
+        "compose": 82
+      }
+    },
+    {
+      "id": "a1202",
+      "name": "제이미",
+      "group": "피프틴앤드",
+      "rawCount": {
+        "lyrics": 42,
+        "compose": 41
+      },
+      "packed": {
+        "lyrics": 37,
+        "compose": 34
+      }
+    },
+    {
+      "id": "a1203",
+      "name": "규빈",
+      "group": "온리원오프",
+      "rawCount": {
+        "lyrics": 5,
+        "compose": 15
+      },
+      "packed": {
+        "lyrics": 5,
+        "compose": 13
+      }
+    },
+    {
+      "id": "a1206",
+      "name": "준지",
+      "group": "온리원오프",
+      "rawCount": {
+        "lyrics": 3,
+        "compose": 4
+      },
+      "packed": {
+        "lyrics": 2,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a1208",
+      "name": "나인",
+      "group": "온리원오프",
+      "rawCount": {
+        "lyrics": 18,
+        "compose": 29
+      },
+      "packed": {
+        "lyrics": 18,
+        "compose": 23
+      }
+    },
+    {
+      "id": "a1212",
+      "name": "재찬",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 22,
+        "compose": 14
+      },
+      "packed": {
+        "lyrics": 18,
+        "compose": 12
+      }
+    },
+    {
+      "id": "a1221",
+      "name": "은휘",
+      "group": "티엔엑스",
+      "rawCount": {
+        "lyrics": 28,
+        "compose": 19
+      },
+      "packed": {
+        "lyrics": 21,
+        "compose": 18
+      }
+    },
+    {
+      "id": "a1227",
+      "name": "원혁",
+      "group": "엘라스트",
+      "rawCount": {
+        "lyrics": 15,
+        "compose": 5
+      },
+      "packed": {
+        "lyrics": 12,
+        "compose": 5
+      }
+    },
+    {
+      "id": "a1229",
+      "name": "예준",
+      "group": "엘라스트",
+      "rawCount": {
+        "lyrics": 8,
+        "compose": 4
+      },
+      "packed": {
+        "lyrics": 5,
+        "compose": 4
+      }
+    },
+    {
+      "id": "a1239",
+      "name": "태환",
+      "group": "배너",
+      "rawCount": {
+        "lyrics": 3,
+        "compose": 6
+      },
+      "packed": {
+        "lyrics": 3,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a1240",
+      "name": "GON",
+      "group": "배너",
+      "rawCount": {
+        "lyrics": 18,
+        "compose": 4
+      },
+      "packed": {
+        "lyrics": 17,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a1242",
+      "name": "성국",
+      "group": "배너",
+      "rawCount": {
+        "lyrics": 17,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 16,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a1244",
+      "name": "이찬",
+      "group": "다크비",
+      "rawCount": {
+        "lyrics": 27,
+        "compose": 7
+      },
+      "packed": {
+        "lyrics": 21,
+        "compose": 6
+      }
+    },
+    {
+      "id": "a1245",
+      "name": "D1",
+      "group": "다크비",
+      "rawCount": {
+        "lyrics": 16,
+        "compose": 8
+      },
+      "packed": {
+        "lyrics": 13,
+        "compose": 7
+      }
+    },
+    {
+      "id": "a1246",
+      "name": "GK",
+      "group": "다크비",
+      "rawCount": {
+        "lyrics": 28,
+        "compose": 7
+      },
+      "packed": {
+        "lyrics": 22,
+        "compose": 5
+      }
+    },
+    {
+      "id": "a1253",
+      "name": "민재",
+      "group": "싸이커스",
+      "rawCount": {
+        "lyrics": 50,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 39,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a1255",
+      "name": "수민",
+      "group": "싸이커스",
+      "rawCount": {
+        "lyrics": 50,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 39,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a1262",
+      "name": "예찬",
+      "group": "싸이커스",
+      "rawCount": {
+        "lyrics": 50,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 39,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a1269",
+      "name": "신지윤",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 11,
+        "compose": 9
+      },
+      "packed": {
+        "lyrics": 10,
+        "compose": 8
+      }
+    },
+    {
+      "id": "a1270",
+      "name": "케이타",
+      "group": "이븐",
+      "rawCount": {
+        "lyrics": 26,
+        "compose": 7
+      },
+      "packed": {
+        "lyrics": 25,
+        "compose": 6
+      }
+    },
+    {
+      "id": "a1281",
+      "name": "DEY",
+      "group": "유나이트",
+      "rawCount": {
+        "lyrics": 43,
+        "compose": 1
+      },
+      "packed": {
+        "lyrics": 41,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a1295",
+      "name": "김채원",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 13
+      },
+      "packed": {
+        "lyrics": 7,
+        "compose": 8
+      }
+    },
+    {
+      "id": "a1299",
+      "name": "이진솔",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 19,
+        "compose": 10
+      },
+      "packed": {
+        "lyrics": 17,
+        "compose": 9
+      }
+    },
+    {
+      "id": "a1305",
+      "name": "라엘",
+      "group": "트렌드지",
+      "rawCount": {
+        "lyrics": 30,
+        "compose": 4
+      },
+      "packed": {
+        "lyrics": 28,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a1306",
+      "name": "은일",
+      "group": "트렌드지",
+      "rawCount": {
+        "lyrics": 12,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 11,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a1359",
+      "name": "강승식",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 16,
+        "compose": 3
+      },
+      "packed": {
+        "lyrics": 13,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a1361",
+      "name": "도한세",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 97,
+        "compose": 35
+      },
+      "packed": {
+        "lyrics": 91,
+        "compose": 33
+      }
+    },
+    {
+      "id": "a1383",
+      "name": "우무티",
+      "group": "엑스러브",
+      "rawCount": {
+        "lyrics": 11,
+        "compose": 5
+      },
+      "packed": {
+        "lyrics": 9,
+        "compose": 4
+      }
+    },
+    {
+      "id": "a1391",
+      "name": "홍성준",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 5,
+        "compose": 7
+      },
+      "packed": {
+        "lyrics": 5,
+        "compose": 6
+      }
+    },
+    {
+      "id": "a1392",
+      "name": "김시훈",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 16,
+        "compose": 7
+      },
+      "packed": {
+        "lyrics": 15,
+        "compose": 6
+      }
+    },
+    {
+      "id": "a1393",
+      "name": "윤정환",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 20,
+        "compose": 24
+      },
+      "packed": {
+        "lyrics": 18,
+        "compose": 21
+      }
+    },
+    {
+      "id": "a1413",
+      "name": "동현",
+      "group": "보이프렌드",
+      "rawCount": {
+        "lyrics": 5,
+        "compose": 5
+      },
+      "packed": {
+        "lyrics": 5,
+        "compose": 4
+      }
+    },
+    {
+      "id": "a1414",
+      "name": "현성",
+      "group": "보이프렌드",
+      "rawCount": {
+        "lyrics": 23,
+        "compose": 27
+      },
+      "packed": {
+        "lyrics": 23,
+        "compose": 23
+      }
+    },
+    {
+      "id": "a1415",
+      "name": "정민",
+      "group": "보이프렌드",
+      "rawCount": {
+        "lyrics": 46,
+        "compose": 54
+      },
+      "packed": {
+        "lyrics": 43,
+        "compose": 43
+      }
+    },
+    {
+      "id": "a1417",
+      "name": "광민",
+      "group": "보이프렌드",
+      "rawCount": {
+        "lyrics": 29,
+        "compose": 4
+      },
+      "packed": {
+        "lyrics": 29,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a1420",
+      "name": "아윤",
+      "group": "퀸즈아이",
+      "rawCount": {
+        "lyrics": 8,
+        "compose": 1
+      },
+      "packed": {
+        "lyrics": 5,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a1431",
+      "name": "리노",
+      "group": "하입프린세스",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 5,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a1461",
+      "name": "요치",
+      "group": "파우",
+      "rawCount": {
+        "lyrics": 9,
+        "compose": 9
+      },
+      "packed": {
+        "lyrics": 9,
+        "compose": 7
+      }
+    },
+    {
+      "id": "a1491",
+      "name": "캐슬제이",
+      "group": "엠씨엔디",
+      "rawCount": {
+        "lyrics": 30,
+        "compose": 7
+      },
+      "packed": {
+        "lyrics": 27,
+        "compose": 7
+      }
+    },
+    {
+      "id": "a1492",
+      "name": "빅",
+      "group": "엠씨엔디",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 6,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a1495",
+      "name": "윈",
+      "group": "엠씨엔디",
+      "rawCount": {
+        "lyrics": 8,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 7,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a1496",
+      "name": "이찬혁",
+      "group": "악뮤",
+      "rawCount": {
+        "lyrics": 149,
+        "compose": 162
+      },
+      "packed": {
+        "lyrics": 124,
+        "compose": 119
+      }
+    },
+    {
+      "id": "a1524",
+      "name": "우태운",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 54,
+        "compose": 39
+      },
+      "packed": {
+        "lyrics": 42,
+        "compose": 24
+      }
+    },
+    {
+      "id": "a1543",
+      "name": "이승협",
+      "group": "엔플라잉",
+      "rawCount": {
+        "lyrics": 124,
+        "compose": 81
+      },
+      "packed": {
+        "lyrics": 108,
+        "compose": 66
+      }
+    },
+    {
+      "id": "a1544",
+      "name": "차훈",
+      "group": "엔플라잉",
+      "rawCount": {
+        "lyrics": 4,
+        "compose": 6
+      },
+      "packed": {
+        "lyrics": 3,
+        "compose": 4
+      }
+    },
+    {
+      "id": "a1546",
+      "name": "유회승",
+      "group": "엔플라잉",
+      "rawCount": {
+        "lyrics": 5,
+        "compose": 6
+      },
+      "packed": {
+        "lyrics": 4,
+        "compose": 4
+      }
+    },
+    {
+      "id": "a1547",
+      "name": "서동성",
+      "group": "엔플라잉",
+      "rawCount": {
+        "lyrics": 4,
+        "compose": 3
+      },
+      "packed": {
+        "lyrics": 3,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a1549",
+      "name": "이진혁",
+      "group": "업텐션",
+      "rawCount": {
+        "lyrics": 45,
+        "compose": 17
+      },
+      "packed": {
+        "lyrics": 43,
+        "compose": 17
+      }
+    },
+    {
+      "id": "a1558",
+      "name": "이승환",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 16,
+        "compose": 10
+      },
+      "packed": {
+        "lyrics": 14,
+        "compose": 7
+      }
+    },
+    {
+      "id": "a1560",
+      "name": "전도염",
+      "group": "원더나인",
+      "rawCount": {
+        "lyrics": 26,
+        "compose": 27
+      },
+      "packed": {
+        "lyrics": 23,
+        "compose": 18
+      }
+    },
+    {
+      "id": "a1563",
+      "name": "박성원",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 7,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a1566",
+      "name": "재준",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 58,
+        "compose": 79
+      },
+      "packed": {
+        "lyrics": 54,
+        "compose": 60
+      }
+    },
+    {
+      "id": "a1567",
+      "name": "서성혁",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 4,
+        "compose": 2
+      },
+      "packed": {
+        "lyrics": 4,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a1568",
+      "name": "김현엽",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 22,
+        "compose": 10
+      },
+      "packed": {
+        "lyrics": 22,
+        "compose": 8
+      }
+    },
+    {
+      "id": "a1570",
+      "name": "지성",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 40,
+        "compose": 27
+      },
+      "packed": {
+        "lyrics": 36,
+        "compose": 26
+      }
+    },
+    {
+      "id": "a1587",
+      "name": "김보아",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 48,
+        "compose": 30
+      },
+      "packed": {
+        "lyrics": 40,
+        "compose": 20
+      }
+    },
+    {
+      "id": "a1594",
+      "name": "주니",
+      "group": "아이칠린",
+      "rawCount": {
+        "lyrics": 9,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 7,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a1606",
+      "name": "정미미",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 5
+      },
+      "packed": {
+        "lyrics": 6,
+        "compose": 4
+      }
+    },
+    {
+      "id": "a1621",
+      "name": "이건우",
+      "group": "저스트비",
+      "rawCount": {
+        "lyrics": 8,
+        "compose": 5
+      },
+      "packed": {
+        "lyrics": 8,
+        "compose": 4
+      }
+    },
+    {
+      "id": "a1624",
+      "name": "김상우",
+      "group": "저스트비",
+      "rawCount": {
+        "lyrics": 6,
+        "compose": 1
+      },
+      "packed": {
+        "lyrics": 5,
+        "compose": 1
+      }
+    },
+    {
+      "id": "a1649",
+      "name": "박소진",
+      "group": "걸스데이",
+      "rawCount": {
+        "lyrics": 9,
+        "compose": 4
+      },
+      "packed": {
+        "lyrics": 7,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a1651",
+      "name": "방민아",
+      "group": "걸스데이",
+      "rawCount": {
+        "lyrics": 5,
+        "compose": 5
+      },
+      "packed": {
+        "lyrics": 4,
+        "compose": 2
+      }
+    },
+    {
+      "id": "a1681",
+      "name": "송선",
+      "group": "트라이비",
+      "rawCount": {
+        "lyrics": 2,
+        "compose": 4
+      },
+      "packed": {
+        "lyrics": 2,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a1690",
+      "name": "김시형",
+      "group": "히스토리",
+      "rawCount": {
+        "lyrics": 10,
+        "compose": 16
+      },
+      "packed": {
+        "lyrics": 10,
+        "compose": 8
+      }
+    },
+    {
+      "id": "a1694",
+      "name": "효은",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 4,
+        "compose": 6
+      },
+      "packed": {
+        "lyrics": 4,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a1707",
+      "name": "손준형",
+      "group": "고스트나인",
+      "rawCount": {
+        "lyrics": 3,
+        "compose": 4
+      },
+      "packed": {
+        "lyrics": 3,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a1709",
+      "name": "최준성",
+      "group": "고스트나인",
+      "rawCount": {
+        "lyrics": 7,
+        "compose": 10
+      },
+      "packed": {
+        "lyrics": 4,
+        "compose": 4
+      }
+    },
+    {
+      "id": "a1724",
+      "name": "김상균",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 71,
+        "compose": 6
+      },
+      "packed": {
+        "lyrics": 49,
+        "compose": 3
+      }
+    },
+    {
+      "id": "a1726",
+      "name": "김용국",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 6,
+        "compose": 0
+      },
+      "packed": {
+        "lyrics": 5,
+        "compose": 0
+      }
+    },
+    {
+      "id": "a1727",
+      "name": "권현빈",
+      "group": "솔로",
+      "rawCount": {
+        "lyrics": 30,
+        "compose": 16
+      },
+      "packed": {
+        "lyrics": 23,
+        "compose": 12
+      }
+    }
+  ]
+}

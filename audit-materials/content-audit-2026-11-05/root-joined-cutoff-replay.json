@@ -1,0 +1,54 @@
+{
+  "revision": "e64f24f9cd",
+  "rows": [
+    {
+      "id": "a1893",
+      "name": "나비",
+      "rootJoined": "2025.08.14",
+      "current": {
+        "active": true
+      },
+      "inMemoryExistingGroupsModel": {
+        "active": true,
+        "joined": "2025-08-14"
+      }
+    },
+    {
+      "id": "a1894",
+      "name": "딘다",
+      "rootJoined": "2025.08.14",
+      "current": {
+        "active": true
+      },
+      "inMemoryExistingGroupsModel": {
+        "active": true,
+        "joined": "2025-08-14"
+      }
+    },
+    {
+      "id": "a1895",
+      "name": "에빈",
+      "rootJoined": "2025.08.14",
+      "current": {
+        "active": true
+      },
+      "inMemoryExistingGroupsModel": {
+        "active": true,
+        "joined": "2025-08-14"
+      }
+    },
+    {
+      "id": "a1896",
+      "name": "민씨",
+      "rootJoined": "2025.08.14",
+      "current": {
+        "active": true
+      },
+      "inMemoryExistingGroupsModel": {
+        "active": true,
+        "joined": "2025-08-14"
+      }
+    }
+  ],
+  "actualFunctions": "\nfunction _memberVideoCutoffCore(a,gEntry,activeHere,ko){\n    if(activeHere!==false)return{active:true};\n    const leftHere=gEntry.left!==undefined?gEntry.left:a.left;\n    // ⚠️ 예전엔 `leftHere.replace(/\\./g,'-')`였다 — 'YYYY.MM.DD'는 맞았지만 연도만/연·월만 적힌 탈퇴일이\n    //    'YYYY'·'YYYY-MM' 그대로 나가서 Postgres가 그 해(달) **1일**로 읽었다. admin은 같은 값을 그 해(달)\n    //    **마지막 날**로 해석하므로 둘이 정반대. 그 결과 탈퇴 연도 1년치 영상이 조용히 사라졌다.\n    //    이제 해석은 shared.js의 _leftCutoffDate 한 곳만 쓴다(2026-09-04).\n    const _lc=_leftCutoffDate(leftHere);\n    if(_lc)return{active:false,left:_lc};                                // ①\n    const end=_groupEndDate(ko);\n    if(end)return{active:false,left:end};                                // ②\n    if(_groupIsOver(ko))return{active:true};                             // ③\n    return{active:false,left:null};                                      // ④\n  }\nfunction _memberVideoCutoff(memberKo,ko){\n    if(!memberKo)return{active:true};\n    const a=ARTISTS.find(x=>x.name.ko===memberKo&&_artistGroups(x).some(g=>g.ko===ko));\n    if(!a)return{active:true};\n    const gEntry=_artistGroups(a).find(g=>g.ko===ko)||{};\n    const activeHere=gEntry.active!==undefined?gEntry.active:a.active;\n    // joined(그 그룹 합류일, 2026-10-12 — 티오원 여정·다이고·렌타 2022.06.17): 있으면 미태깅 그룹 영상을 그날 이후로만.\n    const r=_memberVideoCutoffCore(a,gEntry,activeHere,ko);\n    if(gEntry.joined)r.joined=String(gEntry.joined).replace(/\\./g,'-').slice(0,10);\n    // pausedFrom(그룹 활동 중단일, 2026-10-22 — 펜타곤 옌안·유토: 2023.10 계약 종료, 탈퇴 발표는 없음, 2026 10주년 싱글은 7인).\n    // 멤버 표기는 현역 그대로 두고, 미태깅 그룹 전체 영상만 그날까지로 자른다(사용자: \"옌안 카드에 옌안이 안 한 펜타곤 영상이 나오면 안 된다\").\n    const _pz=_memberPausedCutoff(a,ko);\n    if(_pz&&r.active)return Object.assign(r,{active:false,left:_pz});\n    return r;\n  }"
+}

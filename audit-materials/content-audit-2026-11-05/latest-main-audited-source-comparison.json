@@ -1,0 +1,56 @@
+{
+  "previous": "e64f24f9cd",
+  "latest": "1107f458a4",
+  "checks": [
+    {
+      "name": "_groupEndDate",
+      "unchanged": true
+    },
+    {
+      "name": "_memberVideoCutoffCore",
+      "unchanged": true
+    },
+    {
+      "name": "_memberVideoCutoff",
+      "unchanged": true
+    },
+    {
+      "name": "_buildMemberTimeline",
+      "unchanged": true
+    },
+    {
+      "name": "_mxAgeAt",
+      "unchanged": true
+    },
+    {
+      "name": "_mxFigBuild",
+      "unchanged": true
+    }
+  ],
+  "others": [
+    {
+      "file": "admin.js",
+      "unchanged": true
+    },
+    {
+      "file": "shared.js",
+      "unchanged": true
+    },
+    {
+      "file": "artists.json",
+      "unchanged": true
+    },
+    {
+      "file": "groups.json",
+      "unchanged": true
+    },
+    {
+      "file": "build_group_pages.js",
+      "unchanged": true
+    },
+    {
+      "file": "tools/seo_extra.js",
+      "unchanged": true
+    }
+  ]
+}

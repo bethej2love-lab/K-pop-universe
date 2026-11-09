@@ -1,0 +1,191 @@
+{
+  "revision": "e64f24f9cd",
+  "actualSourceBlock": "  const realGroups=[];\n  if(GROUPS[a.group.ko]&&a.group.ko!=='솔로')realGroups.push({ko:a.group.ko,left:null});\n  (a.groups||[]).forEach(g=>{if(g&&g.ko&&g.ko!=='솔로'&&GROUPS[g.ko]&&!realGroups.some(r=>r.ko===g.ko))realGroups.push({ko:g.ko,left:g.left||null});});\n  const ev=[];\n  realGroups.forEach(rg=>{\n    const info=GROUPS[rg.ko];const gname=isKo?rg.ko:(info.en||rg.ko);\n    if(info.debut){const k=_tlKey(info.debut);if(k)ev.push({key:k,date:_tlDate(info.debut),label:isKo?`${gname} 데뷔`:`${gname} debut`,icon:'🎤',gko:rg.ko});}\n    if(rg.left){const k=_tlKey(rg.left);if(k){\n      // 그룹이 해체됐고 멤버가 그 전에 미리 나간 게 아니면(연도 기준) '탈퇴'가 아니라 '해체'로 표기\n      // (2026-09-13 사용자 요청 — 아이즈원처럼 해체까지 함께한 멤버는 '탈퇴'가 아니라 '해체').\n      const _dis=(typeof _disbandCutoffDate==='function')?_disbandCutoffDate(rg.ko):null;\n      let _ended=!!info.disbanded;\n      if(_ended&&_dis){const ly=+String(rg.left).slice(0,4),dy=+String(_dis).slice(0,4);if(ly&&dy&&ly<dy)_ended=false;} // 해체 전에 미리 나감 = 진짜 탈퇴\n      ev.push({key:k,date:_tlDate(rg.left),label:_ended?(isKo?`${gname} 해체`:`${gname} disbanded`):(isKo?`${gname} 탈퇴`:`Left ${gname}`),icon:_ended?'🏁':'👋'});\n    }}\n  });\n",
+  "rows": [
+    {
+      "id": "a0508",
+      "name": "장현승",
+      "primary": "하이라이트",
+      "joins": [
+        {
+          "group": "하이라이트",
+          "joined": "2009.10.16"
+        }
+      ],
+      "events": [
+        {
+          "key": 20091016,
+          "date": "2009.10",
+          "label": "하이라이트 데뷔",
+          "icon": "🎤",
+          "gko": "하이라이트"
+        }
+      ]
+    },
+    {
+      "id": "a1079",
+      "name": "다이고",
+      "primary": "솔로",
+      "joins": [
+        {
+          "group": "티오원",
+          "joined": "2022.06.17"
+        }
+      ],
+      "events": [
+        {
+          "key": 20200401,
+          "date": "2020.04",
+          "label": "티오원 데뷔",
+          "icon": "🎤",
+          "gko": "티오원"
+        },
+        {
+          "key": 20231231,
+          "date": "2023.12",
+          "label": "티오원 해체",
+          "icon": "🏁"
+        }
+      ]
+    },
+    {
+      "id": "a1082",
+      "name": "렌타",
+      "primary": "솔로",
+      "joins": [
+        {
+          "group": "티오원",
+          "joined": "2022.06.17"
+        }
+      ],
+      "events": [
+        {
+          "key": 20200401,
+          "date": "2020.04",
+          "label": "티오원 데뷔",
+          "icon": "🎤",
+          "gko": "티오원"
+        },
+        {
+          "key": 20230922,
+          "date": "2023.09",
+          "label": "티오원 해체",
+          "icon": "🏁"
+        }
+      ]
+    },
+    {
+      "id": "a1372",
+      "name": "전여여정",
+      "primary": "뉴비트",
+      "joins": [
+        {
+          "group": "티오원",
+          "joined": "2022.06.17"
+        }
+      ],
+      "events": [
+        {
+          "key": 20250324,
+          "date": "2025.03",
+          "label": "뉴비트 데뷔",
+          "icon": "🎤",
+          "gko": "뉴비트"
+        },
+        {
+          "key": 20200401,
+          "date": "2020.04",
+          "label": "티오원 데뷔",
+          "icon": "🎤",
+          "gko": "티오원"
+        },
+        {
+          "key": 20231231,
+          "date": "2023.12",
+          "label": "티오원 해체",
+          "icon": "🏁"
+        }
+      ]
+    },
+    {
+      "id": "a1893",
+      "name": "나비",
+      "primary": "시크릿넘버",
+      "joins": [
+        {
+          "group": "시크릿넘버",
+          "joined": "2025.08.14"
+        }
+      ],
+      "events": [
+        {
+          "key": 20200519,
+          "date": "2020.05",
+          "label": "시크릿넘버 데뷔",
+          "icon": "🎤",
+          "gko": "시크릿넘버"
+        }
+      ]
+    },
+    {
+      "id": "a1894",
+      "name": "딘다",
+      "primary": "시크릿넘버",
+      "joins": [
+        {
+          "group": "시크릿넘버",
+          "joined": "2025.08.14"
+        }
+      ],
+      "events": [
+        {
+          "key": 20200519,
+          "date": "2020.05",
+          "label": "시크릿넘버 데뷔",
+          "icon": "🎤",
+          "gko": "시크릿넘버"
+        }
+      ]
+    },
+    {
+      "id": "a1895",
+      "name": "에빈",
+      "primary": "시크릿넘버",
+      "joins": [
+        {
+          "group": "시크릿넘버",
+          "joined": "2025.08.14"
+        }
+      ],
+      "events": [
+        {
+          "key": 20200519,
+          "date": "2020.05",
+          "label": "시크릿넘버 데뷔",
+          "icon": "🎤",
+          "gko": "시크릿넘버"
+        }
+      ]
+    },
+    {
+      "id": "a1896",
+      "name": "민씨",
+      "primary": "시크릿넘버",
+      "joins": [
+        {
+          "group": "시크릿넘버",
+          "joined": "2025.08.14"
+        }
+      ],
+      "events": [
+        {
+          "key": 20200519,
+          "date": "2020.05",
+          "label": "시크릿넘버 데뷔",
+          "icon": "🎤",
+          "gko": "시크릿넘버"
+        }
+      ]
+    }
+  ]
+}

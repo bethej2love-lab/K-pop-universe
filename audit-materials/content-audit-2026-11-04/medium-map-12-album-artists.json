@@ -1,0 +1,280 @@
+[
+  {
+    "id": "a0492",
+    "name": "수현",
+    "group": "빌리",
+    "expectedAid": "3050085",
+    "title": "지구 한 바퀴",
+    "melonAlbumId": "10301285",
+    "releaseDate": "2019.06.29",
+    "url": "https://www.melon.com/album/detail.htm?albumId=10301285",
+    "status": 200,
+    "artists": [
+      {
+        "aid": "3050085",
+        "name": "수현"
+      }
+    ],
+    "artistText": "수현",
+    "expectedAidPresent": true
+  },
+  {
+    "id": "a0627",
+    "name": "김태헌",
+    "group": "솔로",
+    "expectedAid": "672792",
+    "title": "우리가 헤어지지 않았더라면",
+    "melonAlbumId": "14757532",
+    "releaseDate": "2026.10.18",
+    "url": "https://www.melon.com/album/detail.htm?albumId=14757532",
+    "status": 200,
+    "artists": [
+      {
+        "aid": "672792",
+        "name": "김태헌"
+      }
+    ],
+    "artistText": "김태헌",
+    "expectedAidPresent": true
+  },
+  {
+    "id": "a0627",
+    "name": "김태헌",
+    "group": "솔로",
+    "expectedAid": "672792",
+    "title": "For Mama",
+    "melonAlbumId": "12082897",
+    "releaseDate": "2025.08.29",
+    "url": "https://www.melon.com/album/detail.htm?albumId=12082897",
+    "status": 200,
+    "artists": [
+      {
+        "aid": "672792",
+        "name": "김태헌"
+      }
+    ],
+    "artistText": "김태헌",
+    "expectedAidPresent": true
+  },
+  {
+    "id": "a0908",
+    "name": "혜빈",
+    "group": "모모랜드",
+    "expectedAid": "1229547",
+    "title": "사랑이라 말하기엔 서로 너무 아팠으니까",
+    "melonAlbumId": "11624547",
+    "releaseDate": "2024.10.25",
+    "url": "https://www.melon.com/album/detail.htm?albumId=11624547",
+    "status": 200,
+    "artists": [
+      {
+        "aid": "1229547",
+        "name": "혜빈"
+      }
+    ],
+    "artistText": "혜빈",
+    "expectedAidPresent": true
+  },
+  {
+    "id": "a0909",
+    "name": "제인",
+    "group": "모모랜드",
+    "expectedAid": "1229550",
+    "title": "새벽의 문턱",
+    "melonAlbumId": "14707798",
+    "releaseDate": "2026.10.17",
+    "url": "https://www.melon.com/album/detail.htm?albumId=14707798",
+    "status": 200,
+    "artists": [
+      {
+        "aid": "1229550",
+        "name": "제인 (모모랜드)"
+      }
+    ],
+    "artistText": "제인 (모모랜드)",
+    "expectedAidPresent": true
+  },
+  {
+    "id": "a0909",
+    "name": "제인",
+    "group": "모모랜드",
+    "expectedAid": "1229550",
+    "title": "영화 구라, 베토벤 OST",
+    "melonAlbumId": "10526880",
+    "releaseDate": "2020.12.02",
+    "url": "https://www.melon.com/album/detail.htm?albumId=10526880",
+    "status": 200,
+    "artists": [
+      {
+        "aid": "1229550",
+        "name": "제인"
+      },
+      {
+        "aid": "1229551",
+        "name": "아인"
+      }
+    ],
+    "artistText": "제인 , 아인",
+    "expectedAidPresent": true
+  },
+  {
+    "id": "a1129",
+    "name": "린지",
+    "group": "솔로",
+    "expectedAid": "695331",
+    "title": "보리울의 여름 (서로 사랑해요)",
+    "melonAlbumId": "10281336",
+    "releaseDate": "2019.05.05",
+    "url": "https://www.melon.com/album/detail.htm?albumId=10281336",
+    "status": 200,
+    "artists": [
+      {
+        "aid": "695331",
+        "name": "린지"
+      }
+    ],
+    "artistText": "린지",
+    "expectedAidPresent": true
+  },
+  {
+    "id": "a1211",
+    "name": "민규",
+    "group": "솔로",
+    "expectedAid": "3088770",
+    "title": "체념 後(후) : Re+Project ‘Re+Call’",
+    "melonAlbumId": "11130097",
+    "releaseDate": "2022.12.23",
+    "url": "https://www.melon.com/album/detail.htm?albumId=11130097",
+    "status": 200,
+    "artists": [
+      {
+        "aid": "3088770",
+        "name": "민규"
+      }
+    ],
+    "artistText": "민규",
+    "expectedAidPresent": true
+  },
+  {
+    "id": "a1226",
+    "name": "로민",
+    "group": "엘라스트",
+    "expectedAid": "2873708",
+    "title": "그래서 나는 안티팬과 결혼했다 OST Part.5",
+    "melonAlbumId": "10619527",
+    "releaseDate": "2021.06.04",
+    "url": "https://www.melon.com/album/detail.htm?albumId=10619527",
+    "status": 200,
+    "artists": [
+      {
+        "aid": "2873708",
+        "name": "로민"
+      },
+      {
+        "aid": "2018927",
+        "name": "이유카"
+      }
+    ],
+    "artistText": "로민 , 이유카",
+    "expectedAidPresent": true
+  },
+  {
+    "id": "a1265",
+    "name": "박소은",
+    "group": "솔로",
+    "expectedAid": "2870981",
+    "title": "네가 떠올라",
+    "melonAlbumId": "14334608",
+    "releaseDate": "2026.08.01",
+    "url": "https://www.melon.com/album/detail.htm?albumId=14334608",
+    "status": 200,
+    "artists": [
+      {
+        "aid": "2870981",
+        "name": "박소은"
+      }
+    ],
+    "artistText": "박소은",
+    "expectedAidPresent": true
+  },
+  {
+    "id": "a1367",
+    "name": "영서",
+    "group": "솔로",
+    "expectedAid": "2894504",
+    "title": "Monologue Project",
+    "melonAlbumId": "11048589",
+    "releaseDate": "2022.09.07",
+    "url": "https://www.melon.com/album/detail.htm?albumId=11048589",
+    "status": 200,
+    "artists": [
+      {
+        "aid": "2894504",
+        "name": "영서"
+      }
+    ],
+    "artistText": "영서",
+    "expectedAidPresent": true
+  },
+  {
+    "id": "a1471",
+    "name": "박서함",
+    "group": "크나큰",
+    "expectedAid": "946984",
+    "title": "My valentine (쇼뮤지컬 드림하이 OST)",
+    "melonAlbumId": "11725884",
+    "releaseDate": "2025.02.28",
+    "url": "https://www.melon.com/album/detail.htm?albumId=11725884",
+    "status": 200,
+    "artists": [
+      {
+        "aid": "946984",
+        "name": "박서함"
+      },
+      {
+        "aid": "3880985",
+        "name": "이시우"
+      }
+    ],
+    "artistText": "박서함 , 이시우",
+    "expectedAidPresent": true
+  },
+  {
+    "id": "a1650",
+    "name": "유라",
+    "group": "걸스데이",
+    "expectedAid": "669851",
+    "title": "환승연애4 OST Part 7",
+    "melonAlbumId": "12396907",
+    "releaseDate": "2025.11.20",
+    "url": "https://www.melon.com/album/detail.htm?albumId=12396907",
+    "status": 200,
+    "artists": [
+      {
+        "aid": "669851",
+        "name": "유라"
+      }
+    ],
+    "artistText": "유라",
+    "expectedAidPresent": true
+  },
+  {
+    "id": "a1718",
+    "name": "건우",
+    "group": "솔로",
+    "expectedAid": "2900787",
+    "title": "SHOT",
+    "melonAlbumId": "11732201",
+    "releaseDate": "2025.03.10",
+    "url": "https://www.melon.com/album/detail.htm?albumId=11732201",
+    "status": 200,
+    "artists": [
+      {
+        "aid": "2900787",
+        "name": "건우"
+      }
+    ],
+    "artistText": "건우",
+    "expectedAidPresent": true
+  }
+]

@@ -1,0 +1,45 @@
+{
+  "revision": "a1c7656f0a",
+  "creditRows": 805,
+  "ownerOnlyInCredit": 71,
+  "replayed": 71,
+  "replayErrors": [],
+  "candidates": [
+    {
+      "owner": "아이들",
+      "id": "4exfFClB8Rs",
+      "title": "💫스젵 노래방 LIVE | 빌리 Billlie (하없동)의 ‘TOMBOY’ | 원곡: (여자)아이들 (G)I-DLE | STATION Z | KBS 231027 방송",
+      "published_at": "2023-10-27",
+      "canonicalOwner": "아이들",
+      "stripped": "💫스젵 노래방 LIVE | 빌리 Billlie (하없동)의 ‘TOMBOY’ |  | STATION Z | KBS 231027 방송",
+      "parsed": {
+        "primaryGroup": "빌리",
+        "withGroups": [],
+        "membersByGroup": {
+          "빌리": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "owner": "원더걸스",
+      "id": "2xRvHTmh7n8",
+      "title": "Nobody(원곡:원더걸스) - 로켓펀치(Rocket Punch) [뮤직뱅크 Music Bank] 20191018",
+      "published_at": "2019-10-18",
+      "canonicalOwner": "원더걸스",
+      "stripped": "Nobody - 로켓펀치(Rocket Punch) [뮤직뱅크 Music Bank] 20191018",
+      "parsed": {
+        "primaryGroup": "로켓펀치",
+        "withGroups": [],
+        "membersByGroup": {
+          "로켓펀치": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    }
+  ],
+  "unsupportedOwners": [],
+  "harnessNote": "Injected actual app.js _groupEndDate and admin.js _disbandCutoffDate into in-memory harness only; no source files changed."
+}

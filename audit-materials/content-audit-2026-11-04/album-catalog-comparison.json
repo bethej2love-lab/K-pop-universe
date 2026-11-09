@@ -1,0 +1,2015 @@
+{
+  "revision": "a213912575",
+  "note": "Mechanical candidate comparison; translation/version aliases require human review, not a JSON patch",
+  "officialAlbums": 24,
+  "physicalCatalogTracks": 174,
+  "albumReferences": [
+    {
+      "owner": "라이즈",
+      "title": "Fame",
+      "id": "12402759",
+      "storedTracks": 3,
+      "officialTracks": 3
+    },
+    {
+      "owner": "라이즈",
+      "title": "RIIZING : Epilogue",
+      "id": "11582670",
+      "storedTracks": 9,
+      "officialTracks": 9
+    },
+    {
+      "owner": "라이즈",
+      "title": "RIIZING",
+      "id": "11456179",
+      "storedTracks": 8,
+      "officialTracks": 8
+    },
+    {
+      "owner": "빅뱅",
+      "title": "Alive",
+      "id": "2084128",
+      "storedTracks": 7,
+      "officialTracks": 7
+    },
+    {
+      "owner": "빅뱅",
+      "title": "Tonight",
+      "id": "1184151",
+      "storedTracks": 6,
+      "officialTracks": 6
+    },
+    {
+      "owner": "트리플에스",
+      "title": "tripleS ∞! ＜SecretHimitsuBimil＞",
+      "id": "12128958",
+      "storedTracks": 7,
+      "officialTracks": 7
+    },
+    {
+      "owner": "아이오아이",
+      "title": "I.O.I : LOOP",
+      "id": "13399673",
+      "storedTracks": 6,
+      "officialTracks": 6
+    },
+    {
+      "owner": "제로베이스원",
+      "title": "BLUE PARADISE",
+      "id": "11720927",
+      "storedTracks": 6,
+      "officialTracks": 6
+    },
+    {
+      "owner": "제로베이스원",
+      "title": "You had me at HELLO",
+      "id": "11469986",
+      "storedTracks": 7,
+      "officialTracks": 7
+    },
+    {
+      "owner": "제로베이스원",
+      "title": "MELTING POINT",
+      "id": "11358523",
+      "storedTracks": 5,
+      "officialTracks": 5
+    },
+    {
+      "owner": "제로베이스원",
+      "title": "YOUTH IN THE SHADE",
+      "id": "11281739",
+      "storedTracks": 6,
+      "officialTracks": 6
+    },
+    {
+      "owner": "에이비식스",
+      "title": "SALUTE",
+      "id": "10512189",
+      "storedTracks": 6,
+      "officialTracks": 6
+    },
+    {
+      "owner": "에이비식스",
+      "title": "B:COMPLETE",
+      "id": "10278828",
+      "storedTracks": 7,
+      "officialTracks": 7
+    },
+    {
+      "owner": "하이라이트",
+      "title": "Switch On",
+      "id": "11437485",
+      "storedTracks": 5,
+      "officialTracks": 5
+    },
+    {
+      "owner": "카라",
+      "title": "STEP",
+      "id": "2009327",
+      "storedTracks": 10,
+      "officialTracks": 10
+    },
+    {
+      "owner": "카라",
+      "title": "Blooming",
+      "id": "348747",
+      "storedTracks": 10,
+      "officialTracks": 10
+    },
+    {
+      "owner": "우주소녀",
+      "title": "Would You Like?",
+      "id": "2669168",
+      "storedTracks": 6,
+      "officialTracks": 6
+    },
+    {
+      "owner": "비원에이포",
+      "title": "It B1A4",
+      "id": "2012446",
+      "storedTracks": 6,
+      "officialTracks": 6
+    },
+    {
+      "owner": "비투비",
+      "title": "스릴러 (Thriller)",
+      "id": "2200239",
+      "storedTracks": 6,
+      "officialTracks": 6
+    },
+    {
+      "owner": "S.E.S.",
+      "title": "Sea & Eugene & Shoo - 2집",
+      "id": "5407",
+      "storedTracks": 10,
+      "officialTracks": 10
+    },
+    {
+      "owner": "S.E.S.",
+      "title": "S.E.S. - 1집",
+      "id": "5405",
+      "storedTracks": 10,
+      "officialTracks": 10
+    },
+    {
+      "owner": "블락비",
+      "title": "BLOCKBUSTER",
+      "id": "2153172",
+      "storedTracks": 12,
+      "officialTracks": 12
+    },
+    {
+      "owner": "빅스",
+      "title": "Hyde",
+      "id": "2185649",
+      "storedTracks": 6,
+      "officialTracks": 6
+    },
+    {
+      "owner": "a0166:SM THE BALLAD",
+      "title": "S.M. The Ballad Vol.2 'Breath'",
+      "id": "2232902",
+      "storedTracks": 10,
+      "officialTracks": 10
+    },
+    {
+      "owner": "a0177:SM THE BALLAD",
+      "title": "S.M. The Ballad Vol.2 'Breath'",
+      "id": "2232902",
+      "storedTracks": 10,
+      "officialTracks": 10
+    },
+    {
+      "owner": "a0182:SM THE BALLAD",
+      "title": "S.M. The Ballad Vol.2 'Breath'",
+      "id": "2232902",
+      "storedTracks": 10,
+      "officialTracks": 10
+    },
+    {
+      "owner": "a0241:hatch!",
+      "title": "tripleS hatch! <SecretHimitsuBimil>",
+      "id": "12128958",
+      "storedTracks": 7,
+      "officialTracks": 7
+    },
+    {
+      "owner": "a0242:hatch!",
+      "title": "tripleS hatch! <SecretHimitsuBimil>",
+      "id": "12128958",
+      "storedTracks": 7,
+      "officialTracks": 7
+    },
+    {
+      "owner": "a0243:hatch!",
+      "title": "tripleS hatch! <SecretHimitsuBimil>",
+      "id": "12128958",
+      "storedTracks": 7,
+      "officialTracks": 7
+    },
+    {
+      "owner": "a0244:hatch!",
+      "title": "tripleS hatch! <SecretHimitsuBimil>",
+      "id": "12128958",
+      "storedTracks": 7,
+      "officialTracks": 7
+    },
+    {
+      "owner": "a0249:hatch!",
+      "title": "tripleS hatch! <SecretHimitsuBimil>",
+      "id": "12128958",
+      "storedTracks": 7,
+      "officialTracks": 7
+    },
+    {
+      "owner": "a0254:hatch!",
+      "title": "tripleS hatch! <SecretHimitsuBimil>",
+      "id": "12128958",
+      "storedTracks": 7,
+      "officialTracks": 7
+    },
+    {
+      "owner": "a0258:hatch!",
+      "title": "tripleS hatch! <SecretHimitsuBimil>",
+      "id": "12128958",
+      "storedTracks": 7,
+      "officialTracks": 7
+    },
+    {
+      "owner": "a0259:hatch!",
+      "title": "tripleS hatch! <SecretHimitsuBimil>",
+      "id": "12128958",
+      "storedTracks": 7,
+      "officialTracks": 7
+    },
+    {
+      "owner": "a0373:SM THE BALLAD",
+      "title": "S.M. The Ballad Vol.2 'Breath'",
+      "id": "2232902",
+      "storedTracks": 10,
+      "officialTracks": 10
+    },
+    {
+      "owner": "a0382:SM THE BALLAD",
+      "title": "S.M. The Ballad Vol.2 'Breath'",
+      "id": "2232902",
+      "storedTracks": 10,
+      "officialTracks": 10
+    },
+    {
+      "owner": "a0388:SM THE BALLAD",
+      "title": "S.M. The Ballad Vol.2 'Breath'",
+      "id": "2232902",
+      "storedTracks": 10,
+      "officialTracks": 10
+    },
+    {
+      "owner": "a0594:SM THE BALLAD",
+      "title": "S.M. The Ballad Vol.2 'Breath'",
+      "id": "2232902",
+      "storedTracks": 10,
+      "officialTracks": 10
+    }
+  ],
+  "rows": [
+    {
+      "owner": "라이즈",
+      "album": "Fame",
+      "albumId": "12402759",
+      "no": 2,
+      "title": "Love Song",
+      "songId": "600552360",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "600552360",
+        "title": "Fame"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "라이즈",
+      "album": "Fame",
+      "albumId": "12402759",
+      "no": 3,
+      "title": "Fame (Inst.)",
+      "songId": "600552361",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "600552361",
+        "title": "Sticky Like"
+      },
+      "officialByNormalizedTitle": [
+        {
+          "songId": "600552360",
+          "title": "Fame"
+        }
+      ]
+    },
+    {
+      "owner": "라이즈",
+      "album": "RIIZING : Epilogue",
+      "albumId": "11582670",
+      "no": 6,
+      "title": "Breathe Easy",
+      "songId": "37956041",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "37956041",
+        "title": "Honestly"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "라이즈",
+      "album": "RIIZING : Epilogue",
+      "albumId": "11582670",
+      "no": 7,
+      "title": "Run to You",
+      "songId": "37956042",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "37956042",
+        "title": "One Kiss"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "라이즈",
+      "album": "RIIZING : Epilogue",
+      "albumId": "11582670",
+      "no": 8,
+      "title": "Get A Guitar",
+      "songId": "37956043",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "37956043",
+        "title": "Talk Saxy"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "라이즈",
+      "album": "RIIZING",
+      "albumId": "11456179",
+      "no": 6,
+      "title": "Breathe Easy",
+      "songId": "37463421",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "37463421",
+        "title": "One Kiss"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "라이즈",
+      "album": "RIIZING",
+      "albumId": "11456179",
+      "no": 7,
+      "title": "Run to You",
+      "songId": "37640353",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "37640353",
+        "title": "Talk Saxy"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "라이즈",
+      "album": "RIIZING",
+      "albumId": "11456179",
+      "no": 8,
+      "title": "Get A Guitar",
+      "songId": "37640354",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "37640354",
+        "title": "Love 119"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "빅뱅",
+      "album": "Alive",
+      "albumId": "2084128",
+      "no": 3,
+      "title": "Monster",
+      "songId": "3715673",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3715673",
+        "title": "사랑먼지"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "빅뱅",
+      "album": "Alive",
+      "albumId": "2084128",
+      "no": 5,
+      "title": "Love Dust",
+      "songId": "3715675",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3715675",
+        "title": "재미없어"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "빅뱅",
+      "album": "Alive",
+      "albumId": "2084128",
+      "no": 6,
+      "title": "날 봐줘요 (Look at Me)",
+      "songId": "3715676",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3715676",
+        "title": "FANTASTIC BABY"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "빅뱅",
+      "album": "Alive",
+      "albumId": "2084128",
+      "no": 7,
+      "title": "Ego",
+      "songId": "3715677",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3715677",
+        "title": "날개 (대성 SOLO)"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "빅뱅",
+      "album": "Tonight",
+      "albumId": "1184151",
+      "no": 2,
+      "title": "나만 바라봐 (Look Only at Me)",
+      "songId": "3156949",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3156949",
+        "title": "HANDS UP"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "빅뱅",
+      "album": "Tonight",
+      "albumId": "1184151",
+      "no": 3,
+      "title": "Oh Mom",
+      "songId": "3156950",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3156950",
+        "title": "TONIGHT"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "빅뱅",
+      "album": "Tonight",
+      "albumId": "1184151",
+      "no": 4,
+      "title": "Stupid Liar",
+      "songId": "3156951",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3156951",
+        "title": "SOMEBODY TO LOVE"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "빅뱅",
+      "album": "Tonight",
+      "albumId": "1184151",
+      "no": 5,
+      "title": "Feeling",
+      "songId": "3156952",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3156952",
+        "title": "WHAT IS RIGHT"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "빅뱅",
+      "album": "Tonight",
+      "albumId": "1184151",
+      "no": 6,
+      "title": "손을 잡고 가자 (Let's Hold Hands)",
+      "songId": "3156953",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3156953",
+        "title": "CAFE"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "트리플에스",
+      "album": "tripleS ∞! ＜SecretHimitsuBimil＞",
+      "albumId": "12128958",
+      "no": 2,
+      "title": "ヘッドフォン",
+      "songId": "600151057",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "600151057",
+        "title": "### (hatch! Version)"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "트리플에스",
+      "album": "tripleS ∞! ＜SecretHimitsuBimil＞",
+      "albumId": "12128958",
+      "no": 3,
+      "title": "トキメティック",
+      "songId": "600151053",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "600151053",
+        "title": "Tokimetique"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "트리플에스",
+      "album": "tripleS ∞! ＜SecretHimitsuBimil＞",
+      "albumId": "12128958",
+      "no": 6,
+      "title": "アンタイトル",
+      "songId": "600151056",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "600151056",
+        "title": "Untitled"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "트리플에스",
+      "album": "tripleS ∞! ＜SecretHimitsuBimil＞",
+      "albumId": "12128958",
+      "no": 7,
+      "title": "### - ∞! Ver.",
+      "songId": "600151057",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "600151057",
+        "title": "### (hatch! Version)"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "아이오아이",
+      "album": "I.O.I : LOOP",
+      "albumId": "13399673",
+      "no": 4,
+      "title": "Bittersweet",
+      "songId": "602024050",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "602024050",
+        "title": "IF I"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "아이오아이",
+      "album": "I.O.I : LOOP",
+      "albumId": "13399673",
+      "no": 5,
+      "title": "Missing U",
+      "songId": "602024051",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "602024051",
+        "title": "그때 우리 지금"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "아이오아이",
+      "album": "I.O.I : LOOP",
+      "albumId": "13399673",
+      "no": 6,
+      "title": "Into The Night",
+      "songId": "602024052",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "602024052",
+        "title": "웃으며 안녕 (Recorded in 2016) (Prod.진영)"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "제로베이스원",
+      "album": "BLUE PARADISE",
+      "albumId": "11720927",
+      "no": 2,
+      "title": "Midnight Sun",
+      "songId": "38583474",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "38583474",
+        "title": "Devil Game"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "제로베이스원",
+      "album": "BLUE PARADISE",
+      "albumId": "11720927",
+      "no": 3,
+      "title": "Butterfly Effect",
+      "songId": "38583475",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "38583475",
+        "title": "Doctor! Doctor!"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "제로베이스원",
+      "album": "BLUE PARADISE",
+      "albumId": "11720927",
+      "no": 4,
+      "title": "모든 게 떠오르는 밤 (Night Everything Comes Up)",
+      "songId": "38583476",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "38583476",
+        "title": "Out of Love"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "제로베이스원",
+      "album": "BLUE PARADISE",
+      "albumId": "11720927",
+      "no": 5,
+      "title": "Forever",
+      "songId": "38583477",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "38583477",
+        "title": "Step Back"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "제로베이스원",
+      "album": "BLUE PARADISE",
+      "albumId": "11720927",
+      "no": 6,
+      "title": "Out of Love (Inst.)",
+      "songId": "38583478",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "38583478",
+        "title": "Cruel"
+      },
+      "officialByNormalizedTitle": [
+        {
+          "songId": "38583476",
+          "title": "Out of Love"
+        }
+      ]
+    },
+    {
+      "owner": "제로베이스원",
+      "album": "You had me at HELLO",
+      "albumId": "11469986",
+      "no": 3,
+      "title": "Lovestruck",
+      "songId": "37526069",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "37526069",
+        "title": "Dear ECLIPSE"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "제로베이스원",
+      "album": "You had me at HELLO",
+      "albumId": "11469986",
+      "no": 4,
+      "title": "그리운 날에 (On a Day I Miss You)",
+      "songId": "37438252",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "37438252",
+        "title": "SWEAT"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "제로베이스원",
+      "album": "You had me at HELLO",
+      "albumId": "11469986",
+      "no": 5,
+      "title": "WHEREVER",
+      "songId": "37526070",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "37526070",
+        "title": "Sunday RIDE"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "제로베이스원",
+      "album": "You had me at HELLO",
+      "albumId": "11469986",
+      "no": 6,
+      "title": "We Belong Together",
+      "songId": "37526071",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "37526071",
+        "title": "HELLO"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "제로베이스원",
+      "album": "You had me at HELLO",
+      "albumId": "11469986",
+      "no": 7,
+      "title": "HELLO (Inst.)",
+      "songId": "37526072",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "37526072",
+        "title": "Feel the POP (Sped Up ver.)"
+      },
+      "officialByNormalizedTitle": [
+        {
+          "songId": "37526071",
+          "title": "HELLO"
+        }
+      ]
+    },
+    {
+      "owner": "제로베이스원",
+      "album": "MELTING POINT",
+      "albumId": "11358523",
+      "no": 1,
+      "title": "Feel the POP",
+      "songId": "36937526",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "36937526",
+        "title": "MELTING POINT"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "제로베이스원",
+      "album": "MELTING POINT",
+      "albumId": "11358523",
+      "no": 4,
+      "title": "이유 (Reason)",
+      "songId": "36937529",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "36937529",
+        "title": "Kidz Zone"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "제로베이스원",
+      "album": "MELTING POINT",
+      "albumId": "11358523",
+      "no": 5,
+      "title": "Feel the POP (Inst.)",
+      "songId": "36937530",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "36937530",
+        "title": "Good Night"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "제로베이스원",
+      "album": "YOUTH IN THE SHADE",
+      "albumId": "11281739",
+      "no": 2,
+      "title": "New Thing",
+      "songId": "36601157",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "36601157",
+        "title": "In Bloom"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "제로베이스원",
+      "album": "YOUTH IN THE SHADE",
+      "albumId": "11281739",
+      "no": 3,
+      "title": "SWEAT",
+      "songId": "36601158",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "36601158",
+        "title": "New Kidz on the Block"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "제로베이스원",
+      "album": "YOUTH IN THE SHADE",
+      "albumId": "11281739",
+      "no": 4,
+      "title": "We Go",
+      "songId": "36601159",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "36601159",
+        "title": "우주먼지 (and I)"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "제로베이스원",
+      "album": "YOUTH IN THE SHADE",
+      "albumId": "11281739",
+      "no": 5,
+      "title": "Melting Point",
+      "songId": "36601160",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "36601160",
+        "title": "Our Season"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "제로베이스원",
+      "album": "YOUTH IN THE SHADE",
+      "albumId": "11281739",
+      "no": 6,
+      "title": "In Bloom (Inst.)",
+      "songId": "36601161",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "36601161",
+        "title": "Always"
+      },
+      "officialByNormalizedTitle": [
+        {
+          "songId": "36601157",
+          "title": "In Bloom"
+        }
+      ]
+    },
+    {
+      "owner": "에이비식스",
+      "album": "SALUTE",
+      "albumId": "10512189",
+      "no": 2,
+      "title": "LOVE SHOT",
+      "songId": "33032414",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "33032414",
+        "title": "SALUTE"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "에이비식스",
+      "album": "SALUTE",
+      "albumId": "10512189",
+      "no": 3,
+      "title": "ABOVE",
+      "songId": "33032415",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "33032415",
+        "title": "HEAVEN"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "에이비식스",
+      "album": "SALUTE",
+      "albumId": "10512189",
+      "no": 4,
+      "title": "STRANGER",
+      "songId": "33032416",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "33032416",
+        "title": "이게 그리움이 아니라면 대체 뭐겠어 (MAYBE)"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "에이비식스",
+      "album": "SALUTE",
+      "albumId": "10512189",
+      "no": 5,
+      "title": "BEBE",
+      "songId": "33032417",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "33032417",
+        "title": "BLOOM"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "에이비식스",
+      "album": "SALUTE",
+      "albumId": "10512189",
+      "no": 6,
+      "title": "NEED TO KNOW",
+      "songId": "33032418",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "33032418",
+        "title": "한걸음 뒤에 서서 (BEHIND YOU)"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "에이비식스",
+      "album": "B:COMPLETE",
+      "albumId": "10278828",
+      "no": 3,
+      "title": "WAIT",
+      "songId": "31817362",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "31817362",
+        "title": "BREATHE"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "에이비식스",
+      "album": "B:COMPLETE",
+      "albumId": "10278828",
+      "no": 4,
+      "title": "BLIND FOR LOVE",
+      "songId": "31817363",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "31817363",
+        "title": "FRIEND ZONE"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "에이비식스",
+      "album": "B:COMPLETE",
+      "albumId": "10278828",
+      "no": 5,
+      "title": "STAY",
+      "songId": "31817364",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "31817364",
+        "title": "LIGHT ME UP"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "에이비식스",
+      "album": "B:COMPLETE",
+      "albumId": "10278828",
+      "no": 6,
+      "title": "CHERRY",
+      "songId": "31817365",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "31817365",
+        "title": "둘만의 춤 (DANCE FOR TWO)"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "에이비식스",
+      "album": "B:COMPLETE",
+      "albumId": "10278828",
+      "no": 7,
+      "title": "THE REAL",
+      "songId": "31764624",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "31764624",
+        "title": "HOLLYWOOD"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "하이라이트",
+      "album": "Switch On",
+      "albumId": "11437485",
+      "no": 2,
+      "title": "Hello",
+      "songId": "37292497",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "37292497",
+        "title": "Switch On"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "하이라이트",
+      "album": "Switch On",
+      "albumId": "11437485",
+      "no": 3,
+      "title": "나 돌아갈래 (I Wanna Go Back)",
+      "songId": "37292498",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "37292498",
+        "title": "Feel Your Love (48.6Hertz)"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "하이라이트",
+      "album": "Switch On",
+      "albumId": "11437485",
+      "no": 4,
+      "title": "Love Again",
+      "songId": "37292499",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "37292499",
+        "title": "How to Love"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "하이라이트",
+      "album": "Switch On",
+      "albumId": "11437485",
+      "no": 5,
+      "title": "SWITCH ON (Inst.)",
+      "songId": "37292500",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "37292500",
+        "title": "In My Head"
+      },
+      "officialByNormalizedTitle": [
+        {
+          "songId": "37292497",
+          "title": "Switch On"
+        }
+      ]
+    },
+    {
+      "owner": "카라",
+      "album": "STEP",
+      "albumId": "2009327",
+      "no": 2,
+      "title": "Jet Coaster Love",
+      "songId": "3538478",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3538478",
+        "title": "STEP"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "카라",
+      "album": "STEP",
+      "albumId": "2009327",
+      "no": 3,
+      "title": "Angel",
+      "songId": "3544236",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3544236",
+        "title": "Rider"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "카라",
+      "album": "STEP",
+      "albumId": "2009327",
+      "no": 4,
+      "title": "Guilty",
+      "songId": "3544237",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3544237",
+        "title": "Strawberry"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "카라",
+      "album": "STEP",
+      "albumId": "2009327",
+      "no": 5,
+      "title": "Speed Up",
+      "songId": "3544238",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3544238",
+        "title": "따라와"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "카라",
+      "album": "STEP",
+      "albumId": "2009327",
+      "no": 6,
+      "title": "WELCOME",
+      "songId": "3544239",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3544239",
+        "title": "Date (My boy)"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "카라",
+      "album": "STEP",
+      "albumId": "2009327",
+      "no": 7,
+      "title": "Karma",
+      "songId": "3544240",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3544240",
+        "title": "나는.. (Ing) (Acoustic Ver.)"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "카라",
+      "album": "STEP",
+      "albumId": "2009327",
+      "no": 8,
+      "title": "기다려줄게",
+      "songId": "3544241",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3544241",
+        "title": "KARA 4 U (Outro)"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "카라",
+      "album": "STEP",
+      "albumId": "2009327",
+      "no": 9,
+      "title": "Superstar",
+      "songId": "3544242",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3544242",
+        "title": "STEP (Inst.)"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "카라",
+      "album": "STEP",
+      "albumId": "2009327",
+      "no": 10,
+      "title": "Beautiful Days",
+      "songId": "3544243",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3544243",
+        "title": "내 마음을 담아서 (Dear Kamilia)"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "카라",
+      "album": "Blooming",
+      "albumId": "348747",
+      "no": 4,
+      "title": "I'll Wait",
+      "songId": "1610056",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "1610056",
+        "title": "Secret World"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "카라",
+      "album": "Blooming",
+      "albumId": "348747",
+      "no": 5,
+      "title": "Everyday",
+      "songId": "1610057",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "1610057",
+        "title": "Don’t Be Shy"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "카라",
+      "album": "Blooming",
+      "albumId": "348747",
+      "no": 6,
+      "title": "Girls Power",
+      "songId": "1610058",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "1610058",
+        "title": "우리 둘"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "카라",
+      "album": "Blooming",
+      "albumId": "348747",
+      "no": 7,
+      "title": "Baby",
+      "songId": "1610059",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "1610059",
+        "title": "I’ll Be There"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "카라",
+      "album": "Blooming",
+      "albumId": "348747",
+      "no": 8,
+      "title": "In My World",
+      "songId": "1610060",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "1610060",
+        "title": "눈물 지우개"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "카라",
+      "album": "Blooming",
+      "albumId": "348747",
+      "no": 9,
+      "title": "Feel It",
+      "songId": "1610061",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "1610061",
+        "title": "Break It (Inst.)"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "카라",
+      "album": "Blooming",
+      "albumId": "348747",
+      "no": 10,
+      "title": "Breaking Down",
+      "songId": "1610062",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "1610062",
+        "title": "못 지킨 말 (Inst.)"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "우주소녀",
+      "album": "Would You Like?",
+      "albumId": "2669168",
+      "no": 2,
+      "title": "Open Up",
+      "songId": "8067358",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "8067358",
+        "title": "MoMoMo (모모모)"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "우주소녀",
+      "album": "Would You Like?",
+      "albumId": "2669168",
+      "no": 3,
+      "title": "Stay With Me",
+      "songId": "8067359",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "8067359",
+        "title": "Catch Me"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "우주소녀",
+      "album": "Would You Like?",
+      "albumId": "2669168",
+      "no": 4,
+      "title": "Save Your Love",
+      "songId": "8067360",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "8067360",
+        "title": "Tick-Tock"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "우주소녀",
+      "album": "Would You Like?",
+      "albumId": "2669168",
+      "no": 5,
+      "title": "Crystal Clear",
+      "songId": "8067361",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "8067361",
+        "title": "Take My Breath"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "우주소녀",
+      "album": "Would You Like?",
+      "albumId": "2669168",
+      "no": 6,
+      "title": "You Are My Universe",
+      "songId": "8067362",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "8067362",
+        "title": "MoMoMo (Chinese Ver.)"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "비원에이포",
+      "album": "It B1A4",
+      "albumId": "2012446",
+      "no": 1,
+      "title": "Baby I'm Sorry",
+      "songId": "3548553",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3548553",
+        "title": "Beautiful Target"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "비원에이포",
+      "album": "It B1A4",
+      "albumId": "2012446",
+      "no": 2,
+      "title": "Promise",
+      "songId": "3551039",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3551039",
+        "title": "My Love"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "비원에이포",
+      "album": "It B1A4",
+      "albumId": "2012446",
+      "no": 3,
+      "title": "Gimme ur address",
+      "songId": "3551040",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3551040",
+        "title": "쮸쮸쮸 (Chu Chu Chu)"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "비원에이포",
+      "album": "It B1A4",
+      "albumId": "2012446",
+      "no": 4,
+      "title": "Chu",
+      "songId": "3551041",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3551041",
+        "title": "Wonderful Tonight"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "비원에이포",
+      "album": "It B1A4",
+      "albumId": "2012446",
+      "no": 6,
+      "title": "Baby I'm Sorry (Inst.)",
+      "songId": "3551043",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3551043",
+        "title": "Beautiful Target (Inst.)"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "비투비",
+      "album": "스릴러 (Thriller)",
+      "albumId": "2200239",
+      "no": 2,
+      "title": "그리워하다 (Miss You)",
+      "songId": "4235348",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "4235348",
+        "title": "스릴러"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "비투비",
+      "album": "스릴러 (Thriller)",
+      "albumId": "2200239",
+      "no": 3,
+      "title": "Good Boy",
+      "songId": "4235349",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "4235349",
+        "title": "왜 이래"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "비투비",
+      "album": "스릴러 (Thriller)",
+      "albumId": "2200239",
+      "no": 4,
+      "title": "뚜뚜루루 (Do Do Ru Ru)",
+      "songId": "4235350",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "4235350",
+        "title": "Catch Me"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "비투비",
+      "album": "스릴러 (Thriller)",
+      "albumId": "2200239",
+      "no": 5,
+      "title": "여기 있을게 (Stay Here)",
+      "songId": "4235351",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "4235351",
+        "title": "크리스탈같이"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "비투비",
+      "album": "스릴러 (Thriller)",
+      "albumId": "2200239",
+      "no": 6,
+      "title": "스릴러 (Thriller) (Inst.)",
+      "songId": "4235352",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "4235352",
+        "title": "별"
+      },
+      "officialByNormalizedTitle": [
+        {
+          "songId": "4235348",
+          "title": "스릴러"
+        }
+      ]
+    },
+    {
+      "owner": "S.E.S.",
+      "album": "Sea & Eugene & Shoo - 2집",
+      "albumId": "5407",
+      "no": 7,
+      "title": "바람의 여행",
+      "songId": "75073",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "75073",
+        "title": "애인찾기"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "S.E.S.",
+      "album": "Sea & Eugene & Shoo - 2집",
+      "albumId": "5407",
+      "no": 8,
+      "title": "Shy Boy (Remix)",
+      "songId": "75074",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "75074",
+        "title": "너에게"
+      },
+      "officialByNormalizedTitle": [
+        {
+          "songId": "75067",
+          "title": "Shy Boy"
+        }
+      ]
+    },
+    {
+      "owner": "S.E.S.",
+      "album": "Sea & Eugene & Shoo - 2집",
+      "albumId": "5407",
+      "no": 9,
+      "title": "Dreams Come True (Remix)",
+      "songId": "81244",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "81244",
+        "title": "Kiss"
+      },
+      "officialByNormalizedTitle": [
+        {
+          "songId": "75068",
+          "title": "Dreams Come True"
+        }
+      ]
+    },
+    {
+      "owner": "S.E.S.",
+      "album": "Sea & Eugene & Shoo - 2집",
+      "albumId": "5407",
+      "no": 10,
+      "title": "Shy Boy (Instrumental)",
+      "songId": "81245",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "81245",
+        "title": "Eternal Love"
+      },
+      "officialByNormalizedTitle": [
+        {
+          "songId": "75067",
+          "title": "Shy Boy"
+        }
+      ]
+    },
+    {
+      "owner": "S.E.S.",
+      "album": "S.E.S. - 1집",
+      "albumId": "5405",
+      "no": 1,
+      "title": "I'm Your Girl",
+      "songId": "78184",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "78184",
+        "title": "(&#x27;Cause) I&#x27;m Your Girl"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "S.E.S.",
+      "album": "S.E.S. - 1집",
+      "albumId": "5405",
+      "no": 2,
+      "title": "달리기",
+      "songId": "78185",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "78185",
+        "title": "Oh, My Love"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "S.E.S.",
+      "album": "S.E.S. - 1집",
+      "albumId": "5405",
+      "no": 3,
+      "title": "Oh My Love",
+      "songId": "78186",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "78186",
+        "title": "Nonsense"
+      },
+      "officialByNormalizedTitle": [
+        {
+          "songId": "78185",
+          "title": "Oh, My Love"
+        }
+      ]
+    },
+    {
+      "owner": "S.E.S.",
+      "album": "S.E.S. - 1집",
+      "albumId": "5405",
+      "no": 6,
+      "title": "미래로",
+      "songId": "78189",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "78189",
+        "title": "완전한 이유"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "S.E.S.",
+      "album": "S.E.S. - 1집",
+      "albumId": "5405",
+      "no": 7,
+      "title": "누구에게나",
+      "songId": "78190",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "78190",
+        "title": "친구"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "S.E.S.",
+      "album": "S.E.S. - 1집",
+      "albumId": "5405",
+      "no": 8,
+      "title": "I'm Your Girl (Club Mix)",
+      "songId": "78191",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "78191",
+        "title": "Rock&#x27;n 나라"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "S.E.S.",
+      "album": "S.E.S. - 1집",
+      "albumId": "5405",
+      "no": 9,
+      "title": "달리기 (Remix)",
+      "songId": "78192",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "78192",
+        "title": "오늘이 지나면"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "블락비",
+      "album": "BLOCKBUSTER",
+      "albumId": "2153172",
+      "no": 2,
+      "title": "LOL",
+      "songId": "3928712",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3928712",
+        "title": "INTERLUDE"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "블락비",
+      "album": "BLOCKBUSTER",
+      "albumId": "2153172",
+      "no": 3,
+      "title": "그냥 (Still in the Air)",
+      "songId": "3928713",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3928713",
+        "title": "닐리리맘보"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "블락비",
+      "album": "BLOCKBUSTER",
+      "albumId": "2153172",
+      "no": 4,
+      "title": "뻔한 멜로디 (Melodically)",
+      "songId": "3928714",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3928714",
+        "title": "MENTAL BREAKER"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "블락비",
+      "album": "BLOCKBUSTER",
+      "albumId": "2153172",
+      "no": 5,
+      "title": "Romantically",
+      "songId": "3928715",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3928715",
+        "title": "장난없다(NO JOKE)"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "블락비",
+      "album": "BLOCKBUSTER",
+      "albumId": "2153172",
+      "no": 6,
+      "title": "물들어 (Drenched)",
+      "songId": "3928716",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3928716",
+        "title": "MOVIE&#x27;S OVER"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "블락비",
+      "album": "BLOCKBUSTER",
+      "albumId": "2153172",
+      "no": 7,
+      "title": "쇼챔피언 (Show Champion)",
+      "songId": "3928717",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3928717",
+        "title": "넌 어디에"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "블락비",
+      "album": "BLOCKBUSTER",
+      "albumId": "2153172",
+      "no": 8,
+      "title": "B-Bomb",
+      "songId": "3928718",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3928718",
+        "title": "로맨틱하게"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "블락비",
+      "album": "BLOCKBUSTER",
+      "albumId": "2153172",
+      "no": 9,
+      "title": "Burn Out",
+      "songId": "3928719",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3928719",
+        "title": "했어 안했어"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "블락비",
+      "album": "BLOCKBUSTER",
+      "albumId": "2153172",
+      "no": 10,
+      "title": "Tell Them",
+      "songId": "3928720",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3928720",
+        "title": "HALO"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "블락비",
+      "album": "BLOCKBUSTER",
+      "albumId": "2153172",
+      "no": 11,
+      "title": "Nanlina",
+      "songId": "3928721",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3928721",
+        "title": "닐리리맘보 (INST)"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "블락비",
+      "album": "BLOCKBUSTER",
+      "albumId": "2153172",
+      "no": 12,
+      "title": "닐리리맘보 (Inst.)",
+      "songId": "3928722",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "3928722",
+        "title": "MENTAL BREAKER (INST)"
+      },
+      "officialByNormalizedTitle": [
+        {
+          "songId": "3928713",
+          "title": "닐리리맘보"
+        },
+        {
+          "songId": "3928721",
+          "title": "닐리리맘보 (INST)"
+        }
+      ]
+    },
+    {
+      "owner": "빅스",
+      "album": "Hyde",
+      "albumId": "2185649",
+      "no": 2,
+      "title": "G.R.8.U",
+      "songId": "4117691",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "4117691",
+        "title": "hyde"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "빅스",
+      "album": "Hyde",
+      "albumId": "2185649",
+      "no": 3,
+      "title": "사랑스러워 (Loveable)",
+      "songId": "4117692",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "4117692",
+        "title": "그만 버티고 (Feat. 민아 Of 걸스데이)"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "빅스",
+      "album": "Hyde",
+      "albumId": "2185649",
+      "no": 4,
+      "title": "Rock Ur Body",
+      "songId": "4117693",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "4117693",
+        "title": "CHAOS"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "빅스",
+      "album": "Hyde",
+      "albumId": "2185649",
+      "no": 5,
+      "title": "Starlight",
+      "songId": "4117694",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "4117694",
+        "title": "Love Letter"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "a0166:SM THE BALLAD",
+      "album": "S.M. The Ballad Vol.2 'Breath'",
+      "albumId": "2232902",
+      "no": 8,
+      "title": "僕のせいだよ (Blind)",
+      "songId": "4450174",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "4450174",
+        "title": "太貪心 (Blind) (Sung By ZHOUMI (Super Junior-M))"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "a0177:SM THE BALLAD",
+      "album": "S.M. The Ballad Vol.2 'Breath'",
+      "albumId": "2232902",
+      "no": 8,
+      "title": "僕のせいだよ (Blind)",
+      "songId": "4450174",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "4450174",
+        "title": "太貪心 (Blind) (Sung By ZHOUMI (Super Junior-M))"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "a0182:SM THE BALLAD",
+      "album": "S.M. The Ballad Vol.2 'Breath'",
+      "albumId": "2232902",
+      "no": 8,
+      "title": "僕のせいだよ (Blind)",
+      "songId": "4450174",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "4450174",
+        "title": "太貪心 (Blind) (Sung By ZHOUMI (Super Junior-M))"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "a0373:SM THE BALLAD",
+      "album": "S.M. The Ballad Vol.2 'Breath'",
+      "albumId": "2232902",
+      "no": 8,
+      "title": "僕のせいだよ (Blind)",
+      "songId": "4450174",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "4450174",
+        "title": "太貪心 (Blind) (Sung By ZHOUMI (Super Junior-M))"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "a0382:SM THE BALLAD",
+      "album": "S.M. The Ballad Vol.2 'Breath'",
+      "albumId": "2232902",
+      "no": 8,
+      "title": "僕のせいだよ (Blind)",
+      "songId": "4450174",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "4450174",
+        "title": "太貪心 (Blind) (Sung By ZHOUMI (Super Junior-M))"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "a0388:SM THE BALLAD",
+      "album": "S.M. The Ballad Vol.2 'Breath'",
+      "albumId": "2232902",
+      "no": 8,
+      "title": "僕のせいだよ (Blind)",
+      "songId": "4450174",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "4450174",
+        "title": "太貪心 (Blind) (Sung By ZHOUMI (Super Junior-M))"
+      },
+      "officialByNormalizedTitle": []
+    },
+    {
+      "owner": "a0594:SM THE BALLAD",
+      "album": "S.M. The Ballad Vol.2 'Breath'",
+      "albumId": "2232902",
+      "no": 8,
+      "title": "僕のせいだよ (Blind)",
+      "songId": "4450174",
+      "status": "different_title_for_id",
+      "officialForId": {
+        "songId": "4450174",
+        "title": "太貪心 (Blind) (Sung By ZHOUMI (Super Junior-M))"
+      },
+      "officialByNormalizedTitle": []
+    }
+  ]
+}

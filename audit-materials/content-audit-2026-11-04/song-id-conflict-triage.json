@@ -1,0 +1,1211 @@
+{
+  "revision": "a213912575",
+  "references": 45538,
+  "uniqueSongIds": 42610,
+  "confirmedConflictBundles": 28,
+  "displayOrAliasBundles": 5,
+  "rows": [
+    {
+      "songId": "600552360",
+      "rows": [
+        {
+          "owner": "라이즈",
+          "album": "Fame",
+          "albumId": "12402759",
+          "title": "Fame",
+          "base": "fame"
+        },
+        {
+          "owner": "라이즈",
+          "album": "Fame",
+          "albumId": "12402759",
+          "title": "Love Song",
+          "base": "lovesong"
+        }
+      ],
+      "official": {
+        "id": "600552360",
+        "status": 200,
+        "title": "Fame",
+        "albumId": "12402759",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    },
+    {
+      "songId": "37956043",
+      "rows": [
+        {
+          "owner": "라이즈",
+          "album": "RIIZING : Epilogue",
+          "albumId": "11582670",
+          "title": "Talk Saxy",
+          "base": "talksaxy"
+        },
+        {
+          "owner": "라이즈",
+          "album": "RIIZING : Epilogue",
+          "albumId": "11582670",
+          "title": "Get A Guitar",
+          "base": "getaguitar"
+        }
+      ],
+      "official": {
+        "id": "37956043",
+        "url": "https://www.melon.com/song/detail.htm?songId=37956043",
+        "status": 200,
+        "title": "Talk Saxy",
+        "albumId": "11582670",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    },
+    {
+      "songId": "37640354",
+      "rows": [
+        {
+          "owner": "라이즈",
+          "album": "RIIZING",
+          "albumId": "11456179",
+          "title": "Love 119",
+          "base": "love119"
+        },
+        {
+          "owner": "라이즈",
+          "album": "RIIZING",
+          "albumId": "11456179",
+          "title": "Get A Guitar",
+          "base": "getaguitar"
+        }
+      ],
+      "official": {
+        "id": "37640354",
+        "url": "https://www.melon.com/song/detail.htm?songId=37640354",
+        "status": 200,
+        "title": "Love 119",
+        "albumId": "11456179",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    },
+    {
+      "songId": "37640353",
+      "rows": [
+        {
+          "owner": "라이즈",
+          "album": "RIIZING",
+          "albumId": "11456179",
+          "title": "Talk Saxy",
+          "base": "talksaxy"
+        },
+        {
+          "owner": "라이즈",
+          "album": "RIIZING",
+          "albumId": "11456179",
+          "title": "Run to You",
+          "base": "runtoyou"
+        }
+      ],
+      "official": {
+        "id": "37640353",
+        "url": "https://www.melon.com/song/detail.htm?songId=37640353",
+        "status": 200,
+        "title": "Talk Saxy",
+        "albumId": "11456179",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    },
+    {
+      "songId": "3715676",
+      "rows": [
+        {
+          "owner": "빅뱅",
+          "album": "Alive",
+          "albumId": "2084128",
+          "title": "Fantastic Baby",
+          "base": "fantasticbaby"
+        },
+        {
+          "owner": "빅뱅",
+          "album": "Alive",
+          "albumId": "2084128",
+          "title": "날 봐줘요 (Look at Me)",
+          "base": "날봐줘요"
+        }
+      ],
+      "official": {
+        "id": "3715676",
+        "url": "https://www.melon.com/song/detail.htm?songId=3715676",
+        "status": 200,
+        "title": "FANTASTIC BABY",
+        "albumId": "2084128",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    },
+    {
+      "songId": "3156950",
+      "rows": [
+        {
+          "owner": "빅뱅",
+          "album": "Tonight",
+          "albumId": "1184151",
+          "title": "Tonight",
+          "base": "tonight"
+        },
+        {
+          "owner": "빅뱅",
+          "album": "Tonight",
+          "albumId": "1184151",
+          "title": "Oh Mom",
+          "base": "ohmom"
+        }
+      ],
+      "official": {
+        "id": "3156950",
+        "url": "https://www.melon.com/song/detail.htm?songId=3156950",
+        "status": 200,
+        "title": "TONIGHT",
+        "albumId": "1184151",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    },
+    {
+      "songId": "600151057",
+      "rows": [
+        {
+          "owner": "트리플에스",
+          "album": "tripleS ∞! ＜SecretHimitsuBimil＞",
+          "albumId": "12128958",
+          "title": "ヘッドフォン",
+          "base": "ヘッドフォン"
+        },
+        {
+          "owner": "트리플에스",
+          "album": "tripleS ∞! ＜SecretHimitsuBimil＞",
+          "albumId": "12128958",
+          "title": "### - ∞! Ver.",
+          "base": "ver"
+        },
+        {
+          "owner": "a0241:hatch!",
+          "album": "tripleS hatch! <SecretHimitsuBimil>",
+          "albumId": "12128958",
+          "title": "### (hatch! Version)",
+          "base": ""
+        },
+        {
+          "owner": "a0242:hatch!",
+          "album": "tripleS hatch! <SecretHimitsuBimil>",
+          "albumId": "12128958",
+          "title": "### (hatch! Version)",
+          "base": ""
+        },
+        {
+          "owner": "a0243:hatch!",
+          "album": "tripleS hatch! <SecretHimitsuBimil>",
+          "albumId": "12128958",
+          "title": "### (hatch! Version)",
+          "base": ""
+        },
+        {
+          "owner": "a0244:hatch!",
+          "album": "tripleS hatch! <SecretHimitsuBimil>",
+          "albumId": "12128958",
+          "title": "### (hatch! Version)",
+          "base": ""
+        },
+        {
+          "owner": "a0249:hatch!",
+          "album": "tripleS hatch! <SecretHimitsuBimil>",
+          "albumId": "12128958",
+          "title": "### (hatch! Version)",
+          "base": ""
+        },
+        {
+          "owner": "a0254:hatch!",
+          "album": "tripleS hatch! <SecretHimitsuBimil>",
+          "albumId": "12128958",
+          "title": "### (hatch! Version)",
+          "base": ""
+        },
+        {
+          "owner": "a0258:hatch!",
+          "album": "tripleS hatch! <SecretHimitsuBimil>",
+          "albumId": "12128958",
+          "title": "### (hatch! Version)",
+          "base": ""
+        },
+        {
+          "owner": "a0259:hatch!",
+          "album": "tripleS hatch! <SecretHimitsuBimil>",
+          "albumId": "12128958",
+          "title": "### (hatch! Version)",
+          "base": ""
+        }
+      ],
+      "official": {
+        "id": "600151057",
+        "url": "https://www.melon.com/song/detail.htm?songId=600151057",
+        "status": 200,
+        "title": "### (hatch! Version)",
+        "albumId": "12128958",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    },
+    {
+      "songId": "600151053",
+      "rows": [
+        {
+          "owner": "트리플에스",
+          "album": "tripleS ∞! ＜SecretHimitsuBimil＞",
+          "albumId": "12128958",
+          "title": "トキメティック",
+          "base": "トキメティック"
+        },
+        {
+          "owner": "a0241:hatch!",
+          "album": "tripleS hatch! <SecretHimitsuBimil>",
+          "albumId": "12128958",
+          "title": "Tokimetique",
+          "base": "tokimetique"
+        },
+        {
+          "owner": "a0242:hatch!",
+          "album": "tripleS hatch! <SecretHimitsuBimil>",
+          "albumId": "12128958",
+          "title": "Tokimetique",
+          "base": "tokimetique"
+        },
+        {
+          "owner": "a0243:hatch!",
+          "album": "tripleS hatch! <SecretHimitsuBimil>",
+          "albumId": "12128958",
+          "title": "Tokimetique",
+          "base": "tokimetique"
+        },
+        {
+          "owner": "a0244:hatch!",
+          "album": "tripleS hatch! <SecretHimitsuBimil>",
+          "albumId": "12128958",
+          "title": "Tokimetique",
+          "base": "tokimetique"
+        },
+        {
+          "owner": "a0249:hatch!",
+          "album": "tripleS hatch! <SecretHimitsuBimil>",
+          "albumId": "12128958",
+          "title": "Tokimetique",
+          "base": "tokimetique"
+        },
+        {
+          "owner": "a0254:hatch!",
+          "album": "tripleS hatch! <SecretHimitsuBimil>",
+          "albumId": "12128958",
+          "title": "Tokimetique",
+          "base": "tokimetique"
+        },
+        {
+          "owner": "a0258:hatch!",
+          "album": "tripleS hatch! <SecretHimitsuBimil>",
+          "albumId": "12128958",
+          "title": "Tokimetique",
+          "base": "tokimetique"
+        },
+        {
+          "owner": "a0259:hatch!",
+          "album": "tripleS hatch! <SecretHimitsuBimil>",
+          "albumId": "12128958",
+          "title": "Tokimetique",
+          "base": "tokimetique"
+        }
+      ],
+      "official": {
+        "id": "600151053",
+        "url": "https://www.melon.com/song/detail.htm?songId=600151053",
+        "status": 200,
+        "title": "Tokimetique",
+        "albumId": "12128958",
+        "blocked": false
+      },
+      "classification": "translation_or_display_form_review"
+    },
+    {
+      "songId": "600151056",
+      "rows": [
+        {
+          "owner": "트리플에스",
+          "album": "tripleS ∞! ＜SecretHimitsuBimil＞",
+          "albumId": "12128958",
+          "title": "アンタイトル",
+          "base": "アンタイトル"
+        },
+        {
+          "owner": "a0241:hatch!",
+          "album": "tripleS hatch! <SecretHimitsuBimil>",
+          "albumId": "12128958",
+          "title": "Untitled",
+          "base": "untitled"
+        },
+        {
+          "owner": "a0242:hatch!",
+          "album": "tripleS hatch! <SecretHimitsuBimil>",
+          "albumId": "12128958",
+          "title": "Untitled",
+          "base": "untitled"
+        },
+        {
+          "owner": "a0242:hatch!",
+          "album": "hatch! <Untitled>",
+          "title": "Untitled",
+          "base": "untitled"
+        },
+        {
+          "owner": "a0243:hatch!",
+          "album": "tripleS hatch! <SecretHimitsuBimil>",
+          "albumId": "12128958",
+          "title": "Untitled",
+          "base": "untitled"
+        },
+        {
+          "owner": "a0243:hatch!",
+          "album": "hatch! <Untitled>",
+          "title": "Untitled",
+          "base": "untitled"
+        },
+        {
+          "owner": "a0244:hatch!",
+          "album": "tripleS hatch! <SecretHimitsuBimil>",
+          "albumId": "12128958",
+          "title": "Untitled",
+          "base": "untitled"
+        },
+        {
+          "owner": "a0244:hatch!",
+          "album": "hatch! <Untitled>",
+          "title": "Untitled",
+          "base": "untitled"
+        },
+        {
+          "owner": "a0249:hatch!",
+          "album": "tripleS hatch! <SecretHimitsuBimil>",
+          "albumId": "12128958",
+          "title": "Untitled",
+          "base": "untitled"
+        },
+        {
+          "owner": "a0249:hatch!",
+          "album": "hatch! <Untitled>",
+          "title": "Untitled",
+          "base": "untitled"
+        },
+        {
+          "owner": "a0254:hatch!",
+          "album": "tripleS hatch! <SecretHimitsuBimil>",
+          "albumId": "12128958",
+          "title": "Untitled",
+          "base": "untitled"
+        },
+        {
+          "owner": "a0254:hatch!",
+          "album": "hatch! <Untitled>",
+          "title": "Untitled",
+          "base": "untitled"
+        },
+        {
+          "owner": "a0258:hatch!",
+          "album": "tripleS hatch! <SecretHimitsuBimil>",
+          "albumId": "12128958",
+          "title": "Untitled",
+          "base": "untitled"
+        },
+        {
+          "owner": "a0258:hatch!",
+          "album": "hatch! <Untitled>",
+          "title": "Untitled",
+          "base": "untitled"
+        },
+        {
+          "owner": "a0259:hatch!",
+          "album": "tripleS hatch! <SecretHimitsuBimil>",
+          "albumId": "12128958",
+          "title": "Untitled",
+          "base": "untitled"
+        },
+        {
+          "owner": "a0259:hatch!",
+          "album": "hatch! <Untitled>",
+          "title": "Untitled",
+          "base": "untitled"
+        }
+      ],
+      "official": {
+        "id": "600151056",
+        "url": "https://www.melon.com/song/detail.htm?songId=600151056",
+        "status": 200,
+        "title": "Untitled",
+        "albumId": "12128958",
+        "blocked": false
+      },
+      "classification": "translation_or_display_form_review"
+    },
+    {
+      "songId": "36859689",
+      "rows": [
+        {
+          "owner": "트리플에스",
+          "album": "EVOLution <⟡>",
+          "albumId": "11341308",
+          "title": "＆#10209;",
+          "base": "10209"
+        },
+        {
+          "owner": "a0241:EVOLution",
+          "album": "EVOLution <⟡>",
+          "albumId": "11341308",
+          "title": "◇",
+          "base": ""
+        }
+      ],
+      "official": {
+        "id": "36859689",
+        "url": "https://www.melon.com/song/detail.htm?songId=36859689",
+        "status": 200,
+        "title": "＆#10209;",
+        "albumId": "11341308",
+        "blocked": false
+      },
+      "classification": "translation_or_display_form_review"
+    },
+    {
+      "songId": "36705766",
+      "rows": [
+        {
+          "owner": "트리플에스",
+          "album": "LOVElution <ↀ>",
+          "albumId": "11307474",
+          "title": "&#8576;",
+          "base": "8576"
+        },
+        {
+          "owner": "a0239:LOVElution",
+          "album": "LOVElution <ↀ>",
+          "albumId": "11307474",
+          "title": "⬡",
+          "base": ""
+        }
+      ],
+      "official": {
+        "id": "36705766",
+        "url": "https://www.melon.com/song/detail.htm?songId=36705766",
+        "status": 200,
+        "title": "ↀ",
+        "albumId": "11307474",
+        "blocked": false
+      },
+      "classification": "translation_or_display_form_review"
+    },
+    {
+      "songId": "602024052",
+      "rows": [
+        {
+          "owner": "아이오아이",
+          "album": "I.O.I : LOOP",
+          "albumId": "13399673",
+          "title": "웃으며 안녕",
+          "base": "웃으며안녕"
+        },
+        {
+          "owner": "아이오아이",
+          "album": "I.O.I : LOOP",
+          "albumId": "13399673",
+          "title": "Into The Night",
+          "base": "intothenight"
+        }
+      ],
+      "official": {
+        "id": "602024052",
+        "url": "https://www.melon.com/song/detail.htm?songId=602024052",
+        "status": 200,
+        "title": "웃으며 안녕 (Recorded in 2016) (Prod.진영)",
+        "albumId": "13399673",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    },
+    {
+      "songId": "38583476",
+      "rows": [
+        {
+          "owner": "제로베이스원",
+          "album": "BLUE PARADISE",
+          "albumId": "11720927",
+          "title": "Out of Love",
+          "base": "outoflove"
+        },
+        {
+          "owner": "제로베이스원",
+          "album": "BLUE PARADISE",
+          "albumId": "11720927",
+          "title": "모든 게 떠오르는 밤 (Night Everything Comes Up)",
+          "base": "모든게떠오르는밤"
+        }
+      ],
+      "official": {
+        "id": "38583476",
+        "url": "https://www.melon.com/song/detail.htm?songId=38583476",
+        "status": 200,
+        "title": "Out of Love",
+        "albumId": "11720927",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    },
+    {
+      "songId": "37526071",
+      "rows": [
+        {
+          "owner": "제로베이스원",
+          "album": "You had me at HELLO",
+          "albumId": "11469986",
+          "title": "HELLO",
+          "base": "hello"
+        },
+        {
+          "owner": "제로베이스원",
+          "album": "You had me at HELLO",
+          "albumId": "11469986",
+          "title": "We Belong Together",
+          "base": "webelongtogether"
+        }
+      ],
+      "official": {
+        "id": "37526071",
+        "url": "https://www.melon.com/song/detail.htm?songId=37526071",
+        "status": 200,
+        "title": "HELLO",
+        "albumId": "11469986",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    },
+    {
+      "songId": "37438252",
+      "rows": [
+        {
+          "owner": "제로베이스원",
+          "album": "You had me at HELLO",
+          "albumId": "11469986",
+          "title": "SWEAT (Remix)",
+          "base": "sweat"
+        },
+        {
+          "owner": "제로베이스원",
+          "album": "You had me at HELLO",
+          "albumId": "11469986",
+          "title": "그리운 날에 (On a Day I Miss You)",
+          "base": "그리운날에"
+        }
+      ],
+      "official": {
+        "id": "37438252",
+        "url": "https://www.melon.com/song/detail.htm?songId=37438252",
+        "status": 200,
+        "title": "SWEAT",
+        "albumId": "11469986",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    },
+    {
+      "songId": "36937530",
+      "rows": [
+        {
+          "owner": "제로베이스원",
+          "album": "MELTING POINT",
+          "albumId": "11358523",
+          "title": "Good Night",
+          "base": "goodnight"
+        },
+        {
+          "owner": "제로베이스원",
+          "album": "MELTING POINT",
+          "albumId": "11358523",
+          "title": "Feel the POP (Inst.)",
+          "base": "feelthepop"
+        }
+      ],
+      "official": {
+        "id": "36937530",
+        "url": "https://www.melon.com/song/detail.htm?songId=36937530",
+        "status": 200,
+        "title": "Good Night",
+        "albumId": "11358523",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    },
+    {
+      "songId": "36601157",
+      "rows": [
+        {
+          "owner": "제로베이스원",
+          "album": "YOUTH IN THE SHADE",
+          "albumId": "11281739",
+          "title": "In Bloom",
+          "base": "inbloom"
+        },
+        {
+          "owner": "제로베이스원",
+          "album": "YOUTH IN THE SHADE",
+          "albumId": "11281739",
+          "title": "New Thing",
+          "base": "newthing"
+        }
+      ],
+      "official": {
+        "id": "36601157",
+        "url": "https://www.melon.com/song/detail.htm?songId=36601157",
+        "status": 200,
+        "title": "In Bloom",
+        "albumId": "11281739",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    },
+    {
+      "songId": "33032414",
+      "rows": [
+        {
+          "owner": "에이비식스",
+          "album": "SALUTE",
+          "albumId": "10512189",
+          "title": "SALUTE",
+          "base": "salute"
+        },
+        {
+          "owner": "에이비식스",
+          "album": "SALUTE",
+          "albumId": "10512189",
+          "title": "LOVE SHOT",
+          "base": "loveshot"
+        }
+      ],
+      "official": {
+        "id": "33032414",
+        "url": "https://www.melon.com/song/detail.htm?songId=33032414",
+        "status": 200,
+        "title": "SALUTE",
+        "albumId": "10512189",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    },
+    {
+      "songId": "31817362",
+      "rows": [
+        {
+          "owner": "에이비식스",
+          "album": "B:COMPLETE",
+          "albumId": "10278828",
+          "title": "BREATHE",
+          "base": "breathe"
+        },
+        {
+          "owner": "에이비식스",
+          "album": "B:COMPLETE",
+          "albumId": "10278828",
+          "title": "WAIT",
+          "base": "wait"
+        }
+      ],
+      "official": {
+        "id": "31817362",
+        "url": "https://www.melon.com/song/detail.htm?songId=31817362",
+        "status": 200,
+        "title": "BREATHE",
+        "albumId": "10278828",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    },
+    {
+      "songId": "31764624",
+      "rows": [
+        {
+          "owner": "에이비식스",
+          "album": "B:COMPLETE",
+          "albumId": "10278828",
+          "title": "HOLLYWOOD",
+          "base": "hollywood"
+        },
+        {
+          "owner": "에이비식스",
+          "album": "B:COMPLETE",
+          "albumId": "10278828",
+          "title": "THE REAL",
+          "base": "thereal"
+        }
+      ],
+      "official": {
+        "id": "31764624",
+        "url": "https://www.melon.com/song/detail.htm?songId=31764624",
+        "status": 200,
+        "title": "HOLLYWOOD",
+        "albumId": "10278828",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    },
+    {
+      "songId": "37292497",
+      "rows": [
+        {
+          "owner": "하이라이트",
+          "album": "Switch On",
+          "albumId": "11437485",
+          "title": "SWITCH ON",
+          "base": "switchon"
+        },
+        {
+          "owner": "하이라이트",
+          "album": "Switch On",
+          "albumId": "11437485",
+          "title": "Hello",
+          "base": "hello"
+        }
+      ],
+      "official": {
+        "id": "37292497",
+        "url": "https://www.melon.com/song/detail.htm?songId=37292497",
+        "status": 200,
+        "title": "Switch On",
+        "albumId": "11437485",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    },
+    {
+      "songId": "3538478",
+      "rows": [
+        {
+          "owner": "카라",
+          "album": "STEP",
+          "albumId": "2009327",
+          "title": "STEP",
+          "base": "step"
+        },
+        {
+          "owner": "카라",
+          "album": "STEP",
+          "albumId": "2009327",
+          "title": "Jet Coaster Love",
+          "base": "jetcoasterlove"
+        }
+      ],
+      "official": {
+        "id": "3538478",
+        "url": "https://www.melon.com/song/detail.htm?songId=3538478",
+        "status": 200,
+        "title": "STEP",
+        "albumId": "2009327",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    },
+    {
+      "songId": "1610056",
+      "rows": [
+        {
+          "owner": "카라",
+          "album": "Blooming",
+          "albumId": "348747",
+          "title": "Secret World",
+          "base": "secretworld"
+        },
+        {
+          "owner": "카라",
+          "album": "Blooming",
+          "albumId": "348747",
+          "title": "I'll Wait",
+          "base": "illwait"
+        }
+      ],
+      "official": {
+        "id": "1610056",
+        "url": "https://www.melon.com/song/detail.htm?songId=1610056",
+        "status": 200,
+        "title": "Secret World",
+        "albumId": "348747",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    },
+    {
+      "songId": "8067358",
+      "rows": [
+        {
+          "owner": "우주소녀",
+          "album": "Would You Like?",
+          "albumId": "2669168",
+          "title": "MoMoMo",
+          "base": "momomo"
+        },
+        {
+          "owner": "우주소녀",
+          "album": "Would You Like?",
+          "albumId": "2669168",
+          "title": "Open Up",
+          "base": "openup"
+        }
+      ],
+      "official": {
+        "id": "8067358",
+        "url": "https://www.melon.com/song/detail.htm?songId=8067358",
+        "status": 200,
+        "title": "MoMoMo (모모모)",
+        "albumId": "2669168",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    },
+    {
+      "songId": "3551043",
+      "rows": [
+        {
+          "owner": "비원에이포",
+          "album": "It B1A4",
+          "albumId": "2012446",
+          "title": "Beautiful Target (Reprise)",
+          "base": "beautifultarget"
+        },
+        {
+          "owner": "비원에이포",
+          "album": "It B1A4",
+          "albumId": "2012446",
+          "title": "Baby I'm Sorry (Inst.)",
+          "base": "babyimsorry"
+        }
+      ],
+      "official": {
+        "id": "3551043",
+        "url": "https://www.melon.com/song/detail.htm?songId=3551043",
+        "status": 200,
+        "title": "Beautiful Target (Inst.)",
+        "albumId": "2012446",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    },
+    {
+      "songId": "4235348",
+      "rows": [
+        {
+          "owner": "비투비",
+          "album": "스릴러 (Thriller)",
+          "albumId": "2200239",
+          "title": "스릴러 (Thriller)",
+          "base": "스릴러"
+        },
+        {
+          "owner": "비투비",
+          "album": "스릴러 (Thriller)",
+          "albumId": "2200239",
+          "title": "그리워하다 (Miss You)",
+          "base": "그리워하다"
+        }
+      ],
+      "official": {
+        "id": "4235348",
+        "url": "https://www.melon.com/song/detail.htm?songId=4235348",
+        "status": 200,
+        "title": "스릴러",
+        "albumId": "2200239",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    },
+    {
+      "songId": "75073",
+      "rows": [
+        {
+          "owner": "S.E.S.",
+          "album": "Sea & Eugene & Shoo - 2집",
+          "albumId": "5407",
+          "title": "애인찾기",
+          "base": "애인찾기"
+        },
+        {
+          "owner": "S.E.S.",
+          "album": "Sea & Eugene & Shoo - 2집",
+          "albumId": "5407",
+          "title": "바람의 여행",
+          "base": "바람의여행"
+        }
+      ],
+      "official": {
+        "id": "75073",
+        "url": "https://www.melon.com/song/detail.htm?songId=75073",
+        "status": 200,
+        "title": "애인찾기",
+        "albumId": "5407",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    },
+    {
+      "songId": "78185",
+      "rows": [
+        {
+          "owner": "S.E.S.",
+          "album": "S.E.S. - 1집",
+          "albumId": "5405",
+          "title": "달리기",
+          "base": "달리기"
+        },
+        {
+          "owner": "S.E.S.",
+          "album": "S.E.S. - 1집",
+          "albumId": "5405",
+          "title": "Oh My Love (Inst.)",
+          "base": "ohmylove"
+        }
+      ],
+      "official": {
+        "id": "78185",
+        "url": "https://www.melon.com/song/detail.htm?songId=78185",
+        "status": 200,
+        "title": "Oh, My Love",
+        "albumId": "5405",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    },
+    {
+      "songId": "78190",
+      "rows": [
+        {
+          "owner": "S.E.S.",
+          "album": "S.E.S. - 1집",
+          "albumId": "5405",
+          "title": "친구",
+          "base": "친구"
+        },
+        {
+          "owner": "S.E.S.",
+          "album": "S.E.S. - 1집",
+          "albumId": "5405",
+          "title": "누구에게나",
+          "base": "누구에게나"
+        }
+      ],
+      "official": {
+        "id": "78190",
+        "url": "https://www.melon.com/song/detail.htm?songId=78190",
+        "status": 200,
+        "title": "친구",
+        "albumId": "5405",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    },
+    {
+      "songId": "33271",
+      "rows": [
+        {
+          "owner": "핑클",
+          "album": "Fine Killing Liberty : Blue Rain - 1집",
+          "title": "루비 : 슬픈 눈물",
+          "base": "루비슬픈눈물"
+        },
+        {
+          "owner": "핑클",
+          "album": "Fine Killing Liberty : Blue Rain",
+          "albumId": "3248",
+          "title": "루비(淚悲):슬픈 눈물",
+          "base": "루비"
+        }
+      ],
+      "official": {
+        "id": "33271",
+        "url": "https://www.melon.com/song/detail.htm?songId=33271",
+        "status": 200,
+        "title": "루비(淚悲):슬픈 눈물",
+        "albumId": "3248",
+        "blocked": false
+      },
+      "classification": "translation_or_display_form_review"
+    },
+    {
+      "songId": "3928713",
+      "rows": [
+        {
+          "owner": "블락비",
+          "album": "BLOCKBUSTER",
+          "albumId": "2153172",
+          "title": "닐리리맘보 (Nillili Mambo)",
+          "base": "닐리리맘보"
+        },
+        {
+          "owner": "블락비",
+          "album": "BLOCKBUSTER",
+          "albumId": "2153172",
+          "title": "그냥 (Still in the Air)",
+          "base": "그냥"
+        }
+      ],
+      "official": {
+        "id": "3928713",
+        "url": "https://www.melon.com/song/detail.htm?songId=3928713",
+        "status": 200,
+        "title": "닐리리맘보",
+        "albumId": "2153172",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    },
+    {
+      "songId": "4117691",
+      "rows": [
+        {
+          "owner": "빅스",
+          "album": "Hyde",
+          "albumId": "2185649",
+          "title": "Hyde",
+          "base": "hyde"
+        },
+        {
+          "owner": "빅스",
+          "album": "Hyde",
+          "albumId": "2185649",
+          "title": "G.R.8.U",
+          "base": "gr8u"
+        }
+      ],
+      "official": {
+        "id": "4117691",
+        "url": "https://www.melon.com/song/detail.htm?songId=4117691",
+        "status": 200,
+        "title": "hyde",
+        "albumId": "2185649",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    },
+    {
+      "songId": "4450174",
+      "rows": [
+        {
+          "owner": "a0166:SM THE BALLAD",
+          "album": "S.M. The Ballad Vol.2 'Breath'",
+          "albumId": "2232902",
+          "title": "僕のせいだよ (Blind)",
+          "base": "僕のせいだよ"
+        },
+        {
+          "owner": "a0166:SM THE BALLAD",
+          "album": "S.M. The Ballad Vol.2 'Breath'",
+          "albumId": "2232902",
+          "title": "太貪心 (Blind)",
+          "base": "太貪心"
+        },
+        {
+          "owner": "a0177:SM THE BALLAD",
+          "album": "S.M. The Ballad Vol.2 'Breath'",
+          "albumId": "2232902",
+          "title": "僕のせいだよ (Blind)",
+          "base": "僕のせいだよ"
+        },
+        {
+          "owner": "a0177:SM THE BALLAD",
+          "album": "S.M. The Ballad Vol.2 'Breath'",
+          "albumId": "2232902",
+          "title": "太貪心 (Blind)",
+          "base": "太貪心"
+        },
+        {
+          "owner": "a0182:SM THE BALLAD",
+          "album": "S.M. The Ballad Vol.2 'Breath'",
+          "albumId": "2232902",
+          "title": "僕のせいだよ (Blind)",
+          "base": "僕のせいだよ"
+        },
+        {
+          "owner": "a0182:SM THE BALLAD",
+          "album": "S.M. The Ballad Vol.2 'Breath'",
+          "albumId": "2232902",
+          "title": "太貪心 (Blind)",
+          "base": "太貪心"
+        },
+        {
+          "owner": "a0373:SM THE BALLAD",
+          "album": "S.M. The Ballad Vol.2 'Breath'",
+          "albumId": "2232902",
+          "title": "僕のせいだよ (Blind)",
+          "base": "僕のせいだよ"
+        },
+        {
+          "owner": "a0373:SM THE BALLAD",
+          "album": "S.M. The Ballad Vol.2 'Breath'",
+          "albumId": "2232902",
+          "title": "太貪心 (Blind)",
+          "base": "太貪心"
+        },
+        {
+          "owner": "a0382:SM THE BALLAD",
+          "album": "S.M. The Ballad Vol.2 'Breath'",
+          "albumId": "2232902",
+          "title": "僕のせいだよ (Blind)",
+          "base": "僕のせいだよ"
+        },
+        {
+          "owner": "a0382:SM THE BALLAD",
+          "album": "S.M. The Ballad Vol.2 'Breath'",
+          "albumId": "2232902",
+          "title": "太貪心 (Blind)",
+          "base": "太貪心"
+        },
+        {
+          "owner": "a0388:SM THE BALLAD",
+          "album": "S.M. The Ballad Vol.2 'Breath'",
+          "albumId": "2232902",
+          "title": "僕のせいだよ (Blind)",
+          "base": "僕のせいだよ"
+        },
+        {
+          "owner": "a0388:SM THE BALLAD",
+          "album": "S.M. The Ballad Vol.2 'Breath'",
+          "albumId": "2232902",
+          "title": "太貪心 (Blind)",
+          "base": "太貪心"
+        },
+        {
+          "owner": "a0594:SM THE BALLAD",
+          "album": "S.M. The Ballad Vol.2 'Breath'",
+          "albumId": "2232902",
+          "title": "僕のせいだよ (Blind)",
+          "base": "僕のせいだよ"
+        },
+        {
+          "owner": "a0594:SM THE BALLAD",
+          "album": "S.M. The Ballad Vol.2 'Breath'",
+          "albumId": "2232902",
+          "title": "太貪心 (Blind)",
+          "base": "太貪心"
+        }
+      ],
+      "official": {
+        "id": "4450174",
+        "url": "https://www.melon.com/song/detail.htm?songId=4450174",
+        "status": 200,
+        "title": "太貪心 (Blind) (Sung By ZHOUMI (Super Junior-M))",
+        "albumId": "2232902",
+        "blocked": false
+      },
+      "classification": "different_song_or_language_version_conflict"
+    }
+  ]
+}

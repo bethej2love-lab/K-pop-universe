@@ -1,0 +1,24 @@
+{
+  "rev": "bdf762d69b",
+  "candidates": [
+    {
+      "key": "a:시안|유스피어",
+      "id": "a0707",
+      "groups": [
+        {
+          "ko": "유스피어",
+          "en": "USPEER"
+        }
+      ],
+      "group": "유스피어",
+      "map": {
+        "aid": "2970911",
+        "melonName": "시안",
+        "kind": "solo",
+        "confidence": "high",
+        "evidence": "그룹(버가부) 멜론 상세의 멤버 목록",
+        "checkedAt": "2026-10-14"
+      }
+    }
+  ]
+}

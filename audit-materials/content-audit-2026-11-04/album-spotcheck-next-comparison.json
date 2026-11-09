@@ -1,0 +1,2361 @@
+{
+  "revision": "bdf762d69b",
+  "albums": [
+    {
+      "group": "코르티스",
+      "album": "COLOR OUTSIDE THE LINES",
+      "id": "12018296",
+      "storedTrackCount": 6,
+      "storedRows": 6,
+      "officialRows": 6,
+      "rows": [
+        {
+          "no": 1,
+          "title": "GO!",
+          "songId": "39577662",
+          "officialForId": {
+            "songId": "39577662",
+            "title": "GO!",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "39577662",
+              "title": "GO!",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "39577662",
+            "title": "GO!",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 2,
+          "title": "What You Want",
+          "songId": "39655781",
+          "officialForId": {
+            "songId": "39655781",
+            "title": "What You Want",
+            "isTitle": true
+          },
+          "officialByTitle": [
+            {
+              "songId": "39655781",
+              "title": "What You Want",
+              "isTitle": true
+            },
+            {
+              "songId": "39687942",
+              "title": "What You Want (feat. Teezo Touchdown)",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "39655781",
+            "title": "What You Want",
+            "isTitle": true
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 3,
+          "title": "FaSHioN",
+          "songId": "600056257",
+          "officialForId": {
+            "songId": "600056257",
+            "title": "FaSHioN",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "600056257",
+              "title": "FaSHioN",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "600056257",
+            "title": "FaSHioN",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 4,
+          "title": "JoyRide",
+          "songId": "600056258",
+          "officialForId": {
+            "songId": "600056258",
+            "title": "JoyRide",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "600056258",
+              "title": "JoyRide",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "600056258",
+            "title": "JoyRide",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 5,
+          "title": "Lullaby",
+          "songId": "600056259",
+          "officialForId": {
+            "songId": "600056259",
+            "title": "Lullaby",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "600056259",
+              "title": "Lullaby",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "600056259",
+            "title": "Lullaby",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 6,
+          "title": "What You Want (feat. Teezo Touchdown)",
+          "songId": "39687942",
+          "officialForId": {
+            "songId": "39687942",
+            "title": "What You Want (feat. Teezo Touchdown)",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "39655781",
+              "title": "What You Want",
+              "isTitle": true
+            },
+            {
+              "songId": "39687942",
+              "title": "What You Want (feat. Teezo Touchdown)",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "39687942",
+            "title": "What You Want (feat. Teezo Touchdown)",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        }
+      ]
+    },
+    {
+      "group": "에스파",
+      "album": "Savage",
+      "id": "10731792",
+      "storedTrackCount": 6,
+      "storedRows": 6,
+      "officialRows": 6,
+      "rows": [
+        {
+          "no": 1,
+          "title": "aenergy",
+          "songId": "34041583",
+          "officialForId": {
+            "songId": "34041583",
+            "title": "aenergy",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "34041583",
+              "title": "aenergy",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "34041583",
+            "title": "aenergy",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 2,
+          "title": "Savage",
+          "songId": "34041584",
+          "officialForId": {
+            "songId": "34041584",
+            "title": "Savage",
+            "isTitle": true
+          },
+          "officialByTitle": [
+            {
+              "songId": "34041584",
+              "title": "Savage",
+              "isTitle": true
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "34041584",
+            "title": "Savage",
+            "isTitle": true
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 3,
+          "title": "I'll Make You Cry",
+          "songId": "34041585",
+          "officialForId": {
+            "songId": "34041585",
+            "title": "I&#x27;ll Make You Cry",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "34041585",
+              "title": "I&#x27;ll Make You Cry",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "34041585",
+            "title": "I&#x27;ll Make You Cry",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 4,
+          "title": "YEPPI YEPPI",
+          "songId": "34041586",
+          "officialForId": {
+            "songId": "34041586",
+            "title": "YEPPI YEPPI",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "34041586",
+              "title": "YEPPI YEPPI",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "34041586",
+            "title": "YEPPI YEPPI",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 5,
+          "title": "ICONIC",
+          "songId": "34041587",
+          "officialForId": {
+            "songId": "34041587",
+            "title": "ICONIC",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "34041587",
+              "title": "ICONIC",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "34041587",
+            "title": "ICONIC",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 6,
+          "title": "자각몽 (Lucid Dream)",
+          "songId": "34041588",
+          "officialForId": {
+            "songId": "34041588",
+            "title": "자각몽 (Lucid Dream)",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "34041588",
+              "title": "자각몽 (Lucid Dream)",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "34041588",
+            "title": "자각몽 (Lucid Dream)",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        }
+      ]
+    },
+    {
+      "group": "아이브",
+      "album": "I've IVE",
+      "id": "11211297",
+      "storedTrackCount": 11,
+      "storedRows": 11,
+      "officialRows": 11,
+      "rows": [
+        {
+          "no": 1,
+          "title": "Blue Blood",
+          "songId": "36356992",
+          "officialForId": {
+            "songId": "36356992",
+            "title": "Blue Blood",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "36356992",
+              "title": "Blue Blood",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "36356992",
+            "title": "Blue Blood",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 2,
+          "title": "I AM",
+          "songId": "36356993",
+          "officialForId": {
+            "songId": "36356993",
+            "title": "I AM",
+            "isTitle": true
+          },
+          "officialByTitle": [
+            {
+              "songId": "36356993",
+              "title": "I AM",
+              "isTitle": true
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "36356993",
+            "title": "I AM",
+            "isTitle": true
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 3,
+          "title": "Kitsch",
+          "songId": "36318125",
+          "officialForId": {
+            "songId": "36318125",
+            "title": "Kitsch",
+            "isTitle": true
+          },
+          "officialByTitle": [
+            {
+              "songId": "36318125",
+              "title": "Kitsch",
+              "isTitle": true
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "36318125",
+            "title": "Kitsch",
+            "isTitle": true
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 4,
+          "title": "Lips",
+          "songId": "36356994",
+          "officialForId": {
+            "songId": "36356994",
+            "title": "Lips",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "36356994",
+              "title": "Lips",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "36356994",
+            "title": "Lips",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 5,
+          "title": "Heroine",
+          "songId": "36356995",
+          "officialForId": {
+            "songId": "36356995",
+            "title": "Heroine",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "36356995",
+              "title": "Heroine",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "36356995",
+            "title": "Heroine",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 6,
+          "title": "Mine",
+          "songId": "36356996",
+          "officialForId": {
+            "songId": "36356996",
+            "title": "Mine",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "36356996",
+              "title": "Mine",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "36356996",
+            "title": "Mine",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 7,
+          "title": "섬찟 (Hypnosis)",
+          "songId": "36356997",
+          "officialForId": {
+            "songId": "36356997",
+            "title": "섬찟 (Hypnosis)",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "36356997",
+              "title": "섬찟 (Hypnosis)",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "36356997",
+            "title": "섬찟 (Hypnosis)",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 8,
+          "title": "NOT YOUR GIRL",
+          "songId": "36356998",
+          "officialForId": {
+            "songId": "36356998",
+            "title": "NOT YOUR GIRL",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "36356998",
+              "title": "NOT YOUR GIRL",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "36356998",
+            "title": "NOT YOUR GIRL",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 9,
+          "title": "궁금해 (Next Page)",
+          "songId": "36356999",
+          "officialForId": {
+            "songId": "36356999",
+            "title": "궁금해 (Next Page)",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "36356999",
+              "title": "궁금해 (Next Page)",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "36356999",
+            "title": "궁금해 (Next Page)",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 10,
+          "title": "Cherish",
+          "songId": "36357000",
+          "officialForId": {
+            "songId": "36357000",
+            "title": "Cherish",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "36357000",
+              "title": "Cherish",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "36357000",
+            "title": "Cherish",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 11,
+          "title": "Shine With Me",
+          "songId": "36357001",
+          "officialForId": {
+            "songId": "36357001",
+            "title": "Shine With Me",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "36357001",
+              "title": "Shine With Me",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "36357001",
+            "title": "Shine With Me",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        }
+      ]
+    },
+    {
+      "group": "있지",
+      "album": "IT'z ICY",
+      "id": "10312251",
+      "storedTrackCount": 5,
+      "storedRows": 5,
+      "officialRows": 5,
+      "rows": [
+        {
+          "no": 1,
+          "title": "ICY",
+          "songId": "31955739",
+          "officialForId": {
+            "songId": "31955739",
+            "title": "ICY",
+            "isTitle": true
+          },
+          "officialByTitle": [
+            {
+              "songId": "31955739",
+              "title": "ICY",
+              "isTitle": true
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "31955739",
+            "title": "ICY",
+            "isTitle": true
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 2,
+          "title": "CHERRY",
+          "songId": "31955740",
+          "officialForId": {
+            "songId": "31955740",
+            "title": "CHERRY",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "31955740",
+              "title": "CHERRY",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "31955740",
+            "title": "CHERRY",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 3,
+          "title": "IT'z SUMMER",
+          "songId": "31955741",
+          "officialForId": {
+            "songId": "31955741",
+            "title": "IT&#x27;z SUMMER",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "31955741",
+              "title": "IT&#x27;z SUMMER",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "31955741",
+            "title": "IT&#x27;z SUMMER",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 4,
+          "title": "달라달라 (DallasK Remix)",
+          "songId": "31955742",
+          "officialForId": {
+            "songId": "31955742",
+            "title": "달라달라 (DallasK Remix)",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "31955742",
+              "title": "달라달라 (DallasK Remix)",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "31955742",
+            "title": "달라달라 (DallasK Remix)",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 5,
+          "title": "WANT IT? (Imad Royal Remix)",
+          "songId": "31955743",
+          "officialForId": {
+            "songId": "31955743",
+            "title": "WANT IT? (Imad Royal Remix)",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "31955743",
+              "title": "WANT IT? (Imad Royal Remix)",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "31955743",
+            "title": "WANT IT? (Imad Royal Remix)",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        }
+      ]
+    },
+    {
+      "group": "뉴진스",
+      "album": "New Jeans",
+      "id": "11011565",
+      "storedTrackCount": 4,
+      "storedRows": 4,
+      "officialRows": 4,
+      "rows": [
+        {
+          "no": 1,
+          "title": "Attention",
+          "songId": "35454425",
+          "officialForId": {
+            "songId": "35454425",
+            "title": "Attention",
+            "isTitle": true
+          },
+          "officialByTitle": [
+            {
+              "songId": "35454425",
+              "title": "Attention",
+              "isTitle": true
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "35454425",
+            "title": "Attention",
+            "isTitle": true
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 2,
+          "title": "Hype Boy",
+          "songId": "35454426",
+          "officialForId": {
+            "songId": "35454426",
+            "title": "Hype Boy",
+            "isTitle": true
+          },
+          "officialByTitle": [
+            {
+              "songId": "35454426",
+              "title": "Hype Boy",
+              "isTitle": true
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "35454426",
+            "title": "Hype Boy",
+            "isTitle": true
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 3,
+          "title": "Cookie",
+          "songId": "35485544",
+          "officialForId": {
+            "songId": "35485544",
+            "title": "Cookie",
+            "isTitle": true
+          },
+          "officialByTitle": [
+            {
+              "songId": "35485544",
+              "title": "Cookie",
+              "isTitle": true
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "35485544",
+            "title": "Cookie",
+            "isTitle": true
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 4,
+          "title": "Hurt",
+          "songId": "35457531",
+          "officialForId": {
+            "songId": "35457531",
+            "title": "Hurt",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "35457531",
+              "title": "Hurt",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "35457531",
+            "title": "Hurt",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        }
+      ]
+    },
+    {
+      "group": "세븐틴",
+      "album": "17 CARAT",
+      "id": "2320582",
+      "storedTrackCount": 5,
+      "storedRows": 5,
+      "officialRows": 5,
+      "rows": [
+        {
+          "no": 1,
+          "title": "Shining Diamond",
+          "songId": "5715560",
+          "officialForId": {
+            "songId": "5715560",
+            "title": "Shining Diamond",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "5715560",
+              "title": "Shining Diamond",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "5715560",
+            "title": "Shining Diamond",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 2,
+          "title": "아낀다",
+          "songId": "5712573",
+          "officialForId": {
+            "songId": "5712573",
+            "title": "아낀다",
+            "isTitle": true
+          },
+          "officialByTitle": [
+            {
+              "songId": "5712573",
+              "title": "아낀다",
+              "isTitle": true
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "5712573",
+            "title": "아낀다",
+            "isTitle": true
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 3,
+          "title": "Ah Yeah",
+          "songId": "5715561",
+          "officialForId": {
+            "songId": "5715561",
+            "title": "Ah Yeah",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "5715561",
+              "title": "Ah Yeah",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "5715561",
+            "title": "Ah Yeah",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 4,
+          "title": "Jam Jam",
+          "songId": "5715562",
+          "officialForId": {
+            "songId": "5715562",
+            "title": "Jam Jam",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "5715562",
+              "title": "Jam Jam",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "5715562",
+            "title": "Jam Jam",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 5,
+          "title": "20",
+          "songId": "5715563",
+          "officialForId": {
+            "songId": "5715563",
+            "title": "20",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "5715563",
+              "title": "20",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "5715563",
+            "title": "20",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        }
+      ]
+    },
+    {
+      "group": "트와이스",
+      "album": "THE STORY BEGINS",
+      "id": "2645617",
+      "storedTrackCount": 6,
+      "storedRows": 6,
+      "officialRows": 6,
+      "rows": [
+        {
+          "no": 1,
+          "title": "OOH-AHH하게",
+          "songId": "7891119",
+          "officialForId": {
+            "songId": "7891119",
+            "title": "OOH-AHH하게",
+            "isTitle": true
+          },
+          "officialByTitle": [
+            {
+              "songId": "7891119",
+              "title": "OOH-AHH하게",
+              "isTitle": true
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "7891119",
+            "title": "OOH-AHH하게",
+            "isTitle": true
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 2,
+          "title": "다시 해줘",
+          "songId": "7891120",
+          "officialForId": {
+            "songId": "7891120",
+            "title": "다시 해줘",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "7891120",
+              "title": "다시 해줘",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "7891120",
+            "title": "다시 해줘",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 3,
+          "title": "미쳤나봐",
+          "songId": "7891121",
+          "officialForId": {
+            "songId": "7891121",
+            "title": "미쳤나봐",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "7891121",
+              "title": "미쳤나봐",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "7891121",
+            "title": "미쳤나봐",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 4,
+          "title": "Truth",
+          "songId": "7891122",
+          "officialForId": {
+            "songId": "7891122",
+            "title": "Truth",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "7891122",
+              "title": "Truth",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "7891122",
+            "title": "Truth",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 5,
+          "title": "Candy Boy",
+          "songId": "7891123",
+          "officialForId": {
+            "songId": "7891123",
+            "title": "Candy Boy",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "7891123",
+              "title": "Candy Boy",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "7891123",
+            "title": "Candy Boy",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 6,
+          "title": "Like a Fool",
+          "songId": "7891124",
+          "officialForId": {
+            "songId": "7891124",
+            "title": "Like a Fool",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "7891124",
+              "title": "Like a Fool",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "7891124",
+            "title": "Like a Fool",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        }
+      ]
+    },
+    {
+      "group": "방탄소년단",
+      "album": "2 COOL 4 SKOOL",
+      "id": "2188611",
+      "storedTrackCount": 7,
+      "storedRows": 7,
+      "officialRows": 7,
+      "rows": [
+        {
+          "no": 1,
+          "title": "Intro : 2 COOL 4 SKOOL (Feat. DJ Friz)",
+          "songId": "4140190",
+          "officialForId": {
+            "songId": "4140190",
+            "title": "Intro : 2 COOL 4 SKOOL (Feat. DJ Friz)",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "4140190",
+              "title": "Intro : 2 COOL 4 SKOOL (Feat. DJ Friz)",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "4140190",
+            "title": "Intro : 2 COOL 4 SKOOL (Feat. DJ Friz)",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 2,
+          "title": "We Are Bulletproof PT.2",
+          "songId": "4140191",
+          "officialForId": {
+            "songId": "4140191",
+            "title": "We Are Bulletproof PT.2",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "4140191",
+              "title": "We Are Bulletproof PT.2",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "4140191",
+            "title": "We Are Bulletproof PT.2",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 3,
+          "title": "Skit : Circle Room Talk",
+          "songId": "4140192",
+          "officialForId": {
+            "songId": "4140192",
+            "title": "Skit : Circle Room Talk",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "4140192",
+              "title": "Skit : Circle Room Talk",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "4140192",
+            "title": "Skit : Circle Room Talk",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 4,
+          "title": "No More Dream",
+          "songId": "4140193",
+          "officialForId": {
+            "songId": "4140193",
+            "title": "No More Dream",
+            "isTitle": true
+          },
+          "officialByTitle": [
+            {
+              "songId": "4140193",
+              "title": "No More Dream",
+              "isTitle": true
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "4140193",
+            "title": "No More Dream",
+            "isTitle": true
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 5,
+          "title": "Interlude",
+          "songId": "4140194",
+          "officialForId": {
+            "songId": "4140194",
+            "title": "Interlude",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "4140194",
+              "title": "Interlude",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "4140194",
+            "title": "Interlude",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 6,
+          "title": "좋아요",
+          "songId": "4140195",
+          "officialForId": {
+            "songId": "4140195",
+            "title": "좋아요",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "4140195",
+              "title": "좋아요",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "4140195",
+            "title": "좋아요",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 7,
+          "title": "Outro : Circle Room Cypher",
+          "songId": "4140196",
+          "officialForId": {
+            "songId": "4140196",
+            "title": "Outro : Circle Room Cypher",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "4140196",
+              "title": "Outro : Circle Room Cypher",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "4140196",
+            "title": "Outro : Circle Room Cypher",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        }
+      ]
+    },
+    {
+      "group": "엔시티 127",
+      "album": "NCT #127 CHERRY BOMB",
+      "id": "10071172",
+      "storedTrackCount": 7,
+      "storedRows": 7,
+      "officialRows": 7,
+      "rows": [
+        {
+          "no": 1,
+          "title": "Cherry Bomb",
+          "songId": "30470845",
+          "officialForId": {
+            "songId": "30470845",
+            "title": "Cherry Bomb",
+            "isTitle": true
+          },
+          "officialByTitle": [
+            {
+              "songId": "30470845",
+              "title": "Cherry Bomb",
+              "isTitle": true
+            },
+            {
+              "songId": "30470851",
+              "title": "Cherry Bomb (Performance Ver.)",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "30470845",
+            "title": "Cherry Bomb",
+            "isTitle": true
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 2,
+          "title": "Running 2 U",
+          "songId": "30470846",
+          "officialForId": {
+            "songId": "30470846",
+            "title": "Running 2 U",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "30470846",
+              "title": "Running 2 U",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "30470846",
+            "title": "Running 2 U",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 3,
+          "title": "0 Mile",
+          "songId": "30470847",
+          "officialForId": {
+            "songId": "30470847",
+            "title": "0 Mile",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "30470847",
+              "title": "0 Mile",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "30470847",
+            "title": "0 Mile",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 4,
+          "title": "Sun & Moon",
+          "songId": "30470848",
+          "officialForId": {
+            "songId": "30470848",
+            "title": "Sun &amp; Moon",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "30470848",
+              "title": "Sun &amp; Moon",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "30470848",
+            "title": "Sun &amp; Moon",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 5,
+          "title": "Whiplash",
+          "songId": "30470849",
+          "officialForId": {
+            "songId": "30470849",
+            "title": "Whiplash",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "30470849",
+              "title": "Whiplash",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "30470849",
+            "title": "Whiplash",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 6,
+          "title": "Summer 127",
+          "songId": "30470850",
+          "officialForId": {
+            "songId": "30470850",
+            "title": "Summer 127",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "30470850",
+              "title": "Summer 127",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "30470850",
+            "title": "Summer 127",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 7,
+          "title": "Cherry Bomb (Performance Ver.)",
+          "songId": "30470851",
+          "officialForId": {
+            "songId": "30470851",
+            "title": "Cherry Bomb (Performance Ver.)",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "30470845",
+              "title": "Cherry Bomb",
+              "isTitle": true
+            },
+            {
+              "songId": "30470851",
+              "title": "Cherry Bomb (Performance Ver.)",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "30470851",
+            "title": "Cherry Bomb (Performance Ver.)",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        }
+      ]
+    },
+    {
+      "group": "엔시티 드림",
+      "album": "We Young",
+      "id": "10088607",
+      "storedTrackCount": 6,
+      "storedRows": 6,
+      "officialRows": 6,
+      "rows": [
+        {
+          "no": 1,
+          "title": "We Young",
+          "songId": "30584541",
+          "officialForId": {
+            "songId": "30584541",
+            "title": "We Young",
+            "isTitle": true
+          },
+          "officialByTitle": [
+            {
+              "songId": "30584541",
+              "title": "We Young",
+              "isTitle": true
+            },
+            {
+              "songId": "30584545",
+              "title": "We Young (Chinese Ver.)",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "30584541",
+            "title": "We Young",
+            "isTitle": true
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 2,
+          "title": "La La Love",
+          "songId": "30584542",
+          "officialForId": {
+            "songId": "30584542",
+            "title": "La La Love",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "30584542",
+              "title": "La La Love",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "30584542",
+            "title": "La La Love",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 3,
+          "title": "같은 시간 같은 자리 (Walk you home)",
+          "songId": "30584543",
+          "officialForId": {
+            "songId": "30584543",
+            "title": "같은 시간 같은 자리 (Walk you home)",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "30584543",
+              "title": "같은 시간 같은 자리 (Walk you home)",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "30584543",
+            "title": "같은 시간 같은 자리 (Walk you home)",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 4,
+          "title": "My Page",
+          "songId": "30584544",
+          "officialForId": {
+            "songId": "30584544",
+            "title": "My Page",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "30584544",
+              "title": "My Page",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "30584544",
+            "title": "My Page",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 5,
+          "title": "We Young (Chinese Ver.)",
+          "songId": "30584545",
+          "officialForId": {
+            "songId": "30584545",
+            "title": "We Young (Chinese Ver.)",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "30584541",
+              "title": "We Young",
+              "isTitle": true
+            },
+            {
+              "songId": "30584545",
+              "title": "We Young (Chinese Ver.)",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "30584545",
+            "title": "We Young (Chinese Ver.)",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 6,
+          "title": "Trigger the fever",
+          "songId": "30584546",
+          "officialForId": {
+            "songId": "30584546",
+            "title": "(Bonus Track) Trigger the fever",
+            "isTitle": false
+          },
+          "officialByTitle": [],
+          "officialAtPosition": {
+            "songId": "30584546",
+            "title": "(Bonus Track) Trigger the fever",
+            "isTitle": false
+          },
+          "status": "title_id_mismatch"
+        }
+      ]
+    },
+    {
+      "group": "엔하이픈",
+      "album": "BORDER : DAY ONE",
+      "id": "10526372",
+      "storedTrackCount": 6,
+      "storedRows": 6,
+      "officialRows": 6,
+      "rows": [
+        {
+          "no": 1,
+          "title": "Intro : Walk the Line",
+          "songId": "33100295",
+          "officialForId": {
+            "songId": "33100295",
+            "title": "Intro : Walk the Line",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "33100295",
+              "title": "Intro : Walk the Line",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "33100295",
+            "title": "Intro : Walk the Line",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 2,
+          "title": "Given-Taken",
+          "songId": "33100296",
+          "officialForId": {
+            "songId": "33100296",
+            "title": "Given-Taken",
+            "isTitle": true
+          },
+          "officialByTitle": [
+            {
+              "songId": "33100296",
+              "title": "Given-Taken",
+              "isTitle": true
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "33100296",
+            "title": "Given-Taken",
+            "isTitle": true
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 3,
+          "title": "Let Me In (20 CUBE)",
+          "songId": "33100297",
+          "officialForId": {
+            "songId": "33100297",
+            "title": "Let Me In (20 CUBE)",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "33100297",
+              "title": "Let Me In (20 CUBE)",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "33100297",
+            "title": "Let Me In (20 CUBE)",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 4,
+          "title": "10 Months",
+          "songId": "33100298",
+          "officialForId": {
+            "songId": "33100298",
+            "title": "10 Months",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "33100298",
+              "title": "10 Months",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "33100298",
+            "title": "10 Months",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 5,
+          "title": "Flicker",
+          "songId": "33100299",
+          "officialForId": {
+            "songId": "33100299",
+            "title": "Flicker",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "33100299",
+              "title": "Flicker",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "33100299",
+            "title": "Flicker",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 6,
+          "title": "Outro : Cross the Line",
+          "songId": "33100300",
+          "officialForId": {
+            "songId": "33100300",
+            "title": "Outro : Cross the Line",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "33100300",
+              "title": "Outro : Cross the Line",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "33100300",
+            "title": "Outro : Cross the Line",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        }
+      ]
+    },
+    {
+      "group": "르세라핌",
+      "album": "FEARLESS",
+      "id": "10939458",
+      "storedTrackCount": 5,
+      "storedRows": 5,
+      "officialRows": 5,
+      "rows": [
+        {
+          "no": 1,
+          "title": "The World Is My Oyster",
+          "songId": "35009232",
+          "officialForId": {
+            "songId": "35009232",
+            "title": "The World Is My Oyster",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "35009232",
+              "title": "The World Is My Oyster",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "35009232",
+            "title": "The World Is My Oyster",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 2,
+          "title": "FEARLESS",
+          "songId": "35009233",
+          "officialForId": {
+            "songId": "35009233",
+            "title": "FEARLESS",
+            "isTitle": true
+          },
+          "officialByTitle": [
+            {
+              "songId": "35009233",
+              "title": "FEARLESS",
+              "isTitle": true
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "35009233",
+            "title": "FEARLESS",
+            "isTitle": true
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 3,
+          "title": "Blue Flame",
+          "songId": "35009234",
+          "officialForId": {
+            "songId": "35009234",
+            "title": "Blue Flame",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "35009234",
+              "title": "Blue Flame",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "35009234",
+            "title": "Blue Flame",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 4,
+          "title": "The Great Mermaid",
+          "songId": "35009235",
+          "officialForId": {
+            "songId": "35009235",
+            "title": "The Great Mermaid",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "35009235",
+              "title": "The Great Mermaid",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "35009235",
+            "title": "The Great Mermaid",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 5,
+          "title": "Sour Grapes",
+          "songId": "35009236",
+          "officialForId": {
+            "songId": "35009236",
+            "title": "Sour Grapes",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "35009236",
+              "title": "Sour Grapes",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "35009236",
+            "title": "Sour Grapes",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        }
+      ]
+    },
+    {
+      "group": "블랙핑크",
+      "album": "SQUARE TWO",
+      "id": "10011491",
+      "storedTrackCount": 3,
+      "storedRows": 3,
+      "officialRows": 3,
+      "rows": [
+        {
+          "no": 1,
+          "title": "불장난 (PLAYING WITH FIRE)",
+          "songId": "30069773",
+          "officialForId": {
+            "songId": "30069773",
+            "title": "불장난",
+            "isTitle": true
+          },
+          "officialByTitle": [
+            {
+              "songId": "30069773",
+              "title": "불장난",
+              "isTitle": true
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "30069773",
+            "title": "불장난",
+            "isTitle": true
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 2,
+          "title": "STAY",
+          "songId": "30069774",
+          "officialForId": {
+            "songId": "30069774",
+            "title": "STAY",
+            "isTitle": true
+          },
+          "officialByTitle": [
+            {
+              "songId": "30069774",
+              "title": "STAY",
+              "isTitle": true
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "30069774",
+            "title": "STAY",
+            "isTitle": true
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 3,
+          "title": "휘파람 (WHISTLE) (Acoustic Ver.)",
+          "songId": "30069775",
+          "officialForId": {
+            "songId": "30069775",
+            "title": "휘파람 (Acoustic Ver.)",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "30069775",
+              "title": "휘파람 (Acoustic Ver.)",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "30069775",
+            "title": "휘파람 (Acoustic Ver.)",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        }
+      ]
+    },
+    {
+      "group": "샤이니",
+      "album": "누난 너무 예뻐 (Replay)",
+      "id": "382083",
+      "storedTrackCount": 5,
+      "storedRows": 5,
+      "officialRows": 5,
+      "rows": [
+        {
+          "no": 1,
+          "title": "누난 너무 예뻐 (Replay)",
+          "songId": "1875215",
+          "officialForId": {
+            "songId": "1875215",
+            "title": "누난 너무 예뻐 (Replay)",
+            "isTitle": true
+          },
+          "officialByTitle": [
+            {
+              "songId": "1875215",
+              "title": "누난 너무 예뻐 (Replay)",
+              "isTitle": true
+            },
+            {
+              "songId": "1875219",
+              "title": "누난 너무 예뻐 (Replay Boom Track)",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "1875215",
+            "title": "누난 너무 예뻐 (Replay)",
+            "isTitle": true
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 2,
+          "title": "In My Room",
+          "songId": "1875216",
+          "officialForId": {
+            "songId": "1875216",
+            "title": "In My Room",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "1875216",
+              "title": "In My Room",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "1875216",
+            "title": "In My Room",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 3,
+          "title": "Real",
+          "songId": "1875217",
+          "officialForId": {
+            "songId": "1875217",
+            "title": "Real",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "1875217",
+              "title": "Real",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "1875217",
+            "title": "Real",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 4,
+          "title": "사.계.한 (Love Should Go On)",
+          "songId": "1875218",
+          "officialForId": {
+            "songId": "1875218",
+            "title": "사.계.한 (Love Should Go On)",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "1875218",
+              "title": "사.계.한 (Love Should Go On)",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "1875218",
+            "title": "사.계.한 (Love Should Go On)",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 5,
+          "title": "누난 너무 예뻐 (Replay Boom Track)",
+          "songId": "1875219",
+          "officialForId": {
+            "songId": "1875219",
+            "title": "누난 너무 예뻐 (Replay Boom Track)",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "1875215",
+              "title": "누난 너무 예뻐 (Replay)",
+              "isTitle": true
+            },
+            {
+              "songId": "1875219",
+              "title": "누난 너무 예뻐 (Replay Boom Track)",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "1875219",
+            "title": "누난 너무 예뻐 (Replay Boom Track)",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        }
+      ]
+    },
+    {
+      "group": "레드벨벳",
+      "album": "Ice Cream Cake",
+      "id": "2309156",
+      "storedTrackCount": 6,
+      "storedRows": 6,
+      "officialRows": 6,
+      "rows": [
+        {
+          "no": 1,
+          "title": "Ice Cream Cake",
+          "songId": "5629148",
+          "officialForId": {
+            "songId": "5629148",
+            "title": "Ice Cream Cake",
+            "isTitle": true
+          },
+          "officialByTitle": [
+            {
+              "songId": "5629148",
+              "title": "Ice Cream Cake",
+              "isTitle": true
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "5629148",
+            "title": "Ice Cream Cake",
+            "isTitle": true
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 2,
+          "title": "Automatic",
+          "songId": "5628011",
+          "officialForId": {
+            "songId": "5628011",
+            "title": "Automatic",
+            "isTitle": true
+          },
+          "officialByTitle": [
+            {
+              "songId": "5628011",
+              "title": "Automatic",
+              "isTitle": true
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "5628011",
+            "title": "Automatic",
+            "isTitle": true
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 3,
+          "title": "Somethin Kinda Crazy",
+          "songId": "5629331",
+          "officialForId": {
+            "songId": "5629331",
+            "title": "Somethin Kinda Crazy",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "5629331",
+              "title": "Somethin Kinda Crazy",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "5629331",
+            "title": "Somethin Kinda Crazy",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 4,
+          "title": "Stupid Cupid",
+          "songId": "5629332",
+          "officialForId": {
+            "songId": "5629332",
+            "title": "Stupid Cupid",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "5629332",
+              "title": "Stupid Cupid",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "5629332",
+            "title": "Stupid Cupid",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 5,
+          "title": "Take It Slow",
+          "songId": "5629333",
+          "officialForId": {
+            "songId": "5629333",
+            "title": "Take It Slow",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "5629333",
+              "title": "Take It Slow",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "5629333",
+            "title": "Take It Slow",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 6,
+          "title": "사탕 (Candy)",
+          "songId": "5629334",
+          "officialForId": {
+            "songId": "5629334",
+            "title": "사탕 (Candy)",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "5629334",
+              "title": "사탕 (Candy)",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "5629334",
+            "title": "사탕 (Candy)",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        }
+      ]
+    },
+    {
+      "group": "엑소",
+      "album": "Mama",
+      "id": "2108026",
+      "storedTrackCount": 6,
+      "storedRows": 6,
+      "officialRows": 6,
+      "rows": [
+        {
+          "no": 1,
+          "title": "MAMA",
+          "songId": "3764993",
+          "officialForId": {
+            "songId": "3764993",
+            "title": "MAMA",
+            "isTitle": true
+          },
+          "officialByTitle": [
+            {
+              "songId": "3764993",
+              "title": "MAMA",
+              "isTitle": true
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "3764993",
+            "title": "MAMA",
+            "isTitle": true
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 2,
+          "title": "What Is Love",
+          "songId": "3765073",
+          "officialForId": {
+            "songId": "3765073",
+            "title": "What Is Love",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "3765073",
+              "title": "What Is Love",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "3765073",
+            "title": "What Is Love",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 3,
+          "title": "History",
+          "songId": "3765074",
+          "officialForId": {
+            "songId": "3765074",
+            "title": "History",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "3765074",
+              "title": "History",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "3765074",
+            "title": "History",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 4,
+          "title": "너의 세상으로 (Angel)",
+          "songId": "3765075",
+          "officialForId": {
+            "songId": "3765075",
+            "title": "너의 세상으로 (Angel)",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "3765075",
+              "title": "너의 세상으로 (Angel)",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "3765075",
+            "title": "너의 세상으로 (Angel)",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 5,
+          "title": "두 개의 달이 뜨는 밤 (Two Moons) (Feat. Key Of SHINee)",
+          "songId": "3765076",
+          "officialForId": {
+            "songId": "3765076",
+            "title": "두 개의 달이 뜨는 밤 (Two Moons) (Feat. Key Of SHINee)",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "3765076",
+              "title": "두 개의 달이 뜨는 밤 (Two Moons) (Feat. Key Of SHINee)",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "3765076",
+            "title": "두 개의 달이 뜨는 밤 (Two Moons) (Feat. Key Of SHINee)",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        },
+        {
+          "no": 6,
+          "title": "Machine",
+          "songId": "3765077",
+          "officialForId": {
+            "songId": "3765077",
+            "title": "Machine",
+            "isTitle": false
+          },
+          "officialByTitle": [
+            {
+              "songId": "3765077",
+              "title": "Machine",
+              "isTitle": false
+            }
+          ],
+          "officialAtPosition": {
+            "songId": "3765077",
+            "title": "Machine",
+            "isTitle": false
+          },
+          "status": "normalized_title_match"
+        }
+      ]
+    }
+  ]
+}

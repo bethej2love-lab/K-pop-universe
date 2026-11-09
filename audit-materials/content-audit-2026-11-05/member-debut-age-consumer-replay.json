@@ -1,0 +1,84 @@
+{
+  "revision": "e64f24f9cd",
+  "rows": [
+    {
+      "id": "a1011",
+      "name": "예빈",
+      "group": "시크릿",
+      "joined": null,
+      "bday": "2002.09.01",
+      "actualInput": "2009.10.13",
+      "actualAge": {
+        "age": 7.115820311163131,
+        "year": 2009.7828767123287
+      },
+      "correctJoinedControl": null
+    },
+    {
+      "id": "a1893",
+      "name": "나비",
+      "group": "시크릿넘버",
+      "joined": "2025.08.14",
+      "bday": "2003.04.13",
+      "actualInput": "2020.05.19",
+      "actualAge": {
+        "age": 17.100967165650218,
+        "year": 2020.3826484018264
+      },
+      "correctJoinedControl": {
+        "age": 22.338583270019235,
+        "year": 2025.6189497716894
+      }
+    },
+    {
+      "id": "a1894",
+      "name": "딘다",
+      "group": "시크릿넘버",
+      "joined": "2025.08.14",
+      "bday": "2003.08.22",
+      "actualInput": "2020.05.19",
+      "actualAge": {
+        "age": 16.742301347734724,
+        "year": 2020.3826484018264
+      },
+      "correctJoinedControl": {
+        "age": 21.979917452103738,
+        "year": 2025.6189497716894
+      }
+    },
+    {
+      "id": "a1895",
+      "name": "에빈",
+      "group": "시크릿넘버",
+      "joined": "2025.08.14",
+      "bday": "2004.01.28",
+      "actualInput": "2020.05.19",
+      "actualAge": {
+        "age": 16.30697413362355,
+        "year": 2020.3826484018264
+      },
+      "correctJoinedControl": {
+        "age": 21.544590237992566,
+        "year": 2025.6189497716894
+      }
+    },
+    {
+      "id": "a1896",
+      "name": "민씨",
+      "group": "시크릿넘버",
+      "joined": "2025.08.14",
+      "bday": "2006.04.21",
+      "actualInput": "2020.05.19",
+      "actualAge": {
+        "age": 14.078317829934907,
+        "year": 2020.3826484018264
+      },
+      "correctJoinedControl": {
+        "age": 19.31593393430392,
+        "year": 2025.6189497716894
+      }
+    }
+  ],
+  "sourceAgeFunction": "function _mxAgeAt(bday,debut){\n  const re=/(\\d{4})\\D?(\\d{1,2})?\\D?(\\d{1,2})?/;\n  const b=String(bday||'').match(re),d=String(debut||'').match(re);\n  if(!b||!d)return null;\n  const tb=Date.UTC(+b[1],(+b[2]||7)-1,+b[3]||1),td=Date.UTC(+d[1],(+d[2]||7)-1,+d[3]||1);\n  return{age:(td-tb)/(365.2425*864e5),year:+d[1]+((+d[2]||7)-1)/12+((+d[3]||1)-1)/365};\n}",
+  "sourceOverrideMap": "const _MX_JOINED={'허영지|카라':'2014.08.18','강지영|카라':'2008.02.01','준|유키스':'2014.06.02','윤은혜|베이비복스':'1999.01.01','서아|트리플에스':'2024.05.08','주빈|트리플에스':'2023.12.23'};"
+}

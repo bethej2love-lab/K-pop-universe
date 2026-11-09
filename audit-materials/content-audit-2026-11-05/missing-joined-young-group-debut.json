@@ -1,0 +1,25 @@
+{
+  "revision": "e64f24f9cd",
+  "candidates": [
+    {
+      "id": "a1011",
+      "name": "예빈",
+      "group": "시크릿",
+      "groupDebut": "2009.10.13",
+      "bday": "2002.09.01",
+      "age": 7.1,
+      "currentGroup": "시크릿",
+      "active": true
+    },
+    {
+      "id": "a1351",
+      "name": "하민",
+      "group": "플레이브",
+      "groupDebut": "2023.03.12",
+      "bday": "9999.11.01",
+      "age": -7976.5,
+      "currentGroup": "플레이브",
+      "active": true
+    }
+  ]
+}

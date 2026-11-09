@@ -1,0 +1,5207 @@
+{
+  "revision": "6b7671c9a1",
+  "total": 344,
+  "completed": 344,
+  "stoppedOnRateLimit": false,
+  "normalizationNote": "Shorts IDs parsed from URL path; initial null-key queue entry was an audit-script issue and is excluded from site findings.",
+  "rows": [
+    {
+      "id": "tZixREYOIZQ",
+      "references": [
+        {
+          "owner": "a0001:카리나",
+          "song": "도깨비불",
+          "url": "https://www.youtube.com/watch?v=tZixREYOIZQ"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[페이스캠4K] 에스파 카리나 '도깨비불' (aespa KARINA 'Illusion' FaceCam)│@SBS Inkigayo_2022.7.24.",
+      "author": "SBSKPOP X INKIGAYO",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "tbg3QAu-GnI",
+      "references": [
+        {
+          "owner": "a0001:카리나",
+          "song": "Drama",
+          "url": "https://www.youtube.com/watch?v=tbg3QAu-GnI"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[페이스캠4K] 에스파 카리나 'Drama' (aespa KARINA FaceCam) @SBS Inkigayo 231112",
+      "author": "SBSKPOP ZOOM",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP_ZOOM",
+      "titleReview": []
+    },
+    {
+      "id": "5EYYp59TMzE",
+      "references": [
+        {
+          "owner": "a0001:카리나",
+          "song": "UP",
+          "url": "https://www.youtube.com/watch?v=5EYYp59TMzE"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "에스파 카리나 - UP [SYNK PARALLELLINE]",
+      "author": "마이들아 웃으라고",
+      "authorUrl": "https://www.youtube.com/@%EB%A7%88%EC%9D%B4%EB%93%A4%EC%95%84%EC%9B%83%EC%9C%BC%EB%9D%BC%EA%B3%A0",
+      "titleReview": []
+    },
+    {
+      "id": "kY-LVTbLYDI",
+      "references": [
+        {
+          "owner": "a0002:지젤",
+          "song": "Girls",
+          "url": "https://www.youtube.com/watch?v=kY-LVTbLYDI"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[페이스캠4K] 에스파 지젤 'Girls' (aespa GISELLE FaceCam)│@SBS Inkigayo_2022.07.24.",
+      "author": "SBSKPOP X INKIGAYO",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "RFz5XIEXxag",
+      "references": [
+        {
+          "owner": "a0002:지젤",
+          "song": "Whiplash",
+          "url": "https://www.youtube.com/watch?v=RFz5XIEXxag"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[얼빡직캠 4K] 에스파 지젤 'Whiplash' (aespa GISELLE Facecam) @뮤직뱅크(Music Bank) 241101",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "M9wR7cwwgvQ",
+      "references": [
+        {
+          "owner": "a0002:지젤",
+          "song": "Black Mamba",
+          "url": "https://www.youtube.com/watch?v=M9wR7cwwgvQ"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[K-Fancam] 에스파 지젤 직캠 'Black Mamba' (aespa GISELLE Fancam) l @MusicBank 201120",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "UAQT5Hgrm1Q",
+      "references": [
+        {
+          "owner": "a0003:윈터",
+          "song": "Step Back",
+          "url": "https://www.youtube.com/watch?v=UAQT5Hgrm1Q"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 갓 더 비트 윈터 직캠 4K 'Step Back' (GOT the beat WINTER FanCam) | @MCOUNTDOWN_2022.1.27",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "S7f_LlxdgI0",
+      "references": [
+        {
+          "owner": "a0003:윈터",
+          "song": "Savage",
+          "url": "https://www.youtube.com/watch?v=S7f_LlxdgI0"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[페이스캠4K] 에스파 윈터 'Savage' (aespa WINTER FaceCam)│@SBS Inkigayo_2021.10.24.",
+      "author": "SBSKPOP X INKIGAYO",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "MVtNkTF4Gvs",
+      "references": [
+        {
+          "owner": "a0003:윈터",
+          "song": "Black Mamba",
+          "url": "https://www.youtube.com/watch?v=MVtNkTF4Gvs"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[페이스캠4K] 에스파 윈터 'Black Mamba' (aespa WINTER FaceCam)│@SBS Inkigayo_2020.11.29.",
+      "author": "SBSKPOP X INKIGAYO",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "Dvt7ZPL15xU",
+      "references": [
+        {
+          "owner": "a0004:닝닝",
+          "song": "Drama",
+          "url": "https://www.youtube.com/watch?v=Dvt7ZPL15xU"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[MPD직캠] 에스파 닝닝 직캠 4K 'Drama' (aespa NINGNING FanCam) | @MCOUNTDOWN_2023.11.16",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "UMMtPB3PdYI",
+      "references": [
+        {
+          "owner": "a0004:닝닝",
+          "song": "Black Mamba",
+          "url": "https://www.youtube.com/watch?v=UMMtPB3PdYI"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[페이스캠4K] 에스파 닝닝 'Black Mamba' (aespa NINGNING FaceCam)│@SBS Inkigayo_2020.11.29.",
+      "author": "SBSKPOP X INKIGAYO",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "RQwT1-NiO6Q",
+      "references": [
+        {
+          "owner": "a0004:닝닝",
+          "song": "Thirsty",
+          "url": "https://www.youtube.com/watch?v=RQwT1-NiO6Q"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[페이스캠4K] 에스파 닝닝 'Thirsty' (aespa NINGNING FaceCam) @SBS Inkigayo 230514",
+      "author": "SBSKPOP ZOOM",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP_ZOOM",
+      "titleReview": []
+    },
+    {
+      "id": "opnfgNPg1xI",
+      "references": [
+        {
+          "owner": "a0013:시온",
+          "song": "Steady",
+          "url": "https://www.youtube.com/watch?v=opnfgNPg1xI"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 엔시티 위시 시온 직캠 4K 'Steady' (NCT WISH SION FanCam) | @MCOUNTDOWN_2024.9.26",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "hIqnEd16v04",
+      "references": [
+        {
+          "owner": "a0013:시온",
+          "song": "WISH (Korean Ver.)",
+          "url": "https://www.youtube.com/watch?v=hIqnEd16v04"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 엔시티 위시 시온 직캠 4K 'WISH (Korean Ver.)' (NCT WISH SION FanCam) | @MCOUNTDOWN_2024.3.7",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "qk3qxZ9IcmQ",
+      "references": [
+        {
+          "owner": "a0013:시온",
+          "song": "SODA POP",
+          "url": "https://www.youtube.com/watch?v=qk3qxZ9IcmQ"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "260131 엔시티 위시 시온 SODA POP (원곡:Saja Boys) 직캠 I SMTOWN LIVE in FUKUOKA",
+      "author": "Flot.",
+      "authorUrl": "https://www.youtube.com/@Flot_sion",
+      "titleReview": []
+    },
+    {
+      "id": "TUqZLkjgyVA",
+      "references": [
+        {
+          "owner": "a0014:리쿠",
+          "song": "NASA",
+          "url": "https://www.youtube.com/watch?v=TUqZLkjgyVA"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[4K] 240622 SCHOOL of WISH CHEONGJU RIKU FOCUS 리쿠 직캠 | NASA",
+      "author": "RIKeU",
+      "authorUrl": "https://www.youtube.com/@RIKeU628",
+      "titleReview": []
+    },
+    {
+      "id": "ooq0MXgSjmU",
+      "references": [
+        {
+          "owner": "a0014:리쿠",
+          "song": "으쌰! 으쌰!",
+          "url": "https://www.youtube.com/watch?v=ooq0MXgSjmU"
+        }
+      ],
+      "status": 401
+    },
+    {
+      "id": "WF4611kq1GQ",
+      "references": [
+        {
+          "owner": "a0014:리쿠",
+          "song": "내 얘길 들어봐",
+          "url": "https://www.youtube.com/watch?v=WF4611kq1GQ"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[4k] 250726 NCTWISH 리쿠 직캠 - 내 얘길 들어봐 (A-ing) @SBS 가요대전 SUMMER",
+      "author": "nevertheless",
+      "authorUrl": "https://www.youtube.com/@nevertlessriku",
+      "titleReview": []
+    },
+    {
+      "id": "Qe8Kp5qY9Vk",
+      "references": [
+        {
+          "owner": "a0015:유우시",
+          "song": "NASA",
+          "url": "https://www.youtube.com/watch?v=Qe8Kp5qY9Vk"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[4K] 직캠 241103-04 NASA 엔시티위시 유우시 NCT WISH YUSHI",
+      "author": "미깡",
+      "authorUrl": "https://www.youtube.com/@gyul_nct",
+      "titleReview": []
+    },
+    {
+      "id": "UVf7PVf9kuY",
+      "references": [
+        {
+          "owner": "a0015:유우시",
+          "song": "Medley",
+          "url": "https://www.youtube.com/watch?v=UVf7PVf9kuY"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[4K] 231126 NCT WISH YUSHI 유우시 focus -  Medley | NCT Universe:LASTART PRE-DEBUT TOUR in Ishikawa",
+      "author": "daydream",
+      "authorUrl": "https://www.youtube.com/@daydream_yus",
+      "titleReview": []
+    },
+    {
+      "id": "n3FM40NaPAg",
+      "references": [
+        {
+          "owner": "a0015:유우시",
+          "song": "Steady",
+          "url": "https://www.youtube.com/watch?v=n3FM40NaPAg"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 엔시티 위시 유우시 직캠 4K 'Steady' (NCT WISH YUSHI FanCam) | @MCOUNTDOWN_2024.10.3",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "fXd-uJUrjK4",
+      "references": [
+        {
+          "owner": "a0020:태용",
+          "song": "질주",
+          "url": "https://www.youtube.com/watch?v=fXd-uJUrjK4"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 엔시티 127 태용 직캠 4K '질주 (2 Baddies)' (NCT 127 TAEYONG FanCam) | @MCOUNTDOWN_2022.9.22",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "IgrDN1yOIKY",
+      "references": [
+        {
+          "owner": "a0041:현진",
+          "song": "JJAM",
+          "url": "https://www.youtube.com/watch?v=IgrDN1yOIKY"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 스트레이 키즈 현진 직캠 4K 'JJAM' (Stray Kids HYUNJIN FanCam) | @MCOUNTDOWN_2024.8.8",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "tnMFp53wrRg",
+      "references": [
+        {
+          "owner": "a0046:예지",
+          "song": "River",
+          "url": "https://www.youtube.com/watch?v=tnMFp53wrRg"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[Artist Of The Month] 'River' covered by ITZY YEJI(예지) | March 2021 (4K)",
+      "author": "STUDIO CHOOM [스튜디오 춤]",
+      "authorUrl": "https://www.youtube.com/@STUDIOCHOOM",
+      "titleReview": []
+    },
+    {
+      "id": "pmTjOXIu71Q",
+      "references": [
+        {
+          "owner": "a0046:예지",
+          "song": "WANNABE",
+          "url": "https://www.youtube.com/watch?v=pmTjOXIu71Q"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[주간아 미방] ITZY 예지 'WANNABE’ 직캠 l EP.450",
+      "author": "ALL THE K-POP",
+      "authorUrl": "https://www.youtube.com/@ALLTHEKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "fSAUQ37xbho",
+      "references": [
+        {
+          "owner": "a0046:예지",
+          "song": "달라달라",
+          "url": "https://www.youtube.com/watch?v=fSAUQ37xbho"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[MPD직캠] 있지 예지 직캠 '달라달라(DALLA DALLA)' (ITZY YEJI FanCam) | @MCOUNTDOWN_2019.2.14",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "zahgAha5D9Q",
+      "references": [
+        {
+          "owner": "a0047:리아",
+          "song": "Price Tag",
+          "url": "https://www.youtube.com/watch?v=zahgAha5D9Q"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "※꿀보이스 주의※ Jessie J - Price Tag (ITZY 리아ver.)♬ [유희열의 스케치북/You Heeyeol's Sketchbook] 20200313",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "c3jCty-g5x0",
+      "references": [
+        {
+          "owner": "a0047:리아",
+          "song": "WANNABE",
+          "url": "https://www.youtube.com/watch?v=c3jCty-g5x0"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[주간아 미방] ITZY 리아 'WANNABE’ 직캠 l EP.450",
+      "author": "ALL THE K-POP",
+      "authorUrl": "https://www.youtube.com/@ALLTHEKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "5QGp7KkfZ0Y",
+      "references": [
+        {
+          "owner": "a0047:리아",
+          "song": "달라달라",
+          "url": "https://www.youtube.com/watch?v=5QGp7KkfZ0Y"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 있지 리아 직캠 4K '달라달라(DALLA DALLA)' (ITZY LIA FanCam) | @MCOUNTDOWN_2019.2.28",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "KPUZjvAKmKM",
+      "references": [
+        {
+          "owner": "a0048:류진",
+          "song": "WANNABE",
+          "url": "https://www.youtube.com/watch?v=KPUZjvAKmKM"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[주간아 미방] ITZY 류진 'WANNABE’ 직캠 l EP.450",
+      "author": "ALL THE K-POP",
+      "authorUrl": "https://www.youtube.com/@ALLTHEKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "syoATmUcmL4",
+      "references": [
+        {
+          "owner": "a0048:류진",
+          "song": "ICY",
+          "url": "https://www.youtube.com/watch?v=syoATmUcmL4"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 있지 류진 직캠 4K 'ICY' (ITZY Ryujin FanCam) | @MCOUNTDOWN_2019.8.22",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "L1f8K9sYAgk",
+      "references": [
+        {
+          "owner": "a0048:류진",
+          "song": "마.피.아. In the morning",
+          "url": "https://www.youtube.com/watch?v=L1f8K9sYAgk"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[UNFILTERED CAM] ITZY RYUJIN(류진) '마.피.아. In the morning' | BE ORIGINAL",
+      "author": "STUDIO CHOOM [스튜디오 춤]",
+      "authorUrl": "https://www.youtube.com/@STUDIOCHOOM",
+      "titleReview": []
+    },
+    {
+      "id": "s2Y5lscQVSQ",
+      "references": [
+        {
+          "owner": "a0049:채령",
+          "song": "WANNABE",
+          "url": "https://www.youtube.com/watch?v=s2Y5lscQVSQ"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[주간아 미방] ITZY 채령 'WANNABE’ 직캠 l EP.450",
+      "author": "ALL THE K-POP",
+      "authorUrl": "https://www.youtube.com/@ALLTHEKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "Ifm6elFyYxQ",
+      "references": [
+        {
+          "owner": "a0049:채령",
+          "song": "Not Shy",
+          "url": "https://www.youtube.com/watch?v=Ifm6elFyYxQ"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[주간아 미방] ITZY 채령 'Not Shy’ 직캠 l EP.473",
+      "author": "ALL THE K-POP",
+      "authorUrl": "https://www.youtube.com/@ALLTHEKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "fGTW6zI0rC8",
+      "references": [
+        {
+          "owner": "a0049:채령",
+          "song": "SNEAKERS",
+          "url": "https://www.youtube.com/watch?v=fGTW6zI0rC8"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[안방1열 직캠4K] 있지 채령 'SNEAKERS' (ITZY CHAERYEONG FanCam)│@SBS Inkigayo_2022.07.17.",
+      "author": "SBSKPOP X INKIGAYO",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "8f2IDOUrzkI",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "달라달라",
+          "url": "https://www.youtube.com/watch?v=8f2IDOUrzkI"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 있지 유나 직캠 4K '달라달라(DALLA DALLA)' (ITZY YUNA FanCam) | @MCOUNTDOWN_2019.2.14",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "XxLigZQFc14",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "U-Go-Girl",
+          "url": "https://www.youtube.com/watch?v=XxLigZQFc14"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "U-Go-Girl  - YUNA 유나 (ITZY 있지 イッチ) [2022 KBS Song Festival] | KBS WORLD TV 221216",
+      "author": "KBS WORLD TV",
+      "authorUrl": "https://www.youtube.com/@kbsworldtv",
+      "titleReview": []
+    },
+    {
+      "id": "eQl-5S35WGI",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "WANNABE",
+          "url": "https://www.youtube.com/watch?v=eQl-5S35WGI"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[주간아 미방] ITZY 유나 'WANNABE’ 직캠 l EP.450",
+      "author": "ALL THE K-POP",
+      "authorUrl": "https://www.youtube.com/@ALLTHEKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "x0FwbTiD3iA",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "YUNA \"Ice Cream\" M/V",
+          "url": "https://youtu.be/x0FwbTiD3iA"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "YUNA “Ice Cream” M/V",
+      "author": "JYP Entertainment",
+      "authorUrl": "https://www.youtube.com/@JYPEntertainment",
+      "titleReview": []
+    },
+    {
+      "id": "KTGBX2orBY8",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "'최초 공개' 유나 (ITZY) - Ice Cream #엠카운트다운 EP.921 | Mnet 260326 방송",
+          "url": "https://youtu.be/KTGBX2orBY8"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "'최초 공개' 유나 (ITZY) - Ice Cream #엠카운트다운 EP.921 | Mnet 260326 방송",
+      "author": "Mnet K-POP",
+      "authorUrl": "https://www.youtube.com/@Mnet",
+      "titleReview": []
+    },
+    {
+      "id": "im9i0HdFHhU",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "Ice Cream - 유나 (ITZY) | SBS 260329 방송",
+          "url": "https://youtu.be/im9i0HdFHhU"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "Ice Cream - 유나 (ITZY) | SBS 260329 방송",
+      "author": "SBSKPOP X INKIGAYO",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "AS1J1pnQ1Sk",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[뮤뱅 원테이크 4K] 유원미 유나 (ITZY YUNA) 직캠 'U-Go-Girl (원곡: 이효리)'",
+          "url": "https://youtu.be/AS1J1pnQ1Sk"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[뮤뱅 원테이크 4K] 유원미 유나 (ITZY YUNA) 직캠 'U-Go-Girl (원곡: 이효리)' 4K Bonus Ver. @가요대축제(SongFestival) 221216",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "dZ1RUf4NYlY",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "유나 (ITZY) - Ice Cream #엠카운트다운 EP.922 | Mnet 260402 방송",
+          "url": "https://youtu.be/dZ1RUf4NYlY"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "유나 (ITZY) - Ice Cream #엠카운트다운 EP.922 | Mnet 260402 방송",
+      "author": "Mnet K-POP",
+      "authorUrl": "https://www.youtube.com/@Mnet",
+      "titleReview": []
+    },
+    {
+      "id": "BwGmboNKTiI",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[입덕직캠] 있지 유나 직캠 4K 'THAT'S A NO NO' (ITZY YUNA FanCam) | @MCOUNTDOWN_2026.3.19",
+          "url": "https://youtu.be/BwGmboNKTiI"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 있지 유나 직캠 4K 'THAT'S A NO NO' (ITZY YUNA FanCam) | @MCOUNTDOWN_2026.3.19",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "OAEHa3tyV0A",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[덱스의 냉터뷰] 존예보스! 신유나한테 반해 안반해💥l EP.24 있지(ITZY) 유나 편",
+          "url": "https://youtu.be/OAEHa3tyV0A"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[덱스의 냉터뷰] 존예보스! 신유나한테 반해 안반해💥l EP.24 있지(ITZY) 유나 편",
+      "author": "일일칠 - 117",
+      "authorUrl": "https://www.youtube.com/@ch117",
+      "titleReview": []
+    },
+    {
+      "id": "c_rAwwn9GJc",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[가요대제전 #최애직캠] 유나X카리나X설윤 유나 (ITZY YUNA) – pocket locket | Gayo Daejejeon 2024",
+          "url": "https://youtu.be/c_rAwwn9GJc"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[가요대제전 #최애직캠] 유나X카리나X설윤 유나 (ITZY YUNA) – pocket locket | Gayo Daejejeon 2024 | MBC250129",
+      "author": "MBCkpop",
+      "authorUrl": "https://www.youtube.com/@MBCkpop",
+      "titleReview": []
+    },
+    {
+      "id": "k5qyRYtbKKU",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[MPD직캠] 있지 유나 직캠 4K 'THAT'S A NO NO' (ITZY YUNA FanCam) | @MCOUNTDOWN_2026.3.19",
+          "url": "https://youtu.be/k5qyRYtbKKU"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[MPD직캠] 있지 유나 직캠 4K 'THAT'S A NO NO' (ITZY YUNA FanCam) | @MCOUNTDOWN_2026.3.19",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "jlfFGHP77pQ",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[가요대제전 #최애직캠] ITZY YUNA (있지 유나) – Focus+TUNNEL VISION | 2025 GayoDaejejeon",
+          "url": "https://youtu.be/jlfFGHP77pQ"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[가요대제전 #최애직캠] ITZY YUNA (있지 유나) – Focus+TUNNEL VISION | 2025 GayoDaejejeon | MBC251231",
+      "author": "MBCkpop",
+      "authorUrl": "https://www.youtube.com/@MBCkpop",
+      "titleReview": []
+    },
+    {
+      "id": "bVt4Cq8pJcE",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[얼빡직캠 4K] 있지 유나 'Girls Will Be Girls' (ITZY YUNA Facecam) @뮤직뱅크(Music Bank) 250613",
+          "url": "https://youtu.be/bVt4Cq8pJcE"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[얼빡직캠 4K] 있지 유나 'Girls Will Be Girls' (ITZY YUNA Facecam) @뮤직뱅크(Music Bank) 250613",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "erBGMy7ly34",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[#음중직캠] ITZY YUNA (있지 유나) – Motto FanCam | 쇼! 음악중심 | MBC260523",
+          "url": "https://youtu.be/erBGMy7ly34"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[#음중직캠] ITZY YUNA (있지 유나) – Motto FanCam | 쇼! 음악중심 | MBC260523",
+      "author": "MBCkpop",
+      "authorUrl": "https://www.youtube.com/@MBCkpop",
+      "titleReview": []
+    },
+    {
+      "id": "RncY8aNDr8U",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[입덕직캠] 있지 유나 직캠 4K 'CAKE' (ITZY YUNA FanCam) | @MCOUNTDOWN_2023.8.31",
+          "url": "https://youtu.be/RncY8aNDr8U"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 있지 유나 직캠 4K 'CAKE' (ITZY YUNA FanCam) | @MCOUNTDOWN_2023.8.31",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "Ao3VK6O6eUo",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[입덕직캠] 있지 유나 직캠 4K 'Motto' (ITZY YUNA FanCam) | @MCOUNTDOWN_2026.5.21",
+          "url": "https://youtu.be/Ao3VK6O6eUo"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 있지 유나 직캠 4K 'Motto' (ITZY YUNA FanCam) | @MCOUNTDOWN_2026.5.21",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "CgNuXD1uWD4",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[가요대제전] ITZY YUNA – SNEAKERS+Boys like you(있지 유나) FanCam | MBC Music Festival",
+          "url": "https://youtu.be/CgNuXD1uWD4"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[가요대제전] ITZY YUNA – SNEAKERS+Boys like you(있지 유나) FanCam | MBC Music Festival | MBC221231방송",
+      "author": "MBCkpop",
+      "authorUrl": "https://www.youtube.com/@MBCkpop",
+      "titleReview": []
+    },
+    {
+      "id": "IiOjq7uKvM8",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[#음중직캠] ITZY YUNA (있지 유나) – Girls Will Be Girls FanCam | 쇼! 음악중심 | MBC250614",
+          "url": "https://youtu.be/IiOjq7uKvM8"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[#음중직캠] ITZY YUNA (있지 유나) – Girls Will Be Girls FanCam | 쇼! 음악중심 | MBC250614",
+      "author": "MBCkpop",
+      "authorUrl": "https://www.youtube.com/@MBCkpop",
+      "titleReview": []
+    },
+    {
+      "id": "RLrYOQpfXe4",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[얼빡직캠 4K] 있지 유나 'Imaginary Friend' (ITZY YUNA Facecam) @뮤직뱅크(Music Bank) 241101",
+          "url": "https://youtu.be/RLrYOQpfXe4"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[얼빡직캠 4K] 있지 유나 'Imaginary Friend' (ITZY YUNA Facecam) @뮤직뱅크(Music Bank) 241101",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "rtl1zfLVKP4",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[안방1열 직캠4K] 있지 유나 'Kiss & Tell' (ITZY YUNA FanCam) @SBS Inkigayo 250615",
+          "url": "https://youtu.be/rtl1zfLVKP4"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[안방1열 직캠4K] 있지 유나 'Kiss & Tell' (ITZY YUNA FanCam) @SBS Inkigayo 250615",
+      "author": "SBSKPOP ZOOM",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP_ZOOM",
+      "titleReview": []
+    },
+    {
+      "id": "nd6ei0ITpRY",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[#최애직캠] ITZY YUNA (있지 유나) – TUNNEL VISION | 쇼! 음악중심 | MBC251115",
+          "url": "https://youtu.be/nd6ei0ITpRY"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[#최애직캠] ITZY YUNA (있지 유나) – TUNNEL VISION | 쇼! 음악중심 | MBC251115",
+      "author": "MBCkpop",
+      "authorUrl": "https://www.youtube.com/@MBCkpop",
+      "titleReview": []
+    },
+    {
+      "id": "P7RFR2_rRQo",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[안방1열 직캠4K] 있지 유나 'Motto' (ITZY YUNA FanCam) @SBS Inkigayo 260524",
+          "url": "https://youtu.be/P7RFR2_rRQo"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[안방1열 직캠4K] 있지 유나 'Motto' (ITZY YUNA FanCam) @SBS Inkigayo 260524",
+      "author": "SBSKPOP ZOOM",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP_ZOOM",
+      "titleReview": []
+    },
+    {
+      "id": "7EMrkN2mKLs",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[입덕직캠] 있지 유나 직캠 4K 'Kiss & Tell' (ITZY YUNA FanCam) | @MCOUNTDOWN_2025.6.12",
+          "url": "https://youtu.be/7EMrkN2mKLs"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 있지 유나 직캠 4K 'Kiss & Tell' (ITZY YUNA FanCam) | @MCOUNTDOWN_2025.6.12",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "Y_GcHc-nnms",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[얼빡직캠 4K] 있지 유나 'TUNNEL VISION' (ITZY YUNA Facecam) @뮤직뱅크(Music Bank) 251114",
+          "url": "https://youtu.be/Y_GcHc-nnms"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[얼빡직캠 4K] 있지 유나 'TUNNEL VISION' (ITZY YUNA Facecam) @뮤직뱅크(Music Bank) 251114",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "ALvjfeLM2Kw",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[#음중직캠] ITZY YUNA (있지 유나) – TUNNEL VISION FanCam | 쇼! 음악중심 | MBC251115",
+          "url": "https://youtu.be/ALvjfeLM2Kw"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[#음중직캠] ITZY YUNA (있지 유나) – TUNNEL VISION FanCam | 쇼! 음악중심 | MBC251115",
+      "author": "MBCkpop",
+      "authorUrl": "https://www.youtube.com/@MBCkpop",
+      "titleReview": []
+    },
+    {
+      "id": "_alufwVmO_E",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "유나(ITZY) - You & Me♬",
+          "url": "https://youtu.be/_alufwVmO_E"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "유나(ITZY) - You & Me♬",
+      "author": "SBS Entertainment",
+      "authorUrl": "https://www.youtube.com/@SBSenter.official",
+      "titleReview": []
+    },
+    {
+      "id": "yZIymvw5xgc",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[MPD직캠] 있지 유나 직캠 4K 'Motto' (ITZY YUNA FanCam) | @MCOUNTDOWN_2026.5.21",
+          "url": "https://youtu.be/yZIymvw5xgc"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[MPD직캠] 있지 유나 직캠 4K 'Motto' (ITZY YUNA FanCam) | @MCOUNTDOWN_2026.5.21",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "gUS7ibDJNmw",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[얼빡직캠 4K] 있지 유나 'Girls Will Be Girls' (ITZY YUNA Facecam) @뮤직뱅크(Music Bank) 250620",
+          "url": "https://youtu.be/gUS7ibDJNmw"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[얼빡직캠 4K] 있지 유나 'Girls Will Be Girls' (ITZY YUNA Facecam) @뮤직뱅크(Music Bank) 250620",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "S9HVfE_IlwY",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[입덕직캠] 있지 유나 직캠 4K '달라달라(DALLA DALLA)' (ITZY YUNA FanCam) | @MCOUNTDOWN_2019.3.7",
+          "url": "https://youtu.be/S9HVfE_IlwY"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 있지 유나 직캠 4K '달라달라(DALLA DALLA)' (ITZY YUNA FanCam) | @MCOUNTDOWN_2019.3.7",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "hegxYtQYpbo",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[#음중직캠] ITZY YUNA (있지 유나) – GOLD FanCam | 쇼! 음악중심 | MBC241019방송",
+          "url": "https://youtu.be/hegxYtQYpbo"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[#음중직캠] ITZY YUNA (있지 유나) – GOLD FanCam | 쇼! 음악중심 | MBC241019방송",
+      "author": "MBCkpop",
+      "authorUrl": "https://www.youtube.com/@MBCkpop",
+      "titleReview": []
+    },
+    {
+      "id": "YWyNJlVOa8U",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[MPD직캠] 있지 유나 직캠 4K 'Motto' (ITZY YUNA FanCam) | @MCOUNTDOWN_2026.5.28",
+          "url": "https://youtu.be/YWyNJlVOa8U"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[MPD직캠] 있지 유나 직캠 4K 'Motto' (ITZY YUNA FanCam) | @MCOUNTDOWN_2026.5.28",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "gkKymGe1kyg",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[얼빡직캠 4K] 있지 유나 'Motto' (ITZY YUNA Facecam) @뮤직뱅크(Music Bank) 260522",
+          "url": "https://youtu.be/gkKymGe1kyg"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[얼빡직캠 4K] 있지 유나 'Motto' (ITZY YUNA Facecam) @뮤직뱅크(Music Bank) 260522",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "dwUjvMyr5iU",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[안방1열 직캠4K] 있지 유나 '마.피.아. In the morning' (ITZY YUNA FanCam)│@SBS Inkigayo_2021.05.02.",
+          "url": "https://youtu.be/dwUjvMyr5iU"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[안방1열 직캠4K] 있지 유나 '마.피.아. In the morning' (ITZY YUNA FanCam)│@SBS Inkigayo_2021.05.02.",
+      "author": "SBSKPOP X INKIGAYO",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "T6hUtW1XoNo",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[입덕직캠] 있지 유나 직캠 4K 'BORN TO BE' (ITZY YUNA FanCam) | @MCOUNTDOWN_2024.1.11",
+          "url": "https://youtu.be/T6hUtW1XoNo"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 있지 유나 직캠 4K 'BORN TO BE' (ITZY YUNA FanCam) | @MCOUNTDOWN_2024.1.11",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "dz4pkhU4f7A",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[페이스캠4K] 있지 유나 'Girls Will Be Girls' (ITZY YUNA FaceCam) @SBS Inkigayo 250615",
+          "url": "https://youtu.be/dz4pkhU4f7A"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[페이스캠4K] 있지 유나 'Girls Will Be Girls' (ITZY YUNA FaceCam) @SBS Inkigayo 250615",
+      "author": "SBSKPOP ZOOM",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP_ZOOM",
+      "titleReview": []
+    },
+    {
+      "id": "H7fKleFPkME",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[K-Fancam] 있지 유나 직캠 'Imaginary Friend' (ITZY YUNA Fancam) @뮤직뱅크(Music Bank) 241101",
+          "url": "https://youtu.be/H7fKleFPkME"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[K-Fancam] 있지 유나 직캠 'Imaginary Friend' (ITZY YUNA Fancam) @뮤직뱅크(Music Bank) 241101",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "7CmE-TuxkEI",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[페이스캠4K] 있지 유나 'UNTOUCHABLE' (ITZY YUNA FaceCam) @SBS Inkigayo 240114",
+          "url": "https://youtu.be/7CmE-TuxkEI"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[페이스캠4K] 있지 유나 'UNTOUCHABLE' (ITZY YUNA FaceCam) @SBS Inkigayo 240114",
+      "author": "SBSKPOP ZOOM",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP_ZOOM",
+      "titleReview": []
+    },
+    {
+      "id": "gUktg4LUOy0",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[얼빡직캠 4K] 있지 유나 'Cheshire'(ITZY YUNA Facecam) @뮤직뱅크(Music Bank) 221202",
+          "url": "https://youtu.be/gUktg4LUOy0"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[얼빡직캠 4K] 있지 유나 'Cheshire'(ITZY YUNA Facecam) @뮤직뱅크(Music Bank) 221202",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "fJkq0-jYebY",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[EN/JP] 비주얼 보고 뽑는다는 서울 5성급 호텔리어 지원해봄 🏨ㅣ워커힐 호텔ㅣ워크돌ㅣ프로미스나인 지원, ITZY 유나",
+          "url": "https://youtu.be/fJkq0-jYebY"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[EN/JP] 비주얼 보고 뽑는다는 서울 5성급 호텔리어 지원해봄 🏨ㅣ워커힐 호텔ㅣ워크돌ㅣ프로미스나인 지원, ITZY 유나",
+      "author": "워크맨-Workman",
+      "authorUrl": "https://www.youtube.com/@workman",
+      "titleReview": []
+    },
+    {
+      "id": "9tBXHqpY5jw",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "[2024 MBC 가요대제전] YUNA X KARINA X SULLYOON - pocket locket, MBC 250129 방송",
+          "url": "https://youtu.be/9tBXHqpY5jw"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[2024 MBC 가요대제전] YUNA X KARINA X SULLYOON - pocket locket, MBC 250129 방송",
+      "author": "MBCkpop",
+      "authorUrl": "https://www.youtube.com/@MBCkpop",
+      "titleReview": []
+    },
+    {
+      "id": "4r00ps3AtaU",
+      "references": [
+        {
+          "owner": "a0061:호시",
+          "song": "MAESTRO",
+          "url": "https://www.youtube.com/watch?v=4r00ps3AtaU"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 세븐틴 호시 직캠 4K 'MAESTRO' (SEVENTEEN HOSHI FanCam) | @MCOUNTDOWN_2024.5.16",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "gv1WxmfaLrs",
+      "references": [
+        {
+          "owner": "a0067:승관",
+          "song": "부승관의 비비디바비디부",
+          "url": "https://youtu.be/gv1WxmfaLrs"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "다 울었니? 이제 할 일을 하자🥲 아이돌 최강 찐친 부.비.지🍊🐱🐹 등장 l 세븐틴(SEVENTEEN) 승관 l 비비지(VIVIZ) 신비 & 엄지 l 부승관의 비비디바비디부",
+      "author": "일일칠 - 117",
+      "authorUrl": "https://www.youtube.com/@ch117",
+      "titleReview": []
+    },
+    {
+      "id": "BtFPgl0tC0k",
+      "references": [
+        {
+          "owner": "a0070:신유",
+          "song": "첫 만남은 계획대로 되지 않아",
+          "url": "https://www.youtube.com/watch?v=BtFPgl0tC0k"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[#최애직캠] TWS SHINYU – plot twist (투어스 신유-첫 만남은 계획대로 되지 않아) Close-up Cam |Show!MusicCore| MBC240127방송",
+      "author": "MBCkpop",
+      "authorUrl": "https://www.youtube.com/@MBCkpop",
+      "titleReview": []
+    },
+    {
+      "id": "jTQyctuLb_4",
+      "references": [
+        {
+          "owner": "a0070:신유",
+          "song": "Oh Mymy : 7s",
+          "url": "https://www.youtube.com/watch?v=jTQyctuLb_4"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[얼빡직캠 4K] 투어스 신유 'Oh Mymy : 7s'(TWS SHINYU Facecam) @뮤직뱅크(Music Bank) 240126",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "kQem0PeYcvs",
+      "references": [
+        {
+          "owner": "a0070:신유",
+          "song": "Rock with you",
+          "url": "https://www.youtube.com/watch?v=kQem0PeYcvs"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 투어스 신유 직캠 4K 'Rock with you' (TWS SHINYU FanCam) | @MCOUNTDOWN_2024.7.18",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "EhDIY4FjCeU",
+      "references": [
+        {
+          "owner": "a0071:도훈",
+          "song": "Run Run",
+          "url": "https://www.youtube.com/watch?v=EhDIY4FjCeU"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "TWS(투어스) 도훈 - Run Run (원곡: 이클립스(ECLIPSE) (선재 업고 튀어 OST)) | TWS COMEBACK SHOW | Mnet 240624 방송",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "KPd460eDrWs",
+      "references": [
+        {
+          "owner": "a0071:도훈",
+          "song": "첫 만남은 계획대로 되지 않아",
+          "url": "https://www.youtube.com/watch?v=KPd460eDrWs"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[#최애직캠] TWS DOHOON – plot twist (투어스 도훈-첫 만남은 계획대로 되지 않아) Close-up Cam|Show! MusicCore|MBC240127방송",
+      "author": "MBCkpop",
+      "authorUrl": "https://www.youtube.com/@MBCkpop",
+      "titleReview": []
+    },
+    {
+      "id": "XpadVtyPogs",
+      "references": [
+        {
+          "owner": "a0071:도훈",
+          "song": "OVERDRIVE",
+          "url": "https://www.youtube.com/watch?v=XpadVtyPogs"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[페이스캠4K] 투어스 도훈 'OVERDRIVE' (TWS DOHOON FaceCam) @SBS Inkigayo 251026",
+      "author": "SBSKPOP ZOOM",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP_ZOOM",
+      "titleReview": []
+    },
+    {
+      "id": "U5QNHCyKvXI",
+      "references": [
+        {
+          "owner": "a0072:영재",
+          "song": "너의 모든 가능성이 되어줄게",
+          "url": "https://www.youtube.com/watch?v=U5QNHCyKvXI"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[4K] 260327-28 TWS(투어스) - ‘너의 모든 가능성이 되어줄게‘ 영재 직캠 @2026 TWS 2ND FANMEETING \"42:CLUB\"  IN SEOUL",
+      "author": "My young",
+      "authorUrl": "https://www.youtube.com/@Myyoung531",
+      "titleReview": []
+    },
+    {
+      "id": "Y_1mhDE_fX0",
+      "references": [
+        {
+          "owner": "a0072:영재",
+          "song": "다시 만난 오늘",
+          "url": "https://www.youtube.com/watch?v=Y_1mhDE_fX0"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[MPD직캠] 투어스 영재 직캠 4K '다시 만난 오늘' (TWS YOUNGJAE FanCam) | @MCOUNTDOWN_2026.2.12",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "OYK9DHYPXDw",
+      "references": [
+        {
+          "owner": "a0072:영재",
+          "song": "첫 만남은 계획대로 되지 않아",
+          "url": "https://www.youtube.com/watch?v=OYK9DHYPXDw"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[MPD직캠] 투어스 영재 직캠 4K '첫 만남은 계획대로 되지 않아' (TWS YOUNGJAE FanCam) | TWS DEBUT SHOW",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "WxDm3oin7lk",
+      "references": [
+        {
+          "owner": "a0073:한진",
+          "song": "첫 만남은 계획대로 되지 않아",
+          "url": "https://www.youtube.com/watch?v=WxDm3oin7lk"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[얼빡직캠 4K] 투어스 한진 '첫 만남은 계획대로 되지 않아'(TWS HANJIN Facecam) @뮤직뱅크(Music Bank) 240126",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "m9J7C7yrA9w",
+      "references": [
+        {
+          "owner": "a0073:한진",
+          "song": "Oh Mymy : 7s",
+          "url": "https://www.youtube.com/watch?v=m9J7C7yrA9w"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[얼빡직캠 4K] 투어스 한진 'Oh Mymy : 7s'(TWS HANJIN Facecam) @뮤직뱅크(Music Bank) 240126",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "X-DLqSIv3YA",
+      "references": [
+        {
+          "owner": "a0073:한진",
+          "song": "내가 S면 넌 나의 N이 되어줘",
+          "url": "https://www.youtube.com/watch?v=X-DLqSIv3YA"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 투어스 한진 직캠 4K '내가 S면 넌 나의 N이 되어줘' (TWS HANJIN FanCam) | TWS COMEBACK SHOW",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "Ma_JErDCfBM",
+      "references": [
+        {
+          "owner": "a0074:지훈",
+          "song": "마음 따라 뛰는 건 멋지지 않아?",
+          "url": "https://www.youtube.com/watch?v=Ma_JErDCfBM"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[#최애직캠] TWS JIHOON (투어스 지훈) – 마음 따라 뛰는 건 멋지지 않아? | 쇼! 음악중심 | MBC250426",
+      "author": "MBCkpop",
+      "authorUrl": "https://www.youtube.com/@MBCkpop",
+      "titleReview": []
+    },
+    {
+      "id": "uJnPpGXEEf4",
+      "references": [
+        {
+          "owner": "a0074:지훈",
+          "song": "첫 만남은 계획대로 되지 않아",
+          "url": "https://www.youtube.com/watch?v=uJnPpGXEEf4"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[MPD직캠] 투어스 지훈 직캠 4K '첫 만남은 계획대로 되지 않아' (TWS JIHOON FanCam) | TWS DEBUT SHOW",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "BzSV1_K-P7A",
+      "references": [
+        {
+          "owner": "a0074:지훈",
+          "song": "내가 S면 넌 나의 N이 되어줘",
+          "url": "https://www.youtube.com/watch?v=BzSV1_K-P7A"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 투어스 지훈 직캠 4K '내가 S면 넌 나의 N이 되어줘' (TWS JIHOON FanCam) | TWS COMEBACK SHOW",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "TJxdabTKRQc",
+      "references": [
+        {
+          "owner": "a0075:경민",
+          "song": "첫 만남은 계획대로 되지 않아",
+          "url": "https://www.youtube.com/watch?v=TJxdabTKRQc"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[얼빡직캠 4K] 투어스 경민 '첫 만남은 계획대로 되지 않아'(TWS KYUNGMIN Facecam) @뮤직뱅크(Music Bank) 240126",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "zVjxDvjt36A",
+      "references": [
+        {
+          "owner": "a0075:경민",
+          "song": "はじめまして",
+          "url": "https://www.youtube.com/watch?v=zVjxDvjt36A"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[4K] 251214 뮤글페  'はじめまして(하지메마시떼)' 투어스 경민 FAN CAM",
+      "author": "TWARD",
+      "authorUrl": "https://www.youtube.com/@247tward",
+      "titleReview": []
+    },
+    {
+      "id": "UMcSD3KHeLQ",
+      "references": [
+        {
+          "owner": "a0075:경민",
+          "song": "BFF",
+          "url": "https://www.youtube.com/watch?v=UMcSD3KHeLQ"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[#최애직캠] TWS KYUNGMIN (투어스 경민) – BFF | 쇼! 음악중심 | MBC240224방송",
+      "author": "MBCkpop",
+      "authorUrl": "https://www.youtube.com/@MBCkpop",
+      "titleReview": []
+    },
+    {
+      "id": "9ninWlkEthY",
+      "references": [
+        {
+          "owner": "a0076:민지",
+          "song": "Odoriko (踊り子)",
+          "url": "https://www.youtube.com/watch?v=9ninWlkEthY"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "민지 - 踊り子 (Odoriko) 무희  l 2024 Bunnies camp in tokyo Dom ver. M/V",
+      "author": "팜후드",
+      "authorUrl": "https://www.youtube.com/@%ED%8C%9C%ED%9B%84%EB%93%9C",
+      "titleReview": []
+    },
+    {
+      "id": "ZzU1TNHWWhM",
+      "references": [
+        {
+          "owner": "a0076:민지",
+          "song": "Attention",
+          "url": "https://www.youtube.com/watch?v=ZzU1TNHWWhM"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[안방1열 직캠4K] 뉴진스 민지 'Attention' (NewJeans MINJI FanCam) @SBS Inkigayo 220807",
+      "author": "SBSKPOP ZOOM",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP_ZOOM",
+      "titleReview": []
+    },
+    {
+      "id": "p1cE9T0CFCQ",
+      "references": [
+        {
+          "owner": "a0076:민지",
+          "song": "Hype Boy",
+          "url": "https://www.youtube.com/watch?v=p1cE9T0CFCQ"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[얼빡직캠 4K] 뉴진스 민지 'Hype Boy' (NewJeans MINJI Facecam) @뮤직뱅크(Music Bank) 220812",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "Rj7N4ThLGQY",
+      "references": [
+        {
+          "owner": "a0077:하니",
+          "song": "푸른 산호초 (青い珊瑚礁)",
+          "url": "https://www.youtube.com/watch?v=Rj7N4ThLGQY"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "하니 - 푸른산호초 (青い珊瑚礁) | 240626 BUNNIESCAMP | TOKYO DOME | 松田聖子 | Hanni | ハニ",
+      "author": "버니즈동물병원",
+      "authorUrl": "https://www.youtube.com/@bunniesvet",
+      "titleReview": []
+    },
+    {
+      "id": "lmJPeFW75qQ",
+      "references": [
+        {
+          "owner": "a0077:하니",
+          "song": "Hype Boy",
+          "url": "https://www.youtube.com/watch?v=lmJPeFW75qQ"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 뉴진스 하니 직캠 4K 'Hype Boy' (NewJeans HANNI FanCam) | @MCOUNTDOWN_2022.8.4",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "tQ8YtKBqaMc",
+      "references": [
+        {
+          "owner": "a0077:하니",
+          "song": "New Jeans",
+          "url": "https://www.youtube.com/watch?v=tQ8YtKBqaMc"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[K-Fancam] 뉴진스 하니 직캠 'New Jeans' (NewJeans HANNI Fancam) @뮤직뱅크(Music Bank) 230714",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "zbyet4HK4ko",
+      "references": [
+        {
+          "owner": "a0078:해린",
+          "song": "Hype Boy",
+          "url": "https://www.youtube.com/watch?v=zbyet4HK4ko"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[MPD직캠] 뉴진스 해린 직캠 4K 'Hype Boy' (NewJeans HAERIN FanCam) | @MCOUNTDOWN_2022.8.4",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "g6gM8x9H65Q",
+      "references": [
+        {
+          "owner": "a0078:해린",
+          "song": "Tell Me",
+          "url": "https://www.youtube.com/watch?v=g6gM8x9H65Q"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[2022 가요대전 4K] 뉴진스 해린 'Tell Me (원더걸스)' (NewJeans HAERIN Fancam)│@SBS Gayo Daejeon 221224",
+      "author": "SBSKPOP ZOOM",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP_ZOOM",
+      "titleReview": []
+    },
+    {
+      "id": "GyqqpCOyBos",
+      "references": [
+        {
+          "owner": "a0078:해린",
+          "song": "Cookie",
+          "url": "https://www.youtube.com/watch?v=GyqqpCOyBos"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[페이스캠4K] 뉴진스 해린 'Cookie' (NewJeans HAERIN FaceCam) @SBS Inkigayo 220807",
+      "author": "SBSKPOP ZOOM",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP_ZOOM",
+      "titleReview": []
+    },
+    {
+      "id": "lg6O00c0dGU",
+      "references": [
+        {
+          "owner": "a0079:혜인",
+          "song": "Hype Boy",
+          "url": "https://www.youtube.com/watch?v=lg6O00c0dGU"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[MPD직캠] 뉴진스 혜인 직캠 4K 'Hype Boy' (NewJeans HYEIN FanCam) | @MCOUNTDOWN_2022.8.4",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "Wz_mVys9Z4w",
+      "references": [
+        {
+          "owner": "a0079:혜인",
+          "song": "New Jeans",
+          "url": "https://www.youtube.com/watch?v=Wz_mVys9Z4w"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[K-Fancam] 뉴진스 혜인 직캠 'New Jeans' (NewJeans HYEIN Fancam) @뮤직뱅크(Music Bank) 230714",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "gwXFWPZAxME",
+      "references": [
+        {
+          "owner": "a0079:혜인",
+          "song": "Attention",
+          "url": "https://www.youtube.com/watch?v=gwXFWPZAxME"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[UNFILTERED CAM] NewJeans HYEIN(혜인) 'Attention' 4K | BE ORIGINAL",
+      "author": "STUDIO CHOOM [스튜디오 춤]",
+      "authorUrl": "https://www.youtube.com/@STUDIOCHOOM",
+      "titleReview": []
+    },
+    {
+      "id": "v5UH3wTPbzw",
+      "references": [
+        {
+          "owner": "a0080:다니엘",
+          "song": "Hype Boy",
+          "url": "https://www.youtube.com/watch?v=v5UH3wTPbzw"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[MPD직캠] 뉴진스 다니엘 직캠 4K 'Hype Boy' (NewJeans DANIELLE FanCam) | @MCOUNTDOWN_2022.8.4",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "NDTuPvEvVRI",
+      "references": [
+        {
+          "owner": "a0080:다니엘",
+          "song": "OMG",
+          "url": "https://www.youtube.com/watch?v=NDTuPvEvVRI"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[안방1열 직캠4K] 뉴진스 다니엘 'OMG' (NewJeans DANIELLE FanCam) @SBS Inkigayo 230129",
+      "author": "SBSKPOP ZOOM",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP_ZOOM",
+      "titleReview": []
+    },
+    {
+      "id": "tPKmJMEg2do",
+      "references": [
+        {
+          "owner": "a0080:다니엘",
+          "song": "Ditto",
+          "url": "https://www.youtube.com/watch?v=tPKmJMEg2do"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[얼빡직캠 4K] 뉴진스 다니엘 'Ditto'(NewJeans DANIELLE Facecam) @뮤직뱅크(Music Bank) 230120",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "Gh0paSexs8o",
+      "references": [
+        {
+          "owner": "a0081:마틴",
+          "song": "TNT",
+          "url": "https://www.youtube.com/watch?v=Gh0paSexs8o"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[안방1열 직캠4K] 코르티스 마틴 'TNT' (CORTIS MARTIN FanCam) @SBS Inkigayo 260510",
+      "author": "SBSKPOP ZOOM",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP_ZOOM",
+      "titleReview": []
+    },
+    {
+      "id": "AJTnVwZjnV4",
+      "references": [
+        {
+          "owner": "a0081:마틴",
+          "song": "TNT",
+          "url": "https://www.youtube.com/watch?v=AJTnVwZjnV4"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[#음중직캠] CORTIS MARTIN (코르티스 마틴) – TNT FanCam | 쇼! 음악중심 | MBC260509",
+      "author": "MBCkpop",
+      "authorUrl": "https://www.youtube.com/@MBCkpop",
+      "titleReview": []
+    },
+    {
+      "id": "Mocf2vfxBW0",
+      "references": [
+        {
+          "owner": "a0081:마틴",
+          "song": "ACAI",
+          "url": "https://www.youtube.com/watch?v=Mocf2vfxBW0"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 코르티스 마틴 직캠 4K 'ACAI' (CORTIS MARTIN FanCam) | @MCOUNTDOWN_2026.5.21",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "9mmzesSsQrU",
+      "references": [
+        {
+          "owner": "a0081:마틴",
+          "song": "YOUNGCREATORCREW",
+          "url": "https://www.youtube.com/watch?v=9mmzesSsQrU"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[보이스캠] 마틴 (CORTIS)｜Voice Focused FanCam｜MARTIN of CORTIS 🎵YOUNG​CREATOR​CREW｜VoiceCam360˚",
+      "author": "SoundBOMB360˚ 싸운드밤 삼육공",
+      "authorUrl": "https://www.youtube.com/@SoundBOMB360",
+      "titleReview": []
+    },
+    {
+      "id": "tWOItSAfA4M",
+      "references": [
+        {
+          "owner": "a0081:마틴",
+          "song": "GO!",
+          "url": "https://www.youtube.com/watch?v=tWOItSAfA4M"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[얼빡직캠 4K] 코르티스 마틴 'GO!' (CORTIS MARTIN Facecam) @뮤직뱅크(Music Bank) 250822",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "2LDdWZOK34c",
+      "references": [
+        {
+          "owner": "a0081:마틴",
+          "song": "REDRED",
+          "url": "https://www.youtube.com/watch?v=2LDdWZOK34c"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[MPD직캠] 코르티스 마틴 직캠 4K 'REDRED' (CORTIS MARTIN FanCam) | @MCOUNTDOWN_2026.4.23",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "2azvJj4u5D4",
+      "references": [
+        {
+          "owner": "a0081:마틴",
+          "song": "What You Want",
+          "url": "https://www.youtube.com/watch?v=2azvJj4u5D4"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[보이스캠] 마틴 (CORTIS)｜Voice Focused FanCam｜MARTIN of CORTIS 🎵What You Want｜VoiceCam360˚",
+      "author": "SoundBOMB360˚ 싸운드밤 삼육공",
+      "authorUrl": "https://www.youtube.com/@SoundBOMB360",
+      "titleReview": []
+    },
+    {
+      "id": "1neJU-a_0xk",
+      "references": [
+        {
+          "owner": "a0081:마틴",
+          "song": "[리무진서비스] EP.195 마틴 | Lullaby, Thinking Out Loud, 그땐 미처 알지 못했지, 난춘",
+          "url": "https://www.youtube.com/watch?v=1neJU-a_0xk"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[리무진서비스] EP.195 코르티스 마틴 | CORTIS MARTIN | Lullaby, Thinking Out Loud, 그땐 미처 알지 못했지, 난춘",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": [
+        "[리무진서비스] EP.195 마틴 | Lullaby, Thinking Out Loud, 그땐 미처 알지 못했지, 난춘"
+      ]
+    },
+    {
+      "id": "tT3XwwuPelM",
+      "references": [
+        {
+          "owner": "a0081:마틴",
+          "song": "몽쉘통통?! 일상 속 소름 돋는 프랑스어의 의미 [숭실대 불어불문학과] | 전과자 ep.119",
+          "url": "https://www.youtube.com/watch?v=tT3XwwuPelM"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "몽쉘통통?! 일상 속 소름 돋는 프랑스어의 의미 (feat.코르티스) [숭실대 불어불문학과]ㅣ전과자 ep.119 [EN/IN]",
+      "author": "ootb STUDIO",
+      "authorUrl": "https://www.youtube.com/@ootbstudio",
+      "titleReview": [
+        "몽쉘통통?! 일상 속 소름 돋는 프랑스어의 의미 [숭실대 불어불문학과] | 전과자 ep.119"
+      ]
+    },
+    {
+      "id": "twqghto0qZs",
+      "references": [
+        {
+          "owner": "a0082:제임스",
+          "song": "FaSHioN",
+          "url": "https://www.youtube.com/watch?v=twqghto0qZs"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 코르티스 제임스 직캠 4K 'FaSHioN' (CORTIS JAMES FanCam) | @MCOUNTDOWN_2025.9.18",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "xZBxf0BhMV8",
+      "references": [
+        {
+          "owner": "a0082:제임스",
+          "song": "REDRED",
+          "url": "https://www.youtube.com/watch?v=xZBxf0BhMV8"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[MPD직캠] 코르티스 제임스 직캠 4K 'REDRED' (CORTIS JAMES FanCam) | @MCOUNTDOWN_2026.4.23",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "JlTb7tJbA8U",
+      "references": [
+        {
+          "owner": "a0082:제임스",
+          "song": "ACAI",
+          "url": "https://www.youtube.com/watch?v=JlTb7tJbA8U"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[MPD직캠] 코르티스 제임스 직캠 4K 'ACAI' (CORTIS JAMES FanCam) | @MCOUNTDOWN_2026.5.21",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "a8PVi1KsIoc",
+      "references": [
+        {
+          "owner": "a0083:주훈",
+          "song": "REDRED",
+          "url": "https://www.youtube.com/watch?v=a8PVi1KsIoc"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[MPD직캠] 코르티스 주훈 직캠 4K 'REDRED' (CORTIS JUHOON FanCam) | @MCOUNTDOWN_2026.4.23",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "vVPM4nZvGWg",
+      "references": [
+        {
+          "owner": "a0083:주훈",
+          "song": "FaSHioN",
+          "url": "https://www.youtube.com/watch?v=vVPM4nZvGWg"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[페이스캠4K] 코르티스 주훈 'FaSHioN' (CORTIS JUHOON FaceCam) @SBS Inkigayo 250914",
+      "author": "SBSKPOP ZOOM",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP_ZOOM",
+      "titleReview": []
+    },
+    {
+      "id": "yYUTq-7Ttb4",
+      "references": [
+        {
+          "owner": "a0083:주훈",
+          "song": "GO!",
+          "url": "https://www.youtube.com/watch?v=yYUTq-7Ttb4"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[페이스캠4K] 코르티스 주훈 'GO!' (CORTIS JUHOON FaceCam) @SBS Inkigayo 250824",
+      "author": "SBSKPOP ZOOM",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP_ZOOM",
+      "titleReview": []
+    },
+    {
+      "id": "IoOURzcij64",
+      "references": [
+        {
+          "owner": "a0083:주훈",
+          "song": "노래방 점수는? '영크크'도 피해 갈 수 없는 라면 논쟁🍜",
+          "url": "https://youtu.be/IoOURzcij64"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[ENG/JP] 코르티스의 노래방 점수는? ‘영크크’도 피해 갈 수 없는 라면 논쟁🍜",
+      "author": "W KOREA",
+      "authorUrl": "https://www.youtube.com/@wkorea",
+      "titleReview": []
+    },
+    {
+      "id": "dxO1vEB6MNo",
+      "references": [
+        {
+          "owner": "a0083:주훈",
+          "song": "'FaSHioN' + 'REDRED' + 'What You Want' Live Performance @ KYUNG HEE UNIV.",
+          "url": "https://youtu.be/dxO1vEB6MNo"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "CORTIS (코르티스) ‘FaSHioN’ + ‘REDRED’ + ‘What You Want’ Live Performance @ KYUNG HEE UNIV.",
+      "author": "CORTIS",
+      "authorUrl": "https://www.youtube.com/@cortis_bighit",
+      "titleReview": []
+    },
+    {
+      "id": "ttdoG3Ewkis",
+      "references": [
+        {
+          "owner": "a0083:주훈",
+          "song": "ACAI",
+          "url": "https://youtu.be/ttdoG3Ewkis"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 코르티스 주훈 직캠 4K 'ACAI' (CORTIS JUHOON FanCam) | @MCOUNTDOWN_2026.5.21",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "pXbO-QQJsxM",
+      "references": [
+        {
+          "owner": "a0084:성현",
+          "song": "REDRED",
+          "url": "https://www.youtube.com/watch?v=pXbO-QQJsxM"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 코르티스 성현 직캠 4K 'REDRED' (CORTIS SEONGHYEON FanCam) | @MCOUNTDOWN_2026.4.23",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "A7CRAA9Ztkw",
+      "references": [
+        {
+          "owner": "a0084:성현",
+          "song": "FaSHioN",
+          "url": "https://www.youtube.com/watch?v=A7CRAA9Ztkw"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 코르티스 성현 직캠 4K 'FaSHioN' (CORTIS SEONGHYEON  FanCam) | @MCOUNTDOWN_2025.9.18",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "2Li7-6iraJE",
+      "references": [
+        {
+          "owner": "a0084:성현",
+          "song": "GO!",
+          "url": "https://www.youtube.com/watch?v=2Li7-6iraJE"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[페이스캠4K] 코르티스 성현 'GO!' (CORTIS SEONGHYEON FaceCam) @SBS Inkigayo 250824",
+      "author": "SBSKPOP ZOOM",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP_ZOOM",
+      "titleReview": []
+    },
+    {
+      "id": "gUGOkgP7DCQ",
+      "references": [
+        {
+          "owner": "a0084:성현",
+          "song": "ACAI",
+          "url": "https://youtu.be/gUGOkgP7DCQ"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 코르티스 성현 직캠 4K 'ACAI' (CORTIS SEONGHYEON FanCam) | @MCOUNTDOWN_2026.5.21",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "Lj-aVRh1Jlg",
+      "references": [
+        {
+          "owner": "a0084:성현",
+          "song": "잊어버리지마",
+          "url": "https://youtu.be/Lj-aVRh1Jlg"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[LIVE] CORTIS 성현 - 잊어버리지마 (Feat. 태연) (원곡: 크러쉬) | 우쥬레코드 코르티스 편",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "xup5NRdQERw",
+      "references": [
+        {
+          "owner": "a0084:성현",
+          "song": "JoyRide",
+          "url": "https://youtu.be/xup5NRdQERw"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 코르티스 성현 직캠 4K 'JoyRide' (CORTIS SEONGHYEON FanCam) | @MCOUNTDOWN_2026.2.5",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "MaP3KOq-VmY",
+      "references": [
+        {
+          "owner": "a0084:성현",
+          "song": "What You Want",
+          "url": "https://youtu.be/MaP3KOq-VmY"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[보이스캠] 성현 (CORTIS)｜Voice Focused FanCam｜SEONGHYEON of CORTIS 🎵What You Want｜VoiceCam360˚",
+      "author": "SoundBOMB360˚ 싸운드밤 삼육공",
+      "authorUrl": "https://www.youtube.com/@SoundBOMB360",
+      "titleReview": []
+    },
+    {
+      "id": "PTliWgtFXhk",
+      "references": [
+        {
+          "owner": "a0084:성현",
+          "song": "let's go picnic",
+          "url": "https://youtu.be/PTliWgtFXhk"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[LIVE] CORTIS 성현&건호 - let's go picnic (원곡: 죠지) | 우쥬레코드 코르티스 편",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "0GVgDhUbo0Q",
+      "references": [
+        {
+          "owner": "a0084:성현",
+          "song": "JoyRide",
+          "url": "https://youtu.be/0GVgDhUbo0Q"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[LIVE] CORTIS 성현&건호 - JoyRide (원곡: 코르티스) | 우쥬레코드 코르티스 편",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "sTy2oxQJCYw",
+      "references": [
+        {
+          "owner": "a0084:성현",
+          "song": "Blue Lips",
+          "url": "https://youtu.be/sTy2oxQJCYw"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "마틴X주훈X성현 - Blue Lips [더 시즌즈-성시경의 고막남친] | KBS 260605 방송",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "qx8VbGEWcBo",
+      "references": [
+        {
+          "owner": "a0085:건호",
+          "song": "JoyRide",
+          "url": "https://www.youtube.com/watch?v=qx8VbGEWcBo"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 코르티스 건호 직캠 4K 'JoyRide' (CORTIS KEONHO FanCam) | @MCOUNTDOWN_2026.2.5",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "M1SqjF8_Yns",
+      "references": [
+        {
+          "owner": "a0085:건호",
+          "song": "What You Want",
+          "url": "https://www.youtube.com/watch?v=M1SqjF8_Yns"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[페이스캠4K] 코르티스 건호 'What You Want' (CORTIS KEONHO FaceCam) @SBS Inkigayo 250824",
+      "author": "SBSKPOP ZOOM",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP_ZOOM",
+      "titleReview": []
+    },
+    {
+      "id": "fcdjgDyBj7E",
+      "references": [
+        {
+          "owner": "a0085:건호",
+          "song": "MIC Drop",
+          "url": "https://www.youtube.com/watch?v=fcdjgDyBj7E"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[4K] 251214 KBS 일본 가대축 뮤직뱅크 글로벌 페스티벌 - [ MIC Drop - BTS ] - CORTIS 코르티스 KEONHO 건호 직캠",
+      "author": "Hunter.",
+      "authorUrl": "https://www.youtube.com/@keonho_kr",
+      "titleReview": []
+    },
+    {
+      "id": "93iJLm0kUAU",
+      "references": [
+        {
+          "owner": "a0085:건호",
+          "song": "GO!",
+          "url": "https://www.youtube.com/watch?v=93iJLm0kUAU"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[얼빡직캠 4K] 코르티스 건호 'GO!' (CORTIS KEONHO Facecam) @뮤직뱅크(Music Bank) 250822",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "cxcxx0f6caM",
+      "references": [
+        {
+          "owner": "a0085:건호",
+          "song": "REDRED",
+          "url": "https://www.youtube.com/watch?v=cxcxx0f6caM"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 코르티스 건호 직캠 4K 'REDRED' (CORTIS KEONHO FanCam) | @MCOUNTDOWN_2026.4.23",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "kPjbIP7kaqs",
+      "references": [
+        {
+          "owner": "a0085:건호",
+          "song": "FaSHioN",
+          "url": "https://www.youtube.com/watch?v=kPjbIP7kaqs"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[#최애직캠] CORTIS KEONHO (코르티스 건호) – FaSHioN | 쇼! 음악중심 | MBC250913",
+      "author": "MBCkpop",
+      "authorUrl": "https://www.youtube.com/@MBCkpop",
+      "titleReview": []
+    },
+    {
+      "id": "7B9XR97PqTw",
+      "references": [
+        {
+          "owner": "a0085:건호",
+          "song": "[LIVE] 건호 - 내 마음에 비친 내 모습 (원곡: 유재하) | 우쥬레코드 편",
+          "url": "https://www.youtube.com/watch?v=7B9XR97PqTw"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[LIVE] CORTIS 건호 - 내 마음에 비친 내 모습 (원곡: 유재하) | 우쥬레코드 코르티스 편",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": [
+        "[LIVE] 건호 - 내 마음에 비친 내 모습 (원곡: 유재하) | 우쥬레코드 편"
+      ]
+    },
+    {
+      "id": "6q-6NwTymiM",
+      "references": [
+        {
+          "owner": "a0085:건호",
+          "song": "[리무진서비스] EP.213 건호 | Blue Lips, Great Pretender, 그대 작은 나의 세상이 되어, 나의 외로움이 널 부를 때",
+          "url": "https://www.youtube.com/watch?v=6q-6NwTymiM"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[리무진서비스] EP.213 코르티스 건호 |CORTIS KEONHO | Blue Lips, Great Pretender, 그대 작은 나의 세상이 되어, 나의 외로움이 널 부를 때",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": [
+        "[리무진서비스] EP.213 건호 | Blue Lips, Great Pretender, 그대 작은 나의 세상이 되어, 나의 외로움이 널 부를 때"
+      ]
+    },
+    {
+      "id": "sybGMTcvX7s",
+      "references": [
+        {
+          "owner": "a0085:건호",
+          "song": "말시키면 귀빨개지는 데뷔 5개월차 | EP. 126 마틴 건호 | 살롱드립",
+          "url": "https://www.youtube.com/watch?v=sybGMTcvX7s"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[SUB] 말시키면 귀빨개지는 데뷔 5개월차 | EP. 126 코르티스 마틴 건호 | 살롱드립",
+      "author": "TEO 테오",
+      "authorUrl": "https://www.youtube.com/@TEO_universe",
+      "titleReview": [
+        "말시키면 귀빨개지는 데뷔 5개월차 | EP. 126 마틴 건호 | 살롱드립"
+      ]
+    },
+    {
+      "id": "0Ar9bq1yjP0",
+      "references": [
+        {
+          "owner": "a0086:안유진",
+          "song": "ELEVEN",
+          "url": "https://www.youtube.com/watch?v=0Ar9bq1yjP0"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[페이스캠4K] 아이브 안유진 'ELEVEN' (IVE YUJIN FaceCam)│@SBS Inkigayo_2021.12.12.",
+      "author": "SBSKPOP X INKIGAYO",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "zs7VgEMbpUg",
+      "references": [
+        {
+          "owner": "a0086:안유진",
+          "song": "Lion Heart",
+          "url": "https://www.youtube.com/watch?v=zs7VgEMbpUg"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[가요대제전] IVE YUJIN - Lion Heart(아이브 안유진 - 라이언 하트) FanCam | MBC Music Festival | MBC221231방송",
+      "author": "MBCkpop",
+      "authorUrl": "https://www.youtube.com/@MBCkpop",
+      "titleReview": []
+    },
+    {
+      "id": "kYdWmnu4Qdo",
+      "references": [
+        {
+          "owner": "a0086:안유진",
+          "song": "Kitsch",
+          "url": "https://www.youtube.com/watch?v=kYdWmnu4Qdo"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[MPD직캠] 아이브 안유진 직캠 4K 'Kitsch' (IVE YUJIN FanCam) | @MCOUNTDOWN_2023.4.13",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "-9RMTYZ2Etw",
+      "references": [
+        {
+          "owner": "a0087:가을",
+          "song": "After LIKE",
+          "url": "https://www.youtube.com/watch?v=-9RMTYZ2Etw"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[페이스캠4K] 아이브 가을 'After LIKE' (IVE GAEUL FaceCam) @SBS Inkigayo 220904",
+      "author": "SBSKPOP ZOOM",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP_ZOOM",
+      "titleReview": []
+    },
+    {
+      "id": "UiYUVhsBraM",
+      "references": [
+        {
+          "owner": "a0087:가을",
+          "song": "Odd",
+          "url": "https://www.youtube.com/watch?v=UiYUVhsBraM"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "251031 아이브 콘서트 SHOW WHAT I AM 가을 솔로곡 'Odd' 오드 직캠 ive gaeul solo odd 4k fancam",
+      "author": "sunset",
+      "authorUrl": "https://www.youtube.com/@sunset_ge",
+      "titleReview": []
+    },
+    {
+      "id": "jlVi_OlLkAU",
+      "references": [
+        {
+          "owner": "a0087:가을",
+          "song": "LOVE DIVE",
+          "url": "https://www.youtube.com/watch?v=jlVi_OlLkAU"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[MPD직캠] 아이브 가을 직캠 4K 'LOVE DIVE' (IVE GAEUL FanCam) | @MCOUNTDOWN_2022.4.7",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "mKLLdYSl3Lk",
+      "references": [
+        {
+          "owner": "a0088:레이",
+          "song": "After LIKE",
+          "url": "https://www.youtube.com/watch?v=mKLLdYSl3Lk"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[안방1열 직캠4K] 아이브 레이 'After LIKE' (IVE REI FanCam) @SBS Inkigayo 220828",
+      "author": "SBSKPOP ZOOM",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP_ZOOM",
+      "titleReview": []
+    },
+    {
+      "id": "bD5vB0Yc_O4",
+      "references": [
+        {
+          "owner": "a0088:레이",
+          "song": "ELEVEN",
+          "url": "https://www.youtube.com/watch?v=bD5vB0Yc_O4"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[페이스캠4K] 아이브 레이 'ELEVEN' (IVE REI FaceCam)│@SBS Inkigayo_2021.12.12.",
+      "author": "SBSKPOP X INKIGAYO",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "vWOPzl5iLIc",
+      "references": [
+        {
+          "owner": "a0088:레이",
+          "song": "LOVE DIVE",
+          "url": "https://www.youtube.com/watch?v=vWOPzl5iLIc"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[안방1열 직캠4K] 아이브 레이 'LOVE DIVE' (IVE REI FanCam)│@SBS Inkigayo_2022.05.01.",
+      "author": "SBSKPOP X INKIGAYO",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "DqvMi7J_juM",
+      "references": [
+        {
+          "owner": "a0089:장원영",
+          "song": "LOVE DIVE",
+          "url": "https://www.youtube.com/watch?v=DqvMi7J_juM"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 아이브 장원영 직캠 4K 'LOVE DIVE' (IVE WONYOUNG FanCam) | @MCOUNTDOWN_2022.4.7",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "ERGrC1s5_3k",
+      "references": [
+        {
+          "owner": "a0089:장원영",
+          "song": "ELEVEN",
+          "url": "https://www.youtube.com/watch?v=ERGrC1s5_3k"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[안방1열 직캠4K] 아이브 장원영 'ELEVEN' (IVE WONYOUNG FanCam)│@SBS Inkigayo_2021.12.05.",
+      "author": "SBSKPOP X INKIGAYO",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "A0vgoyTmkgQ",
+      "references": [
+        {
+          "owner": "a0089:장원영",
+          "song": "After LIKE",
+          "url": "https://www.youtube.com/watch?v=A0vgoyTmkgQ"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[MPD직캠] 아이브 장원영 직캠 4K 'After LIKE' (IVE WONYOUNG FanCam) | @MCOUNTDOWN_2022.9.1",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "FkmdvsEqW9k",
+      "references": [
+        {
+          "owner": "a0090:리즈",
+          "song": "바람아 멈추어다오",
+          "url": "https://www.youtube.com/watch?v=FkmdvsEqW9k"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[놀면 뭐하니?] 사랑스러운 목소리🥰 리즈가 부르는 ＜바람아 멈추어다오＞, MBC 250927 방송",
+      "author": "MBCentertainment",
+      "authorUrl": "https://www.youtube.com/@MBCentertainment",
+      "titleReview": []
+    },
+    {
+      "id": "d9v1UAN4tw0",
+      "references": [
+        {
+          "owner": "a0090:리즈",
+          "song": "ELEVEN",
+          "url": "https://www.youtube.com/watch?v=d9v1UAN4tw0"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[K-Fancam] 아이브 리즈 직캠 'ELEVEN' (IVE LIZ Fancam) | @MusicBank 211203",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "h7OmJZS7sxY",
+      "references": [
+        {
+          "owner": "a0090:리즈",
+          "song": "REBEL HEART",
+          "url": "https://www.youtube.com/watch?v=h7OmJZS7sxY"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[페이스캠4K] 아이브 리즈 'REBEL HEART' (IVE LIZ FaceCam) @SBS Inkigayo 250119",
+      "author": "SBSKPOP ZOOM",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP_ZOOM",
+      "titleReview": []
+    },
+    {
+      "id": "f_GA7Z7FFu8",
+      "references": [
+        {
+          "owner": "a0090:리즈",
+          "song": "그 신곡 홍보차 알바 왔다가 피자 싹싹 먹음 ㅣ 파파존스 피자 알바ㅣ워크돌ㅣ리즈, 키키 지유",
+          "url": "https://youtu.be/f_GA7Z7FFu8"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "신곡 홍보차 알바 왔다가 피자 싹싹 먹음 ㅣ 파파존스 피자 알바ㅣ워크돌ㅣ아이브 리즈, 키키 지유",
+      "author": "워크맨-Workman",
+      "authorUrl": "https://www.youtube.com/@workman",
+      "titleReview": [
+        "그 신곡 홍보차 알바 왔다가 피자 싹싹 먹음 ㅣ 파파존스 피자 알바ㅣ워크돌ㅣ리즈, 키키 지유"
+      ]
+    },
+    {
+      "id": "D0lmEcdgO1M",
+      "references": [
+        {
+          "owner": "a0091:이서",
+          "song": "ELEVEN",
+          "url": "https://www.youtube.com/watch?v=D0lmEcdgO1M"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[안방1열 직캠4K] 아이브 이서 'ELEVEN' (IVE LEESEO FanCam)│@SBS Inkigayo_2021.12.05.",
+      "author": "SBSKPOP X INKIGAYO",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "aHGZGBY-Koc",
+      "references": [
+        {
+          "owner": "a0091:이서",
+          "song": "LOVE DIVE",
+          "url": "https://www.youtube.com/watch?v=aHGZGBY-Koc"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 아이브 이서 직캠 4K 'LOVE DIVE' (IVE LEESEO FanCam) | @MCOUNTDOWN_2022.4.21",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "NOVaFSRBZrk",
+      "references": [
+        {
+          "owner": "a0091:이서",
+          "song": "After LIKE",
+          "url": "https://www.youtube.com/watch?v=NOVaFSRBZrk"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[페이스캠4K] 아이브 이서 'After LIKE' (IVE LEESEO FaceCam) @SBS Inkigayo 220828",
+      "author": "SBSKPOP ZOOM",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP_ZOOM",
+      "titleReview": []
+    },
+    {
+      "id": "geAne2rrf7Q",
+      "references": [
+        {
+          "owner": "a0097:원이",
+          "song": "LOVE ATTACK",
+          "url": "https://www.youtube.com/watch?v=geAne2rrf7Q"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[4K] 260527 'LOVE ATTACK' 원이 리센느 WONI RESCENE | 강원대학교 축제",
+      "author": "원아지 wonaji",
+      "authorUrl": "https://www.youtube.com/@wonaji_525",
+      "titleReview": []
+    },
+    {
+      "id": "a2OHT0Bi5lE",
+      "references": [
+        {
+          "owner": "a0097:원이",
+          "song": "Deja Vu",
+          "url": "https://www.youtube.com/watch?v=a2OHT0Bi5lE"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[4K] 260613 'Deja Vu' 원이 리센느 WONI RESCENE | Japan Fan Event",
+      "author": "원아지 wonaji",
+      "authorUrl": "https://www.youtube.com/@wonaji_525",
+      "titleReview": []
+    },
+    {
+      "id": "YAmTgcLa-80",
+      "references": [
+        {
+          "owner": "a0097:원이",
+          "song": "Pinball",
+          "url": "https://www.youtube.com/watch?v=YAmTgcLa-80"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[안방1열 직캠4K] 리센느 원이 'Pinball' (RESCENE WONI FanCam) @SBS Inkigayo 240922",
+      "author": "SBSKPOP ZOOM",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP_ZOOM",
+      "titleReview": []
+    },
+    {
+      "id": "Xc8zNkCwGC0",
+      "references": [
+        {
+          "owner": "a0098:리브",
+          "song": "LOVE ATTACK",
+          "url": "https://www.youtube.com/watch?v=Xc8zNkCwGC0"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "260528 리센느 리브 LOVE ATTACK (RESCENE LIV Fancam) 4K 직캠 | 유한대 버들대동제",
+      "author": "SCENEBAG",
+      "authorUrl": "https://www.youtube.com/@SCENEBAG",
+      "titleReview": []
+    },
+    {
+      "id": "Lo1CTBTXda8",
+      "references": [
+        {
+          "owner": "a0098:리브",
+          "song": "Glow Up",
+          "url": "https://www.youtube.com/watch?v=Lo1CTBTXda8"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[안방1열 직캠4K] 리센느 리브 'Glow Up' (RESCENE LIV FanCam) @SBS Inkigayo 250302",
+      "author": "SBSKPOP ZOOM",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP_ZOOM",
+      "titleReview": []
+    },
+    {
+      "id": "dwGvBIkURR0",
+      "references": [
+        {
+          "owner": "a0098:리브",
+          "song": "Deja Vu",
+          "url": "https://www.youtube.com/watch?v=dwGvBIkURR0"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "260601 리센느 리브 'Deja Vu' 직캠 (RESCENE LIV 4K FANCAM) @국립순천대학교",
+      "author": "primavera",
+      "authorUrl": "https://www.youtube.com/@primavera_liv",
+      "titleReview": []
+    },
+    {
+      "id": "3lONVqtRXAI",
+      "references": [
+        {
+          "owner": "a0099:미나미",
+          "song": "LOVE ATTACK",
+          "url": "https://www.youtube.com/watch?v=3lONVqtRXAI"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[플리캠 4K 가로] RESCENE MINAMI 'LOVE ATTACK' (리센느 미나미 직캠) l Simply K-Pop CON-TOUR Ep.630",
+      "author": "ARIRANG K-POP",
+      "authorUrl": "https://www.youtube.com/@arirangworld",
+      "titleReview": []
+    },
+    {
+      "id": "XA1cVAlrid4",
+      "references": [
+        {
+          "owner": "a0099:미나미",
+          "song": "다시 만난 세계",
+          "url": "https://www.youtube.com/watch?v=XA1cVAlrid4"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[MPD직캠] 리센느 미나미 직캠 4K '다시 만난 세계 (Into The New World)' (RESCENE MINAMI FanCam) | @MCOUNTDOWN_2025.2.6",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "ZJGzCkV_RGg",
+      "references": [
+        {
+          "owner": "a0099:미나미",
+          "song": "Runaway",
+          "url": "https://www.youtube.com/watch?v=ZJGzCkV_RGg"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[얼빡직캠 4K] 리센느 미나미 'Runaway' (RESCENE MINAMI Facecam) @뮤직뱅크(Music Bank) 260417",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "GX4I0MyI6I0",
+      "references": [
+        {
+          "owner": "a0100:메이",
+          "song": "다시 만난 세계",
+          "url": "https://www.youtube.com/watch?v=GX4I0MyI6I0"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 리센느 메이 직캠 4K '다시 만난 세계 (Into The New World)' (RESCENE MAY FanCam) | @MCOUNTDOWN_2025.2.6",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "hlyhddaC6qg",
+      "references": [
+        {
+          "owner": "a0100:메이",
+          "song": "Glow Up",
+          "url": "https://www.youtube.com/watch?v=hlyhddaC6qg"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[안방1열 직캠4K] 리센느 메이 'Glow Up' (RESCENE MAY FanCam) @SBS Inkigayo 250216",
+      "author": "SBSKPOP ZOOM",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP_ZOOM",
+      "titleReview": []
+    },
+    {
+      "id": "h7zcNExoSKM",
+      "references": [
+        {
+          "owner": "a0100:메이",
+          "song": "LOVE ATTACK",
+          "url": "https://www.youtube.com/watch?v=h7zcNExoSKM"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[플리캠 4K] RESCENE MAY 'LOVE ATTACK' (리센느 메이 직캠) l Simply K-Pop CON-TOUR Ep.629",
+      "author": "ARIRANG K-POP",
+      "authorUrl": "https://www.youtube.com/@arirangworld",
+      "titleReview": []
+    },
+    {
+      "id": "maQWa95XlLE",
+      "references": [
+        {
+          "owner": "a0101:제나",
+          "song": "Deja Vu",
+          "url": "https://www.youtube.com/watch?v=maQWa95XlLE"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "260601 리센느 제나 데자부 Rescene Zena Dejavu",
+      "author": "snow",
+      "authorUrl": "https://www.youtube.com/@zenakim1127",
+      "titleReview": []
+    },
+    {
+      "id": "vJkC_NveL08",
+      "references": [
+        {
+          "owner": "a0101:제나",
+          "song": "LOVE ATTACK",
+          "url": "https://www.youtube.com/watch?v=vJkC_NveL08"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[안방1열 직캠4K] 리센느 제나 'LOVE ATTACK' (RESCENE ZENA FanCam)│@SBS Inkigayo 240901",
+      "author": "SBSKPOP ZOOM",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP_ZOOM",
+      "titleReview": []
+    },
+    {
+      "id": "jRfTKjK-mmY",
+      "references": [
+        {
+          "owner": "a0101:제나",
+          "song": "Glow Up",
+          "url": "https://www.youtube.com/watch?v=jRfTKjK-mmY"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[얼빡직캠 4K] 리센느 제나 'Glow Up' (RESCENE ZENA Facecam) @뮤직뱅크(Music Bank) 250214",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "Z9rYx1b4yjU",
+      "references": [
+        {
+          "owner": "a0103:나띠",
+          "song": "Who is she",
+          "url": "https://www.youtube.com/watch?v=Z9rYx1b4yjU"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[MPD직캠] 키스오브라이프 나띠 직캠 4K 'Who is she' (KISS OF LIFE NATTY FanCam) | @MCOUNTDOWN_2026.4.9",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "yWdkluPFQiE",
+      "references": [
+        {
+          "owner": "a0126:앤톤",
+          "song": "#ANTON Like a Pro?",
+          "url": "https://youtu.be/yWdkluPFQiE"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "#ANTON Like a Pro?",
+      "author": "RIIZE",
+      "authorUrl": "https://www.youtube.com/@RIIZE_official",
+      "titleReview": []
+    },
+    {
+      "id": "_rAqLR6kVRo",
+      "references": [
+        {
+          "owner": "a0126:앤톤",
+          "song": "윤상 아들 찬영이",
+          "url": "https://youtu.be/_rAqLR6kVRo"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[#또보능] 윤상 아들 찬영이는 자라서 라이즈(RIIZE) 앤톤이 됩니다.. 감사합니다.. #앤톤 #찬영",
+      "author": "SBS 옛날 예능 - 빽능",
+      "authorUrl": "https://www.youtube.com/@BBACKENT",
+      "titleReview": []
+    },
+    {
+      "id": "qQDjrYoN_VM",
+      "references": [
+        {
+          "owner": "a0126:앤톤",
+          "song": "살롱드립 EP.144",
+          "url": "https://youtu.be/qQDjrYoN_VM"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[SUB] 유난히 내성적이었던 톤짱과 외향적이었던 쇼짱 | EP. 144 라이즈 앤톤 쇼타로 | 살롱드립",
+      "author": "TEO 테오",
+      "authorUrl": "https://www.youtube.com/@TEO_universe",
+      "titleReview": [
+        "살롱드립 EP.144"
+      ]
+    },
+    {
+      "id": "x3Y2-mQRWFw",
+      "references": [
+        {
+          "owner": "a0127:연준",
+          "song": "GGUM",
+          "url": "https://www.youtube.com/watch?v=x3Y2-mQRWFw"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "YEONJUN(연준) 'GGUM' (4K) | STUDIO CHOOM ORIGINAL",
+      "author": "STUDIO CHOOM [스튜디오 춤]",
+      "authorUrl": "https://www.youtube.com/@STUDIOCHOOM",
+      "titleReview": []
+    },
+    {
+      "id": "sx4hPjppi6E",
+      "references": [
+        {
+          "owner": "a0127:연준",
+          "song": "Run Away",
+          "url": "https://www.youtube.com/watch?v=sx4hPjppi6E"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] TXT 연준 직캠 4K '9와 4분의 3 승강장에서 너를 기다려 (Run Away)' (TXT YEONJUN FanCam) | @TXT Welcome Back Show",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "o3WX9FRTIUI",
+      "references": [
+        {
+          "owner": "a0127:연준",
+          "song": "교환일기 (두밧두 와리와리)",
+          "url": "https://www.youtube.com/watch?v=o3WX9FRTIUI"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[페이스캠4K] 투모로우바이투게더 연준 '교환일기 (두밧두 와리와리)' (TXT YEONJUN 'MOA Diary' FaceCam)│@SBS Inkigayo_2021.08.22.",
+      "author": "SBSKPOP X INKIGAYO",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "NTDTHIyNWLk",
+      "references": [
+        {
+          "owner": "a0128:수빈",
+          "song": "Dolphin",
+          "url": "https://www.youtube.com/watch?v=NTDTHIyNWLk"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[K-Fancam] 수빈 직캠 'Dolphin' (SOOBIN Fancam) l @MusicBank 200724",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "ibnQ1bH8fIM",
+      "references": [
+        {
+          "owner": "a0128:수빈",
+          "song": "Run Away",
+          "url": "https://www.youtube.com/watch?v=ibnQ1bH8fIM"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] TXT 수빈 직캠 4K '9와 4분의 3 승강장에서 너를 기다려 (Run Away)' (TXT SOOBIN FanCam) | @MCOUNTDOWN_2019.10.24",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "CrYbcz9ONYY",
+      "references": [
+        {
+          "owner": "a0128:수빈",
+          "song": "어느날 머리에서 뿔이 자랐다 (CROWN)",
+          "url": "https://www.youtube.com/watch?v=CrYbcz9ONYY"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] TXT 수빈 직캠 4K ‘어느날 머리에서 뿔이 자랐다(CROWN)’ (TXT SOOBIN FanCam) | @MCOUNTDOWN_2019.3.7",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "-oJ_uuwNMgk",
+      "references": [
+        {
+          "owner": "a0129:범규",
+          "song": "Panic",
+          "url": "https://www.youtube.com/watch?v=-oJ_uuwNMgk"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "범규 (BEOMGYU) ‘Panic’ Live Clip | TXT (투모로우바이투게더)",
+      "author": "TOMORROW X TOGETHER OFFICIAL",
+      "authorUrl": "https://www.youtube.com/@TXT_bighit",
+      "titleReview": []
+    },
+    {
+      "id": "rDnPaRFDnUk",
+      "references": [
+        {
+          "owner": "a0129:범규",
+          "song": "0X1=LOVESONG (I Know I Love You)",
+          "url": "https://www.youtube.com/watch?v=rDnPaRFDnUk"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] TXT 범규 직캠 4K '0X1=LOVESONG (I Know I Love You) feat. Seori' (TXT BEOMGYU FanCam)",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "OPdaubrjGqk",
+      "references": [
+        {
+          "owner": "a0129:범규",
+          "song": "LO$ER=LO♥ER",
+          "url": "https://www.youtube.com/watch?v=OPdaubrjGqk"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[페이스캠4K] 투모로우바이투게더 범규 'LO$ER=LO♡ER' (TXT BEOMGYU FaceCam)│@SBS Inkigayo_2021.08.22.",
+      "author": "SBSKPOP X INKIGAYO",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "L7rEIensKMo",
+      "references": [
+        {
+          "owner": "a0130:태현",
+          "song": "Angel Or Devil",
+          "url": "https://www.youtube.com/watch?v=L7rEIensKMo"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] TXT 태현 직캠 4K 'Angel Or Devil' (TXT TAEHYUN FanCam) | @TXT Welcome Back Show_2019.10.21",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "A7nimn-8ZA8",
+      "references": [
+        {
+          "owner": "a0130:태현",
+          "song": "0X1=LOVESONG (I Know I Love You)",
+          "url": "https://www.youtube.com/watch?v=A7nimn-8ZA8"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] TXT 태현 직캠 4K '0X1=LOVESONG (I Know I Love You) feat. Seori' (TXT TAEHYUN FanCam)",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "wYMeibz-Uqc",
+      "references": [
+        {
+          "owner": "a0130:태현",
+          "song": "거리에서",
+          "url": "https://www.youtube.com/watch?v=wYMeibz-Uqc"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[Full Version]체인지스트릿 1회 | 태현(TAEHYUN) - 거리에서 | Change Street ver.",
+      "author": "체인지스트릿Official",
+      "authorUrl": "https://www.youtube.com/@%EC%B2%B4%EC%9D%B8%EC%A7%80%EC%8A%A4%ED%8A%B8%EB%A6%BFOfficial",
+      "titleReview": []
+    },
+    {
+      "id": "GINn6TxkNCU",
+      "references": [
+        {
+          "owner": "a0131:휴닝카이",
+          "song": "Run Away",
+          "url": "https://www.youtube.com/watch?v=GINn6TxkNCU"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[MPD직캠] TXT 휴닝카이 직캠 4K '9와 4분의3 승강장에서 너를 기다려 (RunAway)' (HUENINGKAI FanCam) | @MCOUNTDOWN_2019.10.24",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "OJhk0vWphdQ",
+      "references": [
+        {
+          "owner": "a0131:휴닝카이",
+          "song": "어느날 머리에서 뿔이 자랐다 (CROWN)",
+          "url": "https://www.youtube.com/watch?v=OJhk0vWphdQ"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[MPD직캠] TXT 휴닝카이 직캠 ‘어느날 머리에서 뿔이 자랐다(CROWN)’ (TXT HUENINGKAI FanCam) | @MCOUNTDOWN_2019.3.7",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "umDN066o6-Y",
+      "references": [
+        {
+          "owner": "a0131:휴닝카이",
+          "song": "Upside Down Kiss",
+          "url": "https://www.youtube.com/watch?v=umDN066o6-Y"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[#최애직캠] TXT HUENINGKAI (투모로우바이투게더 휴닝카이) – Upside Down Kiss | 쇼! 음악중심 | MBC250726",
+      "author": "MBCkpop",
+      "authorUrl": "https://www.youtube.com/@MBCkpop",
+      "titleReview": []
+    },
+    {
+      "id": "Gn8eN1OEh74",
+      "references": [
+        {
+          "owner": "a0281:은하",
+          "song": "MANIAC",
+          "url": "https://youtu.be/Gn8eN1OEh74"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[페이스캠4K] 비비지 은하 'MANIAC' (VIVIZ EUNHA FaceCam) @SBS Inkigayo 231112",
+      "author": "SBSKPOP ZOOM",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP_ZOOM",
+      "titleReview": []
+    },
+    {
+      "id": "FdMya1GCuT4",
+      "references": [
+        {
+          "owner": "a0281:은하",
+          "song": "Location Unknown (HONNE Cover)",
+          "url": "https://youtu.be/FdMya1GCuT4"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "은하 (EUNHA) - 'Location Unknown ◐ (feat. BEKA) [Brooklyn Session]' (HONNE) Cover",
+      "author": "VIVIZ",
+      "authorUrl": "https://www.youtube.com/@viviz.official",
+      "titleReview": [
+        "Location Unknown (HONNE Cover)"
+      ]
+    },
+    {
+      "id": "TFVeKYkOVUI",
+      "references": [
+        {
+          "owner": "a0282:신비",
+          "song": "산책 (백예린 Cover)",
+          "url": "https://youtu.be/TFVeKYkOVUI"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "신비 (SINB) - '산책' (백예린) Cover",
+      "author": "VIVIZ",
+      "authorUrl": "https://www.youtube.com/@viviz.official",
+      "titleReview": []
+    },
+    {
+      "id": "MYQkJ7UmG9g",
+      "references": [
+        {
+          "owner": "a0282:신비",
+          "song": "Hipnotic",
+          "url": "https://youtu.be/MYQkJ7UmG9g"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "VIVIZ (비비지) - 'Hipnotic (SINB Solo)' Dance Practice (Moving ver.)",
+      "author": "VIVIZ",
+      "authorUrl": "https://www.youtube.com/@viviz.official",
+      "titleReview": []
+    },
+    {
+      "id": "XGIAMH69y4M",
+      "references": [
+        {
+          "owner": "a0283:엄지",
+          "song": "Lemon (요네즈 켄시 Cover)",
+          "url": "https://youtu.be/XGIAMH69y4M"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "엄지 (UMJI) - 'Lemon' (米津玄師(Kenshi Yonezu)) Cover",
+      "author": "VIVIZ",
+      "authorUrl": "https://www.youtube.com/@viviz.official",
+      "titleReview": [
+        "Lemon (요네즈 켄시 Cover)"
+      ]
+    },
+    {
+      "id": "QbGatr39KHA",
+      "references": [
+        {
+          "owner": "a0283:엄지",
+          "song": "비밀의 화원 (IU Cover)",
+          "url": "https://youtu.be/QbGatr39KHA"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "엄지 (UMJI) - '비밀의 화원' (아이유(IU)) (원곡:이상은) Cover",
+      "author": "VIVIZ",
+      "authorUrl": "https://www.youtube.com/@viviz.official",
+      "titleReview": [
+        "비밀의 화원 (IU Cover)"
+      ]
+    },
+    {
+      "id": "3edd9Uwe_cQ",
+      "references": [
+        {
+          "owner": "a0283:엄지",
+          "song": "리무진서비스 EP.20",
+          "url": "https://youtu.be/3edd9Uwe_cQ"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[리무진서비스] EP.20 비비지 엄지 | VIVIZ UMJI | BOP BOP!, LOVE DIVE, What a Wonderful World, 고래",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "MG7rYkSWTt8",
+      "references": [
+        {
+          "owner": "a0283:엄지",
+          "song": "고래 (w/ 이무진)",
+          "url": "https://youtu.be/MG7rYkSWTt8"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[리무진 서비스 클립] 고래 | 비비지 엄지 X 이무진 |  VIVIZ UMJI X LEE MU JIN",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": [
+        "고래 (w/ 이무진)"
+      ]
+    },
+    {
+      "id": "yp8-3vJpeCY",
+      "references": [
+        {
+          "owner": "a0283:엄지",
+          "song": "MANIAC",
+          "url": "https://youtu.be/yp8-3vJpeCY"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[쇼챔직캠 4K] VIVIZ UMJI - MANIAC (비비지 엄지 - 매니악) l Show Champion l EP.500 l 231115",
+      "author": "ALL THE K-POP",
+      "authorUrl": "https://www.youtube.com/@ALLTHEKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "AhVnbwrbxRY",
+      "references": [
+        {
+          "owner": "a0283:엄지",
+          "song": "Untie",
+          "url": "https://youtu.be/AhVnbwrbxRY"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[안방1열 직캠4K] 비비지 엄지 'Untie' (VIVIZ UMJI FanCam) @SBS Inkigayo 231119",
+      "author": "SBSKPOP ZOOM",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP_ZOOM",
+      "titleReview": []
+    },
+    {
+      "id": "Hmq-4f0dEbA",
+      "references": [
+        {
+          "owner": "a0283:엄지",
+          "song": "PULL UP",
+          "url": "https://youtu.be/Hmq-4f0dEbA"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[입덕직캠] 비비지 엄지 직캠 4K 'PULL UP' (VIVIZ UMJI FanCam) | @MCOUNTDOWN_2023.2.2",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "9eshAmxgW4E",
+      "references": [
+        {
+          "owner": "a0283:엄지",
+          "song": "La La Love Me",
+          "url": "https://youtu.be/9eshAmxgW4E"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[K-Fancam] 비비지 엄지 직캠 'La La Love Me'(VIVIZ UMJI Fancam) @뮤직뱅크(Music Bank) 250711",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "KMKF8ZByUmI",
+      "references": [
+        {
+          "owner": "a0283:엄지",
+          "song": "Seven (Jung Kook Cover)",
+          "url": "https://youtu.be/KMKF8ZByUmI"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "MUSHROOM LIVE S06 비비지 엄지 VIVIZ Umji - Seven (Jung Kook Cover)",
+      "author": "MUSHROOM COMPANY",
+      "authorUrl": "https://www.youtube.com/@MUSHROOMCOMPANYOFFICIAL",
+      "titleReview": []
+    },
+    {
+      "id": "-U5Bi9qieeQ",
+      "references": [
+        {
+          "owner": "a0283:엄지",
+          "song": "물고기 (백예린 Cover)",
+          "url": "https://youtu.be/-U5Bi9qieeQ"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "엄지 (UMJI) - '물고기' (백예린) Cover",
+      "author": "VIVIZ",
+      "authorUrl": "https://www.youtube.com/@viviz.official",
+      "titleReview": []
+    },
+    {
+      "id": "DkZeVATtv6c",
+      "references": [
+        {
+          "owner": "a0283:엄지",
+          "song": "MANIAC",
+          "url": "https://youtu.be/DkZeVATtv6c"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[K-Fancam] 비비지 엄지 직캠 'MANIAC'(VIVIZ UMJI Fancam) @뮤직뱅크(Music Bank) 231110",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "qSYNCpb0Bzw",
+      "references": [
+        {
+          "owner": "코르티스",
+          "song": "REDRED",
+          "url": "https://www.youtube.com/watch?v=qSYNCpb0Bzw"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "CORTIS(코르티스) 'REDRED' (4K) | STUDIO CHOOM ORIGINAL",
+      "author": "STUDIO CHOOM [스튜디오 춤]",
+      "authorUrl": "https://www.youtube.com/@STUDIOCHOOM",
+      "titleReview": []
+    },
+    {
+      "id": "koED8KSXfeo",
+      "references": [
+        {
+          "owner": "코르티스",
+          "song": "GO! + FaSHioN",
+          "url": "https://www.youtube.com/watch?v=koED8KSXfeo"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[#2025MAMA] CORTIS - GO! + FaSHioN | Mnet 251129 방송",
+      "author": "Mnet K-POP",
+      "authorUrl": "https://www.youtube.com/@Mnet",
+      "titleReview": []
+    },
+    {
+      "id": "ELPeHSrMd8M",
+      "references": [
+        {
+          "owner": "코르티스",
+          "song": "Deja Vu + FaSHioN",
+          "url": "https://www.youtube.com/watch?v=ELPeHSrMd8M"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[2025 MBC 가요대제전] CORTIS (코르티스) - Deja Vu + FaSHioN, MBC 251231 방송",
+      "author": "MBCkpop",
+      "authorUrl": "https://www.youtube.com/@MBCkpop",
+      "titleReview": []
+    },
+    {
+      "id": "6MYB61hUaFg",
+      "references": [
+        {
+          "owner": "코르티스",
+          "song": "What You Want",
+          "url": "https://www.youtube.com/watch?v=6MYB61hUaFg"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "CORTIS (코르티스) 'What You Want' Conceptual Performance Film",
+      "author": "HYBE LABELS",
+      "authorUrl": "https://www.youtube.com/@HYBELABELS",
+      "titleReview": []
+    },
+    {
+      "id": "iyKA7tSb9KI",
+      "references": [
+        {
+          "owner": "코르티스",
+          "song": "YOUNGCREATORCREW",
+          "url": "https://www.youtube.com/watch?v=iyKA7tSb9KI"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "YOUNGCREATORCREW - CORTIS [뮤직뱅크/Music Bank] | KBS 260605 방송",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "ysg6GVlzz9Y",
+      "references": [
+        {
+          "owner": "코르티스",
+          "song": "ACAI",
+          "url": "https://www.youtube.com/watch?v=ysg6GVlzz9Y"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "CORTIS (코르티스) ‘ACAI’ Dance Practice (Fix ver.)",
+      "author": "CORTIS",
+      "authorUrl": "https://www.youtube.com/@cortis_bighit",
+      "titleReview": []
+    },
+    {
+      "id": "NeaXPMDpfnc",
+      "references": [
+        {
+          "owner": "코르티스",
+          "song": "go home",
+          "url": "https://www.youtube.com/watch?v=NeaXPMDpfnc"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "go home",
+      "author": "CORTIS",
+      "authorUrl": "https://www.youtube.com/@cortis_bighit",
+      "titleReview": []
+    },
+    {
+      "id": "9xBSLI7EsTg",
+      "references": [
+        {
+          "owner": "에스파",
+          "song": "Next Level",
+          "url": "https://www.youtube.com/watch?v=9xBSLI7EsTg"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[BE ORIGINAL] aespa(에스파) 'Next Level' (4K)",
+      "author": "STUDIO CHOOM [스튜디오 춤]",
+      "authorUrl": "https://www.youtube.com/@STUDIOCHOOM",
+      "titleReview": []
+    },
+    {
+      "id": "OZytLLasceA",
+      "references": [
+        {
+          "owner": "에스파",
+          "song": "Whiplash",
+          "url": "https://www.youtube.com/watch?v=OZytLLasceA"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[단독샷캠4K] 에스파 'Whiplash' 단독샷 별도녹화│aespa ONE TAKE STAGE│@SBS Inkigayo 241027",
+      "author": "SBSKPOP X INKIGAYO",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "wHvpwSxCOyQ",
+      "references": [
+        {
+          "owner": "에스파",
+          "song": "Dreams Come True",
+          "url": "https://www.youtube.com/watch?v=wHvpwSxCOyQ"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[단독샷캠] 에스파 'Dreams Come True' 단독샷 별도녹화│aespa ONE TAKE STAGE│@SBS Inkigayo_2022.01.09.",
+      "author": "SBSKPOP X INKIGAYO",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "cU0JrSAyy7o",
+      "references": [
+        {
+          "owner": "아이브",
+          "song": "I AM",
+          "url": "https://www.youtube.com/watch?v=cU0JrSAyy7o"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[BE ORIGINAL] IVE(아이브) 'I AM' (4K)",
+      "author": "STUDIO CHOOM [스튜디오 춤]",
+      "authorUrl": "https://www.youtube.com/@STUDIOCHOOM",
+      "titleReview": []
+    },
+    {
+      "id": "NrTskRd3NUY",
+      "references": [
+        {
+          "owner": "아이브",
+          "song": "LOVE DIVE",
+          "url": "https://www.youtube.com/watch?v=NrTskRd3NUY"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "아이브 (IVE) _ LOVE DIVE | 러브 다이브 | 1theKILLPO | 원더킬포 | 킬포인트 | 킬링파트 | Performance | 유진 가을 레이 원영 리즈 이서",
+      "author": "1theK Originals - 원더케이 오리지널",
+      "authorUrl": "https://www.youtube.com/@1theKOriginals",
+      "titleReview": []
+    },
+    {
+      "id": "fdzojloPlFA",
+      "references": [
+        {
+          "owner": "아이브",
+          "song": "After LIKE",
+          "url": "https://www.youtube.com/watch?v=fdzojloPlFA"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[단독샷캠4K] 아이브 'After LIKE' 단독샷 별도녹화│IVE ONE TAKE STAGE @SBS Inkigayo 220828",
+      "author": "SBSKPOP X INKIGAYO",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "RMSQcFqznwc",
+      "references": [
+        {
+          "owner": "키키",
+          "song": "404 (New Era)",
+          "url": "https://youtu.be/RMSQcFqznwc"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "KiiiKiii (키키) - 404 (New Era) | Show! MusicCore | MBC260131방송",
+      "author": "MBCkpop",
+      "authorUrl": "https://www.youtube.com/@MBCkpop",
+      "titleReview": []
+    },
+    {
+      "id": "e427WRcSmzY",
+      "references": [
+        {
+          "owner": "키키",
+          "song": "돌들의침묵 (I DO ME)",
+          "url": "https://youtu.be/e427WRcSmzY"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[SUB] 역대급 교관 조롱 파티 | 돌들의침묵 | 키키(KiiiKiii) 'I DO ME'",
+      "author": "MUPLY 뮤플리",
+      "authorUrl": "https://www.youtube.com/@muply",
+      "titleReview": [
+        "돌들의침묵 (I DO ME)"
+      ]
+    },
+    {
+      "id": "M3_OeJQ9SfI",
+      "references": [
+        {
+          "owner": "키키",
+          "song": "4 Walls (원곡: f(x))",
+          "url": "https://youtu.be/M3_OeJQ9SfI"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "KiiiKiii 키키 '4 Walls' @2026 KiiiKiii FAN CONCERT 〈KiiiKiii FesTiiival〉",
+      "author": "KiiiKiii",
+      "authorUrl": "https://www.youtube.com/@KiiiKiii_starship",
+      "titleReview": [
+        "4 Walls (원곡: f(x))"
+      ]
+    },
+    {
+      "id": "QgiRK3_qPWk",
+      "references": [
+        {
+          "owner": "키키",
+          "song": "404 (New Era)",
+          "url": "https://youtu.be/QgiRK3_qPWk"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "KiiiKiii - 404 (New Era) #엠카운트다운 EP.915 | Mnet 260205 방송",
+      "author": "Mnet K-POP",
+      "authorUrl": "https://www.youtube.com/@Mnet",
+      "titleReview": []
+    },
+    {
+      "id": "XC8SlKJj4Zs",
+      "references": [
+        {
+          "owner": "키키",
+          "song": "Delulu",
+          "url": "https://youtu.be/XC8SlKJj4Zs"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "'최초 공개' KiiiKiii - Delulu #엠카운트다운 EP.918 | Mnet 260305 방송",
+      "author": "Mnet K-POP",
+      "authorUrl": "https://www.youtube.com/@Mnet",
+      "titleReview": []
+    },
+    {
+      "id": "9sixI39RjVc",
+      "references": [
+        {
+          "owner": "키키",
+          "song": "404 (New Era)",
+          "url": "https://youtu.be/9sixI39RjVc"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "KiiiKiii (키키) - 404 (New Era) | Show! MusicCore | MBC260214방송",
+      "author": "MBCkpop",
+      "authorUrl": "https://www.youtube.com/@MBCkpop",
+      "titleReview": []
+    },
+    {
+      "id": "jE_Sb6NNcw8",
+      "references": [
+        {
+          "owner": "키키",
+          "song": "I DO ME",
+          "url": "https://youtu.be/jE_Sb6NNcw8"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "KiiiKiii (키키) - I DO ME | Show! MusicCore | MBC250315방송",
+      "author": "MBCkpop",
+      "authorUrl": "https://www.youtube.com/@MBCkpop",
+      "titleReview": []
+    },
+    {
+      "id": "TLmRZQgXmEk",
+      "references": [
+        {
+          "owner": "키키",
+          "song": "404 (New Era)",
+          "url": "https://youtu.be/TLmRZQgXmEk"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "KiiiKiii 키키 '404 (New Era)'｜liKe KiiiKiii Performance｜라잌키키 퍼포먼스｜지유 이솔 수이 하음 키야 @KiiiKiii_starship",
+      "author": "1theK Originals - 원더케이 오리지널",
+      "authorUrl": "https://www.youtube.com/@1theKOriginals",
+      "titleReview": []
+    },
+    {
+      "id": "Wuk7OTzzoBU",
+      "references": [
+        {
+          "owner": "키키",
+          "song": "404 (New Era)",
+          "url": "https://youtu.be/Wuk7OTzzoBU"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "'최초 공개' KiiiKiii - 404 (New Era) #엠카운트다운 EP.914 | Mnet 260129 방송",
+      "author": "Mnet K-POP",
+      "authorUrl": "https://www.youtube.com/@Mnet",
+      "titleReview": []
+    },
+    {
+      "id": "02H10qqz3rg",
+      "references": [
+        {
+          "owner": "키키",
+          "song": "DANCING ALONE",
+          "url": "https://youtu.be/02H10qqz3rg"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "KiiiKiii - DANCING ALONE #엠카운트다운 EP.901 | Mnet 250814 방송",
+      "author": "Mnet K-POP",
+      "authorUrl": "https://www.youtube.com/@Mnet",
+      "titleReview": []
+    },
+    {
+      "id": "FY2gYpzGkZo",
+      "references": [
+        {
+          "owner": "키키",
+          "song": "Delulu",
+          "url": "https://youtu.be/FY2gYpzGkZo"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "Delulu - KiiiKiii | SBS 260308 방송",
+      "author": "SBSKPOP X INKIGAYO",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "wThOHtFEcm8",
+      "references": [
+        {
+          "owner": "키키",
+          "song": "I DO ME",
+          "url": "https://youtu.be/wThOHtFEcm8"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "〈liKe KiiiKiii〉KiiiKiii - I DO ME | Performance | 키키 | 라잌키키",
+      "author": "1theK Originals - 원더케이 오리지널",
+      "authorUrl": "https://www.youtube.com/@1theKOriginals",
+      "titleReview": []
+    },
+    {
+      "id": "OpqB1GJbzms",
+      "references": [
+        {
+          "owner": "키키",
+          "song": "404 (New Era)",
+          "url": "https://youtu.be/OpqB1GJbzms"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "KiiiKiii 키키 '404 (New Era)' Dance Practice",
+      "author": "KiiiKiii",
+      "authorUrl": "https://www.youtube.com/@KiiiKiii_starship",
+      "titleReview": []
+    },
+    {
+      "id": "vs_WuuJ1Ias",
+      "references": [
+        {
+          "owner": "키키",
+          "song": "UNDERDOGS",
+          "url": "https://youtu.be/vs_WuuJ1Ias"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "KiiiKiii 키키 'UNDERDOGS' Dance Practice",
+      "author": "KiiiKiii",
+      "authorUrl": "https://www.youtube.com/@KiiiKiii_starship",
+      "titleReview": []
+    },
+    {
+      "id": "lEk9HHgUl7M",
+      "references": [
+        {
+          "owner": "키키",
+          "song": "UNDERDOGS",
+          "url": "https://youtu.be/lEk9HHgUl7M"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "KiiiKiii 키키 'UNDERDOGS' @2026 KiiiKiii FAN CONCERT 〈KiiiKiii FesTiiival〉",
+      "author": "KiiiKiii",
+      "authorUrl": "https://www.youtube.com/@KiiiKiii_starship",
+      "titleReview": []
+    },
+    {
+      "id": "XjIgcEvCTrE",
+      "references": [
+        {
+          "owner": "키키",
+          "song": "To Me From Me",
+          "url": "https://youtu.be/XjIgcEvCTrE"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[4K] KiiiKiii(키키) “To Me From Me (Prod. TABLO)” Band LIVE | it's Live",
+      "author": "it's Live",
+      "authorUrl": "https://www.youtube.com/@itsLiveOfficial",
+      "titleReview": []
+    },
+    {
+      "id": "cYWhK_tuABY",
+      "references": [
+        {
+          "owner": "키키",
+          "song": "404 (New Era)",
+          "url": "https://youtu.be/cYWhK_tuABY"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[4K] KiiiKiii(키키) “404 (New Era)” Band LIVE | it's Live",
+      "author": "it's Live",
+      "authorUrl": "https://www.youtube.com/@itsLiveOfficial",
+      "titleReview": []
+    },
+    {
+      "id": "_51U548cEQg",
+      "references": [
+        {
+          "owner": "키키",
+          "song": "I DO ME",
+          "url": "https://youtu.be/_51U548cEQg"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "〈liKe KiiiKiii〉KiiiKiii - I DO ME (Acoustic ver.) | Live | 키키 | 라잌키키",
+      "author": "1theK Originals - 원더케이 오리지널",
+      "authorUrl": "https://www.youtube.com/@1theKOriginals",
+      "titleReview": []
+    },
+    {
+      "id": "Vp9I_m6znMM",
+      "references": [
+        {
+          "owner": "있지",
+          "song": "WANNABE",
+          "url": "https://www.youtube.com/watch?v=Vp9I_m6znMM"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[BE ORIGINAL] ITZY(있지) 'WANNABE' (4K)",
+      "author": "STUDIO CHOOM [스튜디오 춤]",
+      "authorUrl": "https://www.youtube.com/@STUDIOCHOOM",
+      "titleReview": []
+    },
+    {
+      "id": "b80TWrBflh8",
+      "references": [
+        {
+          "owner": "있지",
+          "song": "Not Shy",
+          "url": "https://www.youtube.com/watch?v=b80TWrBflh8"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[BE ORIGINAL] ITZY(있지) 'Not Shy' (4K)",
+      "author": "STUDIO CHOOM [스튜디오 춤]",
+      "authorUrl": "https://www.youtube.com/@STUDIOCHOOM",
+      "titleReview": []
+    },
+    {
+      "id": "Geh1ZEjkaeM",
+      "references": [
+        {
+          "owner": "있지",
+          "song": "THAT'S A NO NO",
+          "url": "https://www.youtube.com/watch?v=Geh1ZEjkaeM"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "ITZY \"THAT'S A NO NO\" (FULL CAM VER.) @ 'TUNNEL VISION' in SEOUL",
+      "author": "ITZY",
+      "authorUrl": "https://www.youtube.com/@ITZY",
+      "titleReview": []
+    },
+    {
+      "id": "CHp0Kaidr14",
+      "references": [
+        {
+          "owner": "뉴진스",
+          "song": "Attention",
+          "url": "https://www.youtube.com/watch?v=CHp0Kaidr14"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[뮤뱅 원테이크 4K] 뉴진스(NewJeans) 'Attention' 4K Bonus Ver. @뮤직뱅크(Music Bank) 220805",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "1hcdQixxJdA",
+      "references": [
+        {
+          "owner": "뉴진스",
+          "song": "OMG",
+          "url": "https://www.youtube.com/watch?v=1hcdQixxJdA"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "뉴진스 (NewJeans) _ OMG | 1theKILLPO | 원더킬포 | 킬포인트 | 퍼포먼스 | Performance | 4K | 민지 하니 다니엘 해린 혜인",
+      "author": "1theK Originals - 원더케이 오리지널",
+      "authorUrl": "https://www.youtube.com/@1theKOriginals",
+      "titleReview": []
+    },
+    {
+      "id": "jUNz-uTF--E",
+      "references": [
+        {
+          "owner": "뉴진스",
+          "song": "Ditto",
+          "url": "https://www.youtube.com/watch?v=jUNz-uTF--E"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[단독샷캠4K] 뉴진스 'Ditto' 단독샷 별도녹화│NewJeans ONE TAKE STAGE @SBS Inkigayo 230115",
+      "author": "SBSKPOP X INKIGAYO",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "9f6AdfijSTg",
+      "references": [
+        {
+          "owner": "투어스",
+          "song": "첫 만남은 계획대로 되지 않아",
+          "url": "https://www.youtube.com/watch?v=9f6AdfijSTg"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[최초공개] TWS(투어스) - 첫 만남은 계획대로 되지 않아 (plot twist) (4K) | TWS DEBUT SHOW | Mnet 240122 방송",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "HCaUTfs5hlQ",
+      "references": [
+        {
+          "owner": "투어스",
+          "song": "내가 S면 넌 나의 N이 되어줘",
+          "url": "https://www.youtube.com/watch?v=HCaUTfs5hlQ"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[최초공개] TWS(투어스) - 내가 S면 넌 나의 N이 되어줘(If I’m S, Can You Be My N?) | TWS COMEBACK SHOW | Mnet 240624 방송",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "VyKb0WWl6k8",
+      "references": [
+        {
+          "owner": "투어스",
+          "song": "OVERDRIVE",
+          "url": "https://www.youtube.com/watch?v=VyKb0WWl6k8"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[MOVE TO PERFORMANCE] TWS(투어스) - OVERDRIVE (4K)",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "tZYFazhoN6g",
+      "references": [
+        {
+          "owner": "엔시티 위시",
+          "song": "Steady",
+          "url": "https://www.youtube.com/watch?v=tZYFazhoN6g"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[단독샷캠4K] 엔시티 위시 'Steady' 단독샷 별도녹화│NCT WISH ONE TAKE STAGE│@SBS Inkigayo 240929",
+      "author": "SBSKPOP X INKIGAYO",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "0EUvMb6_Fi0",
+      "references": [
+        {
+          "owner": "엔시티 위시",
+          "song": "Songbird",
+          "url": "https://www.youtube.com/watch?v=0EUvMb6_Fi0"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "NCT WISH (엔시티 위시) - Songbird | 수트댄스 | Suit Dance | Performance | 4K",
+      "author": "1theK Originals - 원더케이 오리지널",
+      "authorUrl": "https://www.youtube.com/@1theKOriginals",
+      "titleReview": []
+    },
+    {
+      "id": "oorVGzxTzuw",
+      "references": [
+        {
+          "owner": "엔시티 위시",
+          "song": "으쌰! 으쌰!",
+          "url": "https://www.youtube.com/watch?v=oorVGzxTzuw"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "NCT WISH(엔시티 위시) - 으쌰! 으쌰! (원곡:신화) #2024SBS가요대전Summer",
+      "author": "SBS Entertainment",
+      "authorUrl": "https://www.youtube.com/@SBSenter.official",
+      "titleReview": []
+    },
+    {
+      "id": "Hv1wQ6nlpNE",
+      "references": [
+        {
+          "owner": "리센느",
+          "song": "LOVE ATTACK",
+          "url": "https://www.youtube.com/watch?v=Hv1wQ6nlpNE"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "RESCENE (리센느) - LOVE ATTACK @인기가요 inkigayo 20240901",
+      "author": "SBSKPOP X INKIGAYO",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "2_1YFwGFqys",
+      "references": [
+        {
+          "owner": "리센느",
+          "song": "Deja Vu",
+          "url": "https://www.youtube.com/watch?v=2_1YFwGFqys"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[MOVE TO PERFORMANCE] RESCENE(리센느) - Deja Vu (4K)",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "p1asr5bLsl0",
+      "references": [
+        {
+          "owner": "리센느",
+          "song": "고백주파수",
+          "url": "https://www.youtube.com/watch?v=p1asr5bLsl0"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "RESCENE (리센느) - 고백주파수ㅣ오픈 캔버스ㅣ4KㅣThe Artist Canvas",
+      "author": "The Artist Canvas",
+      "authorUrl": "https://www.youtube.com/@TheArtistCanvas",
+      "titleReview": []
+    },
+    {
+      "id": "vdbg5qS0CEw",
+      "references": [
+        {
+          "owner": "라이즈",
+          "song": "Do your dance",
+          "url": "https://youtu.be/vdbg5qS0CEw"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "RIIZE(라이즈) 'Do your dance' (4K) | STUDIO CHOOM ORIGINAL",
+      "author": "STUDIO CHOOM [스튜디오 춤]",
+      "authorUrl": "https://www.youtube.com/@STUDIOCHOOM",
+      "titleReview": []
+    },
+    {
+      "id": "RW__-SAN6Zg",
+      "references": [
+        {
+          "owner": "라이즈",
+          "song": "Do your dance",
+          "url": "https://youtu.be/RW__-SAN6Zg"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "RIIZE - Do your dance #엠카운트다운 EP.934 | Mnet 260625 방송",
+      "author": "Mnet K-POP",
+      "authorUrl": "https://www.youtube.com/@Mnet",
+      "titleReview": []
+    },
+    {
+      "id": "FbpyVOqpKfs",
+      "references": [
+        {
+          "owner": "라이즈",
+          "song": "집대성 ep.112",
+          "url": "https://youtu.be/FbpyVOqpKfs"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[SUB] 라이즈가 42분 동안 무리하는 영상 | 집대성 ep.112 라이즈",
+      "author": "집대성",
+      "authorUrl": "https://www.youtube.com/@ZIP_DS",
+      "titleReview": []
+    },
+    {
+      "id": "CB9AvAc_XpU",
+      "references": [
+        {
+          "owner": "라이즈",
+          "song": "WE RIIZE EP.22",
+          "url": "https://youtu.be/CB9AvAc_XpU"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "Anton's Swimming School ❮너네 수영 가르치러 왔다❯ | WE RIIZE EP.22",
+      "author": "RIIZE",
+      "authorUrl": "https://www.youtube.com/@RIIZE_official",
+      "titleReview": []
+    },
+    {
+      "id": "Xi8OXaY6xOc",
+      "references": [
+        {
+          "owner": "라이즈",
+          "song": "WE RIIZE EP.43",
+          "url": "https://youtu.be/Xi8OXaY6xOc"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "RIIZE 2nd Anniversary ❮Welcome to RIIZE ISLAND❯ | WE RIIZE EP.43",
+      "author": "RIIZE",
+      "authorUrl": "https://www.youtube.com/@RIIZE_official",
+      "titleReview": []
+    },
+    {
+      "id": "ZXRUQCJBRq4",
+      "references": [
+        {
+          "owner": "라이즈",
+          "song": "라이즈의 떨면 안되는 팬미팅",
+          "url": "https://youtu.be/ZXRUQCJBRq4"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[EN/JP] 라이즈의 떨면 안되는 팬미팅",
+      "author": "유병재",
+      "authorUrl": "https://www.youtube.com/@KoreanCryingGuy",
+      "titleReview": []
+    },
+    {
+      "id": "w11AQwiT07g",
+      "references": [
+        {
+          "owner": "라이즈",
+          "song": "Love 119",
+          "url": "https://youtu.be/w11AQwiT07g"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "RIIZE(라이즈) - Love 119 @인기가요 inkigayo 20240114",
+      "author": "SBSKPOP X INKIGAYO",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "5MSC_Q_Lg-c",
+      "references": [
+        {
+          "owner": "라이즈",
+          "song": "Get A Guitar + Boom Boom Bass",
+          "url": "https://youtu.be/5MSC_Q_Lg-c"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "RIIZE - ‘Get A Guitar + Boom Boom Bass’ 축하공연 [제45회 청룡영화상 시상식]  [제45회 청룡영화상 시상식] | KBS 241129 방송",
+      "author": "KBS Entertain",
+      "authorUrl": "https://www.youtube.com/@KBSEnt",
+      "titleReview": []
+    },
+    {
+      "id": "ydRNw-e9C3Y",
+      "references": [
+        {
+          "owner": "라이즈",
+          "song": "홍석천의 보석함 시즌2 EP.09",
+          "url": "https://youtu.be/ydRNw-e9C3Y"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[EN/JP] 탑게이 impossible 완성시킨 💎라이즈①💎 l 홍석천의 보석함 시즌2 EP.09",
+      "author": "홍석천의 보석함 ",
+      "authorUrl": "https://www.youtube.com/@topgaybox",
+      "titleReview": []
+    },
+    {
+      "id": "22olMW9aZI0",
+      "references": [
+        {
+          "owner": "라이즈",
+          "song": "Impossible",
+          "url": "https://youtu.be/22olMW9aZI0"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[뮤뱅 원테이크 4K] 라이즈(RIIZE) 'Impossible' 4K Bonus Ver. @뮤직뱅크(Music Bank) 240426",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "GdPjDq8KwPs",
+      "references": [
+        {
+          "owner": "라이즈",
+          "song": "Do your dance",
+          "url": "https://youtu.be/GdPjDq8KwPs"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[릴레이댄스] RIIZE(라이즈) - Do your dance (4K)",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "F3C87lOmZBM",
+      "references": [
+        {
+          "owner": "라이즈",
+          "song": "Fame",
+          "url": "https://youtu.be/F3C87lOmZBM"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "RIIZE(라이즈) _ Fame | 1theKILLPO | 원더킬포 | 퍼포먼스 | Performance | 4K",
+      "author": "1theK Originals - 원더케이 오리지널",
+      "authorUrl": "https://www.youtube.com/@1theKOriginals",
+      "titleReview": []
+    },
+    {
+      "id": "0GTyDijQEUQ",
+      "references": [
+        {
+          "owner": "라이즈",
+          "song": "Boom Boom Bass",
+          "url": "https://youtu.be/0GTyDijQEUQ"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[Performance37] RIIZE(라이즈) 'Boom Boom Bass' (4K)",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "rovUWJh_JnA",
+      "references": [
+        {
+          "owner": "라이즈",
+          "song": "Talk Saxy",
+          "url": "https://youtu.be/rovUWJh_JnA"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[Performance37] RIIZE(라이즈) 'Talk Saxy' (4K)",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "jIG4AaIy-5k",
+      "references": [
+        {
+          "owner": "라이즈",
+          "song": "Get A Guitar",
+          "url": "https://youtu.be/jIG4AaIy-5k"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[BE ORIGINAL] RIIZE(라이즈) 'Get A Guitar' (4K)",
+      "author": "STUDIO CHOOM [스튜디오 춤]",
+      "authorUrl": "https://www.youtube.com/@STUDIOCHOOM",
+      "titleReview": []
+    },
+    {
+      "id": "nwvZr4QyQgM",
+      "references": [
+        {
+          "owner": "라이즈",
+          "song": "Fly Up",
+          "url": "https://youtu.be/nwvZr4QyQgM"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[MOVE TO PERFORMANCE] RIIZE(라이즈) - Fly Up (4K)",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "5FgwmDY8MK8",
+      "references": [
+        {
+          "owner": "라이즈",
+          "song": "Bag Bad Back",
+          "url": "https://youtu.be/5FgwmDY8MK8"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "RIIZE(라이즈) 'Bag Bad Back' (4K) | STUDIO CHOOM ORIGINAL",
+      "author": "STUDIO CHOOM [스튜디오 춤]",
+      "authorUrl": "https://www.youtube.com/@STUDIOCHOOM",
+      "titleReview": []
+    },
+    {
+      "id": "m4_liZ4iJJ8",
+      "references": [
+        {
+          "owner": "라이즈",
+          "song": "으르렁 (원곡: EXO)",
+          "url": "https://youtu.be/m4_liZ4iJJ8"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[2024 MBC 가요대제전] 라이즈 - 으르렁 (원곡: EXO) (RIIZE - Growl), MBC 250130 방송",
+      "author": "MBCkpop",
+      "authorUrl": "https://www.youtube.com/@MBCkpop",
+      "titleReview": []
+    },
+    {
+      "id": "Bf7JCS6I0ak",
+      "references": [
+        {
+          "owner": "라이즈",
+          "song": "Talk Saxy + Siren",
+          "url": "https://youtu.be/Bf7JCS6I0ak"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[#2023MAMA] RIIZE (라이즈) - Talk Saxy + Siren | Mnet 231129 방송",
+      "author": "Mnet K-POP",
+      "authorUrl": "https://www.youtube.com/@Mnet",
+      "titleReview": []
+    },
+    {
+      "id": "s2A-_rhynAY",
+      "references": [
+        {
+          "owner": "라이즈",
+          "song": "Get A Guitar + Boom Boom Bass",
+          "url": "https://youtu.be/s2A-_rhynAY"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[#2024MAMA] RIIZE (라이즈) - Get A Guitar + Boom Boom Bass | Mnet 241122 방송",
+      "author": "Mnet K-POP",
+      "authorUrl": "https://www.youtube.com/@Mnet",
+      "titleReview": []
+    },
+    {
+      "id": "1QV4sZnPgXE",
+      "references": [
+        {
+          "owner": "라이즈",
+          "song": "영웅 (원곡: NCT 127)",
+          "url": "https://youtu.be/1QV4sZnPgXE"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[#2024MAMA] RIIZE (라이즈) - 영웅 (英雄;  Kick It) (원곡：NCT 127) | Mnet 241122 방송",
+      "author": "Mnet K-POP",
+      "authorUrl": "https://www.youtube.com/@Mnet",
+      "titleReview": [
+        "영웅 (원곡: NCT 127)"
+      ]
+    },
+    {
+      "id": "OxtraGjrKz0",
+      "references": [
+        {
+          "owner": "투모로우바이투게더",
+          "song": "New Rules",
+          "url": "https://www.youtube.com/watch?v=OxtraGjrKz0"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[BE ORIGINAL] TXT(투모로우바이투게더) 'New Rules' (4K)",
+      "author": "STUDIO CHOOM [스튜디오 춤]",
+      "authorUrl": "https://www.youtube.com/@STUDIOCHOOM",
+      "titleReview": []
+    },
+    {
+      "id": "EzJ7wCz_iK0",
+      "references": [
+        {
+          "owner": "투모로우바이투게더",
+          "song": "No Rules",
+          "url": "https://www.youtube.com/watch?v=EzJ7wCz_iK0"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[최초공개] TXT (투모로우바이투게더) - No Rules (4K) | TXT COMEBACKSHOW 'FREEZE' | Mnet 210531 방송",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "e2r_i9fEp0o",
+      "references": [
+        {
+          "owner": "투모로우바이투게더",
+          "song": "Upside Down Kiss",
+          "url": "https://www.youtube.com/watch?v=e2r_i9fEp0o"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[MOVE TO PERFORMANCE] TXT(투모로우바이투게더) - Upside Down Kiss (4K)",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "R9hv2cLYK-w",
+      "references": [
+        {
+          "owner": "에이티즈",
+          "song": "BAD",
+          "url": "https://youtu.be/R9hv2cLYK-w"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "BAD - ATEEZ (에이티즈) | SBS 260628 방송",
+      "author": "SBSKPOP X INKIGAYO",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "c-n92OgbbwA",
+      "references": [
+        {
+          "owner": "에이티즈",
+          "song": "Ice On My Teeth",
+          "url": "https://youtu.be/c-n92OgbbwA"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "Ice On My Teeth - ATEEZ エイティーズ 에이티즈 [Music Bank] | KBS WORLD TV 241115",
+      "author": "KBS WORLD TV",
+      "authorUrl": "https://www.youtube.com/@kbsworldtv",
+      "titleReview": []
+    },
+    {
+      "id": "inJmmQcJJ78",
+      "references": [
+        {
+          "owner": "에이티즈",
+          "song": "누가 왕이 될 상인가",
+          "url": "https://youtu.be/inJmmQcJJ78"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "ATEEZ(에이티즈) 누가 왕이 될 상인가",
+      "author": "ATEEZ",
+      "authorUrl": "https://www.youtube.com/@ATEEZofficial",
+      "titleReview": []
+    },
+    {
+      "id": "tDuZLK78BEk",
+      "references": [
+        {
+          "owner": "에이티즈",
+          "song": "Adrenaline",
+          "url": "https://youtu.be/tDuZLK78BEk"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "ATEEZ (에이티즈) - Adrenaline | Show! MusicCore | MBC260207방송",
+      "author": "MBCkpop",
+      "authorUrl": "https://www.youtube.com/@MBCkpop",
+      "titleReview": []
+    },
+    {
+      "id": "ST9ib_nbizU",
+      "references": [
+        {
+          "owner": "에이티즈",
+          "song": "The Last Supper + Ice On My Teeth",
+          "url": "https://youtu.be/ST9ib_nbizU"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[2024 MBC 가요대제전] ATEEZ -The Last Supper + Ice On My Teeth, MBC 250130 방송",
+      "author": "MBCkpop",
+      "authorUrl": "https://www.youtube.com/@MBCkpop",
+      "titleReview": []
+    },
+    {
+      "id": "p0T5ZKrjOyk",
+      "references": [
+        {
+          "owner": "에이티즈",
+          "song": "WORK",
+          "url": "https://youtu.be/p0T5ZKrjOyk"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "ATEEZ(에이티즈) - 'WORK' Performance Stage (@The Kelly Clarkson Show)",
+      "author": "ATEEZ",
+      "authorUrl": "https://www.youtube.com/@ATEEZofficial",
+      "titleReview": []
+    },
+    {
+      "id": "-q7zJXR3KMY",
+      "references": [
+        {
+          "owner": "에이티즈",
+          "song": "BOUNCY",
+          "url": "https://youtu.be/-q7zJXR3KMY"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "ATEEZ(에이티즈) - BOUNCY (K-HOT CHILLI PEPPERS) #엠카운트다운 EP.803 | Mnet 230629 방송",
+      "author": "Mnet K-POP",
+      "authorUrl": "https://www.youtube.com/@Mnet",
+      "titleReview": []
+    },
+    {
+      "id": "mNLzeeTiYd8",
+      "references": [
+        {
+          "owner": "에이티즈",
+          "song": "NASA",
+          "url": "https://youtu.be/mNLzeeTiYd8"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "ATEEZ (에이티즈) - NASA | Show! MusicCore | MBC260207방송",
+      "author": "MBCkpop",
+      "authorUrl": "https://www.youtube.com/@MBCkpop",
+      "titleReview": []
+    },
+    {
+      "id": "Nl6unWjkv9k",
+      "references": [
+        {
+          "owner": "에이티즈",
+          "song": "BOUNCY",
+          "url": "https://youtu.be/Nl6unWjkv9k"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[뮤뱅 원테이크 4K] 에이티즈 (ATEEZ) 'BOUNCY' 4K Bonus Ver. @뮤직뱅크 (Music Bank) 230616",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "zqpCho3mX-0",
+      "references": [
+        {
+          "owner": "에이티즈",
+          "song": "Cyberpunk",
+          "url": "https://youtu.be/zqpCho3mX-0"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "Cyberpunk - ATEEZ エイティーズ [Music Bank] | KBS WORLD TV 230106",
+      "author": "KBS WORLD TV",
+      "authorUrl": "https://www.youtube.com/@kbsworldtv",
+      "titleReview": []
+    },
+    {
+      "id": "lPBT8H1fYk8",
+      "references": [
+        {
+          "owner": "에이티즈",
+          "song": "Answer",
+          "url": "https://youtu.be/lPBT8H1fYk8"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[BE ORIGINAL] ATEEZ(에이티즈) 'Answer' (4K)",
+      "author": "STUDIO CHOOM [스튜디오 춤]",
+      "authorUrl": "https://www.youtube.com/@STUDIOCHOOM",
+      "titleReview": []
+    },
+    {
+      "id": "MbJbawOleqE",
+      "references": [
+        {
+          "owner": "에이티즈",
+          "song": "Adrenaline",
+          "url": "https://youtu.be/MbJbawOleqE"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[단독샷캠4K] 에이티즈 'Adrenaline' 단독샷 별도녹화│ATEEZ ONE TAKE STAGE│@SBS Inkigayo 260208",
+      "author": "SBSKPOP X INKIGAYO",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "ue8xg0gqVY8",
+      "references": [
+        {
+          "owner": "에이티즈",
+          "song": "On The Road",
+          "url": "https://youtu.be/ue8xg0gqVY8"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "ATEEZ(에이티즈) - 'On The Road' Live Clip (@Spotify Live Version)",
+      "author": "ATEEZ",
+      "authorUrl": "https://www.youtube.com/@ATEEZofficial",
+      "titleReview": []
+    },
+    {
+      "id": "nFHG0TeBIIs",
+      "references": [
+        {
+          "owner": "비비지",
+          "song": "MANIAC",
+          "url": "https://youtu.be/nFHG0TeBIIs"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "VIVIZ(비비지) - MANIAC | 매니악 | 수트댄스 | Suit Dance | Performance | 4K",
+      "author": "1theK Originals - 원더케이 오리지널",
+      "authorUrl": "https://www.youtube.com/@1theKOriginals",
+      "titleReview": []
+    },
+    {
+      "id": "OF6tzAC0AJE",
+      "references": [
+        {
+          "owner": "비비지",
+          "song": "BOP BOP!",
+          "url": "https://youtu.be/OF6tzAC0AJE"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[BE ORIGINAL] VIVIZ(비비지) 'BOP BOP!' (4K)",
+      "author": "STUDIO CHOOM [스튜디오 춤]",
+      "authorUrl": "https://www.youtube.com/@STUDIOCHOOM",
+      "titleReview": []
+    },
+    {
+      "id": "pCbPwpcgUbM",
+      "references": [
+        {
+          "owner": "비비지",
+          "song": "Untie",
+          "url": "https://youtu.be/pCbPwpcgUbM"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "VIVIZ (비비지) - 'Untie' Performance Video",
+      "author": "BPM Entertainment",
+      "authorUrl": "https://www.youtube.com/@BPMEntertainment-official",
+      "titleReview": []
+    },
+    {
+      "id": "DjoXqZMjhJY",
+      "references": [
+        {
+          "owner": "비비지",
+          "song": "Shhh!",
+          "url": "https://youtu.be/DjoXqZMjhJY"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "VIVIZ(비비지) 'Shhh!' (4K) | STUDIO CHOOM ORIGINAL",
+      "author": "STUDIO CHOOM [스튜디오 춤]",
+      "authorUrl": "https://www.youtube.com/@STUDIOCHOOM",
+      "titleReview": []
+    },
+    {
+      "id": "WJ_EJM5NT6E",
+      "references": [
+        {
+          "owner": "비비지",
+          "song": "La La Love Me",
+          "url": "https://youtu.be/WJ_EJM5NT6E"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "VIVIZ(비비지) 'La La Love Me' (4K) | STUDIO CHOOM ORIGINAL",
+      "author": "STUDIO CHOOM [스튜디오 춤]",
+      "authorUrl": "https://www.youtube.com/@STUDIOCHOOM",
+      "titleReview": []
+    },
+    {
+      "id": "5WUxq3lcYcM",
+      "references": [
+        {
+          "owner": "비비지",
+          "song": "MANIAC",
+          "url": "https://youtu.be/5WUxq3lcYcM"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "VIVIZ (비비지) ‘MANIAC’ Stage Cam @ 2025 Weverse Con Festival",
+      "author": "VIVIZ",
+      "authorUrl": "https://www.youtube.com/@viviz.official",
+      "titleReview": []
+    },
+    {
+      "id": "7jxnB0_YZY0",
+      "references": [
+        {
+          "owner": "비비지",
+          "song": "Shhh!",
+          "url": "https://youtu.be/7jxnB0_YZY0"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "VIVIZ (비비지) - Shhh! [더 시즌즈-이영지의 레인보우] | KBS 241115 방송",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "GfWUBJUTx8k",
+      "references": [
+        {
+          "owner": "비비지",
+          "song": "MANIAC",
+          "url": "https://youtu.be/GfWUBJUTx8k"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "VIVIZ(비비지) - MANIAC @인기가요 inkigayo 20231112",
+      "author": "SBSKPOP X INKIGAYO",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "JGN4WVDaSxI",
+      "references": [
+        {
+          "owner": "비비지",
+          "song": "MANIAC",
+          "url": "https://youtu.be/JGN4WVDaSxI"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "VIVIZ(비비지) - MANIAC @인기가요 inkigayo 20231105",
+      "author": "SBSKPOP X INKIGAYO",
+      "authorUrl": "https://www.youtube.com/@SBSKPOP",
+      "titleReview": []
+    },
+    {
+      "id": "rY8Gz8bBoR8",
+      "references": [
+        {
+          "owner": "비비지",
+          "song": "밤 + 시간을 달려서 (원곡: 여자친구)",
+          "url": "https://youtu.be/rY8Gz8bBoR8"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[풀버전]  ♬ 밤(Time for the Moon Night) + 시간을 달려서(Rough) - 비비지 (VIVIZ)",
+      "author": "Mnet K-POP",
+      "authorUrl": "https://www.youtube.com/@Mnet",
+      "titleReview": [
+        "밤 + 시간을 달려서 (원곡: 여자친구)"
+      ]
+    },
+    {
+      "id": "70KGtxHB8BA",
+      "references": [
+        {
+          "owner": "비비지",
+          "song": "PULL UP",
+          "url": "https://youtu.be/70KGtxHB8BA"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "VIVIZ (비비지) - PULL UP | Show! MusicCore | MBC230204방송",
+      "author": "MBCkpop",
+      "authorUrl": "https://www.youtube.com/@MBCkpop",
+      "titleReview": []
+    },
+    {
+      "id": "-_0VjHT5Ss0",
+      "references": [
+        {
+          "owner": "비비지",
+          "song": "Full Moon",
+          "url": "https://youtu.be/-_0VjHT5Ss0"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "VIVIZ (비비지) - ‘Full Moon’ Concert Clip [2025 VIVIZ WORLD TOUR [NEW LEGACY] in SEOUL]",
+      "author": "VIVIZ",
+      "authorUrl": "https://www.youtube.com/@viviz.official",
+      "titleReview": []
+    },
+    {
+      "id": "0j9fa36iQqc",
+      "references": [
+        {
+          "owner": "비비지",
+          "song": "한 걸음 (Day by day)",
+          "url": "https://youtu.be/0j9fa36iQqc"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "VIVIZ (비비지) - '한 걸음 (Day by day)' Live Clip",
+      "author": "VIVIZ",
+      "authorUrl": "https://www.youtube.com/@viviz.official",
+      "titleReview": []
+    },
+    {
+      "id": "WZwr2a_lFWY",
+      "references": [
+        {
+          "owner": "아이즈원",
+          "song": "라비앙로즈 (La Vie en Rose)",
+          "url": "https://www.youtube.com/watch?v=WZwr2a_lFWY"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "IZ*ONE (아이즈원) - 라비앙로즈 (La Vie en Rose) MV",
+      "author": "STONE MUSIC",
+      "authorUrl": "https://www.youtube.com/@officialstonemusic",
+      "titleReview": []
+    },
+    {
+      "id": "6eEZ7DJMzuk",
+      "references": [
+        {
+          "owner": "아이즈원",
+          "song": "비올레타 (Violeta)",
+          "url": "https://www.youtube.com/watch?v=6eEZ7DJMzuk"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "IZ*ONE (아이즈원) - 비올레타 (Violeta) MV",
+      "author": "STONE MUSIC",
+      "authorUrl": "https://www.youtube.com/@officialstonemusic",
+      "titleReview": []
+    },
+    {
+      "id": "G8GaQdW2wHc",
+      "references": [
+        {
+          "owner": "아이즈원",
+          "song": "Panorama",
+          "url": "https://www.youtube.com/watch?v=G8GaQdW2wHc"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "IZ*ONE (아이즈원) 'Panorama' MV",
+      "author": "STONE MUSIC",
+      "authorUrl": "https://www.youtube.com/@officialstonemusic",
+      "titleReview": []
+    },
+    {
+      "id": "aTfXQmh-2dE",
+      "references": [
+        {
+          "owner": "a0048:류진",
+          "song": "𝑰 𝒂𝒎 𝒂 대추노노 💙#ITZY #RYUJIN #aespa #KARINA #THATSANONO #대추노노 #류진 #에스파 #카리나 #Shorts",
+          "url": "https://youtube.com/shorts/aTfXQmh-2dE"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "𝑰 𝒂𝒎 𝒂 대추노노 💙#ITZY #RYUJIN #aespa #KARINA #THATSANONO #대추노노 #류진 #에스파 #카리나 #Shorts @aespa",
+      "author": "ITZY",
+      "authorUrl": "https://www.youtube.com/@ITZY",
+      "titleReview": []
+    },
+    {
+      "id": "H-hwIIF_k0Q",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "😘👌💗 #ITZY #MIDZY #YUNA #유나 #YUNA_IceCream",
+          "url": "https://youtube.com/shorts/H-hwIIF_k0Q"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "😘👌💗 #ITZY #MIDZY #YUNA #유나 #YUNA_IceCream",
+      "author": "ITZY",
+      "authorUrl": "https://www.youtube.com/@ITZY",
+      "titleReview": []
+    },
+    {
+      "id": "32WsPtO-Ews",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "#유나 와 #신유 님의 #IceCreamChallenge 로 심장이 쿵🍨💗 #ITZY #YUNA #TWS #투어스 #SHINYU",
+          "url": "https://youtube.com/shorts/32WsPtO-Ews"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "#유나 와 #신유 님의 #IceCreamChallenge 로 심장이 쿵🍨💗 #ITZY #YUNA #TWS #투어스 #SHINYU @TWS_PLEDIS",
+      "author": "ITZY",
+      "authorUrl": "https://www.youtube.com/@ITZY",
+      "titleReview": []
+    },
+    {
+      "id": "u8N-6sJb7U0",
+      "references": [
+        {
+          "owner": "a0050:유나",
+          "song": "#효연 선배님과 Drop the #MottoChallenge 🫶 #ITZY #CHAERYEONG #YUNA",
+          "url": "https://youtube.com/shorts/u8N-6sJb7U0"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "#효연 선배님과 Drop the #MottoChallenge 🫶 #ITZY #CHAERYEONG #YUNA @HYOYEONofficial @Hyo_LevelUp",
+      "author": "ITZY",
+      "authorUrl": "https://www.youtube.com/@ITZY",
+      "titleReview": []
+    },
+    {
+      "id": "neL8xYgI6BI",
+      "references": [
+        {
+          "owner": "a0081:마틴",
+          "song": "무대 위 넘치는 존재감 리더 마틴",
+          "url": "https://youtube.com/shorts/neL8xYgI6BI"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "무대 위 넘치는 존재감 코르티스 리더 마틴",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": [
+        "무대 위 넘치는 존재감 리더 마틴"
+      ]
+    },
+    {
+      "id": "J9GO8OxCaa4",
+      "references": [
+        {
+          "owner": "a0081:마틴",
+          "song": "TNT의 코어 마틴 그냥 느껴 | 릴레이댄스",
+          "url": "https://youtube.com/shorts/J9GO8OxCaa4"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "TNT의 코어 마틴 그냥 느껴 | 릴레이댄스",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "L3cINJl1ySM",
+      "references": [
+        {
+          "owner": "a0081:마틴",
+          "song": "MC 마틴&제임스&성현 〈Really Like You〉 챌린지 #엠카운트다운",
+          "url": "https://youtube.com/shorts/L3cINJl1ySM"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "MC 마틴&제임스&성현 〈Really Like You〉 챌린지 #엠카운트다운 #MCOUNTDOWN #BABYMONSTER #CORTIS",
+      "author": "Mnet K-POP",
+      "authorUrl": "https://www.youtube.com/@Mnet",
+      "titleReview": []
+    },
+    {
+      "id": "_aLhEp4WB2U",
+      "references": [
+        {
+          "owner": "a0081:마틴",
+          "song": "왔다! 월요병 치료제 💗Love 마틴, Love 제임스, Love 성현💗 #엠카운트다운",
+          "url": "https://youtube.com/shorts/_aLhEp4WB2U"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "˗ˋˏ 왔다! 월요병 치료제 ˎˊ˗  💗Love 마틴, Love 제임스, Love 성현💗 #엠카운트다운 #MCOUNTDOWN #CORTIS #마틴 #제임스 #성현",
+      "author": "Mnet K-POP",
+      "authorUrl": "https://www.youtube.com/@Mnet",
+      "titleReview": []
+    },
+    {
+      "id": "0Qh9p1nrhEc",
+      "references": [
+        {
+          "owner": "a0083:주훈",
+          "song": "장갑 착장 찰떡인 주훈 | 릴레이댄스",
+          "url": "https://youtube.com/shorts/0Qh9p1nrhEc"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "장갑 착장 찰떡인 코르티스 주훈 | 릴레이댄스",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": [
+        "장갑 착장 찰떡인 주훈 | 릴레이댄스"
+      ]
+    },
+    {
+      "id": "c8fjwObmQ8E",
+      "references": [
+        {
+          "owner": "a0083:주훈",
+          "song": "매 컴백마다 성장하는 주훈",
+          "url": "https://youtube.com/shorts/c8fjwObmQ8E"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "매 컴백마다 성장하는 코르티스 주훈",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": [
+        "매 컴백마다 성장하는 주훈"
+      ]
+    },
+    {
+      "id": "JvXWr7Ko0J8",
+      "references": [
+        {
+          "owner": "a0083:주훈",
+          "song": "GO GO 🚀 #JUHOON #주훈 #CORTIS_GO",
+          "url": "https://youtube.com/shorts/JvXWr7Ko0J8"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "GO GO 🚀 #CORTIS #코르티스 #JUHOON #주훈 #CORTIS_GO",
+      "author": "CORTIS",
+      "authorUrl": "https://www.youtube.com/@cortis_bighit",
+      "titleReview": [
+        "GO GO 🚀 #JUHOON #주훈 #CORTIS_GO"
+      ]
+    },
+    {
+      "id": "15HMB_9CQXI",
+      "references": [
+        {
+          "owner": "a0083:주훈",
+          "song": "김주훈 복숭아 당도 최고 #엠카운트다운 #MCOUNTDOWN",
+          "url": "https://youtube.com/shorts/15HMB_9CQXI"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "김주훈 복숭아 당도 최고 #엠카운트다운 #MCOUNTDOWN #CORTIS #코르티스",
+      "author": "Mnet K-POP",
+      "authorUrl": "https://www.youtube.com/@Mnet",
+      "titleReview": []
+    },
+    {
+      "id": "DdCDoWqci_0",
+      "references": [
+        {
+          "owner": "a0084:성현",
+          "song": "영크크",
+          "url": "https://youtube.com/shorts/DdCDoWqci_0"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "영크크 보고싶었던 사람? #CORTIS #코르티스 #CORTIS_YOUNGCREATORCREW",
+      "author": "CORTIS",
+      "authorUrl": "https://www.youtube.com/@cortis_bighit",
+      "titleReview": []
+    },
+    {
+      "id": "F78vfAun4ps",
+      "references": [
+        {
+          "owner": "a0084:성현",
+          "song": "팔랑거렸어?",
+          "url": "https://youtube.com/shorts/F78vfAun4ps"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "팔랑거렸어? #CORTIS #코르티스 #CORTIS_REDRED",
+      "author": "CORTIS",
+      "authorUrl": "https://www.youtube.com/@cortis_bighit",
+      "titleReview": []
+    },
+    {
+      "id": "CKatID0BYZI",
+      "references": [
+        {
+          "owner": "a0084:성현",
+          "song": "Overdrive",
+          "url": "https://youtube.com/shorts/CKatID0BYZI"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "#CORTIS #SEONGHYEON #KEONHO 님과 함께 심장이 쿵💗 #TWS_OVERDRIVE #TWS #도훈 #영재",
+      "author": "TWS",
+      "authorUrl": "https://www.youtube.com/@TWS_PLEDIS",
+      "titleReview": []
+    },
+    {
+      "id": "aY6I3GgC1lc",
+      "references": [
+        {
+          "owner": "a0085:건호",
+          "song": "소년미 넘치는 보컬 건호의 ＜그대 작은 나의 세상이 되어＞💚 | EP.213 선공개",
+          "url": "https://youtube.com/shorts/aY6I3GgC1lc"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "[리무진서비스] 소년미 넘치는 보컬 건호의 ＜그대 작은 나의 세상이 되어＞💚 | EP.213 선공개 영상 #shorts #리무진서비스 #건호",
+      "author": "KBS Kpop",
+      "authorUrl": "https://www.youtube.com/@KBSKpop",
+      "titleReview": []
+    },
+    {
+      "id": "wm63jPpPc3A",
+      "references": [
+        {
+          "owner": "a0085:건호",
+          "song": "10초 동안 건호 얼굴만 나오는 영상",
+          "url": "https://youtube.com/shorts/wm63jPpPc3A"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "10초 동안 건호 얼굴만 나오는 영상 #CORTIS #KEONHO",
+      "author": "숏피디",
+      "authorUrl": "https://www.youtube.com/@M2_ShortsPD",
+      "titleReview": []
+    },
+    {
+      "id": "OPD2pyDlEG0",
+      "references": [
+        {
+          "owner": "a0085:건호",
+          "song": "드디어 데뷔한 '감자튀김 걔' 건호 | STUDIO CHOOM ORIGINAL",
+          "url": "https://youtube.com/shorts/OPD2pyDlEG0"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "드디어 데뷔한 '감자튀김 걔' 코르티스 건호 | STUDIO CHOOM ORIGINAL #shorts",
+      "author": "STUDIO CHOOM [스튜디오 춤]",
+      "authorUrl": "https://www.youtube.com/@STUDIOCHOOM",
+      "titleReview": [
+        "드디어 데뷔한 '감자튀김 걔' 건호 | STUDIO CHOOM ORIGINAL"
+      ]
+    },
+    {
+      "id": "wKAakyOhz0c",
+      "references": [
+        {
+          "owner": "a0085:건호",
+          "song": "적당히론 배가 차지 않아 🦛",
+          "url": "https://youtube.com/shorts/wKAakyOhz0c"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "적당히론 배가 차지 않아 🦛 #CORTIS #코르티스 #KEONHO #건호 #CORTIS_WhatYouWant",
+      "author": "CORTIS",
+      "authorUrl": "https://www.youtube.com/@cortis_bighit",
+      "titleReview": []
+    },
+    {
+      "id": "jmed2pwkAyU",
+      "references": [
+        {
+          "owner": "a0120:성찬",
+          "song": "dyd w/ CHOI SAN & JONGHO",
+          "url": "https://youtube.com/shorts/jmed2pwkAyU"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "dyd w/ CHOI SAN & JONGHO @ATEEZofficial #RIIZE #라이즈 #RISEandREALIZE #dyd #RIIZE_dyd",
+      "author": "RIIZE",
+      "authorUrl": "https://www.youtube.com/@RIIZE_official",
+      "titleReview": []
+    },
+    {
+      "id": "13mhUd_RXNU",
+      "references": [
+        {
+          "owner": "a0110:산",
+          "song": "Gotta WORK!!",
+          "url": "https://youtube.com/shorts/13mhUd_RXNU"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "Gotta WORK!!✌️ #Shorts",
+      "author": "ATEEZ",
+      "authorUrl": "https://www.youtube.com/@ATEEZofficial",
+      "titleReview": []
+    },
+    {
+      "id": "6YHy4y2Yt4Y",
+      "references": [
+        {
+          "owner": "a0120:성찬",
+          "song": "dyd w/ Sieun",
+          "url": "https://youtube.com/shorts/6YHy4y2Yt4Y"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "dyd w/ Sieun @STAYC #RIIZE #라이즈#RISEandREALIZE #dyd #RIIZE_dyd",
+      "author": "RIIZE",
+      "authorUrl": "https://www.youtube.com/@RIIZE_official",
+      "titleReview": []
+    },
+    {
+      "id": "y8wDy9HnE7s",
+      "references": [
+        {
+          "owner": "a0120:성찬",
+          "song": "Fly Up (w/ 신위)",
+          "url": "https://youtube.com/shorts/y8wDy9HnE7s"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "#tripleS #신위 도 Fly Up‼️#RIIZE #라이즈 #SUNGCHAN #성찬#트리플에스 #XINYU #RISEandREALIZE #FlyUp #ODYSSEY",
+      "author": "RIIZE",
+      "authorUrl": "https://www.youtube.com/@RIIZE_official",
+      "titleReview": [
+        "Fly Up (w/ 신위)"
+      ]
+    },
+    {
+      "id": "iO3ximwv7rY",
+      "references": [
+        {
+          "owner": "a0145:김채원",
+          "song": "Eat 대추노노 up 🍝 #ITZY #YEJI #LE_SSERAFIM #KIMCHAEWON #THATSANONO",
+          "url": "https://youtube.com/shorts/iO3ximwv7rY"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "Eat 대추노노 up 🍝 #ITZY #YEJI #LE_SSERAFIM #KIMCHAEWON #THATSANONO @LESSERAFIM_official",
+      "author": "ITZY",
+      "authorUrl": "https://www.youtube.com/@ITZY",
+      "titleReview": []
+    },
+    {
+      "id": "EJqu6C_HFp0",
+      "references": [
+        {
+          "owner": "코르티스",
+          "song": "REDRED",
+          "url": "https://youtube.com/shorts/EJqu6C_HFp0"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "코르티스 'REDRED' 릴댄 하이라이트 | 릴레이댄스",
+      "author": "M2",
+      "authorUrl": "https://www.youtube.com/@MnetM2",
+      "titleReview": []
+    },
+    {
+      "id": "uGtZAkJhKlE",
+      "references": [
+        {
+          "owner": "코르티스",
+          "song": "this how we vibe to #BTS_SWIM 🏊🫶 #BTS #방탄소년단",
+          "url": "https://youtube.com/shorts/uGtZAkJhKlE"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "this how we vibe to #BTS_SWIM 🏊🫶 #BTS #방탄소년단 #CORTIS #코르티스",
+      "author": "CORTIS",
+      "authorUrl": "https://www.youtube.com/@cortis_bighit",
+      "titleReview": []
+    },
+    {
+      "id": "Z9eI02_ADVQ",
+      "references": [
+        {
+          "owner": "코르티스",
+          "song": "TNT",
+          "url": "https://youtube.com/shorts/Z9eI02_ADVQ"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "Who we are? TNT 🏫 Create a Short with “TNT” #CORTIS #코르티스 #CORTIS_TNT",
+      "author": "CORTIS",
+      "authorUrl": "https://www.youtube.com/@cortis_bighit",
+      "titleReview": []
+    },
+    {
+      "id": "cVfhs5S3Sjw",
+      "references": [
+        {
+          "owner": "에이티즈",
+          "song": "Our 5th anniversary❤",
+          "url": "https://youtube.com/shorts/cVfhs5S3Sjw"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "Our 5th anniversary❤ #Shorts",
+      "author": "ATEEZ",
+      "authorUrl": "https://www.youtube.com/@ATEEZofficial",
+      "titleReview": []
+    },
+    {
+      "id": "1iH6jMJDpcM",
+      "references": [
+        {
+          "owner": "코르티스",
+          "song": "REDRED(cheering ver.)",
+          "url": "https://youtube.com/shorts/1iH6jMJDpcM"
+        }
+      ],
+      "status": 200,
+      "videoTitle": "thoughts on the REDRED cheering ver. choreo? #CORTIS #코르티스 #CORTIS_REDRED",
+      "author": "CORTIS",
+      "authorUrl": "https://www.youtube.com/@cortis_bighit",
+      "titleReview": []
+    }
+  ]
+}

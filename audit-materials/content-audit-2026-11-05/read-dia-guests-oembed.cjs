@@ -1,0 +1,4 @@
+// Public read-only metadata checks, no YouTube Data API quota.
+const fs=require('fs'),path=require('path');
+const ids=['O-Fpg_FQv3A','h5E-qf13XCk','CPD5M9pt8YY','UdDVIYATjtk','_ETWA9wVykw','DKYY_279GTM','g_5n_8vkCG0','OM-m2O_jRjw','qWASj0mhxFw','TPXVXEiwhwM','CQKbw3xr3Io','wMuTWha2wN0'];
+(async()=>{const out=[];for(const id of ids){const url='https://www.youtube.com/oembed?url='+encodeURIComponent('https://www.youtube.com/watch?v='+id)+'&format=json';const r=await fetch(url);const text=await r.text();let data;try{data=JSON.parse(text)}catch{data={error:text.slice(0,120)}}out.push({id,status:r.status,title:data.title,author:data.author_name,author_url:data.author_url,error:data.error});}fs.writeFileSync(path.join(__dirname,'dia-guests-oembed-12.json'),JSON.stringify(out,null,2));console.log(JSON.stringify(out,null,2));})().catch(e=>{console.error(e.message);process.exitCode=1});

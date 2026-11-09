@@ -1,0 +1,5 @@
+const fs=require('fs'),path=require('path');
+const routes=['g/알파드라이브원/건우/','g/시크릿넘버/','en/g/dia/','en/g/dia/eunchae/'];
+const ids=['O-Fpg_FQv3A','h5E-qf13XCk','CPD5M9pt8YY','UdDVIYATjtk','_ETWA9wVykw','DKYY_279GTM','g_5n_8vkCG0','OM-m2O_jRjw','l4EtsHLNLb4','QytGEce4YoM','w8KaRWSpC28'];
+const strip=s=>s.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+(async()=>{const out=[];for(const route of routes){const url='https://kpop-universe.kr/'+route,r=await fetch(url),s=await r.text();out.push({url,httpStatus:r.status,title:s.match(/<title>([\s\S]*?)<\/title>/)?.[1],intro:(s.match(/<p class="intro">[\s\S]*?<\/p>/g)||[]).map(strip),statusLabel:strip(s.match(/<span><b>(?:Status|상태)<\/b>[\s\S]*?<\/span>/)?.[0]||''),matchedVideoAnchors:ids.filter(id=>s.includes('youtube.com/watch?v='+id)),videoIdOccurrences:ids.filter(id=>s.includes(id))});}fs.writeFileSync(path.join(__dirname,'status-dia-live-4.json'),JSON.stringify(out,null,2));console.log(JSON.stringify(out,null,2));})().catch(e=>{console.error(e.message);process.exitCode=1});

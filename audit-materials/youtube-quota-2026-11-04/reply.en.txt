@@ -1,0 +1,22 @@
+DRAFT — attach and verify the screen recording before sending.
+Reply in the existing “YouTube API Services: Thank you for your submission” thread.
+
+Hello YouTube API Services Team,
+
+Thank you for reviewing our quota increase request. The API client is K-POP UNIVERSE: https://kpop-universe.kr/.
+
+Screencast: [attach the verified screen recording or add its accessible link here].
+
+The demonstration covers finding an artist, browsing and filtering their videos, selecting a video, and playing it inside the API client using the YouTube embedded player. It also shows the standard player controls and navigating to another video.
+
+K-POP UNIVERSE is a non-commercial K-pop discovery and archive project. We use the YouTube Data API to retrieve public video and channel metadata, including video IDs, titles, thumbnail URLs, publication dates, view counts and durations. The UI presents this metadata in artist and content collections. The embedded player streams videos from YouTube; the application does not download, re-host or provide downloads of YouTube audiovisual content.
+
+The application does not request access to a visitor's private YouTube account data. Please review the attached demonstration together with our public privacy policy and terms:
+https://kpop-universe.kr/privacy.html
+https://kpop-universe.kr/terms.html
+
+Please let us know if you need another view of a particular workflow or any further information to complete the review.
+
+Best regards,
+K-POP UNIVERSE
+contact@kpop-universe.kr

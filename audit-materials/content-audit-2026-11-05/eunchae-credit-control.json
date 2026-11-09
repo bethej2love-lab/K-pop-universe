@@ -1,0 +1,165 @@
+{
+  "official": [
+    {
+      "url": "https://www.melon.com/artist/detail.htm?artistId=982350",
+      "status": 200,
+      "title": "아티스트 채널>멜론",
+      "affiliation": "소속그룹 DIA (다이아) , L.U.B (다이아) 신상정보 국적 대한민국 맨 위로 가기 --> MelOn Ticket --> aztalk --> --> 멜론 스튜디오 Windows 플레이어 Mac 플레이어 iPad 고객센터 이용약관 위치기반서비스 이용약관 개인정보처리방침 청소년보호정책",
+      "creditSection": "",
+      "creditLinks": [
+        "타임라인",
+        "상세정보",
+        "곡",
+        "앨범",
+        "비디오",
+        "포토/스토리",
+        "팬"
+      ]
+    },
+    {
+      "url": "https://www.melon.com/song/detail.htm?songId=30178736",
+      "status": 200,
+      "title": "곡 정보>멜론",
+      "affiliation": "",
+      "creditSection": "작사 / 작곡 제니 작사 은진 작사 은채 작사 제니 작곡 은진 작곡 은채 작곡 똘아이박 작곡 피터팬 작곡 똘아이박 편곡 Noheul(노을) 편곡",
+      "creditLinks": [
+        "",
+        "은채",
+        "",
+        "은채"
+      ]
+    },
+    {
+      "url": "https://www.melon.com/song/detail.htm?songId=8224333",
+      "status": 200,
+      "title": "곡 정보>멜론",
+      "affiliation": "",
+      "creditSection": "작사 / 작곡 은채 작사 백예빈 작곡 기희현 작곡 안영민 편곡",
+      "creditLinks": [
+        "",
+        "은채"
+      ]
+    }
+  ],
+  "current": {
+    "dia": {
+      "aid": "982350",
+      "lyrics": [
+        {
+          "songId": "37381913",
+          "title": "너만 모르나 봄",
+          "album": ""
+        },
+        {
+          "songId": "37044152",
+          "title": "13월 32일",
+          "album": ""
+        },
+        {
+          "songId": "30374836",
+          "title": "빛",
+          "album": ""
+        },
+        {
+          "songId": "30374839",
+          "title": "너만 모르나 봄",
+          "album": ""
+        },
+        {
+          "songId": "30374840",
+          "title": "乾坤坎離",
+          "album": ""
+        },
+        {
+          "songId": "30178736",
+          "title": "13월 32일",
+          "album": ""
+        },
+        {
+          "songId": "8224333",
+          "title": "기억할게요 (은채)",
+          "album": ""
+        }
+      ],
+      "compose": [
+        {
+          "songId": "37044152",
+          "title": "13월 32일",
+          "album": ""
+        },
+        {
+          "songId": "30178736",
+          "title": "13월 32일",
+          "album": ""
+        }
+      ]
+    },
+    "lesserafim": {
+      "aid": "3093339",
+      "lyrics": [
+        {
+          "songId": "602066110",
+          "title": "iffy iffy",
+          "album": ""
+        },
+        {
+          "songId": "602066115",
+          "title": "Trust Exercise",
+          "album": ""
+        },
+        {
+          "songId": "602066116",
+          "title": "Liminal Space",
+          "album": ""
+        },
+        {
+          "songId": "38660170",
+          "title": "So Cynical (Badum)",
+          "album": ""
+        },
+        {
+          "songId": "37225607",
+          "title": "We got so much",
+          "album": ""
+        },
+        {
+          "songId": "36411345",
+          "title": "피어나 (Between you, me and the lamppost)",
+          "album": ""
+        }
+      ],
+      "compose": [
+        {
+          "songId": "602066110",
+          "title": "iffy iffy",
+          "album": ""
+        },
+        {
+          "songId": "602066115",
+          "title": "Trust Exercise",
+          "album": ""
+        },
+        {
+          "songId": "602066116",
+          "title": "Liminal Space",
+          "album": ""
+        },
+        {
+          "songId": "38660170",
+          "title": "So Cynical (Badum)",
+          "album": ""
+        },
+        {
+          "songId": "37225607",
+          "title": "We got so much",
+          "album": ""
+        },
+        {
+          "songId": "36411345",
+          "title": "피어나 (Between you, me and the lamppost)",
+          "album": ""
+        }
+      ]
+    }
+  }
+}

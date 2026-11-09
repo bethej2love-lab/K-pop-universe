@@ -1,0 +1,161 @@
+[
+  {
+    "id": "ZyE7UH1DwVU",
+    "title": {
+      "primaryGroup": "아이브",
+      "withGroups": [],
+      "membersByGroup": {
+        "아이브": [
+          "이서"
+        ]
+      },
+      "confidence": "weak",
+      "trace": []
+    },
+    "own": []
+  },
+  {
+    "id": "gWzgMjTHOkU",
+    "title": {
+      "primaryGroup": "스트레이키즈",
+      "withGroups": [],
+      "membersByGroup": {
+        "스트레이키즈": [
+          "창빈"
+        ]
+      },
+      "confidence": "strong",
+      "trace": [
+        {
+          "rule": "common_noun_gate",
+          "token": "시그니처",
+          "effect": "blocked"
+        }
+      ]
+    },
+    "own": [
+      "창빈"
+    ]
+  },
+  {
+    "id": "hTJzQAgwMNc",
+    "title": {
+      "primaryGroup": "위너",
+      "withGroups": [],
+      "membersByGroup": {
+        "위너": [
+          "이승훈"
+        ]
+      },
+      "confidence": "weak",
+      "trace": []
+    },
+    "own": [
+      "이승훈"
+    ]
+  },
+  {
+    "id": "PrvOkWYkXSU",
+    "title": {
+      "primaryGroup": "위너",
+      "withGroups": [],
+      "membersByGroup": {
+        "위너": [
+          "이승훈"
+        ]
+      },
+      "confidence": "weak",
+      "trace": []
+    },
+    "own": [
+      "이승훈"
+    ]
+  },
+  {
+    "id": "TdDxqEA4tR4",
+    "title": {
+      "primaryGroup": "위너",
+      "withGroups": [],
+      "membersByGroup": {
+        "위너": [
+          "이승훈"
+        ]
+      },
+      "confidence": "weak",
+      "trace": []
+    },
+    "own": [
+      "이승훈"
+    ]
+  },
+  {
+    "id": "y3hkOUECn_4",
+    "title": {
+      "primaryGroup": "위너",
+      "withGroups": [],
+      "membersByGroup": {
+        "위너": [
+          "이승훈"
+        ]
+      },
+      "confidence": "weak",
+      "trace": []
+    },
+    "own": [
+      "이승훈"
+    ]
+  },
+  {
+    "id": "7ZK1QSX7UN8",
+    "title": {
+      "primaryGroup": "나인뮤지스",
+      "withGroups": [],
+      "membersByGroup": {
+        "나인뮤지스": [
+          "혜미",
+          "금조"
+        ]
+      },
+      "confidence": "strong",
+      "trace": []
+    },
+    "own": [
+      "경리",
+      "혜미",
+      "소진",
+      "금조"
+    ]
+  },
+  {
+    "id": "bcVe5RkdUfU",
+    "title": {
+      "primaryGroup": "나인뮤지스",
+      "withGroups": [],
+      "membersByGroup": {
+        "나인뮤지스": [
+          "소진"
+        ]
+      },
+      "confidence": "weak",
+      "trace": []
+    },
+    "own": [
+      "소진"
+    ]
+  },
+  {
+    "id": "SkBlK21hp_A",
+    "title": {
+      "primaryGroup": "소진",
+      "withGroups": [],
+      "membersByGroup": {
+        "소진": [
+          "소진"
+        ]
+      },
+      "confidence": "weak",
+      "trace": []
+    },
+    "own": []
+  }
+]

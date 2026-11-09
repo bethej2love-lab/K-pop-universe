@@ -1,0 +1,66 @@
+{
+  "revision": "a213912575",
+  "control": "Only in-memory artist array order reversed, no source/data edits",
+  "rows": [
+    {
+      "id": "a0473",
+      "name": "레나",
+      "original": {
+        "ly": 7,
+        "co": 4
+      },
+      "reversed": {
+        "ly": 7,
+        "co": 4
+      }
+    },
+    {
+      "id": "a1047",
+      "name": "레나",
+      "original": null,
+      "reversed": {
+        "ly": 7,
+        "co": 4
+      }
+    },
+    {
+      "id": "a0524",
+      "name": "현아",
+      "original": {
+        "ly": 41,
+        "co": 9
+      },
+      "reversed": null
+    },
+    {
+      "id": "a1401",
+      "name": "현아",
+      "original": null,
+      "reversed": {
+        "ly": 41,
+        "co": 9
+      }
+    },
+    {
+      "id": "a0607",
+      "name": "유주",
+      "original": {
+        "ly": 29,
+        "co": 18
+      },
+      "reversed": {
+        "ly": 29,
+        "co": 18
+      }
+    },
+    {
+      "id": "a1475",
+      "name": "유주",
+      "original": null,
+      "reversed": {
+        "ly": 29,
+        "co": 18
+      }
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "revision": "a213912575",
+  "scope": "Actual loop. Only selected songId removed in memory, existing other IDs preserved",
+  "cases": [
+    {
+      "name": "triples_japanese",
+      "storedTitle": "ヘッドフォン",
+      "normalized": "",
+      "before": {
+        "no": 2,
+        "title": "ヘッドフォン",
+        "isTitle": false
+      },
+      "after": {
+        "no": 2,
+        "title": "ヘッドフォン",
+        "isTitle": false,
+        "songId": "600151057"
+      },
+      "selectedOfficial": {
+        "songId": "600151057",
+        "title": "### (hatch! Version)"
+      }
+    },
+    {
+      "name": "sm_japanese_blind",
+      "storedTitle": "僕のせいだよ (Blind)",
+      "normalized": "",
+      "before": {
+        "no": 8,
+        "title": "僕のせいだよ (Blind)",
+        "isTitle": false,
+        "note": "예성 (일본어 버전)"
+      },
+      "after": {
+        "no": 8,
+        "title": "僕のせいだよ (Blind)",
+        "isTitle": false,
+        "note": "예성 (일본어 버전)",
+        "songId": "4450174"
+      },
+      "selectedOfficial": {
+        "songId": "4450174",
+        "title": "太貪心 (Blind) (Sung By ZHOUMI (Super Junior-M))"
+      }
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+[
+  {
+    "kind": "actual normal group stage",
+    "title": "DIA, Hug U (다이아, 감싸줄게요) [THE SHOW 200707] UHD",
+    "date": "2025-04-12",
+    "result": {
+      "primaryGroup": "다이아",
+      "withGroups": [],
+      "membersByGroup": {
+        "다이아": []
+      },
+      "confidence": "strong",
+      "trace": []
+    }
+  },
+  {
+    "kind": "actual normal group MV",
+    "title": "[MV] DIA(다이아) _ WooWoo(우우)",
+    "date": "2025-03-31",
+    "result": {
+      "primaryGroup": "다이아",
+      "withGroups": [],
+      "membersByGroup": {
+        "다이아": []
+      },
+      "confidence": "strong",
+      "trace": []
+    }
+  },
+  {
+    "kind": "actual normal unit MV",
+    "title": "[MV] DIA, YEBIN, SOMYI(다이아, 예빈, 솜이) _ Good Night(굿밤)",
+    "date": "2025-04-30",
+    "result": {
+      "primaryGroup": "다이아",
+      "withGroups": [],
+      "membersByGroup": {
+        "다이아": []
+      },
+      "confidence": "strong",
+      "trace": []
+    }
+  },
+  {
+    "kind": "memory solo title without English DIA",
+    "title": "디아 - 망각의 섬 (The Isle of Oblivion) MV",
+    "date": "2025-04-10",
+    "result": {
+      "primaryGroup": "픽시",
+      "withGroups": [],
+      "membersByGroup": {
+        "픽시": [
+          "디아"
+        ]
+      },
+      "confidence": "weak",
+      "trace": []
+    }
+  },
+  {
+    "kind": "actual personal channel cover; title alone insufficient",
+    "title": "JEEP- Kim Petras Cover .ᐟJUEUN .ᐟ",
+    "date": "2026-09-28",
+    "result": null
+  }
+]

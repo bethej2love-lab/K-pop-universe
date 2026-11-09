@@ -1,0 +1,880 @@
+{
+  "revision": "a213912575",
+  "rules": [
+    {
+      "name": "하루"
+    },
+    {
+      "name": "하나"
+    },
+    {
+      "name": "위시"
+    },
+    {
+      "name": "BLUE"
+    },
+    {
+      "name": "웨이"
+    },
+    {
+      "name": "베이비"
+    },
+    {
+      "name": "이진"
+    },
+    {
+      "name": "릴리"
+    },
+    {
+      "name": "메이"
+    },
+    {
+      "name": "조이"
+    },
+    {
+      "name": "루나"
+    },
+    {
+      "name": "소울"
+    },
+    {
+      "name": "루비"
+    },
+    {
+      "name": "리오"
+    },
+    {
+      "name": "레오"
+    },
+    {
+      "name": "미아"
+    },
+    {
+      "name": "Love"
+    },
+    {
+      "name": "고우리"
+    },
+    {
+      "name": "미래"
+    },
+    {
+      "name": "아이엠"
+    },
+    {
+      "name": "리세"
+    },
+    {
+      "name": "써머"
+    },
+    {
+      "name": "이현"
+    },
+    {
+      "name": "태양"
+    },
+    {
+      "name": "지디"
+    },
+    {
+      "name": "솔라"
+    },
+    {
+      "name": "김채원"
+    },
+    {
+      "name": "먼데이"
+    }
+  ],
+  "rows": [
+    {
+      "id": "-2y8QMeZn_s",
+      "stored": "더보이즈",
+      "parsed": null
+    },
+    {
+      "id": "GFUnnkR4Le4",
+      "stored": "더보이즈",
+      "parsed": {
+        "primaryGroup": "엑소",
+        "withGroups": [],
+        "membersByGroup": {
+          "엑소": [
+            "시우민"
+          ]
+        },
+        "confidence": "weak",
+        "trace": [
+          {
+            "rule": "fancam_struct",
+            "token": "",
+            "effect": "songtitle_stripped"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fh4-Q6gDjZk",
+      "stored": "더보이즈",
+      "parsed": null
+    },
+    {
+      "id": "fKtfijPNqv8",
+      "stored": "더보이즈",
+      "parsed": null
+    },
+    {
+      "id": "7CQw2hgNw4k",
+      "stored": "더보이즈",
+      "parsed": {
+        "primaryGroup": "케플러",
+        "withGroups": [],
+        "membersByGroup": {
+          "케플러": [
+            "강예서"
+          ]
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "KQtvlaaTeRg",
+      "stored": "더보이즈",
+      "parsed": null
+    },
+    {
+      "id": "xEpkcHbcZUQ",
+      "stored": "더보이즈",
+      "parsed": null
+    },
+    {
+      "id": "cJYXz8anY8A",
+      "stored": "더보이즈",
+      "parsed": null
+    },
+    {
+      "id": "MHGwLx_f5MY",
+      "stored": "더보이즈",
+      "parsed": null
+    },
+    {
+      "id": "dBEyjIp3kfQ",
+      "stored": "더보이즈",
+      "parsed": {
+        "primaryGroup": "케플러",
+        "withGroups": [],
+        "membersByGroup": {
+          "케플러": [
+            "김다연"
+          ]
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "1HIYKjUxoeI",
+      "stored": "더보이즈",
+      "parsed": null
+    },
+    {
+      "id": "3o7tjobet9k",
+      "stored": "더보이즈",
+      "parsed": null
+    },
+    {
+      "id": "FtjjERyZ_hY",
+      "stored": "더보이즈",
+      "parsed": null
+    },
+    {
+      "id": "8IiuODdfBPA",
+      "stored": "더보이즈",
+      "parsed": null
+    },
+    {
+      "id": "ASU7-CoxmNM",
+      "stored": "더보이즈",
+      "parsed": null
+    },
+    {
+      "id": "MlcADDC2F8M",
+      "stored": "더보이즈",
+      "parsed": null
+    },
+    {
+      "id": "fODPnhq55X4",
+      "stored": "더보이즈",
+      "parsed": null
+    },
+    {
+      "id": "GDuaTJoK71A",
+      "stored": "더보이즈",
+      "parsed": null
+    },
+    {
+      "id": "M2H5u71SFnM",
+      "stored": "더보이즈",
+      "parsed": null
+    },
+    {
+      "id": "IJWxZ1hn5ew",
+      "stored": "더보이즈",
+      "parsed": null
+    },
+    {
+      "id": "iJIBE06x8VQ",
+      "stored": "더보이즈",
+      "parsed": null
+    },
+    {
+      "id": "FYro63RXo0M",
+      "stored": "더보이즈",
+      "parsed": {
+        "primaryGroup": "엑소",
+        "withGroups": [],
+        "membersByGroup": {
+          "엑소": [
+            "시우민"
+          ]
+        },
+        "confidence": "weak",
+        "trace": []
+      }
+    },
+    {
+      "id": "A4dVbZW08p4",
+      "stored": "더보이즈",
+      "parsed": {
+        "primaryGroup": "케플러",
+        "withGroups": [],
+        "membersByGroup": {
+          "케플러": [
+            "최유진"
+          ]
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "SEgY7qLgniA",
+      "stored": "더보이즈",
+      "parsed": {
+        "primaryGroup": "케플러",
+        "withGroups": [],
+        "membersByGroup": {
+          "케플러": [
+            "서영은"
+          ]
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "sAS1g8WNOrg",
+      "stored": "더보이즈",
+      "parsed": null
+    },
+    {
+      "id": "Nb3NwKG-T2M",
+      "stored": "스트레이키즈",
+      "parsed": {
+        "primaryGroup": "JBJ",
+        "withGroups": [],
+        "membersByGroup": {
+          "JBJ": [
+            "김동한"
+          ]
+        },
+        "confidence": "weak",
+        "trace": []
+      }
+    },
+    {
+      "id": "9SN7xWt6Gxg",
+      "stored": "스트레이키즈",
+      "parsed": {
+        "primaryGroup": "제로베이스원",
+        "withGroups": [],
+        "membersByGroup": {
+          "제로베이스원": [
+            "한유진"
+          ]
+        },
+        "confidence": "weak",
+        "trace": []
+      }
+    },
+    {
+      "id": "8sWczq1PTtQ",
+      "stored": "스트레이키즈",
+      "parsed": null
+    },
+    {
+      "id": "lR_8HaOARZg",
+      "stored": "스트레이키즈",
+      "parsed": {
+        "primaryGroup": "제로베이스원",
+        "withGroups": [],
+        "membersByGroup": {
+          "제로베이스원": [
+            "성한빈"
+          ]
+        },
+        "confidence": "weak",
+        "trace": []
+      }
+    },
+    {
+      "id": "CEBz8UIT9Qo",
+      "stored": "스트레이키즈",
+      "parsed": {
+        "primaryGroup": null,
+        "withGroups": [],
+        "membersByGroup": {},
+        "confidence": "none",
+        "hold": true,
+        "holdReason": "fancam-unknown-group",
+        "holdToken": "랜덤"
+      }
+    },
+    {
+      "id": "yD-1-04n5yE",
+      "stored": "스트레이키즈",
+      "parsed": {
+        "primaryGroup": "제로베이스원",
+        "withGroups": [],
+        "membersByGroup": {
+          "제로베이스원": [
+            "한유진"
+          ]
+        },
+        "confidence": "weak",
+        "trace": []
+      }
+    },
+    {
+      "id": "LNSe6LRtTeM",
+      "stored": "스트레이키즈",
+      "parsed": null
+    },
+    {
+      "id": "UDUaNMq-OU4",
+      "stored": "스트레이키즈",
+      "parsed": null
+    },
+    {
+      "id": "ls49TmQMv4Y",
+      "stored": "스트레이키즈",
+      "parsed": null
+    },
+    {
+      "id": "q5eJSts0Li0",
+      "stored": "스트레이키즈",
+      "parsed": null
+    },
+    {
+      "id": "j_h9ZOep4yQ",
+      "stored": "스트레이키즈",
+      "parsed": null
+    },
+    {
+      "id": "LgNT5KxI1mc",
+      "stored": "스트레이키즈",
+      "parsed": {
+        "primaryGroup": "이븐",
+        "withGroups": [],
+        "membersByGroup": {
+          "이븐": [
+            "박한빈"
+          ]
+        },
+        "confidence": "weak",
+        "trace": []
+      }
+    },
+    {
+      "id": "SdbNocZqaWg",
+      "stored": "스트레이키즈",
+      "parsed": null
+    },
+    {
+      "id": "gF3cRDO5Gjc",
+      "stored": "스트레이키즈",
+      "parsed": {
+        "primaryGroup": "위클리",
+        "withGroups": [],
+        "membersByGroup": {
+          "위클리": [
+            "지한"
+          ]
+        },
+        "confidence": "weak",
+        "trace": []
+      }
+    },
+    {
+      "id": "mNhTMd4Vz2w",
+      "stored": "스트레이키즈",
+      "parsed": null
+    },
+    {
+      "id": "vDsBboojFds",
+      "stored": "스트레이키즈",
+      "parsed": {
+        "primaryGroup": "제로베이스원",
+        "withGroups": [],
+        "membersByGroup": {
+          "제로베이스원": [
+            "성한빈",
+            "한유진"
+          ]
+        },
+        "confidence": "weak",
+        "trace": [
+          {
+            "rule": "fancam_struct",
+            "token": "",
+            "effect": "songtitle_stripped"
+          }
+        ]
+      }
+    },
+    {
+      "id": "gS4fCryt9CM",
+      "stored": "스트레이키즈",
+      "parsed": {
+        "primaryGroup": "위아이",
+        "withGroups": [],
+        "membersByGroup": {
+          "위아이": [
+            "김요한"
+          ]
+        },
+        "confidence": "weak",
+        "trace": [
+          {
+            "rule": "fancam_struct",
+            "token": "",
+            "effect": "songtitle_stripped"
+          }
+        ]
+      }
+    },
+    {
+      "id": "mP-gfuPKs6I",
+      "stored": "스트레이키즈",
+      "parsed": null
+    },
+    {
+      "id": "VE-GYlZU-KQ",
+      "stored": "스트레이키즈",
+      "parsed": null
+    },
+    {
+      "id": "FHqS59lWeyE",
+      "stored": "스트레이키즈",
+      "parsed": {
+        "primaryGroup": "JBJ",
+        "withGroups": [],
+        "membersByGroup": {
+          "JBJ": [
+            "김동한"
+          ]
+        },
+        "confidence": "weak",
+        "trace": []
+      }
+    },
+    {
+      "id": "zjZDiuzKYwE",
+      "stored": "스트레이키즈",
+      "parsed": {
+        "primaryGroup": null,
+        "withGroups": [],
+        "membersByGroup": {},
+        "confidence": "none",
+        "hold": true,
+        "holdReason": "fancam-unknown-group",
+        "holdToken": "랜덤"
+      }
+    },
+    {
+      "id": "vj1t_38igKM",
+      "stored": "스트레이키즈",
+      "parsed": {
+        "primaryGroup": "JBJ",
+        "withGroups": [],
+        "membersByGroup": {
+          "JBJ": [
+            "김동한"
+          ]
+        },
+        "confidence": "weak",
+        "trace": []
+      }
+    },
+    {
+      "id": "vkEm_m3t7cg",
+      "stored": "스트레이키즈",
+      "parsed": null
+    },
+    {
+      "id": "VQEk89T6owM",
+      "stored": "스트레이키즈",
+      "parsed": null
+    },
+    {
+      "id": "UGfsS4j3swI",
+      "stored": "스트레이키즈",
+      "parsed": {
+        "primaryGroup": null,
+        "withGroups": [],
+        "membersByGroup": {},
+        "confidence": "none",
+        "hold": true,
+        "holdReason": "fancam-unknown-group",
+        "holdToken": "준한"
+      }
+    },
+    {
+      "id": "aDZTKcHdaJA",
+      "stored": "온앤오프",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [
+          "아이오아이"
+        ],
+        "membersByGroup": {
+          "온앤오프": [],
+          "아이오아이": [
+            "정채연"
+          ]
+        },
+        "confidence": "strong",
+        "trace": [
+          {
+            "rule": "cross_group_guest",
+            "token": "정채연",
+            "effect": "아이오아이:정채연"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fZgWkRyEJbE",
+      "stored": "온앤오프",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "SQTNfJAJ7d8",
+      "stored": "온앤오프",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "LonJVgAGskU",
+      "stored": "온앤오프",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "vJko8wkHbvU",
+      "stored": "온앤오프",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "W3uUS4q_BCY",
+      "stored": "온앤오프",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "WlJzy9zkcVg",
+      "stored": "온앤오프",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "Q7ZRKheHN9I",
+      "stored": "온앤오프",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "-Ixn7csYujs",
+      "stored": "온앤오프",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "1N-U-u_KMTc",
+      "stored": "온앤오프",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "HDz2k5ludt0",
+      "stored": "온앤오프",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "d9Y9yD_pSiA",
+      "stored": "온앤오프",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "I0JkMV0BH6I",
+      "stored": "온앤오프",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "2msA_7n_g_c",
+      "stored": "온앤오프",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "HDM2Umtazgo",
+      "stored": "온앤오프",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "NI-krcR8Jc4",
+      "stored": "온앤오프",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "W_zQjBzl2Ho",
+      "stored": "온앤오프",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "KBQ7kFvvNBk",
+      "stored": "온앤오프",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "GJSyEfXt5rk",
+      "stored": "온앤오프",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "7Ib6CMSdZeg",
+      "stored": "온앤오프",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "ablMsVte1xM",
+      "stored": "온앤오프",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "Zw-45Wl9XkU",
+      "stored": "온앤오프",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "pwFer8_bzcU",
+      "stored": "온앤오프",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "qf-BDNkBzgc",
+      "stored": "온앤오프",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "_ybztzb1mUk",
+      "stored": "온앤오프",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    }
+  ]
+}

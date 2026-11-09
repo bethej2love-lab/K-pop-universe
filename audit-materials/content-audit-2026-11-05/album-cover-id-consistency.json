@@ -1,0 +1,29 @@
+{
+  "revision": "e64f24f9cd",
+  "totalAlbumRefs": 12240,
+  "parseableMelonCoverRefs": 10736,
+  "candidates": [
+    {
+      "type": "group",
+      "owner": "비투비",
+      "name": "비투비",
+      "kind": "discography",
+      "title": "Born to Beat",
+      "albumId": "2096628",
+      "coverAlbumId": "2104986",
+      "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/04/986/2104986_500.jpg",
+      "releaseDate": "2012.03.21"
+    },
+    {
+      "type": "group",
+      "owner": "씨엔블루",
+      "name": "씨엔블루",
+      "kind": "discography",
+      "title": "TRIGGER",
+      "albumId": "11081490",
+      "coverAlbumId": "11078855",
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/110/78/855/11078855_20221017104806_500.jpg",
+      "releaseDate": "2022.10.19"
+    }
+  ]
+}

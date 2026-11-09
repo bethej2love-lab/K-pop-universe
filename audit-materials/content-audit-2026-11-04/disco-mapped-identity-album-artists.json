@@ -1,0 +1,107 @@
+[
+  {
+    "artistId": "a0503",
+    "artist": "유정",
+    "album": "자기소개서",
+    "id": "14511137",
+    "status": 200,
+    "blocked": false,
+    "artists": [
+      {
+        "aid": "946040",
+        "name": "남유정"
+      }
+    ],
+    "artistLabel": "남유정"
+  },
+  {
+    "artistId": "a0503",
+    "artist": "유정",
+    "album": "초대",
+    "id": "14469160",
+    "status": 200,
+    "blocked": false,
+    "artists": [
+      {
+        "aid": "946040",
+        "name": "남유정"
+      }
+    ],
+    "artistLabel": "남유정"
+  },
+  {
+    "artistId": "a0503",
+    "artist": "유정",
+    "album": "바다의 왕자",
+    "id": "14449607",
+    "status": 200,
+    "blocked": false,
+    "artists": [
+      {
+        "aid": "946040",
+        "name": "남유정"
+      }
+    ],
+    "artistLabel": "남유정"
+  },
+  {
+    "artistId": "a0503",
+    "artist": "유정",
+    "album": "니가 참 좋아",
+    "id": "14435780",
+    "status": 200,
+    "blocked": false,
+    "artists": [
+      {
+        "aid": "946040",
+        "name": "남유정"
+      }
+    ],
+    "artistLabel": "남유정"
+  },
+  {
+    "artistId": "a0503",
+    "artist": "유정",
+    "album": "Beautiful Sunlight",
+    "id": "13310409",
+    "status": 200,
+    "blocked": false,
+    "artists": [
+      {
+        "aid": "784322",
+        "name": "유정(Kim Yujeong)"
+      }
+    ],
+    "artistLabel": "유정(Kim Yujeong)"
+  },
+  {
+    "artistId": "a0580",
+    "artist": "마유카",
+    "album": "회유하는 아르파프레데리움",
+    "id": "11901366",
+    "status": 200,
+    "blocked": false,
+    "artists": [
+      {
+        "aid": "4362280",
+        "name": "마유카"
+      }
+    ],
+    "artistLabel": "마유카"
+  },
+  {
+    "artistId": "a0707",
+    "artist": "시안",
+    "album": "너와의 하루가 다시 주어진다면",
+    "id": "11535511",
+    "status": 200,
+    "blocked": false,
+    "artists": [
+      {
+        "aid": "2970911",
+        "name": "시안"
+      }
+    ],
+    "artistLabel": "시안"
+  }
+]

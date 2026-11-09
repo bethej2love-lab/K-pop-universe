@@ -1,0 +1,791 @@
+{
+  "revision": "a1c7656f0a",
+  "rows": [
+    {
+      "owner": "2PM",
+      "id": "YqDwRmsp7s0",
+      "title": "[3회] 🎤김선우(キム・ソヌ) – 우리집 (원곡:2PM)",
+      "published_at": "2022-12-20",
+      "canonicalOwner": "2PM",
+      "stripped": "[3회] 🎤김선우(キム・ソヌ) – 우리집 ",
+      "parsed": null
+    },
+    {
+      "owner": "2PM",
+      "id": "sgYfSxvSuA8",
+      "title": "[THE IDOL BAND / 무대 풀버전] 🎤김선우(キム・ソヌ) – 우리집 (원곡:2PM)",
+      "published_at": "2022-12-20",
+      "canonicalOwner": "2PM",
+      "stripped": "[THE IDOL BAND / 무대 풀버전] 🎤김선우(キム・ソヌ) – 우리집 ",
+      "parsed": null
+    },
+    {
+      "owner": "2PM",
+      "id": "_qQJ04L9HUY",
+      "title": "💫스젵 노래방 LIVE | 조나단의 'Again&Again' | 원곡:2PM | STATION Z | KBS 220318방송",
+      "published_at": "2022-03-18",
+      "canonicalOwner": "2PM",
+      "stripped": "💫스젵 노래방 LIVE | 조나단의 'Again&Again' |  | STATION Z | KBS 220318방송",
+      "parsed": null
+    },
+    {
+      "owner": "갓세븐",
+      "id": "0iY61kB-e9g",
+      "title": "[THE IDOL BAND / 무대 풀버전] 🎤UNDERGROUND - 니가 부르는 나의 이름 (원곡:GOT7)",
+      "published_at": "2023-01-20",
+      "canonicalOwner": "갓세븐",
+      "stripped": "[THE IDOL BAND / 무대 풀버전] 🎤UNDERGROUND - 니가 부르는 나의 이름 ",
+      "parsed": null
+    },
+    {
+      "owner": "갓세븐",
+      "id": "p--k5JzNc4w",
+      "title": "[6회] 🎤UNDERGROUND - 니가 부르는 나의 이름 (원곡:GOT7)",
+      "published_at": "2023-01-17",
+      "canonicalOwner": "갓세븐",
+      "stripped": "[6회] 🎤UNDERGROUND - 니가 부르는 나의 이름 ",
+      "parsed": null
+    },
+    {
+      "owner": "골든차일드",
+      "id": "ypP2-o1gdGk",
+      "title": "쿨룩 LIVE ▷ LUCY(루시), 주찬 ‘ONE(Lucid Dream)’ [원곡: Golden Child]  /[키스 더 라디오] ㅣ KBS 211021방송",
+      "published_at": "2021-10-22",
+      "canonicalOwner": "골든차일드",
+      "stripped": "쿨룩 LIVE ▷ LUCY(루시), 주찬 ‘ONE(Lucid Dream)’   /[키스 더 라디오] ㅣ KBS 211021방송",
+      "parsed": {
+        "primaryGroup": "골든차일드",
+        "withGroups": [],
+        "membersByGroup": {
+          "골든차일드": [
+            "홍주찬"
+          ]
+        },
+        "confidence": "weak",
+        "trace": []
+      }
+    },
+    {
+      "owner": "데이식스",
+      "id": "B1pobAzks7c",
+      "title": "[THE IDOL BAND / 무대 풀버전] 강한성 (カン・ハンソン) - 예뻤어 (원곡:DAY6)",
+      "published_at": "2022-12-06",
+      "canonicalOwner": "데이식스",
+      "stripped": "[THE IDOL BAND / 무대 풀버전] 강한성 (カン・ハンソン) - 예뻤어 ",
+      "parsed": null
+    },
+    {
+      "owner": "데이식스",
+      "id": "tjEecIHEMlM",
+      "title": "[1회] 🎤강한성(カン・ハンソン) - 예뻤어 (원곡:DAY6)",
+      "published_at": "2022-12-06",
+      "canonicalOwner": "데이식스",
+      "stripped": "[1회] 🎤강한성(カン・ハンソン) - 예뻤어 ",
+      "parsed": null
+    },
+    {
+      "owner": "데이식스",
+      "id": "gnBFKwMjwPM",
+      "title": "[LIVE] 웬디(Wendy) 라이브 모음.ZIP | 원곡 : 난춘(새소년), 사랑은(리쌍,정인), 예뻤어(데이식스) | 웬디의 영스트리트",
+      "published_at": "2021-10-18",
+      "canonicalOwner": "데이식스",
+      "stripped": "[LIVE] 웬디(Wendy) 라이브 모음.ZIP |  | 웬디의 영스트리트",
+      "parsed": {
+        "primaryGroup": "레드벨벳",
+        "withGroups": [],
+        "membersByGroup": {
+          "레드벨벳": [
+            "웬디"
+          ]
+        },
+        "confidence": "weak",
+        "trace": []
+      }
+    },
+    {
+      "owner": "동방신기",
+      "id": "2SUaYXKcY8o",
+      "title": "[THE IDOL BAND / 무대 풀버전] 🎤논알콜(ノンアルコール) - Love In The Ice (원곡:동방신기)",
+      "published_at": "2023-01-27",
+      "canonicalOwner": "동방신기",
+      "stripped": "[THE IDOL BAND / 무대 풀버전] 🎤논알콜(ノンアルコール) - Love In The Ice ",
+      "parsed": null
+    },
+    {
+      "owner": "동방신기",
+      "id": "L62TtbIGKpE",
+      "title": "💫 스젵 노래방 LIVE | 시그니처의 ‘풍선’ | 원곡 : 동방신기 | STATION Z | KBS 230128 방송",
+      "published_at": "2023-01-27",
+      "canonicalOwner": "동방신기",
+      "stripped": "💫 스젵 노래방 LIVE | 시그니처의 ‘풍선’ |  | STATION Z | KBS 230128 방송",
+      "parsed": null
+    },
+    {
+      "owner": "동방신기",
+      "id": "48rcYUzpz_c",
+      "title": "[7회] 🎤논알콜(ノンアルコール) - Love In The Ice (원곡:동방신기)",
+      "published_at": "2023-01-24",
+      "canonicalOwner": "동방신기",
+      "stripped": "[7회] 🎤논알콜(ノンアルコール) - Love In The Ice ",
+      "parsed": null
+    },
+    {
+      "owner": "동방신기",
+      "id": "WTge5wz9BxU",
+      "title": "'STORAGE M' 'FIVE SENSES'의 'The Way U Are(원곡 - 동방신기)' 무대",
+      "published_at": "2021-07-30",
+      "canonicalOwner": "동방신기",
+      "stripped": "'STORAGE M' 'FIVE SENSES'의 'The Way U Are' 무대",
+      "parsed": null
+    },
+    {
+      "owner": "러블리즈",
+      "id": "UkZQfOHTO8Q",
+      "title": "[#퀸덤퍼즐/Full CAM] ♬ Destiny (나의 지구) - 케이 (KEI) (원곡 : 러블리즈) @업다운배틀 #QUEENDOMPUZZLE",
+      "published_at": "2023-06-20",
+      "canonicalOwner": "러블리즈",
+      "stripped": "[#퀸덤퍼즐/Full CAM] ♬ Destiny (나의 지구) - 케이 (KEI)  @업다운배틀 #QUEENDOMPUZZLE",
+      "parsed": {
+        "primaryGroup": "러블리즈",
+        "withGroups": [
+          "엘즈업"
+        ],
+        "membersByGroup": {
+          "러블리즈": [
+            "Kei"
+          ],
+          "엘즈업": [
+            "Kei"
+          ]
+        },
+        "confidence": "weak",
+        "trace": []
+      }
+    },
+    {
+      "owner": "마마무",
+      "id": "CBhZebbLPXk",
+      "title": "[EN/JP] 정신차려, 원곡자 앞이다😳 끝까지 긴장을 놓을 수 없는 무대 🎤Decalcomanie(데칼코마니) (원곡: 마마무) [빌드업/2회] | Mnet 240202 방송",
+      "published_at": "2024-02-02",
+      "canonicalOwner": "마마무",
+      "stripped": "[EN/JP] 정신차려, 원곡자 앞이다😳 끝까지 긴장을 놓을 수 없는 무대 🎤Decalcomanie(데칼코마니)  [빌드업/2회] | Mnet 240202 방송",
+      "parsed": null
+    },
+    {
+      "owner": "몬스타엑스",
+      "id": "eg-fqkTyJFw",
+      "title": "＂와 무대 너무 좋아＂ 치명적 섹시美 뽐내는 ＜그르렁＞팀 - Jealousy (원곡 : 몬스타엑스)｜PROJECT 7｜JTBC 241122 방송",
+      "published_at": "2024-11-22",
+      "canonicalOwner": "몬스타엑스",
+      "stripped": "＂와 무대 너무 좋아＂ 치명적 섹시美 뽐내는 ＜그르렁＞팀 - Jealousy ｜PROJECT 7｜JTBC 241122 방송",
+      "parsed": null
+    },
+    {
+      "owner": "몬스타엑스",
+      "id": "pRvb9FW-5Z4",
+      "title": "디렉터들이 극찬한 🔥강렬한 퍼포먼스🔥 ＜잭팟＞팀 - GAMBLER (원곡 : 몬스타엑스) ｜PROJECT 7｜JTBC 241122 방송",
+      "published_at": "2024-11-22",
+      "canonicalOwner": "몬스타엑스",
+      "stripped": "디렉터들이 극찬한 🔥강렬한 퍼포먼스🔥 ＜잭팟＞팀 - GAMBLER  ｜PROJECT 7｜JTBC 241122 방송",
+      "parsed": null
+    },
+    {
+      "owner": "미쓰에이",
+      "id": "gBtuiKVoQVE",
+      "title": "KBS가요대축제 - [Special Stage2] Hush  (원곡: Miss A)  20181228",
+      "published_at": "2018-12-28",
+      "canonicalOwner": "미쓰에이",
+      "stripped": "KBS가요대축제 - [Special Stage2] Hush    20181228",
+      "parsed": null
+    },
+    {
+      "owner": "방탄소년단",
+      "id": "jkJrq6bNXD0",
+      "title": "💫스젵 노래방 LIVE | TNX의 '봄날' | 원곡: 방탄소년단 | STATION Z |TNX의 언박싱| KBS 220528방송",
+      "published_at": "2022-05-27",
+      "canonicalOwner": "방탄소년단",
+      "stripped": "💫스젵 노래방 LIVE | TNX의 '봄날' |  | STATION Z |TNX의 언박싱| KBS 220528방송",
+      "parsed": null
+    },
+    {
+      "owner": "방탄소년단",
+      "id": "40m6W58i1gk",
+      "title": "[JTBC Music X 우지원] Dynamite Acoustic ver. COVER🎤｜원곡:BTS",
+      "published_at": "2022-04-28",
+      "canonicalOwner": "방탄소년단",
+      "stripped": "[JTBC Music X 우지원] Dynamite Acoustic ver. COVER🎤｜ ",
+      "parsed": null
+    },
+    {
+      "owner": "방탄소년단",
+      "id": "zWnCgZ-qwPo",
+      "title": "[집방캠][4K] 한사랑산악회(배용길, 정광용) - Butter LIVE | 원곡 : 방탄소년단(BTS) | 두시탈출 컬투쇼 | 210707",
+      "published_at": "2021-07-07",
+      "canonicalOwner": "방탄소년단",
+      "stripped": "[집방캠][4K] 한사랑산악회(배용길, 정광용) - Butter LIVE |  | 두시탈출 컬투쇼 | 210707",
+      "parsed": null
+    },
+    {
+      "owner": "브라운아이드걸스",
+      "id": "uQ7YmfXtPZA",
+      "title": "뮤직뱅크 Music Bank - Must Have Love (원곡 브라운아이드걸스, SG워너비) - 전출연자.20181221",
+      "published_at": "2018-12-21",
+      "canonicalOwner": "브라운아이드걸스",
+      "stripped": "뮤직뱅크 Music Bank - Must Have Love  - 전출연자.20181221",
+      "parsed": null
+    },
+    {
+      "owner": "블랙핑크",
+      "id": "JHDB0djFo3w",
+      "title": "[THE IDOL BAND / 무대 풀버전] 황진석(ファン・ジンソク) - 모나리자 (원곡:조용필) VS 김성현(キム・ソンヒョン) - Pink Venom (원곡:BLACKPINK)",
+      "published_at": "2022-12-06",
+      "canonicalOwner": "블랙핑크",
+      "stripped": "[THE IDOL BAND / 무대 풀버전] 황진석(ファン・ジンソク) - 모나리자  VS 김성현(キム・ソンヒョン) - Pink Venom ",
+      "parsed": null
+    },
+    {
+      "owner": "블랙핑크",
+      "id": "T9LR0Q69lgg",
+      "title": "쿨룩 LIVE ▷크리샤 츄 '응급실'  / 원곡: izi  +블랙핑크 '불장난' /190930[박명수의 라디오쇼]",
+      "published_at": "2019-09-30",
+      "canonicalOwner": "블랙핑크",
+      "stripped": "쿨룩 LIVE ▷크리샤 츄 '응급실'  /  /190930[박명수의 라디오쇼]",
+      "parsed": null
+    },
+    {
+      "owner": "비원에이포",
+      "id": "F7zkcEmG_Kk",
+      "title": "널디나, 이게 무슨 일이야(원곡: B1A4) [2023 우리음악인축제 Day3]",
+      "published_at": "2023-10-25",
+      "canonicalOwner": "비원에이포",
+      "stripped": "널디나, 이게 무슨 일이야 [2023 우리음악인축제 Day3]",
+      "parsed": null
+    },
+    {
+      "owner": "비투비",
+      "id": "4sFwwFh5PVk",
+      "title": "빌드업 파이널 진출자 열두 명이 다함께 준비한 스페셜 합동 무대🎵 🎤Finale : 우리들의 콘서트 (원곡: 비투비(BTOB)) [빌드업/10회] | Mnet 240329 방송",
+      "published_at": "2024-03-29",
+      "canonicalOwner": "비투비",
+      "stripped": "빌드업 파이널 진출자 열두 명이 다함께 준비한 스페셜 합동 무대🎵 🎤Finale : 우리들의 콘서트  [빌드업/10회] | Mnet 240329 방송",
+      "parsed": null
+    },
+    {
+      "owner": "빅뱅",
+      "id": "WNjW0pnFLi4",
+      "title": "[THE IDOL BAND / 무대 풀버전] 🎤Allure - 뱅뱅뱅(BANG BANG BANG) + 벌떼(B-DAY) (원곡:BIGBANG + iKON)",
+      "published_at": "2023-01-20",
+      "canonicalOwner": "빅뱅",
+      "stripped": "[THE IDOL BAND / 무대 풀버전] 🎤Allure - 뱅뱅뱅(BANG BANG BANG) + 벌떼(B-DAY) ",
+      "parsed": null
+    },
+    {
+      "owner": "빅뱅",
+      "id": "awusnwHcDAg",
+      "title": "💫스젵 노래방 LIVE | CIX의 ‘붉은 노을’ | 원곡: BIGBANG | STATION Z | KBS 220827 방송",
+      "published_at": "2022-08-27",
+      "canonicalOwner": "빅뱅",
+      "stripped": "💫스젵 노래방 LIVE | CIX의 ‘붉은 노을’ |  | STATION Z | KBS 220827 방송",
+      "parsed": null
+    },
+    {
+      "owner": "샤이니",
+      "id": "vEbLFzhRP2s",
+      "title": "[4K/최초공개] 민호 (MINHO) - 같은 자리 (Area) (원곡 : SHINee) l @JTBC K-909 221210 방송",
+      "published_at": "2022-12-10",
+      "canonicalOwner": "샤이니",
+      "stripped": "[4K/최초공개] 민호 (MINHO) - 같은 자리 (Area)  l @JTBC K-909 221210 방송",
+      "parsed": null
+    },
+    {
+      "owner": "세븐틴",
+      "id": "1TDqQkT5P9A",
+      "title": "[가을 맞이 특집] 성한빈 X 명재현 X 소희 - 파이팅 해야지 (원곡：부석순 (SEVENTEEN)) #엠카운트다운 EP.863 | Mnet 240919 방송",
+      "published_at": "2024-09-19",
+      "canonicalOwner": "세븐틴",
+      "stripped": "[가을 맞이 특집] 성한빈 X 명재현 X 소희 - 파이팅 해야지  #엠카운트다운 EP.863 | Mnet 240919 방송",
+      "parsed": {
+        "primaryGroup": "제로베이스원",
+        "withGroups": [
+          "소희"
+        ],
+        "membersByGroup": {
+          "제로베이스원": [
+            "성한빈"
+          ],
+          "소희": [
+            "소희"
+          ]
+        },
+        "confidence": "ambiguous",
+        "trace": []
+      }
+    },
+    {
+      "owner": "소녀시대",
+      "id": "KFTyhgpiJEQ",
+      "title": "[K-Choreo 8K] 여자아이돌 직캠 '힘내 (Way to go) (원곡:소녀시대)' (Girls IDOL Choreography) l @가요대축제 211217",
+      "published_at": "2021-12-17",
+      "canonicalOwner": "소녀시대",
+      "stripped": "[K-Choreo 8K] 여자아이돌 직캠 '힘내 (Way to go) ' (Girls IDOL Choreography) l @가요대축제 211217",
+      "parsed": null
+    },
+    {
+      "owner": "소녀시대",
+      "id": "vwEjsV_3SBQ",
+      "title": "KBS가요대축제 - [Special Stage1] Kissing You ♥ (원곡: 소녀시대)   20181228",
+      "published_at": "2018-12-28",
+      "canonicalOwner": "소녀시대",
+      "stripped": "KBS가요대축제 - [Special Stage1] Kissing You ♥    20181228",
+      "parsed": null
+    },
+    {
+      "owner": "슈퍼주니어",
+      "id": "Pfaom-O6XR0",
+      "title": "💫스젵 노래방 LIVE | ATBO의 ‘Show Me Your Love’ | 원곡: 동방신기 & 슈퍼주니어 | STATION Z | KBS 231215 방송",
+      "published_at": "2023-12-15",
+      "canonicalOwner": "슈퍼주니어",
+      "stripped": "💫스젵 노래방 LIVE | ATBO의 ‘Show Me Your Love’ |  | STATION Z | KBS 231215 방송",
+      "parsed": null
+    },
+    {
+      "owner": "슈퍼주니어",
+      "id": "ZJJpWK65rGM",
+      "title": "규현&정동환&로페스타, Devil (원곡: 슈퍼주니어) [2023 우리음악인축제 Day2]",
+      "published_at": "2023-10-18",
+      "canonicalOwner": "슈퍼주니어",
+      "stripped": "규현&정동환&로페스타, Devil  [2023 우리음악인축제 Day2]",
+      "parsed": {
+        "primaryGroup": "슈퍼주니어",
+        "withGroups": [],
+        "membersByGroup": {
+          "슈퍼주니어": [
+            "규현"
+          ]
+        },
+        "confidence": "weak",
+        "trace": []
+      }
+    },
+    {
+      "owner": "슈퍼주니어",
+      "id": "GsEXrZlZcEE",
+      "title": "[IDOL RADIO] MJ가 부르는 \"요리왕 (원곡 슈퍼주니어-HAPPY)\"  ♬♪",
+      "published_at": "2019-08-01",
+      "canonicalOwner": "슈퍼주니어",
+      "stripped": "[IDOL RADIO] MJ가 부르는 \"요리왕 \"  ♬♪",
+      "parsed": null
+    },
+    {
+      "owner": "스테이씨",
+      "id": "zaWul4cKrQA",
+      "title": "[909 직캠 4K] 정동환 세로캠 'BEAUTIFUL MONSTER (원곡 : STAYC)' (Jeong Dong-hwan FanCam) | @JTBC K-909 221015",
+      "published_at": "2022-10-15",
+      "canonicalOwner": "스테이씨",
+      "stripped": "[909 직캠 4K] 정동환 세로캠 'BEAUTIFUL MONSTER ' (Jeong Dong-hwan FanCam) | @JTBC K-909 221015",
+      "parsed": null
+    },
+    {
+      "owner": "시크릿",
+      "id": "v8R1FI3iExw",
+      "title": "[LIVE] 전효성(Jun Hyo Seong) - Madonna + 사랑은 Move (원곡 : 시크릿) / 그룹곡 혼자서도 완벽 소화 해버린 횻디🤭🧡 / 전효성의 꿈꾸는 라디오",
+      "published_at": "2021-02-15",
+      "canonicalOwner": "시크릿",
+      "stripped": "[LIVE] 전효성(Jun Hyo Seong) - Madonna + 사랑은 Move  / 그룹곡 혼자서도 완벽 소화 해버린 횻디🤭🧡 / 전효성의 꿈꾸는 라디오",
+      "parsed": {
+        "primaryGroup": "시크릿",
+        "withGroups": [],
+        "membersByGroup": {
+          "시크릿": [
+            "전효성"
+          ]
+        },
+        "confidence": "weak",
+        "trace": []
+      }
+    },
+    {
+      "owner": "싸이",
+      "id": "tbTM2DkOE44",
+      "title": "💫스젵 노래방 LIVE | ATBO의 ‘강남스타일(GANGNAM STYLE)’ | 원곡 : 싸이(PSY) | STATION Z | KBS 230526 방송",
+      "published_at": "2023-05-26",
+      "canonicalOwner": "싸이",
+      "stripped": "💫스젵 노래방 LIVE | ATBO의 ‘강남스타일(GANGNAM STYLE)’ |  | STATION Z | KBS 230526 방송",
+      "parsed": null
+    },
+    {
+      "owner": "씨스타",
+      "id": "CclzgJO9NfI",
+      "title": "[SERO CAM🎥] HYOLYN (효린) - Touch my body (원곡:SISTAR) | KCON 2022 Premiere in Seoul",
+      "published_at": "2022-07-15",
+      "canonicalOwner": "씨스타",
+      "stripped": "[SERO CAM🎥] HYOLYN (효린) - Touch my body  | KCON 2022 Premiere in Seoul",
+      "parsed": {
+        "primaryGroup": "씨스타",
+        "withGroups": [],
+        "membersByGroup": {
+          "씨스타": [
+            "효린"
+          ]
+        },
+        "confidence": "weak",
+        "trace": []
+      }
+    },
+    {
+      "owner": "아이들",
+      "id": "71RcSvKgFeM",
+      "title": "[선공개] 솔지x초아x설아 – 나는 아픈 건 딱 질색이니까 (원곡 : (여자)아이들 (G)I-DLE)) | 피크닉라이브소풍 | EP.129",
+      "published_at": "2024-07-05",
+      "canonicalOwner": "아이들",
+      "stripped": "[선공개] 솔지x초아x설아 – 나는 아픈 건 딱 질색이니까 ) | 피크닉라이브소풍 | EP.129",
+      "parsed": null
+    },
+    {
+      "owner": "아이들",
+      "id": "4exfFClB8Rs",
+      "title": "💫스젵 노래방 LIVE | 빌리 Billlie (하없동)의 ‘TOMBOY’ | 원곡: (여자)아이들 (G)I-DLE | STATION Z | KBS 231027 방송",
+      "published_at": "2023-10-27",
+      "canonicalOwner": "아이들",
+      "stripped": "💫스젵 노래방 LIVE | 빌리 Billlie (하없동)의 ‘TOMBOY’ |  | STATION Z | KBS 231027 방송",
+      "parsed": {
+        "primaryGroup": "빌리",
+        "withGroups": [],
+        "membersByGroup": {
+          "빌리": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "owner": "아이들",
+      "id": "EiyYKjJsSCE",
+      "title": "[THE IDOL BAND / 무대 풀버전] 🎹박근렬(パク・クンリョル) - TOMBOY (원곡:(여자)아이들)",
+      "published_at": "2022-12-20",
+      "canonicalOwner": "아이들",
+      "stripped": "[THE IDOL BAND / 무대 풀버전] 🎹박근렬(パク・クンリョル) - TOMBOY ",
+      "parsed": null
+    },
+    {
+      "owner": "아이들",
+      "id": "Jr7JZe0Re5s",
+      "title": "[3회] 🎹박근렬(パク・クンリョル) - TOMBOY (원곡:(여자)아이들)",
+      "published_at": "2022-12-20",
+      "canonicalOwner": "아이들",
+      "stripped": "[3회] 🎹박근렬(パク・クンリョル) - TOMBOY ",
+      "parsed": null
+    },
+    {
+      "owner": "아이들",
+      "id": "NSAwieeZDDs",
+      "title": "💫스젵 노래방 LIVE | LIGHTSUM의 'TOMBOY’ | 원곡: (여자)아이들 | STATION Z | LIGHTSUM의 언박싱 | KBS 220611방송",
+      "published_at": "2022-06-11",
+      "canonicalOwner": "아이들",
+      "stripped": "💫스젵 노래방 LIVE | LIGHTSUM의 'TOMBOY’ |  | STATION Z | LIGHTSUM의 언박싱 | KBS 220611방송",
+      "parsed": null
+    },
+    {
+      "owner": "아이브",
+      "id": "Y0V7iyHR3HY",
+      "title": "안유진 & 최유리 - After LIKE (원곡: 아이브)",
+      "published_at": "2026-08-07",
+      "canonicalOwner": "아이브",
+      "stripped": "안유진 & 최유리 - After LIKE ",
+      "parsed": {
+        "primaryGroup": "아이브",
+        "withGroups": [
+          "아이즈원"
+        ],
+        "membersByGroup": {
+          "아이브": [
+            "안유진"
+          ],
+          "아이즈원": [
+            "안유진"
+          ]
+        },
+        "confidence": "weak",
+        "trace": []
+      }
+    },
+    {
+      "owner": "악뮤",
+      "id": "RjI41zL_k0I",
+      "title": "나윤권X선예X벤 – 어떻게 이별까지 사랑하겠어, 널 사랑하는 거지 (원곡 : AKMU(악뮤)) | 피크닉라이브 소풍 | EP.131",
+      "published_at": "2024-09-06",
+      "canonicalOwner": "악뮤",
+      "stripped": "나윤권X선예X벤 – 어떻게 이별까지 사랑하겠어, 널 사랑하는 거지  | 피크닉라이브 소풍 | EP.131",
+      "parsed": null
+    },
+    {
+      "owner": "악뮤",
+      "id": "fO_ttix9vwo",
+      "title": "MC Special Stage - Give Love(원곡: AKMU) @인기가요 inkigayo 20210307",
+      "published_at": "2021-03-07",
+      "canonicalOwner": "악뮤",
+      "stripped": "MC Special Stage - Give Love @인기가요 inkigayo 20210307",
+      "parsed": null
+    },
+    {
+      "owner": "에이오에이",
+      "id": "BqmDq-rHv34",
+      "title": "[#퀸덤퍼즐/Full CAM] ♬ ELVIS+빙글뱅글(Bingle Bangle)+날 보러 와요(Come See Me) - 도화 (DO HWA) (원곡 : AOA) @업다운배틀",
+      "published_at": "2023-06-13",
+      "canonicalOwner": "에이오에이",
+      "stripped": "[#퀸덤퍼즐/Full CAM] ♬ ELVIS+빙글뱅글(Bingle Bangle)+날 보러 와요(Come See Me) - 도화 (DO HWA)  @업다운배틀",
+      "parsed": null
+    },
+    {
+      "owner": "엔믹스",
+      "id": "-BDY-wl52-M",
+      "title": "[909 포커스캠 4K] 에일리 직캠 'O.O (원곡 : NMIXX)' (Ailee FanCam) | @JTBC K-909 221001",
+      "published_at": "2022-10-01",
+      "canonicalOwner": "엔믹스",
+      "stripped": "[909 포커스캠 4K] 에일리 직캠 'O.O ' (Ailee FanCam) | @JTBC K-909 221001",
+      "parsed": null
+    },
+    {
+      "owner": "엔믹스",
+      "id": "D2KUinjoLxE",
+      "title": "[909 직캠 4K] 에일리 세로캠 'O.O (원곡 : NMIXX)' (Ailee FanCam) | @JTBC K-909 221001",
+      "published_at": "2022-10-01",
+      "canonicalOwner": "엔믹스",
+      "stripped": "[909 직캠 4K] 에일리 세로캠 'O.O ' (Ailee FanCam) | @JTBC K-909 221001",
+      "parsed": null
+    },
+    {
+      "owner": "엔믹스",
+      "id": "XyW1hfMZfOA",
+      "title": "[909 직캠 4K] 에일리 풀캠 'O.O (원곡 : NMIXX)' (Ailee FullCam) | @JTBC K-909 221001",
+      "published_at": "2022-10-01",
+      "canonicalOwner": "엔믹스",
+      "stripped": "[909 직캠 4K] 에일리 풀캠 'O.O ' (Ailee FullCam) | @JTBC K-909 221001",
+      "parsed": null
+    },
+    {
+      "owner": "엔믹스",
+      "id": "qDgDJA0Xo3U",
+      "title": "[2회 선공개] (Special Stage) 에일리 - 'O.O (원곡 : NMIXX)'ㅣ[K-909] 10/1 (토) 방송",
+      "published_at": "2022-09-28",
+      "canonicalOwner": "엔믹스",
+      "stripped": "[2회 선공개] (Special Stage) 에일리 - 'O.O 'ㅣ[K-909] 10/1 (토) 방송",
+      "parsed": null
+    },
+    {
+      "owner": "엔시티 127",
+      "id": "OW8JEevEFK4",
+      "title": "[4K/최초공개] Justin Hurwitz X 도영 (NCT) - 윤슬 (Gold Dust) (원곡 : NCT 127) l @JTBC K-909 230603 방송",
+      "published_at": "2023-06-03",
+      "canonicalOwner": "엔시티 127",
+      "stripped": "[4K/최초공개] Justin Hurwitz X 도영 (NCT) - 윤슬 (Gold Dust)  l @JTBC K-909 230603 방송",
+      "parsed": null
+    },
+    {
+      "owner": "엔플라잉",
+      "id": "PeIuYCeUCFo",
+      "title": "♬PARTYAFTERSIX, 옥탑방(Rooftop) (원곡: N.Flying) [THE IDOL BAND : BOY’S BATTLE FINAL]",
+      "published_at": "2023-03-04",
+      "canonicalOwner": "엔플라잉",
+      "stripped": "♬PARTYAFTERSIX, 옥탑방(Rooftop)  [THE IDOL BAND : BOY’S BATTLE FINAL]",
+      "parsed": null
+    },
+    {
+      "owner": "엔플라잉",
+      "id": "0MevjE06onM",
+      "title": "[THE IDOL BAND / 무대 풀버전] O.G Story - Stand By Me (원곡:엔플라잉)",
+      "published_at": "2022-12-30",
+      "canonicalOwner": "엔플라잉",
+      "stripped": "[THE IDOL BAND / 무대 풀버전] O.G Story - Stand By Me ",
+      "parsed": null
+    },
+    {
+      "owner": "엔플라잉",
+      "id": "MDGyMSrXRQQ",
+      "title": "[4회] 🎤O.G Story – Stand By Me (원곡:엔플라잉)",
+      "published_at": "2022-12-27",
+      "canonicalOwner": "엔플라잉",
+      "stripped": "[4회] 🎤O.G Story – Stand By Me ",
+      "parsed": null
+    },
+    {
+      "owner": "오마이걸",
+      "id": "17Fh3MRaiUg",
+      "title": "[K-Fancam] MC스페셜 문상민 직캠 '살짝 설렜어 (Nonstop) (원곡: 오마이걸)' (MOON SANGMIN Fancam) @뮤직뱅크(Music Bank) 241004",
+      "published_at": "2024-10-04",
+      "canonicalOwner": "오마이걸",
+      "stripped": "[K-Fancam] MC스페셜 문상민 직캠 '살짝 설렜어 (Nonstop) ' (MOON SANGMIN Fancam) @뮤직뱅크(Music Bank) 241004",
+      "parsed": null
+    },
+    {
+      "owner": "오마이걸",
+      "id": "rLvHlv-N1LU",
+      "title": "[얼빡직캠 4K] MC스페셜 문상민 '살짝 설렜어 (Nonstop) (원곡: 오마이걸)' (MOON SANGMIN Facecam) @뮤직뱅크(Music Bank) 241004",
+      "published_at": "2024-10-04",
+      "canonicalOwner": "오마이걸",
+      "stripped": "[얼빡직캠 4K] MC스페셜 문상민 '살짝 설렜어 (Nonstop) ' (MOON SANGMIN Facecam) @뮤직뱅크(Music Bank) 241004",
+      "parsed": null
+    },
+    {
+      "owner": "오마이걸",
+      "id": "IGi7Ie3MI7A",
+      "title": "[THE IDOL BAND / 무대 풀버전] 🎤O My Boyz - 살짝 설렜어 (원곡:오마이걸)",
+      "published_at": "2023-01-13",
+      "canonicalOwner": "오마이걸",
+      "stripped": "[THE IDOL BAND / 무대 풀버전] 🎤O My Boyz - 살짝 설렜어 ",
+      "parsed": null
+    },
+    {
+      "owner": "오마이걸",
+      "id": "x51RlLKdQ30",
+      "title": "[5회] 🎤O My Boyz - 살짝 설렜어 (원곡:오마이걸)",
+      "published_at": "2023-01-10",
+      "canonicalOwner": "오마이걸",
+      "stripped": "[5회] 🎤O My Boyz - 살짝 설렜어 ",
+      "parsed": null
+    },
+    {
+      "owner": "우주소녀",
+      "id": "_d-dzmbBrG0",
+      "title": "[선공개] 설아 – 이루리 (원곡 : 우주소녀 WJSN) | 피크닉라이브소풍 | EP.129",
+      "published_at": "2024-07-03",
+      "canonicalOwner": "우주소녀",
+      "stripped": "[선공개] 설아 – 이루리  | 피크닉라이브소풍 | EP.129",
+      "parsed": {
+        "primaryGroup": "우주소녀",
+        "withGroups": [],
+        "membersByGroup": {
+          "우주소녀": [
+            "설아"
+          ]
+        },
+        "confidence": "weak",
+        "trace": []
+      }
+    },
+    {
+      "owner": "우주소녀",
+      "id": "5fBVeqqfrMk",
+      "title": "[#퀸덤퍼즐/Full CAM] ♬ 이루리+음 (Mmmh) - 여름 (YEO REUM) (원곡 : 우주소녀/카이 (KAI)) @업다운배틀 #QUEENDOMPUZZLE",
+      "published_at": "2023-06-13",
+      "canonicalOwner": "우주소녀",
+      "stripped": "[#퀸덤퍼즐/Full CAM] ♬ 이루리+음 (Mmmh) - 여름 (YEO REUM)  @업다운배틀 #QUEENDOMPUZZLE",
+      "parsed": null
+    },
+    {
+      "owner": "원더걸스",
+      "id": "2xRvHTmh7n8",
+      "title": "Nobody(원곡:원더걸스) - 로켓펀치(Rocket Punch) [뮤직뱅크 Music Bank] 20191018",
+      "published_at": "2019-10-18",
+      "canonicalOwner": "원더걸스",
+      "stripped": "Nobody - 로켓펀치(Rocket Punch) [뮤직뱅크 Music Bank] 20191018",
+      "parsed": {
+        "primaryGroup": "로켓펀치",
+        "withGroups": [],
+        "membersByGroup": {
+          "로켓펀치": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "owner": "위너",
+      "id": "DFfvYtKRRI0",
+      "title": "💫스젵 노래방 LIVE | CIX의 ‘Really Really’ | 원곡: WINNER | STATION Z | KBS 220827 방송",
+      "published_at": "2022-08-27",
+      "canonicalOwner": "위너",
+      "stripped": "💫스젵 노래방 LIVE | CIX의 ‘Really Really’ |  | STATION Z | KBS 220827 방송",
+      "parsed": null
+    },
+    {
+      "owner": "있지",
+      "id": "YaG8LC59Zb0",
+      "title": "💫스젵 커버곡 LIVE | Xdinary Heroes의 ‘SNEAKERS’ | 원곡 : ITZY | STATION Z | KBS 220903 방송",
+      "published_at": "2022-09-03",
+      "canonicalOwner": "있지",
+      "stripped": "💫스젵 커버곡 LIVE | Xdinary Heroes의 ‘SNEAKERS’ |  | STATION Z | KBS 220903 방송",
+      "parsed": null
+    },
+    {
+      "owner": "투애니원",
+      "id": "EOAS6KaKPxU",
+      "title": "[가요대제전] 이은지X미미X이영지X안유진 – Fire + 내가 제일 잘 나가 (원곡:2NE1) (KEMIZ Fullcam) | GayoDaejejeon2024 | MBC250129",
+      "published_at": "2025-01-29",
+      "canonicalOwner": "투애니원",
+      "stripped": "[가요대제전] 이은지X미미X이영지X안유진 – Fire + 내가 제일 잘 나가  (KEMIZ Fullcam) | GayoDaejejeon2024 | MBC250129",
+      "parsed": null
+    },
+    {
+      "owner": "트와이스",
+      "id": "i-eGsdhX9tY",
+      "title": "💫스젵 커버곡 LIVE | Xdinary Heroes의 ‘Heart Shaker’ | 원곡 : TWICE | STATION Z | KBS 220903 방송",
+      "published_at": "2022-09-03",
+      "canonicalOwner": "트와이스",
+      "stripped": "💫스젵 커버곡 LIVE | Xdinary Heroes의 ‘Heart Shaker’ |  | STATION Z | KBS 220903 방송",
+      "parsed": null
+    },
+    {
+      "owner": "트와이스",
+      "id": "yqggeyys9Mo",
+      "title": "💫스젵 노래방 LIVE | LIGHTSUM의 'TT’ | 원곡: TWICE | STATION Z | LIGHTSUM의 언박싱 | KBS 220611 방송",
+      "published_at": "2022-06-11",
+      "canonicalOwner": "트와이스",
+      "stripped": "💫스젵 노래방 LIVE | LIGHTSUM의 'TT’ |  | STATION Z | LIGHTSUM의 언박싱 | KBS 220611 방송",
+      "parsed": null
+    },
+    {
+      "owner": "피프티피프티",
+      "id": "vD2bztWtGCs",
+      "title": "[선공개] 키나 & 문샤넬 & 최유리 - Genie Magic (원곡: 피프티피프티)",
+      "published_at": "2026-07-27",
+      "canonicalOwner": "피프티피프티",
+      "stripped": "[선공개] 키나 & 문샤넬 & 최유리 - Genie Magic ",
+      "parsed": {
+        "primaryGroup": "피프티피프티",
+        "withGroups": [],
+        "membersByGroup": {
+          "피프티피프티": [
+            "키나",
+            "문샤넬"
+          ]
+        },
+        "confidence": "weak",
+        "trace": []
+      }
+    },
+    {
+      "owner": "피프티피프티",
+      "id": "OehfwU1nw2o",
+      "title": "[직캠하이라이트] 최유리 - Cupid (원곡: FIFTY FIFTY) #더시즌즈_최정훈의밤의공원ㅣKBS 230616 방송",
+      "published_at": "2023-06-20",
+      "canonicalOwner": "피프티피프티",
+      "stripped": "[직캠하이라이트] 최유리 - Cupid  #더시즌즈_최정훈의밤의공원ㅣKBS 230616 방송",
+      "parsed": null
+    },
+    {
+      "owner": "하이키",
+      "id": "AJTFsM2tRko",
+      "title": "[#퀸덤퍼즐/Full CAM] ♬ 건물 사이에 피어난 장미 (Rose Blossom)+TOMBOY - 휘서 (HWI SEO) (원곡 : 하이키/(여자)아이들) @업다운배틀",
+      "published_at": "2023-06-20",
+      "canonicalOwner": "하이키",
+      "stripped": "[#퀸덤퍼즐/Full CAM] ♬ 건물 사이에 피어난 장미 (Rose Blossom)+TOMBOY - 휘서 (HWI SEO)  @업다운배틀",
+      "parsed": {
+        "primaryGroup": "하이키",
+        "withGroups": [
+          "엘즈업"
+        ],
+        "membersByGroup": {
+          "하이키": [
+            "휘서"
+          ],
+          "엘즈업": [
+            "휘서"
+          ]
+        },
+        "confidence": "weak",
+        "trace": []
+      }
+    }
+  ]
+}

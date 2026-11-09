@@ -1,0 +1,109 @@
+[
+  {
+    "ko": "아이들",
+    "album": {
+      "title": "We made",
+      "type": "미니 9집",
+      "isMain": true,
+      "cover": "https://i.scdn.co/image/ab67616d0000b273202bb4751ace19e7a44778a5",
+      "releaseDate": "2026.07.06",
+      "trackCount": 5,
+      "titleTrack": null,
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Mono (Feat. skaiwater)",
+          "isTitle": false,
+          "songId": "602437175"
+        },
+        {
+          "no": 2,
+          "title": "Gimme Dat Love",
+          "isTitle": false,
+          "songId": "602437176"
+        },
+        {
+          "no": 3,
+          "title": "Morning",
+          "isTitle": false,
+          "songId": "602437177"
+        },
+        {
+          "no": 4,
+          "title": "Crow",
+          "isTitle": false,
+          "songId": "602238726"
+        },
+        {
+          "no": 5,
+          "title": "Love Is Pain",
+          "isTitle": false,
+          "songId": "602437178"
+        }
+      ],
+      "src": "spotify",
+      "spotifyId": "0tWni9oyD9KVezCagLiJsK",
+      "melonAlbumId": "13728288"
+    }
+  },
+  {
+    "ko": "알파드라이브원",
+    "album": {
+      "title": "Talk to me",
+      "type": "싱글",
+      "isMain": true,
+      "cover": "https://cdnimg.melon.co.kr/cm2/album/images/148/15/426/14815426_20261016175942_500.jpg",
+      "releaseDate": "2026.10.22",
+      "trackCount": 3,
+      "titleTrack": "Talk to me (Dance Break Ver.)",
+      "tracks": [
+        {
+          "no": 1,
+          "title": "Talk to me",
+          "isTitle": false
+        },
+        {
+          "no": 2,
+          "title": "Talk to me (Dance Break Ver.)",
+          "isTitle": true
+        },
+        {
+          "no": 3,
+          "title": "Talk to me (Instrumental)",
+          "isTitle": false
+        }
+      ],
+      "src": "melon",
+      "melonAlbumId": "14815426"
+    }
+  },
+  {
+    "ko": "알파드라이브원",
+    "album": {
+      "title": "Agent Kim Reactivated, Pt. 1 (Original Soundtrack)",
+      "type": "싱글",
+      "isMain": true,
+      "cover": "https://i.scdn.co/image/ab67616d0000b27350ce4fc78af575d75b2554e1",
+      "releaseDate": "2026.06.26",
+      "trackCount": 2,
+      "titleTrack": null,
+      "tracks": [
+        {
+          "no": 1,
+          "title": "GO! GO! (Agent Kim Reactivated : Original Television Soundtrack)",
+          "isTitle": false,
+          "songId": "602362112"
+        },
+        {
+          "no": 2,
+          "title": "GO! GO! (Agent Kim Reactivated : Original Television Soundtrack) (Instrumental)",
+          "isTitle": false,
+          "songId": "602362113"
+        }
+      ],
+      "src": "spotify",
+      "spotifyId": "1DDfQfHYYHQuLG23Z6EtdA",
+      "melonAlbumId": "13761388"
+    }
+  }
+]

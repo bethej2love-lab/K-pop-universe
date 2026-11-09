@@ -1,0 +1,1488 @@
+{
+  "revision": "a1c7656f0a",
+  "date": "2026-11-04",
+  "scope": "71 album-cache original-credit triage rows; SELECT only; not an executable patch",
+  "rules": [
+    "Re-read each PK and manual locks before future writes.",
+    "Performer role mismatch is not proof of absence of cameo frames.",
+    "See CHANGELOG152-164 for per-ID evidence, identity, original/remake and unit caveats.",
+    "No bulk program/channel removal; preserve normal performer controls."
+  ],
+  "rows": [
+    {
+      "id": "2xRvHTmh7n8",
+      "title": "Nobody(원곡:원더걸스) - 로켓펀치(Rocket Punch) [뮤직뱅크 Music Bank] 20191018",
+      "note": 152,
+      "action": "fix_primary_roles",
+      "current": {
+        "id": "2xRvHTmh7n8",
+        "group_ko": "원더걸스",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [
+          "원더걸스"
+        ],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": true,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": true
+    },
+    {
+      "id": "4exfFClB8Rs",
+      "title": "💫스젵 노래방 LIVE | 빌리 Billlie (하없동)의 ‘TOMBOY’ | 원곡: (여자)아이들 (G)I-DLE | STATION Z | KBS 231027 방송",
+      "note": 152,
+      "action": "fix_primary_roles",
+      "current": {
+        "id": "4exfFClB8Rs",
+        "group_ko": "아이들",
+        "members": [],
+        "with_members": [],
+        "with_groups": [
+          "빌리"
+        ],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "1TDqQkT5P9A",
+      "title": "[가을 맞이 특집] 성한빈 X 명재현 X 소희 - 파이팅 해야지 (원곡：부석순 (SEVENTEEN)) #엠카운트다운 EP.863 | Mnet 240919 방송",
+      "note": 154,
+      "action": "fix_primary_roles",
+      "current": {
+        "id": "1TDqQkT5P9A",
+        "group_ko": "세븐틴",
+        "members": [],
+        "with_members": [
+          "성한빈(제로베이스원)"
+        ],
+        "with_groups": [],
+        "cover_of_groups": [
+          "부석순"
+        ],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": true,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": true
+    },
+    {
+      "id": "gnBFKwMjwPM",
+      "title": "[LIVE] 웬디(Wendy) 라이브 모음.ZIP | 원곡 : 난춘(새소년), 사랑은(리쌍,정인), 예뻤어(데이식스) | 웬디의 영스트리트",
+      "note": 154,
+      "action": "fix_primary_roles",
+      "current": {
+        "id": "gnBFKwMjwPM",
+        "group_ko": "데이식스",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "17Fh3MRaiUg",
+      "title": "[K-Fancam] MC스페셜 문상민 직캠 '살짝 설렜어 (Nonstop) (원곡: 오마이걸)' (MOON SANGMIN Fancam) @뮤직뱅크(Music Bank) 241004",
+      "note": 155,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "17Fh3MRaiUg",
+        "group_ko": "오마이걸",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "4sFwwFh5PVk",
+      "title": "빌드업 파이널 진출자 열두 명이 다함께 준비한 스페셜 합동 무대🎵 🎤Finale : 우리들의 콘서트 (원곡: 비투비(BTOB)) [빌드업/10회] | Mnet 240329 방송",
+      "note": 155,
+      "action": "verify_actual_appearance",
+      "current": {
+        "id": "4sFwwFh5PVk",
+        "group_ko": "비투비",
+        "members": [
+          "서은광"
+        ],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "71RcSvKgFeM",
+      "title": "[선공개] 솔지x초아x설아 – 나는 아픈 건 딱 질색이니까 (원곡 : (여자)아이들 (G)I-DLE)) | 피크닉라이브소풍 | EP.129",
+      "note": 155,
+      "action": "fix_primary_roles",
+      "current": {
+        "id": "71RcSvKgFeM",
+        "group_ko": "아이들",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "CBhZebbLPXk",
+      "title": "[EN/JP] 정신차려, 원곡자 앞이다😳 끝까지 긴장을 놓을 수 없는 무대 🎤Decalcomanie(데칼코마니) (원곡: 마마무) [빌드업/2회] | Mnet 240202 방송",
+      "note": 155,
+      "action": "verify_actual_appearance",
+      "current": {
+        "id": "CBhZebbLPXk",
+        "group_ko": "마마무",
+        "members": [
+          "솔라"
+        ],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "eg-fqkTyJFw",
+      "title": "＂와 무대 너무 좋아＂ 치명적 섹시美 뽐내는 ＜그르렁＞팀 - Jealousy (원곡 : 몬스타엑스)｜PROJECT 7｜JTBC 241122 방송",
+      "note": 155,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "eg-fqkTyJFw",
+        "group_ko": "몬스타엑스",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "EOAS6KaKPxU",
+      "title": "[가요대제전] 이은지X미미X이영지X안유진 – Fire + 내가 제일 잘 나가 (원곡:2NE1) (KEMIZ Fullcam) | GayoDaejejeon2024 | MBC250129",
+      "note": 155,
+      "action": "fix_primary_roles",
+      "current": {
+        "id": "EOAS6KaKPxU",
+        "group_ko": "투애니원",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "L62TtbIGKpE",
+      "title": "💫 스젵 노래방 LIVE | 시그니처의 ‘풍선’ | 원곡 : 동방신기 | STATION Z | KBS 230128 방송",
+      "note": 155,
+      "action": "fix_primary_roles",
+      "current": {
+        "id": "L62TtbIGKpE",
+        "group_ko": "동방신기",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "Pfaom-O6XR0",
+      "title": "💫스젵 노래방 LIVE | ATBO의 ‘Show Me Your Love’ | 원곡: 동방신기 & 슈퍼주니어 | STATION Z | KBS 231215 방송",
+      "note": 155,
+      "action": "fix_primary_roles",
+      "current": {
+        "id": "Pfaom-O6XR0",
+        "group_ko": "슈퍼주니어",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "pRvb9FW-5Z4",
+      "title": "디렉터들이 극찬한 🔥강렬한 퍼포먼스🔥 ＜잭팟＞팀 - GAMBLER (원곡 : 몬스타엑스) ｜PROJECT 7｜JTBC 241122 방송",
+      "note": 155,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "pRvb9FW-5Z4",
+        "group_ko": "몬스타엑스",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "RjI41zL_k0I",
+      "title": "나윤권X선예X벤 – 어떻게 이별까지 사랑하겠어, 널 사랑하는 거지 (원곡 : AKMU(악뮤)) | 피크닉라이브 소풍 | EP.131",
+      "note": 155,
+      "action": "fix_primary_roles",
+      "current": {
+        "id": "RjI41zL_k0I",
+        "group_ko": "악뮤",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "rLvHlv-N1LU",
+      "title": "[얼빡직캠 4K] MC스페셜 문상민 '살짝 설렜어 (Nonstop) (원곡: 오마이걸)' (MOON SANGMIN Facecam) @뮤직뱅크(Music Bank) 241004",
+      "note": 155,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "rLvHlv-N1LU",
+        "group_ko": "오마이걸",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "tbTM2DkOE44",
+      "title": "💫스젵 노래방 LIVE | ATBO의 ‘강남스타일(GANGNAM STYLE)’ | 원곡 : 싸이(PSY) | STATION Z | KBS 230526 방송",
+      "note": 155,
+      "action": "fix_primary_roles",
+      "current": {
+        "id": "tbTM2DkOE44",
+        "group_ko": "싸이",
+        "members": [
+          "싸이"
+        ],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "-BDY-wl52-M",
+      "title": "[909 포커스캠 4K] 에일리 직캠 'O.O (원곡 : NMIXX)' (Ailee FanCam) | @JTBC K-909 221001",
+      "note": 157,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "-BDY-wl52-M",
+        "group_ko": "엔믹스",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "awusnwHcDAg",
+      "title": "💫스젵 노래방 LIVE | CIX의 ‘붉은 노을’ | 원곡: BIGBANG | STATION Z | KBS 220827 방송",
+      "note": 157,
+      "action": "fix_primary_roles",
+      "current": {
+        "id": "awusnwHcDAg",
+        "group_ko": "빅뱅",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "D2KUinjoLxE",
+      "title": "[909 직캠 4K] 에일리 세로캠 'O.O (원곡 : NMIXX)' (Ailee FanCam) | @JTBC K-909 221001",
+      "note": 157,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "D2KUinjoLxE",
+        "group_ko": "엔믹스",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "DFfvYtKRRI0",
+      "title": "💫스젵 노래방 LIVE | CIX의 ‘Really Really’ | 원곡: WINNER | STATION Z | KBS 220827 방송",
+      "note": 157,
+      "action": "fix_primary_roles",
+      "current": {
+        "id": "DFfvYtKRRI0",
+        "group_ko": "위너",
+        "members": [
+          "이승훈"
+        ],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "GsEXrZlZcEE",
+      "title": "[IDOL RADIO] MJ가 부르는 \"요리왕 (원곡 슈퍼주니어-HAPPY)\"  ♬♪",
+      "note": 157,
+      "action": "verify_identity",
+      "current": {
+        "id": "GsEXrZlZcEE",
+        "group_ko": "슈퍼주니어",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "i-eGsdhX9tY",
+      "title": "💫스젵 커버곡 LIVE | Xdinary Heroes의 ‘Heart Shaker’ | 원곡 : TWICE | STATION Z | KBS 220903 방송",
+      "note": 157,
+      "action": "fix_primary_roles",
+      "current": {
+        "id": "i-eGsdhX9tY",
+        "group_ko": "트와이스",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "jkJrq6bNXD0",
+      "title": "💫스젵 노래방 LIVE | TNX의 '봄날' | 원곡: 방탄소년단 | STATION Z |TNX의 언박싱| KBS 220528방송",
+      "note": 157,
+      "action": "fix_primary_roles",
+      "current": {
+        "id": "jkJrq6bNXD0",
+        "group_ko": "방탄소년단",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "NSAwieeZDDs",
+      "title": "💫스젵 노래방 LIVE | LIGHTSUM의 'TOMBOY’ | 원곡: (여자)아이들 | STATION Z | LIGHTSUM의 언박싱 | KBS 220611방송",
+      "note": 157,
+      "action": "fix_primary_roles",
+      "current": {
+        "id": "NSAwieeZDDs",
+        "group_ko": "아이들",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "OehfwU1nw2o",
+      "title": "[직캠하이라이트] 최유리 - Cupid (원곡: FIFTY FIFTY) #더시즌즈_최정훈의밤의공원ㅣKBS 230616 방송",
+      "note": 157,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "OehfwU1nw2o",
+        "group_ko": "피프티피프티",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "qDgDJA0Xo3U",
+      "title": "[2회 선공개] (Special Stage) 에일리 - 'O.O (원곡 : NMIXX)'ㅣ[K-909] 10/1 (토) 방송",
+      "note": 157,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "qDgDJA0Xo3U",
+        "group_ko": "엔믹스",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "T9LR0Q69lgg",
+      "title": "쿨룩 LIVE ▷크리샤 츄 '응급실'  / 원곡: izi  +블랙핑크 '불장난' /190930[박명수의 라디오쇼]",
+      "note": 157,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "T9LR0Q69lgg",
+        "group_ko": "블랙핑크",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "XyW1hfMZfOA",
+      "title": "[909 직캠 4K] 에일리 풀캠 'O.O (원곡 : NMIXX)' (Ailee FullCam) | @JTBC K-909 221001",
+      "note": 157,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "XyW1hfMZfOA",
+        "group_ko": "엔믹스",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "YaG8LC59Zb0",
+      "title": "💫스젵 커버곡 LIVE | Xdinary Heroes의 ‘SNEAKERS’ | 원곡 : ITZY | STATION Z | KBS 220903 방송",
+      "note": 157,
+      "action": "fix_primary_roles",
+      "current": {
+        "id": "YaG8LC59Zb0",
+        "group_ko": "있지",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "yqggeyys9Mo",
+      "title": "💫스젵 노래방 LIVE | LIGHTSUM의 'TT’ | 원곡: TWICE | STATION Z | LIGHTSUM의 언박싱 | KBS 220611 방송",
+      "note": 157,
+      "action": "fix_primary_roles",
+      "current": {
+        "id": "yqggeyys9Mo",
+        "group_ko": "트와이스",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "zaWul4cKrQA",
+      "title": "[909 직캠 4K] 정동환 세로캠 'BEAUTIFUL MONSTER (원곡 : STAYC)' (Jeong Dong-hwan FanCam) | @JTBC K-909 221015",
+      "note": 157,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "zaWul4cKrQA",
+        "group_ko": "스테이씨",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "_d-dzmbBrG0",
+      "title": "[선공개] 설아 – 이루리 (원곡 : 우주소녀 WJSN) | 피크닉라이브소풍 | EP.129",
+      "note": 160,
+      "action": "preserve_performer_control",
+      "current": {
+        "id": "_d-dzmbBrG0",
+        "group_ko": "우주소녀",
+        "members": [
+          "설아"
+        ],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "AJTFsM2tRko",
+      "title": "[#퀸덤퍼즐/Full CAM] ♬ 건물 사이에 피어난 장미 (Rose Blossom)+TOMBOY - 휘서 (HWI SEO) (원곡 : 하이키/(여자)아이들) @업다운배틀",
+      "note": 160,
+      "action": "fill_external_cover",
+      "current": {
+        "id": "AJTFsM2tRko",
+        "group_ko": "하이키",
+        "members": [
+          "휘서"
+        ],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [
+          "하이키"
+        ],
+        "cover_of_members": [],
+        "cover_of_song": "건물 사이에 피어난 장미 (Rose Blossom)",
+        "content_flag": null,
+        "tags_manual": true,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": true
+    },
+    {
+      "id": "CclzgJO9NfI",
+      "title": "[SERO CAM🎥] HYOLYN (효린) - Touch my body (원곡:SISTAR) | KCON 2022 Premiere in Seoul",
+      "note": 160,
+      "action": "preserve_performer_control",
+      "current": {
+        "id": "CclzgJO9NfI",
+        "group_ko": "씨스타",
+        "members": [
+          "효린"
+        ],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "UkZQfOHTO8Q",
+      "title": "[#퀸덤퍼즐/Full CAM] ♬ Destiny (나의 지구) - 케이 (KEI) (원곡 : 러블리즈) @업다운배틀 #QUEENDOMPUZZLE",
+      "note": 160,
+      "action": "preserve_performer_control",
+      "current": {
+        "id": "UkZQfOHTO8Q",
+        "group_ko": "러블리즈",
+        "members": [
+          "Kei"
+        ],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": true,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": true
+    },
+    {
+      "id": "v8R1FI3iExw",
+      "title": "[LIVE] 전효성(Jun Hyo Seong) - Madonna + 사랑은 Move (원곡 : 시크릿) / 그룹곡 혼자서도 완벽 소화 해버린 횻디🤭🧡 / 전효성의 꿈꾸는 라디오",
+      "note": 160,
+      "action": "preserve_performer_control",
+      "current": {
+        "id": "v8R1FI3iExw",
+        "group_ko": "시크릿",
+        "members": [
+          "전효성"
+        ],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "vD2bztWtGCs",
+      "title": "[선공개] 키나 & 문샤넬 & 최유리 - Genie Magic (원곡: 피프티피프티)",
+      "note": 160,
+      "action": "preserve_performer_control",
+      "current": {
+        "id": "vD2bztWtGCs",
+        "group_ko": "피프티피프티",
+        "members": [
+          "키나",
+          "문샤넬"
+        ],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "Y0V7iyHR3HY",
+      "title": "안유진 & 최유리 - After LIKE (원곡: 아이브)",
+      "note": 160,
+      "action": "preserve_performer_control",
+      "current": {
+        "id": "Y0V7iyHR3HY",
+        "group_ko": "아이브",
+        "members": [
+          "안유진"
+        ],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "ypP2-o1gdGk",
+      "title": "쿨룩 LIVE ▷ LUCY(루시), 주찬 ‘ONE(Lucid Dream)’ [원곡: Golden Child]  /[키스 더 라디오] ㅣ KBS 211021방송",
+      "note": 160,
+      "action": "preserve_performer_control",
+      "current": {
+        "id": "ypP2-o1gdGk",
+        "group_ko": "골든차일드",
+        "members": [
+          "홍주찬"
+        ],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "ZJJpWK65rGM",
+      "title": "규현&정동환&로페스타, Devil (원곡: 슈퍼주니어) [2023 우리음악인축제 Day2]",
+      "note": 160,
+      "action": "preserve_performer_control",
+      "current": {
+        "id": "ZJJpWK65rGM",
+        "group_ko": "슈퍼주니어",
+        "members": [
+          "규현"
+        ],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "0iY61kB-e9g",
+      "title": "[THE IDOL BAND / 무대 풀버전] 🎤UNDERGROUND - 니가 부르는 나의 이름 (원곡:GOT7)",
+      "note": 161,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "0iY61kB-e9g",
+        "group_ko": "갓세븐",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "0MevjE06onM",
+      "title": "[THE IDOL BAND / 무대 풀버전] O.G Story - Stand By Me (원곡:엔플라잉)",
+      "note": 161,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "0MevjE06onM",
+        "group_ko": "엔플라잉",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "2SUaYXKcY8o",
+      "title": "[THE IDOL BAND / 무대 풀버전] 🎤논알콜(ノンアルコール) - Love In The Ice (원곡:동방신기)",
+      "note": 161,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "2SUaYXKcY8o",
+        "group_ko": "동방신기",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "48rcYUzpz_c",
+      "title": "[7회] 🎤논알콜(ノンアルコール) - Love In The Ice (원곡:동방신기)",
+      "note": 161,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "48rcYUzpz_c",
+        "group_ko": "동방신기",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "B1pobAzks7c",
+      "title": "[THE IDOL BAND / 무대 풀버전] 강한성 (カン・ハンソン) - 예뻤어 (원곡:DAY6)",
+      "note": 161,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "B1pobAzks7c",
+        "group_ko": "데이식스",
+        "members": [
+          "Young K"
+        ],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "EiyYKjJsSCE",
+      "title": "[THE IDOL BAND / 무대 풀버전] 🎹박근렬(パク・クンリョル) - TOMBOY (원곡:(여자)아이들)",
+      "note": 161,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "EiyYKjJsSCE",
+        "group_ko": "아이들",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "IGi7Ie3MI7A",
+      "title": "[THE IDOL BAND / 무대 풀버전] 🎤O My Boyz - 살짝 설렜어 (원곡:오마이걸)",
+      "note": 161,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "IGi7Ie3MI7A",
+        "group_ko": "오마이걸",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "JHDB0djFo3w",
+      "title": "[THE IDOL BAND / 무대 풀버전] 황진석(ファン・ジンソク) - 모나리자 (원곡:조용필) VS 김성현(キム・ソンヒョン) - Pink Venom (원곡:BLACKPINK)",
+      "note": 161,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "JHDB0djFo3w",
+        "group_ko": "블랙핑크",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "Jr7JZe0Re5s",
+      "title": "[3회] 🎹박근렬(パク・クンリョル) - TOMBOY (원곡:(여자)아이들)",
+      "note": 161,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "Jr7JZe0Re5s",
+        "group_ko": "아이들",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "MDGyMSrXRQQ",
+      "title": "[4회] 🎤O.G Story – Stand By Me (원곡:엔플라잉)",
+      "note": 161,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "MDGyMSrXRQQ",
+        "group_ko": "엔플라잉",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "p--k5JzNc4w",
+      "title": "[6회] 🎤UNDERGROUND - 니가 부르는 나의 이름 (원곡:GOT7)",
+      "note": 161,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "p--k5JzNc4w",
+        "group_ko": "갓세븐",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "PeIuYCeUCFo",
+      "title": "♬PARTYAFTERSIX, 옥탑방(Rooftop) (원곡: N.Flying) [THE IDOL BAND : BOY’S BATTLE FINAL]",
+      "note": 161,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "PeIuYCeUCFo",
+        "group_ko": "엔플라잉",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "sgYfSxvSuA8",
+      "title": "[THE IDOL BAND / 무대 풀버전] 🎤김선우(キム・ソヌ) – 우리집 (원곡:2PM)",
+      "note": 161,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "sgYfSxvSuA8",
+        "group_ko": "2PM",
+        "members": [
+          "JUN.K"
+        ],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "tjEecIHEMlM",
+      "title": "[1회] 🎤강한성(カン・ハンソン) - 예뻤어 (원곡:DAY6)",
+      "note": 161,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "tjEecIHEMlM",
+        "group_ko": "데이식스",
+        "members": [
+          "Young K"
+        ],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "WNjW0pnFLi4",
+      "title": "[THE IDOL BAND / 무대 풀버전] 🎤Allure - 뱅뱅뱅(BANG BANG BANG) + 벌떼(B-DAY) (원곡:BIGBANG + iKON)",
+      "note": 161,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "WNjW0pnFLi4",
+        "group_ko": "빅뱅",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "x51RlLKdQ30",
+      "title": "[5회] 🎤O My Boyz - 살짝 설렜어 (원곡:오마이걸)",
+      "note": 161,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "x51RlLKdQ30",
+        "group_ko": "오마이걸",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "YqDwRmsp7s0",
+      "title": "[3회] 🎤김선우(キム・ソヌ) – 우리집 (원곡:2PM)",
+      "note": 161,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "YqDwRmsp7s0",
+        "group_ko": "2PM",
+        "members": [
+          "JUN.K"
+        ],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "_qQJ04L9HUY",
+      "title": "💫스젵 노래방 LIVE | 조나단의 'Again&Again' | 원곡:2PM | STATION Z | KBS 220318방송",
+      "note": 162,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "_qQJ04L9HUY",
+        "group_ko": "2PM",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "40m6W58i1gk",
+      "title": "[JTBC Music X 우지원] Dynamite Acoustic ver. COVER🎤｜원곡:BTS",
+      "note": 162,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "40m6W58i1gk",
+        "group_ko": "방탄소년단",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "5fBVeqqfrMk",
+      "title": "[#퀸덤퍼즐/Full CAM] ♬ 이루리+음 (Mmmh) - 여름 (YEO REUM) (원곡 : 우주소녀/카이 (KAI)) @업다운배틀 #QUEENDOMPUZZLE",
+      "note": 162,
+      "action": "fill_external_cover",
+      "current": {
+        "id": "5fBVeqqfrMk",
+        "group_ko": "우주소녀",
+        "members": [
+          "여름"
+        ],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "BqmDq-rHv34",
+      "title": "[#퀸덤퍼즐/Full CAM] ♬ ELVIS+빙글뱅글(Bingle Bangle)+날 보러 와요(Come See Me) - 도화 (DO HWA) (원곡 : AOA) @업다운배틀",
+      "note": 162,
+      "action": "preserve_performer_control",
+      "current": {
+        "id": "BqmDq-rHv34",
+        "group_ko": "에이오에이",
+        "members": [
+          "찬미"
+        ],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": true,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": true
+    },
+    {
+      "id": "F7zkcEmG_Kk",
+      "title": "널디나, 이게 무슨 일이야(원곡: B1A4) [2023 우리음악인축제 Day3]",
+      "note": 162,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "F7zkcEmG_Kk",
+        "group_ko": "비원에이포",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "fO_ttix9vwo",
+      "title": "MC Special Stage - Give Love(원곡: AKMU) @인기가요 inkigayo 20210307",
+      "note": 162,
+      "action": "fix_primary_roles",
+      "current": {
+        "id": "fO_ttix9vwo",
+        "group_ko": "악뮤",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "gBtuiKVoQVE",
+      "title": "KBS가요대축제 - [Special Stage2] Hush  (원곡: Miss A)  20181228",
+      "note": 162,
+      "action": "verify_actual_appearance",
+      "current": {
+        "id": "gBtuiKVoQVE",
+        "group_ko": "미쓰에이",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "KFTyhgpiJEQ",
+      "title": "[K-Choreo 8K] 여자아이돌 직캠 '힘내 (Way to go) (원곡:소녀시대)' (Girls IDOL Choreography) l @가요대축제 211217",
+      "note": 162,
+      "action": "fix_primary_roles",
+      "current": {
+        "id": "KFTyhgpiJEQ",
+        "group_ko": "소녀시대",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "OW8JEevEFK4",
+      "title": "[4K/최초공개] Justin Hurwitz X 도영 (NCT) - 윤슬 (Gold Dust) (원곡 : NCT 127) l @JTBC K-909 230603 방송",
+      "note": 162,
+      "action": "preserve_performer_control",
+      "current": {
+        "id": "OW8JEevEFK4",
+        "group_ko": "엔시티 127",
+        "members": [
+          "도영"
+        ],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "uQ7YmfXtPZA",
+      "title": "뮤직뱅크 Music Bank - Must Have Love (원곡 브라운아이드걸스, SG워너비) - 전출연자.20181221",
+      "note": 162,
+      "action": "verify_actual_appearance",
+      "current": {
+        "id": "uQ7YmfXtPZA",
+        "group_ko": "브라운아이드걸스",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "vEbLFzhRP2s",
+      "title": "[4K/최초공개] 민호 (MINHO) - 같은 자리 (Area) (원곡 : SHINee) l @JTBC K-909 221210 방송",
+      "note": 162,
+      "action": "preserve_performer_control",
+      "current": {
+        "id": "vEbLFzhRP2s",
+        "group_ko": "샤이니",
+        "members": [
+          "민호"
+        ],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "vwEjsV_3SBQ",
+      "title": "KBS가요대축제 - [Special Stage1] Kissing You ♥ (원곡: 소녀시대)   20181228",
+      "note": 162,
+      "action": "verify_actual_appearance",
+      "current": {
+        "id": "vwEjsV_3SBQ",
+        "group_ko": "소녀시대",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [
+          "소녀시대"
+        ],
+        "cover_of_members": [],
+        "cover_of_song": "Kissing You",
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "WTge5wz9BxU",
+      "title": "'STORAGE M' 'FIVE SENSES'의 'The Way U Are(원곡 - 동방신기)' 무대",
+      "note": 162,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "WTge5wz9BxU",
+        "group_ko": "동방신기",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    },
+    {
+      "id": "zWnCgZ-qwPo",
+      "title": "[집방캠][4K] 한사랑산악회(배용길, 정광용) - Butter LIVE | 원곡 : 방탄소년단(BTS) | 두시탈출 컬투쇼 | 210707",
+      "note": 162,
+      "action": "review_scope_and_cast",
+      "current": {
+        "id": "zWnCgZ-qwPo",
+        "group_ko": "방탄소년단",
+        "members": [],
+        "with_members": [],
+        "with_groups": [],
+        "cover_of_groups": [],
+        "cover_of_members": [],
+        "cover_of_song": null,
+        "content_flag": null,
+        "tags_manual": false,
+        "cover_manual": false
+      },
+      "needs_preserve_manual": false
+    }
+  ]
+}

@@ -1,0 +1,1793 @@
+{
+  "revision": "e64f24f9cd",
+  "referenceCount": 61,
+  "uniqueAlbumSignatures": 55,
+  "rows": [
+    {
+      "type": "group",
+      "owner": "웨이션브이",
+      "name": "웨이션브이",
+      "kind": "discography",
+      "title": "Vision Wings",
+      "albumId": "14431267",
+      "releaseDate": "2026.08.10",
+      "duplicates": [
+        {
+          "songId": "602739392",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Vision Wings"
+            },
+            {
+              "no": 7,
+              "title": "Vision Wings (English Version)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "웨이션브이",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "웨이션브이",
+      "name": "웨이션브이",
+      "kind": "discography",
+      "title": "Kick Back",
+      "albumId": "10575611",
+      "releaseDate": "2021.03.10",
+      "duplicates": [
+        {
+          "songId": "33340664",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Kick Back"
+            },
+            {
+              "no": 6,
+              "title": "Kick Back (Korean Version)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "웨이션브이",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "라이즈",
+      "name": "라이즈",
+      "kind": "discography",
+      "title": "Fame",
+      "albumId": "12402759",
+      "releaseDate": "2025.11.24",
+      "duplicates": [
+        {
+          "songId": "600552360",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Fame"
+            },
+            {
+              "no": 2,
+              "title": "Love Song"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "라이즈",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "라이즈",
+      "name": "라이즈",
+      "kind": "discography",
+      "title": "RIIZING : Epilogue",
+      "albumId": "11582670",
+      "releaseDate": "2024.09.04",
+      "duplicates": [
+        {
+          "songId": "37956043",
+          "tracks": [
+            {
+              "no": 4,
+              "title": "Talk Saxy"
+            },
+            {
+              "no": 8,
+              "title": "Get A Guitar"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "라이즈",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "라이즈",
+      "name": "라이즈",
+      "kind": "discography",
+      "title": "RIIZING",
+      "albumId": "11456179",
+      "releaseDate": "2024.06.17",
+      "duplicates": [
+        {
+          "songId": "37640354",
+          "tracks": [
+            {
+              "no": 3,
+              "title": "Love 119"
+            },
+            {
+              "no": 8,
+              "title": "Get A Guitar"
+            }
+          ]
+        },
+        {
+          "songId": "37640353",
+          "tracks": [
+            {
+              "no": 4,
+              "title": "Talk Saxy"
+            },
+            {
+              "no": 7,
+              "title": "Run to You"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "라이즈",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "트와이스",
+      "name": "트와이스",
+      "kind": "discography",
+      "title": "Formula of Love: O+T=<3",
+      "albumId": "10774753",
+      "releaseDate": "2021.11.12",
+      "duplicates": [
+        {
+          "songId": "34254838",
+          "tracks": [
+            {
+              "no": 15,
+              "title": "The Feels (Korean ver.) (CD Only)"
+            },
+            {
+              "no": 16,
+              "title": "The Feels"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "트와이스",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "빅뱅",
+      "name": "빅뱅",
+      "kind": "discography",
+      "title": "Alive",
+      "albumId": "2084128",
+      "releaseDate": "2012.02.29",
+      "duplicates": [
+        {
+          "songId": "3715676",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Fantastic Baby"
+            },
+            {
+              "no": 6,
+              "title": "날 봐줘요 (Look at Me)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "빅뱅",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "빅뱅",
+      "name": "빅뱅",
+      "kind": "discography",
+      "title": "Tonight",
+      "albumId": "1184151",
+      "releaseDate": "2011.02.24",
+      "duplicates": [
+        {
+          "songId": "3156950",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Tonight"
+            },
+            {
+              "no": 3,
+              "title": "Oh Mom"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "빅뱅",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "트리플에스",
+      "name": "트리플에스",
+      "kind": "discography",
+      "title": "tripleS ∞! ＜SecretHimitsuBimil＞",
+      "albumId": "12128958",
+      "releaseDate": "2025.10.01",
+      "duplicates": [
+        {
+          "songId": "600151057",
+          "tracks": [
+            {
+              "no": 2,
+              "title": "ヘッドフォン"
+            },
+            {
+              "no": 7,
+              "title": "### - ∞! Ver."
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "트리플에스",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "아이오아이",
+      "name": "아이오아이",
+      "kind": "discography",
+      "title": "I.O.I : LOOP",
+      "albumId": "13399673",
+      "releaseDate": "2026.05.19",
+      "duplicates": [
+        {
+          "songId": "602024052",
+          "tracks": [
+            {
+              "no": 3,
+              "title": "웃으며 안녕"
+            },
+            {
+              "no": 6,
+              "title": "Into The Night"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "아이오아이",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "제로베이스원",
+      "name": "제로베이스원",
+      "kind": "discography",
+      "title": "BLUE PARADISE",
+      "albumId": "11720927",
+      "releaseDate": "2025.02.24",
+      "duplicates": [
+        {
+          "songId": "38583476",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Out of Love"
+            },
+            {
+              "no": 4,
+              "title": "모든 게 떠오르는 밤 (Night Everything Comes Up)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "제로베이스원",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "제로베이스원",
+      "name": "제로베이스원",
+      "kind": "discography",
+      "title": "You had me at HELLO",
+      "albumId": "11469986",
+      "releaseDate": "2024.05.13",
+      "duplicates": [
+        {
+          "songId": "37526071",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "HELLO"
+            },
+            {
+              "no": 6,
+              "title": "We Belong Together"
+            }
+          ]
+        },
+        {
+          "songId": "37438252",
+          "tracks": [
+            {
+              "no": 2,
+              "title": "SWEAT (Remix)"
+            },
+            {
+              "no": 4,
+              "title": "그리운 날에 (On a Day I Miss You)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "제로베이스원",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "제로베이스원",
+      "name": "제로베이스원",
+      "kind": "discography",
+      "title": "MELTING POINT",
+      "albumId": "11358523",
+      "releaseDate": "2023.11.06",
+      "duplicates": [
+        {
+          "songId": "36937530",
+          "tracks": [
+            {
+              "no": 3,
+              "title": "Good Night"
+            },
+            {
+              "no": 5,
+              "title": "Feel the POP (Inst.)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "제로베이스원",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "제로베이스원",
+      "name": "제로베이스원",
+      "kind": "discography",
+      "title": "YOUTH IN THE SHADE",
+      "albumId": "11281739",
+      "releaseDate": "2023.07.10",
+      "duplicates": [
+        {
+          "songId": "36601157",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "In Bloom"
+            },
+            {
+              "no": 2,
+              "title": "New Thing"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "제로베이스원",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "에스에프나인",
+      "name": "에스에프나인",
+      "kind": "discography",
+      "title": "Rumination",
+      "releaseDate": "2021.10.05",
+      "duplicates": [
+        {
+          "songId": "35356140",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Tear Drop"
+            },
+            {
+              "no": 6,
+              "title": "Tear Drop (Inst.)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "에스에프나인",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "에스에프나인",
+      "name": "에스에프나인",
+      "kind": "discography",
+      "title": "FIRST COLLECTION",
+      "releaseDate": "2020.07.14",
+      "duplicates": [
+        {
+          "songId": "35356147",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Enough"
+            },
+            {
+              "no": 12,
+              "title": "Enough (Inst.)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "에스에프나인",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "에스에프나인",
+      "name": "에스에프나인",
+      "kind": "discography",
+      "title": "RPM",
+      "releaseDate": "2019.09.23",
+      "duplicates": [
+        {
+          "songId": "35356149",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Good Guy"
+            },
+            {
+              "no": 6,
+              "title": "Good Guy (Inst.)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "에스에프나인",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "에스에프나인",
+      "name": "에스에프나인",
+      "kind": "discography",
+      "title": "Narcissus",
+      "releaseDate": "2019.05.27",
+      "duplicates": [
+        {
+          "songId": "35356148",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "RPM"
+            },
+            {
+              "no": 6,
+              "title": "RPM (Inst.)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "에스에프나인",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "베리베리",
+      "name": "베리베리",
+      "kind": "discography",
+      "title": "SERIES 'O' [ROUND 3 : WHOLE]",
+      "albumId": "10930438",
+      "releaseDate": "2022.04.25",
+      "duplicates": [
+        {
+          "songId": "34949397",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Undercover"
+            },
+            {
+              "no": 10,
+              "title": "Undercover (Inst.)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "베리베리",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "베리베리",
+      "name": "베리베리",
+      "kind": "discography",
+      "title": "SERIES 'O' [ROUND 2 : HOLE]",
+      "releaseDate": "2021.08.28",
+      "duplicates": [
+        {
+          "songId": "35313614",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "TRIGGER"
+            },
+            {
+              "no": 6,
+              "title": "TRIGGER (Inst.)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "베리베리",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "에이비식스",
+      "name": "에이비식스",
+      "kind": "discography",
+      "title": "SALUTE",
+      "albumId": "10512189",
+      "releaseDate": "2020.11.02",
+      "duplicates": [
+        {
+          "songId": "33032414",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "SALUTE"
+            },
+            {
+              "no": 2,
+              "title": "LOVE SHOT"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "에이비식스",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "에이비식스",
+      "name": "에이비식스",
+      "kind": "discography",
+      "title": "B:COMPLETE",
+      "albumId": "10278828",
+      "releaseDate": "2019.05.22",
+      "duplicates": [
+        {
+          "songId": "31817362",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "BREATHE"
+            },
+            {
+              "no": 3,
+              "title": "WAIT"
+            }
+          ]
+        },
+        {
+          "songId": "31764624",
+          "tracks": [
+            {
+              "no": 2,
+              "title": "HOLLYWOOD"
+            },
+            {
+              "no": 7,
+              "title": "THE REAL"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "에이비식스",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "하이라이트",
+      "name": "하이라이트",
+      "kind": "discography",
+      "title": "Switch On",
+      "albumId": "11437485",
+      "releaseDate": "2024.03.11",
+      "duplicates": [
+        {
+          "songId": "37292497",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "SWITCH ON"
+            },
+            {
+              "no": 2,
+              "title": "Hello"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "하이라이트",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "카라",
+      "name": "카라",
+      "kind": "discography",
+      "title": "STEP",
+      "albumId": "2009327",
+      "releaseDate": "2011.09.06",
+      "duplicates": [
+        {
+          "songId": "3538478",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "STEP"
+            },
+            {
+              "no": 2,
+              "title": "Jet Coaster Love"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "카라",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "카라",
+      "name": "카라",
+      "kind": "discography",
+      "title": "Blooming",
+      "albumId": "348747",
+      "releaseDate": "2007.03.29",
+      "duplicates": [
+        {
+          "songId": "1610056",
+          "tracks": [
+            {
+              "no": 3,
+              "title": "Secret World"
+            },
+            {
+              "no": 4,
+              "title": "I'll Wait"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "카라",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "동방신기",
+      "name": "동방신기",
+      "kind": "discography",
+      "title": "MIROTIC",
+      "releaseDate": "2008.09.23",
+      "duplicates": [
+        {
+          "songId": "4653917",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "주문-MIROTIC (Clean Ver.)"
+            },
+            {
+              "no": 13,
+              "title": "주문-MIROTIC (Original Ver.)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "동방신기",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "우주소녀",
+      "name": "우주소녀",
+      "kind": "discography",
+      "title": "Happy Moment",
+      "albumId": "10069220",
+      "releaseDate": "2017.06.07",
+      "duplicates": [
+        {
+          "songId": "30459036",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Happy"
+            },
+            {
+              "no": 12,
+              "title": "Happy (Inst.)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "우주소녀",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "우주소녀",
+      "name": "우주소녀",
+      "kind": "discography",
+      "title": "Would You Like?",
+      "albumId": "2669168",
+      "releaseDate": "2016.02.25",
+      "duplicates": [
+        {
+          "songId": "8067358",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "MoMoMo"
+            },
+            {
+              "no": 2,
+              "title": "Open Up"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "우주소녀",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "비원에이포",
+      "name": "비원에이포",
+      "kind": "discography",
+      "title": "Rollin'",
+      "releaseDate": "2017.01.09",
+      "duplicates": [
+        {
+          "songId": "30881786",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Rollin'"
+            },
+            {
+              "no": 5,
+              "title": "Rollin' (Inst.)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "비원에이포",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "비원에이포",
+      "name": "비원에이포",
+      "kind": "discography",
+      "title": "It B1A4",
+      "albumId": "2012446",
+      "releaseDate": "2011.09.15",
+      "duplicates": [
+        {
+          "songId": "3551043",
+          "tracks": [
+            {
+              "no": 5,
+              "title": "Beautiful Target (Reprise)"
+            },
+            {
+              "no": 6,
+              "title": "Baby I'm Sorry (Inst.)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "비원에이포",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "비투비",
+      "name": "비투비",
+      "kind": "discography",
+      "title": "스릴러 (Thriller)",
+      "albumId": "2200239",
+      "releaseDate": "2013.09.09",
+      "duplicates": [
+        {
+          "songId": "4235348",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "스릴러 (Thriller)"
+            },
+            {
+              "no": 2,
+              "title": "그리워하다 (Miss You)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "비투비",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "비투비",
+      "name": "비투비",
+      "kind": "discography",
+      "title": "Press Play",
+      "albumId": "2149892",
+      "releaseDate": "2012.09.12",
+      "duplicates": [
+        {
+          "songId": "3903413",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "WOW"
+            },
+            {
+              "no": 7,
+              "title": "WOW (Inst.)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "비투비",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "H.O.T.",
+      "name": "H.O.T.",
+      "kind": "discography",
+      "title": "Forever 2001 Live Concert",
+      "releaseDate": "2001.04.01",
+      "duplicates": [
+        {
+          "songId": "17681",
+          "tracks": [
+            {
+              "no": 4,
+              "title": "멤버 인사말 (Opening Ment)"
+            },
+            {
+              "no": 8,
+              "title": "멤버 인사말 (Closing Ment)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "H.O.T.",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "H.O.T.",
+      "name": "H.O.T.",
+      "kind": "discography",
+      "title": "We Hate All Kinds of Violence - 1집",
+      "releaseDate": "1996.09.07",
+      "duplicates": [
+        {
+          "songId": "17679",
+          "tracks": [
+            {
+              "no": 2,
+              "title": "아이야"
+            },
+            {
+              "no": 8,
+              "title": "아이야 (Club Mix)"
+            },
+            {
+              "no": 9,
+              "title": "아이야 (Ballad Version)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "H.O.T.",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "젝스키스",
+      "name": "젝스키스",
+      "kind": "discography",
+      "title": "Road Fighter - 2집",
+      "albumId": "5359",
+      "releaseDate": "1998.07.15",
+      "duplicates": [
+        {
+          "songId": "79951",
+          "tracks": [
+            {
+              "no": 2,
+              "title": "Road Fighter"
+            },
+            {
+              "no": 13,
+              "title": "Road Fighter (Instrumental)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "젝스키스",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "신화",
+      "name": "신화",
+      "kind": "discography",
+      "title": "해결사 - 1집",
+      "releaseDate": "1998.05.01",
+      "duplicates": [
+        {
+          "songId": "502667",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "해결사"
+            },
+            {
+              "no": 7,
+              "title": "해결사 (Remix)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "신화",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "god",
+      "name": "god",
+      "kind": "discography",
+      "title": "Chapter 3",
+      "albumId": "717",
+      "releaseDate": "2000.11.03",
+      "duplicates": [
+        {
+          "songId": "10435",
+          "tracks": [
+            {
+              "no": 4,
+              "title": "거짓말"
+            },
+            {
+              "no": 13,
+              "title": "거짓말 (Inst.)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "god",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "S.E.S.",
+      "name": "S.E.S.",
+      "kind": "discography",
+      "title": "Sea & Eugene & Shoo - 2집",
+      "albumId": "5407",
+      "releaseDate": "1998.11.01",
+      "duplicates": [
+        {
+          "songId": "75073",
+          "tracks": [
+            {
+              "no": 6,
+              "title": "애인찾기"
+            },
+            {
+              "no": 7,
+              "title": "바람의 여행"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "S.E.S.",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "S.E.S.",
+      "name": "S.E.S.",
+      "kind": "discography",
+      "title": "S.E.S. - 1집",
+      "albumId": "5405",
+      "releaseDate": "1997.11.01",
+      "duplicates": [
+        {
+          "songId": "78185",
+          "tracks": [
+            {
+              "no": 2,
+              "title": "달리기"
+            },
+            {
+              "no": 10,
+              "title": "Oh My Love (Inst.)"
+            }
+          ]
+        },
+        {
+          "songId": "78190",
+          "tracks": [
+            {
+              "no": 4,
+              "title": "친구"
+            },
+            {
+              "no": 7,
+              "title": "누구에게나"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "S.E.S.",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "베이비복스",
+      "name": "베이비복스",
+      "kind": "discography",
+      "title": "Equalize Her - 1집",
+      "releaseDate": "1997.02.01",
+      "duplicates": [
+        {
+          "songId": "80447",
+          "tracks": [
+            {
+              "no": 3,
+              "title": "남자에게"
+            },
+            {
+              "no": 9,
+              "title": "남자에게 (Club Remix)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "베이비복스",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "NRG",
+      "name": "NRG",
+      "kind": "discography",
+      "title": "비 (Sorrow) - 4집",
+      "releaseDate": "2001.06.01",
+      "duplicates": [
+        {
+          "songId": "606781",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "편지"
+            },
+            {
+              "no": 11,
+              "title": "편지 (Remix)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "NRG",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "NRG",
+      "name": "NRG",
+      "kind": "discography",
+      "title": "Race - 2집",
+      "releaseDate": "1998.08.07",
+      "duplicates": [
+        {
+          "songId": "606866",
+          "tracks": [
+            {
+              "no": 3,
+              "title": "사랑만들기"
+            },
+            {
+              "no": 10,
+              "title": "사랑만들기 (Remix Version)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "NRG",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "펜타곤",
+      "name": "펜타곤",
+      "kind": "discography",
+      "title": "Thumbs Up!",
+      "albumId": "10202667",
+      "releaseDate": "2018.09.10",
+      "duplicates": [
+        {
+          "songId": "31297127",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Thumbs Up!"
+            },
+            {
+              "no": 5,
+              "title": "Thumbs Up! (Inst.)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "펜타곤",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "펜타곤",
+      "name": "펜타곤",
+      "kind": "discography",
+      "title": "PENTAGON",
+      "albumId": "10004706",
+      "releaseDate": "2016.10.10",
+      "duplicates": [
+        {
+          "songId": "30029167",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Gorilla"
+            },
+            {
+              "no": 6,
+              "title": "Gorilla (Inst.)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "펜타곤",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "블락비",
+      "name": "블락비",
+      "kind": "discography",
+      "title": "Blooming Period",
+      "releaseDate": "2016.04.04",
+      "duplicates": [
+        {
+          "songId": "34189120",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Toy"
+            },
+            {
+              "no": 6,
+              "title": "Toy (Inst.)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "블락비",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "블락비",
+      "name": "블락비",
+      "kind": "discography",
+      "title": "HER",
+      "releaseDate": "2014.05.13",
+      "duplicates": [
+        {
+          "songId": "34189115",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "HER"
+            },
+            {
+              "no": 5,
+              "title": "HER (Inst.)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "블락비",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "블락비",
+      "name": "블락비",
+      "kind": "discography",
+      "title": "Jackpot",
+      "releaseDate": "2014.04.17",
+      "duplicates": [
+        {
+          "songId": "34189116",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Jackpot"
+            },
+            {
+              "no": 10,
+              "title": "Jackpot (Inst.)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "블락비",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "블락비",
+      "name": "블락비",
+      "kind": "discography",
+      "title": "BLOCKBUSTER",
+      "albumId": "2153172",
+      "releaseDate": "2012.10.17",
+      "duplicates": [
+        {
+          "songId": "3928713",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "닐리리맘보 (Nillili Mambo)"
+            },
+            {
+              "no": 3,
+              "title": "그냥 (Still in the Air)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "블락비",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "쥬얼리",
+      "name": "쥬얼리",
+      "kind": "discography",
+      "title": "Again - 2집",
+      "albumId": "16566",
+      "releaseDate": "2002.07.31",
+      "duplicates": [
+        {
+          "songId": "314605",
+          "tracks": [
+            {
+              "no": 10,
+              "title": "이별은 모르게"
+            },
+            {
+              "no": 12,
+              "title": "이별은 모르게 (Inst.)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "쥬얼리",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "쥬얼리",
+      "name": "쥬얼리",
+      "kind": "discography",
+      "title": "Discovery - 1집",
+      "releaseDate": "2001.03.13",
+      "duplicates": [
+        {
+          "songId": "90325",
+          "tracks": [
+            {
+              "no": 2,
+              "title": "사랑해"
+            },
+            {
+              "no": 10,
+              "title": "사랑해 (Acoustic)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "쥬얼리",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "빅스",
+      "name": "빅스",
+      "kind": "discography",
+      "title": "Hyde",
+      "albumId": "2185649",
+      "releaseDate": "2013.05.20",
+      "duplicates": [
+        {
+          "songId": "4117691",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Hyde"
+            },
+            {
+              "no": 2,
+              "title": "G.R.8.U"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "빅스",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "씨엔블루",
+      "name": "씨엔블루",
+      "kind": "discography",
+      "title": "TRIGGER",
+      "albumId": "11081490",
+      "releaseDate": "2022.10.19",
+      "duplicates": [
+        {
+          "songId": "35741281",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "TRIGGER"
+            },
+            {
+              "no": 5,
+              "title": "TRIGGER (Inst.)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "씨엔블루",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "브브걸",
+      "name": "브브걸",
+      "kind": "discography",
+      "title": "Summer Queen",
+      "albumId": "10631055",
+      "releaseDate": "2021.06.17",
+      "duplicates": [
+        {
+          "songId": "33589264",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Chi Mat Ba Ram"
+            },
+            {
+              "no": 5,
+              "title": "Chi Mat Ba Ram (English Version)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "브브걸",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "owner": "슈퍼노바",
+      "name": "슈퍼노바",
+      "kind": "discography",
+      "title": "The Beautiful Stardust",
+      "releaseDate": "2007.07.25",
+      "duplicates": [
+        {
+          "songId": "1738781",
+          "tracks": [
+            {
+              "no": 1,
+              "title": "Hit"
+            },
+            {
+              "no": 9,
+              "title": "HIT (Remix)"
+            }
+          ]
+        },
+        {
+          "songId": "1738783",
+          "tracks": [
+            {
+              "no": 3,
+              "title": "너는 어디에"
+            },
+            {
+              "no": 10,
+              "title": "너는 어디에 (Remix)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "group",
+          "owner": "슈퍼노바",
+          "kind": "discography"
+        }
+      ]
+    },
+    {
+      "type": "artist",
+      "owner": "a0166",
+      "name": "태연",
+      "kind": "unit:SM THE BALLAD",
+      "title": "S.M. The Ballad Vol.2 'Breath'",
+      "albumId": "2232902",
+      "releaseDate": "2014.02.13",
+      "duplicates": [
+        {
+          "songId": "4450174",
+          "tracks": [
+            {
+              "no": 8,
+              "title": "僕のせいだよ (Blind)"
+            },
+            {
+              "no": 10,
+              "title": "太貪心 (Blind)"
+            }
+          ]
+        }
+      ],
+      "owners": [
+        {
+          "type": "artist",
+          "owner": "a0166",
+          "kind": "unit:SM THE BALLAD"
+        },
+        {
+          "type": "artist",
+          "owner": "a0177",
+          "kind": "unit:SM THE BALLAD"
+        },
+        {
+          "type": "artist",
+          "owner": "a0182",
+          "kind": "unit:SM THE BALLAD"
+        },
+        {
+          "type": "artist",
+          "owner": "a0373",
+          "kind": "unit:SM THE BALLAD"
+        },
+        {
+          "type": "artist",
+          "owner": "a0382",
+          "kind": "unit:SM THE BALLAD"
+        },
+        {
+          "type": "artist",
+          "owner": "a0388",
+          "kind": "unit:SM THE BALLAD"
+        },
+        {
+          "type": "artist",
+          "owner": "a0594",
+          "kind": "unit:SM THE BALLAD"
+        }
+      ]
+    }
+  ]
+}

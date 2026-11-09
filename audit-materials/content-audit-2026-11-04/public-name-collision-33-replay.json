@@ -1,0 +1,572 @@
+{
+  "revision": "a213912575",
+  "rows": [
+    {
+      "id": "dCQPMxCM4ZA",
+      "title": "버디 활동비 조기 소진? 그럼 남은 한 달은요?",
+      "group_ko": "소진",
+      "published_at": "2025-12-03",
+      "parsed": {
+        "primaryGroup": "소진",
+        "withGroups": [],
+        "membersByGroup": {
+          "소진": [
+            "소진"
+          ]
+        },
+        "confidence": "weak",
+        "trace": []
+      }
+    },
+    {
+      "id": "quJlAw1qjBo",
+      "title": "[ENG] [OST로 다시 본 응답하라 1988] 박보람 - 혜화동 (혹은 쌍문동),디셈버 - 네게 줄 수 있는건 오직 사랑뿐,소진 - 매일 그대와 ｜Stone Music+",
+      "group_ko": "소진",
+      "published_at": "2021-08-04",
+      "parsed": {
+        "primaryGroup": "소진",
+        "withGroups": [],
+        "membersByGroup": {
+          "소진": [
+            "소진"
+          ]
+        },
+        "confidence": "weak",
+        "trace": []
+      }
+    },
+    {
+      "id": "LsfTyabfDMg",
+      "title": "[전참시] 서로 바라만 봐도 좋아 죽음ㅋㅋ😍 결혼 3년 차 부부 이동하❤️소진의 신혼 일상 최초 공개ㅣ#전지적참견시점 #이동하 #소진 MBC260815방송",
+      "group_ko": "소진",
+      "published_at": "2026-08-16",
+      "parsed": {
+        "primaryGroup": "소진",
+        "withGroups": [],
+        "membersByGroup": {
+          "소진": [
+            "소진"
+          ]
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "jWKXNGijnEQ",
+      "title": "[OST 맛집.zip] 응답하라 1988｜오혁, 박보람, 김필, 이적, 소진",
+      "group_ko": "소진",
+      "published_at": "2019-12-25",
+      "parsed": {
+        "primaryGroup": "소진",
+        "withGroups": [],
+        "membersByGroup": {
+          "소진": [
+            "소진"
+          ]
+        },
+        "confidence": "weak",
+        "trace": []
+      }
+    },
+    {
+      "id": "fj8sk-b6NG4",
+      "title": "[HIGH NOTE Challenge] Kim Na Young (Making A New Ending for This Story)",
+      "group_ko": "더보이즈",
+      "published_at": "2016-10-16",
+      "parsed": null
+    },
+    {
+      "id": "mMYqmery6g0",
+      "title": "Mnet TMI NEWS [30회] 이걸 돌린다고..? 특특특 대형 고무 판도 돌려버리는 황금손, 현재 200219 EP.30",
+      "group_ko": "더보이즈",
+      "published_at": "2020-02-19",
+      "parsed": {
+        "primaryGroup": "더보이즈",
+        "withGroups": [],
+        "membersByGroup": {
+          "더보이즈": [
+            "현재"
+          ]
+        },
+        "confidence": "weak",
+        "trace": []
+      }
+    },
+    {
+      "id": "pBZo0gDBAHo",
+      "title": "[Live Cam] New(THE BOYZ) - Right Here, 뉴(더 보이즈) - Right Here, Korean Music Wave HD",
+      "group_ko": "더보이즈",
+      "published_at": "2018-09-28",
+      "parsed": {
+        "primaryGroup": "더보이즈",
+        "withGroups": [],
+        "membersByGroup": {
+          "더보이즈": [
+            "뉴"
+          ]
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "yadOOnVsB2w",
+      "title": "[THE BOYZ] OUR_ADORABLE_KITTY.new😆 moment during rehearsal😎 I THE BOYZ 더보이즈 #Shorts",
+      "group_ko": "더보이즈",
+      "published_at": "2021-11-29",
+      "parsed": {
+        "primaryGroup": "더보이즈",
+        "withGroups": [],
+        "membersByGroup": {
+          "더보이즈": [
+            "뉴"
+          ]
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "-J1sjPVzjoI",
+      "title": "[FULL][4K] 더보이즈(THE BOYZ) 영훈, 뉴(NEW) | 박소현의 러브게임 | 금주의 인기가요 톱텐 | The K-pop Stars Radio",
+      "group_ko": "더보이즈",
+      "published_at": "2023-02-25",
+      "parsed": {
+        "primaryGroup": "더보이즈",
+        "withGroups": [],
+        "membersByGroup": {
+          "더보이즈": [
+            "영훈",
+            "뉴"
+          ]
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "7wDIh1BKzx8",
+      "title": "dua lipa - new rules [세로라이브] Live",
+      "group_ko": "더보이즈",
+      "published_at": "2017-09-02",
+      "parsed": null
+    },
+    {
+      "id": "mFf5N-pka5Q",
+      "title": "[UNFILTERED CAM] THE BOYZ NEW(뉴) 'TRIGGER (導火線)' 4K | STUDIO CHOOM",
+      "group_ko": "더보이즈",
+      "published_at": "2024-11-01",
+      "parsed": {
+        "primaryGroup": "더보이즈",
+        "withGroups": [],
+        "membersByGroup": {
+          "더보이즈": [
+            "뉴"
+          ]
+        },
+        "confidence": "strong",
+        "trace": [
+          {
+            "rule": "fancam_struct",
+            "token": "",
+            "effect": "songtitle_stripped"
+          }
+        ]
+      }
+    },
+    {
+      "id": "mQ5HNwXcEig",
+      "title": "[TMI NEWS SHOW/25회] 귀염❣깜찍❣큐트❣ THE BOYZ 선우, 영훈, 주연과 리메이크곡과의 인연은?#TMINEWSSHOW I EP.25 | Mnet 220817 방송",
+      "group_ko": "더보이즈",
+      "published_at": "2022-08-17",
+      "parsed": {
+        "primaryGroup": "더보이즈",
+        "withGroups": [],
+        "membersByGroup": {
+          "더보이즈": [
+            "영훈",
+            "선우"
+          ]
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "MRJ1I88XqhM",
+      "title": "[ENG/JP] 👸아이돌 이미지와 🦹‍♀️개그 욕심 사이 혼란에 빠진 만채?! 우당탕탕🤯 폭소만발🤣 new 포스터 제작기! | 은채의 스타일기💫 스페셜EP",
+      "group_ko": "더보이즈",
+      "published_at": "2024-07-18",
+      "parsed": null
+    },
+    {
+      "id": "shnWBjp1IVo",
+      "title": "[안방1열 직캠4K] 더보이즈 뉴 'TRIGGER (導火線)' (THE BOYZ NEW FanCam) @SBS Inkigayo 241103",
+      "group_ko": "더보이즈",
+      "published_at": "2024-11-03",
+      "parsed": {
+        "primaryGroup": "더보이즈",
+        "withGroups": [],
+        "membersByGroup": {
+          "더보이즈": [
+            "뉴"
+          ]
+        },
+        "confidence": "strong",
+        "trace": [
+          {
+            "rule": "fancam_struct",
+            "token": "",
+            "effect": "songtitle_stripped"
+          }
+        ]
+      }
+    },
+    {
+      "id": "MDad5KWf62o",
+      "title": "[Simply K-Pop] THE BOYZ NEW 'Salty' (더보이즈 뉴 직캠)_EP.402",
+      "group_ko": "더보이즈",
+      "published_at": "2020-02-24",
+      "parsed": {
+        "primaryGroup": "더보이즈",
+        "withGroups": [],
+        "membersByGroup": {
+          "더보이즈": [
+            "뉴"
+          ]
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "JofylLzo8Pc",
+      "title": "WWD KOREA x THEBOYZ NEW | WWD KOREA MISSION VLOG #더보이즈 #뉴",
+      "group_ko": "더보이즈",
+      "published_at": "2025-04-25",
+      "parsed": {
+        "primaryGroup": "더보이즈",
+        "withGroups": [],
+        "membersByGroup": {
+          "더보이즈": [
+            "뉴"
+          ]
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "4ZY38t8vUTs",
+      "title": "[2020 가요대전] 더보이즈 뉴 'REVEAL' 페이스캠 (THE BOYZ NEW FaceCam)│@2020 SBS Music Awards",
+      "group_ko": "더보이즈",
+      "published_at": "2021-01-08",
+      "parsed": {
+        "primaryGroup": "더보이즈",
+        "withGroups": [],
+        "membersByGroup": {
+          "더보이즈": [
+            "뉴"
+          ]
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "mNuWx7t7TVE",
+      "title": "[쇼챔직캠 4K] 더보이즈 뉴 - 스릴 라이드 (THE BOYZ NEW - THRILL RIDE) l #쇼챔피언 l EP.405",
+      "group_ko": "더보이즈",
+      "published_at": "2021-08-20",
+      "parsed": {
+        "primaryGroup": "더보이즈",
+        "withGroups": [],
+        "membersByGroup": {
+          "더보이즈": [
+            "뉴"
+          ]
+        },
+        "confidence": "strong",
+        "trace": [
+          {
+            "rule": "fancam_struct",
+            "token": "",
+            "effect": "songtitle_stripped"
+          }
+        ]
+      }
+    },
+    {
+      "id": "EL4x-xttSeQ",
+      "title": "[오픈더보이즈(OPEN THE BOYZ)] 스파클링보이즈(상연, 제이콥, 뉴, 큐)(SANGYEON X JACOB X NEW X Q)",
+      "group_ko": "더보이즈",
+      "published_at": "2017-08-11",
+      "parsed": {
+        "primaryGroup": "더보이즈",
+        "withGroups": [],
+        "membersByGroup": {
+          "더보이즈": [
+            "상연",
+            "제이콥",
+            "뉴"
+          ]
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "zdIv3N3KCGU",
+      "title": "[MPD직캠] 더보이즈 뉴 직캠 4K 'THRILL RIDE' (THE BOYZ NEW FanCam) | @MCOUNTDOWN_2021.8.12",
+      "group_ko": "더보이즈",
+      "published_at": "2021-08-12",
+      "parsed": {
+        "primaryGroup": "더보이즈",
+        "withGroups": [],
+        "membersByGroup": {
+          "더보이즈": [
+            "뉴"
+          ]
+        },
+        "confidence": "strong",
+        "trace": [
+          {
+            "rule": "fancam_struct",
+            "token": "",
+            "effect": "songtitle_stripped"
+          }
+        ]
+      }
+    },
+    {
+      "id": "V6llFEguv84",
+      "title": "P1Harmony X New Hope Club _ Super Chic  | 스페셜클립 | Special Clip | 라이브 | LIVE | 4Kㅣ테오 기호 지웅 인탁 소울 종섭",
+      "group_ko": "더보이즈",
+      "published_at": "2023-05-04",
+      "parsed": {
+        "primaryGroup": "피원하모니",
+        "withGroups": [],
+        "membersByGroup": {
+          "피원하모니": [
+            "기호",
+            "테오",
+            "지웅",
+            "인탁",
+            "소울",
+            "종섭"
+          ]
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "08IlkRyoMdc",
+      "title": "[K-Fancam] 더보이즈 뉴 직캠 ‘ROAR’ (THE BOYZ NEW Fancam) @MusicBank 230303",
+      "group_ko": "더보이즈",
+      "published_at": "2023-03-03",
+      "parsed": {
+        "primaryGroup": "더보이즈",
+        "withGroups": [],
+        "membersByGroup": {
+          "더보이즈": [
+            "뉴"
+          ]
+        },
+        "confidence": "strong",
+        "trace": [
+          {
+            "rule": "fancam_struct",
+            "token": "",
+            "effect": "songtitle_stripped"
+          }
+        ]
+      }
+    },
+    {
+      "id": "0jEZ9dKPKcE",
+      "title": "[MPD직캠] 더보이즈 뉴 직캠 4K 'LIP GLOSS' (THE BOYZ NEW FanCam) | @MCOUNTDOWN_2023.8.10",
+      "group_ko": "더보이즈",
+      "published_at": "2023-08-10",
+      "parsed": {
+        "primaryGroup": "더보이즈",
+        "withGroups": [],
+        "membersByGroup": {
+          "더보이즈": [
+            "뉴"
+          ]
+        },
+        "confidence": "strong",
+        "trace": [
+          {
+            "rule": "fancam_struct",
+            "token": "",
+            "effect": "songtitle_stripped"
+          }
+        ]
+      }
+    },
+    {
+      "id": "16oHnfPIYTM",
+      "title": "[안방1열 직캠4K] 더보이즈 뉴 'WATCH IT' (THE BOYZ NEW FanCam) @SBS Inkigayo 231126",
+      "group_ko": "더보이즈",
+      "published_at": "2023-11-26",
+      "parsed": {
+        "primaryGroup": "더보이즈",
+        "withGroups": [],
+        "membersByGroup": {
+          "더보이즈": [
+            "뉴"
+          ]
+        },
+        "confidence": "strong",
+        "trace": [
+          {
+            "rule": "fancam_struct",
+            "token": "",
+            "effect": "songtitle_stripped"
+          }
+        ]
+      }
+    },
+    {
+      "id": "AKHg2tvbXEs",
+      "title": "[#온앤오프] 엄마가 좋아 VS 아빠가 좋아🤣 보아와 이수만의 싸운 얘기에 난처해진 조카 써니💦",
+      "group_ko": "온앤오프",
+      "published_at": "2026-10-18",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "FlvEwwoLDEY",
+      "title": "[#온앤오프] 결혼을 꿈꾸는 이들의 귀감이 되는 부부 🌟 전략적인 접근으로 이뤄낸 하하의 결혼 스토리💍",
+      "group_ko": "온앤오프",
+      "published_at": "2026-08-05",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "Aayt9m08Rxg",
+      "title": "[#온앤오프] 집순이들의 로망 그 자체☀️ 한강이 보이는 집에서 누리는 써니의 집순이 라이프✨",
+      "group_ko": "온앤오프",
+      "published_at": "2026-10-02",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "sDozPLuQYjQ",
+      "title": "[#온앤오프] 승윤의 싱어게인 ON🎤 음악인들이 거쳐간 인디밴드의 성지에 금의환향한 이승윤✨",
+      "group_ko": "온앤오프",
+      "published_at": "2026-10-05",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "l64vrYbVhd4",
+      "title": "[#온앤오프] 앙둥이들 심장 뛰는 소리 여기까지 들린다🫀 10년 만에 뭉친 레전드 걸그룹 아이오아이 먹방😋",
+      "group_ko": "온앤오프",
+      "published_at": "2026-05-19",
+      "parsed": {
+        "primaryGroup": "아이오아이",
+        "withGroups": [
+          "온앤오프"
+        ],
+        "membersByGroup": {
+          "아이오아이": [],
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "PyVwt9nIouE",
+      "title": "[#온앤오프] 이쯤 되면 요리하려고 혼자 사는 거임ㅋㅋ 수제 소시지까지 만들어 먹는 자취러들의 워너비 성시경 일상🏠",
+      "group_ko": "온앤오프",
+      "published_at": "2026-10-18",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "woV6dkJq0Ss",
+      "title": "[#온앤오프] 둘이 되기 전 소진의 하루는✨ 청소부터 중고 재테크까지! 혼자서도 잘 하는 싱글 시절 소진🥰",
+      "group_ko": "온앤오프",
+      "published_at": "2026-08-20",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "fUvesMJe5Z4",
+      "title": "[#온앤오프] 자꾸만 끼게 되는 망붕 렌즈👀 신혼부부 같은 엄정화 X 성시경의 저녁 식사 준비💒",
+      "group_ko": "온앤오프",
+      "published_at": "2026-08-21",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    },
+    {
+      "id": "N_C9CAOn41k",
+      "title": "[#온앤오프] 김완선만의 힐링 우주✨그림 같은 풍경 속 다섯 고양이와 함께하는 완선의 집🏠",
+      "group_ko": "온앤오프",
+      "published_at": "2026-07-31",
+      "parsed": {
+        "primaryGroup": "온앤오프",
+        "withGroups": [],
+        "membersByGroup": {
+          "온앤오프": []
+        },
+        "confidence": "strong",
+        "trace": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,2074 @@
+{
+  "revision": "e64f24f9cd",
+  "scope": "Non-disbanded group metadata; excludes Solo. Count differences are review candidates, not all confirmed current headcount errors.",
+  "candidateGroups": 86,
+  "rows": [
+    {
+      "ko": "엔믹스",
+      "en": "NMIXX",
+      "allCount": 7,
+      "currentTitleCount": 6,
+      "excluded": [
+        {
+          "id": "a1869",
+          "name": "지니",
+          "primary": "엔믹스",
+          "active": false,
+          "left": "2022.12.09"
+        }
+      ]
+    },
+    {
+      "ko": "스트레이키즈",
+      "en": "Stray Kids",
+      "allCount": 9,
+      "currentTitleCount": 8,
+      "excluded": [
+        {
+          "id": "a1441",
+          "name": "김우진",
+          "primary": "스트레이키즈",
+          "active": false,
+          "left": "2019.10.28"
+        }
+      ]
+    },
+    {
+      "ko": "엔시티 127",
+      "en": "NCT 127",
+      "allCount": 9,
+      "currentTitleCount": 8,
+      "excluded": [
+        {
+          "id": "a0025",
+          "name": "마크",
+          "primary": "엔시티 127",
+          "active": false,
+          "left": "2026.04.08",
+          "entry": {
+            "ko": "엔시티 127",
+            "en": "NCT 127"
+          }
+        }
+      ]
+    },
+    {
+      "ko": "웨이션브이",
+      "en": "WayV",
+      "allCount": 7,
+      "currentTitleCount": 5,
+      "excluded": [
+        {
+          "id": "a0034",
+          "name": "윈윈",
+          "primary": "웨이션브이",
+          "active": false,
+          "left": "2026.07.08",
+          "entry": {
+            "ko": "웨이션브이",
+            "en": "WayV"
+          }
+        },
+        {
+          "id": "a1734",
+          "name": "루카스",
+          "primary": "웨이션브이",
+          "active": false,
+          "left": "2023.05"
+        }
+      ]
+    },
+    {
+      "ko": "라이즈",
+      "en": "RIIZE",
+      "allCount": 7,
+      "currentTitleCount": 6,
+      "excluded": [
+        {
+          "id": "a0124",
+          "name": "승한",
+          "primary": "솔로",
+          "active": true,
+          "entry": {
+            "ko": "라이즈",
+            "en": "RIIZE",
+            "active": false,
+            "left": "2024.10.13"
+          }
+        }
+      ]
+    },
+    {
+      "ko": "엔하이픈",
+      "en": "ENHYPEN",
+      "allCount": 7,
+      "currentTitleCount": 6,
+      "excluded": [
+        {
+          "id": "a0132",
+          "name": "에반",
+          "primary": "솔로",
+          "active": true,
+          "left": "2026.03.10",
+          "entry": {
+            "ko": "엔하이픈",
+            "en": "ENHYPEN",
+            "active": false,
+            "left": "2026.03.10",
+            "name": "희승",
+            "nameEn": "Heeseung"
+          }
+        }
+      ]
+    },
+    {
+      "ko": "빅뱅",
+      "en": "BIGBANG",
+      "allCount": 4,
+      "currentTitleCount": 3,
+      "excluded": [
+        {
+          "id": "a0201",
+          "name": "탑",
+          "primary": "빅뱅",
+          "active": false,
+          "left": "2023.06.01"
+        }
+      ]
+    },
+    {
+      "ko": "소녀시대",
+      "en": "Girls' Generation",
+      "allCount": 9,
+      "currentTitleCount": 8,
+      "excluded": [
+        {
+          "id": "a1043",
+          "name": "제시카",
+          "primary": "소녀시대",
+          "active": false,
+          "left": "2014.09.30"
+        }
+      ]
+    },
+    {
+      "ko": "샤이니",
+      "en": "SHINee",
+      "allCount": 5,
+      "currentTitleCount": 4,
+      "excluded": [
+        {
+          "id": "a0177",
+          "name": "종현",
+          "primary": "샤이니",
+          "active": false,
+          "left": "2017.12.18"
+        }
+      ]
+    },
+    {
+      "ko": "아이들",
+      "en": "(G)I-DLE",
+      "allCount": 6,
+      "currentTitleCount": 5,
+      "excluded": [
+        {
+          "id": "a0117",
+          "name": "수진",
+          "primary": "아이들",
+          "active": false,
+          "left": "2021.08.14"
+        }
+      ]
+    },
+    {
+      "ko": "더보이즈",
+      "en": "THE BOYZ",
+      "allCount": 12,
+      "currentTitleCount": 9,
+      "excluded": [
+        {
+          "id": "a0226",
+          "name": "뉴",
+          "primary": "더보이즈",
+          "active": false,
+          "left": "2026.08.27"
+        },
+        {
+          "id": "a0230",
+          "name": "주학년",
+          "primary": "더보이즈",
+          "active": false,
+          "left": "2025.06.18"
+        },
+        {
+          "id": "a0231",
+          "name": "활",
+          "primary": "더보이즈",
+          "active": false,
+          "left": "2019.10.23"
+        }
+      ]
+    },
+    {
+      "ko": "온앤오프",
+      "en": "ONF",
+      "allCount": 7,
+      "currentTitleCount": 6,
+      "excluded": [
+        {
+          "id": "a0238",
+          "name": "라운",
+          "primary": "온앤오프",
+          "active": false,
+          "left": "2019.08.23"
+        }
+      ]
+    },
+    {
+      "ko": "프로미스나인",
+      "en": "fromis_9",
+      "allCount": 9,
+      "currentTitleCount": 5,
+      "excluded": [
+        {
+          "id": "a0268",
+          "name": "지선",
+          "primary": "프로미스나인",
+          "active": false,
+          "left": "2024.12.31"
+        },
+        {
+          "id": "a0269",
+          "name": "새롬",
+          "primary": "프로미스나인",
+          "active": false,
+          "left": "2024.12.31"
+        },
+        {
+          "id": "a0270",
+          "name": "서연",
+          "primary": "프로미스나인",
+          "active": false,
+          "left": "2024.12.31"
+        },
+        {
+          "id": "a0271",
+          "name": "규리",
+          "primary": "프로미스나인",
+          "active": false,
+          "left": "2022.07.31"
+        }
+      ]
+    },
+    {
+      "ko": "트레저",
+      "en": "TREASURE",
+      "allCount": 12,
+      "currentTitleCount": 10,
+      "excluded": [
+        {
+          "id": "a0294",
+          "name": "디모렉스",
+          "primary": "솔로",
+          "active": true,
+          "entry": {
+            "ko": "트레저",
+            "en": "TREASURE",
+            "active": false,
+            "left": "2022.11.08",
+            "name": "예담",
+            "nameEn": "Yedam"
+          }
+        },
+        {
+          "id": "a0295",
+          "name": "마시호",
+          "primary": "트레저",
+          "active": false,
+          "left": "2022.11.08"
+        }
+      ]
+    },
+    {
+      "ko": "아이오아이",
+      "en": "I.O.I",
+      "allCount": 11,
+      "currentTitleCount": 9,
+      "excluded": [
+        {
+          "id": "a0313",
+          "name": "청하",
+          "primary": "솔로",
+          "active": true,
+          "entry": {
+            "ko": "아이오아이",
+            "en": "I.O.I",
+            "active": false,
+            "left": "2017.01.29"
+          }
+        },
+        {
+          "id": "a0319",
+          "name": "강미나",
+          "primary": "아이오아이",
+          "active": false,
+          "left": "2017.01.31",
+          "entry": {
+            "ko": "아이오아이",
+            "en": "I.O.I"
+          }
+        }
+      ]
+    },
+    {
+      "ko": "케플러",
+      "en": "Kep1er",
+      "allCount": 9,
+      "currentTitleCount": 8,
+      "excluded": [
+        {
+          "id": "a0337",
+          "name": "서영은",
+          "primary": "케플러",
+          "active": false,
+          "left": "2026.03.06"
+        }
+      ]
+    },
+    {
+      "ko": "알파드라이브원",
+      "en": "ALPHA DRIVE ONE",
+      "allCount": 8,
+      "currentTitleCount": 7,
+      "excluded": [
+        {
+          "id": "a0350",
+          "name": "건우",
+          "primary": "알파드라이브원",
+          "active": false,
+          "pausedFrom": "2026.04.08"
+        }
+      ]
+    },
+    {
+      "ko": "이즈나",
+      "en": "izna",
+      "allCount": 7,
+      "currentTitleCount": 6,
+      "excluded": [
+        {
+          "id": "a0361",
+          "name": "윤지윤",
+          "primary": "이즈나",
+          "active": false,
+          "left": "2025.08.19"
+        }
+      ]
+    },
+    {
+      "ko": "엑소",
+      "en": "EXO",
+      "allCount": 11,
+      "currentTitleCount": 9,
+      "excluded": [
+        {
+          "id": "a0378",
+          "name": "루한",
+          "primary": "엑소",
+          "active": false,
+          "left": "2014.10.10"
+        },
+        {
+          "id": "a0379",
+          "name": "타오",
+          "primary": "엑소",
+          "active": false,
+          "left": "2015"
+        }
+      ]
+    },
+    {
+      "ko": "슈퍼주니어",
+      "en": "SUPER JUNIOR",
+      "allCount": 13,
+      "currentTitleCount": 9,
+      "excluded": [
+        {
+          "id": "a0389",
+          "name": "성민",
+          "primary": "슈퍼주니어",
+          "active": false,
+          "left": "2017.07.06"
+        },
+        {
+          "id": "a0390",
+          "name": "한경",
+          "primary": "슈퍼주니어",
+          "active": false,
+          "left": "2009.12.21"
+        },
+        {
+          "id": "a0391",
+          "name": "강인",
+          "primary": "슈퍼주니어",
+          "active": false,
+          "left": "2019.07.11"
+        },
+        {
+          "id": "a0392",
+          "name": "기범",
+          "primary": "슈퍼주니어",
+          "active": false,
+          "left": "2015.08.20"
+        }
+      ]
+    },
+    {
+      "ko": "아스트로",
+      "en": "ASTRO",
+      "allCount": 6,
+      "currentTitleCount": 4,
+      "excluded": [
+        {
+          "id": "a0397",
+          "name": "문빈",
+          "primary": "아스트로",
+          "active": false,
+          "left": "2023.04.19"
+        },
+        {
+          "id": "a0398",
+          "name": "라키",
+          "primary": "아스트로",
+          "active": false,
+          "left": "2023.02.28"
+        }
+      ]
+    },
+    {
+      "ko": "몬스타엑스",
+      "en": "MONSTA X",
+      "allCount": 7,
+      "currentTitleCount": 6,
+      "excluded": [
+        {
+          "id": "a0405",
+          "name": "원호",
+          "primary": "솔로",
+          "active": false,
+          "left": "2019.10.31",
+          "entry": {
+            "ko": "몬스타엑스",
+            "en": "MONSTA X",
+            "active": false,
+            "left": "2019.10.31"
+          }
+        }
+      ]
+    },
+    {
+      "ko": "에스에프나인",
+      "en": "SF9",
+      "allCount": 9,
+      "currentTitleCount": 8,
+      "excluded": [
+        {
+          "id": "a0414",
+          "name": "로운",
+          "primary": "에스에프나인",
+          "active": false,
+          "left": "2023.09.18"
+        }
+      ]
+    },
+    {
+      "ko": "이펙스",
+      "en": "EPEX",
+      "allCount": 8,
+      "currentTitleCount": 7,
+      "excluded": [
+        {
+          "id": "a0429",
+          "name": "금동현",
+          "primary": "이펙스",
+          "active": false,
+          "left": "2025.11.21"
+        }
+      ]
+    },
+    {
+      "ko": "원어스",
+      "en": "ONEUS",
+      "allCount": 6,
+      "currentTitleCount": 5,
+      "excluded": [
+        {
+          "id": "a0435",
+          "name": "레이븐",
+          "primary": "원어스",
+          "active": false,
+          "left": "2022.10.27"
+        }
+      ]
+    },
+    {
+      "ko": "오마이걸",
+      "en": "OH MY GIRL",
+      "allCount": 8,
+      "currentTitleCount": 6,
+      "excluded": [
+        {
+          "id": "a0442",
+          "name": "진이",
+          "primary": "오마이걸",
+          "active": false,
+          "left": "2017.10.30"
+        },
+        {
+          "id": "a0443",
+          "name": "지호",
+          "primary": "오마이걸",
+          "active": false,
+          "left": "2022.05.09"
+        }
+      ]
+    },
+    {
+      "ko": "인피니트",
+      "en": "INFINITE",
+      "allCount": 7,
+      "currentTitleCount": 6,
+      "excluded": [
+        {
+          "id": "a0486",
+          "name": "호야",
+          "primary": "인피니트",
+          "active": false,
+          "left": "2017.06.09"
+        }
+      ]
+    },
+    {
+      "ko": "에이비식스",
+      "en": "AB6IX",
+      "allCount": 5,
+      "currentTitleCount": 4,
+      "excluded": [
+        {
+          "id": "a1875",
+          "name": "임영민",
+          "primary": "에이비식스",
+          "active": false,
+          "left": "2020.06.08"
+        }
+      ]
+    },
+    {
+      "ko": "하이라이트",
+      "en": "Highlight",
+      "allCount": 5,
+      "currentTitleCount": 4,
+      "excluded": [
+        {
+          "id": "a0508",
+          "name": "장현승",
+          "primary": "하이라이트",
+          "active": false,
+          "left": "2016.04.19"
+        }
+      ]
+    },
+    {
+      "ko": "카라",
+      "en": "KARA",
+      "allCount": 6,
+      "currentTitleCount": 5,
+      "excluded": [
+        {
+          "id": "a0514",
+          "name": "구하라",
+          "primary": "카라",
+          "active": false,
+          "left": "2019.11.24"
+        }
+      ]
+    },
+    {
+      "ko": "티아라",
+      "en": "T-ara",
+      "allCount": 8,
+      "currentTitleCount": 4,
+      "excluded": [
+        {
+          "id": "a0534",
+          "name": "화영",
+          "primary": "티아라",
+          "active": false,
+          "left": "2012.07.30"
+        },
+        {
+          "id": "a0535",
+          "name": "아름",
+          "primary": "티아라",
+          "active": false,
+          "left": "2013.07.10"
+        },
+        {
+          "id": "a0536",
+          "name": "보람",
+          "primary": "티아라",
+          "active": false,
+          "left": "2017.05.15"
+        },
+        {
+          "id": "a0537",
+          "name": "소연",
+          "primary": "티아라",
+          "active": false,
+          "left": "2017.05.15"
+        }
+      ]
+    },
+    {
+      "ko": "이달의소녀",
+      "en": "LOONA",
+      "allCount": 12,
+      "currentTitleCount": 5,
+      "excluded": [
+        {
+          "id": "a0555",
+          "name": "현진",
+          "primary": "솔로",
+          "active": true,
+          "entry": {
+            "ko": "이달의소녀",
+            "en": "LOONA",
+            "active": false,
+            "left": "2023.05.09"
+          }
+        },
+        {
+          "id": "a0556",
+          "name": "여진",
+          "primary": "솔로",
+          "active": true,
+          "entry": {
+            "ko": "이달의소녀",
+            "en": "LOONA",
+            "active": false,
+            "left": "2023.06.16"
+          }
+        },
+        {
+          "id": "a0557",
+          "name": "비비",
+          "primary": "솔로",
+          "active": true,
+          "entry": {
+            "ko": "이달의소녀",
+            "en": "LOONA",
+            "active": false,
+            "left": "2023.05.09"
+          }
+        },
+        {
+          "id": "a0558",
+          "name": "고원",
+          "primary": "솔로",
+          "active": true,
+          "entry": {
+            "ko": "이달의소녀",
+            "en": "LOONA",
+            "active": false,
+            "left": "2023.06.16"
+          }
+        },
+        {
+          "id": "a0559",
+          "name": "올리비아 혜",
+          "primary": "솔로",
+          "active": true,
+          "entry": {
+            "ko": "이달의소녀",
+            "en": "LOONA",
+            "active": false,
+            "left": "2023.06.16"
+          }
+        },
+        {
+          "id": "a0560",
+          "name": "이브",
+          "primary": "이달의소녀",
+          "active": false,
+          "left": "2023.06.16"
+        },
+        {
+          "id": "a0561",
+          "name": "츄",
+          "primary": "이달의소녀",
+          "active": false,
+          "left": "2022.11.25"
+        }
+      ]
+    },
+    {
+      "ko": "동방신기",
+      "en": "TVXQ",
+      "allCount": 5,
+      "currentTitleCount": 2,
+      "excluded": [
+        {
+          "id": "a0595",
+          "name": "김재중",
+          "primary": "동방신기",
+          "active": false,
+          "left": "2010.03.24"
+        },
+        {
+          "id": "a0596",
+          "name": "박유천",
+          "primary": "동방신기",
+          "active": false,
+          "left": "2010.03.24"
+        },
+        {
+          "id": "a0597",
+          "name": "김준수",
+          "primary": "동방신기",
+          "active": false,
+          "left": "2010.03.24"
+        }
+      ]
+    },
+    {
+      "ko": "드리핀",
+      "en": "DRIPPIN",
+      "allCount": 7,
+      "currentTitleCount": 6,
+      "excluded": [
+        {
+          "id": "a1874",
+          "name": "알렉스",
+          "primary": "드리핀",
+          "active": false,
+          "left": "2023.07.28"
+        }
+      ]
+    },
+    {
+      "ko": "틴탑",
+      "en": "TEEN TOP",
+      "allCount": 6,
+      "currentTitleCount": 4,
+      "excluded": [
+        {
+          "id": "a0636",
+          "name": "엘조",
+          "primary": "틴탑",
+          "active": false,
+          "left": "2017.03.20"
+        },
+        {
+          "id": "a0637",
+          "name": "C.A.P",
+          "primary": "틴탑",
+          "active": false,
+          "left": "2023.05.11"
+        }
+      ]
+    },
+    {
+      "ko": "에프티아일랜드",
+      "en": "FTISLAND",
+      "allCount": 5,
+      "currentTitleCount": 3,
+      "excluded": [
+        {
+          "id": "a0641",
+          "name": "오원빈",
+          "primary": "에프티아일랜드",
+          "active": false,
+          "left": "2009.01.28"
+        },
+        {
+          "id": "a0642",
+          "name": "송승현",
+          "primary": "에프티아일랜드",
+          "active": false,
+          "left": "2019.12.31"
+        }
+      ]
+    },
+    {
+      "ko": "위너",
+      "en": "WINNER",
+      "allCount": 5,
+      "currentTitleCount": 4,
+      "excluded": [
+        {
+          "id": "a0647",
+          "name": "남태현",
+          "primary": "위너",
+          "active": false,
+          "left": "2016.11.25"
+        }
+      ]
+    },
+    {
+      "ko": "아이콘",
+      "en": "iKON",
+      "allCount": 7,
+      "currentTitleCount": 6,
+      "excluded": [
+        {
+          "id": "a0654",
+          "name": "B.I",
+          "primary": "아이콘",
+          "active": false,
+          "left": "2019.06.12"
+        }
+      ]
+    },
+    {
+      "ko": "우주소녀",
+      "en": "WJSN",
+      "allCount": 13,
+      "currentTitleCount": 8,
+      "excluded": [
+        {
+          "id": "a0662",
+          "name": "루다",
+          "primary": "우주소녀",
+          "active": false,
+          "left": "2023.03.03"
+        },
+        {
+          "id": "a0663",
+          "name": "다원",
+          "primary": "우주소녀",
+          "active": false,
+          "left": "2023.03.03"
+        },
+        {
+          "id": "a0664",
+          "name": "선의",
+          "primary": "우주소녀",
+          "active": false,
+          "left": "2023.03.03"
+        },
+        {
+          "id": "a0665",
+          "name": "성소",
+          "primary": "우주소녀",
+          "active": false,
+          "left": "2023.03.03"
+        },
+        {
+          "id": "a0666",
+          "name": "미기",
+          "primary": "우주소녀",
+          "active": false,
+          "left": "2023.03.03"
+        }
+      ]
+    },
+    {
+      "ko": "하이키",
+      "en": "H1-KEY",
+      "allCount": 5,
+      "currentTitleCount": 4,
+      "excluded": [
+        {
+          "id": "a0700",
+          "name": "시탈라",
+          "primary": "하이키",
+          "active": false,
+          "left": "2022.05.25"
+        }
+      ]
+    },
+    {
+      "ko": "피프티피프티",
+      "en": "FIFTY FIFTY",
+      "allCount": 8,
+      "currentTitleCount": 5,
+      "excluded": [
+        {
+          "id": "a1870",
+          "name": "새나",
+          "primary": "피프티피프티",
+          "active": false,
+          "left": "2023.10.19"
+        },
+        {
+          "id": "a1871",
+          "name": "아란",
+          "primary": "피프티피프티",
+          "active": false,
+          "left": "2023.10.19"
+        },
+        {
+          "id": "a1872",
+          "name": "시오",
+          "primary": "피프티피프티",
+          "active": false,
+          "left": "2023.10.19"
+        }
+      ]
+    },
+    {
+      "ko": "유스피어",
+      "en": "USPEER",
+      "allCount": 7,
+      "currentTitleCount": 6,
+      "excluded": [
+        {
+          "id": "a1358",
+          "name": "여원",
+          "primary": "유스피어",
+          "active": false,
+          "left": "2026.05.06"
+        }
+      ]
+    },
+    {
+      "ko": "비원에이포",
+      "en": "B1A4",
+      "allCount": 5,
+      "currentTitleCount": 3,
+      "excluded": [
+        {
+          "id": "a0715",
+          "name": "진영",
+          "primary": "비원에이포",
+          "active": false,
+          "left": "2018.06.30"
+        },
+        {
+          "id": "a0716",
+          "name": "바로",
+          "primary": "비원에이포",
+          "active": false,
+          "left": "2018.06.30"
+        }
+      ]
+    },
+    {
+      "ko": "메이딘",
+      "en": "MADEIN",
+      "allCount": 7,
+      "currentTitleCount": 4,
+      "excluded": [
+        {
+          "id": "a0741",
+          "name": "김수혜",
+          "primary": "메이딘",
+          "active": false,
+          "left": "2025.12.26",
+          "entry": {
+            "ko": "메이딘",
+            "en": "MADEIN"
+          }
+        },
+        {
+          "id": "a0742",
+          "name": "오가은",
+          "primary": "메이딘",
+          "active": false,
+          "left": "2024.11.29",
+          "entry": {
+            "ko": "메이딘",
+            "en": "MADEIN"
+          }
+        },
+        {
+          "id": "a0743",
+          "name": "강예서",
+          "primary": "메이딘",
+          "active": false,
+          "left": "2025.12.26",
+          "entry": {
+            "ko": "메이딘",
+            "en": "MADEIN"
+          }
+        }
+      ]
+    },
+    {
+      "ko": "오메가엑스",
+      "en": "OMEGA X",
+      "allCount": 11,
+      "currentTitleCount": 10,
+      "excluded": [
+        {
+          "id": "a0775",
+          "name": "정훈",
+          "primary": "오메가엑스",
+          "active": false,
+          "left": "2026.06.01"
+        }
+      ]
+    },
+    {
+      "ko": "데이식스",
+      "en": "DAY6",
+      "allCount": 5,
+      "currentTitleCount": 4,
+      "excluded": [
+        {
+          "id": "a0798",
+          "name": "Jae",
+          "primary": "데이식스",
+          "active": false,
+          "left": "2021.12.31"
+        }
+      ]
+    },
+    {
+      "ko": "비투비",
+      "en": "BTOB",
+      "allCount": 7,
+      "currentTitleCount": 6,
+      "excluded": [
+        {
+          "id": "a0805",
+          "name": "정일훈",
+          "primary": "솔로",
+          "active": false,
+          "entry": {
+            "ko": "비투비",
+            "en": "BTOB",
+            "active": false,
+            "left": "2020.12.31"
+          }
+        }
+      ]
+    },
+    {
+      "ko": "골든차일드",
+      "en": "Golden Child",
+      "allCount": 11,
+      "currentTitleCount": 7,
+      "excluded": [
+        {
+          "id": "a0882",
+          "name": "TAG",
+          "primary": "골든차일드",
+          "active": false,
+          "left": "2024.08.28"
+        },
+        {
+          "id": "a0883",
+          "name": "박재석",
+          "primary": "골든차일드",
+          "active": false,
+          "left": "2018.01.07"
+        },
+        {
+          "id": "a0884",
+          "name": "김지범",
+          "primary": "골든차일드",
+          "active": false,
+          "left": "2024.08.28"
+        },
+        {
+          "id": "a0885",
+          "name": "최보민",
+          "primary": "골든차일드",
+          "active": false,
+          "left": "2024.08.28"
+        }
+      ]
+    },
+    {
+      "ko": "에버글로우",
+      "en": "EVERGLOW",
+      "allCount": 6,
+      "currentTitleCount": 4,
+      "excluded": [
+        {
+          "id": "a0895",
+          "name": "미아",
+          "primary": "에버글로우",
+          "active": false,
+          "left": "2025.09.10"
+        },
+        {
+          "id": "a0896",
+          "name": "이런",
+          "primary": "에버글로우",
+          "active": false,
+          "left": "2025.05.31"
+        }
+      ]
+    },
+    {
+      "ko": "모모랜드",
+      "en": "Momoland",
+      "allCount": 9,
+      "currentTitleCount": 6,
+      "excluded": [
+        {
+          "id": "a0914",
+          "name": "연우",
+          "primary": "모모랜드",
+          "active": false,
+          "left": "2019.11.30"
+        },
+        {
+          "id": "a1877",
+          "name": "김태하",
+          "primary": "모모랜드",
+          "active": false,
+          "left": "2019.11.30"
+        },
+        {
+          "id": "a1878",
+          "name": "데이지",
+          "primary": "모모랜드",
+          "active": false,
+          "left": "2020.05.13"
+        }
+      ]
+    },
+    {
+      "ko": "라잇썸",
+      "en": "LIGHTSUM",
+      "allCount": 8,
+      "currentTitleCount": 6,
+      "excluded": [
+        {
+          "id": "a0921",
+          "name": "휘연",
+          "primary": "라잇썸",
+          "active": false,
+          "left": "2022.10.25"
+        },
+        {
+          "id": "a1873",
+          "name": "지안",
+          "primary": "라잇썸",
+          "active": false,
+          "left": "2022.10.25"
+        }
+      ]
+    },
+    {
+      "ko": "펜타곤",
+      "en": "PENTAGON",
+      "allCount": 10,
+      "currentTitleCount": 7,
+      "excluded": [
+        {
+          "id": "a0937",
+          "name": "옌안",
+          "primary": "펜타곤",
+          "active": false,
+          "left": "2026.07.21",
+          "pausedFrom": "2023.10.10"
+        },
+        {
+          "id": "a0938",
+          "name": "유토",
+          "primary": "펜타곤",
+          "active": false,
+          "left": "2026.07.21",
+          "pausedFrom": "2023.10.10"
+        },
+        {
+          "id": "a0941",
+          "name": "던",
+          "primary": "펜타곤",
+          "active": false,
+          "left": "2018.11.14"
+        }
+      ]
+    },
+    {
+      "ko": "업텐션",
+      "en": "UP10TION",
+      "allCount": 10,
+      "currentTitleCount": 8,
+      "excluded": [
+        {
+          "id": "a1549",
+          "name": "이진혁",
+          "primary": "업텐션",
+          "active": false,
+          "left": "2023.02.28",
+          "entry": {
+            "ko": "업텐션",
+            "en": "UP10TION"
+          }
+        },
+        {
+          "id": "a1550",
+          "name": "진후",
+          "primary": "업텐션",
+          "active": false,
+          "left": "2023.02.28"
+        }
+      ]
+    },
+    {
+      "ko": "다이아",
+      "en": "DIA",
+      "allCount": 10,
+      "currentTitleCount": 5,
+      "excluded": [
+        {
+          "id": "a0954",
+          "name": "이소율",
+          "primary": "다이아",
+          "active": false,
+          "left": "2019.07.06"
+        },
+        {
+          "id": "a0955",
+          "name": "안솜이",
+          "primary": "다이아",
+          "active": false,
+          "left": "2022.01.09"
+        },
+        {
+          "id": "a1879",
+          "name": "안은진",
+          "primary": "다이아",
+          "active": false,
+          "left": "2018.05.07"
+        },
+        {
+          "id": "a1193",
+          "name": "백예빈",
+          "primary": "솔로",
+          "active": true,
+          "entry": {
+            "ko": "다이아",
+            "en": "DIA",
+            "active": false,
+            "left": "2022.09.17"
+          }
+        },
+        {
+          "id": "a1522",
+          "name": "승희",
+          "primary": "솔로",
+          "active": true,
+          "entry": {
+            "ko": "다이아",
+            "en": "DIA",
+            "active": false,
+            "left": "2016.04.12"
+          }
+        }
+      ]
+    },
+    {
+      "ko": "2PM",
+      "en": "2PM",
+      "allCount": 7,
+      "currentTitleCount": 6,
+      "excluded": [
+        {
+          "id": "a0962",
+          "name": "박재범",
+          "primary": "2PM",
+          "active": false,
+          "left": "2009.09.08"
+        }
+      ]
+    },
+    {
+      "ko": "에이핑크",
+      "en": "Apink",
+      "allCount": 7,
+      "currentTitleCount": 5,
+      "excluded": [
+        {
+          "id": "a1534",
+          "name": "손나은",
+          "primary": "에이핑크",
+          "active": false,
+          "left": "2022.04.08"
+        },
+        {
+          "id": "a1535",
+          "name": "홍유경",
+          "primary": "에이핑크",
+          "active": false,
+          "left": "2013.04.23"
+        }
+      ]
+    },
+    {
+      "ko": "유키스",
+      "en": "U-KISS",
+      "allCount": 10,
+      "currentTitleCount": 5,
+      "excluded": [
+        {
+          "id": "a1028",
+          "name": "기범",
+          "primary": "유키스",
+          "active": false,
+          "left": "2011.02.23"
+        },
+        {
+          "id": "a1029",
+          "name": "동호",
+          "primary": "유키스",
+          "active": false,
+          "left": "2013.10.16"
+        },
+        {
+          "id": "a1030",
+          "name": "케빈",
+          "primary": "유키스",
+          "active": false,
+          "left": "2017.03.02"
+        },
+        {
+          "id": "a1031",
+          "name": "준",
+          "primary": "유키스",
+          "active": false,
+          "left": "2022.01.29",
+          "entry": {
+            "ko": "유키스",
+            "en": "U-KISS"
+          }
+        },
+        {
+          "id": "a1032",
+          "name": "AJ",
+          "primary": "유키스",
+          "active": false,
+          "left": "2016.08.29"
+        }
+      ]
+    },
+    {
+      "ko": "빅스",
+      "en": "VIXX",
+      "allCount": 6,
+      "currentTitleCount": 4,
+      "excluded": [
+        {
+          "id": "a1057",
+          "name": "홍빈",
+          "primary": "빅스",
+          "active": false,
+          "left": "2020.08.07"
+        },
+        {
+          "id": "a1058",
+          "name": "라비",
+          "primary": "빅스",
+          "active": false,
+          "left": "2023.04.11"
+        }
+      ]
+    },
+    {
+      "ko": "엑스디너리 히어로즈",
+      "en": "Xdinary Heroes",
+      "allCount": 6,
+      "currentTitleCount": 5,
+      "excluded": [
+        {
+          "id": "a1121",
+          "name": "건일",
+          "primary": "엑스디너리 히어로즈",
+          "active": false,
+          "left": "2026.08.13"
+        }
+      ]
+    },
+    {
+      "ko": "우아",
+      "en": "WOOAH",
+      "allCount": 6,
+      "currentTitleCount": 5,
+      "excluded": [
+        {
+          "id": "a1138",
+          "name": "송이",
+          "primary": "우아",
+          "active": false,
+          "left": "2020.08.14"
+        }
+      ]
+    },
+    {
+      "ko": "드림노트",
+      "en": "Dreamnote",
+      "allCount": 8,
+      "currentTitleCount": 6,
+      "excluded": [
+        {
+          "id": "a1182",
+          "name": "유하빈",
+          "primary": "드림노트",
+          "active": false,
+          "left": "2019.09.06"
+        },
+        {
+          "id": "a1183",
+          "name": "안한별",
+          "primary": "드림노트",
+          "active": false,
+          "left": "2019.09.06"
+        }
+      ]
+    },
+    {
+      "ko": "온리원오프",
+      "en": "OnlyOneOf",
+      "allCount": 7,
+      "currentTitleCount": 6,
+      "excluded": [
+        {
+          "id": "a1209",
+          "name": "Love",
+          "primary": "온리원오프",
+          "active": false,
+          "left": "2021.08.02"
+        }
+      ]
+    },
+    {
+      "ko": "티엔엑스",
+      "en": "TNX",
+      "allCount": 6,
+      "currentTitleCount": 5,
+      "excluded": [
+        {
+          "id": "a1223",
+          "name": "우경준",
+          "primary": "티엔엑스",
+          "active": false,
+          "left": "2024.10.23"
+        }
+      ]
+    },
+    {
+      "ko": "다크비",
+      "en": "DKB",
+      "allCount": 9,
+      "currentTitleCount": 8,
+      "excluded": [
+        {
+          "id": "a1252",
+          "name": "테오",
+          "primary": "다크비",
+          "active": false,
+          "left": "2023.11.06"
+        }
+      ]
+    },
+    {
+      "ko": "이븐",
+      "en": "EVNNE",
+      "allCount": 7,
+      "currentTitleCount": 6,
+      "excluded": [
+        {
+          "id": "a1276",
+          "name": "지윤서",
+          "primary": "이븐",
+          "active": false,
+          "left": "2026.02.13"
+        }
+      ]
+    },
+    {
+      "ko": "유나이트",
+      "en": "YOUNITE",
+      "allCount": 9,
+      "currentTitleCount": 7,
+      "excluded": [
+        {
+          "id": "a0615",
+          "name": "이은상",
+          "primary": "솔로",
+          "active": true,
+          "left": "2020.01.06",
+          "entry": {
+            "ko": "유나이트",
+            "en": "YOUNITE",
+            "active": false,
+            "left": "2026.06.30"
+          }
+        },
+        {
+          "id": "a1284",
+          "name": "현승",
+          "primary": "유나이트",
+          "active": false,
+          "left": "2024.07.02"
+        }
+      ]
+    },
+    {
+      "ko": "걸셋",
+      "en": "GIRLSET",
+      "allCount": 6,
+      "currentTitleCount": 4,
+      "excluded": [
+        {
+          "id": "a1881",
+          "name": "케이지",
+          "primary": "걸셋",
+          "active": false,
+          "left": "2024.12.07"
+        },
+        {
+          "id": "a1882",
+          "name": "케일리",
+          "primary": "걸셋",
+          "active": false,
+          "left": "2025.07.12"
+        }
+      ]
+    },
+    {
+      "ko": "루네이트",
+      "en": "LUN8",
+      "allCount": 9,
+      "currentTitleCount": 7,
+      "excluded": [
+        {
+          "id": "a1454",
+          "name": "은섭",
+          "primary": "루네이트",
+          "active": false,
+          "left": "2025.01.21"
+        },
+        {
+          "id": "a1455",
+          "name": "지은호",
+          "primary": "루네이트",
+          "active": false,
+          "left": "2026.03.20"
+        }
+      ]
+    },
+    {
+      "ko": "크나큰",
+      "en": "KNK",
+      "allCount": 7,
+      "currentTitleCount": 3,
+      "excluded": [
+        {
+          "id": "a1470",
+          "name": "김유진",
+          "primary": "크나큰",
+          "active": false,
+          "left": "2018.09.10"
+        },
+        {
+          "id": "a1471",
+          "name": "박서함",
+          "primary": "크나큰",
+          "active": false,
+          "left": "2021.09.30"
+        },
+        {
+          "id": "a1472",
+          "name": "오희준",
+          "primary": "크나큰",
+          "active": false,
+          "left": "2022.01.13"
+        },
+        {
+          "id": "a1473",
+          "name": "이동원",
+          "primary": "크나큰",
+          "active": false,
+          "left": "2026.03.06"
+        }
+      ]
+    },
+    {
+      "ko": "시크릿넘버",
+      "en": "SECRET NUMBER",
+      "allCount": 11,
+      "currentTitleCount": 4,
+      "excluded": [
+        {
+          "id": "a1484",
+          "name": "데니스",
+          "primary": "시크릿넘버",
+          "active": false,
+          "left": "2022.02.01"
+        },
+        {
+          "id": "a1485",
+          "name": "레아",
+          "primary": "시크릿넘버",
+          "active": false,
+          "left": "2025.04.02"
+        },
+        {
+          "id": "a1486",
+          "name": "디타",
+          "primary": "시크릿넘버",
+          "active": false,
+          "left": "2025.04.04"
+        },
+        {
+          "id": "a1487",
+          "name": "진희",
+          "primary": "시크릿넘버",
+          "active": false,
+          "left": "2025.04"
+        },
+        {
+          "id": "a1488",
+          "name": "민지",
+          "primary": "시크릿넘버",
+          "active": false,
+          "left": "2025.04"
+        },
+        {
+          "id": "a1489",
+          "name": "수담",
+          "primary": "시크릿넘버",
+          "active": false,
+          "left": "2025.12.12"
+        },
+        {
+          "id": "a1490",
+          "name": "주",
+          "primary": "시크릿넘버",
+          "active": false,
+          "left": "2026.04.08"
+        }
+      ]
+    },
+    {
+      "ko": "판타지보이즈",
+      "en": "FANTASY BOYS",
+      "allCount": 11,
+      "currentTitleCount": 4,
+      "excluded": [
+        {
+          "id": "a1498",
+          "name": "김규래",
+          "primary": "판타지보이즈",
+          "active": false,
+          "left": "2026.04"
+        },
+        {
+          "id": "a1499",
+          "name": "홍성민",
+          "primary": "판타지보이즈",
+          "active": false,
+          "left": "2026.04",
+          "entry": {
+            "ko": "판타지보이즈",
+            "en": "FANTASY BOYS"
+          }
+        },
+        {
+          "id": "a1501",
+          "name": "이한빈",
+          "primary": "판타지보이즈",
+          "active": false,
+          "left": "2026.04",
+          "entry": {
+            "ko": "판타지보이즈",
+            "en": "FANTASY BOYS"
+          }
+        },
+        {
+          "id": "a1503",
+          "name": "강민서",
+          "primary": "판타지보이즈",
+          "active": false,
+          "left": "2026.04.16",
+          "entry": {
+            "ko": "판타지보이즈",
+            "en": "FANTASY BOYS"
+          }
+        },
+        {
+          "id": "a1505",
+          "name": "소울",
+          "primary": "판타지보이즈",
+          "active": false,
+          "left": "2025.01.24"
+        },
+        {
+          "id": "a1507",
+          "name": "히카루",
+          "primary": "판타지보이즈",
+          "active": false,
+          "left": "2026.04",
+          "entry": {
+            "ko": "판타지보이즈",
+            "en": "FANTASY BOYS"
+          }
+        },
+        {
+          "id": "a1508",
+          "name": "케이단",
+          "primary": "판타지보이즈",
+          "active": false,
+          "left": "2026.04"
+        }
+      ]
+    },
+    {
+      "ko": "브브걸",
+      "en": "BBGIRLS",
+      "allCount": 4,
+      "currentTitleCount": 3,
+      "excluded": [
+        {
+          "id": "a0503",
+          "name": "유정",
+          "primary": "브브걸",
+          "active": false,
+          "left": "2024.04.22"
+        }
+      ]
+    },
+    {
+      "ko": "슈퍼노바",
+      "en": "Supernova",
+      "allCount": 6,
+      "currentTitleCount": 5,
+      "excluded": [
+        {
+          "id": "a1887",
+          "name": "윤성모",
+          "primary": "슈퍼노바",
+          "active": false,
+          "left": "2018.08.31"
+        }
+      ]
+    },
+    {
+      "ko": "앨리스",
+      "en": "ALICE",
+      "allCount": 7,
+      "currentTitleCount": 2,
+      "excluded": [
+        {
+          "id": "a1538",
+          "name": "소희",
+          "primary": "앨리스",
+          "active": false,
+          "left": "2024.04.26"
+        },
+        {
+          "id": "a1539",
+          "name": "도아",
+          "primary": "앨리스",
+          "active": false,
+          "left": "2024.05.02"
+        },
+        {
+          "id": "a1540",
+          "name": "유경",
+          "primary": "앨리스",
+          "active": false,
+          "left": "2024.05.02"
+        },
+        {
+          "id": "a1541",
+          "name": "가린",
+          "primary": "앨리스",
+          "active": false,
+          "left": "2024.05.02"
+        },
+        {
+          "id": "a1542",
+          "name": "연제",
+          "primary": "앨리스",
+          "active": false,
+          "left": "2024.05.29"
+        }
+      ]
+    },
+    {
+      "ko": "엔플라잉",
+      "en": "N.Flying",
+      "allCount": 6,
+      "currentTitleCount": 5,
+      "excluded": [
+        {
+          "id": "a1548",
+          "name": "권광진",
+          "primary": "엔플라잉",
+          "active": false,
+          "left": "2018.12.01"
+        }
+      ]
+    },
+    {
+      "ko": "아이칠린",
+      "en": "ICHILLIN'",
+      "allCount": 8,
+      "currentTitleCount": 7,
+      "excluded": [
+        {
+          "id": "a1598",
+          "name": "소희",
+          "primary": "아이칠린",
+          "active": false,
+          "left": "2022.07.15"
+        }
+      ]
+    },
+    {
+      "ko": "엔싸인",
+      "en": "n.SSign",
+      "allCount": 10,
+      "currentTitleCount": 7,
+      "excluded": [
+        {
+          "id": "a1866",
+          "name": "현",
+          "primary": "엔싸인",
+          "active": false,
+          "left": "2024.08.05"
+        },
+        {
+          "id": "a1867",
+          "name": "에디",
+          "primary": "엔싸인",
+          "active": false,
+          "left": "2024.12.08"
+        },
+        {
+          "id": "a1868",
+          "name": "준혁",
+          "primary": "엔싸인",
+          "active": false,
+          "left": "2024.12.08"
+        }
+      ]
+    },
+    {
+      "ko": "나인아이",
+      "en": "NINE.i",
+      "allCount": 10,
+      "currentTitleCount": 7,
+      "excluded": [
+        {
+          "id": "a0723",
+          "name": "김주형",
+          "primary": "데일리디렉션",
+          "active": true,
+          "entry": {
+            "ko": "나인아이",
+            "en": "NINE.i",
+            "active": false,
+            "left": "2025.03.11"
+          }
+        },
+        {
+          "id": "a1639",
+          "name": "위니",
+          "primary": "나인아이",
+          "active": false,
+          "left": "2024.01.29"
+        },
+        {
+          "id": "a1641",
+          "name": "서원",
+          "primary": "나인아이",
+          "active": false,
+          "left": "2025.06.13"
+        }
+      ]
+    },
+    {
+      "ko": "걸스데이",
+      "en": "Girl's Day",
+      "allCount": 7,
+      "currentTitleCount": 4,
+      "excluded": [
+        {
+          "id": "a1653",
+          "name": "황지선",
+          "primary": "걸스데이",
+          "active": false,
+          "left": "2010.09.13"
+        },
+        {
+          "id": "a1654",
+          "name": "장혜리",
+          "primary": "걸스데이",
+          "active": false,
+          "left": "2010.09.13"
+        },
+        {
+          "id": "a1655",
+          "name": "지해",
+          "primary": "걸스데이",
+          "active": false,
+          "left": "2012.10.17"
+        }
+      ]
+    },
+    {
+      "ko": "트라이비",
+      "en": "TRI.BE",
+      "allCount": 7,
+      "currentTitleCount": 6,
+      "excluded": [
+        {
+          "id": "a1687",
+          "name": "진하",
+          "primary": "트라이비",
+          "active": false,
+          "left": "2023.07.21"
+        }
+      ]
+    },
+    {
+      "ko": "고스트나인",
+      "en": "GHOST9",
+      "allCount": 9,
+      "currentTitleCount": 7,
+      "excluded": [
+        {
+          "id": "a1713",
+          "name": "황동준",
+          "primary": "고스트나인",
+          "active": false,
+          "left": "2021.09.05"
+        },
+        {
+          "id": "a1714",
+          "name": "이태승",
+          "primary": "고스트나인",
+          "active": false,
+          "left": "2021.09.05"
+        }
+      ]
+    },
+    {
+      "ko": "크랙시",
+      "en": "CRAXY",
+      "allCount": 5,
+      "currentTitleCount": 4,
+      "excluded": [
+        {
+          "id": "a1886",
+          "name": "채이",
+          "primary": "크랙시",
+          "active": false,
+          "left": "2023.07.31"
+        }
+      ]
+    },
+    {
+      "ko": "휘브",
+      "en": "WHIB",
+      "allCount": 8,
+      "currentTitleCount": 7,
+      "excluded": [
+        {
+          "id": "a1880",
+          "name": "인홍",
+          "primary": "휘브",
+          "active": false,
+          "left": "2025.10.15"
+        }
+      ]
+    },
+    {
+      "ko": "어센트",
+      "en": "ASC2NT",
+      "allCount": 6,
+      "currentTitleCount": 5,
+      "excluded": [
+        {
+          "id": "a1760",
+          "name": "인준",
+          "primary": "어센트",
+          "active": false,
+          "left": "2025.06.24"
+        }
+      ]
+    },
+    {
+      "ko": "다이몬",
+      "en": "DXMON",
+      "allCount": 6,
+      "currentTitleCount": 5,
+      "excluded": [
+        {
+          "id": "a1806",
+          "name": "조",
+          "primary": "다이몬",
+          "active": false,
+          "left": "2024.09.29"
+        }
+      ]
+    },
+    {
+      "ko": "비비업",
+      "en": "VVUP",
+      "allCount": 5,
+      "currentTitleCount": 4,
+      "excluded": [
+        {
+          "id": "a1883",
+          "name": "현니",
+          "primary": "비비업",
+          "active": false,
+          "left": "2024.08.29"
+        }
+      ]
+    }
+  ],
+  "paused": [
+    {
+      "id": "a0350",
+      "name": {
+        "ko": "건우",
+        "en": "Gunwoo"
+      },
+      "group": {
+        "ko": "알파드라이브원",
+        "en": "ALPHA DRIVE ONE"
+      },
+      "active": false,
+      "pausedFrom": "2026.04.08"
+    },
+    {
+      "id": "a0937",
+      "name": {
+        "ko": "옌안",
+        "en": "Yan An"
+      },
+      "group": {
+        "ko": "펜타곤",
+        "en": "PENTAGON"
+      },
+      "active": false,
+      "left": "2026.07.21",
+      "pausedFrom": "2023.10.10"
+    },
+    {
+      "id": "a0938",
+      "name": {
+        "ko": "유토",
+        "en": "Yuto"
+      },
+      "group": {
+        "ko": "펜타곤",
+        "en": "PENTAGON"
+      },
+      "active": false,
+      "left": "2026.07.21",
+      "pausedFrom": "2023.10.10"
+    }
+  ]
+}

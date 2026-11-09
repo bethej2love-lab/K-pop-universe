@@ -1,0 +1,52 @@
+{
+  "revision": "a213912575",
+  "scope": "Only pure merge loop, partial-data memory fixture. No fetch/apply/source write",
+  "sourceStartLine": 89,
+  "source": "const used = new Set();\n  al.tracks = d.tracks.map(p => {\n    const k = cur.findIndex((o, i) => !used.has(i) && ((o.songId && o.songId === p.songId) || tnorm(o.title) === tnorm(p.title)));\n    const o = k >= 0 ? (used.add(k), cur[k]) : {};\n    return { ...p, ...o, no: p.no, isTitle: !!(p.isTitle || o.isTitle), ...(p.songId || o.songId ? { songId: o.songId || p.songId } : {}) };\n  });",
+  "cases": [
+    {
+      "name": "existing_wrong_title",
+      "input": {
+        "title": "Breathe Easy",
+        "songId": "37956041",
+        "no": 6,
+        "cr": {
+          "l": [
+            [
+              "kept-test-credit",
+              "example"
+            ]
+          ]
+        }
+      },
+      "after": {
+        "songId": "37956041",
+        "title": "Breathe Easy",
+        "no": 6,
+        "isTitle": false,
+        "cr": {
+          "l": [
+            [
+              "kept-test-credit",
+              "example"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "name": "display_case_control",
+      "input": {
+        "title": "HONESTLY",
+        "songId": "37956041",
+        "no": 6
+      },
+      "after": {
+        "songId": "37956041",
+        "title": "HONESTLY",
+        "no": 6,
+        "isTitle": false
+      }
+    }
+  ]
+}

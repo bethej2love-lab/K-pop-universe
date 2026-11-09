@@ -1,0 +1,121 @@
+{
+  "revision": "a213912575",
+  "sourceStartLine": 314,
+  "source": "const used = new Set();\n  al.tracks.forEach((t, i) => {\n    st.tracks++;\n    if (t.songId) return;\n    const tn = tnorm(t.title);\n    let r = rows.find(x => !used.has(x.songId) && tnorm(x.title) === tn);\n    // 제목 표기가 달라도 곡 수가 같으면 순서로(멜론에서 그대로 가져온 앨범이 대부분)\n    if (!r && rows.length === al.tracks.length && rows[i] && !used.has(rows[i].songId)) r = rows[i];\n    if (r) { t.songId = r.songId; used.add(r.songId); st.songFilled++; }\n  });",
+  "cases": [
+    {
+      "name": "partial_seed",
+      "input": [
+        {
+          "no": 1,
+          "title": "Fame",
+          "isTitle": true,
+          "songId": "600552360"
+        },
+        {
+          "no": 2,
+          "title": "Love Song",
+          "isTitle": false
+        },
+        {
+          "no": 3,
+          "title": "Fame (Inst.)",
+          "isTitle": false
+        }
+      ],
+      "result": [
+        {
+          "no": 1,
+          "title": "Fame",
+          "isTitle": true,
+          "songId": "600552360"
+        },
+        {
+          "no": 2,
+          "title": "Love Song",
+          "isTitle": false,
+          "songId": "600552360"
+        },
+        {
+          "no": 3,
+          "title": "Fame (Inst.)",
+          "isTitle": false,
+          "songId": "600552361"
+        }
+      ]
+    },
+    {
+      "name": "no_seed",
+      "input": [
+        {
+          "no": 1,
+          "title": "Fame",
+          "isTitle": true
+        },
+        {
+          "no": 2,
+          "title": "Love Song",
+          "isTitle": false
+        },
+        {
+          "no": 3,
+          "title": "Fame (Inst.)",
+          "isTitle": false
+        }
+      ],
+      "result": [
+        {
+          "no": 1,
+          "title": "Fame",
+          "isTitle": true,
+          "songId": "600552360"
+        },
+        {
+          "no": 2,
+          "title": "Love Song",
+          "isTitle": false
+        },
+        {
+          "no": 3,
+          "title": "Fame (Inst.)",
+          "isTitle": false,
+          "songId": "600552361"
+        }
+      ]
+    },
+    {
+      "name": "official_titles_control",
+      "input": [
+        {
+          "no": 1,
+          "title": "Something's in the Water"
+        },
+        {
+          "no": 2,
+          "title": "Fame"
+        },
+        {
+          "no": 3,
+          "title": "Sticky Like"
+        }
+      ],
+      "result": [
+        {
+          "no": 1,
+          "title": "Something's in the Water",
+          "songId": "600552359"
+        },
+        {
+          "no": 2,
+          "title": "Fame",
+          "songId": "600552360"
+        },
+        {
+          "no": 3,
+          "title": "Sticky Like",
+          "songId": "600552361"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1528 @@
+{
+  "revision": "e64f24f9cd",
+  "rows": [
+    {
+      "group": "웨이션브이",
+      "album": {
+        "title": "Vision Wings",
+        "type": "미니 8집",
+        "isMain": true,
+        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/e5/64/e1/e564e1f1-fa4d-dabe-dd0a-96d9024561c8/888735956584.png/600x600bb.jpg",
+        "releaseDate": "2026.08.10",
+        "trackCount": 7,
+        "titleTrack": "Vision Wings",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Vision Wings",
+            "isTitle": true,
+            "songId": "602739392"
+          },
+          {
+            "no": 2,
+            "title": "Blue Fever",
+            "isTitle": false,
+            "songId": "602739387"
+          },
+          {
+            "no": 3,
+            "title": "Count It",
+            "isTitle": false,
+            "songId": "602739388"
+          },
+          {
+            "no": 4,
+            "title": "Icon",
+            "isTitle": false,
+            "songId": "602739389"
+          },
+          {
+            "no": 5,
+            "title": "Afterparty (5 a.m.)",
+            "isTitle": false,
+            "songId": "602739390"
+          },
+          {
+            "no": 6,
+            "title": "Heaven's Here With Me",
+            "isTitle": false,
+            "songId": "602739391"
+          },
+          {
+            "no": 7,
+            "title": "Vision Wings (English Version)",
+            "isTitle": false,
+            "songId": "602739392"
+          }
+        ],
+        "region": "cn",
+        "melonAlbumId": "14431267"
+      },
+      "official": {
+        "id": "14431267",
+        "url": "https://www.melon.com/album/detail.htm?albumId=14431267",
+        "status": 200,
+        "meta": "앨범명 Vision Wings - The 8th Mini Album WayV 발매일 2026.08.10 장르 월드뮤직, 중국음악, 댄스 발매사 카카오엔터테인먼트 기획사 SM ENTERTAINMENT, LABEL V 좋아요 총건수 0 앨범다운 <button type=\"button\" title=\"FLAC앨범다운\" class=\"btn \" onclick=\"javascript:melon.buy.goBuyProduct('frm','",
+        "tracks": [
+          {
+            "id": "602739386",
+            "title": "鸢 (Vision Wings)",
+            "isTitle": true
+          },
+          {
+            "id": "602739387",
+            "title": "焰光蓝 (Blue Fever)",
+            "isTitle": false
+          },
+          {
+            "id": "602739388",
+            "title": "满贯 (Count It)",
+            "isTitle": false
+          },
+          {
+            "id": "602739389",
+            "title": "主场 (Icon)",
+            "isTitle": false
+          },
+          {
+            "id": "602739390",
+            "title": "Afterparty (5 a.m.)",
+            "isTitle": false
+          },
+          {
+            "id": "602739391",
+            "title": "光云之境 (Heaven’s Here With Me)",
+            "isTitle": false
+          },
+          {
+            "id": "602739392",
+            "title": "Vision Wings (English Ver.)",
+            "isTitle": false
+          }
+        ]
+      }
+    },
+    {
+      "group": "웨이션브이",
+      "album": {
+        "title": "Kick Back",
+        "type": "미니 3집",
+        "isMain": true,
+        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/0d/62/ef/0d62eff6-5953-9863-024a-4b2aca991810/WayV_A_3_Kick_Back.jpg/600x600bb.jpg",
+        "releaseDate": "2021.03.10",
+        "trackCount": 6,
+        "titleTrack": "Kick Back",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Kick Back",
+            "isTitle": true,
+            "songId": "33340664"
+          },
+          {
+            "no": 2,
+            "title": "Action Figure",
+            "isTitle": false,
+            "songId": "33340660"
+          },
+          {
+            "no": 3,
+            "title": "Horizon",
+            "isTitle": false,
+            "songId": "33340661"
+          },
+          {
+            "no": 4,
+            "title": "All For Love",
+            "isTitle": false,
+            "songId": "33340662"
+          },
+          {
+            "no": 5,
+            "title": "Good Time",
+            "isTitle": false,
+            "songId": "33340663"
+          },
+          {
+            "no": 6,
+            "title": "Kick Back (Korean Version)",
+            "isTitle": false,
+            "songId": "33340664"
+          }
+        ],
+        "region": "cn",
+        "melonAlbumId": "10575611"
+      },
+      "official": {
+        "id": "10575611",
+        "url": "https://www.melon.com/album/detail.htm?albumId=10575611",
+        "status": 200,
+        "meta": "앨범명 Kick Back – The 3rd Mini Album WayV 발매일 2021.03.10 장르 월드뮤직, 중국음악 발매사 카카오엔터테인먼트 기획사 SM ENTERTAINMENT, LABEL V 좋아요 총건수 0 앨범다운 <button type=\"button\" title=\"FLAC앨범다운\" class=\"btn \" onclick=\"javascript:melon.buy.goBuyProduct('frm','10575611',",
+        "tracks": [
+          {
+            "id": "33340659",
+            "title": "秘境 (Kick Back)",
+            "isTitle": true
+          },
+          {
+            "id": "33340660",
+            "title": "Action Figure",
+            "isTitle": false
+          },
+          {
+            "id": "33340661",
+            "title": "天空海 (Horizon)",
+            "isTitle": false
+          },
+          {
+            "id": "33340662",
+            "title": "梦尽 (All For Love)",
+            "isTitle": false
+          },
+          {
+            "id": "33340663",
+            "title": "Good Time",
+            "isTitle": false
+          },
+          {
+            "id": "33340664",
+            "title": "Kick Back (Korean Ver.)",
+            "isTitle": false
+          }
+        ]
+      }
+    },
+    {
+      "group": "트와이스",
+      "album": {
+        "title": "Formula of Love: O+T=<3",
+        "type": "정규 3집",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/107/74/753/10774753_20211111235413_500.jpg",
+        "releaseDate": "2021.11.12",
+        "trackCount": 17,
+        "titleTrack": "SCIENTIST",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "SCIENTIST",
+            "isTitle": true,
+            "songId": "34254823"
+          },
+          {
+            "no": 2,
+            "title": "MOONLIGHT",
+            "isTitle": false,
+            "songId": "34254824"
+          },
+          {
+            "no": 3,
+            "title": "ICON",
+            "isTitle": false,
+            "songId": "34254825"
+          },
+          {
+            "no": 4,
+            "title": "CRUEL",
+            "isTitle": false,
+            "songId": "34254826"
+          },
+          {
+            "no": 5,
+            "title": "REAL YOU",
+            "isTitle": false,
+            "songId": "34254827"
+          },
+          {
+            "no": 6,
+            "title": "F.I.L.A (Fall In Love Again)",
+            "isTitle": false,
+            "songId": "34254828"
+          },
+          {
+            "no": 7,
+            "title": "LAST WALTZ",
+            "isTitle": false,
+            "songId": "34254829"
+          },
+          {
+            "no": 8,
+            "title": "ESPRESSO",
+            "isTitle": false,
+            "songId": "34254830"
+          },
+          {
+            "no": 9,
+            "title": "알고 싶지 않아 (REWIND)",
+            "isTitle": false,
+            "songId": "34254831"
+          },
+          {
+            "no": 10,
+            "title": "선인장 (CACTUS)",
+            "isTitle": false,
+            "songId": "34254832"
+          },
+          {
+            "no": 11,
+            "title": "PUSH & PULL (JIHYO, SANA, DAHYUN)",
+            "isTitle": false,
+            "songId": "34254833"
+          },
+          {
+            "no": 12,
+            "title": "HELLO (NAYEON, MOMO, CHAEYOUNG)",
+            "isTitle": false,
+            "songId": "34254834"
+          },
+          {
+            "no": 13,
+            "title": "1, 3, 2 (JEONGYEON, MINA, TZUYU)",
+            "isTitle": false,
+            "songId": "34254835"
+          },
+          {
+            "no": 14,
+            "title": "CANDY",
+            "isTitle": false,
+            "songId": "34254836"
+          },
+          {
+            "no": 15,
+            "title": "The Feels (Korean ver.) (CD Only)",
+            "isTitle": false,
+            "songId": "34254838"
+          },
+          {
+            "no": 16,
+            "title": "The Feels",
+            "isTitle": false,
+            "songId": "34254838"
+          },
+          {
+            "no": 17,
+            "title": "SCIENTIST (R3HAB Remix)",
+            "isTitle": false,
+            "songId": "34254839"
+          }
+        ],
+        "melonAlbumId": "10774753"
+      },
+      "official": {
+        "id": "10774753",
+        "url": "https://www.melon.com/album/detail.htm?albumId=10774753",
+        "status": 200,
+        "meta": "앨범명 Formula of Love: O+T=&lt;3 TWICE (트와이스) 발매일 2021.11.12 장르 댄스, 발라드, R&B/Soul, 랩/힙합, 록/메탈 발매사 Dreamus 기획사 ㈜JYP엔터테인먼트 좋아요 총건수 0 앨범다운 <button type=\"button\" title=\"FLAC앨범다운\" class=\"btn \" onclick=\"javascript:melon.buy.goBuyProduct('frm','10",
+        "tracks": [
+          {
+            "id": "34254823",
+            "title": "SCIENTIST",
+            "isTitle": true
+          },
+          {
+            "id": "34254824",
+            "title": "MOONLIGHT",
+            "isTitle": false
+          },
+          {
+            "id": "34254825",
+            "title": "ICON",
+            "isTitle": false
+          },
+          {
+            "id": "34254826",
+            "title": "CRUEL",
+            "isTitle": false
+          },
+          {
+            "id": "34254827",
+            "title": "REAL YOU",
+            "isTitle": false
+          },
+          {
+            "id": "34254828",
+            "title": "F.I.L.A (Fall In Love Again)",
+            "isTitle": false
+          },
+          {
+            "id": "34254829",
+            "title": "LAST WALTZ",
+            "isTitle": false
+          },
+          {
+            "id": "34254830",
+            "title": "ESPRESSO",
+            "isTitle": false
+          },
+          {
+            "id": "34254831",
+            "title": "알고 싶지 않아 (REWIND)",
+            "isTitle": false
+          },
+          {
+            "id": "34254832",
+            "title": "선인장 (CACTUS)",
+            "isTitle": false
+          },
+          {
+            "id": "34254833",
+            "title": "PUSH &amp; PULL (JIHYO, SANA, DAHYUN)",
+            "isTitle": false
+          },
+          {
+            "id": "34254834",
+            "title": "HELLO (NAYEON, MOMO, CHAEYOUNG)",
+            "isTitle": false
+          },
+          {
+            "id": "34254835",
+            "title": "1, 3, 2 (JEONGYEON, MINA, TZUYU)",
+            "isTitle": false
+          },
+          {
+            "id": "34254836",
+            "title": "CANDY",
+            "isTitle": false
+          },
+          {
+            "id": "34254837",
+            "title": "The Feels (Korean ver.) CD ONLY",
+            "isTitle": false
+          },
+          {
+            "id": "34254838",
+            "title": "The Feels",
+            "isTitle": false
+          },
+          {
+            "id": "34254839",
+            "title": "SCIENTIST (R3HAB Remix)",
+            "isTitle": false
+          }
+        ]
+      }
+    },
+    {
+      "group": "베리베리",
+      "album": {
+        "title": "SERIES 'O' [ROUND 3 : WHOLE]",
+        "type": "정규 1집",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/109/30/438/10930438_20220425120930_500.jpg",
+        "releaseDate": "2022.04.25",
+        "trackCount": 10,
+        "titleTrack": "Undercover",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Undercover",
+            "isTitle": true,
+            "songId": "34949397"
+          },
+          {
+            "no": 2,
+            "title": "Coming Over",
+            "isTitle": false,
+            "songId": "34949398"
+          },
+          {
+            "no": 3,
+            "title": "Wish You Were Here",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Our Spring",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "기억하길 (Remember)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "그런 사람 (That Person)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Rain on Me",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "숨바꼭질 (Hide and Seek)",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "I'm in Love",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "Undercover (Inst.)",
+            "isTitle": false,
+            "songId": "34949397"
+          }
+        ],
+        "melonAlbumId": "10930438"
+      },
+      "official": {
+        "id": "10930438",
+        "url": "https://www.melon.com/album/detail.htm?albumId=10930438",
+        "status": 200,
+        "meta": "앨범명 SERIES &#x27;O&#x27; [ROUND 3 : WHOLE] VERIVERY 발매일 2022.04.25 장르 댄스, 발라드, 록/메탈, R&B/Soul 발매사 카카오엔터테인먼트 기획사 젤리피쉬 엔터테인먼트 좋아요 총건수 0 앨범다운 <button type=\"button\" title=\"FLAC앨범다운\" c",
+        "tracks": [
+          {
+            "id": "34949396",
+            "title": "틈 (Moment)",
+            "isTitle": false
+          },
+          {
+            "id": "34949397",
+            "title": "Undercover",
+            "isTitle": true
+          },
+          {
+            "id": "34949398",
+            "title": "Coming over",
+            "isTitle": false
+          },
+          {
+            "id": "34949399",
+            "title": "Wish U were here",
+            "isTitle": false
+          },
+          {
+            "id": "34949400",
+            "title": "모든 순간들의 널 축하해 (Candle)",
+            "isTitle": false
+          },
+          {
+            "id": "34949401",
+            "title": "O",
+            "isTitle": false
+          },
+          {
+            "id": "34949402",
+            "title": "Fallin’",
+            "isTitle": false
+          },
+          {
+            "id": "34949403",
+            "title": "Childhood",
+            "isTitle": false
+          },
+          {
+            "id": "34949404",
+            "title": "Emotion",
+            "isTitle": false
+          },
+          {
+            "id": "34949405",
+            "title": "Velocity",
+            "isTitle": false
+          },
+          {
+            "id": "34949406",
+            "title": "잠깐, 봄 (Our Spring)",
+            "isTitle": false
+          },
+          {
+            "id": "34949407",
+            "title": "Fine",
+            "isTitle": false
+          },
+          {
+            "id": "34949408",
+            "title": "Thank you, NEXT? (CD Only)",
+            "isTitle": false
+          }
+        ]
+      }
+    },
+    {
+      "group": "우주소녀",
+      "album": {
+        "title": "Happy Moment",
+        "type": "정규 1집",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/69/220/10069220_500.jpg",
+        "releaseDate": "2017.06.07",
+        "trackCount": 12,
+        "titleTrack": "Happy",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Happy",
+            "isTitle": true,
+            "songId": "30459036"
+          },
+          {
+            "no": 2,
+            "title": "Cantare (칸타레)",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Catch Me",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "KISS ME",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "I Wish (New Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "Save Your Love (New Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "Secret (New Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "MoMoMo (New Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Special Love (New Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "For the Summer (New Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "Crystal Clear (New Ver.)",
+            "isTitle": false
+          },
+          {
+            "no": 12,
+            "title": "Happy (Inst.)",
+            "isTitle": false,
+            "songId": "30459036"
+          }
+        ],
+        "melonAlbumId": "10069220"
+      },
+      "official": {
+        "id": "10069220",
+        "url": "https://www.melon.com/album/detail.htm?albumId=10069220",
+        "status": 200,
+        "meta": "앨범명 HAPPY MOMENT 우주소녀 발매일 2017.06.07 장르 댄스 발매사 카카오엔터테인먼트 기획사 스타쉽 엔터테인먼트 좋아요 총건수 0 앨범다운 <span class=\"",
+        "tracks": [
+          {
+            "id": "30459036",
+            "title": "HAPPY",
+            "isTitle": true
+          },
+          {
+            "id": "30459037",
+            "title": "기적 같은 아이 (Miracle)",
+            "isTitle": false
+          },
+          {
+            "id": "30459038",
+            "title": "Mr. BADBOY",
+            "isTitle": false
+          },
+          {
+            "id": "30459039",
+            "title": "SUGAR",
+            "isTitle": false
+          },
+          {
+            "id": "30459040",
+            "title": "Babyface",
+            "isTitle": false
+          },
+          {
+            "id": "30459041",
+            "title": "퐁당퐁당 (Plop Plop)",
+            "isTitle": false
+          },
+          {
+            "id": "30459042",
+            "title": "Follow Me",
+            "isTitle": false
+          },
+          {
+            "id": "30459043",
+            "title": "B.B.B.Boo",
+            "isTitle": false
+          },
+          {
+            "id": "30459044",
+            "title": "Geeminy",
+            "isTitle": false
+          },
+          {
+            "id": "30459045",
+            "title": "지금 만나러 가요 (Closer to you)",
+            "isTitle": false
+          }
+        ]
+      }
+    },
+    {
+      "group": "비투비",
+      "album": {
+        "title": "Press Play",
+        "type": "미니 2집",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/49/892/2149892_500.jpg",
+        "releaseDate": "2012.09.12",
+        "trackCount": 7,
+        "titleTrack": "WOW",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "WOW",
+            "isTitle": true,
+            "songId": "3903413"
+          },
+          {
+            "no": 2,
+            "title": "Stay",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "하루가 너무해 (The Day is Too)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "언제나 (Always)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "오늘 이후로 (From Now On)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "꿈에 (Dreaming)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "WOW (Inst.)",
+            "isTitle": false,
+            "songId": "3903413"
+          }
+        ],
+        "melonAlbumId": "2149892"
+      },
+      "official": {
+        "id": "2149892",
+        "url": "https://www.melon.com/album/detail.htm?albumId=2149892",
+        "status": 200,
+        "meta": "앨범명 Press Play 비투비 발매일 2012.09.12 장르 댄스, 발라드 발매사 카카오엔터테인먼트 기획사 큐브엔터테인먼트 좋아요 총건수 0 앨범다운 <span class=\"button",
+        "tracks": [
+          {
+            "id": "3903412",
+            "title": "Press Play (Feat. G.NA)",
+            "isTitle": false
+          },
+          {
+            "id": "3903413",
+            "title": "WOW",
+            "isTitle": true
+          },
+          {
+            "id": "3903414",
+            "title": "사랑밖에 난 몰라",
+            "isTitle": false
+          },
+          {
+            "id": "3903415",
+            "title": "U &amp; I",
+            "isTitle": false
+          },
+          {
+            "id": "3903416",
+            "title": "Stand Up",
+            "isTitle": false
+          },
+          {
+            "id": "3903417",
+            "title": "My Girl",
+            "isTitle": false
+          }
+        ]
+      }
+    },
+    {
+      "group": "펜타곤",
+      "album": {
+        "title": "Thumbs Up!",
+        "type": "미니 7집",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/02/667/10202667_500.jpg",
+        "releaseDate": "2018.09.10",
+        "trackCount": 5,
+        "titleTrack": "Thumbs Up!",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Thumbs Up!",
+            "isTitle": true,
+            "songId": "31297127"
+          },
+          {
+            "no": 2,
+            "title": "BTS (Behind The Scar)",
+            "isTitle": false,
+            "songId": "31297124"
+          },
+          {
+            "no": 3,
+            "title": "Tornado",
+            "isTitle": false,
+            "songId": "31297125"
+          },
+          {
+            "no": 4,
+            "title": "Naughty Boy (English Ver.)",
+            "isTitle": false,
+            "songId": "31297126"
+          },
+          {
+            "no": 5,
+            "title": "Thumbs Up! (Inst.)",
+            "isTitle": false,
+            "songId": "31297127"
+          }
+        ],
+        "melonAlbumId": "10202667"
+      },
+      "official": {
+        "id": "10202667",
+        "url": "https://www.melon.com/album/detail.htm?albumId=10202667",
+        "status": 200,
+        "meta": "앨범명 Thumbs Up! 펜타곤 발매일 2018.09.10 장르 랩/힙합 발매사 카카오엔터테인먼트 기획사 큐브엔터테인먼트 좋아요 총건수 0 앨범다운 <span class=\"butt",
+        "tracks": [
+          {
+            "id": "31297123",
+            "title": "청개구리",
+            "isTitle": true
+          },
+          {
+            "id": "31297124",
+            "title": "저두요!! (Just do it yo!!)",
+            "isTitle": false
+          },
+          {
+            "id": "31297125",
+            "title": "SKATEBOARD",
+            "isTitle": false
+          },
+          {
+            "id": "31297126",
+            "title": "밤에 비가 내리면",
+            "isTitle": false
+          },
+          {
+            "id": "31297127",
+            "title": "Thumbs Up!",
+            "isTitle": false
+          }
+        ]
+      }
+    },
+    {
+      "group": "펜타곤",
+      "album": {
+        "title": "PENTAGON",
+        "type": "미니 1집",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/04/706/10004706_500.jpg",
+        "releaseDate": "2016.10.10",
+        "trackCount": 6,
+        "titleTrack": "Gorilla",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Gorilla",
+            "isTitle": true,
+            "songId": "30029167"
+          },
+          {
+            "no": 2,
+            "title": "Beautiful",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Shine",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Can You Feel It",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Pentagon",
+            "isTitle": false,
+            "songId": "30029166"
+          },
+          {
+            "no": 6,
+            "title": "Gorilla (Inst.)",
+            "isTitle": false,
+            "songId": "30029167"
+          }
+        ],
+        "melonAlbumId": "10004706"
+      },
+      "official": {
+        "id": "10004706",
+        "url": "https://www.melon.com/album/detail.htm?albumId=10004706",
+        "status": 200,
+        "meta": "앨범명 PENTAGON 펜타곤 발매일 2016.10.10 장르 댄스, 발라드 발매사 카카오엔터테인먼트 기획사 큐브엔터테인먼트 좋아요 총건수 0 앨범다운 <span class=\"butto",
+        "tracks": [
+          {
+            "id": "30029165",
+            "title": "Wake Up (Intro)",
+            "isTitle": false
+          },
+          {
+            "id": "30029166",
+            "title": "Pentagon",
+            "isTitle": false
+          },
+          {
+            "id": "30029167",
+            "title": "Gorilla",
+            "isTitle": true
+          },
+          {
+            "id": "30029168",
+            "title": "미지근해",
+            "isTitle": false
+          },
+          {
+            "id": "30029169",
+            "title": "Smile",
+            "isTitle": false
+          },
+          {
+            "id": "30029170",
+            "title": "귀 좀 막아줘 (Organic Song) (이던, 유토, 우석 With 후이)",
+            "isTitle": false
+          },
+          {
+            "id": "30029171",
+            "title": "You Are (진호, 후이, 홍석, 신원, 여원, 옌안, 키노)",
+            "isTitle": false
+          }
+        ]
+      }
+    },
+    {
+      "group": "브브걸",
+      "album": {
+        "title": "Summer Queen",
+        "type": "미니 5집",
+        "isMain": true,
+        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/f8/48/6d/f8486d99-fe6c-9505-a6c9-824b9e58db61/1.jpg/600x600bb.jpg",
+        "releaseDate": "2021.06.17",
+        "trackCount": 5,
+        "titleTrack": "Chi Mat Ba Ram",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Chi Mat Ba Ram",
+            "isTitle": true,
+            "songId": "33589264"
+          },
+          {
+            "no": 2,
+            "title": "Pool Party (feat. E-CHAN)",
+            "isTitle": false,
+            "songId": "33589261"
+          },
+          {
+            "no": 3,
+            "title": "Summer by myself",
+            "isTitle": false,
+            "songId": "33589262"
+          },
+          {
+            "no": 4,
+            "title": "FEVER",
+            "isTitle": false,
+            "songId": "33589263"
+          },
+          {
+            "no": 5,
+            "title": "Chi Mat Ba Ram (English Version)",
+            "isTitle": false,
+            "songId": "33589264"
+          }
+        ],
+        "melonAlbumId": "10631055"
+      },
+      "official": {
+        "id": "10631055",
+        "url": "https://www.melon.com/album/detail.htm?albumId=10631055",
+        "status": 200,
+        "meta": "앨범명 Summer Queen 브레이브걸스 발매일 2021.06.17 장르 댄스 발매사 카카오엔터테인먼트 기획사 브레이브 엔터테인먼트 좋아요 총건수 0 앨범다운 <span cl",
+        "tracks": [
+          {
+            "id": "33589260",
+            "title": "치맛바람 (Chi Mat Ba Ram)",
+            "isTitle": true
+          },
+          {
+            "id": "33589261",
+            "title": "Pool Party (Feat. 이찬 of DKB)",
+            "isTitle": false
+          },
+          {
+            "id": "33589262",
+            "title": "나 혼자 여름 (Summer by myself)",
+            "isTitle": false
+          },
+          {
+            "id": "33589263",
+            "title": "FEVER (토요일 밤의 열기)",
+            "isTitle": false
+          },
+          {
+            "id": "33589264",
+            "title": "Chi Mat Ba Ram (Eng Ver.)",
+            "isTitle": false
+          }
+        ]
+      }
+    },
+    {
+      "group": "god",
+      "album": {
+        "title": "Chapter 3",
+        "type": "정규 3집",
+        "isMain": true,
+        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/64/8b/93/648b93b7-4a00-9862-4bb4-230179c7ab5f/8804524011205_cover.jpg/600x600bb.jpg",
+        "releaseDate": "2000.11.03",
+        "trackCount": 13,
+        "titleTrack": "거짓말",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Intro",
+            "isTitle": false,
+            "songId": "10433"
+          },
+          {
+            "no": 2,
+            "title": "촛불하나",
+            "isTitle": false,
+            "songId": "10434"
+          },
+          {
+            "no": 3,
+            "title": "니가 필요해",
+            "isTitle": false,
+            "songId": "105714"
+          },
+          {
+            "no": 4,
+            "title": "거짓말",
+            "isTitle": true,
+            "songId": "10435"
+          },
+          {
+            "no": 5,
+            "title": "돌아와줘",
+            "isTitle": false,
+            "songId": "105718"
+          },
+          {
+            "no": 6,
+            "title": "예쁜 여자",
+            "isTitle": false,
+            "songId": "10436"
+          },
+          {
+            "no": 7,
+            "title": "왜",
+            "isTitle": false,
+            "songId": "105715"
+          },
+          {
+            "no": 8,
+            "title": "God 파티",
+            "isTitle": false,
+            "songId": "10437"
+          },
+          {
+            "no": 9,
+            "title": "난 사랑을 몰라",
+            "isTitle": false,
+            "songId": "105716"
+          },
+          {
+            "no": 10,
+            "title": "사랑이 영원하다면",
+            "isTitle": false,
+            "songId": "10432"
+          },
+          {
+            "no": 11,
+            "title": "하늘색 풍선",
+            "isTitle": false,
+            "songId": "10438"
+          },
+          {
+            "no": 12,
+            "title": "촛불하나 (Instrumental)",
+            "isTitle": false,
+            "songId": "105717"
+          },
+          {
+            "no": 13,
+            "title": "거짓말 (Inst.)",
+            "isTitle": false,
+            "songId": "10435"
+          }
+        ],
+        "melonAlbumId": "717"
+      },
+      "official": {
+        "id": "717",
+        "url": "https://www.melon.com/album/detail.htm?albumId=717",
+        "status": 200,
+        "meta": "앨범명 Chapter 3 god 발매일 2000.11.03 장르 댄스, 발라드 발매사 RIAK 기획사 신나라뮤직 좋아요 총건수 0 앨범다운",
+        "tracks": [
+          {
+            "id": "10433",
+            "title": "파리 (Intro)",
+            "isTitle": false
+          },
+          {
+            "id": "10434",
+            "title": "촛불하나",
+            "isTitle": false
+          },
+          {
+            "id": "105714",
+            "title": "니가 필요해",
+            "isTitle": false
+          },
+          {
+            "id": "10435",
+            "title": "거짓말",
+            "isTitle": true
+          },
+          {
+            "id": "105718",
+            "title": "돌아와줘",
+            "isTitle": false
+          },
+          {
+            "id": "10436",
+            "title": "나와 함께 춤을 춰",
+            "isTitle": false
+          },
+          {
+            "id": "105715",
+            "title": "왜",
+            "isTitle": false
+          },
+          {
+            "id": "10437",
+            "title": "god 파티",
+            "isTitle": false
+          },
+          {
+            "id": "10431",
+            "title": "장미의 전쟁",
+            "isTitle": false
+          },
+          {
+            "id": "105716",
+            "title": "난 사랑을 몰라",
+            "isTitle": false
+          },
+          {
+            "id": "10432",
+            "title": "사랑이 영원하다면",
+            "isTitle": false
+          },
+          {
+            "id": "10438",
+            "title": "하늘색 풍선",
+            "isTitle": false
+          },
+          {
+            "id": "105717",
+            "title": "촛불하나 (Inst.)",
+            "isTitle": false
+          }
+        ]
+      }
+    },
+    {
+      "group": "젝스키스",
+      "album": {
+        "title": "Road Fighter - 2집",
+        "type": "정규 2집",
+        "isMain": true,
+        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/62/ce/c6/62cec617-f0ca-5dc5-ce7e-85f8635c6e24/5359.jpg/600x600bb.jpg",
+        "releaseDate": "1998.07.15",
+        "trackCount": 15,
+        "titleTrack": "Road Fighter",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Intro",
+            "isTitle": false,
+            "songId": "79689"
+          },
+          {
+            "no": 2,
+            "title": "Road Fighter",
+            "isTitle": true,
+            "songId": "79951"
+          },
+          {
+            "no": 3,
+            "title": "무모한 사랑",
+            "isTitle": false,
+            "songId": "79690"
+          },
+          {
+            "no": 4,
+            "title": "지금이야",
+            "isTitle": false,
+            "songId": "79691"
+          },
+          {
+            "no": 5,
+            "title": "기사도",
+            "isTitle": false,
+            "songId": "79692"
+          },
+          {
+            "no": 6,
+            "title": "사랑하는 너에게",
+            "isTitle": false,
+            "songId": "79693"
+          },
+          {
+            "no": 7,
+            "title": "친구",
+            "isTitle": false,
+            "songId": "79694"
+          },
+          {
+            "no": 8,
+            "title": "말괄량이 길들이기",
+            "isTitle": false,
+            "songId": "79695"
+          },
+          {
+            "no": 9,
+            "title": "Come to Me Baby",
+            "isTitle": false,
+            "songId": "79696"
+          },
+          {
+            "no": 10,
+            "title": "예감",
+            "isTitle": false,
+            "songId": "79697"
+          },
+          {
+            "no": 11,
+            "title": "너를 보내며",
+            "isTitle": false,
+            "songId": "79698"
+          },
+          {
+            "no": 12,
+            "title": "Say",
+            "isTitle": false,
+            "songId": "79700"
+          },
+          {
+            "no": 13,
+            "title": "Road Fighter (Instrumental)",
+            "isTitle": false,
+            "songId": "79951"
+          },
+          {
+            "no": 14,
+            "title": "무모한 사랑 (Instrumental)",
+            "isTitle": false,
+            "songId": "79701"
+          },
+          {
+            "no": 15,
+            "title": "기사도 (Instrumental)",
+            "isTitle": false,
+            "songId": "79702"
+          }
+        ],
+        "melonAlbumId": "5359"
+      },
+      "official": {
+        "id": "5359",
+        "url": "https://www.melon.com/album/detail.htm?albumId=5359",
+        "status": 200,
+        "meta": "앨범명 Road Fighter 젝스키스 발매일 1998.07.15 장르 댄스, 발라드 발매사 카카오엔터테인먼트 기획사 DSP미디어 좋아요 총건수 0 앨범다운 <span class=\"button_icon",
+        "tracks": [
+          {
+            "id": "79689",
+            "title": "Technopolis",
+            "isTitle": false
+          },
+          {
+            "id": "79951",
+            "title": "Road Fighter",
+            "isTitle": true
+          },
+          {
+            "id": "79690",
+            "title": "무모한 사랑",
+            "isTitle": false
+          },
+          {
+            "id": "79691",
+            "title": "Chance (지금이야)",
+            "isTitle": false
+          },
+          {
+            "id": "79692",
+            "title": "Fake G&#x27;s (절대자)",
+            "isTitle": false
+          },
+          {
+            "id": "79693",
+            "title": "Crying Game",
+            "isTitle": false
+          },
+          {
+            "id": "79694",
+            "title": "Flying Love (천상비애(天上飛愛))",
+            "isTitle": false
+          },
+          {
+            "id": "79695",
+            "title": "약속된 운명 (아마게돈)",
+            "isTitle": false
+          },
+          {
+            "id": "79696",
+            "title": "Come To Me Baby",
+            "isTitle": false
+          },
+          {
+            "id": "79697",
+            "title": "7전 8기",
+            "isTitle": false
+          },
+          {
+            "id": "79698",
+            "title": "Run Away",
+            "isTitle": false
+          },
+          {
+            "id": "79699",
+            "title": "여우사냥",
+            "isTitle": false
+          },
+          {
+            "id": "79700",
+            "title": "Say",
+            "isTitle": false
+          },
+          {
+            "id": "79701",
+            "title": "Last",
+            "isTitle": false
+          },
+          {
+            "id": "79702",
+            "title": "그 날까지 (Together Forever)",
+            "isTitle": false
+          }
+        ]
+      }
+    },
+    {
+      "group": "쥬얼리",
+      "album": {
+        "title": "Again - 2집",
+        "type": "정규 2집",
+        "isMain": true,
+        "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/0e/ee/e0/0eeee0d0-718b-0b29-04f1-c3b4dfe3e805/8806384510249.jpg/600x600bb.jpg",
+        "releaseDate": "2002.07.31",
+        "trackCount": 12,
+        "titleTrack": "Again",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Intro",
+            "isTitle": false,
+            "songId": "314578"
+          },
+          {
+            "no": 2,
+            "title": "Again",
+            "isTitle": true,
+            "songId": "314588"
+          },
+          {
+            "no": 3,
+            "title": "One Summer Night",
+            "isTitle": false,
+            "songId": "314589"
+          },
+          {
+            "no": 4,
+            "title": "To You",
+            "isTitle": false,
+            "songId": "314590"
+          },
+          {
+            "no": 5,
+            "title": "Tonight",
+            "isTitle": false,
+            "songId": "314591"
+          },
+          {
+            "no": 6,
+            "title": "선배",
+            "isTitle": false,
+            "songId": "314592"
+          },
+          {
+            "no": 7,
+            "title": "How Are You?",
+            "isTitle": false,
+            "songId": "314593"
+          },
+          {
+            "no": 8,
+            "title": "말하지 못한 절반의 사랑",
+            "isTitle": false,
+            "songId": "314599"
+          },
+          {
+            "no": 9,
+            "title": "1492살... (T.T;)",
+            "isTitle": false,
+            "songId": "314600"
+          },
+          {
+            "no": 10,
+            "title": "이별은 모르게",
+            "isTitle": false,
+            "songId": "314605"
+          },
+          {
+            "no": 11,
+            "title": "Again (Remix)",
+            "isTitle": false,
+            "songId": "314603"
+          },
+          {
+            "no": 12,
+            "title": "이별은 모르게 (Inst.)",
+            "isTitle": false,
+            "songId": "314605"
+          }
+        ],
+        "melonAlbumId": "16566"
+      },
+      "official": {
+        "id": "16566",
+        "url": "https://www.melon.com/album/detail.htm?albumId=16566",
+        "status": 200,
+        "meta": "앨범명 2집 Again 쥬얼리 발매일 2002.07.31 장르 발라드, 댄스 발매사 Enterone Entertainment 기획사 엔터원 좋아요 총건수 0 앨범다운 <",
+        "tracks": [
+          {
+            "id": "314578",
+            "title": "Cool Girl",
+            "isTitle": false
+          },
+          {
+            "id": "314588",
+            "title": "Again",
+            "isTitle": true
+          },
+          {
+            "id": "314589",
+            "title": "One Summer Night",
+            "isTitle": false
+          },
+          {
+            "id": "314590",
+            "title": "To You",
+            "isTitle": false
+          },
+          {
+            "id": "314591",
+            "title": "Tonight",
+            "isTitle": false
+          },
+          {
+            "id": "314592",
+            "title": "선배",
+            "isTitle": false
+          },
+          {
+            "id": "314593",
+            "title": "How Are You?",
+            "isTitle": false
+          },
+          {
+            "id": "314599",
+            "title": "말하지 못한 절반의 사랑",
+            "isTitle": false
+          },
+          {
+            "id": "314600",
+            "title": "Sad",
+            "isTitle": false
+          },
+          {
+            "id": "314602",
+            "title": "1492...(ㅜ.ㅜ;)",
+            "isTitle": false
+          },
+          {
+            "id": "314603",
+            "title": "Maybe",
+            "isTitle": false
+          },
+          {
+            "id": "314605",
+            "title": "이별은 모르게...",
+            "isTitle": false
+          }
+        ]
+      }
+    }
+  ]
+}
