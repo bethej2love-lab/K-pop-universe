@@ -62,5 +62,13 @@ ck(!hasG(P('#WHIB#휘브#JUNMIN#준민 #WONJUN#원준'), '싸이커스'), '#JUNM
 // ⑥ 자체 채널 멤버 해시태그 — 게스트 그룹만 제목에 있어도 채널 멤버(#HYUI)를 놓치지 않기
 ck(has(P('#StrayKids #한 선배님 goes "O-RLY?" | #HYUI', '넥스지', '2025-05-01'), '넥스지', '휴이') && has(P('#StrayKids #한 선배님 goes "O-RLY?" | #HYUI', '넥스지', '2025-05-01'), '스트레이키즈', '한'), '넥스지 채널 #StrayKids #한 … #HYUI → 넥스지 휴이 + 스키즈 한');
 
+// ⑦ 조사 붙은 한글 이름(그룹 확정 범위) · 동명이인 방어
+ck(has(P("[EXCLUSIVE] 아워벌스데이 신혜원의 아일릿 '체포하겠어' 챌린지 💗"), '아워벌스데이', '신혜원'), '"신혜원의" → 아워벌스데이 신혜원(조사)');
+ck(has(P('X맛 젤리를 먹은 투어스 신유&도훈의 반응 | #팅글인터뷰'), '투어스', '도훈'), '"도훈의" → 투어스 도훈');
+ck(!has(P('피프티피프티 하나도 모르는 퀴즈 #FIFTYFIFTY'), '피프티피프티', '하나'), '"하나도"(일상어) → 피프티피프티 하나 아님');
+ck(!hasG(P('#xikers #세은 님과 BLUSH🌸 @xikers_official #싸이커스 #SEEUN #WOOAH #우아 #LUCY #루시', '우아'), '스테이씨'), '#xikers #세은 → 스테이씨 세은 아님(잡힌 그룹 멤버)');
+ck(!hasG(P('#XODIAC #규민 선배님과 Dopamine 폭발💥#AHOF #아홉 #JEONGWOO #서정우 #Sugar_High', '아홉'), '트레저'), '#JEONGWOO(서정우 Seo Jungwoo) → 트레저 정우 아님(로마자 흔들림 포함)');
+ck(!hasG(P('#루네이트 #LUN8 #나비 #Butterfly', '루네이트'), '시크릿넘버'), '#나비(루네이트 곡) → 시크릿넘버 나비 아님');
+
 console.log(pass ? '\n✅ 챌린지 태깅 테스트 통과' : '\n❌ 실패 있음');
 process.exit(pass ? 0 : 1);

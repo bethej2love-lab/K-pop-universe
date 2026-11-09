@@ -9639,10 +9639,15 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 사람 이름으로도 흔한 Kevin·Jay·Max는 넣지 않는다("THE BOYZ Kevin" 정상) — 문장 속 일반 낱말로 더 자주 쓰이는 것만
     // key는 뺐다 — "SHINee Key's Glow-Up"처럼 대문자 시작 Key가 거의 항상 샤이니 키
     const _ROSTER_PLAIN_WORDS=new Set(['new','on','one','sun','star','king','boy','only','wave','soul','good','high','sky','blue','love','rise','baby','angel','fire','rain','moon','light','dream','gold','hero','lucky','summer','winter','spring','shine','glow','fan']); // ten·nine은 이름으로 대문자 시작 표기가 흔해 뺐다("Ten used the snow filter" = 웨이션브이 텐)
+    // 조사 붙은 한글 이름(2026-11-09) — "아워벌스데이 신혜원의 아일릿 …"·"카리나랑"·"해원이와": 그룹이 확정된 이 범위에서만,
+    // 두 글자↑ 한글 등록명 + 흔한 조사 하나. 흔한 단어형 이름(하나·여름…)은 "하나도"처럼 일상어가 돼 제외.
+    const _KO_PARTICLE='(의|와|과|랑|이랑|이|가|은|는|도|를|을|님|씨|에게|한테|하고|까지|처럼|만|이가|이는|이도|이를|이의)';
+    const _koParticleHit=t=>/^[가-힣]{2,}$/.test(t)&&!_ATM_COMMON_KO_WORDS.has(t)&&!_isHashtagOnlyName(t)
+      &&new RegExp('(^|[^가-힣])'+_atmEscRe(t)+_KO_PARTICLE+'(?![가-힣])').test(title||'');
     const _rosterHit=t=>(/^[A-Za-z]/.test(t)&&_ROSTER_PLAIN_WORDS.has(String(t).toLowerCase().replace(/[^a-z]/g,'')))
       // 소문자로만 쓰인 경우만 막는다 — "P1Harmony Soul"·"(Mill,Love,Nine ver.)"처럼 대문자로 시작하면 이름이다
       ?(hitHashtag(t)||new RegExp('(^|[^A-Za-z])'+_atmEscRe(String(t)[0].toUpperCase())+'('+_atmEscRe(String(t).slice(1).toLowerCase())+'|'+_atmEscRe(String(t).slice(1).toUpperCase())+')(?![A-Za-z])').test(rawTitle||''))
-      :(hit(t,normMinusUnits)||hitHashtagSubstring(t));
+      :(hit(t,normMinusUnits)||hitHashtagSubstring(t)||_koParticleHit(t));
     const matched=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)&&!_atmLeftBefore(a,gko,publishedAt)&&(_m2NameVariants(a).some(_rosterHit)||(a.matchAliases||[]).some(_aliasHit)||_rosterTagHit(a)
       // 그 그룹 시절 활동명(제롬)·매칭 전용 이름(matchNames — 오마이걸 비니) — 그룹이 확정된 이 블록에서만(위 _atmRosterFor 주석과 같은 이유)
       ||(()=>{const e=_artistGroups(a).find(g=>g&&g.ko===gko)||{};return [e.name,e.nameEn,...(e.matchNames||[])].filter(Boolean).some(_aliasHit);})())).map(a=>a.name.ko);
@@ -9793,6 +9798,8 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 단 그 사람이 **챌린지 곡의 원곡 가수**면(#이별로부터_Challenge의 #아이유처럼) 곡 표기로 보고 새 경로로는 붙이지 않는다.
     const _preGuestGroups=new Set(matchedGroupKos);
     const _gRomanKeys=_m2HashtagRomanKeys(rawTitle);
+    // ⚠️ "챌린지" 낱말 없이 '채널 자기 곡 해시태그'로 챌린지 맥락을 잡는 안은 11-09 차분 후 되돌림 — KARD #KINO 몇 건보다
+    //    루네이트 곡 '나비'의 #나비 → 시크릿넘버 나비 30건, 백업 댄서 해시태그(#은호 #우노 #경문 → 유나이트) 같은 오답이 훨씬 많았다.
     const _isChal=/challenge|챌린지/i.test(rawTitle||'');
     const _chalSongs=_isChal?_m2ChallengeSongKeys(rawTitle):[];
     const _byRomanKeys=new Set((String(rawTitle||'').match(/\bby\s*#[A-Za-z]+/gi)||[]).map(m=>_m2RomanCanon(m.replace(/^by\s*#/i,''))));
@@ -9803,8 +9810,9 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
       const st=_atmStripSurname([...String(o.name.ko||'')]);
       // 영문 등록명의 성 뗀 꼴도(서정우 'Seo Jeongwoo' → jeongwoo — #JEONGWOO가 트레저 정우로 가지 않게)
       const enRest=String(o.name.en||'').trim().split(/\s+/).slice(1).join('');
-      [..._m2NameVariants(o),st,o.name.en,enRest].filter(Boolean).forEach(v=>_takenNames.add(String(v).toLowerCase().replace(/[^a-z0-9가-힣]/g,'')));});
-    const _taken=t=>_takenNames.has(String(t||'').toLowerCase().replace(/[^a-z0-9가-힣]/g,''));
+      [..._m2NameVariants(o),st,o.name.en,enRest].filter(Boolean).forEach(v=>{_takenNames.add(String(v).toLowerCase().replace(/[^a-z0-9가-힣]/g,''));
+        if(/[A-Za-z]/.test(v))_takenNames.add('~'+_m2RomanCanon(v));});}); // 로마자 흔들림도(Seo Jungwoo ↔ #JEONGWOO, Oh Yuna ↔ #YOONA)
+    const _taken=t=>_takenNames.has(String(t||'').toLowerCase().replace(/[^a-z0-9가-힣]/g,''))||(/[A-Za-z]/.test(t||'')&&_takenNames.has('~'+_m2RomanCanon(t)));
     for(const a of ARTISTS){
       const toks=_m2NameVariants(a).filter(t=>t&&[...t].length>=2&&_lt.includes(String(t).toLowerCase())); // 제목에 글자가 있는 이름만 정밀 검사
       const _romanTok=_gRomanKeys.size?_m2RomanTagged(a,_gRomanKeys,true):null;
@@ -9887,8 +9895,9 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
         else if(_romanTok&&!_inGroupName(_romanTok)&&(_deny?_coTag(_romanTok):(_m2RomanKeyIndex().get(_romanTok).size===1||_coTag(_romanTok))))tok=_romanTok;
         // ② 챌린지 제목의 한글 등록명 해시태그(#온유·#이영지) — 동명이인 없는 이름(위 toks 거름)·흔한 말·한 글자·막힌 이름 제외
         else if(_isChal&&!_deny&&/^[가-힣]{2,}$/.test(a.name.ko)&&!_ATM_COMMON_KO_WORDS.has(a.name.ko)&&toks.includes(a.name.ko)&&_exactTag(a.name.ko)&&!_inGroupName(a.name.ko))tok=a.name.ko;
-        if(tok&&_taken(tok))tok=null; // 새 경로 공통: 잡힌 그룹 멤버의 이름·애칭이면 그 사람이다
       }
+      // 모든 경로 공통: 잡힌 그룹 현 멤버의 이름·애칭이면 그 사람이다(#xikers #세은 님과 → 스테이씨 세은 ✗)
+      if(tok&&_taken(tok))tok=null;
       if(!tok)continue;
       // 영상 시점에 이미 떠났거나 해체된 그룹은 건너뛴다(2026-11-09 차분 — LNGSHOT 영상의 #박재범이 2PM으로, 2026년 #이채연이 아이즈원으로 붙었다).
       // 날짜가 없으면 예전처럼 첫 그룹. 남는 그룹이 없으면 그 사람 이름 키(솔로 관례 — group_ko=박재범·이영지).
