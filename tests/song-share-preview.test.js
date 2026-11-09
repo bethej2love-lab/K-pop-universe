@@ -35,6 +35,7 @@ const ctx={SITE:'https://example.test',SONG_CSS_V:4,FANCAM_RE:/직캠|fancam|fac
   hashEsc:encodeURIComponent,ogImageForGroup:()=>'/default.jpg',
   SEO:{fmtViews:String},languageNav:()=>'',LIST_FWD:'<script>FORWARD_LIST_HASH</script>'};
 vm.createContext(ctx);
+vm.runInContext(builder.match(/^const SEO_GA_TAG = [\s\S]*?^<script async[^\n]+\x60;/m)[0],ctx);
 vm.runInContext(block('function bilingualLabel(', '// 앱의 _hashEsc'),ctx);
 vm.runInContext(block('function songShareVideo(vids)','// ── 직캠 조회수 순위 페이지'),ctx);
 const vids=[{id:'mv',title:'Snowy Summer MV',category:'mv'},
