@@ -9637,7 +9637,8 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 탈퇴 게이트(위 _atmLeftBefore 주석 참고) — 이 영상이 올라온 시점에 이미 그 그룹을 떠난 사람은 제외.
     // 흔한 영단어 영문명(뉴 'New'·온 'On')은 해시태그거나 대문자 그대로일 때만 — "#THEBOYZ is our new crew"의 new가 뉴로 잡혔다(2026-11-09 차분)
     // 사람 이름으로도 흔한 Kevin·Jay·Max는 넣지 않는다("THE BOYZ Kevin" 정상) — 문장 속 일반 낱말로 더 자주 쓰이는 것만
-    const _ROSTER_PLAIN_WORDS=new Set(['new','on','key','one','sun','star','king','boy','only','wave','soul','good','high','sky','blue','love','rise','baby','angel','fire','rain','moon','light','dream','gold','hero','lucky','summer','winter','spring','shine','glow','fan']); // ten·nine은 이름으로 대문자 시작 표기가 흔해 뺐다("Ten used the snow filter" = 웨이션브이 텐)
+    // key는 뺐다 — "SHINee Key's Glow-Up"처럼 대문자 시작 Key가 거의 항상 샤이니 키
+    const _ROSTER_PLAIN_WORDS=new Set(['new','on','one','sun','star','king','boy','only','wave','soul','good','high','sky','blue','love','rise','baby','angel','fire','rain','moon','light','dream','gold','hero','lucky','summer','winter','spring','shine','glow','fan']); // ten·nine은 이름으로 대문자 시작 표기가 흔해 뺐다("Ten used the snow filter" = 웨이션브이 텐)
     const _rosterHit=t=>(/^[A-Za-z]/.test(t)&&_ROSTER_PLAIN_WORDS.has(String(t).toLowerCase().replace(/[^a-z]/g,'')))
       ?(hitHashtag(t)||new RegExp('(^|[^A-Za-z])'+_atmEscRe(String(t).toUpperCase())+'(?![A-Za-z])').test(rawTitle||''))
       :(hit(t,normMinusUnits)||hitHashtagSubstring(t));
@@ -9787,6 +9788,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 해시태그 하나로만 적는 게 표준 꼴이다. 기존 "함께 표시(with·님·&) 근처" 조건으론 이 꼴이 통째로 빠졌다(최근 챌린지 400개 실측).
     // 그래서 ①성+이름 로마자를 붙여 쓴 해시태그(정규화 후 한 사람만 가리킬 때)와 ②챌린지 제목의 한글 등록명 해시태그를 함께 표시 없이 인정한다.
     // 단 그 사람이 **챌린지 곡의 원곡 가수**면(#이별로부터_Challenge의 #아이유처럼) 곡 표기로 보고 새 경로로는 붙이지 않는다.
+    const _preGuestGroups=new Set(matchedGroupKos);
     const _gRomanKeys=_m2HashtagRomanKeys(rawTitle);
     const _isChal=/challenge|챌린지/i.test(rawTitle||'');
     const _chalSongs=_isChal?_m2ChallengeSongKeys(rawTitle):[];
@@ -9810,7 +9812,8 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
       // 잡힌 그룹의 **현 멤버**면 그 그룹 몫이다. 이미 떠난/해체된 그룹이면(#RocketPunch #수윤 — 지금은 솔로 김수윤) 위 멤버 추출이
       // 탈퇴 게이트로 빼므로 여기서 본인 이름 키로 받는다(2026-11-09 차분).
       const _gone=g=>!!publishedAt&&(_atmLeftBefore(a,g,publishedAt)||(()=>{const e=_disbandCutoffDate(g);return e&&String(publishedAt).slice(0,10)>e;})());
-      if(gs.some(g=>matchedGroupKos.includes(g)&&!_gone(g))||_atmInferExcluded(a))continue;
+      // 게스트 단계 **시작 시점**의 그룹으로 본다 — 루프 중에 게스트로 넣은 그룹까지 보면 같은 그룹 두 번째 사람이 빠졌다("(With. #신유 #도훈)"의 도훈)
+      if(gs.some(g=>_preGuestGroups.has(g)&&!_gone(g))||_atmInferExcluded(a))continue;
       toks.splice(0,toks.length,...toks.filter(t=>!_ATM_COMMON_KO_WORDS.has(t)&&_m2GuestNameIdx.get(String(t).toLowerCase())===1&&!_m2FullNameShadowed(t,a,title)&&!_m2IsGroupName(t)
         &&!(/^[가-힣]{2}$/.test(t)&&_m2FullNameOwnersCache&&[...(_m2FullNameOwnersCache.get(t)||[])].some(f=>f!==a.name.ko)))); // 2글자 한글이 다른 사람 성 뗀 이름이면(은채=홍은채) 동명이인 — 제외
       // 4만 제목 차분에서 나온 오탐을 막는 조건(2026-10-28): 해시태그는 태그 전체가 이름과 같을 때만(#TEN_The_Story·#은채의스타일기 ✗),
@@ -9858,6 +9861,8 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
         //    그 사람 그룹 표기가 같이 있거나(#ELAST #ROMIN) 챌린지 제목에서 앞에 함께 표시가 있을 때만 — 미등록 멤버(#LEON)·곡(#THUNDER) 오답 방지.
         const _enU=_enReg.toLowerCase().replace(/[^a-z]/g,'');
         // 해시태그 바로 옆(앞 22자·뒤 14자)에 함께 표시 — "#YoungK 선배님과"·"#켄 선배님과"
+        // ⚠️ 이어진 해시태그 묶음 전체로 넓히지 말 것(11-09 시도 후 되돌림) — "with #LNGSHOT #LOUIS"·"#JEWELRY #YEWON"·"#TEMPEST #LEW … #루"처럼
+        //    미등록 멤버가 등록된 동명이인으로 붙는 오답이 80건 중 다수였다. 바로 옆(앞 22자·뒤 14자)만 본다.
         const _cueAt=h=>{const i=_lt0.indexOf(String(h).toLowerCase());return i>=0&&/(with|w\/|feat|님|선배|함께|[&＆×]| x )/.test(_lt0.slice(Math.max(0,i-22),i+h.length+14));};
         const _enOk=!_deny&&/^[A-Za-z][A-Za-z .'-]*$/.test(_enReg)&&_enU.length>=5&&!_atmNameNeedsCtx(_enReg)&&_exactTag(_enU)&&!_inGroupName(_enReg)
           &&ARTISTS.filter(o=>o&&o.name&&String(o.name.en||'').toLowerCase().replace(/[^a-z]/g,'')===_enU).length===1
