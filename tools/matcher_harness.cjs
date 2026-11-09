@@ -69,6 +69,11 @@ if (/^function _m2FullNameShadowed\(/m.test(adminSrc)) { // 전체 이름 그림
   pieces.push(extractStatement(adminSrc, /^let _m2FullNameOwnersCache\s*=/m, '_m2FullNameOwnersCache'));
   pieces.push(extractByBraces(adminSrc, /^function _m2FullNameShadowed\(/m, '_m2FullNameShadowed'));
 }
+if (/^const _M2_SURNAME_ROMAN\s*=/m.test(adminSrc)) { // 로마자 흔들림·챌린지 곡 주인(2026-11-09)
+  pieces.push(extractStatement(adminSrc, /^const _M2_SURNAME_ROMAN\s*=/m, '_M2_SURNAME_ROMAN'));
+  pieces.push(extractStatement(adminSrc, /^let _m2RomanKeyIdx\s*=/m, '_m2RomanKeyIdx'));
+  ['_m2RomanCanon', '_m2RomanKeyIndex', '_m2HashtagRomanKeys', '_m2RomanTagged', '_m2ChallengeSongKeys', '_m2IsChallengeSongOwner'].forEach(n => pieces.push(extractByBraces(adminSrc, new RegExp('^function ' + n + '[(]', 'm'), n)));
+}
 if (/^let _m2GuestNameIdx\s*=/m.test(adminSrc)) { // 다른 그룹 게스트 감지(2026-10-28)
   pieces.push(extractStatement(adminSrc, /^const _M2_GUEST_DENY\s*=/m, '_M2_GUEST_DENY'));
   pieces.push(extractStatement(adminSrc, /^let _m2GuestNameIdx\s*=/m, '_m2GuestNameIdx'));

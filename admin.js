@@ -8429,9 +8429,67 @@ let _m2FullNameOwnersCache=null;
 // 게스트 감지에서만 빼는 이름 — '#아이엠'은 거의 항상 아이브 곡 'I AM' 해시태그(몬스타엑스 아이엠 아님)
 // 이현=에이트 이현·박소현=방송인(러브게임 DJ)·다니엘=동명 인플루언서가 챌린지 상대로 훨씬 많다(10-28 기존 24만 개 소급 표본)
 // 박세미=서준맘 코미디언·이준=WAKER 이준·박정민·이준혁·김주호=배우(뮤지컬)·김나영=방송인
-const _M2_GUEST_DENY=new Set(['아이엠','이현','박소현','다니엘','박세미','이준','박정민','이준혁','김주호','김나영']);
+// 김태형=클릭비 등록명 ↔ 방탄 뷔 본명(#뷔 #김태형 화보, 2026-11-09 차분) — 본명 칸이 없어 이름으로 막는다
+const _M2_GUEST_DENY=new Set(['아이엠','이현','박소현','다니엘','박세미','이준','박정민','이준혁','김주호','김나영','김태형']);
 let _m2GuestNameIdx=null; // _m2ParseTitle 다른 그룹 게스트 감지용 이름 수 색인(2026-10-28)
 let _m2GroupNameSet=null;
+// ── 로마자 표기 흔들림 흡수(2026-11-09, 챌린지 태깅 개선) ──────────────────────────────
+// 해시태그는 "성+이름"을 붙여 쓰고(#KIMSUNGMIN·#SUNGHANBIN·#BANGJEEMIN) 로마자도 제각각인데(Seongmin/Sungmin·Jimin/Jeemin·
+// Juyeon/Jooyeon), 등록명은 "Kim Seongmin"·"Hanbin"(성 없음)이라 글자 비교로는 못 찾았다(최근 챌린지 400개 중 클로즈유어아이즈
+// 김성민·전민욱·장여준, 제베원 성한빈, 이즈나 방지민, 엑디 주연 등). ①모음 표기를 하나로 접고(EO·OO·OU→U, EE→I) ②성이 빠진 등록명엔
+// 성 로마자 후보를 붙여 "해시태그 하나 전체"와만 비교한다(부분 문자열 아님 — 짧은 이름이 남의 태그 속에서 걸리지 않게).
+const _M2_SURNAME_ROMAN={'김':['KIM','GIM'],'이':['LEE','YI','RHEE','I'],'박':['PARK','PAK','BAK'],'최':['CHOI','CHOE'],'정':['JUNG','JEONG','CHUNG'],'강':['KANG','GANG'],'조':['CHO','JO'],'윤':['YOON','YUN'],'장':['JANG','CHANG'],'임':['LIM','IM'],'한':['HAN'],'오':['OH','O'],'서':['SEO','SUH'],'신':['SHIN','SIN'],'권':['KWON','GWON'],'황':['HWANG'],'안':['AHN','AN'],'송':['SONG'],'전':['JEON','JUN'],'홍':['HONG'],'유':['YOO','YU','RYU'],'류':['RYU','YOO'],'고':['KO','GO'],'문':['MOON','MUN'],'양':['YANG'],'손':['SON','SOHN'],'배':['BAE'],'백':['BAEK','BAIK'],'허':['HEO','HUH'],'남':['NAM'],'심':['SHIM','SIM'],'노':['NOH','ROH','NO'],'하':['HA'],'곽':['KWAK'],'성':['SUNG','SEONG'],'차':['CHA'],'주':['JOO','JU'],'우':['WOO','WU'],'구':['KOO','GU'],'민':['MIN'],'진':['JIN'],'나':['NA'],'지':['JI'],'엄':['UM','EOM'],'채':['CHAE'],'원':['WON'],'천':['CHUN','CHEON'],'방':['BANG'],'공':['KONG','GONG'],'현':['HYUN'],'함':['HAM'],'변':['BYUN','BYEON'],'염':['YEOM'],'여':['YEO'],'추':['CHOO','CHU'],'도':['DO'],'소':['SO'],'석':['SEOK'],'선':['SUN','SEON'],'설':['SEOL'],'마':['MA'],'길':['GIL'],'연':['YEON'],'위':['WI'],'표':['PYO'],'명':['MYUNG','MYEONG'],'기':['KI','GI'],'왕':['WANG'],'금':['KEUM','GEUM'],'옥':['OK'],'인':['IN'],'제':['JE'],'모':['MO'],'탁':['TAK'],'국':['KOOK','GUK'],'은':['EUN'],'경':['KYUNG','GYEONG'],'봉':['BONG'],'예':['YE'],'용':['YONG'],'편':['PYEON']};
+function _m2RomanCanon(s){return String(s||'').toUpperCase().replace(/[^A-Z]/g,'').replace(/EO/g,'U').replace(/OO/g,'U').replace(/OU/g,'U').replace(/EE/g,'I');}
+let _m2RomanKeyIdx=null; // 정규화 로마자 키 → Set(아티스트). **성+이름 꼴만**(6자↑) — 한 번만 만든다
+// ⚠️ 한 단어 영문 등록명(Thunder·Nicholas)은 넣지 않는다 — 곡·일반 해시태그(#THUNDER)나 남의 그룹 미등록 멤버(#LEON)와 겹친다(Codex 10-28 차분).
+function _m2RomanKeyIndex(){
+  if(_m2RomanKeyIdx)return _m2RomanKeyIdx;
+  const idx=new Map(),add=(k,a)=>{if(!k||k.length<6)return;if(!idx.has(k))idx.set(k,new Set());idx.get(k).add(a);};
+  ARTISTS.forEach(a=>{
+    if(!a||!a.name)return;
+    const en=String(a.name.en||'').trim(),ko=[...String(a.name.ko||'')];
+    if(!/^[A-Za-z][A-Za-z .'-]*$/.test(en))return;
+    if(/\s/.test(en))add(_m2RomanCanon(en),a); // 띄어 쓴 등록명(Kim Seongmin·Bang Jimin)
+    // 한글 2~3글자(성+이름)인데 영문 등록명이 이름만(Hanbin·Hyun)이면 성 후보를 붙인 꼴 — #SUNGHANBIN·#Yihyun
+    if((ko.length===3||ko.length===2)&&/^[가-힣]+$/.test(ko.join(''))&&/^[A-Za-z]+$/.test(en)&&_M2_SURNAME_ROMAN[ko[0]])
+      _M2_SURNAME_ROMAN[ko[0]].forEach(r=>{if(!_m2RomanCanon(en).startsWith(_m2RomanCanon(r)))add(_m2RomanCanon(r+en),a);});
+  });
+  return(_m2RomanKeyIdx=idx);
+}
+// 제목 해시태그(밑줄로 이은 꼴의 조각 포함 — "challenge_with_AND2BLE_ZHANGHAO.exe")를 정규화 로마자 키로
+function _m2HashtagRomanKeys(title){
+  const out=new Set(),t=String(title||'');
+  (t.match(/#[A-Za-z]+(?![A-Za-z0-9_])/g)||[]).forEach(h=>out.add(_m2RomanCanon(h)));
+  (t.match(/[A-Za-z0-9]+(?:_[A-Za-z0-9]+)+/g)||[]).forEach(s=>s.split('_').forEach(p=>{if(/^[A-Za-z]{6,}$/.test(p)&&p===p.toUpperCase())out.add(_m2RomanCanon(p));}));
+  return out;
+}
+// 이 아티스트가 해시태그 하나 전체로 로마자 표기됐는가 — full:true면 성+이름 꼴(6자↑)만
+function _m2RomanTagged(a,keys,full){
+  const idx=_m2RomanKeyIndex();
+  for(const k of keys){if(full&&k.length<6)continue;const s=idx.get(k);if(s&&s.has(a))return k;}
+  return null;
+}
+// 챌린지 곡의 원곡 가수 판정 — "#Lovesick_Challenge"·"'체포하겠어' 챌린지"·"#이별로부터_Challenge"의 곡이 그 사람(또는 그 사람 그룹)
+// 디스코에 있으면 그 사람은 원곡 가수 표기지 출연 근거가 아니다(Codex 10-28 소급 표본의 "#정국 #JungKook_3D" 오답과 같은 계열).
+function _m2ChallengeSongKeys(title){
+  const t=String(title||''),keys=new Set(),nk=s=>String(s||'').toLowerCase().replace(/[^a-z0-9가-힣]/g,'');
+  for(const m of t.matchAll(/#([^\s#]+?)[_ ]?(?:challenge|챌린지)/gi))keys.add(nk(m[1]));
+  for(const m of t.matchAll(/[‘'"“「]([^‘'"“”’」]{1,40})[’'"”」]\s*(?:댄스\s*|dance\s*)?(?:challenge|챌린지)/gi))keys.add(nk(m[1]));
+  // "#홀씨 #challenge"처럼 해시태그로 끊어 쓴 꼴도(Codex 10-28 오답 표본 — 아이유가 게스트로 붙던 것)
+  for(const m of t.matchAll(/(?:^|[\s|#])([A-Za-z0-9가-힣]{2,20})\s*#?(?:댄스\s*|dance\s*)?#?(?:challenge|챌린지)/gi))keys.add(nk(m[1]));
+  ['','dance','댄스','vibecheck','kgma','2026kgma'].forEach(x=>keys.delete(x));
+  return [...keys].filter(k=>k.length>=2);
+}
+function _m2IsChallengeSongOwner(a,songKeys){
+  if(!songKeys||!songKeys.length||!a)return false;
+  const nk=s=>String(s||'').toLowerCase().replace(/\(.*?\)|\[.*?\]/g,'').replace(/[^a-z0-9가-힣]/g,'');
+  const titles=[];
+  const addAl=al=>(al&&al.tracks||[]).forEach(t=>t&&t.title&&titles.push(nk(t.title)));
+  (a.discography||[]).forEach(addAl);(a.unitDiscography||[]).forEach(u=>(u.albums||[]).forEach(addAl));
+  _artistGroups(a).forEach(g=>{const G=g&&GROUPS[g.ko];if(G){(G.discography||[]).forEach(addAl);(G.songs||[]).forEach(s=>s&&s.t&&titles.push(nk(s.t)));}});
+  // 정확히 같은 곡명만 — 앞부분 일치로 보면 샤이니 'ANIMALS'가 보넥도 'ANIMAL' 챌린지의 원곡이 돼 "#온유"가 빠졌다
+  return songKeys.some(k=>titles.some(x=>x&&x.length>=2&&x===k));
+}
 // 그룹 이름(한글 키·영문)과 같은 사람 이름 — #UNIS가 다이아 유니스로, #MIRAE가 체리블렛 미래로 잡히던 것(게스트 감지 전용)
 function _m2IsGroupName(t){
   if(!_m2GroupNameSet){_m2GroupNameSet=new Set();Object.keys(GROUPS).forEach(k=>{_m2GroupNameSet.add(k.toLowerCase().replace(/[^a-z0-9가-힣]/g,''));const e=GROUPS[k]&&GROUPS[k].en;if(e)_m2GroupNameSet.add(String(e).toLowerCase().replace(/[^a-z0-9가-힣]/g,''));});}
@@ -8467,6 +8525,8 @@ function _m2FullNameShadowed(tok,a,text){
 // 그룹 키가 2026-08-10에 "슈퍼노바(초신성)"→"슈퍼노바"로 바뀜(괄호 있는 그룹명이 "이름(그룹)" 태그
 // 문자열 파싱을 깨는 별도 문제 때문 — 초신성은 altNames로 이동, 검색은 그쪽에서 여전히 걸림).
 const _GROUP_TITLE_CONFLICT_EXCLUDE={
+  // 베이비돈크라이 공식 해시태그 #BDC는 2019 그룹 비디씨(BDC)가 아니다 — 베이비돈크라이 표기가 같이 있으면 비디씨 제외(2026-11-09 차분)
+  '비디씨':[/baby\s*don'?t\s*cry|베이비돈크라이|베돈크/i],
   // CxM 팬파티의 곡명 Fiesta는 동명의 걸그룹이 아니다. 실제 FIESTAR 공연 제목은 유지한다.
   '피에스타':[/\bC[x×]M\s+유닛\s+팬파티\s+(?:피에스타|Fiesta)(?![가-힣a-z0-9])/i],
   '슈퍼노바':[/aespa/i,/에스파/,/david\s*guetta/i,/데이비드\s*게타/,/supernova\s*love/i,/아이브|\bIVE\b/i],
@@ -9106,7 +9166,9 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 선두여도 우회하지 않는다 — 그 경우는 멤버 쪽이 맞을 가능성이 커서 기존 게이트/역추론에 맡긴다.
     const _fcHeadOk=t=>_fc&&_fcHead(t)&&!_fcHeadIsMemberName(t);
     if(_STRICT_SYNC_GROUPS.has(ko)){ if(tokens.some(_fcHeadOk)){matchedGroupKos.push(ko);seen.add(ko);} continue; }
-    if(tokens.some(t=>_fcHeadOk(t)||(_GROUP_TOKEN_NEEDS_CORROBORATION[t]?hitCorroborated(t):_GROUP_TOKEN_HASHTAG_UPPER.has(t)?hitHashtagUpper(t):_GROUP_TOKEN_HASHTAG_ONLY.has(t)?hitHashtag(t):(_GROUP_TOKEN_LITERAL_ONLY.has(t)||_ATM_DYNAMIC_LITERAL_ONLY.has(t))?hitLiteral(t):hit(t)))){matchedGroupKos.push(ko);seen.add(ko);}
+    // 띄어 쓴 그룹명은 붙여 쓴 해시태그(#XdinaryHeroes·#ALLDAYPROJECT)도 같은 그룹 — 두 단어↑라 일반어와 우연히 겹칠 일이 없다(2026-11-09)
+    const _hitSpaced=t=>/\S\s+\S/.test(String(t).trim())&&hitHashtag(t);
+    if(tokens.some(t=>_fcHeadOk(t)||(_GROUP_TOKEN_NEEDS_CORROBORATION[t]?hitCorroborated(t):_GROUP_TOKEN_HASHTAG_UPPER.has(t)?hitHashtagUpper(t):_GROUP_TOKEN_HASHTAG_ONLY.has(t)?hitHashtag(t):(_GROUP_TOKEN_LITERAL_ONLY.has(t)||_ATM_DYNAMIC_LITERAL_ONLY.has(t))?hitLiteral(t):(hit(t)||_hitSpaced(t))))){matchedGroupKos.push(ko);seen.add(ko);}
   }
   // 유닛명(V8, GOT the beat 등) 매칭 — 유닛 자체는 그룹이 아니라, 실제 소속 그룹/멤버로 나눠 합류시킴.
   // 제목에 유닛명만 있고 개별 멤버 이름은 없는 경우까지 커버하기 위해, 유닛 멤버를 "그 멤버 이름이
@@ -9271,6 +9333,45 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
       matchedGroupKos.splice(0,matchedGroupKos.length,
         ...matchedGroupKos.filter(ko=>!featOnly.has(ko)),
         ...matchedGroupKos.filter(ko=>featOnly.has(ko)));
+    }
+  }
+  // ── 챌린지 곡의 원곡 그룹(2026-11-09) ──────────────────────────────────────────────
+  // "아워벌스데이 신혜원의 아일릿 '체포하겠어' 챌린지"(아일릿=곡 주인)·"엔믹스 댄스 챌린지에 도전하는 은가은 VS 박서진"(엔믹스=곡 주인,
+  // 출연은 가수 두 명)처럼 그룹명이 **챌린지 곡의 주인**으로만 쓰인 경우 — 출연 그룹이 아니다. 앞에 소유격 "의"가 붙거나
+  // "챌린지에 도전"의 대상일 때만 본다("건욱 탐정과 함께하는 ADP 'CRASH' 챌린지"·"ILLIT Speed Challenge"는 실제 출연이라 그대로).
+  // 자체 채널(selfGko)은 손대지 않는다. 다른 출연 그룹이 남으면 빼고, 이 그룹뿐이면 출연자를 모르는 것이라 보류.
+  if(matchedGroupKos.length&&/challenge|챌린지/i.test(rawTitle||'')){
+    const _gT=ko=>[ko,GROUPS[ko]&&GROUPS[ko].en,...((GROUPS[ko]&&GROUPS[ko].altNames)||[])].filter(t=>t&&String(t).length>=2);
+    const _songOwnerOnly=ko=>ko!==selfGko&&_gT(ko).some(t=>{const e=_atmEscRe(t);
+      return new RegExp('의\\s+'+e+'\\s*(의\\s*)?[‘\'"“][^‘\'"“”’]{1,40}[’\'"”]\\s*(댄스\\s*)?(챌린지|challenge)','i').test(rawTitle)
+        ||new RegExp('(^|[^가-힣A-Za-z0-9])'+e+'\\s*(의\\s*)?([‘\'"“][^‘\'"“”’]{1,40}[’\'"”]\\s*)?(댄스\\s*)?(챌린지|challenge)에\\s*도전','i').test(rawTitle);});
+    const owners=matchedGroupKos.filter(_songOwnerOnly);
+    // 해시태그로만 나온 원곡 그룹 — "리센느 원이 'SPAGHETTI' 챌린지 … #lesserafim #eat_it_up_spaghetti"의 르세라핌. 본문(해시태그 밖)에 그룹명이 없고,
+    // 그 그룹 멤버 언급도 없고, 챌린지 곡이 그 그룹 곡이고, 함께 표시(with·님·선배)가 없을 때만. 함께 표시가 있으면 원곡 그룹이 올린 영상이다
+    // ("#가위바위보 with #BOYNEXTDOOR #태산 #FIFTYFIFTY"). 다른 그룹이 남을 때만 뺀다(아래 공통 처리).
+    // ⚠️ 직캠(한 사람 영상)일 때만 — 일반 챌린지("go viral #CRAVITY #SERIM #BOYNEXTDOOR #VIRAL_Challenge")는 원곡 그룹도 같이 나오는 게 보통이라 빼면 오답(11-09 차분)
+    if(!/(with|w\/|함께|님|선배)/i.test(rawTitle||'')&&/(직캠|fan ?cam|focus|페이스캠|얼빡)/i.test(rawTitle||'')){
+      const _noTagNorm=_mkNorm(String(title||'').replace(/#[^\s#]+/g,' '));
+      const _cs=_m2ChallengeSongKeys(rawTitle);
+      matchedGroupKos.forEach(ko=>{
+        if(ko===selfGko||owners.includes(ko)||_gT(ko).some(t=>hit(t,_noTagNorm)))return;
+        if(ARTISTS.some(a=>_artistGroups(a).some(g=>g&&g.ko===ko)&&_m2NameVariants(a).some(v=>v&&(([...v].length>=2&&hit(v))||hitHashtag(v)))))return;
+        if(_m2IsChallengeSongOwner({name:{ko:''},group:{ko}},_cs)&&matchedGroupKos.length>1)owners.push(ko);
+      });
+    }
+    // 이 그룹뿐이면: "챌린지에 도전"(남이 그 곡에 도전) 꼴만 보류한다. "'윤산'의 에이티즈 'BAD' 챌린지"처럼 그룹 멤버 별명의 소유격은
+    // 그 그룹 자신이라 보류하면 안 된다 — 다른 그룹이 남을 때만 빼는 게 안전하다.
+    const _dojeon=ko=>_gT(ko).some(t=>new RegExp('(^|[^가-힣A-Za-z0-9])'+_atmEscRe(t)+'\\s*(의\\s*)?([‘\'"“][^‘\'"“”’]{1,40}[’\'"”]\\s*)?(댄스\\s*)?(챌린지|challenge)에\\s*도전','i').test(rawTitle));
+    if(owners.length){
+      const kept=matchedGroupKos.filter(ko=>!owners.includes(ko));
+      if(!kept.length&&!owners.every(_dojeon))owners.length=0;
+    }
+    if(owners.length){
+      owners.forEach(ko=>_trace.push({rule:'challenge_song_owner',token:ko,effect:'removed'}));
+      const kept=matchedGroupKos.filter(ko=>!owners.includes(ko));
+      if(!kept.length)return{primaryGroup:null,withGroups:[],membersByGroup:{},confidence:'none',hold:true,holdReason:'challenge-song-owner',holdToken:owners[0]};
+      matchedGroupKos.splice(0,matchedGroupKos.length,...kept);
+      seen.clear();kept.forEach(ko=>seen.add(ko));
     }
   }
   // "이름(그룹명)" 패턴에서 그룹명이 우리 시스템에 없는 경우 → 타 소속 동명이인 신호
@@ -9510,6 +9611,20 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // 각 매칭 그룹에서 멤버 추출 — normMinusUnits 기준으로 검사해 유닛명 토큰이 만든 가짜 개별 언급을
   // 제외한다(위 unit-name-false-with 해결 참고).
   const membersByGroup={};
+  // 그룹이 확정된 범위의 해시태그 멤버(2026-11-09): 로마자 표기 흔들림(#KIMSUNGMIN↔Kim Seongmin·#Jooyeon↔Juyeon·#JEONMINWOOK)과
+  // 성을 붙인 한글 태그(#소정환 ↔ 등록명 정환). 해시태그 하나 전체가 그 사람 표기와 같을 때만 — 부분 문자열은 기존 hitHashtagSubstring 몫.
+  const _rosterRomanKeys=_m2HashtagRomanKeys(rawTitle);
+  const _rosterKoTags=(String(rawTitle||'').match(/#[가-힣]{3}(?![가-힣A-Za-z0-9_])/g)||[]).map(h=>h.slice(1));
+  const _rosterTagHit=a=>{
+    const en=String(a.name.en||'');
+    if(/^[A-Za-z][A-Za-z .'-]*$/.test(en)){const c=_m2RomanCanon(en);if(c.length>=4&&_rosterRomanKeys.has(c))return true;}
+    if(_m2RomanTagged(a,_rosterRomanKeys,true))return true;
+    // 그룹 확정 범위에선 한 글자·점 들어간 이름도 해시태그 그대로면 인정(#벨·#Ode=O.de) — 예전엔 이 그룹이 게스트 경로로 잡힐 때만 붙었다
+    if(_m2NameVariants(a).some(v=>v&&hitHashtag(v)))return true;
+    const ko=String(a.name.ko||'');
+    // 그 세 글자 그대로 등록된 다른 사람이 있으면 그 사람이다(#정예찬 = 트렌드지 정예찬 ≠ 오메가엑스 예찬)
+    return /^[가-힣]{2}$/.test(ko)&&_rosterKoTags.some(t=>t.endsWith(ko)&&!!_M2_SURNAME_ROMAN[t[0]]&&!ARTISTS.some(o=>o&&o.name&&o.name.ko===t));
+  };
   for(const gko of matchedGroupKos){
     // 겸임 멤버 대응 — a.group.ko===gko(주 소속만)면 NCT 마크/해찬처럼 부소속 그룹 이름이 제목에
     // 매칭돼도 정작 그 멤버 자신은 로스터에서 빠져 추출 누락됨(2026-08-20, 위 역추론부와 동일 수정).
@@ -9520,7 +9635,13 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 이미 확정된 맥락이라 hit()의 length<2 컷 없이 단어경계로 인정(진심·진짜는 단어경계라 안 걸림).
     const _aliasHit=al=>{const n=(al||'').toUpperCase().replace(/[^가-힣a-zA-Z0-9]/g,' ').replace(/\s+/g,' ').trim();return !!n&&normMinusUnits.includes(' '+n+' ');};
     // 탈퇴 게이트(위 _atmLeftBefore 주석 참고) — 이 영상이 올라온 시점에 이미 그 그룹을 떠난 사람은 제외.
-    const matched=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)&&!_atmLeftBefore(a,gko,publishedAt)&&(_m2NameVariants(a).some(t=>hit(t,normMinusUnits)||hitHashtagSubstring(t))||(a.matchAliases||[]).some(_aliasHit)
+    // 흔한 영단어 영문명(뉴 'New'·온 'On')은 해시태그거나 대문자 그대로일 때만 — "#THEBOYZ is our new crew"의 new가 뉴로 잡혔다(2026-11-09 차분)
+    // 사람 이름으로도 흔한 Kevin·Jay·Max는 넣지 않는다("THE BOYZ Kevin" 정상) — 문장 속 일반 낱말로 더 자주 쓰이는 것만
+    const _ROSTER_PLAIN_WORDS=new Set(['new','on','key','one','sun','star','king','boy','only','wave','soul','good','high','sky','blue','love','rise','baby','angel','fire','rain','moon','light','dream','gold','hero','lucky','summer','winter','spring','shine','glow','fan']); // ten·nine은 이름으로 대문자 시작 표기가 흔해 뺐다("Ten used the snow filter" = 웨이션브이 텐)
+    const _rosterHit=t=>(/^[A-Za-z]/.test(t)&&_ROSTER_PLAIN_WORDS.has(String(t).toLowerCase().replace(/[^a-z]/g,'')))
+      ?(hitHashtag(t)||new RegExp('(^|[^A-Za-z])'+_atmEscRe(String(t).toUpperCase())+'(?![A-Za-z])').test(rawTitle||''))
+      :(hit(t,normMinusUnits)||hitHashtagSubstring(t));
+    const matched=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===gko)&&!_atmLeftBefore(a,gko,publishedAt)&&(_m2NameVariants(a).some(_rosterHit)||(a.matchAliases||[]).some(_aliasHit)||_rosterTagHit(a)
       // 그 그룹 시절 활동명(제롬)·매칭 전용 이름(matchNames — 오마이걸 비니) — 그룹이 확정된 이 블록에서만(위 _atmRosterFor 주석과 같은 이유)
       ||(()=>{const e=_artistGroups(a).find(g=>g&&g.ko===gko)||{};return [e.name,e.nameEn,...(e.matchNames||[])].filter(Boolean).some(_aliasHit);})())).map(a=>a.name.ko);
     const extra=unitExtraMembers[gko];
@@ -9656,11 +9777,34 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
       _m2GuestNameIdx=new Map();ARTISTS.forEach(o=>_m2NameVariants(o).forEach(t=>{const k=String(t).toLowerCase();_m2GuestNameIdx.set(k,(_m2GuestNameIdx.get(k)||0)+1);}));
     }
     const _lt=rawTitle.toLowerCase();
+    // 챌린지 맥락(2026-11-09): 자체 채널 챌린지는 "MOVE LIKE #온유"·"Count to #SUNGHANBIN"·"#GoodBoy with #BANGJEEMIN"처럼 상대 이름을
+    // 해시태그 하나로만 적는 게 표준 꼴이다. 기존 "함께 표시(with·님·&) 근처" 조건으론 이 꼴이 통째로 빠졌다(최근 챌린지 400개 실측).
+    // 그래서 ①성+이름 로마자를 붙여 쓴 해시태그(정규화 후 한 사람만 가리킬 때)와 ②챌린지 제목의 한글 등록명 해시태그를 함께 표시 없이 인정한다.
+    // 단 그 사람이 **챌린지 곡의 원곡 가수**면(#이별로부터_Challenge의 #아이유처럼) 곡 표기로 보고 새 경로로는 붙이지 않는다.
+    const _gRomanKeys=_m2HashtagRomanKeys(rawTitle);
+    const _isChal=/challenge|챌린지/i.test(rawTitle||'');
+    const _chalSongs=_isChal?_m2ChallengeSongKeys(rawTitle):[];
+    const _byRomanKeys=new Set((String(rawTitle||'').match(/\bby\s*#[A-Za-z]+/gi)||[]).map(m=>_m2RomanCanon(m.replace(/^by\s*#/i,''))));
+    // 이미 잡힌 그룹 멤버의 이름·성 뗀 애칭·영문명 — 새 경로가 이걸 다른 그룹 사람으로 읽지 않게(#오하영 #하영 → 프로미스나인 하영 ✗, #조은찬 #은찬 → 템페스트 은찬 ✗)
+    const _takenNames=new Set();
+    // 현 멤버만 — 이미 떠난/해체된 그룹 멤버(#RocketPunch #수윤 → 지금은 솔로 김수윤)는 아래에서 본인 이름 키로 받아야 한다
+    ARTISTS.forEach(o=>{if(!o||!o.name||!_artistGroups(o).some(g=>g&&matchedGroupKos.includes(g.ko)&&!(publishedAt&&(_atmLeftBefore(o,g.ko,publishedAt)||(()=>{const e=_disbandCutoffDate(g.ko);return e&&String(publishedAt).slice(0,10)>e;})()))))return;
+      const st=_atmStripSurname([...String(o.name.ko||'')]);
+      // 영문 등록명의 성 뗀 꼴도(서정우 'Seo Jeongwoo' → jeongwoo — #JEONGWOO가 트레저 정우로 가지 않게)
+      const enRest=String(o.name.en||'').trim().split(/\s+/).slice(1).join('');
+      [..._m2NameVariants(o),st,o.name.en,enRest].filter(Boolean).forEach(v=>_takenNames.add(String(v).toLowerCase().replace(/[^a-z0-9가-힣]/g,'')));});
+    const _taken=t=>_takenNames.has(String(t||'').toLowerCase().replace(/[^a-z0-9가-힣]/g,''));
     for(const a of ARTISTS){
       const toks=_m2NameVariants(a).filter(t=>t&&[...t].length>=2&&_lt.includes(String(t).toLowerCase())); // 제목에 글자가 있는 이름만 정밀 검사
-      if(!toks.length)continue;
+      const _romanTok=_gRomanKeys.size?_m2RomanTagged(a,_gRomanKeys,true):null;
+      // 한 글자(#켄)·띄어 쓴 영문명(#YoungK)은 위 글자 검사에 안 걸린다 — 그 해시태그가 제목에 있으면 정밀 검사로 넘긴다
+      const _hashHere=_lt.includes('#'+String(a.name.ko||'').toLowerCase())||(()=>{const c=String(a.name.en||'').toLowerCase().replace(/[^a-z]/g,'');return c.length>=5&&_lt.includes('#'+c);})();
+      if(!toks.length&&!_romanTok&&!_hashHere)continue;
       const gs=_artistGroups(a).map(g=>g&&g.ko).filter(Boolean);
-      if(gs.some(g=>matchedGroupKos.includes(g))||_atmInferExcluded(a))continue;
+      // 잡힌 그룹의 **현 멤버**면 그 그룹 몫이다. 이미 떠난/해체된 그룹이면(#RocketPunch #수윤 — 지금은 솔로 김수윤) 위 멤버 추출이
+      // 탈퇴 게이트로 빼므로 여기서 본인 이름 키로 받는다(2026-11-09 차분).
+      const _gone=g=>!!publishedAt&&(_atmLeftBefore(a,g,publishedAt)||(()=>{const e=_disbandCutoffDate(g);return e&&String(publishedAt).slice(0,10)>e;})());
+      if(gs.some(g=>matchedGroupKos.includes(g)&&!_gone(g))||_atmInferExcluded(a))continue;
       toks.splice(0,toks.length,...toks.filter(t=>!_ATM_COMMON_KO_WORDS.has(t)&&_m2GuestNameIdx.get(String(t).toLowerCase())===1&&!_m2FullNameShadowed(t,a,title)&&!_m2IsGroupName(t)
         &&!(/^[가-힣]{2}$/.test(t)&&_m2FullNameOwnersCache&&[...(_m2FullNameOwnersCache.get(t)||[])].some(f=>f!==a.name.ko)))); // 2글자 한글이 다른 사람 성 뗀 이름이면(은채=홍은채) 동명이인 — 제외
       // 4만 제목 차분에서 나온 오탐을 막는 조건(2026-10-28): 해시태그는 태그 전체가 이름과 같을 때만(#TEN_The_Story·#은채의스타일기 ✗),
@@ -9693,9 +9837,48 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
       const _nrm=x=>String(x||'').toLowerCase().replace(/[^a-z0-9가-힣]/g,''),_tn=_nrm(title);
       const _coTag=t=>gs.some(g=>[g,GROUPS[g]&&GROUPS[g].en].map(_nrm).some(k=>k.length>=3&&k!==_nrm(t)&&_tn.includes(k)));
       const _host=Object.entries({'덕밥집':'최강창민','재친구':'김재중','mc쭌':'이장준'}).some(([k,v])=>v===a.name.ko&&_lt0.includes(k));
-      const tok=(_isHashtagOnlyName(a.name.ko)||_M2_GUEST_DENY.has(a.name.ko))?null:toks.find(t=>!_inGroupName(t)&&!_isHashtagOnlyName(t)&&!(/^[가-힣]{2}$/.test(t)&&t!==a.name.ko)&&(_isLat(t)?(_alias(t)&&(_adj(t)||(_exactTag(t)&&_cueNear(t)))):(([...t].length>=3&&_adj(t))||(_exactTag(t)&&(_cueNear(t)||_host||_coTag(t))))));
+      let tok=(_isHashtagOnlyName(a.name.ko)||_M2_GUEST_DENY.has(a.name.ko))?null:toks.find(t=>!_inGroupName(t)&&!_isHashtagOnlyName(t)&&!(/^[가-힣]{2}$/.test(t)&&t!==a.name.ko)&&(_isLat(t)?(_alias(t)&&(_adj(t)||(_exactTag(t)&&_cueNear(t)))):(([...t].length>=3&&_adj(t))||(_exactTag(t)&&(_cueNear(t)||_host||_coTag(t))))));
+      // "#Blue by #KIMTAEWOO"·"원곡 by" — by 뒤 이름은 곡 크레딧이다(새 경로에서만 거름)
+      const _byCredit=t=>new RegExp('\\bby\\s*#?'+_esc(String(t))+'(?![A-Za-z가-힣])','i').test(rawTitle);
+      // 챌린지 제목에서 그 이름 앞 어딘가에 함께 표시(with·w/·함께·님·선배)가 있는가 — "What's a girl to do with #MONSTAX #JOOHONEY #DAYOUNG"
+      const _withBefore=t=>{const i=_lt0.indexOf('#'+String(t).toLowerCase());return i>0&&/(with|w\/|함께|님|선배)/i.test(_lt0.slice(0,i));};
+      const _enReg=String(a.name.en||'').trim();
+      // 챌린지 곡의 원곡 가수라도 함께 표시가 앞에 있으면 실제로 같이 춘 것이다(다영 'What's a girl to do' 챌린지에 주헌과 함께)
+      const _songOwnerSkip=_isChal&&_m2IsChallengeSongOwner(a,_chalSongs)&&![a.name.ko,_enReg,_romanTok].some(v=>v&&_withBefore(v));
+      if(!tok&&!_songOwnerSkip&&!_m2NameVariants(a).some(v=>v&&_byCredit(v))&&!(_romanTok&&_byRomanKeys.has(_romanTok))){
+        const _deny=_isHashtagOnlyName(a.name.ko)||_M2_GUEST_DENY.has(a.name.ko);
+        // ③ 영문 등록명 해시태그(#ROMIN·#DAYOUNG) — 붙여 쓴 그룹 해시태그(#MONSTAX·#ONEPACT)가 그룹으로 잡히면서 예전엔 역추론으로 붙던
+        //    이 이름들이 빠졌다(Codex 10-27 경고와 같은 회귀, 11-09 차분). 다섯 글자↑·흔한 말 아님·전체에서 그 영문명이 한 사람뿐이고,
+        //    그 사람 그룹 표기가 같이 있거나(#ELAST #ROMIN) 챌린지 제목에서 앞에 함께 표시가 있을 때만 — 미등록 멤버(#LEON)·곡(#THUNDER) 오답 방지.
+        const _enU=_enReg.toLowerCase().replace(/[^a-z]/g,'');
+        // 해시태그 바로 옆(앞 22자·뒤 14자)에 함께 표시 — "#YoungK 선배님과"·"#켄 선배님과"
+        const _cueAt=h=>{const i=_lt0.indexOf(String(h).toLowerCase());return i>=0&&/(with|w\/|feat|님|선배|함께|[&＆×]| x )/.test(_lt0.slice(Math.max(0,i-22),i+h.length+14));};
+        const _enOk=!_deny&&/^[A-Za-z][A-Za-z .'-]*$/.test(_enReg)&&_enU.length>=5&&!_atmNameNeedsCtx(_enReg)&&_exactTag(_enU)&&!_inGroupName(_enReg)
+          &&ARTISTS.filter(o=>o&&o.name&&String(o.name.en||'').toLowerCase().replace(/[^a-z]/g,'')===_enU).length===1
+          &&(_coTag(_enReg)||_cueAt('#'+_enU)||(_isChal&&_withBefore(_enU)));
+        if(_enOk)tok=_enReg;
+        // ④ 한글 등록명 해시태그 + 바로 옆 함께 표시 — 한 글자 이름도(#켄 선배님과). 동명이인 없고 흔한 말·막힌 이름 아닐 때만
+        else if(!_deny&&/^[가-힣]+$/.test(a.name.ko)&&!_ATM_COMMON_KO_WORDS.has(a.name.ko)&&_m2GuestNameIdx.get(a.name.ko.toLowerCase())===1
+          &&_exactTag(a.name.ko)&&_cueAt('#'+a.name.ko)&&!_inGroupName(a.name.ko)&&!_m2IsGroupName(a.name.ko))tok=a.name.ko;
+        // ⑥ 한글 등록명 해시태그와 영문 등록명 해시태그가 둘 다 있으면(#우기 #YUQI·#장우영 #JangWooyoung) 업로더가 같은 사람을 두 번 특정한 것 — 동명이인 없을 때
+        //    단 챌린지 제목이거나 함께 표시·그 사람 그룹 표기가 있을 때만 — 없으면 출연 그룹의 미등록 멤버(#WHIB #JUNMIN #준민 → 싸이커스 준민 ✗)와 못 가른다
+        else if(!_deny&&/^[가-힣]{2,}$/.test(a.name.ko)&&_m2GuestNameIdx.get(a.name.ko.toLowerCase())===1&&_exactTag(a.name.ko)&&_enU.length>=3&&_exactTag(_enU)
+          &&(_isChal||_cueAt('#'+a.name.ko)||_coTag(a.name.ko))
+          &&!_ATM_COMMON_KO_WORDS.has(a.name.ko)&&!_inGroupName(a.name.ko)&&!_m2IsGroupName(a.name.ko))tok=a.name.ko;
+        // ⑤ 성 뗀 이름 해시태그 — 그 사람 그룹 표기가 같이 있고 바로 옆에 함께 표시가 있을 때만(#RocketPunch #수윤 선배님 → 김수윤)
+        else if(!_deny&&(()=>{const st=_atmStripSurname([...String(a.name.ko||'')]);return st&&st.length>=2&&st!==a.name.ko&&!_ATM_COMMON_KO_WORDS.has(st)&&_exactTag(st)&&_coTag(st)&&(_cueAt('#'+st)||_isChal);})())tok=_atmStripSurname([...a.name.ko]);
+        // ① 성+이름 로마자 해시태그 — 그 키가 한 사람만 가리키면 인정. 막힌 이름(이현 등)은 그 사람 그룹 표기가 같이 있을 때만(@BabyDONTCry #Yihyun)
+        else if(_romanTok&&!_inGroupName(_romanTok)&&(_deny?_coTag(_romanTok):(_m2RomanKeyIndex().get(_romanTok).size===1||_coTag(_romanTok))))tok=_romanTok;
+        // ② 챌린지 제목의 한글 등록명 해시태그(#온유·#이영지) — 동명이인 없는 이름(위 toks 거름)·흔한 말·한 글자·막힌 이름 제외
+        else if(_isChal&&!_deny&&/^[가-힣]{2,}$/.test(a.name.ko)&&!_ATM_COMMON_KO_WORDS.has(a.name.ko)&&toks.includes(a.name.ko)&&_exactTag(a.name.ko)&&!_inGroupName(a.name.ko))tok=a.name.ko;
+        if(tok&&_taken(tok))tok=null; // 새 경로 공통: 잡힌 그룹 멤버의 이름·애칭이면 그 사람이다
+      }
       if(!tok)continue;
-      const gk=gs.find(g=>GROUPS[g])||a.name.ko;
+      // 영상 시점에 이미 떠났거나 해체된 그룹은 건너뛴다(2026-11-09 차분 — LNGSHOT 영상의 #박재범이 2PM으로, 2026년 #이채연이 아이즈원으로 붙었다).
+      // 날짜가 없으면 예전처럼 첫 그룹. 남는 그룹이 없으면 그 사람 이름 키(솔로 관례 — group_ko=박재범·이영지).
+      const _pub=publishedAt&&String(publishedAt).slice(0,10);
+      const _live=g=>!_pub||(!_atmLeftBefore(a,g,publishedAt)&&!(()=>{const e=_disbandCutoffDate(g);return e&&_pub>e;})());
+      const gk=gs.find(g=>GROUPS[g]&&_live(g))||(_pub&&gs.some(g=>GROUPS[g])?a.name.ko:gs.find(g=>GROUPS[g]))||a.name.ko;
       if(gk===selfGko||a.name.ko===selfGko)continue; // 솔로 이름 키 채널(디모렉스)의 자기 영상에 자기를 전 그룹 게스트로 붙이던 것
       (membersByGroup[gk]=membersByGroup[gk]||[]).includes(a.name.ko)||membersByGroup[gk].push(a.name.ko);
       if(!matchedGroupKos.includes(gk))matchedGroupKos.push(gk);
