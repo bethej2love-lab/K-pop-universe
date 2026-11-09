@@ -17142,6 +17142,39 @@
     },
     "discography": [
       {
+        "title": "Lovesick",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/34/344/15134344_20261106104804_500.jpg",
+        "releaseDate": "2026.11.09",
+        "trackCount": 4,
+        "titleTrack": "Lovesick",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Lovesick",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Moonlit Club",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Scent",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Favorite Reason",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15134344"
+      },
+      {
         "title": "오늘부터 인간입니다만 OST Part.4",
         "type": "OST",
         "releaseDate": "2026.01.30",

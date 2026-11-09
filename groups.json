@@ -49483,6 +49483,69 @@
   },
   "discography": [
    {
+    "title": "DREAM AFTER DREAM",
+    "type": "정규",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/04/542/15004542_20261106160240_500.jpg",
+    "releaseDate": "2026.11.09",
+    "trackCount": 10,
+    "titleTrack": "Boogie Woogie",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "The Sun",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "Boogie Woogie",
+      "isTitle": true
+     },
+     {
+      "no": 3,
+      "title": "Dream After Dream",
+      "isTitle": false
+     },
+     {
+      "no": 4,
+      "title": "Skydive",
+      "isTitle": false
+     },
+     {
+      "no": 5,
+      "title": "Pressure",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "Watch U Watch Me",
+      "isTitle": false
+     },
+     {
+      "no": 7,
+      "title": "Cool for Me",
+      "isTitle": false
+     },
+     {
+      "no": 8,
+      "title": "Tumbler",
+      "isTitle": false
+     },
+     {
+      "no": 9,
+      "title": "Smile for U",
+      "isTitle": false
+     },
+     {
+      "no": 10,
+      "title": "This Is Your World",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15004542"
+   },
+   {
     "title": "Beat It Up",
     "type": "미니 6집",
     "isMain": true,
@@ -217661,6 +217724,24 @@
   },
   "discography": [
    {
+    "title": "달리기 (Running)",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/34/149/15134149_20261106093838_500.jpg",
+    "releaseDate": "2026.11.09",
+    "trackCount": 1,
+    "titleTrack": "달리기",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "달리기",
+      "isTitle": true
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15134149"
+   },
+   {
     "title": "FULL CIRCLE",
     "type": "정규",
     "isMain": true,
@@ -235435,6 +235516,44 @@
   },
   "discography": [
    {
+    "title": "Across Dimensions",
+    "type": "미니",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/20/216/15120216_20261103144910_500.jpg",
+    "releaseDate": "2026.11.09",
+    "trackCount": 5,
+    "titleTrack": "REBELS",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "연애세포 (恋愛細胞)",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "REBELS",
+      "isTitle": true
+     },
+     {
+      "no": 3,
+      "title": "BACK 2 THE FUTURE",
+      "isTitle": false
+     },
+     {
+      "no": 4,
+      "title": "ANTI-HERO",
+      "isTitle": false
+     },
+     {
+      "no": 5,
+      "title": "Dream Residue",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15120216"
+   },
+   {
     "title": "STARBOUND",
     "type": "싱글",
     "isMain": true,
@@ -240947,6 +241066,44 @@
    "x": "https://x.com/KEYVITUP_inkode"
   },
   "discography": [
+   {
+    "title": "2ND EP [NA-GARI]",
+    "type": "미니",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/25/000/15125000_20261104102038_500.jpg",
+    "releaseDate": "2026.11.09",
+    "trackCount": 5,
+    "titleTrack": "NAGARI",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "CHEMISTRY",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "NAGARI",
+      "isTitle": true
+     },
+     {
+      "no": 3,
+      "title": "TA",
+      "isTitle": false
+     },
+     {
+      "no": 4,
+      "title": "ALRIGHT",
+      "isTitle": false
+     },
+     {
+      "no": 5,
+      "title": "LOVE ME DON'T LEAVE ME ALONE",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15125000"
+   },
    {
     "title": "1ST EP ALBUM [KEYVITUP]",
     "type": "미니 1집",
