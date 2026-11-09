@@ -59,5 +59,8 @@ ck(has(P('Ten used the snow filter! #WayV #威神V'), '웨이션브이', '텐'),
 ck(!hasG(P('I DONT CARE #BabyDONTCry #BDC #베돈크 #IDONTCARE'), '비디씨'), '#BDC는 베이비돈크라이 표기가 있으면 그룹 비디씨 아님');
 ck(!hasG(P('#WHIB#휘브#JUNMIN#준민 #WONJUN#원준'), '싸이커스'), '#JUNMIN #준민(휘브 미등록 멤버) → 싸이커스 준민 아님');
 
+// ⑥ 자체 채널 멤버 해시태그 — 게스트 그룹만 제목에 있어도 채널 멤버(#HYUI)를 놓치지 않기
+ck(has(P('#StrayKids #한 선배님 goes "O-RLY?" | #HYUI', '넥스지', '2025-05-01'), '넥스지', '휴이') && has(P('#StrayKids #한 선배님 goes "O-RLY?" | #HYUI', '넥스지', '2025-05-01'), '스트레이키즈', '한'), '넥스지 채널 #StrayKids #한 … #HYUI → 넥스지 휴이 + 스키즈 한');
+
 console.log(pass ? '\n✅ 챌린지 태깅 테스트 통과' : '\n❌ 실패 있음');
 process.exit(pass ? 0 : 1);

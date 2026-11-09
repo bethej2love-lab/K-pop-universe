@@ -9768,6 +9768,12 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // 다른 그룹 멤버 게스트(2026-10-28 Codex 감사17차) — 그룹이 잡히면 위 역추론을 아예 안 타서, "지디 X 부석순"·"(GD & 부석순)"·
   // "#GD #부석순"의 지디가 영원히 with_로 안 붙었다. 근거가 분명할 때만 넣는다: 해시태그(#GD) 또는 콜라보 표시(X·&·×·with·랑·와·과)가
   // 바로 옆에 붙은 이름. 잡힌 그룹의 멤버·동명이인 있는 이름·흔한 말·한 글자는 제외(역추론과 같은 보수 기준).
+  // 자체 채널 멤버 해시태그(2026-11-09) — 채널 그룹명이 제목에 없고 게스트 그룹만 잡히면(넥스지 채널 "#StrayKids #한 선배님 … #HYUI")
+  // 역추론을 안 타서 채널 멤버 휴이가 빠졌다. 해시태그로 적힌 채널 그룹 현 멤버만 찾아 채널 그룹을 맨 앞에 넣는다(주인은 원래 채널이 정한다).
+  if(selfGko&&GROUPS[selfGko]&&matchedGroupKos.length&&!matchedGroupKos.includes(selfGko)){
+    const _selfMs=ARTISTS.filter(a=>_artistGroups(a).some(g=>g&&g.ko===selfGko)&&!_atmLeftBefore(a,selfGko,publishedAt)&&(_m2NameVariants(a).some(v=>v&&hitHashtag(v))||_rosterTagHit(a))).map(a=>a.name.ko);
+    if(_selfMs.length){matchedGroupKos.unshift(selfGko);membersByGroup[selfGko]=_selfMs;_trace.push({rule:'self_roster_hashtag',token:selfGko,effect:_selfMs.join(',')});}
+  }
   if(matchedGroupKos.length){
     const _esc=s=>String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
     const _B='(^|[^가-힣A-Za-z0-9])',_E='([^가-힣A-Za-z0-9]|$)';
