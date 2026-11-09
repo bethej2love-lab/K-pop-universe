@@ -70,5 +70,9 @@ ck(!hasG(P('#xikers #세은 님과 BLUSH🌸 @xikers_official #싸이커스 #SEE
 ck(!hasG(P('#XODIAC #규민 선배님과 Dopamine 폭발💥#AHOF #아홉 #JEONGWOO #서정우 #Sugar_High', '아홉'), '트레저'), '#JEONGWOO(서정우 Seo Jungwoo) → 트레저 정우 아님(로마자 흔들림 포함)');
 ck(!hasG(P('#루네이트 #LUN8 #나비 #Butterfly', '루네이트'), '시크릿넘버'), '#나비(루네이트 곡) → 시크릿넘버 나비 아님');
 
+// ⑧ tvN 예능 '온앤오프' 디글 꼬리표는 그룹 ONF가 아니다(정식 ONF 표기는 그대로)
+ck(!hasG(P('[#온앤오프] 승윤의 싱어게인 ON🎤 음악인들이 거쳐간 인디밴드의 성지에 금의환향한 이승윤✨'), '온앤오프'), '"[#온앤오프]" 예능 클립 → 그룹 온앤오프 아님');
+ck(has(P('온앤오프 효진 직캠'), '온앤오프', '효진'), '"온앤오프 효진 직캠" → 그룹 온앤오프 그대로');
+
 console.log(pass ? '\n✅ 챌린지 태깅 테스트 통과' : '\n❌ 실패 있음');
 process.exit(pass ? 0 : 1);

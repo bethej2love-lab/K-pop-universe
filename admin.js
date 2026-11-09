@@ -8527,6 +8527,8 @@ function _m2FullNameShadowed(tok,a,text){
 const _GROUP_TITLE_CONFLICT_EXCLUDE={
   // 베이비돈크라이 공식 해시태그 #BDC는 2019 그룹 비디씨(BDC)가 아니다 — 베이비돈크라이 표기가 같이 있으면 비디씨 제외(2026-11-09 차분)
   '비디씨':[/baby\s*don'?t\s*cry|베이비돈크라이|베돈크/i],
+  // tvN 예능 '온앤오프' 디글 클립 꼬리표 "[#온앤오프]"는 그룹 ONF가 아니다(Codex 검수172·195차 — 10월에도 새로 들어와 공개 저장됨)
+  '온앤오프':[/\[\s*#\s*온앤오프\s*\]/],
   // CxM 팬파티의 곡명 Fiesta는 동명의 걸그룹이 아니다. 실제 FIESTAR 공연 제목은 유지한다.
   '피에스타':[/\bC[x×]M\s+유닛\s+팬파티\s+(?:피에스타|Fiesta)(?![가-힣a-z0-9])/i],
   '슈퍼노바':[/aespa/i,/에스파/,/david\s*guetta/i,/데이비드\s*게타/,/supernova\s*love/i,/아이브|\bIVE\b/i],
