@@ -35,6 +35,11 @@ const path = require('path');
 
 const ROOT = __dirname;
 const SITE = 'https://kpop-universe.kr';
+// Match index.html automation detection before the Google tag can execute.
+const SEO_GA_TAG = `<script>
+try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>`;
 // 영상 목록 공유 링크(2026-11-02) — 앱의 "이 목록 공유"는 그룹·멤버 정적 페이지 주소 + #…&vf=… 로 나간다. 블로그·메신저는 # 뒤를 무시하고
 // 이 페이지의 미리보기(그 사람 썸네일)를 쓰고(예전 kpop-universe.kr/#… 는 늘 사이트 기본 그림), 사람은 바로 앱의 그 목록으로 넘어간다.
 const LIST_FWD = `<script>(function(){var h=location.hash;if(/(^#|&)vf=/.test(h))location.replace('${SITE}/'+h);})();</script>`;
@@ -467,8 +472,8 @@ ${LIST_FWD}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   ${SEO.EXTRA_CSS}
 </style>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.replace(/\/$/,'').split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
+${SEO_GA_TAG}
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
 <script src="/seo_play.js" defer></script>
 </head>
 <body>
@@ -711,8 +716,8 @@ ${LIST_FWD}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   ${SEO.EXTRA_CSS}
 </style>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.replace(/\/$/,'').split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
+${SEO_GA_TAG}
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
 <script src="/seo_play.js" defer></script>
 </head>
 <body>
@@ -938,8 +943,8 @@ function hubPageHtml(lang, relLinks) {
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
 </style>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.replace(/\/$/,'').split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
+${SEO_GA_TAG}
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
 <script src="/seo_play.js" defer></script>
 </head>
 <body>
@@ -1104,8 +1109,8 @@ function relPageHtml(o) {
   .lang-switch{margin-top:36px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
 </style>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.replace(/\/$/,'').split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
+${SEO_GA_TAG}
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
 <script src="/seo_play.js" defer></script>
 </head>
 <body>
@@ -1542,7 +1547,7 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
 <link rel="preconnect" href="https://i.ytimg.com">
 <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>
 <link rel="stylesheet" href="${SITE}/song-page.css?v=${SONG_CSS_V}">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
+${SEO_GA_TAG}
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var e=((document.querySelector('h1')||{}).textContent||'').trim();gtag('event','seo_land',{entity_name:e,page_type:'${ms ? 'member_song' : 'song'}'});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:e,page_type:'${ms ? 'member_song' : 'song'}'});});});</script>
 <script src="/seo_play.js" defer></script>
 ${LIST_FWD}
@@ -1644,7 +1649,7 @@ function buildRankPages() {
 <link rel="preconnect" href="https://i.ytimg.com">
 <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>
 <link rel="stylesheet" href="${SITE}/song-page.css?v=${SONG_CSS_V}">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
+${SEO_GA_TAG}
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){gtag('event','seo_land',{entity_name:${JSON.stringify(h1)},page_type:'rank'});});</script>
 <script src="/seo_play.js" defer></script>
 </head>
@@ -1759,7 +1764,7 @@ function buildProgramPages() {
 <link rel="preconnect" href="https://i.ytimg.com">
 <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>
 <link rel="stylesheet" href="${SITE}/song-page.css?v=${SONG_CSS_V}">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
+${SEO_GA_TAG}
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){gtag('event','seo_land',{entity_name:${JSON.stringify(h1)},page_type:'${gko ? 'program_group' : 'program'}'});});</script>
 <script src="/seo_play.js" defer></script>
 </head>
@@ -1855,7 +1860,7 @@ function buildYearPages() {
 <link rel="icon" href="${SITE}/icons/icon-192.png" type="image/png">
 <link rel="preconnect" href="https://i.ytimg.com">
 <link rel="stylesheet" href="${SITE}/song-page.css?v=${SONG_CSS_V}">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
+${SEO_GA_TAG}
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){gtag('event','seo_land',{entity_name:${JSON.stringify(h1)},page_type:'year_${kind}'});});</script>
 <script src="/seo_play.js" defer></script>
 </head>
@@ -1920,7 +1925,7 @@ ${ogImage ? `<meta property="og:image" content="${ogImage}">\n<meta name="twitte
 <link rel="icon" href="${SITE}/icons/icon-192.png" type="image/png">
 <link rel="preconnect" href="https://i.ytimg.com">
 <link rel="stylesheet" href="${SITE}/song-page.css?v=${SONG_CSS_V}">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
+${SEO_GA_TAG}
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){gtag('event','seo_land',{entity_name:${JSON.stringify(h1)},page_type:'${kind}'});});</script>
 <script src="/seo_play.js" defer></script>
 </head>
