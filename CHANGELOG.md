@@ -4,7 +4,8 @@
 - **[재스캔] 182·186~194차 현재값 대조** — 라이즈 Fame/RIIZING/Epilogue, 제베원 BLUE PARADISE, SM THE BALLAD 일본어 Blind ID는 11-06 Codex 정정으로 이미 맞음. 같은 songId에 다른 제목 붙은 것 0(트리플에스 일본어/영어 표기 5묶음은 같은 곡 표기).
 - **[데이터] 수록곡 보충 7앨범** tools/melon_track_refill.mjs를 melonVia 번호로도 읽게 한 임시 실행(앨범명 대조 유지) — H.O.T. Outside Castle 5집 9→14(정식 표시판, [3] variant는 그대로)·Age of Peace OST 0→10, 신화 We 11집 5→10·Unchanging Pt.1 3→5, NRG 7집 4→12, 샤크라 크리스마스 스페셜 4→13, 쥬얼리 3집 8→12. Unchanging·샤크라는 멜론 앨범명 표기만 달라(UNCHANGING PART1 / Chakra's Ringing Gingle Bells) 번호 지정 예외 허용. 기존 songId·크레딧 보존 병합.
 - **[데이터] 곡 수 숫자 정정 12앨범** — 멜론 공식 곡 수 = 우리 곡 목록인데 trackCount만 1 많던 것: 엔시티 위시 WISH, 베몬 춤, 킥플립 4, 젝스키스 ANOTHER LIGHT, 나우즈 5. build_slim_data(트랙 43941 일치)·validate-data 오류 0.
-- **⏳ 남은 12** melonVia가 베스트/라이브 앨범을 가리켜 도구가 막은 것(정상 차단): 신화 2·3·6집, 핑클 1·2·4집·Fin.K.L·Memories & Melodies(13>12), 베이비복스 5집·Ya Ya Ya, 쥬얼리 6집(11>9), 나우즈 Fly to the youth. 각 앨범의 진짜 멜론 번호를 찾아야 함.
+- **[데이터] 남은 12 중 10 처리** — 멜론 아티스트 앨범 목록(albumPaging)에서 진짜 앨범 번호 확인 후 melonAlbumId 지정·보충: 신화 Wedding 6집 6→13(멜론명 '너의 결혼식' #26431, 정식 순서로 — 183차 벅스 순서와 일치, 타이틀 너의 결혼식·중독 둘 다 유지), Only One 3집 #4249 8→14, T.O.P 2집 #4247 7→13, 핑클 Fin.K.L(멜론 '핑클 디지털 앨범' #308719) 1→3·영원 4집 #304202 8→15·White 2집 #5291 8→12·Blue Rain 1집 #3248 8→11, 베이비복스 Boyish Story 5집 #2463 10→16. 곡 수 숫자만: 핑클 Memories & Melodies 12→13, 쥬얼리 Sophisticated 9→11. 트랙 43982 일치·validate 오류 0.
+- **⏳ 남은 2(멜론에 해당 판 없음)** 베이비복스 Ya Ya Ya(1998 싱글 6곡 중 4곡), 나우즈 Fly to the youth 한국어판(멜론엔 중국어판만). 그대로 둠.
 
 ## 2026-11-09 (Claude Code — Codex 검수 146~194차 기록 이관)
 - **[발견] 146~194차 검수 기록 49개가 main에 없었음** — Codex 작업 폴더 .audit-worktrees/seo-language-switch의 커밋 안 된 CHANGELOG(1,129줄)와 근거 폴더에만 존재. 195~245차는 11-06 Codex가 이관·실행 상태표(execution-status.json)를 남겼지만 146~194차는 누락. → audit-materials/backlog-146-194/original-audit-notes-146-194.md + 근거 폴더 content-audit-2026-11-04·05, youtube-quota-2026-11-04 복사.
