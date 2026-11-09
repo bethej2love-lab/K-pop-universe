@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-11-10 (Claude Code — CI 빨간불 2건 수정)
+- 매시간 영상 동기화가 11-09 09:33~14:00 UTC 연속 실패: web-push 4.0(11-06 배포)이 default export를 없애 `send_untagged_alert.mjs` import가 깨짐 → 워크플로에서 `web-push@3`으로 고정.
+- Supabase RLS audit 11-05부터 매일 실패: 새 테이블 `ig_photo_tags`(읽기 공개·쓰기 관리자)가 tests/rls.test.js EXPECT에 없었음 → 추가, 로컬 통과.
+- 참고: 매일 루틴 11-09 2회 타임아웃(조회수 갱신·자동 태깅 단계가 평소 30초~3분 → 55분). 같은 날 DB 소급 작업 부하와 겹친 것으로 보여 오늘 밤 실행 결과 보고 판단.
+
 ## 2026-11-09 (Claude Code — Codex 195·203·205·229차 마무리 + 오늘 세션 정리)
 - **[매처]** _GROUP_TITLE_CONFLICT_EXCLUDE에 '온앤오프': "[#온앤오프]"(tvN 예능 디글 꼬리표)면 그룹 ONF 제외 — 10월에도 새로 공개 저장되던 경로(195차). 정식 ONF 표기는 그대로(테스트 2건 추가).
 - **[DB] sql/codex_audit195_205_2026-11-09.sql**(+undo) — 203차 루나 라디오(b-n6mzRER8E) 크리스탈 → 루나(크리스탈은 인용 언급), 205차 루나 솔로 데뷔 무대(YXRJTwpLRRo, oEmbed 401 = 외부 재생 막힘이지 삭제 아님) 루나 태그, 195차 남은 [#온앤오프] 클립 4: 하하·이승윤·이혜성 무관, 소유 → 소유. 전부 잠금.

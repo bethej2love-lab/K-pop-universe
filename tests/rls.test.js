@@ -49,6 +49,8 @@ const EXPECT = {
   // 공개 프로필·게시물 캐시. sql/2026-10-19_ig_stats.sql의 SELECT 전용 정책을 감시.
   // Meta API 인증과 별개. anon INSERT가 열렸으면 실패시키며 DB 정책은 완화하지 않는다.
   ig_accounts:                  { read: 'public', write: 'locked' },
+  // 인스타 사진별 멤버 태그(sql/2026-11-06_ig_photo_tags.sql). 읽기 공개, 쓰기는 관리자만.
+  ig_photo_tags:                { read: 'public', write: 'locked' },
   name_match_whitelist:         { read: 'public', write: 'locked' },
   kpop_events:                  { read: 'public', write: 'locked' },
   melon_yearly_top100:          { read: 'public', write: 'locked' },

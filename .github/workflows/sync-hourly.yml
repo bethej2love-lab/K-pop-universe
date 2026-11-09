@@ -117,5 +117,5 @@ jobs:
           VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
-          npm install web-push --no-save --quiet
+          npm install web-push@3 --no-save --quiet
           node tools/send_untagged_alert.mjs

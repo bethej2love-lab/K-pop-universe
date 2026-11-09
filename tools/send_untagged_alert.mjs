@@ -7,7 +7,7 @@
 //   category = 'live'  AND  (members IS NULL OR members = '{}')
 //   AND  published_at >= (오늘 - 7일)  AND  content_flag IS NULL
 //
-// 의존 패키지: web-push (워크플로에서 npm install web-push --no-save)
+// 의존 패키지: web-push (워크플로에서 npm install web-push@3 --no-save — 4.0(11-06)은 default export 없음)
 // env:
 //   VAPID_PRIVATE_KEY  — GitHub Secret (비밀키)
 //   SUPABASE_ANON_KEY  — 없으면 코드 내 하드코딩 폴백
