@@ -53267,7 +53267,7 @@
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/53/c3/87/53c3877c-5ff2-ce33-997b-1fddb41dc9e0/NCTWISH_WISH_DC_F_s.jpg/600x600bb.jpg",
     "releaseDate": "2024.02.28",
-    "trackCount": 5,
+    "trackCount": 4,
     "titleTrack": "WISH",
     "tracks": [
      {
@@ -83329,7 +83329,7 @@
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/01/cb/8f/01cb8f4b-e6da-9898-6c66-c77fa5bc3c48/8809519881283_cover.jpg/600x600bb.jpg",
     "releaseDate": "2026.05.04",
-    "trackCount": 5,
+    "trackCount": 4,
     "titleTrack": "CHOOM",
     "tracks": [
      {
@@ -113028,7 +113028,7 @@
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/32/50/a9/3250a985-8f85-7494-908a-086c552b18d8/8809928958071_Cover.jpg/600x600bb.jpg",
     "releaseDate": "2026.04.06",
-    "trackCount": 8,
+    "trackCount": 7,
     "titleTrack": "Eye-Poppin'",
     "tracks": [
      {
@@ -113151,7 +113151,7 @@
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/74/7b/ab/747bab11-0bb6-cf96-5724-47b0af9be6a7/8809928954554_Cover.jpg/600x600bb.jpg",
     "releaseDate": "2025.09.22",
-    "trackCount": 8,
+    "trackCount": 7,
     "titleTrack": "My First Love Song",
     "tracks": [
      {
@@ -113205,7 +113205,7 @@
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/14/10/bf/1410bfce-fa69-8841-e433-ca616776de08/8809928953090_Cover.jpg/600x600bb.jpg",
     "releaseDate": "2025.05.26",
-    "trackCount": 8,
+    "trackCount": 7,
     "titleTrack": "FREEZE",
     "tracks": [
      {
@@ -113259,7 +113259,7 @@
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/1b/6c/74/1b6c74ef-92d7-9a32-2a8e-6676e0bb9b39/8809928953663_Cover.jpg/600x600bb.jpg",
     "releaseDate": "2025.01.20",
-    "trackCount": 7,
+    "trackCount": 6,
     "titleTrack": "Mama Said",
     "tracks": [
      {
@@ -172245,8 +172245,9 @@
      },
      {
       "no": 2,
-      "title": "Shinvi",
-      "isTitle": false
+      "title": "신비 (Delight)",
+      "isTitle": false,
+      "songId": "75264"
      },
      {
       "no": 3,
@@ -172256,36 +172257,66 @@
      },
      {
       "no": 4,
+      "title": "My Mother",
+      "isTitle": false,
+      "songId": "75277"
+     },
+     {
+      "no": 5,
       "title": "꿈의 기도",
       "isTitle": false,
       "songId": "75267"
      },
      {
-      "no": 5,
+      "no": 6,
       "title": "파랑새의 소원",
       "isTitle": false,
       "songId": "75268"
      },
      {
-      "no": 6,
+      "no": 7,
+      "title": "Time Will Tell",
+      "isTitle": false,
+      "songId": "75269"
+     },
+     {
+      "no": 8,
       "title": "One Last Love",
       "isTitle": false,
       "songId": "75270"
      },
      {
-      "no": 7,
+      "no": 9,
+      "title": "Good-Bye 이젠 (Goodbye For The Last)",
+      "isTitle": false,
+      "songId": "75271"
+     },
+     {
+      "no": 10,
       "title": "For 연가",
       "isTitle": false,
       "songId": "17691"
      },
      {
-      "no": 8,
+      "no": 11,
+      "title": "Illusion",
+      "isTitle": false,
+      "songId": "75273"
+     },
+     {
+      "no": 12,
       "title": "Natural Born Killer",
       "isTitle": false,
       "songId": "75274"
      },
      {
-      "no": 9,
+      "no": 13,
+      "title": "버려진 아이들",
+      "isTitle": false,
+      "songId": "75275"
+     },
+     {
+      "no": 14,
       "title": "늘 지금처럼",
       "isTitle": false,
       "songId": "75276"
@@ -172300,8 +172331,69 @@
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music69/v4/82/5f/0a/825f0aa4-6f2c-7a28-ad38-9b5e0bc47432/hot_age_of_peace_OST.jpg/600x600bb.jpg",
     "releaseDate": "2000.07.01",
     "trackCount": 10,
-    "titleTrack": "",
-    "tracks": [],
+    "titleTrack": "OP.T (Operation Takeover)",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Age Of Peace",
+      "isTitle": false,
+      "songId": "3454850"
+     },
+     {
+      "no": 2,
+      "title": "OP.T (Operation Takeover)",
+      "isTitle": true,
+      "songId": "3454851"
+     },
+     {
+      "no": 3,
+      "title": "OP.T #1 - '사투(死鬪)'",
+      "isTitle": false,
+      "songId": "3454852"
+     },
+     {
+      "no": 4,
+      "title": "OP.T #2 - 'Zeus'",
+      "isTitle": false,
+      "songId": "3454853"
+     },
+     {
+      "no": 5,
+      "title": "The Best",
+      "isTitle": false,
+      "songId": "3454854"
+     },
+     {
+      "no": 6,
+      "title": "TTTrack #1 (Techno Time Track #1)",
+      "isTitle": false,
+      "songId": "3454855"
+     },
+     {
+      "no": 7,
+      "title": "TTTrack #1 (Techno Time Track #2)",
+      "isTitle": false,
+      "songId": "3454856"
+     },
+     {
+      "no": 8,
+      "title": "OP.T - (3D Movie - 'Concert' Scene)",
+      "isTitle": false,
+      "songId": "3454857"
+     },
+     {
+      "no": 9,
+      "title": "OP.T (Inst.)",
+      "isTitle": false,
+      "songId": "3454858"
+     },
+     {
+      "no": 10,
+      "title": "The Best (Inst.)",
+      "isTitle": false,
+      "songId": "3454859"
+     }
+    ],
     "melonVia": "1316452"
    },
    {
@@ -172999,7 +173091,7 @@
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/ad/21/0b/ad210b32-86a4-c395-5631-b3ef4acdea85/DS_COVER.jpg/600x600bb.jpg",
     "releaseDate": "2017.09.21",
-    "trackCount": 10,
+    "trackCount": 9,
     "titleTrack": "특별해",
     "tracks": [
      {
@@ -174269,18 +174361,33 @@
     "tracks": [
      {
       "no": 1,
-      "title": "All Your Dreams",
-      "isTitle": true
+      "title": "우리",
+      "isTitle": false,
+      "songId": "30121531"
      },
      {
       "no": 2,
-      "title": "If",
-      "isTitle": false
+      "title": "오렌지",
+      "isTitle": true,
+      "songId": "30121532"
      },
      {
       "no": 3,
-      "title": "Refusal",
-      "isTitle": false
+      "title": "아는 사이",
+      "isTitle": false,
+      "songId": "30121533"
+     },
+     {
+      "no": 4,
+      "title": "별",
+      "isTitle": false,
+      "songId": "30121534"
+     },
+     {
+      "no": 5,
+      "title": "#Chocolat",
+      "isTitle": false,
+      "songId": "30121535"
      }
     ],
     "melonAlbumId": "10019045"
@@ -174320,24 +174427,57 @@
      },
      {
       "no": 2,
+      "title": "고양이",
+      "isTitle": false,
+      "songId": "5606943"
+     },
+     {
+      "no": 3,
       "title": "표적",
       "isTitle": true,
       "songId": "5600224"
      },
      {
-      "no": 3,
-      "title": "My Girl",
-      "isTitle": false
-     },
-     {
       "no": 4,
-      "title": "Baby Mama",
-      "isTitle": false
+      "title": "White Shirts",
+      "isTitle": false,
+      "songId": "5606944"
      },
      {
       "no": 5,
-      "title": "Waiting",
-      "isTitle": false
+      "title": "Don't Cry",
+      "isTitle": false,
+      "songId": "5606945"
+     },
+     {
+      "no": 6,
+      "title": "얼음달",
+      "isTitle": false,
+      "songId": "5606946"
+     },
+     {
+      "no": 7,
+      "title": "Give it 2 Me",
+      "isTitle": false,
+      "songId": "5606947"
+     },
+     {
+      "no": 8,
+      "title": "I'm in Love",
+      "isTitle": false,
+      "songId": "5606948"
+     },
+     {
+      "no": 9,
+      "title": "Memory",
+      "isTitle": false,
+      "songId": "5606949"
+     },
+     {
+      "no": 10,
+      "title": "Never Give Up",
+      "isTitle": false,
+      "songId": "5606950"
      }
     ],
     "melonVia": "2305495",
@@ -181604,20 +181744,69 @@
      },
      {
       "no": 2,
+      "title": "The One",
+      "isTitle": false,
+      "songId": "1001957"
+     },
+     {
+      "no": 3,
       "title": "달려!",
       "isTitle": false,
       "songId": "1001958"
      },
      {
-      "no": 3,
-      "title": "Nostalgia",
-      "isTitle": false
+      "no": 4,
+      "title": "선물",
+      "isTitle": false,
+      "songId": "1001959"
      },
      {
-      "no": 4,
+      "no": 5,
+      "title": "널 보낸후",
+      "isTitle": false,
+      "songId": "1001960"
+     },
+     {
+      "no": 6,
+      "title": "잠시만 안녕",
+      "isTitle": false,
+      "songId": "1001961"
+     },
+     {
+      "no": 7,
+      "title": "Dr. DJ",
+      "isTitle": false,
+      "songId": "1001962"
+     },
+     {
+      "no": 8,
       "title": "미치겠네!!!",
       "isTitle": false,
       "songId": "1001963"
+     },
+     {
+      "no": 9,
+      "title": "Shiny",
+      "isTitle": false,
+      "songId": "1001964"
+     },
+     {
+      "no": 10,
+      "title": "바램",
+      "isTitle": false,
+      "songId": "1001965"
+     },
+     {
+      "no": 11,
+      "title": "휴식처럼...",
+      "isTitle": false,
+      "songId": "1001966"
+     },
+     {
+      "no": 12,
+      "title": "잠시만 안녕 (Inst.)",
+      "isTitle": false,
+      "songId": "1001967"
      }
     ],
     "melonVia": "310110"
@@ -183963,10 +184152,64 @@
       "songId": "8904"
      },
      {
+      "no": 4,
+      "title": "고요한 밤",
+      "isTitle": false,
+      "songId": "8905"
+     },
+     {
+      "no": 5,
+      "title": "Christmas 시리즈",
+      "isTitle": false,
+      "songId": "8911"
+     },
+     {
+      "no": 6,
+      "title": "Santa Claus Is Coming To Town",
+      "isTitle": false,
+      "songId": "8912"
+     },
+     {
+      "no": 7,
+      "title": "Chakra X-Mas",
+      "isTitle": false,
+      "songId": "8913"
+     },
+     {
+      "no": 8,
+      "title": "Amazing Grace",
+      "isTitle": false,
+      "songId": "8914"
+     },
+     {
+      "no": 9,
+      "title": "Feliz Navida",
+      "isTitle": false,
+      "songId": "8915"
+     },
+     {
+      "no": 10,
+      "title": "석별의 정",
+      "isTitle": false,
+      "songId": "8916"
+     },
+     {
+      "no": 11,
+      "title": "뒷북치는 소년",
+      "isTitle": false,
+      "songId": "8917"
+     },
+     {
       "no": 12,
       "title": "Hey U! (feat. Yoshi)",
       "isTitle": false,
       "songId": "8918"
+     },
+     {
+      "no": 13,
+      "title": "연주곡",
+      "isTitle": false,
+      "songId": "8919"
      }
     ],
     "melonAlbumId": "813"
@@ -200710,28 +200953,57 @@
      },
      {
       "no": 4,
-      "title": "Love Love Love",
-      "isTitle": false
+      "title": "사랑이란 이유로",
+      "isTitle": false,
+      "songId": "618423"
      },
      {
       "no": 5,
-      "title": "비밀",
-      "isTitle": false
+      "title": "Fantasy",
+      "isTitle": false,
+      "songId": "611871"
      },
      {
       "no": 6,
-      "title": "Kissing You",
-      "isTitle": false
+      "title": "Amore (부제 : 아름다운 날들)",
+      "isTitle": false,
+      "songId": "608201"
      },
      {
       "no": 7,
-      "title": "걱정이야",
-      "isTitle": false
+      "title": "고백 (Duet 박정아, 최현준)",
+      "isTitle": false,
+      "songId": "611925"
      },
      {
       "no": 8,
-      "title": "Good",
-      "isTitle": false
+      "title": "So Long",
+      "isTitle": false,
+      "songId": "618426"
+     },
+     {
+      "no": 9,
+      "title": "유혹",
+      "isTitle": false,
+      "songId": "618780"
+     },
+     {
+      "no": 10,
+      "title": "끝",
+      "isTitle": false,
+      "songId": "611907"
+     },
+     {
+      "no": 11,
+      "title": "Dear My Heart",
+      "isTitle": false,
+      "songId": "608330"
+     },
+     {
+      "no": 12,
+      "title": "My Life",
+      "isTitle": false,
+      "songId": "608162"
      }
     ],
     "melonVia": "40235"
@@ -241021,7 +241293,7 @@
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/49/9d/98/499d9852-6a5a-4c3e-5cb7-2de27e20d3c8/820233795364.jpg/600x600bb.jpg",
     "releaseDate": "2026.08.05",
-    "trackCount": 2,
+    "trackCount": 1,
     "titleTrack": "Achilles",
     "tracks": [
      {
@@ -241212,7 +241484,7 @@
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/b5/af/92/b5af92b9-340b-82b7-9198-0de0e66d490f/199806318850.jpg/600x600bb.jpg",
     "releaseDate": "2025.11.26",
-    "trackCount": 4,
+    "trackCount": 3,
     "titleTrack": "GET BUCK",
     "tracks": [
      {
@@ -241242,7 +241514,7 @@
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ac/81/98/ac819854-39d6-3e83-12b9-e9d9c1fe9f00/199350944635.jpg/600x600bb.jpg",
     "releaseDate": "2025.07.09",
-    "trackCount": 6,
+    "trackCount": 5,
     "titleTrack": "Fly to the youth (feat. YUQI)",
     "tracks": [
      {
@@ -241302,7 +241574,7 @@
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/92/b5/5d/92b55d93-b496-3a0a-f950-624fb1db9287/198704241291.jpg/600x600bb.jpg",
     "releaseDate": "2024.11.21",
-    "trackCount": 2,
+    "trackCount": 1,
     "titleTrack": "Let's get it",
     "tracks": [
      {
@@ -241320,7 +241592,7 @@
     "isMain": true,
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/3c/da/c2/3cdac26c-e354-ac0c-b0d4-f933fc65cd46/198704113130.jpg/600x600bb.jpg",
     "releaseDate": "2024.08.27",
-    "trackCount": 4,
+    "trackCount": 3,
     "titleTrack": "Why Not?",
     "tracks": [
      {
