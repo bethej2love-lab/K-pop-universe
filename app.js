@@ -10115,7 +10115,7 @@ function _gaEvent(name,params){
 // ⚠️ 어드민(본인 테스트)은 세지 않는다. 테이블이 아직 없으면(SQL 미실행) 조용히 버린다.
 // var: _gaEvent가 이 줄보다 먼저 불려도 TDZ 예외가 안 나게(아래 _appEvent가 미초기화면 그냥 건너뜀)
 var _APP_EV=new Set(['view_group','view_member','video_play','search','favorite_group','favorite_member','explore_open',
-  'share_card','deeplink_open','story_to_app','shelf_click','surf_hop','copy_public_collection','save_collection','save_scrap','visit','chem_open','ref']);
+  'share_card','deeplink_open','story_to_app','shelf_click','surf_hop','copy_public_collection','save_collection','save_scrap','visit','chem_open','ref','from_seo']);
 var _appEvQ=[],_appEvT=null,_appEvDead=false;
 function _appEvent(ev,k){
   if(_appEvDead||window._kpuAutomated)return;
@@ -10154,6 +10154,11 @@ async function _appEvFlush(){
     const u=new URLSearchParams(location.search).get('utm_source');
     let h='';try{h=document.referrer?new URL(document.referrer).hostname:'';}catch(e){}
     if(h.startsWith('www.'))h=h.slice(4);
+    // 우리 정적 페이지에서 넘어온 것은 'from_seo'로 따로 센다(2026-11-10 정적 페이지 → 앱 전환 측정, seo_events와 짝)
+    if(!u&&h.endsWith('kpop-universe.kr')){let p='';try{p=new URL(document.referrer).pathname;}catch(e){}
+      if(p&&p!=='/'&&p!=='/index.html'){sessionStorage.setItem('kpu_ref_sent','1');const s=p.split('/').filter(Boolean);if(s[0]==='en')s.shift();
+        _appEvent('from_seo',s[0]!=='g'?'other':s.indexOf('s')>0?'song':s.indexOf('a')>0?'album':s.length>=3?'member':'group');}
+      return;}
     const src=u||(h&&!h.endsWith('kpop-universe.kr')?h:'');
     if(!src)return;
     sessionStorage.setItem('kpu_ref_sent','1');

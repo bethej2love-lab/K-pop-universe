@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-11-10 (Claude Code — 정적 페이지 → 앱 전환 측정)
+- 사용자: GA 650명 vs 앱 기록 64명(11-03~09) 차이 문의 → 원인은 GA가 정적 착지 페이지(챗지피티 331명 유입 대부분) 방문자까지 세고 app_events는 앱을 연 사람만 셈(+GA엔 Ashburn 128 등 데이터센터 접속 섞임). "정적 페이지에서 앱으로 오는 비율을 높이는 게 관건" → 먼저 우리 쪽 측정.
+- **[SQL 실행] sql/2026-11-10_seo_events.sql**: 잠긴 표 `seo_events`(ev·page_type·path·src·did) + `log_seo_event()` 함수(security definer, ev는 land/play/cta/to_app/yt만, 길이 제한, anon 실행 허용). 정적 페이지엔 로그인 세션이 없어 app_events에 못 써서.
+- **[seo_play.js]**(모든 정적 페이지가 불러옴 — 재빌드 불필요): 페이지 열림 land, 페이지 안 재생 play, 앱으로 가는 클릭 cta/to_app, 유튜브로 나감 yt. 헤드리스·봇 UA는 안 셈(GA 차단과 같은 기준), did=기기 무작위 ID, src=외부 출처 호스트/utm_source.
+- **[app.js]** 우리 정적 페이지에서 앱으로 넘어온 세션에 app_events `from_seo`(k=페이지 유형) — 기존 'ref'는 외부 출처만 세던 것.
+- **[tools/seo_funnel.sql]** 일별 깔때기: 정적 페이지 기기 → 페이지 안 재생 → 앱 클릭 → 앱 도착(계정) + 챗지피티 착지. `node C:/Users/user/.kpu_sbq.cjs tools/seo_funnel.sql`.
+- 검증: 헤드리스(아이폰 UA) 코르티스 건호 정적 페이지 → land·play·to_app 3행 확인 후 테스트 행 삭제, RPC 직접 호출 204. seo-play 3/3·문법 통과. 1~2일 쌓이면 전환율 보고 개선(2단계).
+
 ## 2026-11-10 (Claude Code — Codex 검수 남은 항목 정리)
 - 사용자: "코덱스 검수 다 처리한 거 맞나?" → 146~254차 대조, 남은 것 처리.
 - **148차 [SQL 실행] sql/2026-11-10_codex148_yuna_icecream_mv.sql**(+undo): 유나 Ice Cream 공식 MV x0FwbTiD3iA(oEmbed 200, JYP, 2026-03-23)가 DB에 없어 앨범 영상 목록에서 빠짐 → 한 행만 추가(있지·유나·mv·있지:icecream, tags_manual=true). 채널 재수집 안 함. album_videos는 다음 증분 갱신에 반영.
