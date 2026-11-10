@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-11-10 (Claude Code — For You 맨 위에 Recently Viewed)
+- 사용자: "보던 영상 나갔다가 다시 들어와 이어 보고 싶은데 바로 찾기 어렵다". 🕐 Recently Viewed를 For You **맨 위 고정**(index.html 순서·`_FY_ORDER` 첫째·`_fyReorder`에서 '오늘 일어난 일' 끌어올림보다도 위). 11-04 "최애 새 영상 맨 위"는 그 바로 아래로.
+- 로컬 기록이라 즉시 그려지므로 favNew보다 **먼저** 빌드(위 선반이 늦게 끼면 아래가 덜컹). `closeLightbox`에서도 다시 그려 탐험 3분 캐시 중에도 방금 본 영상이 바로 반영.
+- tests/foryou-shelves.test.js: 11-04 이전 기준으로 낡은 순서 검사(신보>신작·신작>이어보기)를 현재 규칙으로 갱신 + 이어보기 시드 → 9/9. smoke·interaction·lb-history-back 통과.
+
 ## 2026-11-10 (Claude Code — 쇼츠 재생 화면 개편 1단계)
 - **[kpop_universe.css]** 쇼츠 몰입 모드 오른쪽 아이콘(좋아요·깃발·컬렉션·음소거·회전·편집) 동그란 배경 제거 → 투명+그림자(사용자 11-05 "동그란 배경 싫음").
 - **[index.html·app.js·css]** 영상 아래 빈 곳에 **"다음" 쇼츠 가로 줄**(`#yt-lb-shorts-next`, `_lbRenderShortsNext`) — 스와이프와 같은 목록·같은 순서(쇼츠만, 최대 12개), 세로 썸네일(`_mountShortThumb`), 누르면 `isAdvance=true`로 열어 쇼츠 세션 유지, 웹은 `_enableDragScroll`. 가로 손짓은 기존 스와이프 핸들러가 축 판정으로 통과시킴.

@@ -7198,6 +7198,7 @@ function _lbPushHist(){
   try{history.pushState({kpuLb:1},'',location.href);}catch(_){}
 }
 function closeLightbox(){
+  try{_buildFeedRecentlyViewed();}catch(_){} // 방금 본 영상이 For You 맨 위 이어보기에 바로 반영(탐험 3분 캐시와 무관)
   // 영상에 붙여 연 앨범 창(곡 카드)은 영상과 함께 닫는다 — 영상 없이 남으면 어디에 붙은 창인지 모호하다
   {const _ad=document.getElementById('gc-discog-detail');if(_ad&&_ad.classList.contains('open')&&_ad.classList.contains('lb-dock'))_closeGcDiscogDetail();}
   _stageAfterLb(); // 웹 무대 — 비켜 있던 앨범·목록 창 중 나중에 연 것이 다시 앞으로
@@ -26739,13 +26740,14 @@ async function _buildFeedFavNew(){
   }catch(e){console.warn('[feed] 즐겨찾기 신작 선반 실패 — 이 선반만 빠집니다',e);}
 }
 // For You 선반 기본 순서(index.html과 같게) + '오늘 일어난 일' 끌어올림(2026-11-04).
-const _FY_ORDER=['feed-favnew-section','feed-favnews-section','feed-favalbum-section','feed-favig-section','feed-favchart-section',
-  'feed-favconcert-section','feed-foryou-anniv-section','feed-recent-section'];
+const _FY_ORDER=['feed-recent-section','feed-favnew-section','feed-favnews-section','feed-favalbum-section','feed-favig-section','feed-favchart-section',
+  'feed-favconcert-section','feed-foryou-anniv-section'];
 function _fyUrgent(id,on){const el=document.getElementById(id);if(!el)return;const v=on?'1':'';if((el.dataset.urgent||'')===v)return;el.dataset.urgent=v;_fyReorder();}
 function _fyReorder(){
   const els=_FY_ORDER.map(id=>document.getElementById(id)).filter(Boolean);if(els.length<2)return;
   const par=els[0].parentNode;if(!els.every(e=>e.parentNode===par))return;
-  const want=[...els.filter(e=>e.dataset.urgent==='1'),...els.filter(e=>e.dataset.urgent!=='1')];
+  // 이어보기(최근 본)는 '오늘 일어난 일'보다도 위 — 맨 앞 고정(2026-11-10 사용자 "보던 영상 이어 보고 싶은데 바로 찾기 어렵다")
+  const want=[els[0],...els.slice(1).filter(e=>e.dataset.urgent==='1'),...els.slice(1).filter(e=>e.dataset.urgent!=='1')];
   const cur=[...par.children].filter(e=>els.includes(e));
   if(want.every((e,i)=>e===cur[i]))return;
   const anchor=cur[cur.length-1].nextSibling; // 마지막 선반 뒤(빈 화면 안내 등)는 그대로
@@ -26761,8 +26763,9 @@ function _buildFeedRec(){
   _buildFeedForYouAnniv();  // 동기(로컬 데이터)
   // 최애 새 영상을 **먼저** 쏜다 — 선반들이 한꺼번에 쿼리를 던지면 서로 막혀(08-31 실측 단독 0.13초→동시 10초) 맨 위 선반이 늦게 뜬다.
   // 나머지는 그게 끝나거나 1.2초가 지나면(느릴 때 다 같이 묶이지 않게) 시작.
+  _buildFeedRecentlyViewed(); // 맨 위 선반이라 먼저(로컬 기록이라 즉시) — 위에서 늦게 끼어들면 아래가 덜컹 밀린다
   const favNewP=_buildFeedFavNew();
-  const jobs=[favNewP.finally(()=>_buildFeedRecentlyViewed())]; // 즐겨찾기 신작 → 이어보기 순서 확정(09-13 덜컹 방지)
+  const jobs=[favNewP];
   const gate=Promise.race([favNewP.catch(()=>{}),new Promise(r=>setTimeout(r,1200))]);
   jobs.push(gate.then(()=>Promise.allSettled([_buildFeedFavNews(),_buildFeedFavAlbums(),_buildFeedFavConcerts(),_buildFeedFavIg(),_buildFeedFavCharts()])));
 

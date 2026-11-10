@@ -196,17 +196,18 @@ const recentAlbumGroups = [...new Set(ALBUMS
     }
     if (!albumGroup) skipped('최근 30일 안 그룹 앨범이 없음(일본반 제외) — 케이스 ④ 건너뜀');
     else {
-      const cdp = await openForYou({ kpu_fav_groups: JSON.stringify([albumGroup]) });
+      const cdp = await openForYou({ kpu_fav_groups: JSON.stringify([albumGroup]),
+        _kpu_recent_vids: JSON.stringify([{ id: 'koED8KSXfeo', t: 'RECENT TEST', u: 'https://www.youtube.com/watch?v=koED8KSXfeo', thumb: 'https://i.ytimg.com/vi/koED8KSXfeo/mqdefault.jpg', ts: Date.now() }]) });
       const r = await ev(cdp, SHELVES);
       r.album?.shown ? ok(`④ 즐겨찾기 신보 선반이 뜸 (${albumGroup})`) : bad(`④ 신보 선반이 안 뜸 (${albumGroup})`);
       (r.album?.items || []).length > 0 ? ok(`④ 앨범 카드가 채워짐 (${r.album.items.length}장)`) : bad('④ 선반은 떴는데 카드가 0장');
       const oi = id => r.order.indexOf(id);
-      (oi('feed-favalbum-section') >= 0 && oi('feed-favalbum-section') < oi('feed-favnew-section'))
-        ? ok('④ 순서: 신보가 신작 영상보다 위') : bad(`④ 순서가 뒤집힘: ${JSON.stringify(r.order)}`);
-      (oi('feed-foryou-anniv-section') < 0 || oi('feed-foryou-anniv-section') < oi('feed-favalbum-section'))
-        ? ok('④ 순서: 기념일이 신보보다 위') : bad(`④ 기념일이 신보 아래: ${JSON.stringify(r.order)}`);
-      (oi('feed-recent-section') < 0 || oi('feed-favnew-section') < oi('feed-recent-section'))
-        ? ok('④ 순서: 신작 영상이 이어보기보다 위') : bad(`④ 이어보기가 위로 올라옴: ${JSON.stringify(r.order)}`);
+      // 순서(11-04 최애 새 영상 맨 위, '오늘 일어난 일'만 끌어올림 / 11-10 이어보기는 항상 맨 위) — app.js _FY_ORDER·_fyReorder
+      const albUrgent = await ev(cdp, "document.getElementById('feed-favalbum-section')?.dataset.urgent==='1'");
+      (oi('feed-favalbum-section') >= 0 && (albUrgent || oi('feed-favnew-section') < oi('feed-favalbum-section')))
+        ? ok('④ 순서: 신작 영상이 신보보다 위(발매 48시간 안이면 신보가 위)') : bad(`④ 순서가 뒤집힘: ${JSON.stringify(r.order)}`);
+      (oi('feed-recent-section') === 0)
+        ? ok('④ 순서: 이어보기가 맨 위') : bad(`④ 이어보기가 맨 위가 아님: ${JSON.stringify(r.order)}`);
       // ⑤ 정사각 카드 스타일이 실제로 먹었는지 — computed로 본다(셀렉터가 id에 묶여 있으면 여기서 걸린다)
       const card = await ev(cdp, `(function(){const c=document.querySelector('#feed-favalbum>.feed-card');
         if(!c)return null;const w=c.querySelector('.feed-card-thumb-wrap');

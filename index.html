@@ -1595,6 +1595,11 @@ if(typeof window.supabase==='undefined'){
     <div id="feed-pane-rec" class="feed-pane">
       <!-- For You 선반 순서(2026-11-04 사용자 "최애의 new video를 젤 먼저") — 최애 새 영상 → 소식 → 신보 → 인스타 → 차트 → 공연 → 기념일 → 최근 본 것.
            신보 발매 48시간·기념일 당일/전날·공연 당일엔 그 선반이 맨 위로 올라간다(app.js _FY_ORDER·_fyReorder). -->
+      <!-- 🕐 Recently Viewed는 항상 맨 위(2026-11-10 사용자 "보던 영상 이어 보고 싶은데 바로 찾기 어렵다") -->
+      <div class="feed-section" id="feed-recent-section" style="display:none">
+        <div class="feed-section-ttl">🕐 Recently Viewed</div>
+        <div id="feed-recent" class="feed-strip hscroll-drag"></div>
+      </div>
       <div class="feed-section" id="feed-favnew-section" style="display:none">
         <div class="feed-section-ttl">💖 New Videos</div>
         <div id="feed-favnew" class="feed-grid"></div>
@@ -1633,10 +1638,6 @@ if(typeof window.supabase==='undefined'){
       <div class="feed-section" id="feed-foryou-anniv-section" style="display:none">
         <div class="feed-section-ttl">🎉 Anniversaries Coming Up</div>
         <div id="feed-foryou-anniv" class="feed-strip hscroll-drag"></div>
-      </div>
-      <div class="feed-section" id="feed-recent-section" style="display:none">
-        <div class="feed-section-ttl">🕐 Recently Viewed</div>
-        <div id="feed-recent" class="feed-strip hscroll-drag"></div>
       </div>
       <div id="feed-empty-rec" class="feed-empty" hidden><div class="feed-empty-txt"></div><button class="feed-empty-retry" type="button"></button></div>
       <!-- 슬로건 뒷짝(2026-10-21 사용자 — "디즈니 인트로처럼 앞뒤로, 은은하게"). 앞은 첫 화면 .ld-l3, 뒤는 For You 맨 끝 -->
