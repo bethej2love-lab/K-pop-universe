@@ -385,14 +385,14 @@ groupKos.forEach(ko => {
     const agencyLabel = isEn ? 'Agency' : '소속사';
     const fandomLabel = isEn ? 'Fandom' : '팬덤명';
     // 제목·설명은 실제 검색어에 맞춘다(2026-10-16) — '아이브(IVE) 멤버·음방 1위·직캠·투어 기록'. 설명엔 이 그룹만의 숫자(1위 N회·대상·최대 투어)
-    const xg = SEO.groupExtra(ko, lang, EX, ST);
+    const stageVids = groupStageVids(ko);
+    const hasStage = stageVids.length >= GROUP_STAGE_MIN;
+    const xg = SEO.groupExtra(ko, lang, EX, ST, { hideTop: hasStage }); // 위 직캠·무대 썸네일 그리드와 같은 영상이면 TOP 10 생략
     const bits = isEn ? ['Members', ...xg.titleBits] : ['멤버', ...xg.titleBits];
     // 현재 멤버 이름(2026-10-30 사용자 — '멤버'라는 일반어 대신 실제 이름이 검색에 걸린다). 6명 이하면 제목에, 넘으면 '멤버 N명'+설명에
     const curMembers = members.filter(a => membershipStatus(a,ko) !== 'former')
       .map(a => { const e = (a.groups || []).find(g => g && g.ko === ko) || {}; return isEn ? (e.nameEn || a.name.en || a.name.ko) : (e.name || a.displayName || a.name.ko); });
     const memTitle = curMembers.length && curMembers.length <= 6 ? curMembers.join('·') : ([curMembers.length ? (isEn ? `${curMembers.length} members` : `멤버 ${curMembers.length}명`) : '', ...bits.filter(b => !['멤버', 'Members', '직캠', 'Fancams'].includes(b))].filter(Boolean).join(isEn ? ', ' : '·') || (isEn ? 'Members' : '멤버'));
-    const stageVids = groupStageVids(ko);
-    const hasStage = stageVids.length >= GROUP_STAGE_MIN;
     const title = hasStage
       // '코르티스(CORTIS) 직캠·무대 모음 - 멤버·음방 1위·투어'(2026-10-30 사용자 — 예전 '… - 코르티스(CORTIS) 멤버·음방 1위 기록'은 그룹명이 두 번·'기록'이 어색)
       ? (isEn ? `${en}${ko !== en ? ` (${ko})` : ''} Fancams & Stages - ${memTitle} | K-POP UNIVERSE` : `${ko}${info.en && info.en !== ko ? `(${info.en})` : ''} 직캠·무대 모음 - ${memTitle} | K-POP UNIVERSE`)
@@ -577,15 +577,13 @@ artists.forEach(a => {
 
   function songsHtml(lang) {
     if (!a.songs || !a.songs.length) return '';
-    const items = a.songs.slice(0, 20).map(s => {
-      const withTag = s.with && s.with.length ? ` <span class="tag">feat. ${escHtml(s.with.join(', '))}</span>` : '';
-      return `<li>${escHtml(s.t)}${withTag}</li>`;
-    }).join('\n      ');
+    // 썸네일 카드로(2026-11-10 사용자 — 제목 줄만 있던 게 이상). 유튜브 주소 없는 항목은 카드가 안 되니 뺀다.
+    const ytIdOf = u => { const m = /(?:v=|youtu\.be\/|shorts\/|embed\/)([A-Za-z0-9_-]{11})/.exec(u || ''); return m ? m[1] : null; };
+    const cards = a.songs.map(s => ({ id: ytIdOf(s.u), title: s.t, sub: s.with && s.with.length ? `feat. ${s.with.join(', ')}` : '' })).filter(v => v.id).slice(0, 20);
+    if (!cards.length) return '';
     return `
     <h2>${lang === 'en' ? 'Featured Videos' : '대표 영상'}</h2>
-    <ul class="discog-list">
-      ${items}
-    </ul>`;
+    <div class="mf-grid">${SEO.vidCards(cards, lang === 'en')}</div>`;
   }
 
   function memberDiscogHtml(lang) {
@@ -632,13 +630,14 @@ artists.forEach(a => {
     const agencyLabel = isEn ? 'Agency' : '소속사';
     const statusLbl = isEn ? 'Status' : '상태';
     // 제목·설명(2026-10-16) — '장원영(아이브) 프로필·나이·직캠'. 설명엔 생년·데뷔 나이·작사작곡·솔로 1위 같은 이 사람만의 숫자
-    const xm = SEO.memberExtra(a, isSolo ? ko : primaryGko, lang, EX, ST, creditsFor(a));
+    const fancams = isSolo ? [] : memberFancams(a, primaryGko);
+    const hasFancams = fancams.length >= MEMBER_FANCAM_MIN;
+    const _crHref = creditsFor(a) && creditPagePath(a, lang) ? `${SITE}/${creditPagePath(a, lang)}` : '';
+    const xm = SEO.memberExtra(a, isSolo ? ko : primaryGko, lang, EX, ST, creditsFor(a), { hideTop: hasFancams, creditHref: _crHref });
     const ag = SEO.ages(a, (a.groups && a.groups.length ? a.groups : [a.group]).map(g => groups[g.ko] ? ({...groups[g.ko],joined:affiliationFor(a,g.ko)?.joined}) : null));
     const identityKo=[isSolo?'':primaryGko,ko].filter(Boolean).join(' '),identityEn=[isSolo?'':(groupInfo.en||primaryGko),en].filter(Boolean).join(' ');
     const who = isEn ? bilingualLabel(identityEn,identityKo) : bilingualLabel(identityKo,identityEn);
     // 개인 직캠이 MEMBER_FANCAM_MIN개 이상이면 제목 맨 앞을 '성현 직캠 모음'으로(2026-10-30) — 동명이인이 많아 그룹 이름도 같이
-    const fancams = isSolo ? [] : memberFancams(a, primaryGko);
-    const hasFancams = fancams.length >= MEMBER_FANCAM_MIN;
     const title = hasFancams
       ? `${who} ${isEn ? 'Fancams & Profile' : '직캠 모음·프로필'} | K-POP UNIVERSE`
       : isEn
@@ -740,7 +739,7 @@ ${SEO_GA_TAG}
     ${fancams.slice(0, 24).map(v => `<a class="mf-card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">${escHtml(v.title)}</span><span class="mf-y">${[v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? (isEn ? `${SEO.fmtViews(v.view_count, isEn)} views` : `조회수 ${SEO.fmtViews(v.view_count, isEn)}`) : ''].filter(Boolean).join(' · ')}</span></a>`).join('\n    ')}
   </div>${fancams.length > 24 ? `<p class="note">${isEn ? `Top 24 of ${fancams.length} fancams` : `직캠 ${fancams.length}개 중 상위 24개`}</p>` : ''}` : ''}
   ${memberIntroHtml(a, affiliations, lang)}
-  ${creditLinkHtml(a, lang)}
+  ${xm.hasCredits ? '' : creditLinkHtml(a, lang)}
   ${affiliationHtml(lang)}
   ${xm.html}
   ${songsHtml(lang)}

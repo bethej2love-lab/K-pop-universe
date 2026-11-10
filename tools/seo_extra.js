@@ -11,7 +11,7 @@ const readJson = p => { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } c
 
 function packCredits(list,base) {
   const by=new Map();
-  for(const song of list||[]){const b=base(song.title||'');if(!b)continue;const current=by.get(b);if(!current||String(song.title).length<String(current.title).length)by.set(b,{b,title:song.title});}
+  for(const song of list||[]){const b=base(song.title||'');if(!b)continue;const current=by.get(b);const id=Math.max(+song.songId||0,current?current.id:0);if(!current||String(song.title).length<String(current.title).length)by.set(b,{b,title:song.title,id});else current.id=id;} // id=멜론 songId(최신일수록 큼) — 최근 곡부터 보여주려고
   return [...by.values()];
 }
 function loadStatic(ROOT) {
@@ -91,7 +91,7 @@ function winSummary(list) {
 }
 
 // ── 그룹 페이지 보강 ──
-function groupExtra(ko, lang, EX, ST) {
+function groupExtra(ko, lang, EX, ST, opts) {
   const en = lang === 'en';
   const out = { html: '', facts: [], titleBits: [] };
   const ws = winSummary(EX.wins[ko]);
@@ -111,11 +111,10 @@ function groupExtra(ko, lang, EX, ST) {
   const top = (EX.top[ko] || []).slice(0, 10);
   if (top.length) {
     out.titleBits.push(en ? 'Fancams' : '직캠');
-    out.html += `
+    // 위에 직캠·무대 썸네일 그리드가 이미 있으면(같은 영상들) 생략, 없으면 썸네일 카드로
+    if (!(opts && opts.hideTop)) out.html += `
     <h2>${en ? 'Most viewed stages & fancams' : '인기 무대·직캠 TOP 10'}</h2>
-    <ol class="vid-list">
-      ${top.map(v => `<li><a href="${ytUrl(v.id)}" target="_blank" rel="noopener">${esc(v.title)}</a> <span class="yr">${fmtViews(v.view_count, en)}${v.published_at ? ' · ' + esc(String(v.published_at).slice(0, 4)) : ''}</span></li>`).join('\n      ')}
-    </ol>`;
+    <div class="mf-grid">${vidCards(top, en)}</div>`;
   }
   const tours = (ST.tours[ko] || []).filter(t => t.attendance || t.gross_usd || t.shows).sort((a, b) => String(b.start || '').localeCompare(String(a.start || '')));
   if (tours.length) {
@@ -150,19 +149,27 @@ function groupExtra(ko, lang, EX, ST) {
   return out;
 }
 
+// 영상 썸네일 카드(멤버·그룹 페이지 공용, 스타일 EXTRA_CSS .mf-*). 정적 페이지의 영상 목록은 제목만 두지 말고 이걸로
+// (2026-11-10 사용자 — "영상 정보엔 썸네일이 웬만해서 항상 있어야", 대표 영상·인기 TOP이 제목 줄만이었다).
+// v: {id,title,published_at?,view_count?,sub?} — sub가 있으면 날짜·조회수 대신 그 줄(예: feat.)
+function vidCards(list, en) {
+  return list.filter(v => v && v.id).map(v => {
+    const y = v.sub != null && v.sub !== '' ? v.sub : [v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? (en ? `${fmtViews(v.view_count, en)} views` : `조회수 ${fmtViews(v.view_count, en)}`) : ''].filter(Boolean).join(' · ');
+    return `<a class="mf-card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">${esc(v.title)}</span>${y ? `<span class="mf-y">${esc(y)}</span>` : ''}</a>`;
+  }).join('');
+}
+
 // ── 멤버 페이지 보강 ──
-function memberExtra(a, primaryGko, lang, EX, ST, catalog) {
+function memberExtra(a, primaryGko, lang, EX, ST, catalog, opts) {
   const en = lang === 'en';
   const out = { html: '', facts: [], titleBits: [] };
   const nm = a.name.ko;
   const top = (EX.top[primaryGko] || []).filter(v => Array.isArray(v.members) && v.members.includes(nm)).slice(0, 5);
   if (top.length) {
     out.titleBits.push(en ? 'Fancams' : '직캠');
-    out.html += `
+    if (!(opts && opts.hideTop)) out.html += `
     <h2>${en ? 'Most viewed fancams & stages' : '인기 직캠·무대 TOP 5'}</h2>
-    <ol class="vid-list">
-      ${top.map(v => `<li><a href="${ytUrl(v.id)}" target="_blank" rel="noopener">${esc(v.title)}</a> <span class="yr">${fmtViews(v.view_count, en)}</span></li>`).join('\n      ')}
-    </ol>`;
+    <div class="mf-grid">${vidCards(top, en)}</div>`;
   }
   const cr = catalog ? {lyrics:catalog.ly.length,compose:catalog.co.length} : ST.credits[nm + '|' + (primaryGko || '')] || ST.credits[nm + '|'];
   if (cr && (cr.lyrics || cr.compose)) {
@@ -170,9 +177,27 @@ function memberExtra(a, primaryGko, lang, EX, ST, catalog) {
     const partsKo = [cr.lyrics ? `작사 ${cr.lyrics}곡` : '', cr.compose ? `작곡 ${cr.compose}곡` : ''].filter(Boolean);
     const partsEn = [cr.lyrics ? `${cr.lyrics} as lyricist` : '', cr.compose ? `${cr.compose} as composer` : ''].filter(Boolean);
     out.facts.push(en ? `songwriting credits: ${partsEn.join(', ')}` : `${partsKo.join('·')} 참여`);
+    // 2026-11-10 사용자 — "'이름을 올렸다' 개구려, 작사 n 작곡 n으로 간단히 + 어떤 노래인지 몇 개라도". 곡이 아주 많은 사람도 있어
+    // 최근 곡부터 CREDIT_SHOW개만 칩으로 두고, 나머지는 작사·작곡 전체 페이지(opts.creditHref)로 보낸다.
+    const CREDIT_SHOW = 12;
+    const roles = new Map();
+    if (catalog) {
+      for (const s of catalog.ly) roles.set(s.b, { title: s.title, id: s.id || 0, ly: true, co: false });
+      for (const s of catalog.co) { const r = roles.get(s.b); if (r) { r.co = true; r.id = Math.max(r.id, s.id || 0); } else roles.set(s.b, { title: s.title, id: s.id || 0, ly: false, co: true }); }
+    }
+    const songs = [...roles.values()].sort((p, q) => q.id - p.id);
+    const roleLbl = r => r.ly && r.co ? (en ? 'Lyrics·Music' : '작사·작곡') : r.ly ? (en ? 'Lyrics' : '작사') : (en ? 'Music' : '작곡');
+    const statKo = [cr.lyrics ? `작사 ${cr.lyrics}` : '', cr.compose ? `작곡 ${cr.compose}` : ''].filter(Boolean).join(' · ');
+    const statEn = [cr.lyrics ? `Lyrics ${cr.lyrics}` : '', cr.compose ? `Music ${cr.compose}` : ''].filter(Boolean).join(' · ');
+    const more = opts && opts.creditHref ? `
+    <p class="note"><a href="${opts.creditHref}">${songs.length > CREDIT_SHOW ? (en ? `All ${songs.length} songs →` : `전체 ${songs.length}곡 보기 →`) : (en ? 'Credits page →' : '작사·작곡 자세히 →')}</a></p>` : '';
+    out.hasCredits = true; // 섹션 안에 전체 보기 링크가 있으니 빌더의 단독 링크(creditLinkHtml)는 생략
     out.html += `
     <h2>${en ? 'Songwriting credits' : '작사·작곡'}</h2>
-    <p class="intro">${en ? `Credited on songs ${partsEn.join(' and ')} (Melon credits).` : `${partsKo.join(', ')}에 이름을 올렸다(멜론 크레딧 기준).`}</p>`;
+    <p class="intro">${en ? statEn : statKo}</p>${songs.length ? `
+    <ul class="member-list">
+      ${songs.slice(0, CREDIT_SHOW).map(r => `<li>${esc(r.title)} <span class="tag">${roleLbl(r)}</span></li>`).join('\n      ')}
+    </ul>` : ''}${more}`;
   }
   const ws = winSummary(EX.memberWins[nm]);
   if (ws) {
@@ -282,4 +307,4 @@ const roundViews = n => { if (!n) return 0; const p = Math.pow(10, Math.max(0, M
 
 const EXTRA_CSS =`.vid-list{padding-left:20px;margin:0;}.vid-list li{font-size:13.5px;margin-bottom:7px;}.vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}.note{font-size:11px;color:rgba(150,170,210,0.55);margin:6px 0 0;}.rel a{color:rgba(210,225,255,0.95);text-decoration:none;}.sp-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 10px;}@media(min-width:620px){.sp-tiles{grid-template-columns:repeat(5,minmax(0,1fr));}}.sp-tile{display:block;text-decoration:none;min-width:0;}.sp-tile img,.sp-tile-ph{display:block;width:100%;aspect-ratio:1;border-radius:10px;object-fit:cover;background:#1a1d33;}.sp-tile-t{display:block;font-size:12.5px;margin-top:6px;color:rgba(228,236,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.sp-tile-n{display:block;font-size:11px;color:rgba(160,180,230,0.6);}.mf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;margin-bottom:6px;}@media(min-width:620px){.mf-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}.mf-card{display:block;min-width:0;text-decoration:none;}.mf-th{display:block;position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#14162c;}.mf-th img{width:100%;height:100%;object-fit:cover;display:block;}.mf-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.38;margin-top:7px;color:rgba(228,236,255,0.94);}.mf-y{display:block;font-size:11.5px;color:rgba(160,180,230,0.6);margin-top:2px;}`;
 
-module.exports = { loadStatic, packCredits, bilingualSongTitle, prefetch, groupExtra, memberExtra, ages, EXTRA_CSS, fmtViews, prefetchGroupVideos, buildSongs, roundViews, esc };
+module.exports = { vidCards, loadStatic, packCredits, bilingualSongTitle, prefetch, groupExtra, memberExtra, ages, EXTRA_CSS, fmtViews, prefetchGroupVideos, buildSongs, roundViews, esc };

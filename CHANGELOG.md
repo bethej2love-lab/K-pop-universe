@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-11-10 (Claude Code — 정적 페이지 영상 썸네일 + 작사·작곡 표기)
+- 사용자: "대표 영상·TOP 영상이 제목만 있어 이상, 영상 정보엔 썸네일이 항상", "'이름을 올렸다' 별로, 작사 n 작곡 n + 어떤 노래인지 몇 개라도".
+- **[tools/seo_extra.js]** 공용 `vidCards()`(기존 .mf-card 썸네일 카드) 추가. 그룹 '인기 무대·직캠 TOP 10'·멤버 '인기 직캠·무대 TOP 5'를 제목 줄 → 썸네일 카드로. 위에 직캠/직캠·무대 썸네일 그리드가 이미 있는 페이지는 같은 영상이라 TOP 목록 생략(`opts.hideTop`).
+- 작사·작곡: "작사 11 · 작곡 11" + 곡 칩(작사/작곡/작사·작곡 표시) **최근 곡부터 12개**(packCredits가 멜론 songId 보존 → 최신순), 넘으면 "전체 N곡 보기 →" 작사·작곡 페이지 링크(섹션 안으로 옮기고 빌더 단독 링크는 생략). 설명(meta) 문구는 그대로.
+- **[build_group_pages.js]** 멤버 '대표 영상'을 텍스트 줄 → 썸네일 카드(유튜브 주소 없는 항목 제외, feat.는 보조 줄).
+- 검증: 로컬 빌드로 코르티스 건호 페이지 캡처 확인 후 생성물은 되돌림(전체 생성은 CI). credit-pages 10/10·song-page-design 통과.
+
 ## 2026-11-10 (Claude Code — 최근 본 영상 계정 저장 + 음반몰 4곳)
 - **[SQL 실행 완료] sql/2026-11-10_user_data_recent_views.sql** — `user_data.recent_views jsonb` 추가(기존 본인 행 RLS 그대로).
 - **[app.js]** `_recordRecentView`가 기기 저장과 함께 `_sbPushColumn('recent_views')`(800ms 디바운스·탭 닫힘 flush). 세션 확정 시(익명 포함, surf_prefs와 같은 방식) 서버 값을 읽어 `_mergeRecentViews` — 영상 id별 최신 ts 기준으로 합쳐 기기·서버 양쪽에 두고 선반 다시 그림. 익명은 기기마다 계정이 달라 같은 기기 보존용, 구글/X 연결 계정이면 기기 간 공유.
