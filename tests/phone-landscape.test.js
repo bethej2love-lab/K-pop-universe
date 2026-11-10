@@ -71,9 +71,9 @@ async function setup(c,W,H){
     if(v&&t&&t.y>=v.b-1)ok('세로 영상: 제목이 영상 아래(기존 배치 유지)');else bad('세로 배치가 바뀜 '+JSON.stringify({v,t}));
     // 실제 조합 렌더러만 호출하며 검색 쿼리/운영 데이터 쓰기는 하지 않는다.
     await ev(c,`document.getElementById('combo-overlay').classList.add('open');
-      _comboSel=['수빈','연준','범규','태현','휴닝카이','태용','도영','재현','마크','해찬'].map((name,i)=>({name,group:i<5?'투모로우바이투게더':'NCT 127'}));
-      _comboRenderChips();_comboRenderSuggest('민');
-      document.getElementById('combo-results').textContent='LAYOUT TEST — result area';`);
+      // 2026-11-10 조합 패널 = Chemistry 사람 고르기 창(최대 4명, 결과 칸 없음) — 버튼이 늘 화면 안에 있는지만 본다
+      _comboSel=['수빈','연준','범규','태현'].map(name=>({name,group:'투모로우바이투게더'}));
+      _comboRenderChips();_comboRenderSuggest('민');`);
     for(const [W,H] of [[320,568],[390,844],[844,390],[1280,800]]){
       await c.send('Emulation.setDeviceMetricsOverride',{width:W,height:H,deviceScaleFactor:2,mobile:true});
       await ev(c,`new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))`);
@@ -81,10 +81,10 @@ async function setup(c,W,H){
         const sheet=document.getElementById('combo-sheet'),go=document.getElementById('combo-go'),results=document.getElementById('combo-results');
         sheet.scrollTop=0;const overflowing=sheet.scrollHeight>sheet.clientHeight+1;
         go.scrollIntoView({block:'center'});const button=(${RECT})('combo-go');
-        results.scrollIntoView({block:'end'});const area=(${RECT})('combo-results'),panel=(${RECT})('combo-sheet');
-        return {button,area,panel,overflowing,overflow:getComputedStyle(sheet).overflowY,suggestions:document.getElementById('combo-suggest').children.length};
+        const panel=(${RECT})('combo-sheet');
+        return {button,panel,overflowing,overflow:getComputedStyle(sheet).overflowY,suggestions:document.getElementById('combo-suggest').children.length};
       })()`);
-      if(measure.suggestions>0&&inView(measure.button,W,H)&&inView(measure.area,W,H)&&measure.area.h>=Math.min(120,H*.25)-1&&measure.area.b<=measure.panel.b+1&&(!measure.overflowing||['auto','scroll'].includes(measure.overflow)))ok(`조합 ${W}×${H}: 10명+검색 후보에서도 버튼·결과 접근 가능`);
+      if(measure.suggestions>0&&inView(measure.button,W,H)&&measure.button.b<=measure.panel.b+1&&(!measure.overflowing||['auto','scroll'].includes(measure.overflow)))ok(`Chemistry 고르기 ${W}×${H}: 4명+검색 후보에서도 버튼 접근 가능`);
       else bad(`조합 ${W}×${H} 잘림 `+JSON.stringify(measure));
     }
     // 오류/부분 결과 UI의 실제 렌더러·CSS·재시도 터치. 합성 상태만 쓰며 조회/저장을 호출하지 않는다.

@@ -7198,6 +7198,20 @@ function _lbPushHist(){
   if(_lbIgnorePop)return; // 직전 닫기의 되감기(비동기)가 아직 안 끝남 — 지금 쌓으면 그 되감기가 새 칸을 지운다. 끝난 뒤 쌓는다
   try{history.pushState({kpuLb:1},'',location.href);}catch(_){}
 }
+// 아이폰 가로 회전 뒤 유튜브 영상 그림만 오른쪽으로 밀려 왼쪽에 검은 띠(2026-11-10 사용자 캡처 '가로모드' — 틀·컨트롤은 제자리,
+// 썸네일 원본엔 여백 없음). 크롬은 회전해도 바로 맞는다(헤드리스 확인) → iOS 플레이어가 iframe 크기 변화를 한 번 놓친 것으로 보고,
+// 회전·크기 변화가 잦아든 뒤 iframe 폭을 1px 줄였다 되돌려 크기 변화를 한 번 더 준다(두 번: 회전 애니메이션 중·후).
+let _lbNudgeT=null;
+function _lbNudgeIframe(){
+  const f=document.getElementById('yt-lb-iframe');
+  if(!f||!document.getElementById('yt-lightbox')?.classList.contains('open'))return;
+  f.style.width='calc(100% - 1px)';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{f.style.width='';}));
+}
+window.addEventListener('resize',()=>{
+  if(!document.getElementById('yt-lightbox')?.classList.contains('open'))return;
+  clearTimeout(_lbNudgeT);_lbNudgeT=setTimeout(()=>{_lbNudgeIframe();setTimeout(_lbNudgeIframe,700);},350);
+});
 function closeLightbox(){
   try{_buildFeedRecentlyViewed();}catch(_){} // 방금 본 영상이 For You 맨 위 이어보기에 바로 반영(탐험 3분 캐시와 무관)
   // 영상에 붙여 연 앨범 창(곡 카드)은 영상과 함께 닫는다 — 영상 없이 남으면 어디에 붙은 창인지 모호하다
