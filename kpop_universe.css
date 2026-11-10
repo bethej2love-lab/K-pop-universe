@@ -5583,3 +5583,12 @@
 .gc-ch-sort-item.gc-ch-only-item{color:rgba(255,186,214,0.92);font-weight:650;}
 .gc-ch-sort-item.gc-ch-only-item:hover{color:#FFC6DD;}
 .gc-ch-sort-item.gc-ch-only-item.active{color:#FFB0D0;}
+
+/* 메시지 서비스 링크(2026-11-10) — SNS 아이콘 줄 끝에 말풍선 + 서비스 이름(bubble·fromm·Weverse DM). 아이콘과 같은 색·크기 */
+.gc-link-msg{display:inline-flex;align-items:center;gap:3px;color:rgba(150,175,220,0.66);text-decoration:none;font-size:11px;font-weight:600;line-height:1;white-space:nowrap;
+  box-sizing:content-box;padding:7px 4px;margin:-7px -4px;transition:color .15s;}
+.gc-link-msg svg{width:15px;height:15px;flex:0 0 auto;}
+#tt-links .gc-link-msg svg{width:13px;height:13px;}
+.gc-link-msg:hover{color:rgba(200,220,255,0.95);}
+/* SNS 많은 그룹 + 메시지 2개면 한 줄을 넘는다(클로즈유어아이즈 390px 실측 — 카드가 옆으로 밀림) → 넘치면 다음 줄로 */
+#gc-links,#tt-links{flex-wrap:wrap;row-gap:10px;min-width:0;}

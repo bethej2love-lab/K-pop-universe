@@ -11344,7 +11344,7 @@ function showT(a,cx,cy,keepNavStack,urlMode,_unusedPushMobNav,noFly){
   tnEl.textContent=currentLang==='ko'?_dispKo(a):(a.name.en||a.name.ko);
   {const _tg=document.getElementById('tt-glyph');if(_tg)_tg.innerHTML=(GROUPS[a.group.ko]?_groupGlyphSVG(a.group.ko,18,a.name.ko):'');} // 별자리 글리프(본인 점 밝게, Q2)
   _appendDeceasedStar(tnEl,a);_appendSubName(tnEl,a);
-  _renderGcLinks(_withIdolChannelLink(a),'tt-links');
+  _renderGcLinks(_withIdolChannelLink(a),'tt-links',{gkos:_artistGroups(a).filter(g=>_activeInGroup(a,g.ko)).map(g=>g.ko),mko:a.name.ko});
   _renderIgStrip('tt',a.links?.instagram);
   _renderIgMagStrip('tt',[_igHandle(a.links?.instagram)].filter(Boolean));
   const tgEl=document.getElementById('tg');
@@ -12164,9 +12164,34 @@ function _gcEnFit(){
 // 모바일 카드는 숫자가 채워질 때 시트가 아직 안 그려져 폭이 0으로 재진다 — 줄 크기가 바뀔 때마다 다시 잰다
 // (재는 동안 클래스를 뗐다 붙이는 건 한 콜백 안에서 끝나 최종 크기가 안 바뀌면 다시 불리지 않는다)
 try{const _r=document.getElementById('gc-en-row');if(_r&&window.ResizeObserver)new ResizeObserver(()=>_gcEnFit()).observe(_r.parentElement||_r);}catch(e){}
-function _renderGcLinks(links,wrapId){
+// 메시지 서비스(2026-11-10 사용자 — "메시지 아이콘 옆에 bubble 같은 텍스트, 누르면 그 서비스로"). 아티스트마다 많아야 1~2개라
+// 펼침 없이 SNS 줄 끝에 그대로 붙인다. 데이터는 fan_platforms.json(조사·근거는 tools/fan_platforms/), m=입점 멤버 명단이 있으면
+// 멤버 카드에선 그 멤버가 들어 있을 때만. 로그인이 필요한 앱도 일단 그 서비스 첫 화면/채널로 보낸다.
+let _fanPlatP=null;
+function _loadFanPlat(){return _fanPlatP||(_fanPlatP=fetch('fan_platforms.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).catch(()=>({})));}
+const _MSG_SVG='<svg viewBox="0 0 24 24" fill="none"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v9a1.5 1.5 0 0 1-1.5 1.5H10l-4.5 3.8V16h0A1.5 1.5 0 0 1 4 14.5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+function _appendFanMsgLinks(wrap,ctx){
+  if(!ctx||!ctx.gkos||!ctx.gkos.length)return;
+  const tok=String(Math.random());wrap.dataset.fpTok=tok;
+  _loadFanPlat().then(fp=>{
+    if(wrap.dataset.fpTok!==tok||!fp)return; // 그새 다른 카드
+    const seen=new Set();
+    ctx.gkos.forEach(g=>(fp[g]||[]).forEach(it=>{
+      if(!it||!it.s||!it.u||seen.has(it.s))return;
+      if(ctx.mko&&Array.isArray(it.m)&&!it.m.includes(ctx.mko))return;
+      seen.add(it.s);
+      const el=document.createElement('a');el.className='gc-link-msg';el.href=it.u;el.target='_blank';el.rel='noopener noreferrer';
+      el.title=(currentLang==='ko'?'메시지 · ':'Messages · ')+it.s;el.setAttribute('aria-label',el.title);
+      el.innerHTML=_MSG_SVG;const t=document.createElement('span');t.textContent=it.s;el.appendChild(t);
+      el.addEventListener('click',e=>e.stopPropagation());
+      wrap.appendChild(el);wrap.style.display='';
+    }));
+    if(seen.size&&wrap.id==='gc-links'&&typeof _gcEnFit==='function')_gcEnFit();
+  });
+}
+function _renderGcLinks(links,wrapId,ctx){
   const wrap=document.getElementById(wrapId||'gc-links');
-  wrap.innerHTML='';
+  wrap.innerHTML='';delete wrap.dataset.fpTok;
   let any=false;
   if(links){
     _LINK_DEFS.forEach(({key,label,svg})=>{
@@ -12194,6 +12219,7 @@ function _renderGcLinks(links,wrapId){
   }
   // 비어있을 땐 flex 아이템 취급에서 완전히 빼야 gap이 앞 요소에 안 붙음(빈 컨테이너도 gap은 그대로 적용되는 flex 특성)
   wrap.style.display=any?'':'none';
+  _appendFanMsgLinks(wrap,ctx);
 }
 // ── 그룹 카드 멤버 목록: 비활동/탈퇴 멤버가 있으면 "멤버" 라벨을 토글 버튼으로 ──
 let _gcShowInactive=false;
@@ -15133,7 +15159,7 @@ function showGC(ko,cx,cy,keepMemberPanel,skipRipple,urlMode,_unusedPushMobNav){
   const leaderEl=document.getElementById('gc-leader');
   if(info.leader){leaderEl.textContent=info.leader;leaderRow.style.display='';}
   else leaderRow.style.display='none';
-  _renderGcLinks(info.links);
+  _renderGcLinks(info.links,null,{gkos:[ko]});
   _renderIgStrip('gc',info.links?.instagram);
   // 2행(공식 외): 그룹 계정 + 멤버 개인 계정이 태그된 게시물
   _renderIgMagStrip('gc',[...new Set([_igHandle(info.links?.instagram),...ARTISTS.filter(x=>(_artistGroups(x)||[]).some(g=>g&&g.ko===ko)).map(x=>_igHandle(x.links?.instagram))].filter(Boolean))]);

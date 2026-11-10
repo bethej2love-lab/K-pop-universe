@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-11-10 (Claude Code — 카드에 메시지 서비스(bubble·fromm·Weverse DM) 1차)
+- 사용자: "카드가 아티스트 정보를 다 모아주는 곳인데 소통 앱 정리 필요 — 위버스·버블, 그룹/멤버 단위, DM 여부" → "메시지 아이콘 옆에 bubble처럼 텍스트, 누르면 그 서비스로 연결(펼침 없이)".
+- **조사(tools/fan_platforms/)**: 활동 중 A등급 98그룹 나무위키 문서의 '입점 아티스트' 분류 + 버블 문서의 소속사별 그룹·멤버 표 + 위버스 DM 페이지 추천 목록(새로고침 400회, 201명에서 포화) + 위버스 공식 'DM 오픈' 공지 + 사용자 확인(코르티스·투어스 DM 없음, 클로즈유어아이즈 DM 있음). 초안 `draft_2026-11-10.json`, 스크립트 extract/cats/tables/agg/weverse_dm_collect.
+- **데이터 `fan_platforms.json`**(build_fan_platforms.cjs): 64그룹 — bubble 42(멤버 명단), fromm 14(그룹 단위), Weverse DM 10. 링크: bubble=dear-u.co, fromm=그룹 채널(헤드리스로 열려 확인된 5곳, 나머지 frommyarti.com), Weverse DM=그룹 위버스 커뮤니티(없으면 dm.weverse.io). withfan은 공식 주소 못 찾아 보류.
+- **[app.js·css]** `_renderGcLinks(links,wrapId,ctx)` 끝에 `_appendFanMsgLinks` — 말풍선 아이콘 + 서비스 이름, 새 탭으로 연결. 멤버 카드는 명단(m)이 있으면 그 멤버가 들어 있을 때만. SNS 많은 그룹은 줄이 넘쳐 카드가 옆으로 밀려서 `#gc-links,#tt-links` 줄바꿈 허용.
+- 한계·남은 것: 위버스 DM 전체 목록은 로그인 필요라 '확인된 것만'(없다고 단정 안 함), JYP FANS·Berriz·Mnet Plus 등 커뮤니티 앱과 멜론 아티스트 메시지(1:1 아님, 사진 가능 — 사용자)는 다음 단계, 98그룹 밖은 미조사.
+- 검증: 헤드리스 클로즈유어아이즈 그룹 카드(bubble·Weverse DM, 줄바꿈), 카리나 멤버 카드(bubble). smoke·interaction·card-title-visibility·touch-targets 12/12·uc-card-gate 15/15 통과.
+
 ## 2026-11-10 (Claude Code — 멤버 카드 '단독만' → '성현만')
 - 사용자: "'단독만'을 멤버 이름 살려 '성현만'·'제임스만'으로, 메뉴에서 위아래 텍스트와 살짝 다르게 눈에 띄게". 멤버 카드 영상 ⋮ 메뉴 항목·켜졌을 때 줄 버튼("성현만 ✕")·툴팁을 `_dispName` 이름으로(영문은 "Only {영문 이름}"). 메뉴 항목은 앱 별빛 분홍·굵게(구분선은 메뉴에 원래 있어 안 더함).
 - 검증: 헤드리스 코르티스 성현 카드 — 메뉴 "성현만" 분홍, 켜면 줄에 "성현만 ✕". touch-targets 12/12·smoke 통과.
