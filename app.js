@@ -3135,7 +3135,7 @@ const _SR_VID_FIRST=6;   // 첫 페이지 — 검색 결과 목록에 영상이 
 const _SR_VID_STEP=30;   // 더보기 한 번에 가져오는 양
 let _srVidMore=null;     // 더보기가 이어받을 조회 상태(쿼리·오프셋·이미 그린 id)
 function _srVidQuery(q,like,hint,fallbackGroup){
-  let vq=sb.from(_YT_TABLE).select(_SR_VID_COLS);
+  let vq=sb.from(_YT_TABLE).select(_SR_VID_COLS).is('unavailable_at',null); // 재생 불가 영상은 검색 결과에서도 제외(2026-11-10)
   if(fallbackGroup&&hint&&hint.gko){
     vq=vq.eq('group_ko',hint.gko);
   }else if(hint&&hint.kind==='member'){
@@ -4611,7 +4611,7 @@ function doSearch(q){
     if(gA)ors.push(`and(with_members.cs.{"${nA}(${gA})"},members.cs.{"${nB}"})`);
     if(gB)ors.push(`and(with_members.cs.{"${nB}(${gB})"},members.cs.{"${nA}"})`);
     if(gA&&gB)ors.push(`and(with_members.cs.{"${nA}(${gA})"},with_members.cs.{"${nB}(${gB})"})`);
-    const r=await sb.from(_YT_TABLE).select(_SR_VID_COLS).or(ors.join(','))
+    const r=await sb.from(_YT_TABLE).select(_SR_VID_COLS).is('unavailable_at',null).or(ors.join(','))
       .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
       .or('content_flag.is.null,content_flag.neq.hidden')
       .order('view_count',{ascending:false,nullsFirst:false}).limit(6);
@@ -23008,7 +23008,8 @@ async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatF
       .or('content_flag.is.null,content_flag.neq.기타')
       .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
       .or('content_flag.is.null,content_flag.neq.hidden') // 노출 제외 처리된 영상이 대표(하트 최다) 영상으로 뽑히면 안 됨
-      .or('content_flag.is.null,content_flag.neq.개별출연'); // 컴필레이션 클립 제외(2026-08-20)
+      .or('content_flag.is.null,content_flag.neq.개별출연') // 컴필레이션 클립 제외(2026-08-20)
+      .is('unavailable_at',null); // 재생 불가 영상이 대표 영상으로 뽑히지 않게(2026-11-10)
     // 검색 중이면 대표영상도 검색어에 실제로 걸리는 것만 후보로 — 그리드(buildBaseQuery)가 쓰는 것과
     // 완전히 동일한 title_norm ilike 매칭을 그대로 재사용. 안 걸리면 그냥 null 반환(대표영상 없음)돼서
     // 검색과 무관한 "하트 최다" 영상이 검색 결과 맨 위에 인위적으로 고정되는 걸 막는다(2026-08-20, 사용자 요청).
@@ -27905,6 +27906,8 @@ function _makeChVidController(contId){
         :cols?sb.from(_YT_TABLE).select(cols) // ID 목록만(아래 _chIdPool, 2026-11-04)
         :(reset&&randomize)?sb.from(_YT_TABLE).select(selectCols,{count:'exact'})
         :sb.from(_YT_TABLE).select(selectCols);
+      // 재생 불가(삭제·비공개로 확인된) 영상은 카드에서도 뺀다 — 탐험 피드 4경로엔 이미 있음(Codex 248·250차), 11-05 ⏳ '카드/검색 등 다른 조회' 반영(2026-11-10)
+      q=q.is('unavailable_at',null);
       if(state.unitKey){
         q=_applyUnitScope(q,state.unitKey); // 유닛 카드 — 범위 정의는 _applyUnitScope 주석
       }else if(state.unitFilter){

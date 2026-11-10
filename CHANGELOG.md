@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 2026-11-10 (Claude Code — Codex 검수 남은 항목 정리)
+- 사용자: "코덱스 검수 다 처리한 거 맞나?" → 146~254차 대조, 남은 것 처리.
+- **148차 [SQL 실행] sql/2026-11-10_codex148_yuna_icecream_mv.sql**(+undo): 유나 Ice Cream 공식 MV x0FwbTiD3iA(oEmbed 200, JYP, 2026-03-23)가 DB에 없어 앨범 영상 목록에서 빠짐 → 한 행만 추가(있지·유나·mv·있지:icecream, tags_manual=true). 채널 재수집 안 함. album_videos는 다음 증분 갱신에 반영.
+- **149차**: YWyNJlVOa8U unavailable_at 이미 null(복구돼 있음) — 변경 없음.
+- **153차**: tools/m2_harness.js가 이미 _groupEndDate·_disbandCutoffDate를 추출 — 변경 없음.
+- **156차**: 대상 5행은 이미 수동 정정·잠금(ATBO·시그니처·EXID 솔지·오마이걸 미미). 매처는 여전히 'ATBO의'·'시그니처의'를 null로 — 그룹명 경계(_atmTextHasGroupName)는 통과하므로 다른 단계 문제. 매처 변경은 4.5만 제목 차분 검증이 필요해 **보류**(오늘 Disk IO 경고).
+- **176차**: 50표본의 후속 판정은 177~179차로 이어짐(177 처리, 178·179는 근거 부족 보류) — 별도 작업 없음.
+- **11-05 ⏳ 재생 불가 반영 범위 [app.js]**: 카드 영상 그리드(buildBaseQuery)·대표 영상 후보·검색 영상 2곳에 `unavailable_at IS NULL` — 재생 불가 240행이 탐험 피드 외에서도 빠짐. smoke·interaction·msheet·lb-every-entry 8/8·vid-list-share 16/16 통과.
+- **11-05 ⏳ RoadFighter '2집'**: 위키백과는 3집이나 YG 공식 'THE 20TH ANNIVERSARY 정규 5집'(2017) 순번과 멜론 표기 기준으로 Welcome to the Sechskies Land=스페셜, Road Fighter=2집이 일관 — **변경 없음**.
+- **11-05 ⏳ We made CD 전용 1곡**: 곡 목록은 멜론(디지털) 정본 정책 유지 — 추가 안 함.
+- 남은 보류: 156차 매처(차분 검증 필요), 근거 부족 5건(163·170·178·179·155차).
+
 ## 2026-11-10 (Claude Code — 소통 앱 전 그룹 확장 + 커뮤니티 앱)
 - 사용자: "아직 안 한 거 확인해줘". **나머지 190그룹** 나무위키 문서도 같은 방식(분류·버블 표)으로 조사 → `draft_rest_2026-11-10.json`. 엘즈업·A2O MAY는 문서명 불일치로 미조사.
 - **커뮤니티 앱 추가**(k:'c', 사람 둘 아이콘): 베리즈·Mnet Plus·b.stage는 나무위키 문서의 실제 그룹 페이지 링크(link.berriz.in/web/main/…, artist.mnetplus.world/main/stg/…, *.bstage.in), 링크 없으면 앱 첫 화면. JYP FANS는 나무위키 FANS 문서 라인업(2PM·데이식스·트와이스·스트레이키즈·있지·니쥬·엑스디너리히어로즈·엔믹스·걸셋·넥스지·킥플립) → app.fans(그룹별 주소 없음 확인). 위버스 커뮤니티는 SNS 줄 하트 아이콘이 이미 있어 제외. 포닝·Cosmo는 웹 주소 없어 보류.
