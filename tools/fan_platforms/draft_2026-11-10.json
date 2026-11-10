@@ -822,14 +822,14 @@
     ],
     "total": 7,
     "note": ""
-   },
-   {
-    "svc": "Weverse DM",
-    "members": null,
-    "note": "2025-05-13 위버스 공식 X 오픈 공지(당시 전민욱 제외 6명) — 사용자 기억과 일치"
    }
   ],
-  "ended": []
+  "ended": [
+   "Weverse DM"
+  ],
+  "noDm": {
+   "Weverse DM": "사용자 확인: 서비스 종료(2026-11-10)"
+  }
  },
  {
   "g": "엑소",
