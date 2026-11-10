@@ -5578,3 +5578,8 @@
 .chem-door-arr{font-size:20px;color:rgba(160,190,255,0.4);flex-shrink:0;}
 /* Chemistry 관계도(3~4명) — 조합 그림(.cb-fig) 재사용, 헤더 안 여백만 */
 .chem-fig{margin:12px 0 4px;}
+
+/* 멤버 카드 영상 ⋮ 메뉴의 '성현만'(2026-11-10) — 정렬 항목들과 구분되게 앱 별빛 색·굵게(위아래 구분선은 메뉴에 원래 있음) */
+.gc-ch-sort-item.gc-ch-only-item{color:rgba(255,186,214,0.92);font-weight:650;}
+.gc-ch-sort-item.gc-ch-only-item:hover{color:#FFC6DD;}
+.gc-ch-sort-item.gc-ch-only-item.active{color:#FFB0D0;}

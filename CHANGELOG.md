@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-11-10 (Claude Code — 멤버 카드 '단독만' → '성현만')
+- 사용자: "'단독만'을 멤버 이름 살려 '성현만'·'제임스만'으로, 메뉴에서 위아래 텍스트와 살짝 다르게 눈에 띄게". 멤버 카드 영상 ⋮ 메뉴 항목·켜졌을 때 줄 버튼("성현만 ✕")·툴팁을 `_dispName` 이름으로(영문은 "Only {영문 이름}"). 메뉴 항목은 앱 별빛 분홍·굵게(구분선은 메뉴에 원래 있어 안 더함).
+- 검증: 헤드리스 코르티스 성현 카드 — 메뉴 "성현만" 분홍, 켜면 줄에 "성현만 ✕". touch-targets 12/12·smoke 통과.
+
 ## 2026-11-10 (Claude Code — 멤버 조합 찾기 → Chemistry 통합)
 - 사용자: "검색창 멤버 조합 찾기와 Chemistry가 성격이 너무 비슷 — 정비", "시안 없이 바로", "조합 찾기 배너 디자인이 구렸다".
 - **[app.js·index.html·css]** 조합 패널 = Chemistry 사람 고르기 창(제목 Chemistry, "2~4명 고르기", 최대 4명=`_CHEM_MAX`, 버튼 "Chemistry 보기" → `_openChem`). 결과·Only·공유는 숨김, 높이는 내용만큼. 예전 #combo 공유 링크·발자국도 `_comboSearch`를 지나 Chemistry로. 죽은 결과 조회(`_comboSearchLegacy`) 제거, 짝 조회만 `_comboFetchRows`로 분리.

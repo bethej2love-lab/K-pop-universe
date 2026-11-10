@@ -28516,19 +28516,23 @@ function _makeChVidController(contId){
     // 예: Shorts+Only = 이 멤버 단독 쇼츠만). 전체/라이브/Shorts는 배타적 "모드"라 알약 버튼이지만 Only는
     // 부가 조건이라 텍스트만(.gc-ch-only)으로 구분되게 함.
     if(memberKo){
+      // 이름을 살려 '성현만'(2026-11-10 사용자 — '단독만'보다 누구 얘기인지 바로 읽히게, 메뉴에서 살짝 눈에 띄게)
+      const _oa=ARTISTS.find(x=>x&&x.name&&x.name.ko===memberKo&&((x.group&&x.group.ko===ko)||(x.groups||[]).some(g=>g&&g.ko===ko)));
+      const _onm=_oa?_dispName(_oa,ko):memberKo;
+      const _onlyLbl=currentLang==='ko'?_onm+'만':'Only '+((_oa&&_oa.name.en)||_onm);
       const onlyBtn=document.createElement('button');
       onlyBtn.className='gc-ch-only';
-      onlyBtn.textContent='단독만';
-      onlyBtn.title='이 멤버만 단독 출연한 영상만 보기';
+      onlyBtn.textContent=_onlyLbl;
+      onlyBtn.title=currentLang==='ko'?_onm+' 혼자 나온 영상만 보기':'Videos with only '+_onm;
       onlyBtn.setAttribute('aria-pressed','false');
       // ⋮ 메뉴 "단독만" 항목(2026-10-27 영상 줄 정리) — 평소엔 줄에서 숨기고(CSS), 켜지면 줄 맨 앞쪽에 "단독만 ✕"로 떠서 누르면 꺼진다
       const onlyItem=document.createElement('button');
       onlyItem.className='gc-ch-sort-item gc-ch-only-item';onlyItem.type='button';
-      onlyItem.innerHTML='<span class="chk">✓</span><span>'+(currentLang==='ko'?'단독만':'Solo only')+'</span>';
+      onlyItem.innerHTML='<span class="chk">✓</span><span></span>';onlyItem.lastChild.textContent=_onlyLbl;
       const _syncOnly=()=>{
         onlyBtn.classList.toggle('active',state.onlyMe);
         onlyBtn.setAttribute('aria-pressed',state.onlyMe?'true':'false');
-        onlyBtn.textContent=state.onlyMe?(currentLang==='ko'?'단독만 ✕':'Solo ✕'):'단독만';
+        onlyBtn.textContent=state.onlyMe?_onlyLbl+' ✕':_onlyLbl;
         onlyItem.classList.toggle('active',state.onlyMe);
       };
       onlyBtn.addEventListener('click',()=>{
