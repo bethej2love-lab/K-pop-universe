@@ -16403,6 +16403,9 @@ const _KPOP_LINKS=[
     {n:'위드뮤',u:'https://www.withmuu.com'},{n:'사운드웨이브',u:'https://sound-wave.co.kr'},
     {n:'애플뮤직',u:'https://www.applemusic.co.kr'},{n:'메이크스타',u:'https://www.makestar.com'},
     {n:'뮤직코리아',u:'https://www.musickorea.asia'},
+    // 팬사인회 응모 몰 추가(2026-11-10 사용자 요청) — 후즈팬 스토어(한터글로벌 운영, 한터 집계)·에버라인·케이팝투게더, 케이팝나라는 미국 매장 체인(미국 팬사인회)
+    {n:'후즈팬 스토어',u:'https://whosfanstore.com'},{n:'에버라인',u:'https://www.everlineshop.com'},
+    {n:'케이팝투게더',u:'https://www.kpop2gether.com'},{n:'케이팝나라 (미국)',u:'https://kpopnara.com'},
   ]},
   // 오프라인 매장(2026-10-13, 사용자 요청 — 정보 제공용). 매장 목록을 우리가 직접 들고 있지 않는다(금방 낡는다) —
   // 각 체인이 직접 관리하는 매장 안내 페이지로만 보낸다. 핫트랙스는 교보문고 안에 있어 매장 안내도 교보문고 쪽이다.
@@ -21300,6 +21303,12 @@ async function initSupabaseSync(){
         if(Object.keys(_surfPrefs).length)_sbPushColumn('surf_prefs',_surfPrefs);
       },()=>{});
     }
+    // 최근 본 영상 계정 동기화 — 위 surf_prefs와 같은 방식(익명 포함 모든 세션, 컬럼 없으면 조용히 건너뜀)
+    sb.from('user_data').select('recent_views').eq('user_id',session.user.id).maybeSingle().then(({data,error})=>{
+      if(error)return;
+      _recentViewsColumn=true;
+      _mergeRecentViews(data&&data.recent_views);
+    },()=>{});
     _backfillCollectionVideoTags(); // 세션이 확정된 뒤 백그라운드로 — 화면 표시를 막지 않음
   }catch(e){
     _authAlert('initSupabaseSync 예외: '+(e&&e.message||e));
@@ -23190,7 +23199,23 @@ function _recordRecentView(vid,song,shorts){
       pa:(song&&(song.pa||song.paFull))?String(song.pa||song.paFull).slice(0,10):(_pubById.get(vid)||''), // 날짜도 저장해 다음 세션 최근본 재생에서도 표기(2026-09-04)
       groupKo:song?.groupKo,memberKos:song?.memberKos,ts:Date.now()});
     localStorage.setItem(_RECENT_VIEW_KEY,JSON.stringify(arr.slice(0,20)));
+    if(_recentViewsColumn)_sbPushColumn('recent_views',arr.slice(0,20)); // 계정에도(800ms 디바운스, 탭 닫힐 때 즉시 flush)
   }catch(e){/* localStorage 꽉 참/비활성 등 — 조용히 무시, 기록 실패가 재생을 막으면 안 됨 */}
+}
+// 서버 저장(2026-11-10 사용자 "서버에 저장할 수는 없나") — user_data.recent_views(sql/2026-11-10_user_data_recent_views.sql).
+// 세션이 잡히면 서버·기기 기록을 영상 id별 최신 시청(ts) 기준으로 합쳐 양쪽에 둔다. 익명 방문자는 기기마다 계정이 달라
+// 사실상 같은 기기 보존용이고, 구글/X로 연결한 계정이면 폰·PC·홈화면 앱 어디서 본 것이든 같이 뜬다.
+let _recentViewsColumn=false;
+function _mergeRecentViews(server){
+  let local=[];try{local=JSON.parse(localStorage.getItem(_RECENT_VIEW_KEY)||'[]');}catch(e){}
+  const srv=Array.isArray(server)?server:[];
+  const m=new Map();
+  [...srv,...local].forEach(v=>{if(!v||!v.id)return;const o=m.get(v.id);if(!o||(+v.ts||0)>(+o.ts||0))m.set(v.id,v);});
+  const out=[...m.values()].sort((x,y)=>(+y.ts||0)-(+x.ts||0)).slice(0,20);
+  const js=JSON.stringify(out);
+  if(js!==JSON.stringify(local.slice(0,20))){try{localStorage.setItem(_RECENT_VIEW_KEY,js);}catch(e){}try{_buildFeedRecentlyViewed();}catch(e){}}
+  if(out.length&&js!==JSON.stringify(srv))_sbPushColumn('recent_views',out);
+  return out;
 }
 function _buildFeedRecentlyViewed(){
   const section=document.getElementById('feed-recent-section');

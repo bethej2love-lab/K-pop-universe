@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-11-10 (Claude Code — 최근 본 영상 계정 저장 + 음반몰 4곳)
+- **[SQL 실행 완료] sql/2026-11-10_user_data_recent_views.sql** — `user_data.recent_views jsonb` 추가(기존 본인 행 RLS 그대로).
+- **[app.js]** `_recordRecentView`가 기기 저장과 함께 `_sbPushColumn('recent_views')`(800ms 디바운스·탭 닫힘 flush). 세션 확정 시(익명 포함, surf_prefs와 같은 방식) 서버 값을 읽어 `_mergeRecentViews` — 영상 id별 최신 ts 기준으로 합쳐 기기·서버 양쪽에 두고 선반 다시 그림. 익명은 기기마다 계정이 달라 같은 기기 보존용, 구글/X 연결 계정이면 기기 간 공유.
+- 검증: 헤드리스 실제 Supabase — 영상 2개 열기 → 서버에 [B,A] 저장 → 기기 기록 비운 뒤 서버에서 복원·선반 2개. smoke·foryou-shelves 9/9·rls 통과.
+- **[app.js] 케이팝 링크 › 음반 구매**에 후즈팬 스토어(whosfanstore.com, 한터글로벌)·에버라인(everlineshop.com)·케이팝투게더(kpop2gether.com)·케이팝나라 (미국)(kpopnara.com — 미국 매장 체인) 추가. 4곳 모두 HTTP 200 확인.
+
 ## 2026-11-10 (Claude Code — For You 맨 위에 Recently Viewed)
 - 사용자: "보던 영상 나갔다가 다시 들어와 이어 보고 싶은데 바로 찾기 어렵다". 🕐 Recently Viewed를 For You **맨 위 고정**(index.html 순서·`_FY_ORDER` 첫째·`_fyReorder`에서 '오늘 일어난 일' 끌어올림보다도 위). 11-04 "최애 새 영상 맨 위"는 그 바로 아래로.
 - 로컬 기록이라 즉시 그려지므로 favNew보다 **먼저** 빌드(위 선반이 늦게 끼면 아래가 덜컹). `closeLightbox`에서도 다시 그려 탐험 3분 캐시 중에도 방금 본 영상이 바로 반영.
