@@ -5526,3 +5526,11 @@
 /* 섹션 제목 줄 오른쪽 작은 정렬 버튼(2026-11-05 공연 임박순/최근 등록순) — 제목의 대문자·자간을 물려받지 않게 */
 .feed-section-ttl.feed-ttl-row{display:flex;align-items:center;gap:8px;}
 .feed-ttl-row .tvf-sort-sm{margin-left:auto;padding:4px 10px;font-size:11px;letter-spacing:0;text-transform:none;border-radius:10px;}
+
+/* 휴대폰 유튜브 전체화면 버튼(2026-11-10) — 휴대폰용 유튜브 플레이어는 전체화면 버튼을 맨 아래 구석이 아니라
+   재생바 바로 위 오른쪽(영상 오른쪽 끝에서 약 24~48px, 아래에서 약 100px)에 둔다. 2배속 탭존(#yt-lb-speed-zone,
+   오른쪽 끝 22%·아래 80px 위)이 그 자리를 덮어 가로에선 아예 안 눌리고 세로에선 2~3번 눌러야 했다(위 설정·아래
+   YouTube 로고는 탭존 밖이라 눌림). 캡처로 버튼 위치를 확인하고, 터치 기기에선 탭존을 오른쪽 끝 80px 안쪽으로 옮긴다. */
+@media (pointer:coarse){
+  #yt-lb-video-box:not(.is-shorts) #yt-lb-speed-zone{right:80px;width:18%;}
+}

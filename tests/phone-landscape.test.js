@@ -55,6 +55,10 @@ async function setup(c,W,H){
     await ev(c,"openLightbox('https://www.youtube.com/watch?v=koED8KSXfeo',false,[{u:'https://www.youtube.com/watch?v=koED8KSXfeo',t:'LAYOUT TEST — 가로 화면의 긴 영상 제목과 재생 영역이 겹치지 않아야 합니다',dur:230}],0)");await sleep(2500);
     let v=await ev(c,`(${RECT})('yt-lb-video-box')`),t=await ev(c,`(${RECT})('yt-lb-title-text')`);
     if(inView(v,844,390)&&inView(t,844,390)&&!overlap(v,t)&&t.x>=v.r)ok('가로 영상: 영상 왼쪽·제목 오른쪽, 겹침 없음');else bad('가로 영상 배치 '+JSON.stringify({v,t}));
+    // 휴대폰 유튜브 플레이어의 전체화면 버튼은 재생바 위 오른쪽(끝에서 24~48px, 아래에서 ~104px). 2배속 탭존이 덮으면
+    // 가로에선 아예 안 눌림(2026-11-10 사용자 제보 — 캡처로 위치 확인, 실제 유튜브로 수정 전 탭0/수정 후 1번에 전체화면).
+    const fsHits=await ev(c,`(()=>{document.querySelectorAll('[class*=ob-tips],[id*=ob-tips]').forEach(e=>e.remove());/* 첫 방문 안내는 새 프로필에서만 뜸 */const f=document.getElementById('yt-lb-iframe').getBoundingClientRect();const o=[];for(const rx of [6,24,48,70])for(const by of [80,104,128]){const e=document.elementFromPoint(f.right-rx,f.bottom-by);if(e&&e.id!=='yt-lb-iframe')o.push(rx+','+by+'='+(e.id||e.className));}return o;})()`);
+    if(!fsHits.length)ok('가로 영상: 유튜브 전체화면 버튼 자리를 덮는 요소 없음');else bad('전체화면 버튼 자리를 덮음 '+fsHits.join(' '));
     await ev(c,'closeLightbox()');await sleep(800);
     await ev(c,"openLightbox('https://youtube.com/shorts/EJqu6C_HFp0',true,[{u:'https://youtube.com/shorts/EJqu6C_HFp0',t:'LAYOUT TEST — 쇼츠의 긴 제목이 화면 안에 표시되어야 합니다',is_short:true,dur:30}],0)");await sleep(2500);
     v=await ev(c,`(${RECT})('yt-lb-video-box')`);t=await ev(c,`(${RECT})('yt-lb-title-text')`);

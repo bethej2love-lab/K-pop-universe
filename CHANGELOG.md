@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-11-10 (Claude Code — 휴대폰 유튜브 전체화면 버튼 안 눌림 진짜 원인)
+- **원인**: 휴대폰용 유튜브 플레이어는 전체화면 버튼을 맨 아래 구석이 아니라 **재생바 바로 위 오른쪽**(끝에서 24~48px, 아래에서 ~104px)에 둔다. 우리 2배속 탭존(`#yt-lb-speed-zone`, 오른쪽 22%·top52~bottom80)이 정확히 그 자리를 덮어 가로에선 0회, 세로에선 절반만 걸려 2~3번 눌러야 했다(위 설정·아래 YouTube 로고는 탭존 밖이라 눌림 — 사용자 증상과 일치). 11-05 Codex 수정은 우하단 56px `yt-lb-fs-cap`만 숨겨서 효과가 없었다. 실제 유튜브 플레이어 캡처로 버튼 위치 확인.
+- **수정** [kpop_universe.css]: 터치 기기 가로 영상에서 탭존을 `right:80px;width:18%`로 안쪽 이동(2배속 기능 유지, 탭존 62~94px 폭).
+- **검증**: 헤드리스 실제 유튜브 iframe에 CDP 터치 — 수정 전 844×390·390×844 모두 1번 탭에 전체화면 안 됨 → 수정 후 둘 다 1번에 `fullscreenElement=yt-lb-iframe`. 6개 크기(가로3·세로3)에서 버튼 주변 격자 전부 iframe. tests/phone-landscape.test.js에 회귀 검사 추가 29/29. ⚠️ 아이폰 실기기 확인 대기.
+
 ## 2026-11-10 (Claude Code — CI 빨간불 2건 수정)
 - 매시간 영상 동기화가 11-09 09:33~14:00 UTC 연속 실패: web-push 4.0(11-06 배포)이 default export를 없애 `send_untagged_alert.mjs` import가 깨짐 → 워크플로에서 `web-push@3`으로 고정.
 - Supabase RLS audit 11-05부터 매일 실패: 새 테이블 `ig_photo_tags`(읽기 공개·쓰기 관리자)가 tests/rls.test.js EXPECT에 없었음 → 추가, 로컬 통과.
