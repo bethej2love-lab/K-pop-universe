@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-11-10 (Claude Code — 팬 영상 = 출처 층위, 퍼포먼스 탭 중복 노출)
+- 사용자: "By Fans 영상에 퍼포먼스 많은데 퍼포먼스 탭에 안 보인다. 팬 영상도 쇼츠처럼 형식 층위로, 내용은 퍼포먼스 혹은 기타" / "기존 차트에선 빼고, By Fans 탭은 팬 창작물 리스펙으로 유지, 퍼포먼스 탭에 중복 노출, 나중엔 팬캠 차트도".
+- **[app.js]** `_isFanV`(source_tier='fans' 또는 옛 category='fan'). 카드 By Fans 탭·존재 확인을 `source_tier='fans'`로, 앨범/곡 영상 칩은 `_tvfHas`로 팬 영상이 내용 칩과 by Fans 칩에 겹쳐 듦, 행사 영상 직캠 판정, `_applyLiveExclude` 차트 모드에 팬 제외(탭 모드는 포함). 미리 계산 파일 5번째 칸 비트(1=쇼츠, 2=팬).
+- **[admin.js]** 동기화·출처 연결에서 팬 채널을 category='fan'으로 덮던 것 제거 → 내용 분류(팬이 올린 mv·skip은 other). 재분류 스윕도 팬 mv→other. **[tools/build_album_videos.mjs]** source_tier 비트. 전량 재생성 수동 실행.
+- **[SQL 실행 완료] sql/2026-11-10_fan_source_layer.sql**(+undo, 백업 `_bak_fan_category_20261110` 35,883행, 부분 인덱스 `idx_ytv_fans_group_published`): 팬 영상 → live 19,493 · other 15,908 · challenge 308 · variety 160 · fan 15(tags_manual 잠금, By Fans는 source_tier라 무해).
+- 검증(실제 앱 쿼리, 에이핑크): By Fans 1,427 · 퍼포먼스 탭 2,113 중 팬 1,214 · 차트 모드 팬 0(전체 834). album-video-categories·event-stage-kind 테스트를 새 규칙으로 갱신, live-tab·fan-tab-order·jacon-tab·smoke·interaction 등 통과.
+- 남은 것: 팬캠 차트(사용자 "궁극적으로") — `source_tier='fans'` + category live로 만들면 됨.
+
 ## 2026-11-10 (Claude Code — 두 번째 스크롤 민감 완화)
 - 사용자: "첫 터치는 나아졌는데 그다음 두 번째 터치가 너무 민감할 때가 있다, 쓰다 보면 괜찮다". **실측**(탐험 패널, 손가락 200px씩): 1번째 100px → 2번째 241px. `_wireFirstScrollDamp`가 맨 위에서 시작한 첫 제스처만 0.5배·관성 없음이고 두 번째부터 곧장 1배+네이티브 관성이라 2.4배로 튐.
 - **수정** [app.js `_wireFirstScrollDamp`]: 맨 위 근처(`_FIRST_SCROLL_RAMP`=400px 안)에서 시작한 제스처는 시작 위치에 따라 배율 0.5→1로 서서히 올리고, 손 떼면 약한 자체 관성(손뗀 속도×0.7, 감쇠 0.94/프레임, 새 터치 시 즉시 멈춤). 맨 위 첫 제스처는 예전 그대로(관성 없음), 반쯤 열린 카드 맨 위는 배율 0 그대로, 400px 아래는 네이티브. 막는 touchmove 리스너도 400px 안에서만 붙임.
