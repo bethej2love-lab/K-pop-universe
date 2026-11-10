@@ -99,6 +99,7 @@ function load(){
     S(/^const _M2_SURNAME_ROMAN\s*=/m,'_M2_SURNAME_ROMAN');S(/^let _m2RomanKeyIdx\s*=/m,'_m2RomanKeyIdx');
     ['_m2RomanCanon','_m2RomanKeyIndex','_m2HashtagRomanKeys','_m2RomanTagged','_m2ChallengeSongKeys','_m2IsChallengeSongOwner'].forEach(n=>F(new RegExp('^function '+n+'[(]','m'),n));
   }
+  if(/^let _m2FullNameSetC\s*=/m.test(adminSrc)){S(/^let _m2FullNameSetC\s*=/m,'_m2FullNameSetC');['_m2FullNameSet','_m2QuotedSongKeys'].forEach(n=>F(new RegExp('^function '+n+'[(]','m'),n));} // 성 뗀 이름 본명 그림자·곡 주인 가리기(2026-11-10)
   if(/^let _m2GuestNameIdx\s*=/m.test(adminSrc))S(/^let _m2GuestNameIdx\s*=/m,'_m2GuestNameIdx'); // 다른 그룹 게스트 색인(2026-10-28)
   if(/^let _m2GroupNameSet\s*=/m.test(adminSrc)){S(/^let _m2GroupNameSet\s*=/m,'_m2GroupNameSet');F(/^function _m2IsGroupName\(/m,'_m2IsGroupName');}
   S(/^const _GROUP_TITLE_CONFLICT_EXCLUDE\s*=/m,'_GROUP_TITLE_CONFLICT_EXCLUDE');

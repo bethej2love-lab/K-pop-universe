@@ -74,6 +74,10 @@ if (/^const _M2_SURNAME_ROMAN\s*=/m.test(adminSrc)) { // 로마자 흔들림·�
   pieces.push(extractStatement(adminSrc, /^let _m2RomanKeyIdx\s*=/m, '_m2RomanKeyIdx'));
   ['_m2RomanCanon', '_m2RomanKeyIndex', '_m2HashtagRomanKeys', '_m2RomanTagged', '_m2ChallengeSongKeys', '_m2IsChallengeSongOwner'].forEach(n => pieces.push(extractByBraces(adminSrc, new RegExp('^function ' + n + '[(]', 'm'), n)));
 }
+if (/^let _m2FullNameSetC\s*=/m.test(adminSrc)) { // 성 뗀 이름 본명 그림자·곡 주인 가리기(2026-11-10)
+  pieces.push(extractStatement(adminSrc, /^let _m2FullNameSetC\s*=/m, '_m2FullNameSetC'));
+  ['_m2FullNameSet', '_m2QuotedSongKeys'].forEach(n => pieces.push(extractByBraces(adminSrc, new RegExp('^function ' + n + '[(]', 'm'), n)));
+}
 if (/^let _m2GuestNameIdx\s*=/m.test(adminSrc)) { // 다른 그룹 게스트 감지(2026-10-28)
   pieces.push(extractStatement(adminSrc, /^const _M2_GUEST_DENY\s*=/m, '_M2_GUEST_DENY'));
   pieces.push(extractStatement(adminSrc, /^let _m2GuestNameIdx\s*=/m, '_m2GuestNameIdx'));

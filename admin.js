@@ -8481,6 +8481,15 @@ function _m2ChallengeSongKeys(title){
   ['','dance','댄스','vibecheck','kgma','2026kgma'].forEach(x=>keys.delete(x));
   return [...keys].filter(k=>k.length>=2);
 }
+// 등록 아티스트 본명(한글) 집합 — 성 뗀 이름이 남의 본명과 같은지 볼 때(위 _stripShadow)
+let _m2FullNameSetC=null;
+function _m2FullNameSet(){if(!_m2FullNameSetC){_m2FullNameSetC=new Set();(typeof ARTISTS!=='undefined'?ARTISTS:[]).forEach(x=>{if(x&&x.name&&x.name.ko)_m2FullNameSetC.add(x.name.ko);});}return _m2FullNameSetC;}
+// 제목의 따옴표 곡명(‘ADDICTED’·'Flower'·"…"·「…」) → 곡 키(_m2IsChallengeSongOwner와 같은 정규화)
+function _m2QuotedSongKeys(title){
+  const nk=s=>String(s||'').toLowerCase().replace(/\(.*?\)|\[.*?\]/g,'').replace(/[^a-z0-9가-힣]/g,'');
+  const keys=new Set();for(const m of String(title||'').matchAll(/[‘'"“「]([^‘'"“”’」]{1,40})[’'"”」]/g)){const k=nk(m[1]);if(k.length>=2)keys.add(k);}
+  return [...keys];
+}
 function _m2IsChallengeSongOwner(a,songKeys){
   if(!songKeys||!songKeys.length||!a)return false;
   const nk=s=>String(s||'').toLowerCase().replace(/\(.*?\)|\[.*?\]/g,'').replace(/[^a-z0-9가-힣]/g,'');
@@ -9422,7 +9431,12 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
       // ⚠️ "겹치는 성 뗀 이름 전부(채원 5명·지우 등 61명)"로 넓히는 안은 이전/새 매처 차분(DB 제목 31,180개 → 718개 변화)에서
       //    "CLASS:y 채원 직캠"이 르세라핌 김채원으로 가는 등 회귀가 나와 버렸다 — 대부분은 개선(르세라핌 영상의 '채원'→클라씨 윤채원 제거)이라
       //    다시 할 땐 그룹 근거(CLASS:y 표기 인식 등)부터 보강하고 차분으로 확인할 것.
-      const names=_ATM_NO_GIVEN_ONLY.has(a.name.ko)?_m2NameVariants(a).filter(t=>t!==_atmStripSurname([...a.name.ko])):_m2NameVariants(a);
+      // 성 뗀 이름이 **다른 아티스트의 본명과 똑같으면**(서지수→"지수" = 블랙핑크 지수) 그 변형으로는 역추론하지 않는다(2026-11-10 사용자 —
+      // 블랙핑크 지수 'ADDICTED' 인기가요 직캠(주간 직캠 1위)이 러블리즈 서지수로 붙음). 본명 "지수"는 흔한 단어라 막혀 있는데 성 뗀 "지수"는
+      // 안 막혀 비대칭으로 서지수만 남았다. 본명 주인이 우선 — 성 붙은 "서지수"·영문은 그대로 인정.
+      const _strip=_atmStripSurname([...a.name.ko]);
+      const _stripShadow=_strip&&_strip!==a.name.ko&&_m2FullNameSet().has(_strip);
+      const names=(_ATM_NO_GIVEN_ONLY.has(a.name.ko)||_stripShadow)?_m2NameVariants(a).filter(t=>t!==_strip):_m2NameVariants(a);
       // strict 채널(예능/잡지)에서는 그룹명 literal 매칭이 아예 없으므로, 멤버 이름도 해시태그로
       // 명시된 경우만 인정 — 평문 매칭(memberHit의 일반 분기)은 여기서 아예 시도하지 않는다.
       const _matchedToks=(strict?names.filter(t=>hitHashtag(t)):memberHitTokens(a,names)).filter(t=>!_m2FullNameShadowed(t,a,title));
@@ -9515,8 +9529,22 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // "지유"와 키키 "지유"가 외부 모음채널 영상에서 계속 서로에게 잘못 얹히던 원인이 이거였음(2026-08-05,
     // 사용자 제보). 기존 selfGko 안전장치는 "그 그룹 전체"가 selfGko와 같을 때만 작동해서, selfGko가
     // 아예 idol 그룹이 아닌 모음채널인 경우까지는 못 걸렀었음.
+    const _collisionDropped=new Set(); // 동명이인 충돌로 빠진 사람 — 아래 '공유 토큰만 남은 다른 사람' 정리용(2026-11-10)
+    const _titleSongKeys=_m2QuotedSongKeys(rawTitle);
     nameToGroups.forEach((perPerson,name)=>{
       if(perPerson.size<2)return; // 매칭된 사람이 1명뿐이면(겸임이라 그룹이 여러 개여도) 진짜 동명이인 충돌 아님
+      // ── 곡 주인 tie-break(2026-11-10): 같은 이름 후보 중 제목 따옴표 곡이 자기 디스코에 있는 사람이 딱 한 명이면 그 사람.
+      //    "지수 'ADDICTED'" — 블랙핑크 지수 vs 솔로 지수가 겹쳐 둘 다 지워지고 러블리즈 서지수가 영문 JISOO로 혼자 남던 것.
+      if(_titleSongKeys.length){
+        const own=[...perPerson.keys()].filter(p=>_m2IsChallengeSongOwner(p,_titleSongKeys));
+        if(own.length===1){
+          const keep=new Set(perPerson.get(own[0]));
+          perPerson.forEach((gkos,person)=>{if(person===own[0])return;_collisionDropped.add(person);
+            gkos.forEach(g=>{if(keep.has(g))return;const l=inferred.get(g);if(!l)return;const i=l.indexOf(name);if(i!==-1)l.splice(i,1);if(!l.length)inferred.delete(g);});});
+          _trace.push({rule:'song_owner_tiebreak',token:name,effect:'kept'});
+          return;
+        }
+      }
       // ── 동명이인 tie-break: 영상 시점에 **불가능한 후보**를 먼저 걷어낸다(2026-09-03) ────────────
       // 소속 그룹이 전부 그 영상보다 먼저 해체됐으면 그 사람일 수 없다. 걸러서 한 명만 남으면 애초에
       // 충돌이 아니므로 그 사람으로 확정한다(무소속 솔로는 GROUPS에 없어 해체일도 없으니 항상 살아남음).
@@ -9529,7 +9557,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
           gkos.some(g=>{const end=_disbandCutoffDate(g);return !end||String(publishedAt).slice(0,10)<=end;}));
         if(alive.length===1){
           const keep=new Set(alive[0][1]);
-          perPerson.forEach((gkos,person)=>{if(person===alive[0][0])return;
+          perPerson.forEach((gkos,person)=>{if(person===alive[0][0])return;_collisionDropped.add(person);
             gkos.forEach(g=>{if(keep.has(g))return;const l=inferred.get(g);if(!l)return;
               const i=l.indexOf(name);if(i!==-1)l.splice(i,1);if(!l.length)inferred.delete(g);});});
           return; // 충돌 해소됨 — 아래 전면 제거로 넘어가지 않는다
@@ -9538,6 +9566,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
       const allGkos=new Set();
       perPerson.forEach(gkos=>gkos.forEach(g=>allGkos.add(g)));
       const keepGko=(selfGko&&allGkos.has(selfGko))?selfGko:null;
+      perPerson.forEach((gkos,person)=>{if(!keepGko||!gkos.includes(keepGko))_collisionDropped.add(person);});
       allGkos.forEach(gko=>{
         if(gko===keepGko)return;
         const list=inferred.get(gko);
@@ -9551,6 +9580,17 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 그룹명이 아예 없이 멤버 이름 하나만으로 그룹을 역추론한 상황 — 이 영상이 원래 어느 채널 소속인지
     // (selfGko) 이미 알고 있고 그 그룹도 같은 이름으로 걸렸다면, 동명이인(예: 크래비티 "성민" ↔
     // 슈퍼주니어 "성민")을 엉뚱하게 다른 그룹 콜라보로 엮는 걸 막기 위해 다른 그룹 추론은 버린다.
+    // 공유 토큰만 남은 사람 정리(2026-11-10) — 동명이인 충돌로 빠진 사람과 **같은 토큰으로만** 매칭된 다른 사람(영문 JISOO만 걸린 러블리즈 서지수)은
+    // 그 토큰이 누구를 가리키는지 모르는 건 마찬가지라 같이 뺀다. 자기만의 토큰(서지수 본명 등)이 하나라도 있으면 남는다.
+    if(_collisionDropped.size&&!selfGko){
+      for(const [p,toks] of artistToTokens){
+        if(_collisionDropped.has(p)||!toks.length)continue;
+        const onlyShared=toks.every(k=>[...(tokenToArtists.get(k)||[])].some(o=>o!==p&&_collisionDropped.has(o)));
+        if(!onlyShared)continue;
+        (artistToGkos.get(p)||[]).forEach(g=>{const l=inferred.get(g);if(!l)return;const i=l.indexOf(p.name.ko);if(i!==-1)l.splice(i,1);if(!l.length)inferred.delete(g);});
+        _trace.push({rule:'shared_token_with_dropped',token:p.name.ko,effect:'dropped'});
+      }
+    }
     if(selfGko&&inferred.has(selfGko)){
       for(const gko of[...inferred.keys()]){if(gko!==selfGko)inferred.delete(gko);}
     }
@@ -9580,6 +9620,20 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
         const survived=(artistToGkos.get(a)||[]).some(g=>(inferred.get(g)||[]).includes(a.name.ko));
         if(!survived)continue;
         if((artistToTokens.get(a)||[]).some(_tokAmbig)){_tokenAmbiguous=true;break;}
+      }
+      // 곡 주인으로 가리기(2026-11-10) — 같은 토큰(JISOO)에 걸린 후보 중 **제목의 따옴표 곡명이 자기 디스코에 있는 사람이 딱 한 명**이면
+      // 그 사람으로 확정하고 나머지 후보 그룹을 뺀다("지수 'ADDICTED'" → 블랙핑크 지수). 못 가리면 예전처럼 애매.
+      if(_tokenAmbiguous){
+        const _songKeys=_m2QuotedSongKeys(rawTitle);
+        if(_songKeys.length){
+          const _alive=[...artistToTokens.keys()].filter(x=>(artistToGkos.get(x)||[]).some(g=>(inferred.get(g)||[]).includes(x.name.ko)));
+          const _owners=_alive.filter(x=>_m2IsChallengeSongOwner(x,_songKeys));
+          if(_owners.length===1){
+            const keep=new Set(artistToGkos.get(_owners[0])||[]);
+            _alive.forEach(x=>{if(x===_owners[0])return;(artistToGkos.get(x)||[]).forEach(g=>{if(keep.has(g))return;const l=inferred.get(g);if(!l)return;const i=l.indexOf(x.name.ko);if(i!==-1)l.splice(i,1);if(!l.length)inferred.delete(g);});});
+            _tokenAmbiguous=false;_trace.push({rule:'song_owner_tiebreak',token:_owners[0].name.ko,effect:'resolved'});
+          }
+        }
       }
     }
     const result=[];
