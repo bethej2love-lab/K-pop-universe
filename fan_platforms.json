@@ -1,7 +1,7 @@
 {
  "_meta": {
   "updated": "2026-11-10",
-  "note": "메시지 서비스(아티스트가 팬에게 보내는 구독형 메시지). m=입점 멤버(없으면 그룹 단위·명단 미확인). 근거: 나무위키 분류·버블 문서 표, 위버스 DM 추천·공식 오픈 공지, 사용자 확인. tools/fan_platforms/"
+  "note": "k=c 커뮤니티 앱, 없으면 메시지 서비스. m=입점 멤버(없으면 그룹 단위·명단 미확인). 근거: 나무위키 분류·버블/FANS 문서 표, 위버스 DM 추천·공식 오픈 공지, 사용자 확인. tools/fan_platforms/"
  },
  "에스파": [
   {
@@ -17,6 +17,11 @@
  ],
  "아이브": [
   {
+   "k": "c",
+   "s": "Berriz",
+   "u": "https://link.berriz.in/web/main/ive"
+  },
+  {
    "s": "bubble",
    "u": "https://dear-u.co",
    "m": [
@@ -31,6 +36,11 @@
  ],
  "키키": [
   {
+   "k": "c",
+   "s": "Berriz",
+   "u": "https://link.berriz.in/web/main/kiiikiii"
+  },
+  {
    "s": "bubble",
    "u": "https://dear-u.co",
    "m": [
@@ -43,6 +53,11 @@
   }
  ],
  "있지": [
+  {
+   "k": "c",
+   "s": "FANS",
+   "u": "https://app.fans"
+  },
   {
    "s": "bubble",
    "u": "https://dear-u.co",
@@ -57,6 +72,11 @@
  ],
  "키스오브라이프": [
   {
+   "k": "c",
+   "s": "Berriz",
+   "u": "https://link.berriz.in/web/main/kissoflife"
+  },
+  {
    "s": "bubble",
    "u": "https://dear-u.co",
    "m": [
@@ -68,6 +88,11 @@
   }
  ],
  "엔믹스": [
+  {
+   "k": "c",
+   "s": "FANS",
+   "u": "https://app.fans"
+  },
   {
    "s": "bubble",
    "u": "https://dear-u.co",
@@ -82,6 +107,11 @@
   }
  ],
  "스트레이키즈": [
+  {
+   "k": "c",
+   "s": "FANS",
+   "u": "https://app.fans"
+  },
   {
    "s": "bubble",
    "u": "https://dear-u.co",
@@ -155,6 +185,11 @@
  ],
  "리센느": [
   {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/rescene-official"
+  },
+  {
    "s": "bubble",
    "u": "https://dear-u.co",
    "m": [
@@ -220,6 +255,11 @@
  ],
  "트와이스": [
   {
+   "k": "c",
+   "s": "FANS",
+   "u": "https://app.fans"
+  },
+  {
    "s": "bubble",
    "u": "https://dear-u.co",
    "m": [
@@ -231,6 +271,13 @@
     "채영",
     "쯔위"
    ]
+  }
+ ],
+ "빅뱅": [
+  {
+   "k": "c",
+   "s": "b.stage",
+   "u": "https://bigbang.bstage.in/"
   }
  ],
  "소녀시대": [
@@ -274,6 +321,11 @@
  ],
  "아이들": [
   {
+   "k": "c",
+   "s": "Berriz",
+   "u": "https://link.berriz.in/web/main/i-dle"
+  },
+  {
    "s": "bubble",
    "u": "https://dear-u.co"
   },
@@ -310,6 +362,11 @@
   }
  ],
  "스테이씨": [
+  {
+   "k": "c",
+   "s": "b.stage",
+   "u": "https://stayc.bstage.in/"
+  },
   {
    "s": "bubble",
    "u": "https://dear-u.co",
@@ -386,6 +443,11 @@
  ],
  "크래비티": [
   {
+   "k": "c",
+   "s": "Berriz",
+   "u": "https://link.berriz.in/web/main/cravity"
+  },
+  {
    "s": "bubble",
    "u": "https://dear-u.co",
    "m": [
@@ -401,7 +463,24 @@
    ]
   }
  ],
+ "아이오아이": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/ioi10th"
+  },
+  {
+   "k": "c",
+   "s": "b.stage",
+   "u": "https://ioi-10th.bstage.in"
+  }
+ ],
  "케플러": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/kep1er"
+  },
   {
    "s": "bubble",
    "u": "https://dear-u.co",
@@ -414,6 +493,27 @@
     "휴닝바히에",
     "서영은"
    ]
+  }
+ ],
+ "제로베이스원": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/zerobaseone"
+  }
+ ],
+ "알파드라이브원": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/ald1"
+  }
+ ],
+ "이즈나": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/izna"
   }
  ],
  "클로즈유어아이즈": [
@@ -460,6 +560,11 @@
  ],
  "몬스타엑스": [
   {
+   "k": "c",
+   "s": "Berriz",
+   "u": "https://link.berriz.in/web/main/monstax"
+  },
+  {
    "s": "bubble",
    "u": "https://dear-u.co",
    "m": [
@@ -478,6 +583,11 @@
   }
  ],
  "킥플립": [
+  {
+   "k": "c",
+   "s": "FANS",
+   "u": "https://app.fans"
+  },
   {
    "s": "bubble",
    "u": "https://dear-u.co",
@@ -500,11 +610,21 @@
  ],
  "원어스": [
   {
+   "k": "c",
+   "s": "Berriz",
+   "u": "https://link.berriz.in/web/main/oneus"
+  },
+  {
    "s": "fromm",
    "u": "https://frommyarti.com"
   }
  ],
  "오마이걸": [
+  {
+   "k": "c",
+   "s": "b.stage",
+   "u": "https://ohmygirl.bstage.in/"
+  },
   {
    "s": "fromm",
    "u": "https://channel.frommyarti.com/en/channels/ohmygirl/notice"
@@ -517,6 +637,11 @@
   }
  ],
  "베리베리": [
+  {
+   "k": "c",
+   "s": "b.stage",
+   "u": "https://verivery.bstage.in/"
+  },
   {
    "s": "bubble",
    "u": "https://dear-u.co",
@@ -532,6 +657,11 @@
   }
  ],
  "인피니트": [
+  {
+   "k": "c",
+   "s": "b.stage",
+   "u": "https://infinite.bstage.in/"
+  },
   {
    "s": "bubble",
    "u": "https://dear-u.co",
@@ -591,11 +721,21 @@
  ],
  "아이콘": [
   {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/ikon"
+  },
+  {
    "s": "fromm",
    "u": "https://frommyarti.com"
   }
  ],
  "우주소녀": [
+  {
+   "k": "c",
+   "s": "Berriz",
+   "u": "https://link.berriz.in/web/main/wjsn"
+  },
   {
    "s": "bubble",
    "u": "https://dear-u.co",
@@ -612,6 +752,11 @@
   }
  ],
  "아이딧": [
+  {
+   "k": "c",
+   "s": "Berriz",
+   "u": "https://link.berriz.in/web/main/idid"
+  },
   {
    "s": "bubble",
    "u": "https://dear-u.co",
@@ -658,6 +803,11 @@
   }
  ],
  "데이식스": [
+  {
+   "k": "c",
+   "s": "FANS",
+   "u": "https://app.fans"
+  },
   {
    "s": "bubble",
    "u": "https://dear-u.co",
@@ -734,6 +884,11 @@
  ],
  "브브걸": [
   {
+   "k": "c",
+   "s": "b.stage",
+   "u": "https://bbgirls.bstage.in"
+  },
+  {
    "s": "bubble",
    "u": "https://dear-u.co",
    "m": [
@@ -741,6 +896,1024 @@
     "은지",
     "유나"
    ]
+  }
+ ],
+ "위아이": [
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "장대현",
+    "김동한",
+    "유용하",
+    "김요한",
+    "강석화",
+    "김준서"
+   ]
+  }
+ ],
+ "씨아이엑스": [
+  {
+   "s": "fromm",
+   "u": "https://frommyarti.com"
+  }
+ ],
+ "아르테미스": [
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "희진",
+    "하슬",
+    "김립",
+    "진솔",
+    "최리"
+   ]
+  }
+ ],
+ "클라씨": [
+  {
+   "s": "Weverse DM",
+   "u": "https://dm.weverse.io",
+   "m": [
+    "김선유",
+    "윤채원",
+    "명형서",
+    "김리원",
+    "원지민",
+    "홍혜주"
+   ]
+  }
+ ],
+ "니쥬": [
+  {
+   "k": "c",
+   "s": "FANS",
+   "u": "https://app.fans"
+  },
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "마코",
+    "리오",
+    "마야",
+    "리쿠",
+    "아야카",
+    "마유카",
+    "리마",
+    "미이히",
+    "니나"
+   ]
+  }
+ ],
+ "카드": [
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "J.Seph",
+    "BM",
+    "전소민",
+    "전지우"
+   ]
+  }
+ ],
+ "갓세븐": [
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "영재"
+   ]
+  }
+ ],
+ "드리핀": [
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "이협",
+    "주창욱",
+    "김동윤",
+    "김민서",
+    "차준호"
+   ]
+  }
+ ],
+ "틴탑": [
+  {
+   "k": "c",
+   "s": "b.stage",
+   "u": "https://teentop.bstage.in/"
+  },
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co"
+  }
+ ],
+ "키라스": [
+  {
+   "k": "c",
+   "s": "b.stage",
+   "u": "https://kiiras.bstage.in/"
+  }
+ ],
+ "유스피어": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/uspeer"
+  }
+ ],
+ "비에이피": [
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "정대현",
+    "유영재",
+    "문종업"
+   ]
+  }
+ ],
+ "데일리디렉션": [
+  {
+   "s": "Weverse DM",
+   "u": "https://weverse.io/dailydirection",
+   "m": [
+    "김주형",
+    "임지환",
+    "앤 킴",
+    "장윤석",
+    "이원우",
+    "이반"
+   ]
+  }
+ ],
+ "베이온": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/vayonn"
+  }
+ ],
+ "메이딘": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/madein"
+  }
+ ],
+ "키비츠": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/keyveatz"
+  }
+ ],
+ "오메가엑스": [
+  {
+   "s": "fromm",
+   "u": "https://frommyarti.com"
+  }
+ ],
+ "프림로즈": [
+  {
+   "s": "fromm",
+   "u": "https://frommyarti.com"
+  }
+ ],
+ "소디엑": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/xodiac"
+  }
+ ],
+ "하트오브우먼": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/heartofwoman"
+  }
+ ],
+ "원위": [
+  {
+   "s": "fromm",
+   "u": "https://frommyarti.com"
+  }
+ ],
+ "god": [
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "손호영"
+   ]
+  }
+ ],
+ "에버글로우": [
+  {
+   "k": "c",
+   "s": "b.stage",
+   "u": "https://everglow.bstage.in/"
+  }
+ ],
+ "드림캐쳐": [
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "다미",
+    "가현"
+   ]
+  },
+  {
+   "s": "fromm",
+   "u": "https://frommyarti.com"
+  }
+ ],
+ "라잇썸": [
+  {
+   "k": "c",
+   "s": "Berriz",
+   "u": "https://link.berriz.in/web/main/lightsum"
+  },
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "상아",
+    "초원",
+    "나영",
+    "히나",
+    "주현",
+    "유정"
+   ]
+  }
+ ],
+ "2PM": [
+  {
+   "k": "c",
+   "s": "FANS",
+   "u": "https://app.fans"
+  },
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "JUN. K",
+    "닉쿤",
+    "우영"
+   ]
+  }
+ ],
+ "유키스": [
+  {
+   "k": "c",
+   "s": "b.stage",
+   "u": "https://ukiss.bstage.in/"
+  }
+ ],
+ "티오원": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://www.mnetplus.world"
+  },
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "송동건",
+    "조찬혁",
+    "최지수",
+    "이재윤",
+    "김제유",
+    "장경호",
+    "코바야시 다이고",
+    "전여여정"
+   ]
+  }
+ ],
+ "앳하트": [
+  {
+   "s": "fromm",
+   "u": "https://frommyarti.com"
+  }
+ ],
+ "캣츠아이": [
+  {
+   "s": "Weverse DM",
+   "u": "https://dm.weverse.io",
+   "m": [
+    "라라 라자고팔란",
+    "마농 바너만"
+   ]
+  }
+ ],
+ "넥스지": [
+  {
+   "k": "c",
+   "s": "FANS",
+   "u": "https://app.fans"
+  },
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "토모야",
+    "유우",
+    "하루",
+    "소 건",
+    "세이타",
+    "휴이",
+    "유키"
+   ]
+  }
+ ],
+ "올아워즈": [
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "건호",
+    "유민",
+    "제이든",
+    "민제",
+    "마사미",
+    "현빈",
+    "온"
+   ]
+  }
+ ],
+ "엑스디너리 히어로즈": [
+  {
+   "k": "c",
+   "s": "FANS",
+   "u": "https://app.fans"
+  },
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "정수",
+    "가온",
+    "O.de",
+    "Jun Han",
+    "주연"
+   ]
+  }
+ ],
+ "피에스타": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/fiestar"
+  }
+ ],
+ "우아": [
+  {
+   "s": "fromm",
+   "u": "https://frommyarti.com"
+  }
+ ],
+ "퍼플키스": [
+  {
+   "k": "c",
+   "s": "b.stage",
+   "u": "https://purplekiss.bstage.in/"
+  },
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co"
+  },
+  {
+   "s": "fromm",
+   "u": "https://frommyarti.com"
+  }
+ ],
+ "영파씨": [
+  {
+   "k": "c",
+   "s": "b.stage",
+   "u": "https://youngposse.bstage.in/"
+  },
+  {
+   "s": "fromm",
+   "u": "https://frommyarti.com"
+  }
+ ],
+ "드림노트": [
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "보니",
+    "유아이",
+    "라라",
+    "미소",
+    "수민",
+    "은조"
+   ]
+  }
+ ],
+ "82메이저": [
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "조성일",
+    "윤예찬",
+    "남성모",
+    "황성빈",
+    "박석준",
+    "김도균"
+   ]
+  }
+ ],
+ "언차일드": [
+  {
+   "k": "c",
+   "s": "Berriz",
+   "u": "https://link.berriz.in/web/main/unchild"
+  }
+ ],
+ "온리원오프": [
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co"
+  }
+ ],
+ "동키즈": [
+  {
+   "k": "c",
+   "s": "b.stage",
+   "u": "https://dkz.bstage.in"
+  },
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co"
+  },
+  {
+   "s": "fromm",
+   "u": "https://frommyarti.com"
+  }
+ ],
+ "티엔엑스": [
+  {
+   "s": "Weverse DM",
+   "u": "https://weverse.io/tnx",
+   "m": [
+    "오성준",
+    "천준혁",
+    "장현수",
+    "최태훈",
+    "은휘"
+   ]
+  }
+ ],
+ "템페스트": [
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "한빈",
+    "형섭",
+    "은찬",
+    "태래"
+   ]
+  }
+ ],
+ "배너": [
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "태환",
+    "GON"
+   ]
+  }
+ ],
+ "다크비": [
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "이찬",
+    "D1",
+    "GK",
+    "희찬",
+    "룬",
+    "준서",
+    "유쿠",
+    "해리준"
+   ]
+  }
+ ],
+ "이븐": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/evnne"
+  },
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "케이타",
+    "박한빈",
+    "이정현",
+    "문정현",
+    "박지후"
+   ]
+  }
+ ],
+ "유나이트": [
+  {
+   "k": "c",
+   "s": "Berriz",
+   "u": "https://link.berriz.in/web/main/younite"
+  },
+  {
+   "s": "fromm",
+   "u": "https://frommyarti.com"
+  }
+ ],
+ "에잇턴": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/8turn"
+  },
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "명호",
+    "재윤",
+    "민호",
+    "윤성",
+    "해민",
+    "경민",
+    "윤규",
+    "승헌"
+   ]
+  }
+ ],
+ "라임라잇": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://www.mnetplus.world"
+  }
+ ],
+ "튜넥스": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/tunexx"
+  }
+ ],
+ "에이스": [
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co"
+  }
+ ],
+ "힛지스": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/hitgs"
+  }
+ ],
+ "원팩트": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/0nepact"
+  },
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "종우",
+    "제이 창",
+    "성민",
+    "태그",
+    "예담"
+   ]
+  }
+ ],
+ "플레이브": [
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "예준",
+    "노아",
+    "밤비",
+    "은호",
+    "하민"
+   ]
+  }
+ ],
+ "이세계아이돌": [
+  {
+   "k": "c",
+   "s": "Berriz",
+   "u": "https://link.berriz.in/web/main/isegyeidol"
+  }
+ ],
+ "BAE173": [
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "유준",
+    "무진",
+    "준서",
+    "영서",
+    "빛"
+   ]
+  }
+ ],
+ "뉴비트": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/newbeat-official"
+  }
+ ],
+ "이프아이": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/ifeye"
+  }
+ ],
+ "엑스러브": [
+  {
+   "k": "c",
+   "s": "b.stage",
+   "u": "https://xlov.bstage.in/"
+  }
+ ],
+ "베이비돈크라이": [
+  {
+   "s": "Weverse DM",
+   "u": "https://dm.weverse.io",
+   "m": [
+    "이현",
+    "베니",
+    "쿠미",
+    "미아"
+   ]
+  }
+ ],
+ "비디씨": [
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "홍성준",
+    "김시훈",
+    "윤정환"
+   ]
+  }
+ ],
+ "걸셋": [
+  {
+   "k": "c",
+   "s": "FANS",
+   "u": "https://app.fans"
+  }
+ ],
+ "퀸즈아이": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/queenzeye-official"
+  }
+ ],
+ "플레어유": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/flareu"
+  }
+ ],
+ "하입프린세스": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/hiipe-princess"
+  }
+ ],
+ "키빗업": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/keyvitup"
+  }
+ ],
+ "루네이트": [
+  {
+   "s": "fromm",
+   "u": "https://frommyarti.com"
+  }
+ ],
+ "나우즈": [
+  {
+   "k": "c",
+   "s": "Berriz",
+   "u": "https://link.berriz.in/web/main/nowz"
+  },
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "현빈",
+    "윤",
+    "연우",
+    "진혁",
+    "시윤"
+   ]
+  }
+ ],
+ "파우": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/pow-grid"
+  },
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co"
+  }
+ ],
+ "엠씨엔디": [
+  {
+   "k": "c",
+   "s": "b.stage",
+   "u": "http://mcnd.bstage.in"
+  },
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "캐슬제이",
+    "빅",
+    "민재",
+    "휘준",
+    "윈"
+   ]
+  }
+ ],
+ "판타지보이즈": [
+  {
+   "s": "fromm",
+   "u": "https://frommyarti.com"
+  }
+ ],
+ "티아이오티": [
+  {
+   "k": "c",
+   "s": "b.stage",
+   "u": "https://tiot.bstage.in/"
+  },
+  {
+   "s": "fromm",
+   "u": "https://frommyarti.com"
+  }
+ ],
+ "엔플라잉": [
+  {
+   "s": "fromm",
+   "u": "https://frommyarti.com"
+  }
+ ],
+ "아이칠린": [
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "지윤",
+    "이지",
+    "재키",
+    "주니",
+    "채린",
+    "예주",
+    "초원"
+   ]
+  }
+ ],
+ "엔싸인": [
+  {
+   "s": "fromm",
+   "u": "https://frommyarti.com"
+  }
+ ],
+ "배드빌런": [
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "엠마",
+    "클로이 영",
+    "휴이",
+    "이나",
+    "윤서",
+    "빈",
+    "켈리"
+   ]
+  }
+ ],
+ "나인아이": [
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co"
+  }
+ ],
+ "트라이비": [
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co"
+  }
+ ],
+ "B.D.U": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/bdu"
+  }
+ ],
+ "고스트나인": [
+  {
+   "s": "fromm",
+   "u": "https://frommyarti.com"
+  }
+ ],
+ "크랙시": [
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "우아",
+    "카린",
+    "혜진",
+    "수안"
+   ]
+  }
+ ],
+ "픽시": [
+  {
+   "k": "c",
+   "s": "b.stage",
+   "u": "https://pixy.bstage.in"
+  }
+ ],
+ "세븐어스": [
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "희재",
+    "이레"
+   ]
+  }
+ ],
+ "휘브": [
+  {
+   "s": "Weverse DM",
+   "u": "https://dm.weverse.io",
+   "m": [
+    "원준",
+    "진범",
+    "재하",
+    "이정",
+    "김준민",
+    "유건",
+    "하승"
+   ]
+  }
+ ],
+ "어센트": [
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "가람",
+    "제이",
+    "레온",
+    "카일",
+    "효원"
+   ]
+  },
+  {
+   "s": "Weverse DM",
+   "u": "https://dm.weverse.io",
+   "m": [
+    "가람",
+    "제이",
+    "효원",
+    "레온",
+    "카일"
+   ]
+  }
+ ],
+ "빅오션": [
+  {
+   "k": "c",
+   "s": "b.stage",
+   "u": "https://bigocean.bstage.in/"
+  },
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "찬연",
+    "PJ",
+    "지석"
+   ]
+  }
+ ],
+ "다이몬": [
+  {
+   "s": "Weverse DM",
+   "u": "https://dm.weverse.io",
+   "m": [
+    "히",
+    "태극",
+    "세이타",
+    "렉스",
+    "민재"
+   ]
+  }
+ ],
+ "아크": [
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "끼엔",
+    "현민",
+    "최한",
+    "앤디",
+    "리오토",
+    "도하",
+    "지빈"
+   ]
+  }
+ ],
+ "하츠웨이브": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/hrtzwav"
+  }
+ ],
+ "모디세이": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/planetc-homerace"
+  }
+ ],
+ "에이엔": [
+  {
+   "k": "c",
+   "s": "Berriz",
+   "u": "https://link.berriz.in/web/main/aen_offcl"
+  },
+  {
+   "s": "bubble",
+   "u": "https://dear-u.co",
+   "m": [
+    "지용",
+    "보민",
+    "규현",
+    "하루",
+    "하루토",
+    "준서",
+    "카이라"
+   ]
+  }
+ ],
+ "A2O LITE": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/a2olite"
+  }
+ ],
+ "A2O SOUL": [
+  {
+   "k": "c",
+   "s": "Mnet Plus",
+   "u": "https://artist.mnetplus.world/main/stg/a2osoul"
   }
  ]
 }

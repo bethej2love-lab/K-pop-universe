@@ -12184,6 +12184,8 @@ try{const _r=document.getElementById('gc-en-row');if(_r&&window.ResizeObserver)n
 let _fanPlatP=null;
 function _loadFanPlat(){return _fanPlatP||(_fanPlatP=fetch('fan_platforms.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).catch(()=>({})));}
 const _MSG_SVG='<svg viewBox="0 0 24 24" fill="none"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v9a1.5 1.5 0 0 1-1.5 1.5H10l-4.5 3.8V16h0A1.5 1.5 0 0 1 4 14.5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+// 커뮤니티 앱(k:'c' — 베리즈·Mnet Plus·b.stage·JYP FANS)은 사람 둘 아이콘으로 메시지와 구분(위버스 커뮤니티는 SNS 줄 하트 아이콘이 이미 있음)
+const _COMM_SVG='<svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="9" r="3.2" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 19c.6-3 2.8-4.6 5.5-4.6s4.9 1.6 5.5 4.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M15.5 6.3a2.8 2.8 0 1 1 0 5.4M17 14.6c1.9.5 3.1 2 3.5 4.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
 function _appendFanMsgLinks(wrap,ctx){
   if(!ctx||!ctx.gkos||!ctx.gkos.length)return;
   const tok=String(Math.random());wrap.dataset.fpTok=tok;
@@ -12195,8 +12197,9 @@ function _appendFanMsgLinks(wrap,ctx){
       if(ctx.mko&&Array.isArray(it.m)&&!it.m.includes(ctx.mko))return;
       seen.add(it.s);
       const el=document.createElement('a');el.className='gc-link-msg';el.href=it.u;el.target='_blank';el.rel='noopener noreferrer';
-      el.title=(currentLang==='ko'?'메시지 · ':'Messages · ')+it.s;el.setAttribute('aria-label',el.title);
-      el.innerHTML=_MSG_SVG;const t=document.createElement('span');t.textContent=it.s;el.appendChild(t);
+      const _c=it.k==='c';
+      el.title=(currentLang==='ko'?(_c?'커뮤니티 · ':'메시지 · '):(_c?'Community · ':'Messages · '))+it.s;el.setAttribute('aria-label',el.title);
+      el.innerHTML=_c?_COMM_SVG:_MSG_SVG;const t=document.createElement('span');t.textContent=it.s;el.appendChild(t);
       el.addEventListener('click',e=>e.stopPropagation());
       wrap.appendChild(el);wrap.style.display='';
     }));

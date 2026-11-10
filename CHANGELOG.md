@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-11-10 (Claude Code — 소통 앱 전 그룹 확장 + 커뮤니티 앱)
+- 사용자: "아직 안 한 거 확인해줘". **나머지 190그룹** 나무위키 문서도 같은 방식(분류·버블 표)으로 조사 → `draft_rest_2026-11-10.json`. 엘즈업·A2O MAY는 문서명 불일치로 미조사.
+- **커뮤니티 앱 추가**(k:'c', 사람 둘 아이콘): 베리즈·Mnet Plus·b.stage는 나무위키 문서의 실제 그룹 페이지 링크(link.berriz.in/web/main/…, artist.mnetplus.world/main/stg/…, *.bstage.in), 링크 없으면 앱 첫 화면. JYP FANS는 나무위키 FANS 문서 라인업(2PM·데이식스·트와이스·스트레이키즈·있지·니쥬·엑스디너리히어로즈·엔믹스·걸셋·넥스지·킥플립) → app.fans(그룹별 주소 없음 확인). 위버스 커뮤니티는 SNS 줄 하트 아이콘이 이미 있어 제외. 포닝·Cosmo는 웹 주소 없어 보류.
+- 결과 fan_platforms.json **163그룹**: bubble 86·fromm 31·Weverse DM 17 / Berriz 15·Mnet Plus 33·b.stage 19·FANS 11.
+- 멜론: 1:1 메시지 없음. 확인된 건 뮤직웨이브(단체 채팅 이벤트)·FANswer(팬 질문 답변 콘텐츠)·앨범 페이지 '아티스트 노트'. 사용자가 말한 '사진도 보내는 아티스트 메시지'는 검색으로 특정 못 함 — 사용자에게 화면 확인 요청. withfan은 앱(App Store)만 있고 웹 주소 없어 보류(아이덴티티 등).
+- 검증: 헤드리스 아이브 카드(👥 Berriz → link.berriz.in/web/main/ive, 💬 bubble). smoke·card-title-visibility·touch-targets 통과.
+
 ## 2026-11-10 (Claude Code — 아이폰 가로 회전 뒤 영상 왼쪽 검은 띠 보정)
 - 사용자 캡처 '가로모드'(아이폰 가로, XLOV 투스젬 치와와 응원법): 영상 그림만 오른쪽으로 밀려 왼쪽에 검은 띠·오른쪽 잘림, 유튜브 컨트롤·제목은 틀에 맞음. 썸네일 원본(maxres)엔 여백 없음, 헤드리스 크롬은 세로→가로 회전 후 iframe=틀 473×266 정확·그림도 꽉 참 → iOS 유튜브 플레이어가 iframe 크기 변화를 한 번 놓친 것으로 판단.
 - **[app.js]** 라이트박스가 열린 상태에서 resize가 잦아들면(350ms) iframe 폭을 1px 줄였다 두 프레임 뒤 되돌림, 700ms 뒤 한 번 더(`_lbNudgeIframe`). src·재생은 그대로(헤드리스 확인: 인라인 폭 원복, src 동일). ⚠️ 아이폰 실기기 확인 대기 — 안 고쳐지면 회전 후 현재 시점부터 iframe 재로드가 다음 수단.
