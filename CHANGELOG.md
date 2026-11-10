@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-11-10 (Claude Code — 어드민 버튼 정리 + 안 쓰는 조합 코드 걷어냄)
+- 사용자: "어드민 거의 안 들어가는데 괜찮나" → 실측(제보 0건, 검수 대기 1.8만 중 98%는 이미 공개, 보류 이번 주 +2, 매일 루틴 무인 성공) 후 "쓸데없는 건 정리" → 어드민 버튼·안 쓰는 코드.
+- **[index.html 어드민 템플릿·css]** 설정 패널 위에는 패널 열기 6·미태깅 알림·영상 URL 직접 추가만. 동기화·백필·측정·오태깅 미리보기·재처리 4·데뷔 이전·청소·일괄 되돌리기는 `<details class="sp-adv">고급 도구</details>`로 접음(버튼ID·핸들러 그대로, 펼치면 사용). admin-dock·admin-exec-lock·admin-markup-exposure·routine-parity·overlay-front·smoke 통과.
+- **[app.js·index.html]** Chemistry 통합 뒤 화면에 안 쓰이던 예전 조합 결과 코드 125줄 제거: `_comboApplyAndRender`·`_comboRenderResults`·`_comboRenderList`·Only 토글·링크 복사/이미지 공유(`_buildComboCardDataURL`·`_comboShareHash`) + combo-only/combo-share 버튼. 관계도(`_comboBuildFig`·`_comboVizRows`)·짝 조회(`_comboFetchRows`)는 Chemistry가 써서 유지. tests/share-copy-outcome(공용 복사 함수만 7/7)·combo-query-state(7/7) 갱신, combo-search-navigation·mobile-first-visit 19/19·phone-landscape 29/29·cancel-top-surface·smoke·interaction 통과, 헤드리스 3명 Chemistry 관계도 정상.
+- .audit-worktrees(Codex 작업 폴더)는 미기록 검수가 남아 있을 수 있어 그대로 둠.
+
 ## 2026-11-10 (Claude Code — 정적 페이지 → 앱 전환 측정)
 - 사용자: GA 650명 vs 앱 기록 64명(11-03~09) 차이 문의 → 원인은 GA가 정적 착지 페이지(챗지피티 331명 유입 대부분) 방문자까지 세고 app_events는 앱을 연 사람만 셈(+GA엔 Ashburn 128 등 데이터센터 접속 섞임). "정적 페이지에서 앱으로 오는 비율을 높이는 게 관건" → 먼저 우리 쪽 측정.
 - **[SQL 실행] sql/2026-11-10_seo_events.sql**: 잠긴 표 `seo_events`(ev·page_type·path·src·did) + `log_seo_event()` 함수(security definer, ev는 land/play/cta/to_app/yt만, 길이 제한, anon 실행 허용). 정적 페이지엔 로그인 세션이 없어 app_events에 못 써서.

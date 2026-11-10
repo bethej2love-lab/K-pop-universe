@@ -4,7 +4,7 @@
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict');
 const src=fs.readFileSync(path.join(__dirname,'../app.js'),'utf8');
 function part(a,b){const s=src.indexOf(a),e=src.indexOf(b,s);assert(s>=0&&e>s,a);return src.slice(s,e);}
-const code=part('async function _comboSearch(){','// Only 토글 반영:');
+const code=part('async function _comboSearch(){','// ── 조합 그림(');
 const P=(name,group)=>({name,group});
 function fixture(sel,resp){
   const calls={chem:[],closed:0};

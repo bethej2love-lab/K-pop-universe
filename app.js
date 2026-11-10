@@ -14023,20 +14023,17 @@ document.getElementById('gc-track-videos-overlay')?.addEventListener('click',e=>
 // with_members[]에 "이름(그룹)". Phase1 = 선택 전원이 함께 나온 영상(교집합). 공유 해시 #combo=이름(그룹),…
 const _COMBO_MAX=4; // 2026-11-10 Chemistry로 통합 — 고르기 창 최대 인원 = _CHEM_MAX(예전 10명)
 let _comboSel=[],_comboReq=0;
-let _comboExactOnly=false,_comboAllRows=null; // "Only" 토글 — 선택 조합만 정확히 나온 영상(외부인 없음). 재요청 없이 클라 재필터
 function _openComboPanel(){
   const ov=document.getElementById('combo-overlay');if(!ov)return;
   ov.classList.add('open');_bringToFront(ov); // 조합 패널 열리면 맨 위
   const s=document.getElementById('combo-search');if(s)s.value='';
-  _comboExactOnly=false;_comboInvalidateResults(); // 새 화면에서 이전 응답/공유 이미지 무효화
-  const _ob=document.getElementById('combo-only');if(_ob){_ob.classList.remove('active');_ob.setAttribute('aria-pressed','false');_ob.style.display='none';}
-  _comboRenderSuggest('');_comboRenderChips();_comboRenderResults(null);
+  _comboInvalidateResults();
+  _comboRenderSuggest('');_comboRenderChips();
   setTimeout(()=>{try{if(!isMob()&&s)s.focus();}catch(e){}},60); // 모바일은 자동 키보드 안 띄움
 }
 function _closeComboPanel(){_comboInvalidateResults();const ov=document.getElementById('combo-overlay');if(ov)ov.classList.remove('open');_fpUpdateVis();}
 function _comboInvalidateResults(){
-  _comboReq++;_comboAllRows=null;
-  _comboCardDataURL=null;_comboLastThumbs=[];_comboLastCount=0;
+  _comboReq++;
 }
 function _comboAdd(name,group){
   if(!name||!group)return;
@@ -14044,9 +14041,9 @@ function _comboAdd(name,group){
   if(_comboSel.length>=_COMBO_MAX){_showShareToast(currentLang==='ko'?('최대 '+_COMBO_MAX+'명까지'):('Up to '+_COMBO_MAX));return;}
   _comboSel.push({name:name,group:group});_comboInvalidateResults();
   const s=document.getElementById('combo-search');if(s){s.value='';s.focus();}
-  _comboRenderSuggest('');_comboRenderChips();_comboApplyAndRender();
+  _comboRenderSuggest('');_comboRenderChips();
 }
-function _comboRemove(name,group){_comboSel=_comboSel.filter(m=>!(m.name===name&&m.group===group));_comboInvalidateResults();_comboRenderChips();_comboApplyAndRender();}
+function _comboRemove(name,group){_comboSel=_comboSel.filter(m=>!(m.name===name&&m.group===group));_comboInvalidateResults();_comboRenderChips();}
 function _comboRenderChips(){
   const el=document.getElementById('combo-chips');if(!el)return;
   el.innerHTML='';
@@ -14058,10 +14055,9 @@ function _comboRenderChips(){
     x.addEventListener('click',()=>_comboRemove(m.name,m.group));
     chip.appendChild(nm);chip.appendChild(gp);chip.appendChild(x);el.appendChild(chip);
   });
-  const go=document.getElementById('combo-go'),sh=document.getElementById('combo-share'),ct=document.getElementById('combo-count');
+  const go=document.getElementById('combo-go'),ct=document.getElementById('combo-count');
   const ok=_comboSel.length>=2;
   if(go)go.disabled=!ok;
-  if(sh)sh.style.display=ok?'':'none';
   if(ct)ct.textContent=_comboSel.length?(_comboSel.length+'/'+_COMBO_MAX):'';
 }
 function _comboRenderSuggest(q){
@@ -14085,7 +14081,7 @@ function _comboRenderSuggest(q){
   }
 }
 // ⭐2026-11-10 멤버 조합 찾기 → Chemistry 통합(사용자 "성격이 너무 비슷 — 정비", "시안 없이 바로"). 이 패널은 이제 사람 고르는 창이고
-// '보기'는 Chemistry를 연다. 예전 #combo 공유 링크·발자국도 여기를 지나 Chemistry로 간다. 아래 예전 결과 그리기(_comboRenderResults·Only·
+// '보기'는 Chemistry를 연다. 예전 #combo 공유 링크·발자국도 여기를 지나 Chemistry로 간다. 예전 결과 그리기·Only·공유 이미지는 11-10에 걷어냈다(_comboRenderResults·Only·
 // 공유 이미지)는 더 이상 화면에 안 쓰인다 — 관계도(_comboBuildFig)와 짝 조회(_comboFetchRows)만 Chemistry가 빌려 쓴다.
 async function _comboSearch(){
   if(_comboSel.length<2)return;
@@ -14116,31 +14112,10 @@ async function _comboFetchRows(sel){
   _filterBannedVideos(r.data).forEach(v=>{const who=sel.filter(m=>_chemHas(v,m));if(who.length>=2)rows.push({v,who,isCover:false});});
   return rows;
 }
-// Only 토글 반영: 이미 받아둔 _comboAllRows에서 "선택 조합 외 사람이 안 나온" 영상만 남겨 렌더.
-// 외부인(관리자 표시)·조합 밖 출연자가 있으면 제외. 재요청 없음.
-function _comboApplyAndRender(){
-  const onlyBtn=document.getElementById('combo-only');
-  let rows=_comboAllRows;
-  if(Array.isArray(rows)){
-    if(onlyBtn)onlyBtn.style.display=''; // 결과가 있으면 토글 노출
-    if(_comboExactOnly){
-      const selKeys=new Set(_comboSel.map(m=>m.name+'('+m.group+')'));
-      rows=rows.filter(r=>{
-        const v=r.v;
-        if(v.content_flag==='외부인')return false; // 미표기 외부인 섞임 → 제외
-        const cast=[];
-        (v.members||[]).forEach(n=>cast.push(n+'('+(v.group_ko||'')+')'));
-        (v.with_members||[]).forEach(n=>cast.push(n)); // 이미 이름(그룹) 형식
-        return cast.length>0 && cast.every(k=>selKeys.has(k));
-      });
-    }
-  }else if(onlyBtn){onlyBtn.style.display='none';}
-  _comboRenderResults(rows);
-}
 // ── 조합 그림(2026-10-15, 사용자 "the pudding처럼 데이터 시각화로") ──
 // 고른 멤버들 = 원 위의 노드(멤버 색, 크기 ∝ 엮인 영상 수), 두 사람 사이 선 = 함께 나온 영상 수(굵기·숫자),
 // 한 번도 안 엮인 쌍은 점선 — "아직 없음"도 이야기다. 아래 막대 = 연도별로 함께 나온 영상 수.
-// 선·막대를 누르면 목록이 그 쌍/그 해로 좁혀진다(다시 누르면 해제). 재요청 없음(_comboAllRows 재필터).
+// 선·막대를 누르면 목록이 그 쌍/그 해로 좁혀진다(다시 누르면 해제). 재요청 없음.
 let _comboViz={pair:null,year:null};
 function _comboMemColor(m){
   const a=ARTISTS.find(x=>x.name.ko===m.name&&x.group?.ko===m.group);
@@ -14276,71 +14251,8 @@ function _comboBuildFig(rows,onChange){
   wrap.appendChild(cap);
   return wrap;
 }
-function _comboRenderResults(rows){
-  const el=document.getElementById('combo-results');if(!el)return;
-  el.innerHTML='';
-  const empty=t=>{const p=document.createElement('div');p.className='tvf-empty';p.textContent=t;el.appendChild(p);};
-  if(rows===null){empty(_comboSel.length>=2?(currentLang==='ko'?'조합 영상 보기를 눌러 영상을 찾아보세요':'Press the button to find videos for this combo'):(currentLang==='ko'?'멤버를 2명 이상 골라 조합 영상을 보세요':'Pick 2+ members to see their videos'));return;}
-  if(rows==='error'){
-    empty(currentLang==='ko'?'영상을 불러오지 못했어요':'Could not load videos');
-    const retry=document.createElement('button');retry.type='button';retry.className='gc-ch-err-retry';
-    retry.textContent=currentLang==='ko'?'다시 시도':'Retry';retry.addEventListener('click',()=>_comboSearch());el.appendChild(retry);
-    return;
-  }
-  if(rows==='loading'){empty(currentLang==='ko'?'불러오는 중…':'Loading…');return;}
-  if(!rows.length){empty(_comboExactOnly?(currentLang==='ko'?'이 조합만 정확히 나온 영상이 없어요':'No video with only this combo'):(currentLang==='ko'?'이 멤버들이 함께·커버로 엮인 영상이 없어요':'No video connecting them (together or cover)'));return;}
-  // 카드 안 영상 그리드와 동일하게(제각각 크기+쇼츠 비율+제목/with·원곡 2줄) — buildVideoSection 재사용(2026-09-02 제보).
-  // 자체그룹 멤버=members[]→"이름(그룹)", with_members는 그대로. 개별출연은 함께한 멤버 줄 생략.
-  const _cw=v=>{ if(v.content_flag==='개별출연')return[]; const o=[]; (v.members||[]).forEach(n=>o.push(v.group_ko?(n+'('+v.group_ko+')'):n)); (v.with_members||[]).forEach(n=>o.push(n)); return o; };
-  // 그림(연결·연도) → 그 아래 목록. 선·막대 선택은 목록만 다시 거른다(재요청 없음).
-  const allRows=rows;
-  const draw=()=>{
-    el.innerHTML='';
-    try{el.appendChild(_comboBuildFig(allRows,draw));}catch(e){console.warn('[combo] 그림 실패 — 목록만',e);}
-    const list=document.createElement('div');list.className='cb-list';el.appendChild(list);
-    _comboRenderList(_comboVizRows(allRows),list,_cw);
-  };
-  draw();
-}
-function _comboRenderList(rows,el,_cw){
-  const songs=rows.map(r=>{const v=r.v;return{
-    t:v.title,u:(_isShortV(v)?'https://www.youtube.com/shorts/':'https://www.youtube.com/watch?v=')+v.id,
-    thumb:v.thumb||'',category:v.category,type:v.category,is_short:v.is_short,content_flag:v.content_flag,
-    with:_cw(v),coverOfMembers:v.cover_of_members||[],coverOfGroups:v.cover_of_groups||[],
-    _apiId:v.id,_apiGroupKo:v.group_ko
-  };});
-  buildVideoSection(songs,el,{groupKo:(_comboSel[0]&&_comboSel[0].group)||'',memberKo:null});
-}
 // 공유 해시 — 이름/그룹 구분자는 '~'(괄호 X). 예전 '이름(그룹)' 형식은 그룹명에 괄호가 있으면((여자)아이들 등)
 // 정규식 파싱이 깨져 링크가 안 열렸음(2026-09-02 제보). 멤버 구분자 ',' (이름·그룹엔 안 쓰임).
-function _comboShareHash(){return '#combo='+_comboSel.map(m=>_hashEsc(m.name)+'~'+_hashEsc(m.group)).join(',');}
-// 조합 공유 이미지 — 컬렉션 카드(_buildCollectionCardDataURL)와 같은 톤: 영상 썸네일 2×2 콜라주 + 멤버명 + 개수.
-// 외부 썸네일은 _loadImgSafe(crossOrigin)로 안전 로드, CORS 실패한 낱장은 빈칸. iOS 공유 차단 회피 위해
-// 결과 로드 시 미리 만들어 _comboCardDataURL에 담아둔다(2026-09-02).
-let _comboLastThumbs=[],_comboLastCount=0,_comboCardDataURL=null;
-async function _buildComboCardDataURL(){
-  const W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;
-  const ctx=cv.getContext('2d');ctx.fillStyle='#040309';ctx.fillRect(0,0,W,H);
-  const coverH=H*0.72,imgs=await Promise.all((_comboLastThumbs||[]).slice(0,4).map(_loadImgSafe));
-  const cell=W/2,cellH=coverH/2;
-  imgs.forEach((img,i)=>{if(img)_drawImgCover(ctx,img,(i%2)*cell,Math.floor(i/2)*cellH,cell,cellH);});
-  ctx.fillStyle='#040309';ctx.fillRect(0,coverH,W,H-coverH);
-  const fade=ctx.createLinearGradient(0,coverH*0.55,0,coverH);fade.addColorStop(0,'rgba(4,3,9,0)');fade.addColorStop(1,'rgba(4,3,9,0.95)');
-  ctx.fillStyle=fade;ctx.fillRect(0,coverH*0.55,W,coverH*0.45);
-  ctx.textAlign='center';
-  const g=GROUPS[_comboSel[0]&&_comboSel[0].group],col_=(g&&Array.isArray(g.color))?g.color:[170,195,255];
-  ctx.font='700 30px "Pretendard","Apple SD Gothic Neo",sans-serif';ctx.fillStyle=`rgba(${col_[0]},${col_[1]},${col_[2]},0.92)`;
-  ctx.fillText(currentLang==='ko'?'함께 나온 무대':'Together on stage',W/2,H-250);
-  let fs=54;const names=_comboSel.map(m=>m.name).join(' · ');
-  ctx.font=`700 ${fs}px "Pretendard","Apple SD Gothic Neo",sans-serif`;
-  while(fs>26&&ctx.measureText(names).width>W-120){fs-=4;ctx.font=`700 ${fs}px "Pretendard","Apple SD Gothic Neo",sans-serif`;}
-  ctx.fillStyle='#f3f6ff';ctx.shadowColor=`rgba(${col_[0]},${col_[1]},${col_[2]},0.6)`;ctx.shadowBlur=20;ctx.fillText(names,W/2,H-180);ctx.shadowBlur=0;
-  ctx.font='400 26px "Pretendard","Apple SD Gothic Neo",sans-serif';ctx.fillStyle='rgba(200,212,240,0.65)';
-  ctx.fillText(currentLang==='ko'?`영상 ${_comboLastCount}개`:`${_comboLastCount} video${_comboLastCount===1?'':'s'}`,W/2,H-120);
-  ctx.font='400 22px "Pretendard","Apple SD Gothic Neo",sans-serif';ctx.fillStyle='rgba(200,212,240,0.55)';
-  ctx.fillText('K · P O P   U N I V E R S E',W/2,H-65);
-  return cv.toDataURL('image/png');
-}
 function _comboFromHash(param){
   const sel=[];
   String(param).split(',').forEach(pair=>{
@@ -14610,35 +14522,6 @@ document.getElementById('combo-close')?.addEventListener('click',e=>{e.stopPropa
 document.getElementById('combo-bg')?.addEventListener('click',_closeComboPanel);
 document.getElementById('combo-search')?.addEventListener('input',e=>_comboRenderSuggest(e.target.value));
 document.getElementById('combo-go')?.addEventListener('click',e=>{e.stopPropagation();_comboSearch();});
-document.getElementById('combo-only')?.addEventListener('click',e=>{
-  e.stopPropagation();
-  _comboExactOnly=!_comboExactOnly;
-  const b=e.currentTarget;
-  b.classList.toggle('active',_comboExactOnly);
-  b.setAttribute('aria-pressed',_comboExactOnly?'true':'false');
-  _comboApplyAndRender(); // 재요청 없이 캐시 재필터
-});
-document.getElementById('combo-share')?.addEventListener('click',async e=>{
-  e.stopPropagation();
-  _gaEvent('share_card',{kind:'combo',method:_isTouchPrimary()&&navigator.share?'native':'link'}); // C1
-  const link=location.origin+location.pathname+_comboShareHash();
-  // 이미지(썸네일 콜라주)가 준비됐으면 이미지로 공유 — 터치=네이티브 공유시트(파일+링크), 데스크톱=이미지 저장+링크복사.
-  if(_comboCardDataURL){
-    try{
-      if(_isTouchPrimary()&&navigator.share){
-        const blob=await(await fetch(_comboCardDataURL)).blob();
-        const file=new File([blob],'kpop-universe-combo.png',{type:'image/png'});
-        if(navigator.canShare&&navigator.canShare({files:[file]})){ await navigator.share({files:[file],text:link,title:'K-POP Universe'}); return; }
-      }
-      const a=document.createElement('a');a.href=_comboCardDataURL;a.download='kpop-universe-combo.png';document.body.appendChild(a);a.click();a.remove();
-      const copied=await _copyShareLink(link,true);
-      _showShareToast(currentLang==='ko'?(copied?'이미지 저장 요청 · 링크 복사됨':'이미지 저장 요청 · 링크 복사 실패'):(copied?'Image download requested · Link copied':'Image download requested · Link copy failed'));
-      return;
-    }catch(err){if(err?.name==='AbortError')return; /* 실패 → 아래 링크 폴백 */ }
-  }
-  const copied=await _copyShareLink(link,true);
-  _showShareToast(copied?(currentLang==='ko'?'링크 복사됨':'Link copied'):link);
-});
 
 // ══ 발자국(2026-09-02) — 방금 본 카드로 되돌아가기. 기존 세션 스택(_cardStack/_memberNavStack)은 닫으면
 // 비워져 "모르고 껐다 직전으로 못 감"이었음 → 닫혀도 남는 별도 히스토리(localStorage). 카드 열 때 기록하고,
