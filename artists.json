@@ -110459,6 +110459,31 @@
         "active": false,
         "left": "2024.08.08"
       }
+    ],
+    "discography": [
+      {
+        "title": "아침이 조금 느려진다면 (웹툰 벙커의 낮 OST X 세이 (Weki Meki))",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/41/816/15141816_20261109135016_500.jpg",
+        "releaseDate": "2026.11.10",
+        "trackCount": 2,
+        "titleTrack": "아침이 조금 느려진다면 (웹툰 벙커의 낮 OST X 세이 (Weki Meki))",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "아침이 조금 느려진다면 (웹툰 벙커의 낮 OST X 세이 (Weki Meki))",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "아침이 조금 느려진다면 (웹툰 벙커의 낮 OST X 세이 (Weki Meki))(Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15141816"
+      }
     ]
   },
   {
@@ -119481,6 +119506,31 @@
         "en": "Wonder Girls",
         "active": false,
         "left": "2017.01.26"
+      }
+    ],
+    "discography": [
+      {
+        "title": "Afterglow - p1.김소희 어쩌다",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/42/072/15142072_20261109151929_500.jpg",
+        "releaseDate": "2026.11.10",
+        "trackCount": 2,
+        "titleTrack": "어쩌다",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "어쩌다",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "어쩌다 (inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15142072"
       }
     ]
   },
