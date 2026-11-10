@@ -5425,6 +5425,7 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   _maybeShowSwipeHint();
   _lbUpdateMemberInfo();
   if(_lbSessionMode==='browse'){_lbUpdateUplist();_surfUpdate();}
+  _lbRenderShortsNext();
   _lbHydrateItem(_lbPlaylist[_lbIdx]);
 }
 // 제목 없이 들어온 항목(URL만 넘긴 호출부)을 DB 행으로 채우고, 아직 그 영상이 떠 있으면 상단·툴바를 다시 그린다.
@@ -6912,6 +6913,42 @@ function _lbRipple(btn,e){
   el.addEventListener('mousedown',e=>_lbRipple(el,e));
 });
 
+// 쇼츠 재생 화면 아래 "다음" 가로 줄(2026-11-10, 11-05 합의 1단계 — "다음 재생목록이 안 보여 답답, 아래 여백 활용").
+// 쇼츠 세션(_lbSessionMode==='shorts')에서만 채우고 CSS도 쇼츠 몰입 모드에서만 보인다. 스와이프와 같은 목록·같은
+// 순서(같은 타입만, _lbAdjacentIdx와 동일 기준)이고 isAdvance=true로 열어 세션 모드가 안 바뀐다(_lbGo와 같음).
+let _lbSnKey='';
+function _lbRenderShortsNext(){
+  const el=document.getElementById('yt-lb-shorts-next');if(!el)return;
+  const items=[];
+  if(_lbSessionMode==='shorts'&&_lbPlaylist)for(let i=_lbIdx+1;i<_lbPlaylist.length&&items.length<12;i++)if(_songIsShort(_lbPlaylist[i]))items.push([_lbPlaylist[i],i]);
+  const key=items.map(([it,i])=>i+':'+it.u).join(',');
+  if(key===_lbSnKey&&el.childElementCount)return;
+  _lbSnKey=key;el.innerHTML='';el.hidden=!items.length;
+  if(!items.length)return;
+  const hd=document.createElement('div');hd.className='lb-sn-hd';hd.textContent='다음';el.appendChild(hd);
+  const row=document.createElement('div');row.className='lb-sn-row hscroll-drag';
+  items.forEach(([item,idx])=>{
+    const b=document.createElement('button');b.type='button';b.className='lb-sn-item';b.setAttribute('aria-label',item.t||'');
+    const img=document.createElement('img');img.alt='';img.decoding='async';
+    const id=ytId(item.u||'');
+    if(id)_mountShortThumb(img,id,{onReady:i=>i.classList.add('loaded')});else if(item.thumb)img.src=item.thumb;
+    b.appendChild(img);
+    b.addEventListener('click',e=>{e.stopPropagation();openLightbox(item.u,true,_lbPlaylist,idx,_lbCtx,true);});
+    row.appendChild(b);
+  });
+  el.appendChild(row);
+  _enableDragScroll(row);
+  requestAnimationFrame(_lbSnFit);
+}
+// 화면 안에 다 들어갈 때만 보인다 — 쇼츠 화면은 세로 손짓이 전부 넘기기라 잘린 줄을 스크롤해 볼 방법이 없다.
+// 아이폰 홈화면 앱(844↑)은 들어가고, 주소창 있는 사파리처럼 짧은 화면에선 숨는다(아래 24px은 홈 표시줄 몫).
+function _lbSnFit(){
+  const el=document.getElementById('yt-lb-shorts-next');if(!el||el.hidden)return;
+  el.classList.remove('lb-sn-nofit');
+  const r=el.getBoundingClientRect();
+  if(r.height&&r.bottom>window.innerHeight-24)el.classList.add('lb-sn-nofit');
+}
+window.addEventListener('resize',()=>requestAnimationFrame(_lbSnFit));
 function _lbGo(delta){
   if(!_lbPlaylist)return;
   // isAdvance=true로 열기 때문에 세션 모드는 절대 안 바뀜(같은 타입 안에서만 이동, _lbAdjacentIdx 참고).

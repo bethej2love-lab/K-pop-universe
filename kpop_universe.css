@@ -5534,3 +5534,26 @@
 @media (pointer:coarse){
   #yt-lb-video-box:not(.is-shorts) #yt-lb-speed-zone{right:80px;width:18%;}
 }
+
+/* 쇼츠 재생 화면 개편 1단계(2026-11-10, 11-05 합의) — ① 오른쪽 아이콘의 동그란 배경을 빼고 그림자만(사용자 "동그란 배경 싫음"),
+   ② 아래 빈 곳에 "다음" 쇼츠 가로 줄(app.js _lbRenderShortsNext). 출연자 줄은 이미 위에 있어(_lbUpdateMemberInfo) 중복으로 안 넣음. */
+@media(max-width:768px),(pointer:coarse) and (max-height:500px){
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-rotate,
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-mute,
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-col,
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-flag,
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-scrap,
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-edit{background:transparent;filter:drop-shadow(0 1px 3px rgba(0,0,0,.7));}
+}
+#yt-lb-shorts-next{display:none;}
+@media(max-width:768px){
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-shorts-next:not([hidden]){display:block;width:calc(min(68vh,530px) * 9 / 16);max-width:100%;margin:12px auto 0;}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-shorts-next.lb-sn-nofit{visibility:hidden;height:0;margin:0;overflow:hidden;}
+}
+.lb-sn-hd{font-size:10.5px;font-weight:700;color:rgba(180,198,232,0.45);letter-spacing:.06em;margin:0 0 6px 2px;}
+.lb-sn-row{display:flex;gap:6px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+.lb-sn-row::-webkit-scrollbar{display:none;}
+.lb-sn-item{flex:0 0 auto;width:62px;aspect-ratio:9/16;padding:0;border:none;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.06);cursor:var(--kpu-cursor-pointer,pointer);}
+.lb-sn-item img{width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .25s;}
+.lb-sn-item img.loaded{opacity:1;}
+.lb-sn-item img.is-fallback{object-fit:cover;}
