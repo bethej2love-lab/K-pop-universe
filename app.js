@@ -16003,9 +16003,15 @@ _sheetScrollers.forEach(_wireScrollStabilizer);
 //    이유(_wireSheetSwipe 주석, 2026-09-02)를 지키려고. 내려가 있으면 리스너가 없어 네이티브 스크롤이 지금과 같다.
 //    overflow:hidden으로 잠그는 방식은 크롬 실측에서 이미 시작된 스크롤을 못 막았다(2026-10-23).
 const _FIRST_SCROLL_FACTOR=0.5;
+// ⭐ 2026-11-10 "첫 터치 다음 두 번째 터치가 너무 민감"(사용자) — 실측(탐험 패널, 손가락 200px씩): 1번째 100px → 2번째 241px.
+//   첫 제스처만 0.5배·관성 없음이고 두 번째부터 곧장 1배+네이티브 관성이라 두 번째가 2.4배로 튀었다(둔한 첫 터치에 손이 익은 직후).
+//   그래서 맨 위 근처(_FIRST_SCROLL_RAMP px 안)에서 시작한 제스처는 시작 위치에 따라 배율을 base→1로 서서히 올리고, 손을 떼면
+//   약한 자체 관성을 준다(맨 위에서 시작한 첫 제스처는 예전처럼 관성 없음). 그 아래에선 지금처럼 네이티브 그대로.
+const _FIRST_SCROLL_RAMP=400;
 function _wireFirstScrollDamp(sc,factorFn){
   if(!sc||sc._dampWired)return;sc._dampWired=true;
-  let on=false,x0=0,y0=0,top0=0,att=false;
+  let on=false,x0=0,y0=0,top0=0,f=1,att=false,lastY=0,lastT=0,vel=0,momRaf=0;
+  const stopMom=()=>{if(momRaf){cancelAnimationFrame(momRaf);momRaf=0;}};
   const onMove=e=>{
     if(!on)return;
     if(!e.cancelable){on=false;return;} // 네이티브 스크롤이 이미 시작됨 → 이번 제스처는 손 뗌
@@ -16016,27 +16022,48 @@ function _wireFirstScrollDamp(sc,factorFn){
     // 맨 위에서 아래로 당기는 건 시트 끌어내리기 몫 — 건드리지 않는다
     if(y>y0&&sc.scrollTop<=0)return;
     e.preventDefault();
-    const f=Math.max(0,factorFn?factorFn():_FIRST_SCROLL_FACTOR);
     const max=sc.scrollHeight-sc.clientHeight;
     sc.scrollTop=Math.max(0,Math.min(max,top0+(y0-y)*f));
+    const t=e.timeStamp||performance.now();
+    if(lastT&&t>lastT){const v=(lastY-y)*f/(t-lastT);vel=vel*0.4+v*0.6;} // 내용이 움직인 속도(px/ms), 살짝 평활
+    lastY=y;lastT=t;
   };
   const attach=()=>{if(!att){sc.addEventListener('touchmove',onMove,{passive:false});att=true;}};
   const detach=()=>{if(att&&!on){sc.removeEventListener('touchmove',onMove);att=false;}};
-  sc.addEventListener('scroll',()=>{if(sc.scrollTop<=2)attach();else detach();},{passive:true});
+  sc.addEventListener('scroll',()=>{if(sc.scrollTop<_FIRST_SCROLL_RAMP)attach();else detach();},{passive:true});
   attach();
   sc.addEventListener('touchstart',e=>{
-    on=false;
+    on=false;stopMom();
     // 가로 스크롤 줄(.hscroll-drag) 위에서 시작해도 대상 — 가로로 먼저 움직이면 onMove가 손을 뗀다
     if(e.touches.length!==1)return;
-    if(sc.scrollTop>2||sc.scrollHeight-sc.clientHeight<4)return;
+    if(sc.scrollTop>=_FIRST_SCROLL_RAMP||sc.scrollHeight-sc.clientHeight<4)return;
+    const base=Math.max(0,factorFn?factorFn():_FIRST_SCROLL_FACTOR);
+    top0=sc.scrollTop;
+    // 맨 위면 base 그대로, 내려갈수록 1에 가깝게. base=0(반쯤 열린 카드 — 첫 스와이프는 펼치기만)은 맨 위에서만 0.
+    f=top0<=2?base:Math.min(1,Math.max(base,_FIRST_SCROLL_FACTOR)+(1-Math.max(base,_FIRST_SCROLL_FACTOR))*(top0/_FIRST_SCROLL_RAMP));
+    if(f>=0.98)return;
     attach();
-    on=true;x0=e.touches[0].clientX;y0=e.touches[0].clientY;top0=sc.scrollTop;
+    on=true;x0=e.touches[0].clientX;y0=e.touches[0].clientY;lastY=y0;lastT=e.timeStamp||performance.now();vel=0;
   },{passive:true});
-  sc.addEventListener('touchend',()=>{
-    // 처리 지연으로 touchmove가 몰려도 속도를 추정해 추가 이동시키지 않는다.
-    on=false;if(sc.scrollTop>2)detach();
+  sc.addEventListener('touchend',e=>{
+    const was=on;on=false;
+    // 맨 위에서 시작한 첫 제스처는 관성 없음(예전 그대로). 그 아래 구간은 약한 관성 — 뚝 끊기면 "안 미끄러진다"가 된다.
+    const t=e.timeStamp||performance.now();
+    if(was&&top0>2&&Math.abs(vel)>0.15&&t-lastT<80){
+      let v=Math.max(-3,Math.min(3,vel))*16*0.7,prev=0; // px/프레임, 손뗄 때 속도보다 약간 약하게
+      const step=ts=>{
+        const dt=prev?Math.min(40,ts-prev)/16:1;prev=ts;
+        const max=sc.scrollHeight-sc.clientHeight,before=sc.scrollTop;
+        sc.scrollTop=Math.max(0,Math.min(max,before+v*dt));
+        v*=Math.pow(0.94,dt);
+        if(Math.abs(v)<0.3||sc.scrollTop===before){momRaf=0;if(sc.scrollTop>=_FIRST_SCROLL_RAMP)detach();return;}
+        momRaf=requestAnimationFrame(step);
+      };
+      momRaf=requestAnimationFrame(step);
+    }
+    if(sc.scrollTop>=_FIRST_SCROLL_RAMP)detach();
   },{passive:true});
-  sc.addEventListener('touchcancel',()=>{on=false;if(sc.scrollTop>2)detach();},{passive:true});
+  sc.addEventListener('touchcancel',()=>{on=false;if(sc.scrollTop>=_FIRST_SCROLL_RAMP)detach();},{passive:true});
 }
 _sheetScrollers.forEach(sc=>_wireFirstScrollDamp(sc,()=>_sheetFull?_FIRST_SCROLL_FACTOR:0));
 function _tlog(){}
