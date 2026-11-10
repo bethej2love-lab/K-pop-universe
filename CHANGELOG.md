@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-11-10 (Claude Code — 아이폰 가로 영상 검은 띠 2차)
+- 사용자: 전체화면 버튼은 잘 눌리는데, 가로 재생 화면 왼쪽 검은 띠·그림 오른쪽 밀림은 회전 보정(_lbNudgeIframe) 후에도·재생 중에도 그대로.
+- 조사: 가로 폰 레이아웃에서 영상 틀은 `position:fixed`(left 56px)이고 조상 `#yt-lightbox.lb-browse`에 `will-change:transform`이 상시 — 띠 폭 ≈ 틀 왼쪽 여백(56px). iOS가 고정 요소 안 영상 레이어를 변환 조상 기준 오프셋만큼 한 번 더 민 것으로 판단.
+- **[css]** 폰 가로 미디어쿼리에서만 `#yt-lightbox.lb-browse{will-change:auto}`(세로·데스크톱은 그대로). 헤드리스: 가로 will-change auto·틀 56,62 473×266 동일, 세로 transform 유지. phone-landscape·lb-history-back·lb-swipe-ownership·lb-every-entry·smoke 통과. ⚠️ 아이폰 실기기 확인 대기 — 그래도 남으면 다음은 가로에서 영상 틀 fixed 대신 일반 배치.
+
 ## 2026-11-10 (Claude Code — 어드민 버튼 정리 + 안 쓰는 조합 코드 걷어냄)
 - 사용자: "어드민 거의 안 들어가는데 괜찮나" → 실측(제보 0건, 검수 대기 1.8만 중 98%는 이미 공개, 보류 이번 주 +2, 매일 루틴 무인 성공) 후 "쓸데없는 건 정리" → 어드민 버튼·안 쓰는 코드.
 - **[index.html 어드민 템플릿·css]** 설정 패널 위에는 패널 열기 6·미태깅 알림·영상 URL 직접 추가만. 동기화·백필·측정·오태깅 미리보기·재처리 4·데뷔 이전·청소·일괄 되돌리기는 `<details class="sp-adv">고급 도구</details>`로 접음(버튼ID·핸들러 그대로, 펼치면 사용). admin-dock·admin-exec-lock·admin-markup-exposure·routine-parity·overlay-front·smoke 통과.

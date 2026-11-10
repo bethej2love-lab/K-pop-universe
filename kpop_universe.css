@@ -5467,6 +5467,10 @@
     width:var(--lv-w);height:auto;aspect-ratio:16/9;z-index:2;}
   #yt-lightbox.lb-browse #yt-lb-info{padding-top:0;}
   #yt-lightbox.lb-browse #yt-lb-uplist{flex:none;height:auto;max-height:none;overflow:visible;}
+  /* 아이폰 가로에서 영상 그림만 오른쪽으로 밀려 왼쪽 검은 띠(2026-11-10 사용자 — 회전 보정 후에도, 재생 중에도 그대로). 띠 폭 ≈ 영상 틀 왼쪽 여백(--lv-l 56px):
+     고정(fixed) 영상 틀의 조상 #yt-lightbox에 will-change:transform이 늘 걸려 있어 iOS가 영상 레이어를 그 오프셋만큼 한 번 더 민 것으로 판단 →
+     가로에선 will-change를 끈다(라이트박스가 화면 전체라 고정 위치 기준은 그대로). */
+  #yt-lightbox.lb-browse{will-change:auto;}
 
   /* ③ 쇼츠 — 세로 영상은 화면 높이에 맞춰 왼쪽, 오른쪽에 제목·출연자·반응을 세로 가운데로. 오른쪽 끝 세로 버튼 줄(고정)과 안 겹치게 여백. */
   #yt-lightbox.lb-shorts:not(.lb-browse){align-items:stretch;}
