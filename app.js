@@ -26327,7 +26327,7 @@ function _buildFeedRandomVideo(list){
 // 기준도 조회수가 아니라 **업로드일**이고, 노출 순서는 랜덤이다(순위표처럼 보이지 않게 — Discovery
 // Trend 카드에서 이미 확립된 규칙).
 // Trend는 "거의 무한 스크롤" 목적(2026-08-30 사용자 요청) — 7일치를 많이 깐다. 그룹당 캡은 한 채널 도배 방지용.
-const _FEED_TREND_DAYS=7,_FEED_TREND_MAX=200,_FEED_TREND_PER_GROUP=4,_FEED_FAVNEW_MAX=200,_FEED_FAVNEW_FIRST=14; // 접기 전 14개(2026-11-10 사용자 "더보기 전에 너무 딱 최애만 보이고 패널이 너무 빨리 끝난다" — 예전 6)
+const _FEED_TREND_DAYS=7,_FEED_TREND_MAX=200,_FEED_TREND_PER_GROUP=4,_FEED_FAVNEW_MAX=200,_FEED_FAVNEW_FIRST=36; // 접기 전 최소 36개, 전체의 1/4이 더 많으면 그만큼(2026-11-10 사용자 "14개도 적다, 최소 반의 반, 30~40개" — 예전 6→14)
 // 2열 메이슨리(열 독립 스택) — 카드를 "현재 더 짧은 열"에 순서대로 붙여, 16:9(가로)·9:16(쇼츠)가 섞여도
 // 가로영상 아래 여백이 원천적으로 안 생기게 한다(2026-08-30 사용자 제보 — grid+dense의 "한 행=같은 비율"
 // 전제 때문에 여백이 지속 발생). container를 2열 flex로 바꾸고, 반환된 함수 add(isShort)가 붙일 열을 주고
@@ -26754,7 +26754,8 @@ async function _buildFeedFavNew(){
       cs.forEach(x=>{const r=x.getBoundingClientRect();const k=Math.round(r.top);rowsByTop.set(k,Math.max(rowsByTop.get(k)||0,r.right));minW=Math.min(minW,r.width);});
       return [...rowsByTop.values()].every(right=>sr.right-right<minW*0.6);};
     let shown=0;
-    while(shown<items.length&&shown<_FEED_FAVNEW_FIRST)drawItem(items[shown++]);
+    const _first=Math.max(_FEED_FAVNEW_FIRST,Math.ceil(items.length/4));
+    while(shown<items.length&&shown<_first)drawItem(items[shown++]);
     const restItems=items.slice(shown);
     if(restItems.length){
       const more=document.createElement('button');more.type='button';more.className='sr-more feed-favnew-more';
