@@ -4547,8 +4547,10 @@
   .feed-album-rail>.feed-card .feed-card-title{font-size:11px;}
   .feed-album-rail>.feed-card .feed-card-sub,.feed-album-rail>.feed-card .feed-card-meta{font-size:10px;}
   /* 공연 포스터는 세로 틀에 전체를 담는다. 양쪽 탭에서 같은 규칙을 쓴다. */
-  #feed-concerts>.feed-card .feed-card-thumb-wrap,#feed-favconcert>.feed-card .feed-card-thumb-wrap{aspect-ratio:2/3;}
-  #feed-concerts>.feed-card .feed-card-thumb,#feed-favconcert>.feed-card .feed-card-thumb{object-fit:contain;}
+  #feed-concerts>.feed-card .feed-card-thumb-wrap,#feed-favconcert>.feed-card .feed-card-thumb-wrap,.card-concert-rail>.feed-card .feed-card-thumb-wrap{aspect-ratio:2/3;}
+  #feed-concerts>.feed-card .feed-card-thumb,#feed-favconcert>.feed-card .feed-card-thumb,.card-concert-rail>.feed-card .feed-card-thumb{object-fit:contain;}
+  /* 그룹/멤버 카드 공연 포스터 레일(2026-11-10) — 탐험 공연 선반과 같은 카드, 아래 '전체 공연' 줄과 간격 */
+  .card-concert-rail{margin-bottom:8px;}
   @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){
     /* 앨범·공연은 같은 너비: 두 장 전체와 세 번째 절반. 간격은 8px. */
     #feed-newalbum.feed-album-rail,#feed-favalbum.feed-album-rail,#feed-concerts.feed-album-rail,#feed-favconcert.feed-album-rail{grid-auto-columns:calc((100% + 4px) / 2.5);}

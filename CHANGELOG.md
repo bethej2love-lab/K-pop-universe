@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-11-10 (Claude Code — 그룹/멤버 카드 공연 포스터 레일)
+- 사용자: "탐험 패널은 공연 포스터 썸네일인데 그룹/멤버 카드는 이미지 없이 한 줄 — 탐험 패널과 같게".
+- **[app.js `_renderConcertRow`]** 카드 공연 칸 맨 위에 탐험 공연 선반과 같은 포스터 카드 레일(`_appendFeedCard` + `.feed-album-rail` + `.card-concert-rail`) — 예정 전부 → 최근 지난 공연 6개, 메타는 D-n/진행 중 또는 날짜 · 공연장, 누르면 `_openConcertSheet`. 아래 한 줄은 "🎤 전체 공연 N" 펼치기로 남김(지난 공연 전체·투어 기록·KOPIS 출처 표기). **[css]** 포스터 2:3 contain 규칙을 카드 레일에도.
+- 검증: 헤드리스 데이식스 카드 캡처(포스터 카드 6장·전체 공연 217). stage-venue-album 41/41·smoke·interaction·card-title-visibility·uc-card-gate 15/15·upcoming-concert-recovery·star-cursor 통과.
+
 ## 2026-11-10 (Claude Code — 팬 영상 = 출처 층위, 퍼포먼스 탭 중복 노출)
 - 사용자: "By Fans 영상에 퍼포먼스 많은데 퍼포먼스 탭에 안 보인다. 팬 영상도 쇼츠처럼 형식 층위로, 내용은 퍼포먼스 혹은 기타" / "기존 차트에선 빼고, By Fans 탭은 팬 창작물 리스펙으로 유지, 퍼포먼스 탭에 중복 노출, 나중엔 팬캠 차트도".
 - **[app.js]** `_isFanV`(source_tier='fans' 또는 옛 category='fan'). 카드 By Fans 탭·존재 확인을 `source_tier='fans'`로, 앨범/곡 영상 칩은 `_tvfHas`로 팬 영상이 내용 칩과 by Fans 칩에 겹쳐 듦, 행사 영상 직캠 판정, `_applyLiveExclude` 차트 모드에 팬 제외(탭 모드는 포함). 미리 계산 파일 5번째 칸 비트(1=쇼츠, 2=팬).

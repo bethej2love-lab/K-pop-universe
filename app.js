@@ -29062,9 +29062,30 @@ function _renderConcertRow(containerId,events,tours){
   const upcoming=sorted.filter(e=>(e.date_end||e.date_start)>=todayStr);
   const past=sorted.filter(e=>(e.date_end||e.date_start)<todayStr).reverse();
   const featured=upcoming[0]||past[0];
+  // 포스터 카드 레일(2026-11-10 사용자 "탐험 패널은 공연 포스터 썸네일인데 카드는 이미지 없이 한 줄 — 탐험 패널과 같게").
+  // 탐험 공연 선반과 같은 부품(_appendFeedCard + .feed-album-rail, 포스터 2:3 contain). 예정 전부 → 최근 지난 공연 몇 개.
+  // 아래 한 줄(teaser)은 '전체 공연' 펼치기로 남긴다 — 지난 공연 전체·투어 성적·KOPIS 출처 표기가 거기 있다.
+  const RAIL_PAST=6;
+  const railEvs=[...upcoming,...past.slice(0,RAIL_PAST)];
+  if(railEvs.length){
+    const rail=document.createElement('div');rail.className='feed-album-grid feed-album-rail feed-album-rail-1 hscroll-drag card-concert-rail';
+    railEvs.forEach(ev=>{
+      const up=(ev.date_end||ev.date_start)>=todayStr,d=_dDay(ev.date_start);
+      const when=up?(d<=0?(currentLang==='ko'?'진행 중':'Now'):'D-'+d):String(ev.date_start||'').slice(0,10).replace(/-/g,'.');
+      const meta=[when,_venueName(ev.venue)].filter(Boolean).join(' · ');
+      const own=(ev.groups||[])[0];
+      const thumb=_posterUrl(ev.poster_url)||(_ogThumbs&&own&&_ogThumbs[own])||null;
+      _appendFeedCard(rail,'🎟️',ev.title,'',()=>_openConcertSheet(ev),thumb,null,{meta});
+    });
+    row.appendChild(rail);
+    _enableDragScroll(rail);
+  }
   const teaser=document.createElement('button');teaser.type='button';teaser.className='concert-teaser';
   const txt=document.createElement('span');txt.className='concert-teaser-txt';
-  if(!featured){
+  if(railEvs.length){
+    const n=events.length;
+    txt.textContent=currentLang==='ko'?`🎤 전체 공연 ${n}${tours.length?' · 투어 기록':''}`:`🎤 All ${n} shows${tours.length?' · tour stats':''}`;
+  }else if(!featured){
     // 공연 일정은 없고 투어 성적만 있는 그룹 — 누적 관객으로 요약
     const tot=tours.reduce((s,t)=>s+(t.attendance||0),0);
     txt.textContent=currentLang==='ko'?`🎤 투어 ${tours.length}개${tot?` · 누적 관객 ${_fmtPeople(tot)}명`:''}`:`🎤 ${tours.length} tours${tot?` · ${_fmtPeople(tot)} attendees`:''}`;
