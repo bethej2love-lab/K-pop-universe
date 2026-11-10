@@ -26327,7 +26327,7 @@ function _buildFeedRandomVideo(list){
 // 기준도 조회수가 아니라 **업로드일**이고, 노출 순서는 랜덤이다(순위표처럼 보이지 않게 — Discovery
 // Trend 카드에서 이미 확립된 규칙).
 // Trend는 "거의 무한 스크롤" 목적(2026-08-30 사용자 요청) — 7일치를 많이 깐다. 그룹당 캡은 한 채널 도배 방지용.
-const _FEED_TREND_DAYS=7,_FEED_TREND_MAX=200,_FEED_TREND_PER_GROUP=4,_FEED_FAVNEW_MAX=200,_FEED_FAVNEW_FIRST=6;
+const _FEED_TREND_DAYS=7,_FEED_TREND_MAX=200,_FEED_TREND_PER_GROUP=4,_FEED_FAVNEW_MAX=200,_FEED_FAVNEW_FIRST=14; // 접기 전 14개(2026-11-10 사용자 "더보기 전에 너무 딱 최애만 보이고 패널이 너무 빨리 끝난다" — 예전 6)
 // 2열 메이슨리(열 독립 스택) — 카드를 "현재 더 짧은 열"에 순서대로 붙여, 16:9(가로)·9:16(쇼츠)가 섞여도
 // 가로영상 아래 여백이 원천적으로 안 생기게 한다(2026-08-30 사용자 제보 — grid+dense의 "한 행=같은 비율"
 // 전제 때문에 여백이 지속 발생). container를 2열 flex로 바꾸고, 반환된 함수 add(isShort)가 붙일 열을 주고
