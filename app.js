@@ -5185,6 +5185,7 @@ function _applyLiveExclude(q,opts){
   if(!(opts&&opts.includeChoreo)){
     for(const f of _STAGE_EXCLUDE_FORMATS)q=q.not('content_formats','cs',`{${f}}`);
     if(_hasLiveCol)q=q.or('was_live.is.null,was_live.eq.false');
+    q=q.or('source_tier.is.null,source_tier.neq.fans'); // 기존 차트엔 팬 영상 제외(2026-11-10 사용자 — 팬캠 차트는 나중에 따로)
   }
   return q;
 }
@@ -13362,7 +13363,7 @@ async function _loadAlbumVideos(album,gko){
   const push=(v,albumHit)=>{if(seen.has(v.id))return;seen.add(v.id);v._albHit=albumHit;all.push(v);};
   files.forEach((f,fi)=>{
     if(!f)return;
-    const rowOf=i=>{const r=f.v[i];return r&&{id:r[0],title:r[1],published_at:r[2],category:r[3],is_short:!!r[4],duration_sec:r[5]||null,
+    const rowOf=i=>{const r=f.v[i];return r&&{id:r[0],title:r[1],published_at:r[2],category:r[3],is_short:!!(r[4]&1),source_tier:(r[4]&2)?'fans':null,duration_sec:r[5]||null,
       thumb:r[6]||`https://i.ytimg.com/vi/${r[0]}/mqdefault.jpg`,group_ko:owners[fi]};};
     if(albumN)(f.a[albumN]||[]).forEach(i=>{const v=rowOf(i);if(v)push(v,true);});
     bases.forEach(b=>(f.s[b]||[]).forEach(i=>{const v=rowOf(i);if(v)push(v,false);}));
@@ -13410,10 +13411,10 @@ function _renderAlbumVideos(more){
   const cntEl=document.getElementById('gc-discog-video-count');
   const _ko=currentLang==='ko';
   // 카드와 같은 순서/필터 버튼. 앨범·곡에 실제로 있는 분류만 노출한다.
-  const cnt={};st.list.forEach(v=>{const f=_tvfFmt(v);cnt[f]=(cnt[f]||0)+1;});
+  const cnt={};st.list.forEach(v=>{const f=_tvfFmt(v);cnt[f]=(cnt[f]||0)+1;if(_isFanV(v))cnt.fan=(cnt.fan||0)+1;});
   const fmts=_TVF_FMTS.filter(([k])=>cnt[k]);
   if(st.fmt!=='all'&&!cnt[st.fmt])st.fmt='all';
-  const rows=st.fmt==='all'?st.list:st.list.filter(v=>_tvfFmt(v)===st.fmt);
+  const rows=st.fmt==='all'?st.list:st.list.filter(v=>_tvfHas(v,st.fmt));
   if(cntEl&&!_albSong)cntEl.textContent=rows.length.toLocaleString();
   if(!more){
     chipsEl.innerHTML='';
@@ -13807,12 +13808,18 @@ async function _openSongVideos(title,owner,songMeta,opt){
 // 형식 칩(2026-09-21) — 값은 그룹/멤버 카드 영상 탭과 같은 DB category 그대로 쓴다.
 // ⚠️ 'cover'는 칩에 넣지 않는다 — 이 시트엔 이미 "원곡/커버"(cover_of 태깅 기준) 탭이 있어서 같은
 //    낱말이 두 가지를 뜻하게 된다. 칩은 좁히기용일 뿐이라, 칩에 없는 형식도 '전체'에선 그대로 보인다.
+// 팬 영상 = 형식(출처) 층위(2026-11-10 사용자 — "팬 영상도 쇼츠 층위로, 형식인 거지. 내용은 퍼포먼스 혹은 기타"). 예전엔 category='fan'으로
+// 내용 분류를 덮어써 팬 직캠이 퍼포먼스 탭에 안 떴다. 이제 category는 내용(live/other…), 팬 여부는 source_tier='fans'(팬 채널 출처).
+// By Fans 탭은 팬 창작물에 대한 리스펙으로 유지 — 퍼포먼스 탭과 중복 노출. 기존 차트(무대·직캠 TOP)에선 제외(_applyLiveExclude).
+// category==='fan'은 전환 전 데이터(미리 계산 파일 등) 호환용.
+const _isFanV=v=>!!v&&(v.source_tier==='fans'||v.category==='fan');
 const _TVF_FMTS=['mv','live','fan','jacon','cover','short','variety','show'].map(k=>[k,k==='fan'?'by Fans':_CAT_LABEL[k][0],k==='fan'?'by Fans':_CAT_LABEL[k][1]]);
 function _tvfFmt(v){
   // 챌린지는 별도 탭으로 나누지 않는다. 원본의 실제 세로 여부는 _isShortV로만 판단한다.
   if(_isShortV(v)||v.category==='challenge')return 'short';
-  return v.category||'other';
+  return v.category==='fan'?'other':(v.category||'other');
 }
+function _tvfHas(v,k){return k==='fan'?_isFanV(v):_tvfFmt(v)===k;} // 칩 소속 — 팬 영상은 내용 칩과 by Fans 칩에 겹쳐 든다
 function _tvfVidUrl(v){return _isShortV(v)?`https://www.youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;}
 // 라이트박스 playlist 항목 — 다른 목록(컬렉션·모아보기)과 같은 모양으로 맞춰 길이·조회수·날짜가
 // 플레이어 쪽에서도 그대로 쓰인다.
@@ -13843,7 +13850,7 @@ function _renderSongVideoTabs(){
   if(st.member&&!_memCnt.has(st.member))st.member=null;
   const _byMem=arr=>st.member?arr.filter(v=>_memOf(v).has(st.member)):arr;
   const base=_byMem(st.tab==='orig'?st.orig:st.tab==='cover'?st.cover:[...st.orig,...st.cover]);
-  const fmtCnt={};base.forEach(v=>{const f=_tvfFmt(v);fmtCnt[f]=(fmtCnt[f]||0)+1;});
+  const fmtCnt={};base.forEach(v=>{const f=_tvfFmt(v);fmtCnt[f]=(fmtCnt[f]||0)+1;if(_isFanV(v))fmtCnt.fan=(fmtCnt.fan||0)+1;});
   const fmts=_TVF_FMTS.filter(([k])=>fmtCnt[k]);
   if(st.fmt!=='all'&&!fmtCnt[st.fmt])st.fmt='all'; // 탭을 바꿔 그 형식이 사라졌으면 전체로 되돌린다
   // ── 탭 줄: [전체/원곡/커버] + 구분선 + [형식 칩]. 둘 다 없을 일이 흔해서(커버 없고 형식 한 종류)
@@ -13896,7 +13903,7 @@ function _renderSongVideoTabs(){
   const cmp=st.sort==='views'
     ?(a,b)=>(b.view_count||0)-(a.view_count||0)
     :(a,b)=>_mvMain(a)-_mvMain(b)||String(b.published_at||'').localeCompare(String(a.published_at||''));
-  const filt=arr=>(st.fmt==='all'?arr.slice():arr.filter(v=>_tvfFmt(v)===st.fmt)).sort(cmp);
+  const filt=arr=>(st.fmt==='all'?arr.slice():arr.filter(v=>_tvfHas(v,st.fmt))).sort(cmp);
   const rows=st.tab==='all'?[...filt(_byMem(st.orig)),...filt(_byMem(st.cover))]:filt(base);
   st.rows=rows;
   if(actEl){
@@ -22980,6 +22987,8 @@ async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatF
       q=q.eq('is_short',true); // short는 장르가 아니라 형식 플래그(is_short_migration.sql) — category와 직교
     }else if(filter==='jacon'){
       q=_applyJaconQuery(q,ko,memberKo,null,null); // 자컨 — 공식·개인 채널 업로드
+    }else if(filter==='fan'){
+      q=q.eq('source_tier','fans'); // 팬 = 출처 층위(_isFanV 주석)
     }else if(filter&&filter!=='all'){
       q=q.eq('category',filter);
     }
@@ -25266,7 +25275,7 @@ async function _openChartList(id,sel,_view){
 // 태그가 아직 과거 영상에 안 붙었을 수 있어(스윕 소급 전) 태그 결과가 적으면 제목(title_norm ilike)으로 후보를 받아 같은 규칙으로 거른다.
 // ⚠️ 정렬은 서버에 안 맡긴다(ORDER BY+LIMIT이 후보가 적을 때 타임아웃 — 메모리), 받아서 조회수순으로.
 const _evCache=new Map();
-const _EV_SEL='id,title,thumb,is_short,category,group_ko,members,with_members,with_groups,view_count,duration_sec,published_at,content_formats,content_flag';
+const _EV_SEL='id,title,thumb,is_short,category,group_ko,members,with_members,with_groups,view_count,duration_sec,published_at,content_formats,content_flag,source_tier'; // source_tier: 팬 영상 판정(_isFanV)
 async function _eventRows(s){
   if(_evCache.has(s.id))return _evCache.get(s.id);
   let complete=true;
@@ -25308,7 +25317,7 @@ const _EV_STAGE_RE=/ - | – |stage|무대|performance|퍼포먼스|\(4k\)|\[4k\
 const _evKind=v=>{
   const t=v.title||'',cf=v.content_formats||[];
   if(_isShortV(v)||_EV_NOT_STAGE_RE.test(t)||cf.some(f=>f==='비하인드'||f==='브이로그'||f==='인터뷰'||f==='챌린지'))return'other'; // 안무영상 태그는 방송사 공식 안무캠(K-Choreo)에도 붙어 빼지 않는다 — 연습실 영상은 제목(practice·연습)으로 거른다
-  if(v.category==='fan'||_EV_FANCAM_RE.test(t))return'fancam';
+  if(_isFanV(v)||_EV_FANCAM_RE.test(t))return'fancam';
   if(v.category==='live'||v.category==='mv'||_EV_STAGE_RE.test(t))return'stage';
   return'other';
 };
@@ -27952,6 +27961,8 @@ function _makeChVidController(contId){
         q=q.eq('is_short',true);
       }else if(filter==='jacon'){
         q=_applyJaconQuery(q,ko,state.memberKo,state.histKos,state.unitKey); // 자컨 — 공식·개인 채널 업로드
+      }else if(filter==='fan'){
+        q=q.eq('source_tier','fans'); // 팬 = 출처 층위(_isFanV 주석) — 부분 인덱스 idx_ytv_fans_group_published
       }else if(filter!=='all'){
         q=q.eq('category',filter);
       }
@@ -28410,7 +28421,7 @@ function _makeChVidController(contId){
     // 멤버 카드 쪽은 정확히 "이 멤버가 태깅된 팬 영상"까지 구분하지 않고 "이 그룹에 팬 영상이 하나라도
     // 있는지"만 보는 근사치 — 실제 탭 클릭 시 콘텐츠 자체는 buildBaseQuery의 기존 멤버/그룹 스코프 로직을
     // category='fan'에도 그대로 재사용하므로(else if(filter!=='all')q=q.eq('category',filter);) 결과는 정확함.
-    sb.from(_YT_TABLE).select('id').eq('group_ko',ko).eq('category','fan').limit(1).then(({data})=>{
+    sb.from(_YT_TABLE).select('id').eq('group_ko',ko).eq('source_tier','fans').limit(1).then(({data})=>{
       if(!data?.length)return;
       if(state.ko!==ko||state.memberKo!==(memberKo||null)||catTabs.some(([v])=>v==='fan'))return;
       const fandomEn=GROUPS[ko]?.fandom?.en;

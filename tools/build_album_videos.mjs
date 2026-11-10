@@ -79,7 +79,7 @@ artists.forEach(a => [a?.name?.ko, a?.name?.en].forEach(x => { const n = songNor
 const songsOf = o => o.songs || (o.songs = songListFromDisco(o.albums, persons));
 
 const H = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY };
-const COLS = 'id,title,group_ko,song_keys,category,is_short,published_at,duration_sec,thumb,content_flag,created_at';
+const COLS = 'id,title,group_ko,song_keys,category,is_short,source_tier,published_at,duration_sec,thumb,content_flag,created_at';
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 async function get(qs) {
   for (let i = 0; i < 5; i++) {
@@ -101,7 +101,7 @@ function classify(v, computeMissing) {
   return bases.length || albs.length ? { bases, albs } : null;
 }
 const rowOf = v => {
-  const row = [v.id, v.title || '', String(v.published_at || '').slice(0, 10), v.category || '', v.is_short ? 1 : 0, v.duration_sec || 0];
+  const row = [v.id, v.title || '', String(v.published_at || '').slice(0, 10), v.category || '', (v.is_short ? 1 : 0) | (v.source_tier === 'fans' ? 2 : 0), v.duration_sec || 0]; // 5번째 칸 비트: 1=쇼츠, 2=팬 채널(2026-11-10)
   if (v.thumb && v.thumb !== `https://i.ytimg.com/vi/${v.id}/mqdefault.jpg`) row.push(v.thumb);
   return row;
 };

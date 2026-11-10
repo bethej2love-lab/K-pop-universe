@@ -4778,14 +4778,15 @@ async function _ytSweepCategoryMistag(){
   try{
     _ytSetProg('[영상 카테고리 재분류] 조회 중…');
     const{data:rows,error}=await _sbFetchAll(()=>sb.from(_YT_TABLE)
-      .select('id,title,category,is_short')
+      .select('id,title,category,is_short,source_tier')
       .eq('tags_manual',false)
       .order('id'));
     if(error){_ytSetProg('조회 실패: '+error.message);return;}
     if(!rows?.length){_ytSetProg('검사할 영상이 없어요');return;}
     const updates=[];
     rows.forEach(v=>{
-      const newCat=_ytClassify(v.title||'',{isShort:!!v.is_short});
+      let newCat=_ytClassify(v.title||'',{isShort:!!v.is_short});
+      if(v.source_tier==='fans'&&newCat==='mv')newCat='other'; // 팬이 올린 'MV'는 공식 뮤비가 아님(2026-11-10)
       // ── 강등 금지 2종(2026-09-14) ───────────────────────────────────────────
       // ⓐ 'fan'/'show'는 **채널이 무엇이냐**로 정해지는 값이다(팬채널·드라마/영화 채널). 제목만 보는
       //    이 분류기가 알 수 없는 정보라 덮어쓰면 안 된다. 실측에서 팬채널 직캠 한 건이 fan→live로
@@ -10066,7 +10067,8 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat,handle){
     //    남은 방어선은 채널 설정과 이 주석뿐이다. 새 magazine 채널을 추가할 때 같이 확인할 것.
     const _fbRaw=defaultCat||(tier==='show'?'show':'variety');
     const _fallback=_fbRaw==='none'?(v.category||'other'):_fbRaw;
-    const category=tier==='fans'?'fan':(tier&&tier!=='music'&&(!v.category||v.category==='other'))?_fallback:v.category;
+    // ⭐2026-11-10 팬 채널도 내용대로 분류 — 팬 여부는 source_tier='fans'가 맡는다(app.js _isFanV). 팬이 올린 'MV'는 공식 뮤비가 아니라 기타로.
+    const category=tier==='fans'?((!v.category||v.category==='mv'||v.category==='skip')?'other':v.category):(tier&&tier!=='music'&&(!v.category||v.category==='other'))?_fallback:v.category;
     // 신뢰도 검수 — owner 없는 채널(THE SHOW·뮤직뱅크 등 특정 그룹 소유가 아닌 모음/방송사 채널)에서
     // group_ko가 오로지 멤버 이름 하나만으로 역추론(confidence:'weak')됐으면, 그 즉시 실제 그룹으로
     // 확정하지 않고 content_flag:'hidden'(기존에 이미 전면 신뢰되던 은닉 메커니즘 재사용)+needs_review:true로
@@ -10156,7 +10158,7 @@ async function _extClaimExisting(ch,ids){
   let n=0;
   for(let i=0;i<ids.length;i+=100){
     const patch={source_handle:ch.handle,source_tier:ch.tier};
-    if(ch.tier==='fans')patch.category='fan';
+    // 팬 채널이어도 category는 내용 그대로(2026-11-10 — 팬 여부는 source_tier가 맡는다)
     const{data,error}=await sb.from(_YT_TABLE).update(patch).in('id',ids.slice(i,i+100)).is('source_handle',null).select('id');
     if(error)throw new Error(error.message);
     n+=(data||[]).length;

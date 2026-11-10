@@ -6,6 +6,7 @@ const{readIndexSource}=require('../tools/index_source.cjs');
 const src=readIndexSource();
 const grab=name=>{const m=src.match(new RegExp('^const '+name+'=.*$','m'));if(!m)throw new Error(name+' 없음');return m[0];};
 const _isShortV=v=>!!v.is_short;
+const _isFanV=v=>!!v&&(v.source_tier==='fans'||v.category==='fan'); // app.js와 같은 정의(팬 = 출처 층위)
 eval([grab('_EV_NOT_STAGE_RE'),grab('_EV_FANCAM_RE'),grab('_EV_STAGE_RE')].join('\n')+'\nglobalThis._EVK_RE={_EV_NOT_STAGE_RE,_EV_FANCAM_RE,_EV_STAGE_RE};');
 const{_EV_NOT_STAGE_RE,_EV_FANCAM_RE,_EV_STAGE_RE}=globalThis._EVK_RE;
 const kindSrc=src.match(/^const _evKind=v=>\{[\s\S]*?^\};/m);
