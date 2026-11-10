@@ -36,15 +36,15 @@ async function shot(c,name){fs.mkdirSync(ARTIFACTS,{recursive:true});const s=awa
   await shot(c,'first-search-390');
   for(const width of [320,360,390,430]){
    await c.send('Emulation.setDeviceMetricsOverride',{width,height:844,deviceScaleFactor:1,mobile:true});await sleep(300);
-   const m=await ev(c,`(()=>{const el=document.querySelector('#msheet-body .combo-entry'),p=el.parentElement,b=el.getBoundingClientRect(),r=p.getBoundingClientRect();return{width:innerWidth,banner:b.width,left:b.left-r.left,right:r.right-b.right,overflow:p.scrollWidth-p.clientWidth};})()`);
+   const m=await ev(c,`(()=>{const el=document.querySelector('#msheet-body .chem-door'),p=el.parentElement,b=el.getBoundingClientRect(),r=p.getBoundingClientRect();return{width:innerWidth,banner:b.width,left:b.left-r.left,right:r.right-b.right,overflow:p.scrollWidth-p.clientWidth};})()`);
    if(Math.abs(m.left-16)<=1&&Math.abs(m.right-16)<=1&&m.overflow<=1)ok('배너 '+width+'px 좌우16px·가로 넘침 없음');else bad('배너 폭 '+JSON.stringify(m));
   }
   await c.send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});await sleep(300);
-  await tap(c,'#msheet-body .combo-entry');await wait(c,`document.getElementById('combo-overlay').classList.contains('open')`,'조합 열기');
+  await tap(c,'#msheet-body .chem-door');await wait(c,`document.getElementById('combo-overlay').classList.contains('open')`,'조합 열기');
   if(await ev(c,`!document.getElementById('msheet').classList.contains('open')`))ok('조합 진입 때 검색창 정상 종료');else bad('조합 밑 검색창이 열린 채 남음');
   await tap(c,'#combo-close');await tap(c,'#tab-search');
-  await wait(c,`document.getElementById('msheet').classList.contains('open')&&document.querySelector('#msheet-body .combo-entry')`,'검색 다시 열기');
-  const visible=await ev(c,`getComputedStyle(document.getElementById('msheet-body')).display!=='none'&&document.querySelector('#msheet-body .combo-entry').offsetWidth>0`);
+  await wait(c,`document.getElementById('msheet').classList.contains('open')&&document.querySelector('#msheet-body .chem-door')`,'검색 다시 열기');
+  const visible=await ev(c,`getComputedStyle(document.getElementById('msheet-body')).display!=='none'&&document.querySelector('#msheet-body .chem-door').offsetWidth>0`);
   if(visible)ok('조합 닫기→검색 재진입 본문 표시');else bad('조합 뒤 검색이 빈 화면');
   await ev(c,`(()=>{const el=document.getElementById('msheet-input');el.value='에스파';el.dispatchEvent(new Event('input',{bubbles:true}));})()`);
   await wait(c,`/에스파|aespa/i.test(document.querySelector('#msheet-body .sr-item[data-type="group"]')?.textContent||'')`,'그룹 검색 결과');

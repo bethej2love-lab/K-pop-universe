@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-11-10 (Claude Code — 멤버 조합 찾기 → Chemistry 통합)
+- 사용자: "검색창 멤버 조합 찾기와 Chemistry가 성격이 너무 비슷 — 정비", "시안 없이 바로", "조합 찾기 배너 디자인이 구렸다".
+- **[app.js·index.html·css]** 조합 패널 = Chemistry 사람 고르기 창(제목 Chemistry, "2~4명 고르기", 최대 4명=`_CHEM_MAX`, 버튼 "Chemistry 보기" → `_openChem`). 결과·Only·공유는 숨김, 높이는 내용만큼. 예전 #combo 공유 링크·발자국도 `_comboSearch`를 지나 Chemistry로. 죽은 결과 조회(`_comboSearchLegacy`) 제거, 짝 조회만 `_comboFetchRows`로 분리.
+- **Chemistry 3~4명**: 짝 조회를 함께 받아 헤더에 **관계도**(조합 그림 `_comboBuildFig` 재사용, 선을 누르면 그 둘의 Chemistry, 막대는 그림 안 요약) + 맨 아래 **SOME OF US**(일부만 함께) 섹션. 전원 함께가 0이면 안내 문구가 일부만 함께로 안내.
+- **검색 첫 화면 배너** 새 디자인: 'Chemistry' 라벨 + 얇은 줄 버튼(빈 자리 두 개 사이에 앱 별, "둘 이상 고르기 / 함께 나온 영상 · 관계").
+- 검증: 헤드리스 — 배너 캡처, 에스파 카리나·윈터·닝닝 고르기 → Chemistry(관계도 220·469·159, STAGE·ONLY US·WITH OTHERS·SOME OF US 476개), 선 누르면 카리나 · 윈터 Chemistry. tests/combo-query-state.test.js를 새 동작으로 다시 씀(7/7), mobile-first-visit 선택자 갱신(19/19), combo-search-navigation 5/5·cancel-top-surface·share-copy-outcome·smoke 통과. interaction은 1회 오클릭 판정 실패 후 재실행 2회 통과(기존 코드에서도 통과 — 간헐).
+
 ## 2026-11-10 (Claude Code — New Videos 접기 전 최소 36개·전체의 1/4)
 - 사용자: "14개도 적다 — 최소 반의 반, 30~40개는 보여도 될 것". 접기 전 개수 = max(36, ceil(전체/4)) (`_FEED_FAVNEW_FIRST`=36). 실측(즐겨찾기 4그룹, 189개): 49개(1/4=48 + 빈칸 메우기 1)·선반 11,447px, 나머지 140개 더보기. 썸네일은 lazy라 아래 카드는 스크롤할 때 받는다. foryou-shelves 통과.
 

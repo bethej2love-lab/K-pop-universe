@@ -5559,3 +5559,22 @@
 .lb-sn-item img{width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .25s;}
 .lb-sn-item img.loaded{opacity:1;}
 .lb-sn-item img.is-fallback{object-fit:cover;}
+
+/* Chemistry 통합(2026-11-10) — 조합 패널은 사람 고르는 창만: 결과·Only·공유 숨김, 높이는 내용만큼 */
+#combo-only,#combo-share,#combo-results{display:none!important;}
+#combo-sheet{height:auto!important;max-height:82vh;}
+@media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){#combo-sheet{height:auto!important;max-height:min(82vh,640px);}}
+/* 검색 첫 화면 Chemistry 입구 — '여기서 시작해 보세요' 라벨과 같은 줄 모양 + 얇은 줄 버튼(그라데이션 상자 대신) */
+.chem-entry-lbl{margin:22px 16px 8px;font-size:12px;font-weight:700;letter-spacing:.04em;color:rgba(150,170,220,0.62);}
+.chem-door{display:flex;align-items:center;gap:14px;width:calc(100% - 32px);margin:0 16px 6px;padding:12px 14px;background:rgba(255,255,255,0.035);border:0.5px solid rgba(150,175,255,0.16);border-radius:14px;text-align:left;color:inherit;cursor:var(--kpu-cursor-pointer,pointer);-webkit-tap-highlight-color:transparent;}
+.chem-door:active{background:rgba(255,255,255,0.07);}
+.chem-door-pair{display:flex;align-items:center;gap:5px;flex-shrink:0;}
+.chem-door-slot{width:34px;height:34px;border-radius:50%;border:1px dashed rgba(170,190,255,0.42);display:flex;align-items:center;justify-content:center;font-size:16px;line-height:1;color:rgba(190,205,255,0.7);}
+.chem-door-star{width:12px;height:12px;display:flex;}
+.chem-door-star svg{width:100%;height:100%;fill:#FFB0D0;filter:drop-shadow(0 0 4px rgba(255,176,208,.55));}
+.chem-door-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+.chem-door-t{font-size:14px;font-weight:700;color:rgba(225,233,255,0.96);}
+.chem-door-s{font-size:11.5px;color:rgba(160,180,230,0.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.chem-door-arr{font-size:20px;color:rgba(160,190,255,0.4);flex-shrink:0;}
+/* Chemistry 관계도(3~4명) — 조합 그림(.cb-fig) 재사용, 헤더 안 여백만 */
+.chem-fig{margin:12px 0 4px;}

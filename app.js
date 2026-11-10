@@ -13973,7 +13973,7 @@ document.getElementById('gc-track-videos-overlay')?.addEventListener('click',e=>
 // 연결 카드(_connAnchor 엔진)는 "주인공+with" 구조라 대등 조합엔 안 맞고 결합도가 높아 취약 → 독립 모듈.
 // 저장 형식 직접 사용: 같은그룹 멤버는 members[]에 "이름"(+video.group_ko=그룹), 타그룹 게스트는
 // with_members[]에 "이름(그룹)". Phase1 = 선택 전원이 함께 나온 영상(교집합). 공유 해시 #combo=이름(그룹),…
-const _COMBO_MAX=10;
+const _COMBO_MAX=4; // 2026-11-10 Chemistry로 통합 — 고르기 창 최대 인원 = _CHEM_MAX(예전 10명)
 let _comboSel=[],_comboReq=0;
 let _comboExactOnly=false,_comboAllRows=null; // "Only" 토글 — 선택 조합만 정확히 나온 영상(외부인 없음). 재요청 없이 클라 재필터
 function _openComboPanel(){
@@ -14036,25 +14036,23 @@ function _comboRenderSuggest(q){
     if(++n>=20)break;
   }
 }
+// ⭐2026-11-10 멤버 조합 찾기 → Chemistry 통합(사용자 "성격이 너무 비슷 — 정비", "시안 없이 바로"). 이 패널은 이제 사람 고르는 창이고
+// '보기'는 Chemistry를 연다. 예전 #combo 공유 링크·발자국도 여기를 지나 Chemistry로 간다. 아래 예전 결과 그리기(_comboRenderResults·Only·
+// 공유 이미지)는 더 이상 화면에 안 쓰인다 — 관계도(_comboBuildFig)와 짝 조회(_comboFetchRows)만 Chemistry가 빌려 쓴다.
 async function _comboSearch(){
-  if(_comboSel.length<2||!sb)return;
-  _comboInvalidateResults();const myReq=_comboReq;
-  _comboApplyAndRender(); // 로딩 중 이전 Only 결과를 다시 그리지 않도록 비운다
-  _comboViz={pair:null,year:null}; // 새 조합이면 그림 선택 해제
-  _fpPush({type:'combo',members:_comboSel.map(m=>({name:m.name,group:m.group})),label:_comboSel.map(m=>m.name).join('·')}); // 발자국 기록
-  _comboRenderResults('loading');
+  if(_comboSel.length<2)return;
+  const ppl=_comboSel.slice(0,_CHEM_MAX);
+  _closeComboPanel();
+  _openChem(ppl);
+}
+// 고른 사람 중 2명 이상이 엮인 영상(짝 단위 OR 조회) — Chemistry 3~4명일 때 관계도·SOME OF US 섹션용. [{v,who,isCover}]
+async function _comboFetchRows(sel){
   const esc=s=>String(s).replace(/["\\]/g,'');
-  const COLS='id,title,thumb,category,is_short,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,content_flag,published_at';
-  const _excl=q=>q.or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류').or('content_flag.is.null,content_flag.neq.hidden');
-  // "전원이 함께"(교집합)만 보면 3명 이상에선 거의 안 나옴 → 선택 멤버가 엮인 영상을 싹(2명 이상) 가져온다:
-  // 같은그룹=members[], 타그룹 게스트=with_members["이름(그룹)"], 커버=cover_of_members["이름(그룹)"]. OR로 한 번에.
-  // ⚠️ 멤버 **한 명씩** OR로 걸면(예전) 영상 많은 멤버 한 명의 단독 직캠이 최신순 600칸을 다 채워 정작 함께 나온 영상이
-  //    잘렸다(2026-10-15 실측: 민지·하니·해린·카리나 → 민지+하니 실제 12개 중 1개만). **두 명씩 짝지은 조건**으로 걸어
-  //    처음부터 함께 나온 영상만 받는다. 커버(cover_of_members)만 한 명 단위로 남긴다(커버 영상은 수가 적다).
+  const COLS='id,title,thumb,category,is_short,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,content_flag,published_at,view_count'+_durCol();
   const ors=[];
   const wk=m=>'"'+esc(m.name)+'('+esc(m.group)+')"';
-  for(let i=0;i<_comboSel.length;i++)for(let j=i+1;j<_comboSel.length;j++){
-    const a=_comboSel[i],b=_comboSel[j];
+  for(let i=0;i<sel.length;i++)for(let j=i+1;j<sel.length;j++){
+    const a=sel[i],b=sel[j];
     if(a.group===b.group)ors.push('and(group_ko.eq.'+_pgFilterVal(a.group)+',members.cs.{"'+esc(a.name)+'","'+esc(b.name)+'"})');
     else{
       ors.push('and(group_ko.eq.'+_pgFilterVal(a.group)+',members.cs.{"'+esc(a.name)+'"},with_members.cs.{'+wk(b)+'})');
@@ -14062,35 +14060,13 @@ async function _comboSearch(){
     }
     ors.push('with_members.cs.{'+wk(a)+','+wk(b)+'}');
   }
-  _comboSel.forEach(m=>ors.push('cover_of_members.cs.{'+wk(m)+'}'));
-  let data=null;
-  try{
-    const r=await _withTimeout(()=>_excl(sb.from(_YT_TABLE).select(COLS).or(ors.join(',')))
-      .order('published_at',{ascending:false}).limit(600),15000);
-    if(r.error||!Array.isArray(r.data))throw new Error('조합 조회 실패');
-    data=r.data;
-  }catch(e){
-    if(myReq===_comboReq)_comboRenderResults('error');
-    return;
-  }
-  if(myReq!==_comboReq)return;
-  const inMem=(v,m)=>v.group_ko===m.group&&(v.members||[]).indexOf(m.name)>=0;
-  const inWith=(v,m)=>(v.with_members||[]).indexOf(m.name+'('+m.group+')')>=0;
-  const inCover=(v,m)=>(v.cover_of_members||[]).indexOf(m.name+'('+m.group+')')>=0;
+  const r=await _withTimeout(()=>sb.from(_YT_TABLE).select(COLS).or(ors.join(','))
+    .or('content_flag.is.null,content_flag.not.in.("무관","보류","hidden","개별출연")')
+    .order('published_at',{ascending:false}).limit(600),15000);
+  if(r.error||!Array.isArray(r.data))throw new Error('combo fetch');
   const rows=[];
-  _filterBannedVideos(data||[]).forEach(v=>{
-    const who=_comboSel.filter(m=>inMem(v,m)||inWith(v,m)||inCover(v,m));
-    if(who.length<2)return; // 선택 멤버 중 최소 2명이 엮인 영상만
-    rows.push({v:v,who:who,isCover:_comboSel.some(m=>inCover(v,m))});
-  });
-  rows.sort((a,b)=>b.who.length-a.who.length); // 많이 함께 나온 영상 먼저(전원>일부)
-  if(myReq!==_comboReq)return;
-  _comboAllRows=rows;
-  _comboApplyAndRender(); // Only 토글 반영해 렌더(원본은 캐시 → 토글 시 재요청 없이 재필터)
-  // 공유 이미지(썸네일 콜라주) 미리 생성 — 공유 버튼 누를 때 iOS가 async를 막지 않게(2026-09-02)
-  _comboLastThumbs=rows.slice(0,4).map(r=>r.v.thumb||('https://i.ytimg.com/vi/'+r.v.id+'/mqdefault.jpg'));
-  _comboLastCount=rows.length;_comboCardDataURL=null;
-  _buildComboCardDataURL().then(d=>{if(myReq===_comboReq)_comboCardDataURL=d;}).catch(()=>{});
+  _filterBannedVideos(r.data).forEach(v=>{const who=sel.filter(m=>_chemHas(v,m));if(who.length>=2)rows.push({v,who,isCover:false});});
+  return rows;
 }
 // Only 토글 반영: 이미 받아둔 _comboAllRows에서 "선택 조합 외 사람이 안 나온" 영상만 남겨 렌더.
 // 외부인(관리자 표시)·조합 밖 출연자가 있으면 제외. 재요청 없음.
@@ -14328,15 +14304,23 @@ function _comboFromHash(param){
   _comboSel=sel.slice(0,_COMBO_MAX);
   _openComboPanel();_comboSearch();
 }
+// 검색 첫 화면의 Chemistry 입구(2026-11-10 — 예전 "멤버 조합 찾기" 배너를 Chemistry로 통합하며 새로 그림, 사용자 "배너 디자인이 구렸다").
+// 빈 자리 둘 사이에 앱 별 — "두 사람을 고르면 둘 사이가 보인다"를 그림으로. 섹션 라벨은 '여기서 시작해 보세요'와 같은 줄 모양.
 function _appendComboEntry(res){
-  const b=document.createElement('button');b.type='button';b.className='combo-entry';
-  const ico=document.createElement('span');ico.className='combo-entry-ico';ico.textContent='🔗';
-  const txt=document.createElement('span');txt.className='combo-entry-txt';
-  const t=document.createElement('span');t.className='combo-entry-t';t.textContent=currentLang==='ko'?'멤버 조합 찾기':'Find a member combo';
-  const s=document.createElement('span');s.className='combo-entry-s';s.textContent=currentLang==='ko'?'여러 멤버가 함께 나온 영상 모아보고 공유':'Videos where members appear together — share it';
+  const ko=currentLang==='ko';
+  const lbl=document.createElement('div');lbl.className='chem-entry-lbl';lbl.textContent='Chemistry';
+  const b=document.createElement('button');b.type='button';b.className='chem-door';
+  const pair=document.createElement('span');pair.className='chem-door-pair';
+  const slot=()=>{const s=document.createElement('span');s.className='chem-door-slot';s.textContent='+';return s;};
+  const st=document.createElement('span');st.className='chem-door-star';st.innerHTML=_CHEM_STAR;
+  pair.appendChild(slot());pair.appendChild(st);pair.appendChild(slot());
+  const txt=document.createElement('span');txt.className='chem-door-txt';
+  const t=document.createElement('span');t.className='chem-door-t';t.textContent=ko?'둘 이상 고르기':'Pick two or more';
+  const s=document.createElement('span');s.className='chem-door-s';s.textContent=ko?'함께 나온 영상 · 관계':'Videos together · how they connect';
   txt.appendChild(t);txt.appendChild(s);
-  const arr=document.createElement('span');arr.className='combo-entry-arr';arr.textContent='›';
-  b.appendChild(ico);b.appendChild(txt);b.appendChild(arr);
+  const arr=document.createElement('span');arr.className='chem-door-arr';arr.textContent='›';
+  b.appendChild(pair);b.appendChild(txt);b.appendChild(arr);
+  res.appendChild(lbl);
   b.addEventListener('click',e=>{
     e.stopPropagation();
     try{
@@ -14472,10 +14456,15 @@ async function _openChem(people,opt){
   if(!rows){
     _openFeedListOverlay(title,ko?'불러오는 중…':'Loading…',[],{chem:people});
     _gaEvent('chem_open',{n:people.length,target:sub});
-    try{rows=await _chemFetch(people);}catch(e){if(myReq===_chemReq)document.getElementById('feed-list-sub').textContent=ko?'불러오지 못했어요. 잠시 후 다시 열어 주세요.':'Couldn’t load. Try again shortly.';return;}
+    let pairRows=null;
+    try{[rows,pairRows]=await Promise.all([_chemFetch(people),people.length>=3?_comboFetchRows(people).catch(()=>null):Promise.resolve(null)]);}catch(e){if(myReq===_chemReq)document.getElementById('feed-list-sub').textContent=ko?'불러오지 못했어요. 잠시 후 다시 열어 주세요.':'Couldn’t load. Try again shortly.';return;}
     if(myReq!==_chemReq)return;
-    _chemCache={key,rows};
+    _chemCache={key,rows,pairRows};
   }
+  // 3~4명: 일부만 함께 나온 영상(전원 교집합은 3명부터 거의 0 — 조합 찾기에서 옮겨 온 것, 2026-11-10)
+  const pairRows=(_chemCache&&_chemCache.key===key&&_chemCache.pairRows)||null;
+  const exactIds=new Set(rows.map(v=>v.id));
+  const partial=pairRows?pairRows.filter(r=>r.who.length<people.length&&!exactIds.has(r.v.id)).sort((x,y)=>y.who.length-x.who.length||(y.v.view_count||0)-(x.v.view_count||0)):[];
   const exact=rows.filter(v=>_chemNp(v)===people.length);
   const facts=_chemFacts(people,rows,exact);
   const costars=_chemCoStars(people,rows);
@@ -14495,9 +14484,16 @@ async function _openChem(people,opt){
     {title:'STAGE',songs:stage.map(_chemSong)},
     {title:'ONLY US',songs:only.map(_chemSong)},
     {title:'WITH OTHERS',songs:others.map(_chemSong)},
+    {title:'SOME OF US',songs:partial.filter(r=>pass(r.v)).map(r=>_chemSong(r.v))},
   ].filter(s=>s.songs.length);
   const head=_chemHead(people,facts,costars,add);
-  if(!rows.length){const e=document.createElement('div');e.className='chem-empty';e.textContent=ko?'아직 모두 함께 나온 영상이 없어요':'No videos with all of them yet';head.appendChild(e);}
+  // 관계도(누가 누구와 몇 번·연도별) — 3~4명일 때. 조합 찾기의 그림을 그대로 쓴다(선·막대를 누르면 그림 안 요약만 바뀐다).
+  if(pairRows&&pairRows.length){
+    try{_comboSel=people.slice();_comboViz={pair:null,year:null};const box=document.createElement('div');box.className='chem-fig';
+      // 선(두 사람)을 누르면 그 둘의 Chemistry로 — 목록이 바로 아래라 "거기만"을 이 화면에서 따로 거르지 않는다. 막대(연도)는 그림 안 요약만.
+      const draw=()=>{if(_comboViz.pair){const ppl=_comboViz.pair.map(k=>people.find(p=>_comboKey(p)===k)).filter(Boolean);_comboViz={pair:null,year:null};if(ppl.length===2){_openChem(ppl);return;}}box.replaceChildren(_comboBuildFig(pairRows,draw));};draw();head.appendChild(box);}catch(e){console.warn('[chem] 관계도 실패',e);}
+  }
+  if(!rows.length){const e=document.createElement('div');e.className='chem-empty';e.textContent=partial.length?(ko?'모두 함께 나온 영상은 아직 없어요 — 일부만 함께 나온 영상':'Not all together yet — some of them together'):(ko?'아직 모두 함께 나온 영상이 없어요':'No videos with all of them yet');head.appendChild(e);}
   _openFeedListOverlay(title,sub,sections.flatMap(s=>s.songs),{chem:people,head,sections,facets:rows.length?[facet]:[]});
   // + 사람 추가(오른쪽 위) — 함께 많이 나온 사람부터, 아래 검색창으로 다른 사람도
   const plus=document.getElementById('feed-list-chem-add');
