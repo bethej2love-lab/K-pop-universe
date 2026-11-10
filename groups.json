@@ -112997,6 +112997,25 @@
   },
   "discography": [
    {
+    "title": "Kick Off The Wall (Midnight Drift Remix)",
+    "type": "싱글",
+    "isMain": false,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/41/243/15141243_20261109105139_500.jpg",
+    "releaseDate": "2026.11.10",
+    "trackCount": 1,
+    "titleTrack": "Kick Off The Wall (Midnight Drift Remix)",
+    "variant": true,
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Kick Off The Wall (Midnight Drift Remix)",
+      "isTitle": true
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15141243"
+   },
+   {
     "title": "KICK OFF THE WALL Pt. 1",
     "type": "미니 5집",
     "isMain": true,
@@ -188456,6 +188475,45 @@
   },
   "discography": [
    {
+    "title": "S.W.I.S.H.",
+    "type": "미니",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b2731f2c372605d00f9f80f087b3",
+    "releaseDate": "2026.11.10",
+    "trackCount": 5,
+    "titleTrack": null,
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Masterpiece",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "Bananas",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "Wanna Go",
+      "isTitle": false
+     },
+     {
+      "no": 4,
+      "title": "Up & Away",
+      "isTitle": false
+     },
+     {
+      "no": 5,
+      "title": "Beep Beep",
+      "isTitle": false
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "0ulLmM5roN7ywJVZblQasC",
+    "copyright": "2026 MORE VISION,under license to Kakao Entertainment"
+   },
+   {
     "title": "Masterpiece",
     "type": "싱글",
     "isMain": true,
@@ -188703,6 +188761,29 @@
    "namu": "https://namu.wiki/w/모모랜드"
   },
   "discography": [
+   {
+    "title": "Still Valid",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/30/759/15130759_20261105155658_500.jpg",
+    "releaseDate": "2026.11.10",
+    "trackCount": 2,
+    "titleTrack": "Still Valid",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Still Valid",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "lowkey",
+      "isTitle": true
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15130759"
+   },
    {
     "title": "white spring (하얀 봄)",
     "type": "싱글",
@@ -211021,6 +211102,24 @@
    "x": "https://x.com/atheart_titan"
   },
   "discography": [
+   {
+    "title": "Say It (R2 x AtHeart)",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/42/628/15142628_20261109160010_500.jpg",
+    "releaseDate": "2026.11.10",
+    "trackCount": 1,
+    "titleTrack": "Say It (R2 x AtHeart)",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Say It (R2 x AtHeart)",
+      "isTitle": true
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15142628"
+   },
    {
     "title": "3!4!",
     "type": "싱글",

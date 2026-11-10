@@ -161737,6 +161737,29 @@
     },
     "discography": [
       {
+        "title": "0,1",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/41/962/15141962_20261109143252_500.jpg",
+        "releaseDate": "2026.11.10",
+        "trackCount": 2,
+        "titleTrack": "MIS2 U",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "MIS2 U",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "생각이나 (Narration.MISEO)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15141962"
+      },
+      {
         "title": "드라마 '빌런즈' 삽입곡 - We Got a Fire",
         "type": "OST",
         "releaseDate": "2026.01.06",
@@ -281839,6 +281862,29 @@
     },
     "left": "2018.12.26",
     "discography": [
+      {
+        "title": "욕망의 덫 OST Part.11",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/34/403/15134403_20261106112202_500.jpg",
+        "releaseDate": "2026.11.10",
+        "trackCount": 2,
+        "titleTrack": "사랑이 다 끝난 게 맞다면",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "사랑이 다 끝난 게 맞다면",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "사랑이 다 끝난 게 맞다면 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15134403"
+      },
       {
         "title": "사랑이 온다 OST Part.25",
         "type": "OST",
