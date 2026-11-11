@@ -17909,7 +17909,9 @@ function _openCardMenu(btn,ctx){
   item(currentLang==='ko'?'+ 사진 컬렉션 만들기':'+ New photo collection',()=>_createPhotoColFromCard(ctx));
   if(ctx&&ctx.memberKo&&ctx.groupKo)item('Chemistry',()=>_chemPickPartner(ctx.groupKo,ctx.memberKo)); // 이 멤버와 함께 나온 사람 → Chemistry
   // For You 덜 보기(2026-11-11) — 그룹 멤버만(솔로 아티스트는 '혼자 나온 영상'이 곧 전부라 의미가 없다)
-  if(ctx&&ctx.memberKo&&ctx.groupKo&&GROUPS[ctx.groupKo]){const on=lessMembers.has(ctx.groupKo+':'+ctx.memberKo);
+  // 소속 그룹을 즐겨찾기했을 때만 보인다(2026-11-11 사용자 "쓸데없이 모든 경우에 노출될 필요는 없다") — 그때만 그 멤버 단독 영상이 For You에 들어온다.
+  // 멤버 본인을 즐겨찾기했으면 안 보인다(서로 모순). 이미 덜 보기 중이면 풀 수 있게 항상 '다시 보기'로 보인다.
+  if(ctx&&ctx.memberKo&&ctx.groupKo&&GROUPS[ctx.groupKo]&&(lessMembers.has(ctx.groupKo+':'+ctx.memberKo)||(favGroups.has(ctx.groupKo)&&!favMembers.has(ctx.groupKo+':'+ctx.memberKo)))){const on=lessMembers.has(ctx.groupKo+':'+ctx.memberKo);
     item(currentLang==='ko'?(on?'For You에서 다시 보기':'For You에서 덜 보기'):(on?'Show again in For You':'Show less in For You'),()=>_toggleLess(ctx.groupKo,ctx.memberKo));}
   // 제보하기(2026-11-02) — 이 카드의 그룹/멤버를 대상으로 붙여 연다
   if(ctx&&ctx.groupKo)item(T[currentLang].fbReport,()=>openFeedback(ctx.memberKo
