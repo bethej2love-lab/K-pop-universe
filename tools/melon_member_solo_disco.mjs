@@ -11,7 +11,7 @@
 // 저장: artists.json discography(그룹 수집기와 같은 스키마·종류 판정·변형판/해외반 태그). 멤버 aid는 'a:이름|그룹' 키로 남긴다.
 // 멜론 파싱·차단 대응·캐시는 melon_disco_audit.mjs 에서 가져왔다(같은 캐시 폴더).
 //
-// 실행: node tools/melon_member_solo_disco.mjs [--groups 에프엑스,소녀시대] [--apply]
+// 실행: node tools/melon_member_solo_disco.mjs [--groups 에프엑스,소녀시대] [--shard 0/7] [--apply]
 //       → 리포트 ~/Downloads/melon_disco_audit/melon_member_solo_report.txt, 적용 후 node tools/build_slim_data.mjs
 import fs from 'node:fs';
 import path from 'node:path';
@@ -251,7 +251,10 @@ const nameParts = t => [t, ...String(t).split(/[()]/)].map(nrm).filter(Boolean);
 const keysOf = a => [a.name.ko, a.name.en, ...(a.matchAliases || [])].filter(Boolean).map(nrm).filter(k => k.length >= 2);
 
 const ONLY_G = argOf('--groups') ? new Set(argOf('--groups').split(',')) : null;
-const gList = Object.keys(GROUPS).filter(g => (!ONLY_G || ONLY_G.has(g)) && map[g] && map[g].aid && !map[g].blocked && !map[g].rejected);
+// --shard i/n (2026-11-11): 그룹을 n등분해 i번째만 — CI가 요일별로 나눠 돌린다(.github/workflows/member-solo-disco.yml).
+// 한 번에 전 그룹(요청 1,600여 개)을 돌리면 멜론이 IP를 막는다(2026-09-17 실측 ~2,400요청). 정렬은 키 순서라 날마다 같은 몫.
+const SHARD = (argOf('--shard') || '').match(/^(\d+)\/(\d+)$/);
+const gList = Object.keys(GROUPS).sort().filter((g, i) => (!SHARD || i % Number(SHARD[2]) === Number(SHARD[1])) && (!ONLY_G || ONLY_G.has(g)) && map[g] && map[g].aid && !map[g].blocked && !map[g].rejected);
 console.log(`[member-solo] 그룹 ${gList.length}팀`);
 const log = [], unmatched = [];
 let added = 0, people = 0, touchedPeople = 0;
