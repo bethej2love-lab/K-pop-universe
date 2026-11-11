@@ -14985,6 +14985,44 @@
     ],
     "discography": [
       {
+        "title": "Hey, Somebody",
+        "type": "미니 1집",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/74/809/15074809_20261023153742_500.jpg",
+        "releaseDate": "2026.10.26",
+        "trackCount": 5,
+        "titleTrack": "Hey, Somebody",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Hey, Somebody",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Sky High",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "时光情书 (To Us)",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "我眼中的你 (Wave)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Hey, Somebody (English Ver.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15074809"
+      },
+      {
         "title": "最初的记忆",
         "type": "싱글",
         "releaseDate": "2026.07.18",
@@ -113892,7 +113930,177 @@
       "en": "KR"
     },
     "left": "2020.06.08",
-    "id": "a1875"
+    "id": "a1875",
+    "discography": [
+      {
+        "title": "ON DND",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/144/66/641/14466641_20260820123048_500.jpg",
+        "releaseDate": "2026.08.24",
+        "trackCount": 1,
+        "titleTrack": "ON DND",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "ON DND",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14466641"
+      },
+      {
+        "title": "Merry Birthday",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/124/49/747/12449747_20251219171344_500.jpg",
+        "releaseDate": "2025.12.22",
+        "trackCount": 2,
+        "titleTrack": "손난로",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "손난로",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "나 홀로 집에",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "12449747"
+      },
+      {
+        "title": "UNFOLDING COLORS",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/121/65/976/12165976_20251017151959_500.jpg",
+        "releaseDate": "2025.10.24",
+        "trackCount": 4,
+        "titleTrack": "Bang Bang",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Unfolding",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Bang Bang",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "Sirius",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Bang Bang (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "12165976"
+      },
+      {
+        "title": "On My Way",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/117/23/073/11723073_20250225172955_500.jpg",
+        "releaseDate": "2025.02.26",
+        "trackCount": 3,
+        "titleTrack": "On My Way",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "On My Way",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Tell me that you want me too",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Vibe Check",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11723073"
+      },
+      {
+        "title": "LOVE?",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/115/22/543/11522543_20240627184018_500.jpg",
+        "releaseDate": "2024.06.27",
+        "trackCount": 4,
+        "titleTrack": "LOVE?",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Doubt Me",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "LOVE?",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "Nowhere",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Romantic (feat. 빈센트블루)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11522543"
+      },
+      {
+        "title": "ROOM",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/15/117/11315117_20230828161005_500.jpg",
+        "releaseDate": "2023.08.29",
+        "trackCount": 4,
+        "titleTrack": "IN MY ROOM",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "LET ME OUT",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "IN MY ROOM",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "BROKEN WINGS",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "다시",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11315117"
+      }
+    ]
   },
   {
     "name": {
@@ -285990,7 +286198,68 @@
       "ko": "한국",
       "en": "KR"
     },
-    "id": "a1888"
+    "id": "a1888",
+    "discography": [
+      {
+        "title": "SNOW DAY",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/124/06/823/12406823_20251125143238_500.jpg",
+        "releaseDate": "2025.11.26",
+        "trackCount": 1,
+        "titleTrack": "SNOW DAY",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "SNOW DAY",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "12406823"
+      },
+      {
+        "title": "처음 그때",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/116/08/345/11608345_20241004150056_500.jpg",
+        "releaseDate": "2024.10.05",
+        "trackCount": 2,
+        "titleTrack": "처음 그때",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "처음 그때",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "처음 그때 (inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11608345"
+      },
+      {
+        "title": "밤의 의미 (Trust Yourself)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/53/097/11353097_20231027121536_500.jpg",
+        "releaseDate": "2023.10.30",
+        "trackCount": 1,
+        "titleTrack": "밤의 의미 (Trust Yourself)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "밤의 의미 (Trust Yourself)",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "11353097"
+      }
+    ]
   },
   {
     "name": {

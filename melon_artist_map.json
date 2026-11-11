@@ -11135,5 +11135,21 @@
     "confidence": "identity",
     "evidence": "공식 artist2970911=bugAboo 및 앨범11535511 가창자",
     "checkedAt": "2026-11-06"
+  },
+  "a:임영민|에이비식스": {
+    "aid": "1865246",
+    "melonName": "임영민",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(에이비식스) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-11-11"
+  },
+  "a:정인성|크나큰": {
+    "aid": "946986",
+    "melonName": "정인성",
+    "kind": "solo",
+    "confidence": "high",
+    "evidence": "그룹(크나큰) 멜론 상세의 멤버 목록",
+    "checkedAt": "2026-11-11"
   }
 }
