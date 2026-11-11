@@ -2,6 +2,10 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-11 (Claude Code — 그룹 카드 대표 영상: 단독 영상 우선)
+- 사용자: "웨이션브이 그룹카드 대표 영상이 라이즈랑 합동 공연이라 썸네일이 라이즈". 원인: 그룹 대표(하트 최다)는 members가 빈 영상이면 `with_groups`가 있는 합동 무대도 후보였다. 웨이션브이×라이즈 'Tempo'(뮤뱅 글로벌페스티벌) 7건이 해당한다.
+- **[app.js `_pickFeaturedVidFromDB`]** 그룹 카드는 with_groups·with_members가 빈 단독 영상 중 하트 최다를 먼저 고른다. 단독에 하트가 없을 때만 합동 영상으로 내려간다. 멤버 카드는 그대로다.
+
 ## 2026-11-11 (Claude Code — 멤버 공유 썸네일 = 가로 직캠 우선·예능 제외)
 - 사용자: "샤오쥔 카드 공유 링크 썸네일 바꿔줘. 공유 링크 썸네일은 웬만하면 예능은 빼고 가로 긴 직사각형 직캠 썸네일이 좋지". 원인: 샤오쥔이 KBS 예능 '체험! 직캠의 현장'(ioeh9JCZn3c)이었다. 제목의 '직캠' 때문에 category가 live로 들어가 MV·무대 후보에 섞였다.
 - **[og_thumbs.json]** 샤오쥔을 음악중심 직캠 'Vision Wings'(VsxHa6h1Mvg)로 교체했다.

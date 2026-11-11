@@ -22965,9 +22965,11 @@ async function _pickFeaturedVidFromDB(ko,memberKo,onlyMe,filter,viewMode,formatF
     const{data}=await q;
     if(!data?.length)return null;
     const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
-    let best=null,bestC=0;
-    for(const v of data){const c=_scrapCounts.get(vidUrl(v))||0;if(c>bestC){bestC=c;best=v;}}
-    return bestC>0?best:null;
+    // 그룹 카드는 다른 그룹과 함께한 영상(with_groups)보다 그룹 단독 영상을 먼저(2026-11-11 사용자 — 웨이션브이 대표가
+    // 라이즈 합동 'Tempo'라 썸네일이 라이즈였다). 단독 영상에 하트가 하나도 없을 때만 합동 영상으로 내려간다.
+    const pickBest=list=>{let b=null,bc=0;for(const v of list){const c=_scrapCounts.get(vidUrl(v))||0;if(c>bc){bc=c;b=v;}}return b;};
+    if(!memberKo){const solo=pickBest(data.filter(v=>!(v.with_groups||[]).length&&!(v.with_members||[]).length));if(solo)return solo;}
+    return pickBest(data);
   }catch(e){return null;}
 }
 
