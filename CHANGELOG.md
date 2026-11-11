@@ -2,6 +2,12 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-11 (Claude Code — 관리자 Daily 팝업 다시 보기 + 지표 2개)
+- 사용자: "방문자 수 팝업을 꺼도 설정 어딘가에서 확인할 수 있게 + 꼭 볼 지표 한두 개 더". **설정 › 관리자 '📊 Daily' 버튼**: 누르면 지금 숫자를 새로 조회해서 팝업을 다시 띄운다. 팝업 아래에 **지난 기록 7일**(그날 처음 열었을 때 숫자, 이 기기 localStorage `kpu_adm_digest_log`, 14일 보관)이 표로 나온다.
+- 지표 추가: **다시 온 사람**(24시간 방문자−새 방문, 재방문 신호). **정적 페이지 방문 → 앱**(seo_events land·to_app 기기 수. 최근 24시간 실측은 190명 → 앱 4명으로, 지금 가장 큰 유입인데 관리자 화면에 없었음). 정적 페이지 쪽은 기기 ID 기준이라 자동 테스트 제외가 안 된다(검색엔진 렌더러가 섞일 수 있음).
+- **[SQL 실행] sql/2026-11-11_app_metrics_seo_daily.sql**: get_app_metrics에 seo_land·seo_to_app을 추가했다(함수 정의 반영 확인).
+- syntax 통과, 예시 데이터로 팝업 렌더 확인.
+
 ## 2026-11-11 (Claude Code — 새 음방 쇼케이팝 SHOW K-POP 등록)
 - 사용자: "쇼케이팝 음방이 10월에 새로 시작 — 어드민으로 유튜브 채널 추가했다". 공식 사이트 확인: 2026-10-19 첫 방송, **매주 월요일 18:00 생방송**(아리랑TV·TikTok LIVE 파트너, 뮤빗 투표·써클차트 데이터), 1위 있음(1위 후보 2팀 + 생방송 투표 15%, 통산 3주 1위면 명예의 전당), 회차 표기 '2026.11.09 (4회)'. 채널 ext_channels에 `showkpop.official`(tier music, 기본 live)로 11-11 11:16 등록 확인 — 영상은 아직 0개(다음 동기화 대기).
 - **[shared.js] `_MS_SHOWS`에 쇼케이팝**(dow 1, h ['showkpop.official'], 제목 re show k-pop/쇼케이팝, slug show-kpop) → 음방 회차 화면·show/ 정적 페이지가 자동으로 포함. **[app.js]** 1위 영상 찾기 키워드 `_WIN_SHOW_KW`, **[tools/seo_extra.js]** 영문 이름 `showEn`, **[admin.js]** 1위 수집 요일표 `_MSW_SHOW_DOW`(월).
