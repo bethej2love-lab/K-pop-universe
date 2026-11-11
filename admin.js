@@ -13146,7 +13146,7 @@ function _admDigestLogPut(day,m){
   const a=_admDigestLogRead().filter(r=>r&&r.day!==day);a.unshift(rec);
   try{localStorage.setItem(_ADM_DIGEST_LOG,JSON.stringify(a.slice(0,14)));}catch(e){}
 }
-function _admDigestRender(m,day){
+function _admDigestRender(m,day,t){
   document.getElementById('adm-digest')?.remove();
   const box=document.createElement('div');
   box.id='adm-digest';box.setAttribute('role','status');
@@ -13159,6 +13159,25 @@ function _admDigestRender(m,day){
     +row('다시 온 사람',`${back}명`,'24시간 안에 온 사람 중 처음이 아닌 사람')
     +row('즐겨찾기 새로 한 사람',`${m.fav_users??0}명`+(m.fav_adds?dim(`(${m.fav_adds}건)`):''))
     +(m.seo_land!=null?row('정적 페이지 방문',`${m.seo_land}명`+dim(`→ 앱 ${m.seo_to_app??0}명`),'검색·챗지피티로 g/ 페이지에 들어온 기기, 그중 앱으로 넘어온 기기(검색엔진 렌더러가 섞일 수 있음)'):'');
+  // 추세(2026-11-11 사용자 "어제·지난주·지난달 대비 몇 명·몇 % — 추세가 제일 중요") — get_app_trend(sql/2026-11-11_app_trend.sql).
+  // 구간마다 바로 앞 같은 길이 구간과 비교. 앞 구간이 0이면(정적 페이지 기록은 11-10부터) 비율 대신 '—'.
+  if(t&&t.d1){
+    const cell=(cur,prev)=>{
+      const c=cur??0,p=prev??0;
+      if(!p)return `<b>${c}</b><div style="font-size:10px;color:rgba(200,212,240,0.45)">—</div>`;
+      const d=c-p,pct=Math.round(d/p*100);
+      const col=d>0?'#7fe0a8':d<0?'#ff9a9a':'rgba(200,212,240,0.55)';
+      const sign=d>0?'+':'';
+      // 앞 구간이 5 미만이면 %는 뻥튀기(3→237 = +7800%)라 명수만
+      return `<b>${c}</b><div style="font-size:10px;color:${col}">${sign}${d}${p>=5?` · ${sign}${pct}%`:''}</div>`;
+    };
+    const rowT=(lbl,a,b)=>`<tr><td style="padding:4px 0;color:rgba(200,212,240,0.75);white-space:nowrap">${lbl}</td>`
+      +['visitors','new','seo_land','seo_to_app'].map(k=>`<td style="padding:4px 0 4px 6px;text-align:right;vertical-align:top">${cell((t[a]||{})[k],(t[b]||{})[k])}</td>`).join('')+'</tr>';
+    const th='padding:0 0 2px 6px;text-align:right;font-weight:400';
+    html+=`<div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(150,175,225,0.15)"><div style="font-size:11px;color:rgba(150,175,225,0.75);margin-bottom:2px">추세 · 바로 앞 같은 기간 대비</div>`
+      +`<table style="width:100%;border-collapse:collapse;font-size:12px;color:#e8edf8"><tr style="font-size:10.5px;color:rgba(150,175,225,0.6)"><td></td><td style="${th}">방문자</td><td style="${th}">새 방문</td><td style="${th}">정적</td><td style="${th}">정적→앱</td></tr>`
+      +rowT('24시간','d1','d1p')+rowT('7일','w','wp')+rowT('30일','m','mp')+'</table></div>';
+  }
   const hist=_admDigestLogRead().filter(r=>r&&r.day!==day).slice(0,7);
   if(hist.length){
     const td='padding:2px 0;text-align:right';
@@ -13181,12 +13200,13 @@ async function _admDailyDigest(force){
   const day=new Date(Date.now()+9*3600e3).toISOString().slice(0,10); // KST 날짜
   if(!force){try{if(localStorage.getItem('kpu_adm_digest_day')===day)return;}catch(e){}}
   let m;
+  const trendP=sb.rpc('get_app_trend').then(r=>r.error?null:(typeof r.data==='string'?JSON.parse(r.data):r.data),()=>null); // 추세 — 실패해도 팝업은 뜬다
   try{const{data,error}=await sb.rpc('get_app_metrics',{p_days:1});if(error)throw error;m=typeof data==='string'?JSON.parse(data):data;}catch(e){if(force&&typeof _showToast==='function')_showToast('Daily 조회 실패');return;}
   if(!m||(!force&&document.getElementById('adm-digest')))return;
   // 지난 기록은 그날 처음 본 숫자로 남긴다(나중에 다시 열어 본 숫자로 덮지 않음)
   if(!_admDigestLogRead().some(r=>r&&r.day===day))_admDigestLogPut(day,m);
   try{localStorage.setItem('kpu_adm_digest_day',day);}catch(e){}
-  _admDigestRender(m,day);
+  _admDigestRender(m,day,await trendP);
 }
 document.getElementById('sp-digest-btn')?.addEventListener('click',()=>{_admDailyDigest(true);});
 setTimeout(()=>{_admDailyDigest();},4000);
