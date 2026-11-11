@@ -13157,8 +13157,8 @@ function _admDigestRender(m,day,t){
   let html=`<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px"><b style="font-size:15px">Daily</b><span style="font-size:11px;color:rgba(150,175,225,0.75)">최근 24시간 · 자동 테스트 제외</span></div>`
     +row('새 방문',`${nv}명`)
     +row('다시 온 사람',`${back}명`,'24시간 안에 온 사람 중 처음이 아닌 사람')
-    +row('즐겨찾기 새로 한 사람',`${m.fav_users??0}명`+(m.fav_adds?dim(`(${m.fav_adds}건)`):''))
-    +(m.seo_land!=null?row('정적 페이지 방문',`${m.seo_land}명`+dim(`→ 앱 ${m.seo_to_app??0}명`),'검색·챗지피티로 g/ 페이지에 들어온 기기, 그중 앱으로 넘어온 기기(검색엔진 렌더러가 섞일 수 있음)'):'');
+    +(m.seo_land!=null?row('정적 페이지 방문',`${m.seo_land}명`+dim(`→ 앱 ${m.seo_to_app??0}명`),'검색·챗지피티로 g/ 페이지에 들어온 기기, 그중 앱으로 넘어온 기기(검색엔진 렌더러가 섞일 수 있음)'):'')
+    +row('즐겨찾기 새로 한 사람',`${m.fav_users??0}명`+(m.fav_adds?dim(`(${m.fav_adds}건)`):''));
   // 추세(2026-11-11 사용자 "어제·지난주·지난달 대비 몇 명·몇 % — 추세가 제일 중요") — get_app_trend(sql/2026-11-11_app_trend.sql).
   // 구간마다 바로 앞 같은 길이 구간과 비교. 앞 구간이 0이면(정적 페이지 기록은 11-10부터) 비율 대신 '—'.
   if(t&&t.d1){
@@ -13169,13 +13169,15 @@ function _admDigestRender(m,day,t){
       const col=d>0?'#7fe0a8':d<0?'#ff9a9a':'rgba(200,212,240,0.55)';
       const sign=d>0?'+':'';
       // 앞 구간이 5 미만이면 %는 뻥튀기(3→237 = +7800%)라 명수만
-      return `<b>${c}</b><div style="font-size:10px;color:${col}">${sign}${d}${p>=5?` · ${sign}${pct}%`:''}</div>`;
+      return `<b>${c}</b><div style="font-size:10px;color:${col}">${sign}${d}${p>=5?` (${sign}${pct}%)`:''}</div>`;
     };
+    // 재방문 = 방문자 − 새 방문(계정이 그 구간 전에 생긴 사람)
+    const val=(w,k)=>{const o=t[w]||{};return k==='ret'?Math.max(0,(o.visitors??0)-(o.new??0)):o[k];};
     const rowT=(lbl,a,b)=>`<tr><td style="padding:4px 0;color:rgba(200,212,240,0.75);white-space:nowrap">${lbl}</td>`
-      +['visitors','new','seo_land','seo_to_app'].map(k=>`<td style="padding:4px 0 4px 6px;text-align:right;vertical-align:top">${cell((t[a]||{})[k],(t[b]||{})[k])}</td>`).join('')+'</tr>';
+      +['visitors','ret','seo_land','seo_to_app'].map(k=>`<td style="padding:4px 0 4px 6px;text-align:right;vertical-align:top">${cell(val(a,k),val(b,k))}</td>`).join('')+'</tr>';
     const th='padding:0 0 2px 6px;text-align:right;font-weight:400';
     html+=`<div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(150,175,225,0.15)"><div style="font-size:11px;color:rgba(150,175,225,0.75);margin-bottom:2px">추세 · 바로 앞 같은 기간 대비</div>`
-      +`<table style="width:100%;border-collapse:collapse;font-size:12px;color:#e8edf8"><tr style="font-size:10.5px;color:rgba(150,175,225,0.6)"><td></td><td style="${th}">방문자</td><td style="${th}">새 방문</td><td style="${th}">정적</td><td style="${th}">정적→앱</td></tr>`
+      +`<table style="width:100%;border-collapse:collapse;font-size:12px;color:#e8edf8"><tr style="font-size:10.5px;color:rgba(150,175,225,0.6)"><td></td><td style="${th}">방문자</td><td style="${th}">재방문</td><td style="${th}">정적</td><td style="${th}">정적→앱</td></tr>`
       +rowT('24시간','d1','d1p')+rowT('7일','w','wp')+rowT('30일','m','mp')+'</table></div>';
   }
   const hist=_admDigestLogRead().filter(r=>r&&r.day!==day).slice(0,7);
