@@ -790,6 +790,7 @@ ${SEO_GA_TAG}
       ${peers.map(p => `<li><a href="${SITE}/${memberPagePath(p, lang)}">${escHtml(isEn ? (p.name.en || p.name.ko) : p.name.ko)}</a>${groups[p.group.ko] ? ` <span class="tag">${escHtml(isEn ? (groups[p.group.ko].en || p.group.ko) : p.group.ko)}</span>` : ''}</li>`).join('\n      ')}
     </ul>` : ''; })()}
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a> · <a href="${SITE}/about.html">${isEn ? 'About · removal requests' : '사이트 소개 · 삭제 요청'}</a></div>
+  ${nextItemsJson(a, lang)}
   <div class="cta-dock"><a class="cta" href="${SITE}/${deepLinkHash}${memberIdParam}">${isEn ? 'View profile, fancams & stages →' : '프로필·직캠·무대 영상 보기 →'}</a></div>
 </div>
 </body>
@@ -1483,6 +1484,51 @@ function computeMemberSongs() {
   MEMBER_SONGS_BY_ARTIST.forEach(l => l.sort((x, y) => y.n - x.n));
 }
 // 멤버 페이지의 "곡별 직캠" 칸 — 앨범 커버 타일
+// ── 재생 화면 '이어서' 카드 데이터(2026-11-11) ─────────────────────────────────────────────
+// 멤버 페이지에 <script type="application/json" id="kpu-next">로 싣고 seo_play.js가 영상 밑에 그린다.
+// 항목: 케미 상위 2명(함께 나온 영상 수) + 곡별 직캠 상위 2곡. 링크는 앱 딥링크(#chem= / #g=&m=&song=)라 누르면 그 화면이 바로 열린다.
+// 재생 중인 영상 제목에 곡 이름이 있으면 seo_play.js가 그 곡 카드를 맨 앞으로 올린다(m: 맞춤 키).
+let _chemByMember = null;
+function chemPartnersOf(a) {
+  if (!CHEM_RAW) return [];
+  if (!_chemByMember) {
+    _chemByMember = new Map();
+    const byName = new Map();
+    for (const g of groupKos) membersOf(g).forEach(x => { byName.set(g + '|' + x.name.ko, x); const ge = (x.groups || []).find(y => y && y.ko === g); if (ge && ge.name) byName.set(g + '|' + ge.name, x); });
+    for (const p of CHEM_RAW) {
+      if (!groups[p.g]) continue;
+      const x = byName.get(p.g + '|' + p.a), y = byName.get(p.g + '|' + p.b);
+      if (!x || !y || x === y) continue;
+      [[x, y], [y, x]].forEach(([me, other]) => { if (!_chemByMember.has(me)) _chemByMember.set(me, []); _chemByMember.get(me).push({ g: p.g, other, n: p.n, v: (p.v || []).find(q => q && !q.s) || (p.v || [])[0] }); /* 가로 영상 썸네일 우선 */ });
+    }
+    _chemByMember.forEach(l => l.sort((u, w) => w.n - u.n));
+  }
+  return _chemByMember.get(a) || [];
+}
+function nextItemsJson(a, lang) {
+  // 2026-11-11 사용자 "꼭 케미 제안할 필요 없음 — 다른 제안할 거 많다" → 종류를 섞는다(케미는 1개만):
+  // ① 이 멤버 곡별 직캠 상위 곡 ② 같은 곡 다른 멤버 직캠 ③ 그룹 전체 ④ 케미 1명 ⑤ 두 번째 곡. 폰은 가로로 넘기고 넓은 화면은 앞 3개.
+  const isEn = lang === 'en', gko = a.group && a.group.ko;
+  if (!gko || !groups[gko]) return '';
+  const nm = x => isEn ? (x.name.en || x.name.ko) : (x.displayName || x.name.ko);
+  const vidId = v => (typeof v === 'string' ? v : v && (v.id || v.v)) || '';
+  const topVid = vids => (vids || []).slice().sort((p, q) => (q.view_count || 0) - (p.view_count || 0))[0];
+  const songs = (MEMBER_SONGS_BY_ARTIST.get(a) || []).filter(y => y.gko === gko);
+  const songItem = x => { const ms = (MEMBER_SONGS_BY_SONG.get(gko + '|' + x.s.b) || []).find(y => y.a === a); const v = ms && topVid(ms.vids);
+    return { k: isEn ? 'Every stage' : '모든 무대', t: x.s.title, s: isEn ? `${x.n} fancams of ${nm(a)}` : `${nm(a)} 직캠 ${x.n}개`, img: v ? v.id : '', m: x.s.title, h: `${SITE}/#g=${hashEsc(gko)}&m=${hashEsc(a.name.ko)}&song=${hashEsc(x.s.title)}` }; };
+  const items = [];
+  if (songs[0]) items.push(songItem(songs[0]));
+  if (songs[0]) { const mate = (MEMBER_SONGS_BY_SONG.get(gko + '|' + songs[0].s.b) || []).find(y => y.a !== a); if (mate) { const v = topVid(mate.vids);
+    items.push({ k: isEn ? 'Same song' : '같은 곡', t: `${nm(mate.a)} · ${songs[0].s.title}`, s: isEn ? `${mate.vids.length} fancams` : `직캠 ${mate.vids.length}개`, img: v ? v.id : '', m: songs[0].s.title, h: `${SITE}/#g=${hashEsc(gko)}&m=${hashEsc(mate.a.name.ko)}&song=${hashEsc(songs[0].s.title)}` }); } }
+  { const G = isEn ? (groups[gko].en || gko) : gko; const gi = ogImageForGroup(gko, groups[gko]);
+    items.push({ k: isEn ? 'Group' : '그룹', t: G, s: isEn ? 'Stages · MVs · members' : '무대 · 뮤비 · 멤버', im: /og-image\.png$/.test(gi) ? '' : gi.replace('/maxresdefault.', '/mqdefault.').replace('/hq720.', '/mqdefault.'), h: `${SITE}/#g=${hashEsc(gko)}` }); }
+  const c = chemPartnersOf(a)[0];
+  if (c) { const key = [a, c.other].map(x => x.name.ko + '~' + c.g).join(',');
+    items.push({ k: isEn ? 'Chemistry' : '케미', t: `${nm(a)} × ${nm(c.other)}`, s: isEn ? `${c.n} videos together` : `함께 나온 영상 ${c.n}개`, img: vidId(c.v), h: `${SITE}/#chem=${encodeURIComponent(key)}` }); }
+  if (songs[1]) items.push(songItem(songs[1]));
+  if (!items.length) return '';
+  return `<script type="application/json" id="kpu-next">${JSON.stringify(items).replace(/</g, '\\u003c')}</script>`;
+}
 function memberSongLinksHtml(a, lang) {
   const list = MEMBER_SONGS_BY_ARTIST.get(a) || [];
   if (!list.length) return '';
@@ -2229,11 +2275,16 @@ function chemPagePath(g, a, b, lang) {
   if (lang === 'en') return `en/chem/${slugify(groups[g].en || g, g)}/${slugify(a.name.en || a.name.ko, a.name.ko)}-${slugify(b.name.en || b.name.ko, b.name.ko)}/`;
   return `chem/${urlSafeKo(g)}/${relSeg(a.name.ko, 'ko')}-${relSeg(b.name.ko, 'ko')}/`;
 }
-async function buildChemPages() {
+let CHEM_RAW = null; // get_chem_pairs 결과 — 메인에서 멤버 페이지 전에 받아 둔다(nextItems), 실패하면 buildChemPages가 다시 받는다
+async function fetchChemPairs() {
   const res = await fetch(`${SB_URL}/rest/v1/rpc/get_chem_pairs`, { method: 'POST', headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_min: CHEM_MIN }), signal: AbortSignal.timeout(60000) });
   if (!res.ok) throw new Error(`get_chem_pairs ${res.status}`);
   const raw = await res.json();
   if (!Array.isArray(raw)) throw new Error('get_chem_pairs 응답이 배열이 아님');
+  return raw;
+}
+async function buildChemPages() {
+  const raw = CHEM_RAW || await fetchChemPairs();
   // 그룹 멤버 이름 → 아티스트(활동명·예전 이름 별칭 포함)
   const byName = new Map();
   for (const g of groupKos) membersOf(g).forEach(a => { byName.set(g + '|' + a.name.ko, a); const ge = (a.groups || []).find(x => x && x.ko === g); if (ge && ge.name) byName.set(g + '|' + ge.name, a); });
@@ -2621,6 +2672,7 @@ else (async () => {
     FANCAM_HUB.forEach(f => ids.push(f[0].id));
     await probeWide(ids);
   } catch (e) { console.warn('⚠️ 16:9 썸네일 확인 건너뜀:', e.message); }
+  try { CHEM_RAW = await fetchChemPairs(); } catch (e) { console.warn(`⚠️ 케미 쌍 미리 받기 실패 — 재생 화면 케미 카드 없이: ${e.message}`); }
   buildGroupPages();
   buildMemberPages();
   redirectStaleMemberPages();

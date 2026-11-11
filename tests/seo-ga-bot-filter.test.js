@@ -14,7 +14,7 @@ const appGuard = app.match(/try\{window\._kpuAutomated=[^\n]+\n\s*if\(window\._k
 const flag = 'ga-disable-G-Z5NTV6X3YF';
 assert(tag.indexOf(flag) < tag.indexOf('googletagmanager'));
 const templates = [...builder.matchAll(/\$\{SEO_GA_TAG\}\r?\n<script>([^\n]+)<\/script>/g)];
-assert.equal(templates.length, 9);
+assert.equal(templates.length, 10); // 2026-11-11 멤버 직캠 전체 페이지(fancamPageHtml) 추가로 9→10
 const cases = [
   ['Mozilla/5.0 Chrome/130.0', false, false],
   ['Mozilla/5.0 iPhone Safari', false, false],
@@ -54,4 +54,4 @@ for (const [, body] of templates) {
     assert(queued.some(args => args[1] === 'seo_land'));
   }
 }
-console.log('PASS 90 automation and visitor cases across 9 static templates');
+console.log(`PASS ${templates.length * cases.length} automation and visitor cases across ${templates.length} static templates`);
