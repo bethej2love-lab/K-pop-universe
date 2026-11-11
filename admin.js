@@ -13147,17 +13147,17 @@ function _admDigestLogPut(day,m){
   try{localStorage.setItem(_ADM_DIGEST_LOG,JSON.stringify(a.slice(0,14)));}catch(e){}
 }
 function _admDigestRender(m,day,t){
-  document.getElementById('adm-digest')?.remove();
+  document.getElementById('adm-digest-x')?.click();document.getElementById('adm-digest')?.remove();
   const box=document.createElement('div');
   box.id='adm-digest';box.setAttribute('role','status');
   box.style.cssText='position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(320px,calc(100vw - 32px));box-sizing:border-box;padding:14px 16px 12px;border-radius:16px;background:rgba(14,18,34,0.94);border:1px solid rgba(150,175,225,0.25);box-shadow:0 10px 30px rgba(0,0,0,0.45);color:#e8edf8;font-size:13px;cursor:pointer;';
   const dim=t=>` <span style="font-weight:400;color:rgba(200,212,240,0.6)">${t}</span>`;
   const row=(lbl,val,tip)=>`<div style="display:flex;justify-content:space-between;gap:12px;padding:3px 0"${tip?` title="${tip}"`:''}><span style="color:rgba(200,212,240,0.75)">${lbl}</span><b>${val}</b></div>`;
   const nv=m.new_visitors??0,v=m.visitors??0,back=Math.max(0,v-nv);
-  let html=`<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px"><b style="font-size:15px">Daily</b><span style="font-size:11px;color:rgba(150,175,225,0.75)">최근 24시간 · 자동 테스트 제외</span></div>`
+  let html=`<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px"><b style="font-size:15px">Daily</b><span style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;color:rgba(150,175,225,0.75)">최근 24시간 · 봇·테스트 제외</span><button type="button" id="adm-digest-x" aria-label="닫기" style="background:none;border:0;color:rgba(200,212,240,0.6);font-size:17px;line-height:1;padding:2px 2px 2px 6px;cursor:pointer">×</button></span></div>`
     +row('새 방문',`${nv}명`)
     +row('다시 온 사람',`${back}명`,'24시간 안에 온 사람 중 처음이 아닌 사람')
-    +(m.seo_land!=null?row('정적 페이지 방문',`${m.seo_land}명`+dim(`→ 앱 ${m.seo_to_app??0}명`),'검색·챗지피티로 g/ 페이지에 들어온 기기, 그중 앱으로 넘어온 기기(검색엔진 렌더러가 섞일 수 있음)'):'')
+    +(m.seo_land!=null?row('정적 페이지 방문',`${m.seo_land}명`+dim(`→ 앱 ${m.seo_to_app??0}명`),'검색·챗지피티 등 출처가 있거나 스크롤·재생한 기기만(출처 없이 페이지 1장만 여는 크롤러 제외, seo_human_land), 그중 앱으로 넘어온 기기'):'')
     +row('즐겨찾기 새로 한 사람',`${m.fav_users??0}명`+(m.fav_adds?dim(`(${m.fav_adds}건)`):''));
   // 추세(2026-11-11 사용자 "어제·지난주·지난달 대비 몇 명·몇 % — 추세가 제일 중요") — get_app_trend(sql/2026-11-11_app_trend.sql).
   // 구간마다 바로 앞 같은 길이 구간과 비교. 앞 구간이 0이면(정적 페이지 기록은 11-10부터) 비율 대신 '—'.
@@ -13192,8 +13192,13 @@ function _admDigestRender(m,day,t){
   box.innerHTML=html;
   document.body.appendChild(box);
   if(typeof _bringToFront==='function')_bringToFront(box);
+  // 닫기(2026-11-12 사용자 "닫기 버튼이든 배경 우주 탭이든"): 팝업 탭·× 버튼·바깥(우주) 탭·Esc. 관리자 전용이라 × 허용.
+  const close=()=>{box.remove();document.removeEventListener('pointerdown',outside,true);document.removeEventListener('keydown',esc,true);};
+  const outside=ev=>{if(!box.contains(ev.target))close();};
+  const esc=ev=>{if(ev.key==='Escape')close();};
+  setTimeout(()=>{if(box.isConnected){document.addEventListener('pointerdown',outside,true);document.addEventListener('keydown',esc,true);}},0);
   box.addEventListener('click',ev=>{
-    box.remove();
+    close();
     if(ev.target.id==='adm-digest-home'&&typeof _admHomeOpen==='function')_admHomeOpen();
   });
 }

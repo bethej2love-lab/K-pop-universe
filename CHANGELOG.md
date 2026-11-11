@@ -2,6 +2,13 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-12 (Claude Code — 정적 페이지 방문 수에서 봇 빼기 + Daily 팝업 닫기)
+- 사용자: "정적 페이지 24시간 1172 찍히던데 진짜임? 봇 제외된 거 맞나?" → **아니었다.** 11-11 14시(KST)부터 출처 없는 land가 시간당 ~60건씩 새벽에도 일정하게 들어옴(24시간 1,183기기 중 956). 전부 페이지 1장(대부분 곡 페이지, 사이트맵을 고루 훑음), 재생 1·앱 이동 1. 봇 표시 없는 UA로 JS를 돌리는 크롤러 — seo_play.js 봇 정규식(UA에 bot/crawl 등)만으론 못 거름. 출처 있는 방문은 이전과 비슷(하루 ~170, 재생 40%대).
+- **[SQL 실행] sql/2026-11-12_seo_human_land.sql**: `seo_human_land(t0,t1)` = 출처(referrer/utm)가 있거나 같은 기기가 행동(eng/play/cta/to_app/yt)을 남긴 기기만. get_app_metrics·get_app_trend의 seo_land를 이걸로 교체(현재 정의를 읽어 그 부분만 바꿈). seo_events에 ua 열 추가(land 때만 160자), log_seo_event에 p_ua(기본 null — 예전 캐시된 스크립트도 그대로 동작), 'eng' 허용. 실측: 24시간 216명(전날 129), 7일 341.
+- **[seo_play.js]** 첫 스크롤·터치·키 입력 때 'eng' 한 번. 봇 정규식에 yeti·daumoa·slurp·bytespider·gptbot·chatgpt-user·perplexity·claude·facebookexternalhit·preview·inspectiontool·mediapartners 추가(Daum 앱 사용자 UA 'DaumApps'는 안 걸리게 daumoa만). ⚠️ eng는 11-12부터라 그 전 '출처 없이 재생 안 한 사람'은 집계에서 빠짐(과소 쪽).
+- ⏳ 며칠 뒤 `select ua,count(*) from seo_events where ev='land' and src='' group by 1 order by 2 desc` 로 크롤러 정체 확인 → 알려진 것이면 정규식에 추가.
+- **[admin.js] Daily 팝업 닫기**: 오른쪽 위 ×, 바깥(우주) 탭, Esc, 팝업 탭(기존). 머리말 '봇·테스트 제외'. 헤드리스: 바깥 탭·×·Esc·팝업 탭 모두 닫힘, seo_play land(ua 포함)→스크롤 시 eng 기록 확인. syntax·seo-play·seo-ga-bot-filter·static-load-recovery·smoke 통과.
+
 ## 2026-11-11 (Claude Code — 정적 페이지 재생 화면: 보라 버튼 → 투명한 '이어서' 카드)
 - 배경: 정적 페이지 방문 대비 앱 이동이 적다(24시간 237명 → 9명). 챗지피티로 온 사람의 42%는 페이지 안에서 직캠을 트는데, 거기서 끝난다. 사용자: "영상 밑 '앱에서 더 보기' 보라 그라데이션은 너무 구려서 안 누르고 싶게 생김, 웹에선 가로로 너무 길다 — 그 폭으로 다른 콘텐츠 제안", "'앱에서 보기'는 노골적 — 경험이 스무스하게 연결돼야", "꼭 케미 제안할 필요 없음 — 다른 제안할 거 많다".
 - 확인: 하단 고정 버튼은 원래 스크롤 내내 보인다(처음엔 긴 캡처를 보고 맨 아래에만 있다고 잘못 판단했다). 정적 페이지 → 앱 딥링크는 1.5초 만에 그 멤버 카드가 바로 열리고, 온보딩은 카드 뒤에 깔려 막지 않는다.
