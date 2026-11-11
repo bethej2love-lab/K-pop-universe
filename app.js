@@ -5040,7 +5040,13 @@ function _shortThumbWatch(img){
 // CSS도 같은 조건: @media(max-width:768px),(pointer:coarse) and (max-height:500px). 가로 전용 배치는 body.ph-land.
 const _PH_LAND_MQ="(pointer:coarse) and (max-height:500px)";
 function _phoneLand(){try{return matchMedia(_PH_LAND_MQ).matches;}catch(e){return false;}}
-function isMob(){return window.innerWidth<=768||_phoneLand();}
+// ⚠️ 결과를 기억한다(2026-11-11 실측) — 3D 루프·카드·피드가 프레임마다 수십 번 부르는데, 매번 matchMedia를 새로 만들어
+// 평가하면 탐험 패널을 그리는 중엔 그때마다 스타일 계산이 돌아 탐험 열기 4초 중 377ms를 먹었다(헤드리스 프로파일).
+// 화면 크기·방향·포인터 조건이 바뀔 때만 다시 계산한다. 이 리스너는 파일 앞쪽이라 다른 resize 처리보다 먼저 돈다.
+var _isMobC=null; // ⚠️ var — 이 줄보다 앞(파일 위쪽 초기화)에서도 isMob()이 불린다. let이면 TDZ 오류로 앱이 안 뜬다(11-11 실측)
+function isMob(){if(_isMobC==null)_isMobC=window.innerWidth<=768||_phoneLand();return _isMobC;}
+{const _r=()=>{_isMobC=null;};window.addEventListener('resize',_r,{passive:true});window.addEventListener('orientationchange',_r);
+  try{const mq=matchMedia(_PH_LAND_MQ);mq.addEventListener?mq.addEventListener('change',_r):mq.addListener(_r);}catch(e){}}
 // 유튜브 API로 동기화된 일부 영상(주로 인스타 릴스 크로스포스트) 제목엔 실제 줄바꿈 문자가 들어있어서,
 // 한 줄 말줄임(white-space:nowrap)이 안 먹고 제목 영역이 여러 줄로 확 커져 보이는 문제가 있었음 — 표시 직전에 제거.
 // (정규식 리터럴에 U+2028/2029를 직접 쓰면 소스 파일 자체가 깨지므로 charCode로 안전하게 구성)
@@ -13260,10 +13266,12 @@ function _lbFitSync(){
   try{
     const W=window.innerWidth,open=id=>{const e=document.getElementById(id);return e&&e.classList.contains('open')?e:null;};
     const desk=W>=769&&!(typeof isMob==='function'&&isMob());
-    const fo=open('feed-overlay');
+    const fo=desk&&open('feed-overlay');
+    // 폭(getBoundingClientRect)은 웹에서 나침반이 열려 있을 때만 잰다 — 1초마다·창이 열리고 닫힐 때마다 불려서, 폰에서도 매번 재다가
+    // 피드를 그리는 중엔 그때마다 화면 배치를 다시 계산했다(2026-11-11 실측: 탐험 열기 4초 중 430ms)
     const w=e=>e&&typeof e.getBoundingClientRect==='function'?e.getBoundingClientRect().width:0;
-    const cards=['side-panel','member-panel','conn-panel'].map(open).filter(Boolean).reduce((n,e)=>n+w(e),0);
-    const cover=!!(desk&&fo&&W-w(fo)-(cards||80)<480);
+    const cards=fo?['side-panel','member-panel','conn-panel'].map(open).filter(Boolean).reduce((n,e)=>n+w(e),0):0;
+    const cover=!!(fo&&W-w(fo)-(cards||80)<480);
     if(document.body.classList.contains('lb-cover-feed')!==cover)document.body.classList.toggle('lb-cover-feed',cover);
   }catch(e){}
 }
@@ -17023,11 +17031,16 @@ function flyHome(){
     camera.position.copy(controls.target).addScaledVector(dir.normalize(),dist);
     controls.update();
   }
+  // 매 프레임 불린다(animate) — 예전엔 프레임마다 높이를 읽고(clientHeight·offsetHeight) top을 써서, 피드·카드를 그리는 중엔
+  // 그때마다 화면 전체 배치를 다시 계산했다(2026-11-11 실측: 탐험 열기 4초 중 479ms). 높이는 기억해 두고(창 크기가 바뀔 때·
+  // 숨겨져 있으면 1초에 한 번만 다시 잼), top은 값이 바뀔 때만 쓴다.
+  let _zsH=0,_zsT=0,_zsLast=-1,_zsRetry=0;
+  window.addEventListener('resize',()=>{_zsH=0;_zsRetry=0;},{passive:true});
   window._syncZoomSlider=function(){
-    if(dragging)return;
-    const trackH=track.clientHeight,thumbH=thumb.offsetHeight;
-    if(!trackH)return;
-    thumb.style.top=(getFrac()*(trackH-thumbH))+'px';
+    if(dragging){_zsLast=-1;return;} // 끌고 난 뒤 첫 프레임은 다시 쓴다(끈 자리와 계산값이 다를 수 있음)
+    if(!_zsH){const now=performance.now();if(now<_zsRetry)return;_zsH=track.clientHeight;_zsT=thumb.offsetHeight;if(!_zsH){_zsRetry=now+1000;return;}}
+    const top=Math.round(getFrac()*(_zsH-_zsT)*2)/2;
+    if(top!==_zsLast){_zsLast=top;thumb.style.top=top+'px';}
   };
   thumb.addEventListener('mousedown',e=>{
     e.preventDefault();e.stopPropagation();
@@ -21229,6 +21242,9 @@ async function initSupabaseSync(){
     _instaPicPreloadP=_warmInstaPicCache(); // 멤버 카드를 열 때마다 DB 왕복 없이 바로 캐시에서 쓰도록 미리 로드
     _warmPubCollections(); // 컬렉션 행도 마찬가지로 미리 로드(2026-08-11)
     _colLikesP=_warmColLikes(); // 콜렉션 좋아요 개수/내 좋아요 여부도 같이 미리 로드(2026-08-12)
+    // For You 'New Videos' 미리 받기(2026-11-11) — 시작 조회들과 겹치지 않게 2.5초 뒤 한가할 때 한 번. 이미 탐험이 열려 있으면 안 함
+    setTimeout(()=>{const go=()=>{try{if(!document.body.classList.contains('feed-open'))_buildFeedFavNew({prefetch:true});}catch(e){}};
+      if(typeof requestIdleCallback==='function')requestIdleCallback(go,{timeout:2000});else go();},2500);
     const isAnonymous=session.user.is_anonymous===true;
     if(!isAnonymous)_dismissFavHint(); // 구글 계정 연결(로그인) 상태면 즐겨찾기 시작 안내는 더 이상 필요 없음
     if(isBrandNewAnonymous){
@@ -26592,13 +26608,21 @@ async function _buildFeedFavCharts(){
     _enableDragScroll(strip);
   }catch(e){console.warn('[feed] 내 최애 차트 실패 — 이 선반만 빠집니다',e);}
 }
-async function _buildFeedFavNew(){
+// ── New Videos 미리 받기(2026-11-11 사용자 "For You New Videos 로딩이 살짝 느리다") ─────────────────────────────
+// 실측(헤드리스, 즐겨찾기 4그룹): 탐험을 열면 바로 조회를 쏘는데 응답이 0.56초 → 첫 카드 0.7초. 쿼리 자체는 가볍고(인덱스) 대부분 왕복 시간.
+// 그래서 앱이 뜨고 한가할 때 같은 조회를 미리 던져 두고(_buildFeedFavNew({prefetch:true})), 3분 안에 탐험을 열면 그 결과로 바로 그린다.
+// 조회 조건(즐겨찾기·7일)이 그 사이 바뀌면 키가 달라 안 쓴다. 즐겨찾기 없는 사람은 미리 받지 않는다.
+let _favNewPre=null; // {key, at, p}
+const _FAVNEW_PRE_TTL=180e3;
+async function _buildFeedFavNew(opts){
+  const pre=!!(opts&&opts.prefetch);
   const strip=document.getElementById('feed-favnew');
   const section=document.getElementById('feed-favnew-section');
   if(!strip||!section)return;
-  strip.innerHTML='';section.style.display='none';
-  strip.className='feed-grid'; // 세로 2단 그리드(2026-08-30 — 7일 전부 최신순, Trend와 동일 행패커. 예전 가로 스트립 폐)
+  if(!pre){strip.innerHTML='';section.style.display='none';
+  strip.className='feed-grid';} // 세로 2단 그리드(2026-08-30 — 7일 전부 최신순, Trend와 동일 행패커. 예전 가로 스트립 폐)
   const {passAll,memberFilter,queryGkos}=_feedFavTargets();
+  if(pre&&(!queryGkos.size||!sb))return;
   if(!queryGkos.size){ // 즐겨찾기 0 → 온보딩(그리드라 전체폭으로)
     _appendFeedOnboardCard(strip);
     const oc=strip.querySelector('.feed-onboard-card'); if(oc)oc.style.gridColumn='1/-1';
@@ -26637,7 +26661,13 @@ async function _buildFeedFavNew(){
       .or('content_flag.is.null,content_flag.neq.hidden')
       .order('published_at',{ascending:false})
       .limit(200):null;
-    let[{data,error},guest]=await Promise.all([_q(),_qGuest?_qGuest().then(r=>r,()=>({data:null})):Promise.resolve({data:null})]);
+    const _fetch=()=>Promise.all([_q(),_qGuest?_qGuest().then(r=>r,()=>({data:null})):Promise.resolve({data:null})]);
+    const _preKey=JSON.stringify([[...queryGkos].sort(),_gMem.slice().sort(),_gGrp.slice().sort(),since,_hasPubTs]);
+    if(pre){_favNewPre={key:_preKey,at:Date.now(),p:_fetch()};_favNewPre.p.catch(()=>{});return;}
+    const _hit=_favNewPre&&_favNewPre.key===_preKey&&Date.now()-_favNewPre.at<_FAVNEW_PRE_TTL?_favNewPre.p:null;
+    _favNewPre=null; // 한 번만 쓴다(다음 열기는 새로 — 3분 캐시는 _feedRecBuiltAt가 따로 맡는다)
+    let[{data,error},guest]=_hit?await _hit.catch(()=>_fetch()):await _fetch();
+    if(_hit&&error){[{data,error},guest]=await _fetch();} // 미리 받은 게 실패였으면 새로
     if(_isPubTsMissing(error)){_hasPubTs=false;({data,error}=await _q());guest=_qGuest?await _qGuest().then(r=>r,()=>({data:null})):{data:null};} // 컬럼 추가 전이면 빼고 재조회
     if(error)return;
     const _guestIds=new Set();
@@ -26684,7 +26714,8 @@ async function _buildFeedFavNew(){
     // 넓은 웹 화면은 칸 수가 행 패커와 달라(한 줄 5칸 등) 6개에서 끊으면 마지막 줄에 빈칸이 남는다 → 화면상 마지막 줄이 찰 때까지 더 그린다.
     section.style.display=''; // 줄 폭을 재야 해서 먼저 보이게(lazy 썸네일에도 그게 맞다)
     // 그리드가 dense라 뒤 카드가 앞 빈칸을 메운다 — 마지막 카드 위치가 아니라 '모든 줄에 빈칸이 없나'로 본다.
-    const _lastRowFull=()=>{const cs=[...strip.querySelectorAll('.feed-card')];if(!cs.length)return true;
+    // 폰(isMob)은 2칸 고정이라 행 패커가 이미 줄을 채운다 — 재지 않는다(카드마다 위치를 재느라 첫 그리기 전에 화면 배치를 강제로 돌렸다, 11-11 실측 188ms)
+    const _lastRowFull=()=>{if(isMob())return true;const cs=[...strip.querySelectorAll('.feed-card')];if(!cs.length)return true;
       const sr=strip.getBoundingClientRect();if(!sr.width)return true;
       const rowsByTop=new Map();let minW=Infinity;
       cs.forEach(x=>{const r=x.getBoundingClientRect();const k=Math.round(r.top);rowsByTop.set(k,Math.max(rowsByTop.get(k)||0,r.right));minW=Math.min(minW,r.width);});
