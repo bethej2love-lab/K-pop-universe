@@ -68657,6 +68657,29 @@
     },
     "discography": [
       {
+        "title": "메리 베리 러브 OST Part 1",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/42/523/15142523_20261109154338_500.jpg",
+        "releaseDate": "2026.11.11",
+        "trackCount": 2,
+        "titleTrack": "더 짙어져 가",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "더 짙어져 가",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "더 짙어져 가 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15142523"
+      },
+      {
         "title": "Love, From Here",
         "type": "싱글",
         "isMain": true,
@@ -81538,6 +81561,29 @@
       }
     ],
     "discography": [
+      {
+        "title": "Darling",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/43/073/15143073_20261109173434_500.jpg",
+        "releaseDate": "2026.11.11",
+        "trackCount": 2,
+        "titleTrack": "Darling",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Darling",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Darling (English Ver.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15143073"
+      },
       {
         "title": "너의 모든 순간 [THE 시즌즈: 성시경의 고막남친]",
         "type": "싱글",
@@ -96658,6 +96704,44 @@
       }
     ],
     "discography": [
+      {
+        "title": "CONTINUE",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/50/716/15150716_20261111114659_500.jpg",
+        "releaseDate": "2026.11.11",
+        "trackCount": 5,
+        "titleTrack": "약속",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "약속",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "끝나지 않는 계절",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "FILAMENT",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "괜찮은 줄 알았는데",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "돛단배",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15150716"
+      },
       {
         "title": "The Classic",
         "type": "미니 6집",
