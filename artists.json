@@ -190780,6 +190780,29 @@
     },
     "discography": [
       {
+        "title": "월하독작 (月下獨酌)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/146/63/248/14663248_20261013103106_500.jpg",
+        "releaseDate": "2026.10.14",
+        "trackCount": 2,
+        "titleTrack": "혼술 (月下獨酌)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "혼술 (月下獨酌)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "BETTER MAN",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14663248"
+      },
+      {
         "title": "아직, 여름 (まだ夏だよ)",
         "type": "싱글",
         "releaseDate": "2026.07.10",
@@ -200866,6 +200889,45 @@
     },
     "id": "a0928",
     "discography": [
+      {
+        "title": "Sobaniite hoshii（forget me not）",
+        "type": "미니",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/42/952/15142952_20261109172853_500.jpg",
+        "releaseDate": "2026.11.11",
+        "trackCount": 5,
+        "titleTrack": "Yuwaku",
+        "region": "jp",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Yuwaku",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Sobaniite hoshii （forget me not）",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "Blue",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Imasara aiwo katareba",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Tada kimiga",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15142952"
+      },
       {
         "title": "불야성 OST Part.2",
         "type": "OST",
@@ -297709,6 +297771,24 @@
       "instagram": "https://www.instagram.com/thankyouvarimuch"
     },
     "discography": [
+      {
+        "title": "Heart",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/147/07/254/14707254_20261014112312_500.jpg",
+        "releaseDate": "2026.10.15",
+        "trackCount": 1,
+        "titleTrack": "Heart",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Heart",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14707254"
+      },
       {
         "title": "Dear",
         "type": "싱글",
