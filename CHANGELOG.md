@@ -2,6 +2,17 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-11 (Claude Code — 곡 이름 기준 = 한국 활동 곡명: 음방 1위 1,560행 정정·영문 별칭·판본 곡 합치기)
+- 사용자: "음방 1위 영어 제목 215개 작업 + 한영 제목 헷갈리는 경우 더 있을 듯 — 정답은 없지만 우선 한국 활동 위주의 곡명이 중심". 규칙은 docs/NAMING.md '곡의 정답 이름'.
+- **[SQL 실행] sql/2026-11-11_win_titles_disco.sql**(+undo, 백업 `_bak_win_titles_20261111`): music_show_wins 506종 1,560행 → 디스코(멜론) 표기. 각 그룹·멤버 디스코와 대조(한국 원곡 우선·일본판/판본 제외·괄호 앞부분만 같은 다른 곡 제외), 영문 번역 제목(아이유 Palette→팔레트, 세븐틴 Super→손오공 등)은 내가 아는 한글 원제를 디스코에서 실제로 찾은 것만. 제외: 2PM Again & Again(멜론 'Again＆Again'), 브아걸 L.O.V.E(다른 곡 Love로 잡힘). 이후 디스코 일치 970종. ⏳ 남은 55종 94행: 디스코에 없거나 한글 원제 불확실(뉴이스트 Dejavu·Help Me, B1A4 A Lie, 하이라이트 Good Luck/YeY 등, 아일릿·캣츠아이 'Iconic by Mistake'는 데이터 자체가 의심) — 재조회: 스크래치 winmatch 방식 또는 `select group_ko,member_ko,song_title from music_show_wins` 후 디스코 대조.
+- **[tools/wiki_music_wins.mjs] `_canonWinTitle`**: 새 1위 기록도 들어올 때 디스코 대조 → 영문 별칭 순으로 정리(판본 곡만 걸리면 별칭 먼저 — TWS 'plot twist (Japanese ver.)'). tests/win-title-canon.test.js 8건.
+- **[shared.js] `_SONG_ALIASES` 102곡**(61 주인 — 그룹, 솔로·멤버 개인곡은 그 사람 이름) + `_songAliasesFor(owner,title)`(멜론 꼬리 차이를 _songBase로 흡수). 앱 검색(솔로곡 포함)·정적 곡 페이지 표기('소리꾼 Thunderous')·영상 연결이 같은 표.
+- **[shared.js] 영상↔곡 연결**: `_songAddNicks`가 영문 별칭도 붙임 — 7글자 이하·한 낱말('Super'·'Fighting')은 따옴표·'가수 - 곡'에서만(본문 포함 금지 q). 판본 곡('FIRE (Japanese Ver.)'·'plot twist (Japanese ver.)')이 원곡 별칭과 같으면 원곡에 합침(디스코 전체 표본 212쌍이 둘로 갈려 'BTS - FIRE'가 일본판 곡에 붙었음). '곡 - (G)I-DLE'처럼 대시 뒤 주인 이름이 괄호로 시작해도 인식. 차분: 대시 제목 표본 12,963개 중 125개 변화(일본판 중복 키 제거·원곡/영문 제목 연결), 연결이 통째로 사라지는 영상 0. 별칭 후보 1,883행에서 +272. song-link 47건(새 7건)·matching 246·cover-resolve 75 통과.
+- **[admin.js] `_SONG_RULES_VER` 2026-11-11-v5** → 다음 루틴부터 song_keys 전량 이어달리기(바뀐 행만 씀).
+- **[tools/seo_extra.js·build_group_pages.js]** 정적 곡 페이지도 앱 루틴과 같은 별칭 곡 목록(`_songAddNicks`). 합쳐진 판본 곡의 옛 페이지(g/투어스/s/plottwist/·g/방탄소년단/s/fire/ 등 306개)는 원곡 페이지로 넘기는 안내 페이지(noindex·canonical)로 — `redirectMergedSongPages`. 로컬 전체 빌드로 확인 후 생성물 되돌림(곡 5,977→5,926).
+- ⏳ 디스코에 영어판이 판본 표시 없이 별도 곡으로 있는 경우(데이식스 'You Were Beautiful' ⇄ '예뻤어' 등)는 다른 곡과 구분이 안 돼 자동 합치기에서 뺌 — 표본 212쌍 중 남은 것 확인 필요.
+- **[build_group_pages.js] 멤버 제목에 그룹**(사용자 후속: "영재는 소속그룹 투어스를 표기해야") — 멤버×곡 `투어스 영재(TWS Youngjae) - 곡 직캠 모음`, 직캠 전체 `투어스 영재(TWS Youngjae) 직캠 모음 — 곡별 N개`(영어 페이지는 `TWS Youngjae(투어스 영재)`), 끝의 그룹 중복 표기 제거. 동명이인(갓세븐·B.A.P 영재)·음방 직캠 제목 관례 근거. docs/NAMING.md 갱신.
+
 ## 2026-11-11 (Claude Code — 이름 표기 규칙 docs/NAMING.md)
 - 사용자 확정: 사람·그룹 `영재(Youngjae)`(영어 페이지 `Youngjae(영재)`), 곡 `한글 제목 English Title`(괄호 없이 — 원제에 괄호 영문이 붙은 SM식 제목과 구분, 원제 괄호는 그대로), 사람+곡 `이름 - 곡`. 규칙 전문 **docs/NAMING.md**.
 - **[build_group_pages.js]** bilingualLabel `a / b` → `a(b)`, 멤버×곡 제목 `{이름} - {곡} 직캠 모음 - {그룹}`. **[shared.js]** 곡 영문 제목 별칭 `_SONG_ALIASES`를 app.js에서 옮김(앱 검색 + 정적 페이지 공용), 투어스 `너의 모든 가능성이 되어 줄게`→All the Possibilities 추가. **[tools/seo_extra.js]** 별칭 있는 곡은 bilingualTitle `첫 만남은 계획대로 되지 않아 Plot Twist`.

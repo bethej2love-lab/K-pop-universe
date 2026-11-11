@@ -15,7 +15,7 @@ const need = (c, m) => { console.log((c ? '✅ ' : '❌ ') + m); if (!c) fail++;
 
 need(/const MEMBER_SONG_MIN = \d+;/.test(b) && /m\.length !== 1/.test(b), '① 개인 직캠 기준(멤버 한 명만 태깅) + 최소 개수');
 need(/function memberSongPagePath\(a, b, lang\) \{ return `\$\{memberPagePath\(a, lang\)\}s\/\$\{b\}\/`; \}/.test(b), '① 경로 = 멤버 페이지 아래 s/곡/');
-need(/\$\{mFull\} - \$\{songLabel\} 직캠 모음 - /.test(b), '① 한국어 제목 "멤버(영문) - 곡 직캠 모음" — 표기 규칙 docs/NAMING.md(2026-11-11)');
+need(/\$\{whoFull\} - \$\{songLabel\} 직캠 모음 \|/.test(b), '① 한국어 제목 "그룹 멤버(영문) - 곡 직캠 모음" — 표기 규칙 docs/NAMING.md(2026-11-11)');
 need(/computeMemberSongs\(\);/.test(b) && b.indexOf('computeMemberSongs();') < b.indexOf('buildMemberPages();'), '① 멤버 페이지보다 먼저 계산(멤버 페이지에 곡별 직캠 링크)');
 need(/\$\{memberSongLinksHtml\(a, lang\)\}/.test(b), '① 멤버 페이지에 곡별 직캠 칸');
 need(/song-page\.css\?v=\$\{SONG_CSS_V\}/.test(b) && !/SONG_PAGE_CSS/.test(b) && css.length > 1000, '② 공용 스타일 파일(song-page.css)');

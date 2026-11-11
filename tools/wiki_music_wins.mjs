@@ -12,6 +12,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
+import vm from 'node:vm';
 import { execFileSync } from 'node:child_process';
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname).replace(/^\/([A-Za-z]:)/, '$1'), '..');
@@ -37,6 +38,49 @@ if (INSERT_MODE) {
 const G = JSON.parse(fs.readFileSync(path.join(ROOT, 'groups.json'), 'utf8'));
 const A = JSON.parse(fs.readFileSync(path.join(ROOT, 'artists.json'), 'utf8'));
 const arts = Array.isArray(A) ? A : Object.values(A);
+
+// ── 곡 제목을 한국 활동 곡명(멜론 디스코 표기)으로(2026-11-11 사용자 "한국 활동 위주의 곡명이 중심") ──────────────
+// 위키는 영문 제목('Red Flavor'·'Palette'·'Love Dive')으로 적는다. 그 그룹·멤버 디스코(disco/g/*.json + artists.json)에서
+// ① 같은 제목(대소문자·기호·판본 꼬리 무시) ② 괄호 속 영문이 같은 곡('빨간 맛 (Red Flavor)') ③ shared.js _SONG_ALIASES 영문 별칭
+// 순서로 찾아 디스코 표기로 바꾼다. 한국 원곡 우선(일본판·판본 제외). 못 찾으면 null(기존 처리). 정리 규칙은 docs/NAMING.md.
+const _vmCtx = {}; vm.createContext(_vmCtx);
+vm.runInContext(fs.readFileSync(path.join(ROOT, 'shared.js'), 'utf8') + ';this.SA=_SONG_ALIASES;', _vmCtx);
+const _wNorm = s => String(s || '').toLowerCase().replace(/[’‘′`']/g, '').replace(/[^0-9a-z가-힣]/g, '');
+const _VER = /\s*(?:[\(\[]\s*(?:feat\.?|ft\.?|with |prod\.?|japanese|japan|korean|english|chinese|inst\.?|instrumental|live|remix|ver\b|version|solo version|sped|slowed|acoustic|remaster|explicit|clean|radio|edit|cd only|bonus|narr\.?)[^\)\]]*[\)\]]|\s+-\s*(?:live|remix|.*\bver(?:sion)?\.?|japanese|korean|english)[^-]*-?$)/gi;
+const _VER2 = /\s*[\(\[][^\)\]]*\b(?:ver|version|narr|edit|mix|remix|inst)\b\.?[^\)\]]*[\)\]]/gi;
+const _wClean = t => { let s = String(t).trim(), p; do { p = s; s = s.replace(_VER, '').replace(_VER2, '').trim(); } while (s !== p); return s.replace(/＆/g, '&').replace(/[’‘′]/g, "'").replace(/\s+/g, ' '); };
+const _discoCache = {};
+function _winTracks(groupKo, memberKo) {
+  const out = [], push = al => (al.tracks || []).forEach(t => t && t.title && out.push({ t: t.title, al: al.title || '', date: al.releaseDate || '9999', region: al.region || '' }));
+  const f = path.join(ROOT, 'disco/g', String(groupKo || '').replace(/[\/\\]/g, '_').replace(/[.\s]+$/, '') + '.json');
+  if (groupKo && fs.existsSync(f)) {
+    const d = _discoCache[f] || (_discoCache[f] = JSON.parse(fs.readFileSync(f, 'utf8')));
+    (d.g || []).forEach(push);
+    for (const x of Object.values(d.m || {})) [...(x.d || []), ...(x.u || []).flatMap(u => (u && u.albums) || [])].forEach(push);
+  }
+  arts.filter(a => a.name && a.name.ko === memberKo).forEach(a => (a.discography || []).forEach(push));
+  if (groupKo && G[groupKo]) (G[groupKo].discography || []).forEach(push);
+  return out;
+}
+function _canonWinTitle(groupKo, memberKo, song) {
+  const q = _wNorm(song); if (!q) return null;
+  const JP = /[぀-ヿ]/, verish = t => /japan|japanese|ver\.|version|live|remix|inst|chinese|english/i.test(t);
+  const cands = [];
+  for (const t of _winTracks(groupKo, memberKo)) {
+    if (JP.test(t.t) || t.region === 'jp') continue;
+    const c = _wClean(t.t), m = /^(.*?)\s*\(([^()]+)\)\s*$/.exec(c);
+    if (_wNorm(c) === q || (m && _wNorm(m[2]) === q)) cands.push({ ...t, c });
+  }
+  const isVer = t => verish(t.t) || verish(t.al);
+  cands.sort((a, b) => (isVer(a) - isVer(b)) || ((/[가-힣]/.test(a.t) ? 0 : 1) - (/[가-힣]/.test(b.t) ? 0 : 1)) || a.date.localeCompare(b.date));
+  if (cands.length && !isVer(cands[0])) return cands[0].c;
+  // 영문 별칭(번역 제목) → 디스코 제목. 판본 곡('plot twist (Japanese ver.)')만 걸린 경우보다 먼저 — 한국 원곡 이름이 따로 있다
+  for (const owner of [memberKo, groupKo]) {
+    const m = owner && _vmCtx.SA[owner]; if (!m) continue;
+    for (const [title, als] of Object.entries(m)) if (als.some(a => _wNorm(a) === q)) return title;
+  }
+  return cands.length ? cands[0].c : null;
+}
 
 // ── 멜론 기준 곡 제목 보정 ──────────────────────────────────────────────────
 // wiki song_title이 영어인 경우 win_date 전후 60일 발매 앨범에서 타이틀 곡을 찾아 대체.
@@ -293,9 +337,15 @@ function parseYear(html, year) {
         const prevSong = w.from ? songOf.get(sk + w.from) : null;
         if (prevSong) song = prevSong; // 연속 1위 — 앞 주와 같은 곡(멜론 보정이 날짜 근접 다른 앨범을 집는 것 방지)
         // 위키 제목이 영어면 멜론 디스코그래피에서 발매일 근접 타이틀 곡으로 대체 시도
-        else if (song && !_isHangul(song)) {
-          const melonTitle = _getMelonTitle(res.group_ko, res.member_ko, w.date);
-          if (melonTitle) song = melonTitle;
+        else if (song) {
+          // 1) 디스코 곡 제목 대조·영문 별칭(2026-11-11) — 'Red Flavor'→'빨간 맛 (Red Flavor)', 'Palette'→'팔레트', 'Love Dive'→'LOVE DIVE'
+          const canon = _canonWinTitle(res.group_ko, res.member_ko, song);
+          if (canon) song = canon;
+          // 2) 그래도 영어면 발매일 근접 타이틀 곡(예전 방식)
+          else if (!_isHangul(song)) {
+            const melonTitle = _getMelonTitle(res.group_ko, res.member_ko, w.date);
+            if (melonTitle) song = melonTitle;
+          }
         }
         if (song) songOf.set(sk + w.date, song);
         rows.push({ show: show.db, win_date: w.date, song_title: song, group_ko: res.group_ko, member_ko: res.member_ko });

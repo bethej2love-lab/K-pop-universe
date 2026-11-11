@@ -14,7 +14,7 @@ const sandbox={path,ROOT:'/fixture',SITE:'https://example.test',pages,
   ]),songPageCount:0,memberSongPageCount:0,
   songPagePath:(g,b,l)=>`${l}/${g}/s/${b}/`,
   memberSongPagePath:(a,b,l)=>`${l}/${a.slug}/s/${b}/`,
-  songLikePageHtml:()=>'<html/>',
+  songLikePageHtml:()=>'<html/>',redirectMergedSongPages:()=>{},
   fs:{mkdirSync:()=>{},writeFileSync:(p,v)=>writes.set(p.replace(/\\/g,'/'),v)}
 };
 vm.createContext(sandbox);
@@ -54,10 +54,10 @@ assert.equal(ctx.songShareVideo([vids[0]]).id,'mv','no stage: stay within the se
 assert.equal(ctx.songShareVideo([]),undefined);
 const memberHtml=ctx.songLikePageHtml({gko:'Alpha',info:{en:'Alpha'},s,lang:'ko',others:[],
   member:{a:{id:'member',name:{ko:'멤버'}},nm:'멤버',nmEn:'Member',vids:[{id:'cam',title:'Snowy Summer fancam'}]}});
-assert.match(memberHtml,/og:title" content="멤버\(Member\) - Snowy Summer 직캠 모음/,'naming style: 한글(English) - 곡 (docs/NAMING.md)');
+assert.match(memberHtml,/og:title" content="Alpha 멤버\(Alpha Member\) - Snowy Summer 직캠 모음/,'naming style: 그룹 이름(Group Name) - 곡 (docs/NAMING.md)');
 const memberEn=ctx.songLikePageHtml({gko:'Alpha',info:{en:'Alpha'},s,lang:'en',others:[],
   member:{a:{id:'member',name:{ko:'멤버'}},nm:'멤버',nmEn:'Member',vids:[{id:'cam',title:'Snowy Summer fancam'}]}});
-assert.match(memberEn,/<title>Member\(멤버\) - Snowy Summer Fancams/,'English page title also keeps the Korean name up front');
+assert.match(memberEn,/<title>Alpha Member\(Alpha 멤버\) - Snowy Summer Fancams/,'English page title also keeps the Korean name up front');
 assert.match(memberHtml,/og:image" content="https:\/\/i.ytimg.com\/vi\/cam\//);
 
 console.log('✅ Published song routes, song/member OG and unchanged hero');

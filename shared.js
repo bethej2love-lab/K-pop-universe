@@ -526,7 +526,8 @@ function _songLinkBases(title,songs,blockNames){
     const L=t.slice(0,m.index),R=t.slice(m.index+m[0].length);
     const Lseg=L.split(/[|｜\]】」』]/).pop();
     if(_hasOwner(Lseg))dash.push(_lead(R));
-    else if(_hasOwner(_cut(R).split(/\s+/).slice(0,4).join(' ')))dash.push(look(_songBase(Lseg.replace(_SONG_ZW,'').trim())));
+    // 주인 이름이 괄호로 시작하면('Fate - (G)I-DLE [Music Bank]') _cut이 '('에서 잘라 빈 문자열이 된다 — 괄호는 살린 앞 낱말로 한 번 더(11-11)
+    else if(_hasOwner(_cut(R).split(/\s+/).slice(0,4).join(' '))||_hasOwner(R.split(/[|｜\[\]【】#@]/)[0].split(/\s+/).slice(0,2).join(' ')))dash.push(look(_songBase(Lseg.replace(_SONG_ZW,'').trim())));
   }
   for(const m of t.matchAll(/🎵\s*([^\n]+)/g))dash.push(_lead(m[1]));
   // ② 해시태그를 뺀 본문에서 곡명 포함 — 4글자 이상·흔한 낱말 아님·주인 이름 아님. 긴 곡명 안에 든 짧은 곡명은 버린다
@@ -553,7 +554,7 @@ function _songLinkBases(title,songs,blockNames){
   for(const s of songs){
     if(!s.alias)continue;
     for(const al of s.alias){
-      if(blocked.has(al.n)||_SONG_COMMON.has(al.n)||!body.includes(al.n))continue;
+      if(al.q||blocked.has(al.n)||_SONG_COMMON.has(al.n)||!body.includes(al.n))continue; // q = 따옴표·대시로만 믿는 별칭(_songAddNicks)
       const hangul=/^[가-힣]+$/.test(al.n);
       if(hangul?al.n.length<3:al.n.length<5)continue; // 영어 별칭은 5글자부터 — '별빛 ⇐ Stay'·'엉망 ⇐ Mess' 같은 흔한 낱말은 따옴표로만
       if(/^[a-z0-9]+$/.test(al.n)){const w=al.raw.toLowerCase().normalize('NFKC').match(/[a-z0-9]+/g);if(w&&!new RegExp('(^|[^a-z0-9])'+w.join('[^a-z0-9]*')+'(?![a-z0-9])').test(tl))continue;}
@@ -664,9 +665,20 @@ const _SONG_KO_NICK={
   '원팩트':{fxxoff:['꺼져']},
 };
 function _songAddNicks(songs,gko){
-  const t=_SONG_KO_NICK[gko];if(!t)return songs;
-  songs.forEach(s=>(t[s.b]||[]).forEach(raw=>{const n=_songNorm(raw);s.alias=s.alias||[];if(!s.alias.some(x=>x.n===n))s.alias.push({n,raw});}));
-  return songs;
+  const t=_SONG_KO_NICK[gko];
+  if(t)songs.forEach(s=>(t[s.b]||[]).forEach(raw=>{const n=_songNorm(raw);s.alias=s.alias||[];if(!s.alias.some(x=>x.n===n))s.alias.push({n,raw});}));
+  // 공식 영문 제목(_SONG_ALIASES, 2026-11-11) — 'TWS - plot twist'·'Countdown! - TWS [Music Bank]'처럼 영문으로만 적힌 영상을 한글 곡에.
+  // 짧은 것(7글자 이하: 'Super'·'My House')·한 낱말('Fighting'·'Thunderous')은 따옴표·'가수 - 곡'에서만(q) — 본문 포함으론
+  // 'Super Junior'·'Real 2PM My House'·'Fighting 2022 Special'(엠카 특집명)까지 걸렸다(11-11 차분 표본). 여러 낱말 긴 별칭('plot twist')만 본문 포함
+  if(typeof _songAliasesFor==='function')songs.forEach(s=>{const al=_songAliasesFor(gko,s.title);if(!al)return;
+    al.forEach(raw=>{const n=_songNorm(raw);if(n.length<2||n===s.b)return;s.alias=s.alias||[];if(!s.alias.some(x=>x.n===n))s.alias.push({n,raw,q:n.length<=7||!/\s/.test(String(raw).trim())});});});
+  // 판본 곡 합치기: 영문 별칭이 다른 곡의 기본형과 같고 그 곡이 판본('plot twist (Japanese ver.)')이면 빼서 한국 원곡 하나로 —
+  // 안 빼면 별칭보다 그 판본 곡이 먼저 잡혀 'TWS - plot twist' 영상이 일본판 곡에 붙고 곡 페이지도 따로 생겼다(11-11)
+  // 괄호 영문 별칭도 같이('불타오르네 (FIRE)' ← 'FIRE (Japanese Ver.)'·'DOPE-超ヤベ-！- (쩔어)'): 디스코 전체 표본 212쌍이 이렇게 둘로 갈려
+  // 'BTS - FIRE' 영상이 일본판 곡에 붙었다. 빼는 쪽은 판본 표시·일본 문자가 있는 곡만 — '소년 (Boy)' ⇄ 'B.O.Y (Bet On You)'처럼 다른 곡은 남는다
+  const an=new Map();songs.forEach(s=>(s.alias||[]).forEach(a=>{if(!an.has(a.n))an.set(a.n,s);}));
+  const VER=/japan|\bver(?:sion)?\b|\bjp\b|remix|sped\s*up|slowed|rerecorded|acoustic|piano|orchestra|spanish|chinese|english|[぀-ヿ]/i;
+  return an.size?songs.filter(s=>{const o=an.get(s.b);return !(o&&o!==s&&VER.test(s.title)&&!VER.test(o.title.replace(/\s*[\(\[][^)\]]*(?:ver|version|remix)[^)\]]*[\)\]]/ig,'')));}):songs;
 }
 
 // ── 동명이인 솔로 정적 페이지 주소 구분(2026-10-19) ─────────────────────────────────────────────
@@ -796,14 +808,80 @@ function _msGroupEpisodes(vids, minVids) {
 
 // ── 곡 영문 제목 별칭(2026-11-11) ─────────────────────────────────────────────────────────
 // 디스코 정본은 멜론 한글 제목이라 해외 팬·음방 기록(위키 영문)이 쓰는 공식 영문 제목으로는 곡을 못 찾았다("plot twist").
-// 그룹 → 디스코 곡 제목(표기 그대로) → 공식 영문 제목들(첫 번째가 대표). 쓰는 곳: 앱 검색(app.js _buildSongIndex) ·
+// 주인(그룹 이름, 솔로·멤버 개인곡은 그 사람 이름) → 디스코 곡 제목 → 영문 제목들(첫 번째가 대표). 2026-11-11 음방 1위 영문 제목 정정에서 확인된 98곡 포함(sql/2026-11-11_win_titles_disco.sql). 쓰는 곳: 앱 검색(app.js _buildSongIndex) ·
 // 정적 페이지 곡 표기(tools/seo_extra.js — '첫 만남은 계획대로 되지 않아 Plot Twist', 표기 규칙은 docs/NAMING.md).
 // 제목에 이미 괄호 영문이 있는 곡('널 따라가 (You, You)')은 넣지 않아도 된다.
 const _SONG_ALIASES={
-  '투어스':{
-    '첫 만남은 계획대로 되지 않아':['Plot Twist'],
-    '마음 따라 뛰는 건 멋지지 않아?':['Countdown!'],
-    '내가 S면 넌 나의 N이 되어줘':["If I'm S, Can You Be My N?"],
-    '너의 모든 가능성이 되어 줄게':['All the Possibilities'],
-  },
+  "2AM":{"어느 봄날":["One Spring Day"]},
+  "2PM":{"이 노래를 듣고 돌아와":["Comeback When You Hear This Song"],"니가밉다":["I Hate You"],"우리집":["My House"]},
+  "가인":{"우리 사랑하게 됐어요":["I Happen to Love You"]},
+  "갓세븐":{"하드캐리":["Hard Carry"],"니가 하면":["If You Do"],"니가 부르는 나의 이름":["You Calling My Name"]},
+  "김성규":{"너여야만 해":["The Answer"]},
+  "김세정":{"꽃길":["Flower Way"],"화분":["Plant"]},
+  "김재환":{"안녕하세요":["Begin Again"]},
+  "김태우":{"사랑비":["Love Rain"]},
+  "남우현":{"너만 괜찮다면":["If Only You Are Fine"]},
+  "니엘":{"못된 여자":["Love Killer","Lovekiller (Bad Girl)"]},
+  "러블리즈":{"지금, 우리":["Now, We"]},
+  "르세라핌":{"이브, 프시케 그리고 푸른 수염의 아내":["Eve, Psyche & the Bluebeard's Wife"]},
+  "마마무":{"데칼코마니":["Décalcomanie"],"넌 is 뭔들":["You're the Best","You're The Best"]},
+  "모모랜드":{"뿜뿜":["Bboom Bboom"]},
+  "박경":{"보통연애":["Ordinary Love"]},
+  "방민아":{"나도 여자예요":["I Am a Woman Too"]},
+  "블락비":{"몇 년 후에":["A Few Years Later"]},
+  "블랙핑크":{"마지막처럼":["As If It's Your Last"]},
+  "비투비":{"너 없인 안 된다":["Only One For Me"]},
+  "빅스":{"이별공식":["Love Equation"]},
+  "빅톤":{"그리운 밤":["Nostalgic Night"]},
+  "선미":{"보름달":["Full Moon"],"가시나":["Gashina"],"주인공":["Heroine"]},
+  "세븐틴":{"붐붐 (Boomboom)":["Boom Boom"],"청바지":["CBZ (Prime Time)"],"박수":["Clap"],"파이팅 해야지":["Fighting","Fighting (BSS)"],"예쁘다":["Pretty U"],"손오공":["Super"],"고맙다":["Thanks"]},
+  "소유":{"까만밤":["All Night"],"어깨":["Lean On Me"],"썸":["Some"]},
+  "송민호":{"아낙네":["Fiancé"]},
+  "스트레이키즈":{"락 (樂)":["Lalalala"],"특":["S-Class"],"소리꾼":["Thunderous"]},
+  "신화":{"표적 (Sniper)":["Sniper (Target)"]},
+  "싸이":{"강남스타일":["Gangnam Style"]},
+  "아이들":{"나는 아픈 건 딱 질색이니까":["Fate"]},
+  "아이오아이":{"너무너무너무":["Very Very Very"]},
+  "아이유":{"삐삐":["Bbibbi"],"에잇":["Eight"],"금요일에 만나요":["Friday"],"좋은 날":["Good Day"],"라일락":["Lilac"],"잔소리":["Nagging"],"팔레트":["Palette"],"소격동":["Sogyeokdong"],"분홍신":["The Red Shoes"],"밤편지":["Through The Night"],"스물셋":["Twenty-Three"],"겨울잠":["Winter Sleep"],"너랑 나":["You & I"],"봄 사랑 벚꽃 말고":["Not Spring, Love, or Cherry Blossoms"]},
+  "악뮤":{"소문의 낙원":["Paradise of Rumors"]},
+  "양요섭":{"네가 없는 곳":["Where I Am Gone"]},
+  "에이티즈":{"불놀이야 (I'm The One)":["Fireworks (I'm The One)"]},
+  "에이핑크":{"1도 없어":["I'm So Sick"]},
+  "에프엑스":{"피노키오 (Danger)":["Pinocchio (Danger)"]},
+  "에프티아일랜드":{"사랑후애":["After Love"]},
+  "엑소":{"첫 눈":["The First Snow"]},
+  "오마이걸":{"비밀정원":["Secret Garden"],"다섯 번째 계절 (SSFWL)":["The Fifth Season (SSFWL)"]},
+  "워너원":{"약속해요":["I Promise You (I.P.U.)"],"봄바람":["Spring Breeze"]},
+  "위너":{"공허해":["Empty"]},
+  "유키스":{"놀이터":["Playground"]},
+  "이엑스아이디":{"덜덜덜":["DDD"]},
+  "정은지":{"하늘바라기":["Hopefully Sky"],"너란 봄":["The Spring"]},
+  "젝스키스":{"아프지 마요":["Be Well"]},
+  "조권":{"우리 사랑하게 됐어요":["I Happen to Love You"]},
+  "종현":{"데자-부 (Deja-Boo)":["Déjà-Boo"]},
+  "지디":{"쿠데타 (COUP D'ETAT)":["Coup D'état"]},
+  "청하":{"벌써 12시":["Gotta Go"]},
+  "첸":{"우리 어떻게 할까요":["Shall We?"]},
+  "카라":{"맘마미아":["Mamma Mia"]},
+  "탑":{"쩔어":["Zutter"]},
+  "태양":{"눈, 코, 입":["Eyes, Nose, Lips"],"나만 바라봐":["Look Only At Me"]},
+  "투모로우바이투게더":{"5시 53분의 하늘에서 발견한 너와 나":["Blue Hour"]},
+  "투어스":{"첫 만남은 계획대로 되지 않아":["Plot Twist"],"마음 따라 뛰는 건 멋지지 않아?":["Countdown!"],"내가 S면 넌 나의 N이 되어줘":["If I'm S, Can You Be My N?"],"너의 모든 가능성이 되어 줄게":["All the Possibilities"]},
+  "티아라":{"내 이름은":["What's My Name?"]},
+  "포미닛":{"미쳐":["Crazy"],"오늘 뭐해":["Whatcha Doin' Today"]},
+  "하이라이트":{"일하러 가야 돼":["Gotta Go to Work"],"리본":["Ribbon"]},
+  "현아":{"어때?":["How's This?"],"빨개요":["Red"]},
+  "효린":{"지워":["Erase"]},
+  "JBJ":{"꽃이야":["My Flower"]},
 };
+// 주인(그룹 이름 또는 솔로 이름) + 디스코 곡 제목 → 영문 제목 배열(없으면 null). 멜론 표기 차이('(Feat. …)' 꼬리·괄호 영문)는 _songBase로 흡수
+let _SONG_ALIAS_BASE=null;
+function _songAliasesFor(owner,title){
+  if(!owner||!title)return null;
+  const m=_SONG_ALIASES[owner];if(!m)return null;
+  if(m[title])return m[title];
+  if(!_SONG_ALIAS_BASE)_SONG_ALIAS_BASE={};
+  let bm=_SONG_ALIAS_BASE[owner];
+  if(!bm){bm=_SONG_ALIAS_BASE[owner]=new Map();for(const k in m){const b=_songBase(k);if(b&&!bm.has(b))bm.set(b,m[k]);}}
+  return bm.get(_songBase(title))||null;
+}

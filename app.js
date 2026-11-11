@@ -3073,7 +3073,8 @@ function _buildSongIndex(){
   const out=[...byKey.values()];
   // 공식 영문 제목 별칭(2026-11-11 사용자 "plot twist로 검색해도 '첫 만남은 계획대로 되지 않아'가 나오면") — 디스코는 멜론 한글 제목이 정본이라
   // 해외 팬·음방 기록이 쓰는 영문 제목으로는 곡이 안 잡혔다. 그룹 → 곡 제목(디스코 표기 그대로) → 영문 제목들
-  out.forEach(s=>{const m=s.ownerType==='group'&&_SONG_ALIASES[s.owner];const al=m&&m[s.title];if(al){s.alt=al;s.altL=al.map(x=>x.toLowerCase());}});
+  // 주인 = 그룹 이름 또는 솔로·멤버 개인곡이면 그 사람 이름(shared.js _songAliasesFor — 멜론 표기 꼬리 차이 흡수)
+  out.forEach(s=>{const al=(typeof _songAliasesFor==='function')&&_songAliasesFor(s.ownerType==='group'?s.owner:(s.owner&&s.owner.name&&s.owner.name.ko),s.title);if(al){s.alt=al;s.altL=al.map(x=>x.toLowerCase());}});
   return out;
 }
 // _SONG_ALIASES(곡 영문 제목 별칭)는 shared.js — 정적 페이지 곡 표기와 같은 표

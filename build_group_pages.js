@@ -1347,6 +1347,42 @@ function songLinksHtml(gko, lang) {
       ${list.slice(0, 40).map(s => `<li><a href="${SITE}/${songPagePath(gko, s.b, lang)}">${escHtml(s.bilingualTitle || s.title)}</a></li>`).join('\n      ')}
     </ul>`;
 }
+// ── 합쳐진 판본 곡 페이지 정리(2026-11-11) ────────────────────────────────────────────────────────────────
+// 곡 목록에서 판본 곡('plot twist (Japanese ver.)')을 한국 원곡('첫 만남은 계획대로 되지 않아')에 합치면(shared.js _songAddNicks)
+// 예전에 따로 만든 g/투어스/s/plottwist/·멤버×곡 …/s/plottwist/가 갱신 없이 남는다. 이번에 안 만든 곡 폴더 중 그 곡 이름이
+// 지금 곡의 별칭이면(buildSongs aliasTo) 그 곡 페이지로 넘기는 안내 페이지로 바꾼다(noindex·canonical·즉시 이동). 못 찾으면 그대로 둔다.
+let mergedSongRedirects = 0;
+function redirectMergedSongPages() {
+  const madeRel = new Set(pages.map(p => decodeURI(p.loc.slice(SITE.length + 1))));
+  const page = (url, nm, lang) => `<!doctype html>
+<html lang="${lang}"><head><meta charset="utf-8"><title>${escHtml(nm)} — K-POP UNIVERSE</title>
+<link rel="canonical" href="${url}"><meta name="robots" content="noindex">
+<meta http-equiv="refresh" content="0; url=${url}">
+</head><body><a href="${url}">${escHtml(nm)}</a></body></html>
+`;
+  for (const gko of Object.keys(SONGS)) {
+    const aliasTo = SONGS[gko].aliasTo; if (!aliasTo || !aliasTo.size) continue;
+    const byB = new Map(SONGS[gko].map(s => [s.b, s]));
+    for (const lang of ['ko', 'en']) {
+      const gp = groupPagePath(gko, lang); if (!gp) continue;
+      const fix = (sDir, relBase, toRel) => {
+        if (!fs.existsSync(sDir)) return;
+        for (const e of fs.readdirSync(sDir, { withFileTypes: true })) {
+          if (!e.isDirectory()) continue;
+          const rel = `${relBase}s/${e.name}/`;
+          if (madeRel.has(rel) || !fs.existsSync(path.join(sDir, e.name, 'index.html'))) continue;
+          const b = aliasTo.get(e.name); const s = b && byB.get(b); if (!s) continue;
+          const to = toRel(s.b); if (!to || !madeRel.has(to)) continue;
+          fs.writeFileSync(path.join(sDir, e.name, 'index.html'), page(`${SITE}/${to}`, s.bilingualTitle || s.title, lang));
+          mergedSongRedirects++;
+        }
+      };
+      fix(path.join(ROOT, gp, 's'), gp, b => songPagePath(gko, b, lang));
+      for (const a of membersOf(gko)) { const mp = memberPagePath(a, lang); if (mp && mp.startsWith(gp)) fix(path.join(ROOT, mp, 's'), mp, b => madeRel.has(memberSongPagePath(a, b, lang)) ? memberSongPagePath(a, b, lang) : null); }
+    }
+  }
+  if (mergedSongRedirects) console.log(`합쳐진 판본 곡 페이지 → 원곡으로 넘김 ${mergedSongRedirects}개`);
+}
 function buildSongPages() {
   const shareRoutes = Object.fromEntries(Object.keys(groups).map(g => [g, {g: [], m: {}}]));
   const memberRouteOwners = new Map();
@@ -1385,6 +1421,7 @@ function buildSongPages() {
       });
     });
   }
+  redirectMergedSongPages();
   const shareDir = path.join(ROOT, 'share_routes');
   fs.mkdirSync(shareDir, {recursive: true});
   for (const [gko, routes] of Object.entries(shareRoutes)) {
@@ -1505,8 +1542,8 @@ function fancamPageHtml(a, lang) {
   const songLabel = s => s.bilingualTitle || s.title;
   const topSongs = songs.slice(0, 4).map(x => songLabel(x.s));
   const title = isEn
-    ? `${mFull} Fancams — All ${fancams.length} by Song - ${gFull} | K-POP UNIVERSE`
-    : `${mFull} 직캠 모음 — 곡별 ${fancams.length}개 - ${gFull} | K-POP UNIVERSE`; // 이름은 영·한 같이 맨 앞에(잘려도 보이게)
+    ? `${bilingualLabel(`${gName} ${nmEn}`, `${gko} ${nm}`)} Fancams — All ${fancams.length} by Song | K-POP UNIVERSE`
+    : `${bilingualLabel(`${gko} ${nm}`, `${info.en || gko} ${nmEn}`)} 직캠 모음 — 곡별 ${fancams.length}개 | K-POP UNIVERSE`; // 그룹+이름 영·한 같이 맨 앞(docs/NAMING.md)
   const desc = isEn
     ? `All ${fancams.length} ${gName} ${mName} fancams and face cams, grouped by song${topSongs.length ? ` (${topSongs.join(', ')}…)` : ''}, most viewed first.`
     : `${gko} ${mName} 직캠·페이스캠 ${fancams.length}개를 곡별로 모았어요${topSongs.length ? `(${topSongs.join(', ')} 등)` : ''}. 조회수 많은 직캠부터.`;
@@ -1660,7 +1697,9 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
   let title, desc, h1, sub;
   if (ms) {
     // 멤버 이름은 영·한 같이 맨 앞에(2026-11-11 — 네이버 결과에서 영문 페이지 제목이 'Youngjae …'만 보이고 한글 이름은 끝에서 잘렸다)
-    title = isEn ? `${mFull} - ${songLabel} Fancams - ${gFull} | K-POP UNIVERSE` : `${mFull} - ${songLabel} 직캠 모음 - ${gFull} | K-POP UNIVERSE`;
+    // 그룹 + 이름(2026-11-11 사용자 — 영재는 갓세븐·B.A.P에도 있다. 음방 직캠 제목 관례 '투어스 영재 … (TWS YOUNGJAE FanCam)')
+    const whoFull = isEn ? bilingualLabel(`${gName} ${ms.nmEn}`, `${gko} ${ms.nm}`) : bilingualLabel(`${gko} ${ms.nm}`, `${info.en || gko} ${ms.nmEn}`);
+    title = isEn ? `${whoFull} - ${songLabel} Fancams | K-POP UNIVERSE` : `${whoFull} - ${songLabel} 직캠 모음 | K-POP UNIVERSE`;
     desc = isEn ? `${gFull} ${mFull} "${songLabel}" fancams and face cams — ${vids.length} videos, most viewed first. ${facts.join(', ')}.`
                 : `${gko} ${mName} '${songLabel}' 직캠·페이스캠 ${vids.length}개를 조회수 순으로 모았어요. ${facts.join(', ')}.`;
     h1 = isEn ? `${mFull} "${songLabel}" Fancams` : `${mFull} '${songLabel}' 직캠`;

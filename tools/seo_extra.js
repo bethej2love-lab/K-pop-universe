@@ -233,7 +233,7 @@ let _SL = null;
 function songLib(ROOT) {
   if (_SL) return _SL;
   const ctx = {}; vm.createContext(ctx);
-  vm.runInContext(fs.readFileSync(path.join(ROOT, 'shared.js'), 'utf8') + ';this.f=_songLinkBases;this.L=_songListFromDisco;this.B=_songBase;this.N=_songNorm;this.D=_groupJoinOrDebut;this.A=_SONG_ALIASES;', ctx);
+  vm.runInContext(fs.readFileSync(path.join(ROOT, 'shared.js'), 'utf8') + ';this.f=_songLinkBases;this.L=_songListFromDisco;this.B=_songBase;this.N=_songNorm;this.D=_groupJoinOrDebut;this.A=_songAliasesFor;this.K=_songAddNicks;', ctx);
   return (_SL = ctx);
 }
 // 그룹별 영상 전부(가로 영상, 노출 가능한 것만) — id 순 페이지 넘김(정렬 없는 페이지 나눔은 중복·누락 — 메모리)
@@ -274,7 +274,8 @@ function buildSongs({ ROOT, groups, artists, EX, vids, minVids = 4 }) {
     const d = readJson(path.join(ROOT, 'disco/g', fileKey(g) + '.json'));
     if (!d || !vids[g] || !vids[g].length) continue;
     const albums = [...Object.values(d.g || {}), ...Object.values(d.m || {}).flatMap(x => [...(x.d || []), ...(x.u || []).flatMap(u => (u && u.albums) || [])])];
-    const songs = S.L(albums, persons);
+    // 별칭(한글 소리 표기·공식 영문 제목)까지 — 앱 루틴(admin.js)과 같은 곡 목록(2026-11-11)
+    const songs = S.K(S.L(albums, persons), g);
     if (!songs.length) continue;
     // 곡 → 처음 실린 앨범(가장 이른 발매)·타이틀곡 여부·크레딧
     const meta = {};
@@ -285,7 +286,7 @@ function buildSongs({ ROOT, groups, artists, EX, vids, minVids = 4 }) {
       const m = meta[b] || (meta[b] = { name: String(tr.title).replace(/\s*-[^-]*\bver(?:sion)?\b\.?[^-]*-\s*$/i, '').split(/\s+[\(\[]/)[0].trim(), album: al.title, date: al.releaseDate || '', isTitle: false, cr: null, melonId: null, cover: al.cover || null });
       if(!m.bilingualTitle)m.bilingualTitle=bilingualSongTitle(tr.title,null);
       // 공식 영문 제목이 따로 있는 곡은 '한글 제목 English Title'(괄호 없이 — 원래 제목에 괄호 영문이 붙은 곡과 구분, docs/NAMING.md)
-      if(!m.bilingualTitle){const al=S.A&&S.A[g]&&(S.A[g][m.name]||S.A[g][tr.title]);if(al&&al[0])m.bilingualTitle=m.name+' '+al[0];}
+      if(!m.bilingualTitle){const al=S.A&&(S.A(g,tr.title)||S.A(g,m.name));if(al&&al[0])m.bilingualTitle=m.name+' '+al[0];}
       if (tr.isTitle) m.isTitle = true;
       if (!m.cr && tr.cr) m.cr = tr.cr;
       if (!m.melonId && tr.songId) m.melonId = tr.songId;
@@ -300,7 +301,11 @@ function buildSongs({ ROOT, groups, artists, EX, vids, minVids = 4 }) {
     (EX.wins[g] || []).forEach(w => { const b = toBase.get(S.B(w.song_title || '')) || toBase.get(S.N(w.song_title || '')); if (b) winBy[b] = (winBy[b] || 0) + 1; });
     const list = [...bucket.values()].filter(s => s.vids.length >= minVids).map(s => { const m = meta[s.b] || {}; return Object.assign(s, m, { title: m.name || s.title, wins: winBy[s.b] || 0 }); });
     list.forEach(s => s.vids.sort((a, b) => (b.view_count || 0) - (a.view_count || 0)));
-    if (list.length) out[g] = list.sort((a, b) => b.vids.length - a.vids.length);
+    if (list.length) {
+      out[g] = list.sort((a, b) => b.vids.length - a.vids.length);
+      // 별칭 → 곡 기본형(판본 곡 합치기로 빠진 'plottwist' → '첫만남은계획대로되지않아' 등). 배열의 속성이라 JSON·반복엔 안 나온다
+      Object.defineProperty(out[g], 'aliasTo', { value: new Map([...toBase].filter(([n, b]) => n !== b)), enumerable: false });
+    }
   }
   return out;
 }

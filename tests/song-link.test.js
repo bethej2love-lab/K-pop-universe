@@ -75,5 +75,16 @@ const GI = ctx.N(songsOf('아이들'), '아이들');
 eq(ctx.f('[I-LIVE] 4랑하는 네버랜드💜 (여자)아이들 데뷔 4주년 됐어요', GI, ['아이들', '(G)I-DLE']), [], "'네버랜드'는 (여자)아이들 팬덤 이름 — 곡 Neverland로 잇지 않음");
 const LSN = ctx.N(songsOf('르세라핌'), '르세라핌');
 eq(ctx.f('큰 무대에서 보니 더 좋은 붐팔라 #엠카운트다운 #MCOUNTDOWN #LE_SSERAFIM', LSN, ['르세라핌', 'LE SSERAFIM']), ['boompala'], "애칭 '붐팔라'");
+// 공식 영문 제목 별칭(shared.js _SONG_ALIASES, 2026-11-11 "한국 활동 곡명 중심") + 판본 곡 합치기
+const TWS = ctx.N(songsOf('투어스'), '투어스'), tws = t => ctx.f(t, TWS, ['투어스', 'TWS']);
+eq(tws('TWS (투어스) - plot twist | Show! MusicCore | MBC240127방송'), ['첫만남은계획대로되지않아'], "영문 'plot twist' → 한국 원곡(일본판 곡이 아니라)");
+eq(TWS.some(s => s.b === 'plottwist'), false, "'plot twist (Japanese ver.)'는 원곡에 합쳐져 별도 곡이 아님");
+eq(tws('Countdown! - TWS トゥアス 투어스 [Music Bank] | KBS WORLD TV 250425'), ['마음따라뛰는건멋지지않아'], "'곡 - 가수' 형식의 영문 별칭");
+const SVT = ctx.N(songsOf('세븐틴'), '세븐틴');
+eq(ctx.f('[SEVENTEEN - HOME;RUN] Fighting 2022 Special | #엠카운트다운 EP.738', SVT, ['세븐틴', 'SEVENTEEN']), ['homerun'], "한 낱말 영문 별칭('Fighting')은 본문 포함으론 안 붙음 — 엠카 특집명");
+eq(ctx.f('SEVENTEEN - “Super”  VERNON ver. [it’s Live] #MBCWORLD', SVT, ['세븐틴', 'SEVENTEEN']), ['손오공'], '따옴표 안 영문 별칭은 붙음');
+eq(ctx.f('Fate - (G)I-DLE ジーアイドゥル [Music Bank] | KBS WORLD TV 240322', GI, ['아이들', '(G)I-DLE']), ['나는아픈건딱질색이니까'], "'곡 - 가수'에서 가수 이름이 괄호로 시작해도 주인으로 알아봄");
+const BTS = ctx.N(songsOf('방탄소년단'), '방탄소년단');
+eq(ctx.f('BTS - FIRE @인기가요 160515', BTS, ['방탄소년단', 'BTS']), ['불타오르네'], "괄호 영문('불타오르네 (FIRE)')과 같은 일본판 곡은 합쳐짐");
 console.log(fail ? `💥 곡 연결 테스트 실패 ${fail}건 (통과 ${pass})` : `✅ 곡 연결 테스트 통과 ${pass}건`);
 process.exit(fail ? 1 : 0);
