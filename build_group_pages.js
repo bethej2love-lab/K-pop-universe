@@ -1541,9 +1541,23 @@ function fancamPageHtml(a, lang) {
   const { songs, rest } = fancamsBySong(a, gko, fancams);
   const songLabel = s => s.bilingualTitle || s.title;
   const topSongs = songs.slice(0, 4).map(x => songLabel(x.s));
+  // 제목의 대표 곡(2026-11-11 사용자 "'곡별 N개'는 구미가 안 당긴다 — 대표 곡을, 직캠 개수뿐 아니라 조회수도 고려해서"):
+  // 그 멤버의 그 곡 직캠 **조회수 합**(= 개수 × 평균 조회수) 순 상위 2곡, 둘이 합쳐 길면 1곡. 개수(N)는 매주 바뀌어 제목에선 빼고 설명에만.
+  // 영어 페이지는 영문 제목(bilingualTitle의 영문 부분)이 있으면 그걸로. 실측: 장원영 LOVE DIVE·ELEVEN, 김채원 ANTIFRAGILE·FEARLESS
+  const shortName = s => { const ko = String(s.title || ''); if (!isEn) return ko; const bt = s.bilingualTitle || ''; return bt.startsWith(ko + ' ') ? bt.slice(ko.length + 1) : (bt || ko); };
+  // 시간도(사용자 "대표곡이 너무 옛날 곡 2개면 좀 그렇다"): 첫 칸 = 조회수 합 1위, 둘째 칸 = 최근 1년 안에 나온 곡 중 조회수 합 1위
+  // (첫 칸이 이미 최근 곡이면 그냥 2위). 두 곡이 합쳐 길면(26자 초과) 한 곡 — 첫 칸이 옛 곡이고 최근 곡이 있으면 최근 곡으로.
+  const yearAgo = new Date(Date.parse(TODAY_ISO) - 365 * 864e5).toISOString().slice(0, 10);
+  const isRecent = s => String(s.date || '').replace(/\./g, '-').slice(0, 10) >= yearAgo;
+  const ranked = songs.map(x => ({ s: x.s, v: x.vids.reduce((n, v) => n + (v.view_count || 0), 0) })).sort((p, q) => q.v - p.v);
+  const first = ranked[0], fresh = ranked.find(o => o !== first && isRecent(o.s));
+  const second = first && isRecent(first.s) ? ranked[1] : (fresh || ranked[1]);
+  let picks = [first, second].filter(Boolean).map(o => shortName(o.s));
+  if (picks.join('').length > 26) picks = first && !isRecent(first.s) && fresh ? [shortName(fresh.s)] : picks.slice(0, 1);
+  const idTitle = isEn ? bilingualLabel(`${gName} ${nmEn}`, `${gko} ${nm}`) : bilingualLabel(`${gko} ${nm}`, `${info.en || gko} ${nmEn}`); // 그룹+이름 영·한 같이 맨 앞(docs/NAMING.md)
   const title = isEn
-    ? `${bilingualLabel(`${gName} ${nmEn}`, `${gko} ${nm}`)} Fancams — All ${fancams.length} by Song | K-POP UNIVERSE`
-    : `${bilingualLabel(`${gko} ${nm}`, `${info.en || gko} ${nmEn}`)} 직캠 모음 — 곡별 ${fancams.length}개 | K-POP UNIVERSE`; // 그룹+이름 영·한 같이 맨 앞(docs/NAMING.md)
+    ? `${idTitle} Fancams${picks.length ? ` — ${picks.map(t => `"${t}"`).join(', ')} & more` : ''} | K-POP UNIVERSE`
+    : `${idTitle} 직캠 모음${picks.length ? ` — ${picks.map(t => `'${t}'`).join('·')} 등` : ''} | K-POP UNIVERSE`;
   const desc = isEn
     ? `All ${fancams.length} ${gName} ${mName} fancams and face cams, grouped by song${topSongs.length ? ` (${topSongs.join(', ')}…)` : ''}, most viewed first.`
     : `${gko} ${mName} 직캠·페이스캠 ${fancams.length}개를 곡별로 모았어요${topSongs.length ? `(${topSongs.join(', ')} 등)` : ''}. 조회수 많은 직캠부터.`;

@@ -2,6 +2,10 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-11 (Claude Code — 직캠 전체 페이지 제목: 대표 곡으로)
+- 사용자: "'곡별 N개'는 구미가 안 당긴다 — 대표 곡을, 개수뿐 아니라 조회수도" → "시간도 — 옛날 곡 2개면 좀". **[build_group_pages.js]** 제목 `{그룹 멤버(영문)} 직캠 모음 — '곡1'·'곡2' 등`: 곡1 = 그 멤버 직캠 조회수 합 1위, 곡2 = 최근 1년 곡 중 조회수 합 1위(곡1이 최근 곡이면 2위), 합쳐 26자 넘으면 한 곡. N은 매주 바뀌어 제목에서 빼고 설명에만. "모아보기" 대신 검색어로 쓰이는 "모음". 영어 페이지는 영문 제목("LOVE DIVE", "BANG BANG" & more).
+- 실데이터 확인(빌더 함수 그대로): 장원영 LOVE DIVE·BANG BANG, 김채원 ANTIFRAGILE·Made My Night, 신유 첫 만남은 계획대로 되지 않아·널 따라가, 성현 REDRED·FaSHioN, 영재 너의 모든 가능성이 되어 줄게. 갱신은 자동(매주 재빌드 + 데이터 푸시). docs/NAMING.md 갱신.
+
 ## 2026-11-11 (Claude Code — 곡 이름 기준 = 한국 활동 곡명: 음방 1위 1,560행 정정·영문 별칭·판본 곡 합치기)
 - 사용자: "음방 1위 영어 제목 215개 작업 + 한영 제목 헷갈리는 경우 더 있을 듯 — 정답은 없지만 우선 한국 활동 위주의 곡명이 중심". 규칙은 docs/NAMING.md '곡의 정답 이름'.
 - **[SQL 실행] sql/2026-11-11_win_titles_disco.sql**(+undo, 백업 `_bak_win_titles_20261111`): music_show_wins 506종 1,560행 → 디스코(멜론) 표기. 각 그룹·멤버 디스코와 대조(한국 원곡 우선·일본판/판본 제외·괄호 앞부분만 같은 다른 곡 제외), 영문 번역 제목(아이유 Palette→팔레트, 세븐틴 Super→손오공 등)은 내가 아는 한글 원제를 디스코에서 실제로 찾은 것만. 제외: 2PM Again & Again(멜론 'Again＆Again'), 브아걸 L.O.V.E(다른 곡 Love로 잡힘). 이후 디스코 일치 970종. ⏳ 남은 55종 94행: 디스코에 없거나 한글 원제 불확실(뉴이스트 Dejavu·Help Me, B1A4 A Lie, 하이라이트 Good Luck/YeY 등, 아일릿·캣츠아이 'Iconic by Mistake'는 데이터 자체가 의심) — 재조회: 스크래치 winmatch 방식 또는 `select group_ko,member_ko,song_title from music_show_wins` 후 디스코 대조.
