@@ -60,6 +60,13 @@ const TOPN = 20;
 //   · 타 그룹 콜라보 2개  ·  진짜 그룹 콘텐츠(멤버 태그 없음) 8개
 // 즉 인기순 상위일수록 **개인 활동이 그룹 영상을 밀어낸다**(솔로가 잘 되는 그룹일수록 심하다).
 // 그래서 "하나하나 눈으로 확인"할 일이 아니라 고를 때 걸러야 한다.
+// 멤버 공유 썸네일 = 가로 직캠 우선, 예능은 빼고(2026-11-11 사용자: "공유 링크 썸네일은 웬만하면 예능은 빼고 가로 긴 직캠").
+// 제보: 샤오쥔이 KBS 예능 '체험! 직캠의 현장'(category가 live로 잘못 들어감)이었다 — 분류만 믿지 말고 제목도 본다.
+// 둘 다 "우선 조건"이라 후보가 없으면 원래 풀로 내려간다(randomEligible).
+const VARIETY_TITLE = /체험|사연|비하인드|behind|인터뷰|interview|reaction|리액션|브이로그|vlog|토크|예능|퀴즈|quiz|런닝맨|아는\s?형님|주간아이돌|놀토/i;
+const FANCAM_TITLE = /직캠|fan\s?cam|face\s?cam|페이스캠|얼빡|\bfocus\b/i;
+const notVariety = v => !VARIETY_TITLE.test(v.title || '');
+const MEMBER_FILTERS = [v => !isCollab(v) && notVariety(v) && FANCAM_TITLE.test(v.title || ''), v => !isCollab(v) && notVariety(v), v => !isCollab(v)];
 const isCollab = v => ((v.with_groups || []).length > 0) || ((v.with_members || []).length > 0);
 // 그룹 대표 후보로 부적절한 것: 타 그룹 콜라보, 그리고 **멤버 한 명만 태깅된 영상**(직캠·솔로 무대).
 // 멤버 태그가 아예 없는 건 보통 그룹 전체 콘텐츠라 그대로 둔다.
@@ -207,7 +214,8 @@ if (prevForAudit) {
       const gko = usedAsGroup ? (idToKeys.get(v.id).find(k => k.startsWith('groups|')) || '').split('|')[1] : null;
       const violates = usedAsGroup && badForGroup(v, memberCountOf[gko] || 0);
       // 쇼츠(세로)도 다시 뽑는다(2026-10-19, 사용자: "공유 썸네일은 가로 영상 위주" — A2O LITE가 세로 쇼츠였다). 가로가 없으면 다시 쇼츠가 뽑힐 뿐
-      if (!isCoverish(v) && !violates && !v.is_short && !isHiddenFlag(v.content_flag)) continue;
+      // 예능 제목도 다시 뽑는다(2026-11-11 샤오쥔 '체험! 직캠의 현장')
+      if (!isCoverish(v) && !violates && !v.is_short && !isHiddenFlag(v.content_flag) && notVariety(v)) continue;
       dirtyIds.add(v.id);
       for (const key of (idToKeys.get(v.id) || [])) {
         const name = key.startsWith('members|') ? key.split('|').pop() : null; // "members|소녀시대|태연" → 태연
@@ -249,11 +257,11 @@ for (const a of artists) {
   // 그쪽이 1순위이고, 본인 이름 키(솔로 활동분)는 그다음 — 둘 다 "본인이 나온 영상"이므로 이름만
   // 같으면 걸리는 memberAny 폴백보다는 앞에 둔다.
   const soloKey = isSolo ? videoGroupKoFor(a) : a.name.ko;
-  let pick = isSolo ? randomEligible(soloCands[soloKey], soloPick[soloKey], [v => !isCollab(v)]) : null;
+  let pick = isSolo ? randomEligible(soloCands[soloKey], soloPick[soloKey], MEMBER_FILTERS) : null;
   if (pick) memSolo++;
-  if (!pick) { pick = randomEligible(memberCands[key], memberPick[key], [v => !isCollab(v)]); if (pick) memHit++; } // 소속 그룹의 MV/라이브 중 랜덤
-  if (!pick && !isSolo) { pick = randomEligible(soloCands[a.name.ko], soloPick[a.name.ko], [v => !isCollab(v)]); if (pick) memSolo++; } // 그룹 멤버의 솔로 활동분
-  if (!pick && (!isSolo || _ogCanNameFallback(a))) { pick = randomEligible(memberAnyCands[a.name.ko], memberAny[a.name.ko], [v => !isCollab(v)]); if (pick) memFallback++; } // Ambiguous solo names cannot borrow another group's namesake.
+  if (!pick) { pick = randomEligible(memberCands[key], memberPick[key], MEMBER_FILTERS); if (pick) memHit++; } // 소속 그룹의 MV/라이브 중 랜덤
+  if (!pick && !isSolo) { pick = randomEligible(soloCands[a.name.ko], soloPick[a.name.ko], MEMBER_FILTERS); if (pick) memSolo++; } // 그룹 멤버의 솔로 활동분
+  if (!pick && (!isSolo || _ogCanNameFallback(a))) { pick = randomEligible(memberAnyCands[a.name.ko], memberAny[a.name.ko], MEMBER_FILTERS); if (pick) memFallback++; } // Ambiguous solo names cannot borrow another group's namesake.
   if (!pick) { misses.push(a); continue; }
   memberOut[key] = pick.id;
 }
@@ -294,7 +302,7 @@ if (misses.length) {
       best = better(best, v);
       if (ELIGIBLE.has(v.category)) cands.push(v);
     }
-    const pick = randomEligible(cands, best, [v => !isCollab(v)]);
+    const pick = randomEligible(cands, best, MEMBER_FILTERS);
     if (pick) { memberOut[key] = pick.id; recovered++; }
     else memMiss++;
   }
@@ -304,7 +312,7 @@ const groupOut = {};
 let groupFiltered = 0;
 for (const gko of gkos) {
   const n = memberCountOf[gko] || 0;
-  const p = randomEligible(groupCands[gko], groupPick[gko], [v => !badForGroup(v, n)]);
+  const p = randomEligible(groupCands[gko], groupPick[gko], [v => !badForGroup(v, n) && notVariety(v), v => !badForGroup(v, n)]);
   if (p) {
     groupOut[gko] = p.id;
     if (badForGroup(p, n)) groupFiltered++; // 필터를 다 통과 못 해 느슨한 풀로 내려간 경우(후보가 적은 그룹)

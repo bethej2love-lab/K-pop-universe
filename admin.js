@@ -114,6 +114,9 @@ function _ytClassify(title,{isShort=false}={}){
   // 직캠 브랜드 낱말은 **가장 강한 신호**라 다른 어떤 판정보다 먼저 본다(2026-09-14).
   // 원래 이 자리가 없어서 페이스캠·원픽캠·풀캠류가 통째로 other로 샜다(_YT_CAM_BRAND_RE 주석 참고).
   // 위 MC 예외(_ytIsMcHosting)도 이미 "직캠류가 같이 있으면 라이브로 남긴다"는 같은 원칙이라 순서가 맞다.
+  // 예외: KBS 예능 '체험! 직캠의 현장'(2026-11-11) — 직캠 뒷이야기·리뷰 토크라 제목에 직캠/얼빡직캠이 있어도 예능.
+  // 이 줄이 없으면 아래 직캠 브랜드 판정이 live로 가져가 퍼포먼스 탭·공유 썸네일에 섞였다(샤오쥔 공유 썸네일 제보, 8건).
+  if(/체험! ?직캠의 ?현장/.test(title||''))return'variety';
   if(_YT_CAM_BRAND_RE.test(t)||_YT_CAM_BRAND_RE.test(title||''))return'live';
   // MC 진행분은 라이브 판정보다 앞에서 걸러낸다(위 _ytIsMcHosting 주석 참고). 쇼츠 여부는 이제
   // 이 함수와 무관한 별도 플래그(_ytIsShortTitle → is_short)라, MC 쇼츠도 여기선 그냥 other가 되고
