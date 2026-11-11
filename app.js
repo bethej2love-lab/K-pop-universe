@@ -3070,8 +3070,15 @@ function _buildSongIndex(){
     Object.keys(GROUPS).forEach(gko=>(GROUPS[gko].discography||[]).forEach(al=>(al.tracks||[]).forEach(t=>add(t&&t.title,al.title,!!(t&&t.isTitle),'','group',gko,gko))));
     ARTISTS.forEach(a=>(a.discography||[]).forEach(al=>(al.tracks||[]).forEach(t=>add(t&&t.title,al.title,!!(t&&t.isTitle),'','member',a,a.name.ko))));
   }
-  return [...byKey.values()];
+  const out=[...byKey.values()];
+  // 공식 영문 제목 별칭(2026-11-11 사용자 "plot twist로 검색해도 '첫 만남은 계획대로 되지 않아'가 나오면") — 디스코는 멜론 한글 제목이 정본이라
+  // 해외 팬·음방 기록이 쓰는 영문 제목으로는 곡이 안 잡혔다. 그룹 → 곡 제목(디스코 표기 그대로) → 영문 제목들
+  out.forEach(s=>{const m=s.ownerType==='group'&&_SONG_ALIASES[s.owner];const al=m&&m[s.title];if(al){s.alt=al;s.altL=al.map(x=>x.toLowerCase());}});
+  return out;
 }
+const _SONG_ALIASES={
+  '투어스':{'첫 만남은 계획대로 되지 않아':['plot twist'],'마음 따라 뛰는 건 멋지지 않아?':['Countdown!'],'내가 S면 넌 나의 N이 되어줘':["If I'm S, Can You Be My N?"]},
+};
 // ── 최근 검색 (검색창 열고 아직 안 쳤을 때 위에 뜨는 목록) ──────
 const RECENT_SEARCH_KEY='kpu_recent_searches';
 const RECENT_SEARCH_MAX=8;
@@ -4382,8 +4389,10 @@ function doSearch(q){
     const _songSeen=new Set();
     for(const s of (_songIndex||[])){
       const t=s.title,tl=t.toLowerCase();
-      if(!(t.includes(q)||tl.includes(ql)||(qln.length>=2&&_normEn(t).includes(qln))||(s.koPho&&s.koPho.includes(q.replace(/ /g,'')))))continue;
-      songHits.push({s,sc:_mScore(t,q,ql)});_songSeen.add(s);
+      // 영문 별칭(_SONG_ALIASES)으로 잡히면 결과 줄에 그 영문 제목을 같이 보여준다
+      const altHit=s.altL?s.alt.find((x,i)=>s.altL[i].includes(ql)||(qln.length>=2&&_normEn(x).includes(qln))):null;
+      if(!altHit&&!(t.includes(q)||tl.includes(ql)||(qln.length>=2&&_normEn(t).includes(qln))||(s.koPho&&s.koPho.includes(q.replace(/ /g,'')))))continue;
+      songHits.push({s,sc:altHit?Math.min(_mScore(t,q,ql),_mScore(altHit,q,ql)):_mScore(t,q,ql),altHit});_songSeen.add(s);
       if(songHits.length>400)break; // 너무 흔한 단어에서 전체 순회를 계속하지 않게
     }
     // 소속 아티스트가 확실히 잡혔으면(_songOwner) 제목 매칭 여부와 무관하게 그 사람 곡을 채운다 —
@@ -4396,14 +4405,14 @@ function doSearch(q){
     }
     songHits.sort((a,b)=>(a.sc-b.sc)||(b.s.isTitle-a.s.isTitle)||a.s.title.localeCompare(b.s.title,'ko'));
     _srSongTotal=songHits.length; // 렌더가 "몇 개 더 있는지"를 알아야 더보기 줄을 붙인다
-    songHits.slice(0,_srCap('song')).forEach(({s,sc})=>{
+    songHits.slice(0,_srCap('song')).forEach(({s,sc,altHit})=>{
       const ownerA=s.ownerType==='member'?s.owner:null;
       const pos=ownerA?ownerA._worldPos:(bubbleMeshes.find(b=>b.ko===s.owner)?.mesh.position.clone());
       if(!pos)return; // 행성이 아직 안 만들어졌으면(로딩 중) 건너뜀
       const ownerName=ownerA
         ?((_hasLatin&&ownerA.name.en)?ownerA.name.en:(currentLang==='ko'?(ownerA.displayName||ownerA.name.ko):(ownerA.name.en||ownerA.name.ko)))
         :((_hasLatin&&GROUPS[s.owner]?.en)?GROUPS[s.owner].en:s.owner);
-      hits.push({type:'song',name:s.title,alias:s.album&&s.album!==s.title?s.album:'',sub:ownerName,
+      hits.push({type:'song',name:s.title,alias:altHit||(s.album&&s.album!==s.title?s.album:''),sub:ownerName,
         pos,data:s.owner,ownerType:s.ownerType,score:sc+1});
     });
   }
@@ -29002,6 +29011,11 @@ function _renderConcertRow(containerId,events,tours){
   // 아래 한 줄(teaser)은 '전체 공연' 펼치기로 남긴다 — 지난 공연 전체·투어 성적·KOPIS 출처 표기가 거기 있다.
   const RAIL_PAST=6;
   const railEvs=[...upcoming,...past.slice(0,RAIL_PAST)];
+  // 제목 줄(2026-11-11 사용자 "전체 공연 5 눌리는 거 디자인 별로") — 다른 카드 섹션(HISTORY·COLLECTIONS)처럼 위에 'Concerts',
+  // 펼치기 버튼은 그 줄 오른쪽에 작게("전체 5 ›"). 예전엔 레일 아래 '🎤 전체 공연 5' 한 줄이 따로 떠 있었다.
+  const hd=document.createElement('div');hd.className='concert-hd';
+  const hdT=document.createElement('span');hdT.className='gc-collection-hd';hdT.textContent='Concerts';hd.appendChild(hdT);
+  row.appendChild(hd);
   if(railEvs.length){
     const rail=document.createElement('div');rail.className='feed-album-grid feed-album-rail feed-album-rail-1 hscroll-drag card-concert-rail';
     railEvs.forEach(ev=>{
@@ -29019,7 +29033,7 @@ function _renderConcertRow(containerId,events,tours){
   const txt=document.createElement('span');txt.className='concert-teaser-txt';
   if(railEvs.length){
     const n=events.length;
-    txt.textContent=currentLang==='ko'?`🎤 전체 공연 ${n}${tours.length?' · 투어 기록':''}`:`🎤 All ${n} shows${tours.length?' · tour stats':''}`;
+    txt.textContent=currentLang==='ko'?`전체 ${n}${tours.length?' · 투어 기록':''}`:`All ${n}${tours.length?' · tour stats':''}`;
   }else if(!featured){
     // 공연 일정은 없고 투어 성적만 있는 그룹 — 누적 관객으로 요약
     const tot=tours.reduce((s,t)=>s+(t.attendance||0),0);
@@ -29083,7 +29097,8 @@ function _renderConcertRow(containerId,events,tours){
     teaser.classList.toggle('open');
     list.classList.toggle('open');
   });
-  row.appendChild(teaser);row.appendChild(list);
+  txt.textContent=txt.textContent.replace(/^🎤 /,''); // 제목 줄에 'Concerts'가 있어 아이콘은 뺀다
+  hd.appendChild(teaser);row.appendChild(list);
 }
 
 async function _loadConcertRow(gko,containerId){

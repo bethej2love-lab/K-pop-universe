@@ -27,6 +27,8 @@ assert.equal(pages.length,8,'both languages and member pages are still generated
 // Render the real template: preview changes without moving the existing MV hero.
 const ctx={SITE:'https://example.test',SONG_CSS_V:4,FANCAM_RE:/직캠|fancam|facecam/i,
   ytThumb:id=>`https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+  wideThumb:id=>`https://i.ytimg.com/vi/${id}/mqdefault.jpg`,ogSizeFor:()=>({w:320,h:180}),
+  FANCAM_HUB:new Map(),MEMBER_SONGS_BY_ARTIST:new Map(),memberFancamPagePath:(a,l)=>`${l}/${a.id}/fancams/`,
   songPagePath:(g,b,l)=>`${l}/${g}/s/${b}/`,
   memberSongPagePath:(a,b,l)=>`${l}/${a.id}/s/${b}/`,
   memberPagePath:(a,l)=>`${l}/${a.id}/`,groupPagePath:(g,l)=>`${l}/${g}/`,
@@ -44,7 +46,7 @@ const vids=[{id:'mv',title:'Snowy Summer MV',category:'mv'},
 const s={b:'snowysummer',title:'Snowy Summer',vids};
 const html=ctx.songLikePageHtml({gko:'Alpha',info:{en:'Alpha'},s,lang:'ko',others:[]});
 assert.match(html,/og:title" content="Snowy Summer 직캠·무대 모음/);
-assert.match(html,/og:image" content="https:\/\/i.ytimg.com\/vi\/stage\/hqdefault.jpg/);
+assert.match(html,/og:image" content="https:\/\/i.ytimg.com\/vi\/stage\/mqdefault.jpg/,'share preview is 16:9 (no 4:3 black bars)');
 assert.match(html,/class="hero" href="https:\/\/www.youtube.com\/watch\?v=mv"[^>]*><img src="https:\/\/i.ytimg.com\/vi\/mv\/hqdefault.jpg/);
 assert.match(html,/FORWARD_LIST_HASH/);
 assert.equal(ctx.songShareVideo([{id:'cam',title:'Snowy Summer fancam'}]).id,'cam');
@@ -52,7 +54,10 @@ assert.equal(ctx.songShareVideo([vids[0]]).id,'mv','no stage: stay within the se
 assert.equal(ctx.songShareVideo([]),undefined);
 const memberHtml=ctx.songLikePageHtml({gko:'Alpha',info:{en:'Alpha'},s,lang:'ko',others:[],
   member:{a:{id:'member',name:{ko:'멤버'}},nm:'멤버',nmEn:'Member',vids:[{id:'cam',title:'Snowy Summer fancam'}]}});
-assert.match(memberHtml,/og:title" content="멤버 Snowy Summer 직캠 모음/);
+assert.match(memberHtml,/og:title" content="멤버 \/ Member Snowy Summer 직캠 모음/,'member name is Korean + English at the front');
+const memberEn=ctx.songLikePageHtml({gko:'Alpha',info:{en:'Alpha'},s,lang:'en',others:[],
+  member:{a:{id:'member',name:{ko:'멤버'}},nm:'멤버',nmEn:'Member',vids:[{id:'cam',title:'Snowy Summer fancam'}]}});
+assert.match(memberEn,/<title>Member \/ 멤버 &quot;Snowy Summer&quot; Fancams/,'English page title also keeps the Korean name up front');
 assert.match(memberHtml,/og:image" content="https:\/\/i.ytimg.com\/vi\/cam\//);
 
 console.log('✅ Published song routes, song/member OG and unchanged hero');

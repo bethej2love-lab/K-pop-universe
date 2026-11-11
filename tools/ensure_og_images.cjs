@@ -2,7 +2,7 @@
 // 실측: 정적 페이지 422개에 og:image가 아예 없었다 — 커버 모음 215·아이돌 생년 108·소속사 52·연도별 1위 38 등. 페이지 종류마다
 // 빌더 함수가 따로라(simplePageHtml·buildYearPages·관계 페이지…) 새 종류를 만들 때마다 같은 구멍이 다시 생겼다.
 // 그래서 빌드 **끝에** 한 번 훑어, og:image가 없는 페이지에만 넣는다(이미 있는 페이지는 손대지 않음):
-//   ① 그 페이지 안 첫 유튜브 썸네일(hqdefault — 모든 영상에 있음) → ② 커버·콜라보 페이지면 그 그룹 대표 썸네일(og_thumbs.json)
+//   ① 그 페이지 안 첫 유튜브 썸네일(mqdefault — 모든 영상에 있고 16:9, 2026-11-11 hqdefault 4:3 검은 띠 제거) → ② 커버·콜라보 페이지면 그 그룹 대표 썸네일(og_thumbs.json)
 //   → ③ 등록 프로필 사진(supabase) → ④ 사이트 기본 이미지(og-image.png 1200×630)
 // build_group_pages.js가 마지막에 부르고, 단독 실행도 된다: node tools/ensure_og_images.cjs  (고친 파일 수를 찍는다)
 // tests/og-image.test.js가 og:image 없는 정적 페이지를 잡는다.
@@ -23,13 +23,13 @@ function walk(dir, out) {
 
 function pickImage(html, rel, ogThumbs) {
   const yt = html.match(/(?:i\.ytimg\.com|img\.youtube\.com)\/vi\/([A-Za-z0-9_-]{6,})\//);
-  if (yt) return { url: `https://i.ytimg.com/vi/${yt[1]}/hqdefault.jpg`, w: 480, h: 360 };
+  if (yt) return { url: `https://i.ytimg.com/vi/${yt[1]}/mqdefault.jpg`, w: 320, h: 180 };
   const m = rel.match(/^(?:en\/)?(?:cover|collab)\/([^/]+)\//);
   if (m && ogThumbs && ogThumbs.groups) {
     let seg = m[1]; try { seg = decodeURIComponent(seg); } catch (e) {}
     const t = ogThumbs.groups[seg] || Object.entries(ogThumbs.groups).find(([k]) => k.toLowerCase() === seg.toLowerCase())?.[1];
     const id = t && (String(t).match(/\/vi\/([^/]+)\//) || [])[1];
-    if (id) return { url: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`, w: 480, h: 360 };
+    if (id) return { url: `https://i.ytimg.com/vi/${id}/mqdefault.jpg`, w: 320, h: 180 };
   }
   const sb = html.match(/<img[^>]+src="(https:\/\/[^"]+supabase\.co\/storage\/[^"]+)"/);
   if (sb) return { url: sb[1], w: 600, h: 600 };
