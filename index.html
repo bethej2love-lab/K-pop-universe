@@ -77,7 +77,9 @@
   gtag('js',new Date());
   gtag('config','G-Z5NTV6X3YF');
   // 첫 방문자 판정(사용자 지표, 2026-10-13) — 앱 코드가 localStorage를 쓰기 **전에** 봐야 하므로 head에서 잰다.
-  try{window._kpuNewVisitor=!Object.keys(localStorage).some(function(k){return /^kpu/.test(k);});}catch(e){window._kpuNewVisitor=false;}
+  // ⚠️ 정적 페이지(seo_play.js)가 남기는 kpu_seo_did는 빼고 본다(2026-11-11) — 이게 걸려서 정적 페이지를 거쳐 처음 온 사람이 전부
+  //    재방문(ret)으로 찍혔다(24시간 새 계정 10명 중 9명이 'ret'). 지표 RPC는 이제 계정 생성 시각으로 신규를 판정해 이 값에 덜 기댄다.
+  try{window._kpuNewVisitor=!Object.keys(localStorage).some(function(k){return /^kpu/.test(k)&&k!=='kpu_seo_did';});}catch(e){window._kpuNewVisitor=false;}
 </script>
 
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
