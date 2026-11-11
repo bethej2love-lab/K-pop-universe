@@ -4,7 +4,7 @@
 
 ## 시작할 때
 1. `git fetch origin` 후 최신 main 위에서 시작(로컬 `git status`만 믿지 말 것 — CHANGELOG 사용 규칙 참고)
-2. **CHANGELOG.md**의 "사용 규칙" + 최근 날짜 섹션 + "⏳ 덜 된 일" 먼저 읽기
+2. **CHANGELOG.md**의 "사용 규칙" + 최근 날짜 섹션 + "⏳ 덜 된 일" 먼저 읽기 — 2026-11-11부터 CHANGELOG.md엔 최근 7일만, 그 전 세션은 `docs/changelog/YYYY-MM.md`(내용 그대로), 보관분의 남은 ⏳는 CHANGELOG.md 맨 아래 "⏳ 열린 일(보관분)". 끝낸 보관 ⏳는 보관 파일에서 ✅로 바꾼다. 일주일에 한 번쯤 `node tools/archive_changelog.cjs`
 3. **PRINCIPLES.md** 읽기
 
 ## 작업할 때
