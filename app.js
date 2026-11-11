@@ -669,7 +669,7 @@ const T={
   ko:{tab_home:'홈',tab_search:'검색',tab_random:'랜덤',tab_explore:'탐험',tab_me:'나',dh_fav_title:'즐겨찾기 하이라이트',feedCloseTitle:'탐험 닫기',dh_lang_title:'언어 전환',dh_random_title:'랜덤 탐험',
       sp_title:'설정',debutYr:'데뷔 연도',birthYr:'멤버 생년',grpType:'그룹 유형',
       genLabel:'세대',genNote:'데뷔 연도 기준. 재미로 봐주세요 !',
-      all:'전체',girl:'걸그룹',boy:'보이그룹',coed:'혼성그룹',inactive:'비활동/탈퇴 멤버',reset:'↺ 초기화',powerSave:'절전 모드',psAuto:'자동',psOn:'켬',psOff:'끔',psHintAuto:'기기 성능을 보고 알아서 조절해요',psHintAutoOn:'자동 — 지금 절전 중이에요',psHintOn:'화질과 부드러움을 낮춰 발열을 줄여요',psHintOff:'항상 최고 화질로 그려요',
+      all:'전체',girl:'걸그룹',boy:'보이그룹',coed:'혼성그룹',inactive:'비활동/탈퇴 멤버',lessTitle:'For You에서 덜 보기',lessSub:'이 멤버 혼자 나온 영상은 For You에 안 떠요. 눌러서 풀기',reset:'↺ 초기화',powerSave:'절전 모드',psAuto:'자동',psOn:'켬',psOff:'끔',psHintAuto:'기기 성능을 보고 알아서 조절해요',psHintAutoOn:'자동 — 지금 절전 중이에요',psHintOn:'화질과 부드러움을 낮춰 발열을 줄여요',psHintOff:'항상 최고 화질로 그려요',
       searchPH:'그룹 · 멤버 검색…',mobileTitle:'케이팝 아이돌 지형도',srGroup:'그룹',
       preparing:'준비 중',gcAgency:'소속',gcDebut:'데뷔',gcFandom:'팬덤',gcLeader:'리더',gcMember:'멤버',gcSNS:'공식',
       chSortRec:'추천순',chSortNew:'최신순',chSortOld:'날짜순',chSortPop:'인기순',chViewsPfx:'',chViewsSfx:'',chViewCon:'콘텐츠별 보기',chSearch:'영상 검색…',
@@ -691,7 +691,7 @@ const T={
   en:{tab_home:'Home',tab_search:'Search',tab_random:'Random',tab_explore:'Explore',tab_me:'Me',dh_fav_title:'Highlight favorites',feedCloseTitle:'Close Explore',dh_lang_title:'Language',dh_random_title:'Random explore',
       sp_title:'Settings',debutYr:'Debut Year',birthYr:'Birth Year',grpType:'Group Type',
       genLabel:'Generation',genNote:'By debut year. Just for fun!',
-      all:'All',girl:'Girl Groups',boy:'Boy Groups',coed:'Coed Groups',inactive:'Inactive / Left',reset:'↺ Reset',powerSave:'Power saving',psAuto:'Auto',psOn:'On',psOff:'Off',psHintAuto:'Adjusts itself based on your device',psHintAutoOn:'Auto — saving power right now',psHintOn:'Lowers quality and smoothness to run cooler',psHintOff:'Always render at full quality',
+      all:'All',girl:'Girl Groups',boy:'Boy Groups',coed:'Coed Groups',inactive:'Inactive / Left',lessTitle:'Show less in For You',lessSub:'Solo videos of these members stay out of For You. Tap to undo',reset:'↺ Reset',powerSave:'Power saving',psAuto:'Auto',psOn:'On',psOff:'Off',psHintAuto:'Adjusts itself based on your device',psHintAutoOn:'Auto — saving power right now',psHintOn:'Lowers quality and smoothness to run cooler',psHintOff:'Always render at full quality',
       searchPH:'Search groups · members…',mobileTitle:'K-pop Idol Map',srGroup:'Group',
       preparing:'Coming soon',gcAgency:'Agency',gcDebut:'Debut',gcFandom:'Fandom',gcLeader:'Leader',gcMember:'Members',gcSNS:'Official',
       chSortRec:'Recommended',chSortNew:'Latest',chSortOld:'Oldest',chSortPop:'Popular',chViewsPfx:'',chViewsSfx:' views',chViewCon:'By Content',chSearch:'Search videos…',
@@ -10453,6 +10453,9 @@ function _connShareHash(){
   if(_connSelected.length)h+='&s='+_connSelected.map(_hashEsc).join(',');
   return h;
 }
+// _showToast — 깃발 꽂기(🚩)·For You 덜 보기·관리자 Daily가 부르는데 정의가 어디에도 없었다(2026-11-11 발견 — 깃발은 꽂히고 토스트 대신
+// ReferenceError). 공유 토스트 칸을 같이 쓴다. ms는 받기만 한다(공유 토스트는 1.8초 고정).
+function _showToast(msg,ms){_showShareToast(msg);}
 function _showShareToast(msg){
   const el=document.getElementById('share-toast');
   if(!el)return;
@@ -16187,6 +16190,7 @@ document.getElementById('tab-settings').addEventListener('click',e=>{
   sw.classList.remove('open');
   ['tab-search','dh-search-btn'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('active');});
   sp.classList.toggle('open',!open);
+  if(!open){try{_renderLessList();}catch(e){}} // For You 덜 보기 목록(2026-11-11)
   if(!open)_bringToFront(sp); // 검색창과 같은 이유 — 정적 z-index:68이라 카드(131+) 뒤로 깔렸다
   ['tab-settings','dh-settings-btn'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('active',!open);});
   // 모바일: 설정 패널 열릴 때 궤도 컨트롤 비활성화 (열린 상태→닫힘: enable, 닫힌 상태→열림: disable)
@@ -17142,6 +17146,7 @@ document.getElementById('dh-settings-btn').addEventListener('click',e=>{
   sw.classList.remove('open');
   ['tab-search','dh-search-btn'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('active');});
   sp.classList.toggle('open',!open);
+  if(!open){try{_renderLessList();}catch(e){}} // For You 덜 보기 목록(2026-11-11)
   if(!open)_bringToFront(sp); // 검색창과 같은 이유 — 데스크톱 헤더 버튼도 별개 리스너다
   ['tab-settings','dh-settings-btn'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('active',!open);});
   _updateFavHintCallout();
@@ -17476,6 +17481,49 @@ const FAV_HINT_DISMISSED_KEY='kpu_fav_hint_dismissed'; // 탐색 버튼을 눌�
 let favGroups=new Set(JSON.parse(localStorage.getItem(FAV_KEY_G)||'[]'));
 let favMembers=new Set(JSON.parse(localStorage.getItem(FAV_KEY_M)||'[]'));
 let favConnections=new Set(JSON.parse(localStorage.getItem(FAV_KEY_C)||'[]'));
+// ── For You 덜 보기(2026-11-11 사용자 "82메이저는 좋아하지만 조성일 단독 콘텐츠는 For You에 안 떴으면") ──────────────
+// 멤버 카드 ⋮ → 'For You에서 덜 보기'. For You에서만 그 멤버 **혼자** 나온 영상(단독 직캠·솔로 무대)과 그룹을 타고 들어온 생일을 뺀다.
+// 그룹 전체·다른 멤버와 함께 나온 영상, 카드·검색·차트·우주는 그대로. 키는 즐겨찾기와 같은 _mFavKey("그룹:이름").
+// 문구는 일부러 '숨기기/관심 없음'이 아닌 '덜 보기' — 그 멤버 팬이 봐도 거슬리지 않게. 설정 › '덜 보기한 멤버'에서 풀 수 있다.
+const LESS_KEY_M='kpu_less_members';
+let lessMembers=(()=>{try{return new Set(JSON.parse(localStorage.getItem(LESS_KEY_M)||'[]'));}catch(e){return new Set();}})();
+let _lessColumn=false; // user_data.less_members 컬럼이 있을 때만 서버에 올린다(sql/2026-11-11_user_less_members.sql)
+function _saveLess(){
+  try{localStorage.setItem(LESS_KEY_M,JSON.stringify([...lessMembers]));}catch(e){}
+  if(_lessColumn)_sbPushColumn('less_members',[...lessMembers]);
+  try{_feedRecBuiltAt=0;}catch(e){}
+  try{_renderLessList();}catch(e){}
+}
+// 영상 v가 '덜 보기 멤버만' 나온 것인가 — 멤버 태그가 있고 전원이 덜 보기, 다른 멤버·그룹 손님 없음
+function _lessOnly(v){
+  if(!lessMembers.size||!v)return false;
+  const gk=v.group_ko||v.groupKo,mem=v.members||v.memberKos||[];
+  if(!gk||!mem.length)return false;
+  if((v.with_members||[]).length||(v.with_groups||[]).length)return false;
+  return mem.every(m=>lessMembers.has(gk+':'+m));
+}
+function _toggleLess(gko,mko){
+  const k=gko+':'+mko,ko=currentLang==='ko';
+  if(lessMembers.has(k)){lessMembers.delete(k);_showToast(ko?`For You에 ${mko} 단독 영상이 다시 나와요`:`${mko} solo videos are back in For You`,1800);}
+  else{lessMembers.add(k);_showToast(ko?`For You에서 ${mko} 단독 영상을 덜 보여줄게요`:`Showing fewer ${mko} solo videos in For You`,2200);}
+  _saveLess();
+}
+// 설정 › 덜 보기한 멤버 목록(있을 때만 보인다). 알약을 누르면 풀린다.
+function _renderLessList(){
+  const sec=document.getElementById('sp-less-sec'),box=document.getElementById('sp-less-list');
+  if(!sec||!box)return;
+  box.innerHTML='';
+  if(!lessMembers.size){sec.style.display='none';return;}
+  sec.style.display='';
+  [...lessMembers].forEach(k=>{
+    const i=k.indexOf(':'),gko=k.slice(0,i),mko=k.slice(i+1);
+    const b=document.createElement('button');b.type='button';b.className='sp-less-chip';
+    b.textContent=mko+(GROUPS[gko]?' · '+(currentLang==='ko'?(_gLabelKo(gko)||gko):(GROUPS[gko].en||gko)):'')+'  ✕';
+    b.title=currentLang==='ko'?'눌러서 다시 보기':'Tap to show again';
+    b.addEventListener('click',()=>_toggleLess(gko,mko));
+    box.appendChild(b);
+  });
+}
 // 즐겨찾기 표시 순서(dk 배열 'g:..'/'m:..'/'c:..', 각 행 케밥 ⋮ 메뉴에서 조정). 다른 fav_* 컬럼과 동일하게
 // user_data.fav_order로 계정 동기화(⚠️ user_data에 fav_order jsonb 컬럼 필요 — fav_order_migration.sql).
 const FAV_ORDER_KEY='kpu_fav_order';
@@ -17860,6 +17908,9 @@ function _openCardMenu(btn,ctx){
   const item=(label,onClick)=>{const b=document.createElement('button');b.textContent=label;b.style.cssText='display:block;width:100%;text-align:left;background:none;border:none;color:#e6edff;font-family:inherit;font-size:13px;padding:10px 12px;border-radius:8px;cursor:var(--kpu-cursor-pointer,pointer);white-space:nowrap;';b.addEventListener('click',e=>{e.stopPropagation();pop.remove();onClick();});pop.appendChild(b);};
   item(currentLang==='ko'?'+ 사진 컬렉션 만들기':'+ New photo collection',()=>_createPhotoColFromCard(ctx));
   if(ctx&&ctx.memberKo&&ctx.groupKo)item('Chemistry',()=>_chemPickPartner(ctx.groupKo,ctx.memberKo)); // 이 멤버와 함께 나온 사람 → Chemistry
+  // For You 덜 보기(2026-11-11) — 그룹 멤버만(솔로 아티스트는 '혼자 나온 영상'이 곧 전부라 의미가 없다)
+  if(ctx&&ctx.memberKo&&ctx.groupKo&&GROUPS[ctx.groupKo]){const on=lessMembers.has(ctx.groupKo+':'+ctx.memberKo);
+    item(currentLang==='ko'?(on?'For You에서 다시 보기':'For You에서 덜 보기'):(on?'Show again in For You':'Show less in For You'),()=>_toggleLess(ctx.groupKo,ctx.memberKo));}
   // 제보하기(2026-11-02) — 이 카드의 그룹/멤버를 대상으로 붙여 연다
   if(ctx&&ctx.groupKo)item(T[currentLang].fbReport,()=>openFeedback(ctx.memberKo
     ?{type:'member',id:ctx.groupKo+':'+ctx.memberKo,label:ctx.memberKo+(GROUPS[ctx.groupKo]?' ('+(_gLabelKo(ctx.groupKo)||ctx.groupKo)+')':'')}
@@ -21165,6 +21216,11 @@ async function _pullServerToLocal(userId){
   // v2 Surf 학습 기록 — 서버 컬럼이 있을 때만 동기화(없는 컬럼에 push하면 매번 에러). 기기 기록과 합친다(큰 값 우선).
   if('surf_prefs' in data){_surfPrefsColumn=true;const sp=data.surf_prefs||{};for(const k in sp)_surfPrefs[k]=Math.max(+_surfPrefs[k]||0,+sp[k]||0);try{localStorage.setItem(_SURF_PREF_KEY,JSON.stringify(_surfPrefs));}catch(e){}}
   concertLog=data.concert_log||[];
+  // For You 덜 보기(2026-11-11) — 컬럼이 있을 때만. 서버가 비었고 이 기기에 있으면 올린다(첫 동기화)
+  if('less_members' in data){_lessColumn=true;const sv=data.less_members||[];
+    if(sv.length||!lessMembers.size){lessMembers=new Set(sv);try{localStorage.setItem(LESS_KEY_M,JSON.stringify(sv));}catch(e){}}
+    else _sbPushColumn('less_members',[...lessMembers]);
+    try{_renderLessList();}catch(e){}}
   localStorage.setItem(FAV_KEY_G,JSON.stringify([...favGroups]));
   localStorage.setItem(FAV_KEY_M,JSON.stringify([...favMembers]));
   localStorage.setItem(FAV_KEY_C,JSON.stringify([...favConnections]));
@@ -23150,7 +23206,7 @@ function _buildFeedForYouAnniv(){
   (ARTISTS||[]).forEach(a=>{
     if(!a.bday)return;
     const direct=favMembers.has(_mFavKey(a));
-    const viaGroup=!direct&&_artistGroups(a).some(g=>g&&favGroups.has(g.ko)&&!_isFormerOf(a,g.ko));
+    const viaGroup=!direct&&_artistGroups(a).some(g=>g&&favGroups.has(g.ko)&&!_isFormerOf(a,g.ko)&&!lessMembers.has(g.ko+':'+a.name.ko)); // 덜 보기 멤버는 그룹을 타고 오는 생일에서 뺀다(2026-11-11)
     if(!direct&&!viaGroup)return;
     const d=_daysUntilBday(a.bday);
     if(d==null||d<0||d>WITHIN)return;
@@ -26569,6 +26625,7 @@ async function _buildFeedFavCharts(){
   const {passAll,memberFilter,queryGkos}=_feedFavTargets();
   if(!queryGkos.size)return;
   const isFav=v=>{
+    if(_lessOnly(v))return false; // 덜 보기 멤버 단독 무대(2026-11-11)
     if(passAll.has(v.group_ko))return true;
     const mf=memberFilter.get(v.group_ko);if(!mf)return false;
     const mem=v.members||[];return mem.some(m=>mf.has(m)); // 멤버 즐겨찾기는 그 멤버가 나온 무대만(그룹 전체 무대는 제외)
@@ -26678,7 +26735,7 @@ async function _buildFeedFavNew(opts){
     // 최신순 유지(셔플 안 함), 쇼츠 포함(그리드라 9:16 그대로 렌더), 멤버필터 적용, 그룹당 캡 없음(즐겨찾기라 "싹 다").
     // ⚠️ published_at은 날짜만이라 같은 날 안에서 시간순 정렬이 안 됐다 — 어제 저녁(20시간 전)이 어제 오전
     //    영상 아래로 밀리는 역전이 생김(2026-09-13 제보). 정확한 시각(published_ts)으로 다시 내림차순 정렬한다.
-    const vids=_filterBannedVideos(data).filter(v=>_guestIds.has(v.id)||_favMatch(v))
+    const vids=_filterBannedVideos(data).filter(v=>(_guestIds.has(v.id)||_favMatch(v))&&!_lessOnly(v)) // 덜 보기 멤버 단독 영상 제외(2026-11-11)
       .sort((a,b)=>String(b.published_ts||b.published_at||'').localeCompare(String(a.published_ts||a.published_at||'')))
       .slice(0,_FEED_FAVNEW_MAX);
     if(!vids.length)return;
