@@ -3076,9 +3076,7 @@ function _buildSongIndex(){
   out.forEach(s=>{const m=s.ownerType==='group'&&_SONG_ALIASES[s.owner];const al=m&&m[s.title];if(al){s.alt=al;s.altL=al.map(x=>x.toLowerCase());}});
   return out;
 }
-const _SONG_ALIASES={
-  '투어스':{'첫 만남은 계획대로 되지 않아':['plot twist'],'마음 따라 뛰는 건 멋지지 않아?':['Countdown!'],'내가 S면 넌 나의 N이 되어줘':["If I'm S, Can You Be My N?"]},
-};
+// _SONG_ALIASES(곡 영문 제목 별칭)는 shared.js — 정적 페이지 곡 표기와 같은 표
 // ── 최근 검색 (검색창 열고 아직 안 쳤을 때 위에 뜨는 목록) ──────
 const RECENT_SEARCH_KEY='kpu_recent_searches';
 const RECENT_SEARCH_MAX=8;

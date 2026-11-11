@@ -233,7 +233,7 @@ let _SL = null;
 function songLib(ROOT) {
   if (_SL) return _SL;
   const ctx = {}; vm.createContext(ctx);
-  vm.runInContext(fs.readFileSync(path.join(ROOT, 'shared.js'), 'utf8') + ';this.f=_songLinkBases;this.L=_songListFromDisco;this.B=_songBase;this.N=_songNorm;this.D=_groupJoinOrDebut;', ctx);
+  vm.runInContext(fs.readFileSync(path.join(ROOT, 'shared.js'), 'utf8') + ';this.f=_songLinkBases;this.L=_songListFromDisco;this.B=_songBase;this.N=_songNorm;this.D=_groupJoinOrDebut;this.A=_SONG_ALIASES;', ctx);
   return (_SL = ctx);
 }
 // 그룹별 영상 전부(가로 영상, 노출 가능한 것만) — id 순 페이지 넘김(정렬 없는 페이지 나눔은 중복·누락 — 메모리)
@@ -284,6 +284,8 @@ function buildSongs({ ROOT, groups, artists, EX, vids, minVids = 4 }) {
       // 표시 이름은 가장 먼저 나온 원곡 제목(띄어 쓴 첫 괄호 앞 — 붙은 괄호는 이름의 일부: FRI(END)S) — 곡 목록 순서대로 쓰면 'LOVE DIVE -Japanese version-'이 이름이 됐다
       const m = meta[b] || (meta[b] = { name: String(tr.title).replace(/\s*-[^-]*\bver(?:sion)?\b\.?[^-]*-\s*$/i, '').split(/\s+[\(\[]/)[0].trim(), album: al.title, date: al.releaseDate || '', isTitle: false, cr: null, melonId: null, cover: al.cover || null });
       if(!m.bilingualTitle)m.bilingualTitle=bilingualSongTitle(tr.title,null);
+      // 공식 영문 제목이 따로 있는 곡은 '한글 제목 English Title'(괄호 없이 — 원래 제목에 괄호 영문이 붙은 곡과 구분, docs/NAMING.md)
+      if(!m.bilingualTitle){const al=S.A&&S.A[g]&&(S.A[g][m.name]||S.A[g][tr.title]);if(al&&al[0])m.bilingualTitle=m.name+' '+al[0];}
       if (tr.isTitle) m.isTitle = true;
       if (!m.cr && tr.cr) m.cr = tr.cr;
       if (!m.melonId && tr.songId) m.melonId = tr.songId;

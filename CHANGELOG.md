@@ -2,6 +2,12 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-11 (Claude Code — 이름 표기 규칙 docs/NAMING.md)
+- 사용자 확정: 사람·그룹 `영재(Youngjae)`(영어 페이지 `Youngjae(영재)`), 곡 `한글 제목 English Title`(괄호 없이 — 원제에 괄호 영문이 붙은 SM식 제목과 구분, 원제 괄호는 그대로), 사람+곡 `이름 - 곡`. 규칙 전문 **docs/NAMING.md**.
+- **[build_group_pages.js]** bilingualLabel `a / b` → `a(b)`, 멤버×곡 제목 `{이름} - {곡} 직캠 모음 - {그룹}`. **[shared.js]** 곡 영문 제목 별칭 `_SONG_ALIASES`를 app.js에서 옮김(앱 검색 + 정적 페이지 공용), 투어스 `너의 모든 가능성이 되어 줄게`→All the Possibilities 추가. **[tools/seo_extra.js]** 별칭 있는 곡은 bilingualTitle `첫 만남은 계획대로 되지 않아 Plot Twist`.
+- 확인: buildSongs 출력 `첫 만남은 계획대로 되지 않아 Plot Twist`, 헤드리스 검색 "all the possibilities" → 투어스 곡 맨 위. song-share-preview·song-page-design(기대값 갱신)·smoke·syntax 통과. 정적 페이지 반영은 CI 재빌드.
+- ⏳ 앱 화면(카드·검색 줄) 표기는 아직 기존대로 — 바꿀 땐 NAMING.md. 별칭 표는 계속 채울 것(음방 1위 영문 제목 불일치 약 215행이 후보).
+
 ## 2026-11-11 (Claude Code — 멤버 직캠 전체 페이지 · 공유 썸네일 16:9 · 카드 선반 · 팬 영상 분류 잔여)
 - 사용자(네이버 "송승호 직캠" 캡처): 우리 썸네일만 정사각형 안에 4:3 검은 띠째 갇힘 + "{멤버} 직캠"이면 그 멤버 전체 직캠 페이지가, "{멤버} {곡}"이면 곡 페이지가 먼저 — 둘을 오가게.
 - **[build_group_pages.js] 멤버 직캠 전체 페이지** `g/{그룹}/{멤버}/fancams/`(+en): 개인 직캠 10개(FANCAM_HUB_MIN) 이상 멤버 982명. 맨 위 대표 영상 + 곡 칩(같은 페이지 곡 묶음으로 이동) + 조회수 상위 12 + 곡별 묶음 전부(제목 → 멤버×곡 페이지, 그 페이지가 있으면 12개 + 전체 보기) + 그 밖의 직캠 + 같은 그룹 다른 멤버 직캠 페이지. VideoObject 구조화 데이터 상위 10개(구글 동영상 결과 시도 — 채택 장담 못 함). 사이트맵 sitemaps/fancams.xml, seo_play.js 페이지 유형 'fancams'.

@@ -90,7 +90,8 @@ function escHtml(s) {
 }
 function bilingualLabel(primary, alternate) {
   const a=String(primary||'').trim(),b=String(alternate||'').trim();
-  return a && b && a.toLocaleLowerCase()!==b.toLocaleLowerCase() ? `${a} / ${b}` : (a||b);
+  // 이름 표기(2026-11-11 사용자 확정): 한글(영문) — '영재(Youngjae)', 영문 페이지는 'Youngjae(영재)'. 규칙 전체는 docs/NAMING.md
+  return a && b && a.toLocaleLowerCase()!==b.toLocaleLowerCase() ? `${a}(${b})` : (a||b);
 }
 // 앱의 _hashEsc와 동일 규칙(index.html 참고) — 해시 구분자로 실제 쓰이는 문자만 최소 이스케이프,
 // 한글은 그대로 둬서 딥링크가 지저분해지지 않게 함.
@@ -1659,7 +1660,7 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
   let title, desc, h1, sub;
   if (ms) {
     // 멤버 이름은 영·한 같이 맨 앞에(2026-11-11 — 네이버 결과에서 영문 페이지 제목이 'Youngjae …'만 보이고 한글 이름은 끝에서 잘렸다)
-    title = isEn ? `${mFull} "${songLabel}" Fancams - ${gFull} | K-POP UNIVERSE` : `${mFull} ${songLabel} 직캠 모음 - ${gFull} | K-POP UNIVERSE`;
+    title = isEn ? `${mFull} - ${songLabel} Fancams - ${gFull} | K-POP UNIVERSE` : `${mFull} - ${songLabel} 직캠 모음 - ${gFull} | K-POP UNIVERSE`;
     desc = isEn ? `${gFull} ${mFull} "${songLabel}" fancams and face cams — ${vids.length} videos, most viewed first. ${facts.join(', ')}.`
                 : `${gko} ${mName} '${songLabel}' 직캠·페이스캠 ${vids.length}개를 조회수 순으로 모았어요. ${facts.join(', ')}.`;
     h1 = isEn ? `${mFull} "${songLabel}" Fancams` : `${mFull} '${songLabel}' 직캠`;

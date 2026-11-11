@@ -793,3 +793,17 @@ function _msGroupEpisodes(vids, minVids) {
   }
   return Object.keys(eps).map(k => eps[k]).filter(e => e.list.length >= (minVids || 1)).sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
 }
+
+// ── 곡 영문 제목 별칭(2026-11-11) ─────────────────────────────────────────────────────────
+// 디스코 정본은 멜론 한글 제목이라 해외 팬·음방 기록(위키 영문)이 쓰는 공식 영문 제목으로는 곡을 못 찾았다("plot twist").
+// 그룹 → 디스코 곡 제목(표기 그대로) → 공식 영문 제목들(첫 번째가 대표). 쓰는 곳: 앱 검색(app.js _buildSongIndex) ·
+// 정적 페이지 곡 표기(tools/seo_extra.js — '첫 만남은 계획대로 되지 않아 Plot Twist', 표기 규칙은 docs/NAMING.md).
+// 제목에 이미 괄호 영문이 있는 곡('널 따라가 (You, You)')은 넣지 않아도 된다.
+const _SONG_ALIASES={
+  '투어스':{
+    '첫 만남은 계획대로 되지 않아':['Plot Twist'],
+    '마음 따라 뛰는 건 멋지지 않아?':['Countdown!'],
+    '내가 S면 넌 나의 N이 되어줘':["If I'm S, Can You Be My N?"],
+    '너의 모든 가능성이 되어 줄게':['All the Possibilities'],
+  },
+};
