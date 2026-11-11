@@ -78,7 +78,7 @@ const fmtViews = (n, en) => {
 const fmtPeople = (n, en) => !n ? '' : en ? (n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : Math.round(n / 1e3) + 'K') : (n >= 1e4 ? (n >= 1e5 ? Math.round(n / 1e4) : (n / 1e4).toFixed(1).replace(/\.0$/, '')) + '만 명' : n.toLocaleString() + '명');
 const fmtUsd = n => !n ? '' : n >= 1e9 ? '$' + (n / 1e9).toFixed(1) + 'B' : n >= 1e6 ? '$' + (n / 1e6).toFixed(n >= 1e8 ? 0 : 1) + 'M' : '$' + Math.round(n / 1e3) + 'K';
 const ytUrl = id => `https://www.youtube.com/watch?v=${id}`;
-const showEn = { '쇼챔피언': 'Show Champion', '엠카운트다운': 'M Countdown', '뮤직뱅크': 'Music Bank', '인기가요': 'Inkigayo', '쇼음악중심': 'Show! Music Core', '더쇼': 'The Show' };
+const showEn = { '쇼챔피언': 'Show Champion', '엠카운트다운': 'M Countdown', '뮤직뱅크': 'Music Bank', '인기가요': 'Inkigayo', '쇼음악중심': 'Show! Music Core', '더쇼': 'The Show', '쇼케이팝': 'SHOW K-POP' };
 
 // 1위 기록 요약 — 곡별 횟수(내림차순)·첫 1위·총합
 function winSummary(list) {

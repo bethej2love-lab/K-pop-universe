@@ -751,6 +751,9 @@ const _MS_SHOWS = [
   { key: '인기가요', en: 'Inkigayo', short: '인가', slug: 'inkigayo', dow: 0, h: ['SBSKPOP', 'SBSKPOP_ZOOM'], re: /inkigayo|인기가요|SBS\s*\d{6}\s*방송/i, no: /매점|live\s+in|in\s+tokyo|in\s+japan/i },
   { key: '쇼챔피언', en: 'Show Champion', short: '쇼챔', slug: 'show-champion', dow: 3, h: ['ALLTHEKPOP'], re: /show\s*champion|쇼챔/i },
   { key: '더쇼', en: 'THE SHOW', short: '더쇼', slug: 'the-show', dow: 2, h: ['thekpop'], re: /the\s*show|더쇼/i },
+  // 쇼케이팝(2026-11-11 추가) — 2026-10-19 첫 방송, 월요일 18:00 생방송(아리랑TV·뮤빗·써클차트 글로벌 차트쇼, 1위 있음). 공식 채널 @showkpop.official.
+  // ⚠️ 채널을 넣으면 부분 인덱스 idx_ytv_music_show_ch의 WHERE에도 넣어야 한다(sql/2026-11-11_music_show_index_showkpop.sql)
+  { key: '쇼케이팝', en: 'SHOW K-POP', short: '쇼케', slug: 'show-kpop', dow: 1, h: ['showkpop.official'], re: /show\s*k-?pop|쇼\s*케이팝/i },
 ];
 const _MS_KIND_LABEL = { stage: ['무대', 'Stage'], encore: ['앵콜', 'Encore'], fullcam: ['풀캠', 'Full cam'], fancam: ['직캠', 'Fancam'], facecam: ['페이스캠', 'Face cam'] };
 const _MS_KIND_ORDER = ['stage', 'encore', 'fullcam', 'fancam', 'facecam'];

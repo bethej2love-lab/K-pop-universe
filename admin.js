@@ -2515,7 +2515,7 @@ async function _ytSweepCoverCleanup(){
 const _MSW_TABLE='music_show_wins';
 const _MSW_LS_LAST='kpu_adm_mswin_last';
 // 방송 고정 요일(0=일 … 6=토). music_show_wins.show 값과 철자가 정확히 같아야 한다(기존 2,626행 기준).
-const _MSW_SHOW_DOW={'뮤직뱅크':5,'쇼음악중심':6,'인기가요':0,'엠카운트다운':4,'쇼챔피언':3,'더쇼':2};
+const _MSW_SHOW_DOW={'뮤직뱅크':5,'쇼음악중심':6,'인기가요':0,'엠카운트다운':4,'쇼챔피언':3,'더쇼':2,'쇼케이팝':1}; // 쇼케이팝(2026-11-11) — 월요일. ⏳ 1위 앵콜 제목 규칙(_MSW_RULES)은 영상이 들어온 뒤 제목을 보고 추가
 
 function _mswNorm(s){
   return String(s||'').toLowerCase().normalize('NFKC').replace(/&amp;/g,'&').replace(/[\s'’`´.\-_!:()·,~]/g,'');

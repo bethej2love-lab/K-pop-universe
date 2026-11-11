@@ -23773,7 +23773,7 @@ function _collectWeekNews(){
             .limit(400).then(r=>r,()=>({data:[]}))
     ]);
     // 음방 이름 → 영상 제목 검색 키워드 (wiki_music_wins.mjs의 db 값 그대로 사용)
-    const _WIN_SHOW_KW={'쇼챔피언':['쇼챔','챔피언송','showchampion'],'엠카운트다운':['엠카','mcountdown'],'뮤직뱅크':['뮤직뱅크','musicbank'],'인기가요':['인기가요','inkigayo'],'쇼음악중심':['음악중심','musiccore'],'더쇼':['더쇼','theshow']};
+    const _WIN_SHOW_KW={'쇼챔피언':['쇼챔','챔피언송','showchampion'],'엠카운트다운':['엠카','mcountdown'],'뮤직뱅크':['뮤직뱅크','musicbank'],'인기가요':['인기가요','inkigayo'],'쇼음악중심':['음악중심','musiccore'],'더쇼':['더쇼','theshow'],'쇼케이팝':['쇼케이팝','showkpop']};
     const _n=s=>String(s||'').toLowerCase().replace(/[^a-z0-9가-힣]/g,'');
     const _WIN_KW=['앵콜','encore','1위','챔피언송','no1'].map(_n);
     // 한 1위 기록(w)에 딱 맞는 영상: ①제목에 **곡명 필수** ②1위류 단어 필수 ③1위 전날~4일 뒤에 올라온 것.

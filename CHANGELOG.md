@@ -2,6 +2,13 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-11 (Claude Code — 새 음방 쇼케이팝 SHOW K-POP 등록)
+- 사용자: "쇼케이팝 음방이 10월에 새로 시작 — 어드민으로 유튜브 채널 추가했다". 공식 사이트 확인: 2026-10-19 첫 방송, **매주 월요일 18:00 생방송**(아리랑TV·TikTok LIVE 파트너, 뮤빗 투표·써클차트 데이터), 1위 있음(1위 후보 2팀 + 생방송 투표 15%, 통산 3주 1위면 명예의 전당), 회차 표기 '2026.11.09 (4회)'. 채널 ext_channels에 `showkpop.official`(tier music, 기본 live)로 11-11 11:16 등록 확인 — 영상은 아직 0개(다음 동기화 대기).
+- **[shared.js] `_MS_SHOWS`에 쇼케이팝**(dow 1, h ['showkpop.official'], 제목 re show k-pop/쇼케이팝, slug show-kpop) → 음방 회차 화면·show/ 정적 페이지가 자동으로 포함. **[app.js]** 1위 영상 찾기 키워드 `_WIN_SHOW_KW`, **[tools/seo_extra.js]** 영문 이름 `showEn`, **[admin.js]** 1위 수집 요일표 `_MSW_SHOW_DOW`(월).
+- **[SQL 실행] sql/2026-11-11_music_show_index_showkpop.sql**: 부분 인덱스 idx_ytv_music_show_ch WHERE에 showkpop.official 추가(새로 만들고→옛것 삭제→이름 변경, concurrently라 한 문장씩).
+- ⏳ 영상이 들어오면: ① 제목 형식 확인 → 회차 날짜 판정(제목 날짜/회차)·`_MS_SHOWS.re`가 맞는지 ② 1위 앵콜 제목 규칙 `_MSW_RULES` 추가(지금은 요일만 등록) ③ 지난 1~4회 1위 기록 수동 입력 여부 ④ tools/music_show_breaks.mjs(위키 기반 결방)는 위키 문서가 없어 미포함. 채널 핸들에 점(.)이 있어 동기화가 정상인지도 첫 수집 때 확인.
+- show-episode-kind 18·mswin-parse·smoke·syntax 통과.
+
 ## 2026-11-11 (Claude Code — 탐험 New Videos·카드 영상 로딩 속도)
 - 사용자: "For You New Videos·카드 대표 영상/아래 영상 로딩이 살짝 느리다". 헤드리스(모바일, 즐겨찾기 4그룹)로 함수 시각·요청 시간표·CPU 프로파일 측정.
 - **[app.js] 프레임마다 화면 배치를 강제로 다시 계산하던 3곳**: `isMob()` 결과 기억(resize·회전·포인터 조건 바뀔 때만 다시, ⚠️ `var _isMobC` — 앞쪽에서도 불려 let이면 TDZ로 앱이 안 뜸), `_syncZoomSlider` 높이 기억+값 바뀔 때만 쓰기(숨김이면 1초에 한 번만 재기), `_lbFitSync`는 웹에서 나침반이 열렸을 때만 폭 측정. 프로파일상 각각 377·479·430ms였음.
