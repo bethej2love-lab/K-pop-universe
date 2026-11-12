@@ -20,9 +20,11 @@
   var DID=(function(){try{var d=localStorage.getItem('kpu_seo_did');if(!d){d=Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem('kpu_seo_did',d);}return d;}catch(e){return '';}})();
   var SRC=(function(){try{var u=new URLSearchParams(location.search).get('utm_source');if(u)return u;var h=document.referrer?new URL(document.referrer).hostname.replace(/^www\./,''):'';return h&&!/kpop-universe\.kr$/.test(h)?h:'';}catch(e){return '';}})();
   var PTYPE=(function(){var p=location.pathname.split('/').filter(Boolean);if(p[0]==='en')p.shift();if(p[0]!=='g')return p[0]?'other':'group_list';if(p.indexOf('fancams')>0)return 'fancams';if(p.indexOf('s')>0)return 'song';if(p.indexOf('a')>0)return 'album';if(p.indexOf('credits')>0)return 'credits';return p.length>=3?'member':'group';})();
+  // 이 페이지의 그룹(앱 버튼 #g=) — 그룹별 '이번 주 n명'을 세려고 기록에 같이 남긴다(2026-11-12)
+  var GRP=(function(){try{var a=document.querySelector('a.cta[href*="#g="]');return a?(new URLSearchParams(new URL(a.href).hash.slice(1)).get('g')||''):'';}catch(e){return '';}})();
   function log(ev,vid){if(BOT)return;try{fetch('https://dukgguehegnembimqvkm.supabase.co/rest/v1/rpc/log_seo_event',{method:'POST',keepalive:true,
     headers:{'Content-Type':'application/json',apikey:'sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0',Authorization:'Bearer sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0'},
-    body:JSON.stringify({p_ev:ev,p_type:PTYPE,p_path:decodeURIComponent(location.pathname).slice(0,200),p_src:SRC,p_did:DID,p_ua:ev==='land'?String(navigator.userAgent||'').slice(0,160):null,p_vid:vid||null})}).catch(function(){});}catch(e){}}
+    body:JSON.stringify({p_ev:ev,p_type:PTYPE,p_path:decodeURIComponent(location.pathname).slice(0,200),p_src:SRC,p_did:DID,p_ua:ev==='land'?String(navigator.userAgent||'').slice(0,160):null,p_vid:vid||null,p_grp:GRP||null})}).catch(function(){});}catch(e){}}
   log('land');
   // 사람 신호(2026-11-12): 봇 표시 없이 JS를 돌리는 크롤러가 land만 잔뜩 남겨서(하루 ~950기기) — 첫 스크롤·터치·키 입력 때 한 번 'eng'.
   // 집계(seo_human_land)는 출처가 있거나 이런 행동이 있는 기기만 센다.
@@ -222,6 +224,34 @@
       .then(function(r){return r.ok?r.json():null;}).then(function(d){if(!d)return;try{sessionStorage.setItem(KEY,JSON.stringify({t:Date.now(),d:d}));}catch(e){}draw(d);}).catch(function(){});}catch(e){}
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',hot);else hot();
+  // ── 이번 주 n명(2026-11-12) — 서버 get_week_viewers(1시간 캐시): 그룹별 7일 본 사람(정적 페이지 사람 + 앱 카드 연 계정), 30명 이상만.
+  // 숫자가 작으면 아예 안 보인다(빈 식당처럼 보이지 않게). 그룹·멤버·직캠 모음·곡 페이지의 제목 아래 한 줄.
+  function viewers(){
+    if(!/^(group|member|fancams|song)$/.test(PTYPE))return;
+    var g=GRP;if(!g||document.querySelector('.kpu-vw'))return;
+    var KEY='kpu_vw_v1',data=null;
+    try{var c=JSON.parse(sessionStorage.getItem(KEY)||'null');if(c&&Date.now()-c.t<30*60e3)data=c.d;}catch(e){}
+    function draw(d){
+      var n=d&&d.g&&d.g[g];if(!n||n<30)return;
+      var h1=document.querySelector('h1');if(!h1)return;
+      var st=document.createElement('style');st.textContent='.kpu-vw{display:flex;align-items:center;gap:7px;margin:6px 0 10px;font-size:12.5px;color:rgba(200,212,245,.72)}'
+        +'.kpu-vw i{width:7px;height:7px;border-radius:50%;background:#5be0a0;box-shadow:0 0 0 0 rgba(91,224,160,.5);animation:kpu-vw 2.4s infinite}'
+        +'@keyframes kpu-vw{0%{box-shadow:0 0 0 0 rgba(91,224,160,.45)}70%{box-shadow:0 0 0 7px rgba(91,224,160,0)}100%{box-shadow:0 0 0 0 rgba(91,224,160,0)}}';
+      document.head.appendChild(st);
+      var p=document.createElement('p');p.className='kpu-vw';var dot=document.createElement('i');p.appendChild(dot);
+      var gn=EN?(PTYPE==='group'?((h1.textContent||'').replace(/\s*\(.*$/,'').trim()):''):g;
+      p.appendChild(document.createTextNode(EN?(n.toLocaleString()+' '+(gn?gn+' ':'')+'fans visited this week'):('이번 주 '+gn+' 팬 '+n.toLocaleString()+'명이 다녀갔어요')));
+      var top=document.querySelector('.kpu-top');
+      if(top&&top.contains(h1)){var side=document.querySelector('.kpu-side-h');(side||h1).insertAdjacentElement('afterend',p);}
+      else h1.insertAdjacentElement('afterend',p);
+    }
+    if(data){draw(data);return;}
+    try{fetch('https://dukgguehegnembimqvkm.supabase.co/rest/v1/rpc/get_week_viewers',{method:'POST',
+      headers:{'Content-Type':'application/json',apikey:'sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0',Authorization:'Bearer sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0'},body:'{}'})
+      .then(function(r){return r.ok?r.json():null;}).then(function(d){if(!d)return;try{sessionStorage.setItem(KEY,JSON.stringify({t:Date.now(),d:d}));}catch(e){}draw(d);}).catch(function(){});}catch(e){}
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',viewers);else viewers();
+
 
 
   var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
