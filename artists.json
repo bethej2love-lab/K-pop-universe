@@ -103511,6 +103511,29 @@
     ],
     "discography": [
       {
+        "title": "뜨거운 안녕 OST Part 1",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/51/191/15151191_20261111143648_500.jpg",
+        "releaseDate": "2026.11.12",
+        "trackCount": 2,
+        "titleTrack": "지금",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "지금",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "지금 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15151191"
+      },
+      {
         "title": "So Good (English ver.)",
         "type": "싱글",
         "releaseDate": "2026.07.24",
@@ -217188,6 +217211,24 @@
       }
     ],
     "discography": [
+      {
+        "title": "나의 20대에게 (Harmonica. 하림)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/51/818/15151818_20261111170329_500.jpg",
+        "releaseDate": "2026.11.12",
+        "trackCount": 1,
+        "titleTrack": "나의 20대에게 (Harmonica. 하림)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "나의 20대에게 (Harmonica. 하림)",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15151818"
+      },
       {
         "title": "總有一顆屬於你的星球 (Your Own Star)",
         "type": "싱글",
