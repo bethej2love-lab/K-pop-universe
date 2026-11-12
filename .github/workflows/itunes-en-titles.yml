@@ -1,0 +1,77 @@
+name: 곡 한·영 제목 짝 맞추기 (주 1회)
+
+# 곡 제목을 한국어 화면엔 정본(한국 활동 곡명), 영어 화면엔 공식 영문 제목으로(2026-11-12 사용자 "주 1회 ㅇㅇ").
+# 지난 앨범은 2026-11-12에 전량 처리했다(한글 정본 663곡·영문 제목 5,089곡). 여기선 발매 90일 안의 새 앨범만:
+#  ① tools/melon_bilingual_titles.mjs --recent 90 — 스포티파이·애플 경로로 영어로만 들어온 곡 → 멜론 곡 번호로 한글 정본, 영어는 곡 en·별칭
+#  ② tools/itunes_en_titles.mjs --recent 90 — 한글 곡의 공식 영문 제목(아이튠즈 미국 스토어, 발매일·곡 수·영어 곡 일치로 짝 검증)
+# 둘 다 이미 en·별칭이 있으면 안 건드리고, 결과는 groups.json·artists.json(곡 en)과 shared.js _SONG_ALIASES.
+# ⚠️ 러너(해외 IP)에서 멜론이 막히면 ①은 0건으로 끝난다(차단은 HTTP 200 + 3.5KB로 판정, 틀린 데이터는 안 들어감) — 다음 주에 다시.
+# ⚠️ 커밋 전 출처 불변식·곡 연결·문법 테스트를 통과해야 커밋. 파생물(slim·disco/)은 같은 잡에서 만든다(GITHUB_TOKEN push는 다른 워크플로를 안 깨움).
+# 정본 제목이 바뀐 곡의 기존 영상 곡 키는 관리자 루틴 증분에 안 걸린다 — 요약에 '한글 제목으로 N곡'이 1 이상이면 로컬에서
+# node tools/song_keys_retitle_fix.mjs --apply (입력: 이 잡이 남기는 요약의 별칭 목록과 같은 bilingual_aliases.json).
+
+on:
+  schedule:
+    - cron: '17 20 * * 6'   # 매주 일요일 KST 05:17 — 다른 수집과 겹치지 않는 시간
+  workflow_dispatch:
+    inputs:
+      recent:
+        description: "발매 며칠 안의 앨범만 (기본 90)"
+        required: false
+        default: '90'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: itunes-en-titles
+  cancel-in-progress: false
+
+jobs:
+  titles:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: ① 영어로만 들어온 곡 → 멜론 한글 정본
+        continue-on-error: true
+        timeout-minutes: 20
+        run: |
+          D="${{ github.event.inputs.recent }}"; [ -z "$D" ] && D=90
+          node tools/melon_bilingual_titles.mjs --fetch --recent "$D" --apply | tail -40 | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: ② 한글 곡 공식 영문 제목(아이튠즈)
+        continue-on-error: true
+        timeout-minutes: 30
+        run: |
+          D="${{ github.event.inputs.recent }}"; [ -z "$D" ] && D=90
+          node tools/itunes_en_titles.mjs --fetch --recent "$D" --apply | tail -60 | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: 검사(실패 시 커밋 안 함)
+        run: |
+          node tests/syntax.test.js
+          node tests/song-link.test.js
+          node tests/disco-provenance.test.js
+
+      - name: 파생물 재생성 + 커밋
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          node tools/build_slim_data.mjs
+          git add groups.json artists.json shared.js
+          git add groups.slim.json artists.slim.json tracks_index.json albums_recent.json disco/
+          if git diff --cached --quiet; then
+            echo "바뀐 제목 없음 — 커밋할 것이 없습니다"
+            exit 0
+          fi
+          git commit -m "data(disco): 곡 한·영 제목 짝 맞추기 (auto)"
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push && exit 0
+            echo "push 경합 — 재시도 ($i/3)"; sleep $((i * 5))
+          done
+          exit 1

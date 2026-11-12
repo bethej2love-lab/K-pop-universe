@@ -20,6 +20,10 @@ const P = f => path.join(ROOT, f);
 const CACHE_DIR = path.join(os.homedir(), 'Downloads', 'melon_disco_audit', 'cache');
 fs.mkdirSync(CACHE_DIR, { recursive: true });
 const APPLY = process.argv.includes('--apply');
+// --recent N: 발매 N일 안의 앨범만(주간 워크플로 itunes-en-titles.yml — 지난 앨범은 2026-11-12 전량 처리)
+const RECENT = (() => { const i = process.argv.indexOf('--recent'); return i >= 0 ? Number(process.argv[i + 1]) : 0; })();
+const isRecent = al => { if (!RECENT) return true; const m = String(al.releaseDate || '').match(/(\d{4})\D?(\d{1,2})\D?(\d{1,2})/); return !!m && (Date.now() - Date.UTC(+m[1], +m[2] - 1, +m[3])) / 864e5 <= RECENT; };
+
 const FETCH = process.argv.includes('--fetch');
 const SLEEP = Number(process.env.MELON_SLEEP || 1200);
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
@@ -61,7 +65,7 @@ const artists = JSON.parse(fs.readFileSync(P('artists.json'), 'utf8'));
 const st = { albums: 0, checked: 0, noCache: 0, retitled: 0, titleFix: 0 };
 const log = [], aliases = {}; // owner → { 한글 제목: [영어 제목] }
 async function fix(al, owner, who) {
-  if (!al || typeof al !== 'object' || !al.melonAlbumId || !Array.isArray(al.tracks) || !al.tracks.length) return;
+  if (!al || typeof al !== 'object' || !al.melonAlbumId || !Array.isArray(al.tracks) || !al.tracks.length || !isRecent(al)) return;
   st.albums++;
   const melonCover = /cdnimg\.melon\.co\.kr/.test(al.cover || '');
   const tr = al.tracks.filter(t => t && typeof t === 'object');

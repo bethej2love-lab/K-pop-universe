@@ -2,6 +2,9 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-12 (Claude Code — 곡 한·영 제목 주 1회 자동: .github/workflows/itunes-en-titles.yml)
+- 사용자 "주 1회 ㅇㅇ". 매주 일요일 KST 05:17, 발매 90일 안의 앨범만(`--recent 90` — 두 도구에 추가, 지난 앨범은 오늘 전량 처리): ① melon_bilingual_titles(영어로만 들어온 곡 → 멜론 한글 정본) ② itunes_en_titles(한글 곡 공식 영문 제목). 실측 규모 아이튠즈 40팀·멜론 180장 이하. syntax·song-link·disco-provenance 통과해야 커밋, 파생물 같은 잡에서. 멜론이 러너 IP를 막으면 ①은 0건(틀린 데이터 없음).
+
 ## 2026-11-12 (Claude Code — 한글 곡 공식 영문 제목 5,089곡: 아이튠즈 미국 스토어)
 - 사용자: "영어권엔 영문 제목('오늘만 I LOVE YOU' → 'IF I SAY, I LOVE YOU')". 멜론 디스코엔 한글 정본만 있고 스포티파이는 호출 제한(100회/24시간 잠김)이라 **tools/itunes_en_titles.mjs** 신설: 주인 영문명으로 아이튠즈 앨범 검색(아티스트명 정확히 일치) → 우리 앨범과 발매일 ±3일·곡 수 같음·후보 하나 → 양쪽 다 영어인 곡 제목 일치율 ≥0.6(짝 검증) → 트랙 번호로 곡 en. 본 제목에 한글 있고 아이튠즈 이름에 한글 없을 때만, 이미 en·별칭 있으면 안 건드림. 라이브·콘서트 앨범 제외(H.O.T. Forever 2001 Live 순서 어긋남). 결과 곡 en + shared.js _SONG_ALIASES(검색·영상 연결). 809팀 앨범 2,673장 짝, **5,089곡**(후보 여럿 155·짝 검증 실패 31 버림). 요청 1,283(캐시 ~/Downloads/melon_disco_audit/itunes).
 - 예: 오늘만 I LOVE YOU → IF I SAY, I LOVE YOU, 21세기 소녀 → 21st Century Girl, 잘 하고 있어 → Grow Up, 늪 → Six Feet Under. 영어 화면은 _songTitleFor가 en을 먼저 쓴다. `_SONG_RULES_VER` v8(영문 제목 영상도 곡에 연결 — 루틴 전량).

@@ -20,6 +20,10 @@ const P = f => path.join(ROOT, f);
 const CACHE = path.join(os.homedir(), 'Downloads', 'melon_disco_audit', 'itunes');
 fs.mkdirSync(CACHE, { recursive: true });
 const APPLY = process.argv.includes('--apply');
+// --recent N: 발매 N일 안의 앨범만(주간 워크플로 itunes-en-titles.yml — 지난 앨범은 2026-11-12 전량 처리)
+const RECENT = (() => { const i = process.argv.indexOf('--recent'); return i >= 0 ? Number(process.argv[i + 1]) : 0; })();
+const isRecent = al => { if (!RECENT) return true; const m = String(al.releaseDate || '').match(/(\d{4})\D?(\d{1,2})\D?(\d{1,2})/); return !!m && (Date.now() - Date.UTC(+m[1], +m[2] - 1, +m[3])) / 864e5 <= RECENT; };
+
 const FETCH = process.argv.includes('--fetch');
 const argOf = k => { const i = process.argv.indexOf(k); return i >= 0 ? process.argv[i + 1] : null; };
 const ONLY = argOf('--only') ? new Set(argOf('--only').split(',')) : null;
@@ -62,7 +66,7 @@ const st = { owners: 0, albumsNeed: 0, matched: 0, ambiguous: 0, verifyFail: 0, 
 const log = [], aliases = {};
 for (const o of owners) {
   if (ONLY && !ONLY.has(o.key)) continue;
-  const need = o.albums.filter(al => (al.tracks || []).some(t => t && typeof t === 'object' && baseHan(t.title) && !t.en && !(ctx.A(o.key, t.title) || [])[0]));
+  const need = o.albums.filter(al => isRecent(al) && (al.tracks || []).some(t => t && typeof t === 'object' && baseHan(t.title) && !t.en && !(ctx.A(o.key, t.title) || [])[0]));
   if (!need.length) continue;
   st.owners++; st.albumsNeed += need.length;
   const s = await getJson('s_' + o.en, `https://itunes.apple.com/search?term=${encodeURIComponent(o.en)}&entity=album&attribute=artistTerm&country=us&limit=200`);
