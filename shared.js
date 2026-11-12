@@ -180,6 +180,8 @@ const _PROJECT_UNITS={
   '씨스타19':{names:['씨스타19'],members:[{mko:'효린',gko:'씨스타'},{mko:'보라',gko:'씨스타'}]},
   '오렌지캬라멜':{names:['오렌지캬라멜'],members:[{mko:'레이나',gko:'애프터스쿨'},{mko:'나나',gko:'애프터스쿨'},{mko:'리지',gko:'애프터스쿨'}]},
   '태티서':{names:['태티서'],members:[{mko:'태연',gko:'소녀시대'},{mko:'티파니',gko:'소녀시대'},{mko:'서현',gko:'소녀시대'}]},
+  // 효리수(2026-09 데뷔, SM 소녀시대 유닛 — 효연·유리·수영). 2026-11-12 Codex: 유닛 무대가 members 빈 채로 들어와 태연 카드에 떴다. 'HRS' 단독은 흔한 약어라 뺌
+  '효리수':{names:['효리수',"Girls' Generation-HRS",'Girls’ Generation-HRS','GirlsGeneration_HRS'],members:[{mko:'효연',gko:'소녀시대'},{mko:'유리',gko:'소녀시대'},{mko:'수영',gko:'소녀시대'}]},
   // JYJ는 한때 독립 groups.json 행성(키 "JX")으로 등록돼있었으나, 소속 멤버 전원이 active:false인데
   // 그룹 자체는 disbanded가 아니라서 "전원 행성 밖으로 흩어져 행성에 별이 하나도 안 남는" 문제가
   // 있었음(2026-08-14, 사용자 제보) — "행성 승격 안 함" 원칙(더블에스301·바스타즈·부석순과 동일)에 맞게
