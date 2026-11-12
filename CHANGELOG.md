@@ -2,6 +2,10 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-12 (Claude Code — Codex 11-12 검수 처리 ③: 옛 곡 페이지 잔존·흔한 단어 곡 'Solo')
+- **[build_group_pages.js] `retireStaleSongPages`**: 이번 빌드에서 안 만든 옛 곡 페이지(그룹·멤버×곡, 한·영)를 noindex + 그룹(멤버) 페이지로 넘기는 페이지로 바꾼다. 관계 페이지엔 이 정리가 있었는데 곡 페이지엔 없어, 11-09 태그 정정 뒤에도 2PM 'All I Wanna Do'·'Abandoned'·'Candy'·'Drive'·'Yesterday'·'오늘밤'이 11-05 생성본 그대로 200이었다(박재범 솔로·I-LAND 커버 링크). 이번 빌드에서 곡 목록을 만든 그룹만(조회 실패로 비면 손대지 않음), 이미 넘김 페이지는 그대로. 현재 그룹 곡 페이지(ko) 기준 45개(블락비 '쇼챔피언'처럼 곡이 아닌 이름 포함). 다음 CI 빌드에서 적용.
+- **[shared.js _SONG_COMMON] solo·encore 추가**: 2PM 곡 목록(멤버 솔로 포함)의 박재범 'Solo'에 '준호 Solo Concert'가, 블랙핑크 'SOLO'에 로제 'Solo Seoul'·'Solo Stage' 직캠이 묶였다. 이제 따옴표·'가수 - 곡'일 때만. `_SONG_RULES_VER` v7. **[SQL 실행]** tools/song_keys_for_ids.mjs로 ':solo'·':encore' 키 영상 104개 재계산 → 77개 정정(진짜 제니 'SOLO' 연결 27개는 유지). song-link 47·matching 246·cover-resolve 75 통과.
+
 ## 2026-11-12 (Claude Code — Codex 11-12 검수 처리 ②: 임나영↔라잇썸 나영·유닛 칩·직캠 허브 비공연)
 - **[SQL 실행] sql/2026-11-12_lightsum_nayoung_fix.sql**(+undo, 백업 `_bak_lightsum_nayoung_20261112`): 제목에 '라잇썸 나영/LIGHTSUM NAYOUNG'인데 아이오아이 임나영으로 저장된 방송사 직캠 **29개**(Codex 확인 18 + 같은 유형 11, 1개는 최유정까지 붙음 — 라잇썸 유정 혼동) → group_ko 라잇썸·members 나영. 전부 tags_manual=true라 헌법 예외(근거 있는 한정 정정: 백업 → 풀기 → 정정 → 재잠금). 곡 키는 새 도구 **tools/song_keys_for_ids.mjs**(지정 영상만 루틴 규칙으로 재계산)로 28개 라잇썸 곡에 다시 연결.
 - **[app.js _makeWithLine] 'I.O.I (7인 유닛)' 칩 오표시**: 유닛 판정 ②가 이름만 비교해 프리스틴 'WEE WOO' 직캠(주결경 이름 겹침)에 I.O.I 유닛 칩이 붙었다 → 영상 소속 그룹(_apiGroupKo)이 유닛을 이루는 그룹일 때만. 아이오아이 영상(Whatta Man)은 그대로.

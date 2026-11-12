@@ -1384,6 +1384,41 @@ function redirectMergedSongPages() {
   }
   if (mergedSongRedirects) console.log(`합쳐진 판본 곡 페이지 → 원곡으로 넘김 ${mergedSongRedirects}개`);
 }
+// 이번 빌드에서 안 만든 옛 곡 페이지 정리(2026-11-12 Codex 검수 — 2PM 'All I Wanna Do'·'Abandoned' 등 6곡 12주소가 11-09 태그 정정 뒤에도
+// 11-05 생성본 그대로 200으로 남아 박재범 솔로·I-LAND 커버 링크를 보여줬다). 관계 페이지엔 이 정리가 있었는데(옛 관계 페이지 삭제) 곡 페이지엔 없었다.
+// 지우면 검색 결과에서 404가 되므로 판본 합치기와 같은 방식 — noindex + 그룹(멤버×곡이면 멤버) 페이지로 넘김. 이미 넘김 페이지면 그대로.
+// ⚠️ 이번 빌드에서 곡 목록을 만든 그룹만(SONGS[gko]가 있을 때) — 조회 실패로 곡이 비면 멀쩡한 페이지를 지우지 않는다.
+let retiredSongPages = 0;
+function retireStaleSongPages() {
+  const madeRel = new Set(pages.map(p => decodeURI(p.loc.slice(SITE.length + 1))));
+  const page = (url, nm, lang) => `<!doctype html>
+<html lang="${lang}"><head><meta charset="utf-8"><title>${escHtml(nm)} — K-POP UNIVERSE</title>
+<link rel="canonical" href="${url}"><meta name="robots" content="noindex">
+<meta http-equiv="refresh" content="0; url=${url}">
+</head><body><a href="${url}">${escHtml(nm)}</a></body></html>
+`;
+  const sweep = (sDir, relBase, toRel, nm, lang) => {
+    if (!fs.existsSync(sDir)) return;
+    for (const e of fs.readdirSync(sDir, { withFileTypes: true })) {
+      if (!e.isDirectory()) continue;
+      const f = path.join(sDir, e.name, 'index.html');
+      if (madeRel.has(`${relBase}s/${e.name}/`) || !fs.existsSync(f)) continue;
+      if (/http-equiv="refresh"/.test(fs.readFileSync(f, 'utf8').slice(0, 600))) continue; // 이미 넘김 페이지
+      fs.writeFileSync(f, page(`${SITE}/${toRel}`, nm, lang));
+      retiredSongPages++;
+    }
+  };
+  for (const gko of Object.keys(SONGS)) {
+    if (!Array.isArray(SONGS[gko]) || !SONGS[gko].length) continue;
+    for (const lang of ['ko', 'en']) {
+      const gp = groupPagePath(gko, lang); if (!gp) continue;
+      const gName = lang === 'en' ? (groups[gko] && groups[gko].en) || gko : gko;
+      sweep(path.join(ROOT, gp, 's'), gp, gp, gName, lang);
+      for (const a of membersOf(gko)) { const mp = memberPagePath(a, lang); if (mp && mp.startsWith(gp)) sweep(path.join(ROOT, mp, 's'), mp, mp, lang === 'en' ? (a.name.en || a.name.ko) : a.name.ko, lang); }
+    }
+  }
+  if (retiredSongPages) console.log(`이번에 안 만든 옛 곡 페이지 → 그룹·멤버 페이지로 넘김 ${retiredSongPages}개`);
+}
 function buildSongPages() {
   const shareRoutes = Object.fromEntries(Object.keys(groups).map(g => [g, {g: [], m: {}}]));
   const memberRouteOwners = new Map();
@@ -1423,6 +1458,7 @@ function buildSongPages() {
     });
   }
   redirectMergedSongPages();
+  retireStaleSongPages();
   const shareDir = path.join(ROOT, 'share_routes');
   fs.mkdirSync(shareDir, {recursive: true});
   for (const [gko, routes] of Object.entries(shareRoutes)) {

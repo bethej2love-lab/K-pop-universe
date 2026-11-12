@@ -491,7 +491,7 @@ function _songBase(title){
   return _songNorm(t.split(/\s*[\(\[]/)[0])||_songNorm(t);
 }
 // 따옴표 없이 제목에 들어 있는 것만으로는 안 믿는 흔한 낱말 곡명(4글자 이상이어도)
-const _SONG_COMMON=new Set(['love','baby','girls','girl','boys','dream','dreams','star','stars','magic','fire','light','heart','money','party','world','summer','winter','spring','happy','sorry','hello','smile','queen','king','game','time','life','home','night','dance','music','angel','crown','rain','snow','blue','gold','free','alone','again','forever','beautiful','intro','outro','interlude','shorts','live','stage','special','teaser','focus','close','with','only','more','what','this','that','yours','mine','good','bad','real','next','last','first','young','wild','sweet','pink','black','white','highlight','behind','vlog','episode','well','habit','yawn']);
+const _SONG_COMMON=new Set(['love','baby','girls','girl','boys','dream','dreams','star','stars','magic','fire','light','heart','money','party','world','summer','winter','spring','happy','sorry','hello','smile','queen','king','game','time','life','home','night','dance','music','angel','crown','rain','snow','blue','gold','free','alone','again','forever','beautiful','intro','outro','interlude','shorts','live','stage','special','teaser','focus','close','with','only','more','what','this','that','yours','mine','good','bad','real','next','last','first','young','wild','sweet','pink','black','white','highlight','behind','vlog','episode','well','habit','yawn','solo','encore']); // solo·encore(2026-11-12 Codex): '준호 Solo Concert'·'1위 앵콜'이 박재범 솔로곡 'Solo' 등으로 묶였다
 // songs: [{b:기본형}] (한 주인의 곡 목록, 중복 기본형 제거된 것) · blockNames: 주인 이름 정규형(그룹 ko/en 등)
 // 반환: 기본형 배열(최대 5) — 키로 쓸 땐 주인 키를 앞에 붙인다
 function _songLinkBases(title,songs,blockNames){
