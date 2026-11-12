@@ -2,6 +2,10 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-12 (Claude Code — 내일 이어서)
+- ⏳ **정적 곡 페이지 B·C는 git stash에 보관(배포 안 함)** — 'git stash list'의 "WIP 11-12: 정적 곡 페이지 크레딧 역할·다른 곡 앨범별(미검증)"(build_group_pages.js·song-page.css): ① 크레딧을 사람마다 이름+역할(작사·작곡·편곡, 혼자면 단독) 칩으로 제목 아래 정보 칩 다음에 ② "다른 곡"을 앨범별로 커버 한 번 + 수록곡 목록 ③ SONG_CSS_V 6. 로컬 전체 빌드로 확인하다 중단(빌드 생성물은 되돌림). 내일: stash pop → 전체 빌드 → 곡 페이지 캡처 확인 → 스크립트만 커밋(로컬 빌드는 sitemap 소실, CI가 생성).
+- ⏳ 사용자 요청 남은 것: 재생 화면 위 그룹색 띠 → 영상 대표색 빛 결정(Downloads/amb_*.png), 우주 별·행성 리디자인(보류, 메모리 project_kpop_universe_visual_redesign), iKON WELCOME BACK·신화 Winter Story·중복 곡 canonical 63묶음.
+
 ## 2026-11-12 (Claude Code — 전체 재생 버튼·크레딧 역할·창 안 이전)
 - [완료][kpop_universe.css] 곡 창 '▶ 전체 재생' — 사용자 "혼자 너무 튄다": 쨍한 파랑 꽉 칠 → 정렬 칩과 같은 반투명 + 얇은 테두리, 재생 표시는 글자 ▶(iOS 이모지 위험) 대신 도형.
 - [완료][app.js] 크레딧 칩 역할 '작사/작곡' → '작사 · 작곡', 한 곡 화면에선 그 곡 멜론 전체 크레딧(디스코 트랙 cr)으로 그 역할이 혼자면 '단독 작사'·'단독 작곡'(멜론 '장원영 (IVE)'·'지젤 (GISELLE)' 표기도 맞춤). cr 없으면 단독 표시 안 함. 확인: 아이브 Blue Heart "장원영 단독 작사", 코르티스 ACAI 5명 "작사 · 작곡".
