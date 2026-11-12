@@ -13762,7 +13762,15 @@ async function _resolveSongMeta(title,o){
   if(!disco.length)return null;
   const key=_songKey(title);
   let al=o.album?disco.find(a=>a&&a.title===o.album):null;
-  if(!al)al=disco.find(a=>a&&(a.tracks||[]).some(t=>t&&_songKey(t.title)===key));
+  // 앨범 힌트가 없으면 정본(처음 실린 스튜디오 앨범)을 고른다(2026-11-12 Codex — 디스코가 최신순이라 첫 일치가
+  // EXO Monster→2020 라이브, SHINee Hello→콘서트 라이브, BTS RUN→Young Forever, SEVENTEEN Home→베스트, Stray Kids CEREMONY→리믹스).
+  // 라이브·리믹스·베스트·재녹음 앨범과 판본 꼬리 붙은 트랙은 뒤로, 같은 등급 안에선 발매일 이른 순.
+  if(!al){
+    const ALT=/\blive\b|라이브|concert|콘서트|remix|리믹스|\bbest\b|베스트|selection|collection|greatest|anniversary|replay|\btour\b|re-?recorded|ost\b|japan|일본/i;
+    const cands=disco.filter(a=>a&&(a.tracks||[]).some(t=>t&&_songKey(t.title)===key));
+    const rank=a=>{const t=(a.tracks||[]).find(x=>x&&_songKey(x.title)===key);return (ALT.test(a.title||'')||ALT.test(a.type||'')?2:0)+(t&&ALT.test(t.title||'')?1:0);};
+    al=cands.sort((x,y)=>rank(x)-rank(y)||String(x.releaseDate||'9').localeCompare(String(y.releaseDate||'9')))[0]||null;
+  }
   return al?{album:al.title,year:(al.releaseDate||'').slice(0,4),cover:al.cover||''}:null;
 }
 // 헤더 채우기 — 아티스트명을 먼저 보이고, disco 로드 후 앨범·연도·커버를 붙인다. myReq로 레이스 가드.

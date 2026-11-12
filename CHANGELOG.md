@@ -2,6 +2,13 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-12 (Claude Code — Codex 검수 ⑦: 직캠 순위 단체 영상·옛 직캠 페이지·곡 바로가기 정본 앨범·음방 솔로 표기)
+- [완료][SQL] 개인 직캠으로 잘못 태그된 9개(백업 _bak_codex_fancam_person_20261112): 하츠투하츠 STUDIO CHOOM Full Focused 3개·ITZY Close-up CAM 단체 안무 → 그룹 전체, 한국예지동아리 채널의 채령 2·류진·유나 직캠(예지로 태그) → 제목의 본인, 싸이커스 Kick It MINJAE FANCAM(세은) → 민재.
+- [완료][build_group_pages.js] 직캠 허브·순위: 단체 풀캠 표시(Full Focused·풀캠·Close-up CAM·단체 직캠)는 제목에 그 멤버 이름이 있을 때만 개인 직캠(카이 '음' Full Focused는 남음) + 팬사인회 직캠은 비공연. 기준(10개) 아래로 내려간 멤버의 옛 /fancams/ 페이지 → 멤버 페이지로 넘김·noindex(허브 200명 미만이면 조회 덜 된 빌드로 보고 건너뜀) — 임나영 옛 허브.
+- [완료][build_group_pages.js] 음방 회차: 그 회차에 그룹 전체 영상이 하나도 없는 팀은 멤버 한 명씩 따로(솔로 출연). SHOWS_ONLY 빌드 확인: 11/08 인가 샤오쥔·지수, 10/15 엠카 김재환·박우진 각각, 09/06 인가 니나·디노·태민. 생성물은 되돌림(매시간 CI).
+- [완료][app.js] 곡 바로가기 앨범·연도·커버(_resolveSongMeta): 앨범 힌트 없으면 라이브·리믹스·베스트·OST·일본반은 뒤로, 같은 등급 안에선 발매일 이른 순 — Codex 8곡 전부 정본(EX'ACT·Hello 리패키지·화양연화 pt.2·YOU MADE MY DAWN·KARMA·minisode 3·[X X]·HANDS UP).
+- ⏳ 전소미 솔로 영상 380개가 group_ko=아이오아이(아티스트 기본 그룹이 아이오아이라 설계상 그 키) — 정적 페이지 I.O.I 표기는 구조 문제라 보류. ⏳ 앨범 수록곡 혼입 복원(Codex 3묶음, 수십 장)·중복 곡 canonical 63묶음.
+
 ## 2026-11-12 (Claude Code — Codex 검수 ⑥: 영문 곡명 짝 오류 정리 + 재발 방지)
 - [완료][tools/en_title_audit.mjs(새)·itunes_en_titles.mjs] Codex "오마이걸 여름이 들려→Celebrate, 컬러링북→Real World/Coloring Book (Japanese Version), 빅뱅 눈물뿐인 바보→This Love, 여자친구 바람 바람 바람→Summer Rain, 에이프릴 인형→Oh! My Mistake". 원인: 아이튠즈 트랙 번호 짝인데 우리 저장 순서가 공식과 다른 앨범(앞 두 곡 역순·타 앨범 곡 혼입). 판정(같은 앨범 안): ① 다른 곡 제목과 같은 영문 ② 두 곡이 같은 영문 ③ 일본어·인스트·리믹스·라이브 판본 이름인데 우리 제목엔 없음 ④ 제목 앞 괄호의 공식 영문과 전혀 다름. 곡 en 106개 삭제 + 손으로 확인한 별칭 충돌 18개(tools/en_title_manual_remove.json). 지운 곡은 별칭→괄호 영문→한글 제목 순으로 보임(여름이 들려→Summer Comes, 바람 바람 바람→Windy Windy). 아이튠즈 수집기에 같은 판정 → 캐시로 전량 재실행 시 다시 붙는 것 0·버림 15. _SONG_RULES_VER v9(별칭이 바뀐 곡 키 재계산).
 - ⏳ iKON WELCOME BACK 12번 '왜 또 (HOLUP!)' — 제목 자체가 BOBBY 꽐라(HOLUP!)와 섞임, 앨범 수록곡 복원 묶음에서 멜론 대조로.

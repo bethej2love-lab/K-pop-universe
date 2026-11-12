@@ -1481,15 +1481,18 @@ const FANCAM_RE = /(직캠|페이스캠|얼빡|원픽캠|fan ?cam|face ?cam|focu
 // 음악 공연이 아닌 직캠(2026-11-12 Codex 검수 — 놀토·사전녹화 비하인드·공항 출국·출근길·포토월·셀프 리뷰·리액션·소감이 직캠 허브에).
 // 제목 한 단어로 일괄 빼지 않게: '(+ Behind cam)' 붙은 챌린지 공연과 '#아돌라비하인드' 같은 프로그램 해시태그는 무시, 곡 이름 'Interview'·'Red Carpet'·
 // '인천공항 스카이 페스티벌' 무대는 남는다. 10분 넘는 영상 기준은 콘서트 풀캠·메들리까지 빼서 쓰지 않는다. 표본 27개(Codex 제외 17·보존 10) 일치.
-const FANCAM_NONPERF_RE = /(비하인드|behind|출국|입국|공항\s*도착|출근길?|퇴근길(?!\s*live)|포토월|photo\s?wall|놀라운\s?토요일|놀토|셀프\s?리뷰|리액션|reaction|브이로그|vlog|소감|airport\s*(arrival|departure))/i;
+const FANCAM_NONPERF_RE = /(팬\s*싸인회|팬사인회|팬싸|fan\s*sign|비하인드|behind|출국|입국|공항\s*도착|출근길?|퇴근길(?!\s*live)|포토월|photo\s?wall|놀라운\s?토요일|놀토|셀프\s?리뷰|리액션|reaction|브이로그|vlog|소감|airport\s*(arrival|departure))/i;
 const isPerfFancam = v => FANCAM_RE.test(v.title || '') && v.category !== 'variety'
   && !FANCAM_NONPERF_RE.test(String(v.title || '').replace(/\(\+\s*behind[^)]*\)/ig, ' ').replace(/#\S*비하인드\S*/g, ' '));
 // 악기 캠(드럼·기타·베이스·키보드 직캠)은 밴드 무대에 피처링한 사람까지 태그돼 있다(2026-11-12 Codex — 드래곤포니 고강훈 드럼캠이
 // 피처링 더보이즈 선우 'AURA' 직캠으로). 악기 캠은 제목에 그 멤버 이름(한글·영문·그룹 활동명)이 있을 때만 그 사람 직캠으로.
 const INSTR_CAM_RE = /(드럼|기타|베이스|키보드|drum|guitar|bass|keyboard)\s*(직캠|캠|cam)/i;
+// 단체 풀캠도 같은 방식(2026-11-12 Codex — STUDIO CHOOM 하츠투하츠 'Full Focused'·ITZY 'Close-up CAM' 단체 안무가 예온·유나 개인 순위 2·3위).
+// 솔로 'Full Focused'(카이 '음')는 제목에 이름이 있어 남는다.
+const GROUP_CAM_RE = /(full\s*focus(ed)?|풀\s*캠|full\s*cam|close-?up\s*cam|단체\s*(직캠|캠)|group\s*(fan)?cam)/i;
 function camTargetOk(v, a, gko) {
   const t = String(v.title || '');
-  if (!INSTR_CAM_RE.test(t)) return true;
+  if (!INSTR_CAM_RE.test(t) && !GROUP_CAM_RE.test(t)) return true;
   const ge = (a.groups || []).find(g => g && g.ko === gko);
   const ns = [a.name && a.name.ko, a.name && a.name.en, ge && ge.name, ge && ge.nameEn].filter(Boolean);
   const tu = t.toUpperCase();
@@ -1767,6 +1770,27 @@ function buildFancamPages() {
     fancamPageCount++;
   }
   console.log(`멤버 직캠 전체 페이지 ${fancamPageCount}명 × 2개 언어`);
+  // 이번에 기준(FANCAM_HUB_MIN) 아래로 내려간 멤버의 옛 직캠 페이지 → 멤버 페이지로 넘김(noindex)
+  // (2026-11-12 Codex — 임나영 태그 정정 후에도 옛 /fancams/ 두 주소에 남의 영상 18개가 그대로). 영상 조회가 덜 된 빌드에선 하지 않는다.
+  if (FANCAM_HUB.size < 200) { console.log(`직캠 허브 ${FANCAM_HUB.size}명 — 조회가 덜 된 것 같아 옛 허브 정리는 건너뜀`); return; }
+  let retired = 0;
+  for (const a of artists) {
+    if (!a || !a.name || FANCAM_HUB.has(a)) continue;
+    for (const lang of ['ko', 'en']) {
+      const mp = memberPagePath(a, lang); if (!mp) continue;
+      const f = path.join(ROOT, memberFancamPagePath(a, lang), 'index.html');
+      if (!fs.existsSync(f) || /http-equiv="refresh"/.test(fs.readFileSync(f, 'utf8').slice(0, 600))) continue;
+      const url = `${SITE}/${mp}`, nm = lang === 'en' ? (a.name.en || a.name.ko) : a.name.ko;
+      fs.writeFileSync(f, `<!doctype html>
+<html lang="${lang}"><head><meta charset="utf-8"><title>${escHtml(nm)} — K-POP UNIVERSE</title>
+<link rel="canonical" href="${url}"><meta name="robots" content="noindex">
+<meta http-equiv="refresh" content="0; url=${url}">
+</head><body><a href="${url}">${escHtml(nm)}</a></body></html>
+`);
+      retired++;
+    }
+  }
+  if (retired) console.log(`기준 아래로 내려간 옛 직캠 페이지 → 멤버 페이지로 넘김 ${retired}개`);
 }
 
 // ── 곡·멤버×곡 페이지 공용 화면(2026-10-30 사용자 "썸네일은 하나고 텍스트가 너무 많아 눈에 안 들어온다 — 이미지가 많이 들어가야")
@@ -2610,6 +2634,7 @@ async function buildShowPages() {
   const gName = (g, isEn) => isEn ? (groups[g] && groups[g].en || g) : g;
   // 그룹으로 묶되, 해체한 팀 이름으로 잡힌 솔로(워너원 → 김재환)는 사람 이름으로 보여준다
   const performer = (g, list, isEn) => {
+    if (g.includes('|')) { const [gg, nm] = g.split('|'); const a = artists.find(x => x.name.ko === nm && ((x.groups || []).some(y => y && y.ko === gg) || (x.group && x.group.ko === gg))); return { name: a ? (isEn ? a.name.en || a.name.ko : a.name.ko) : nm, href: a && memberPagePath(a, isEn ? 'en' : 'ko') ? `${SITE}/${memberPagePath(a, isEn ? 'en' : 'ko')}` : '' }; }
     const ms = new Set(list.flatMap(r => r.v.members || []));
     if (groups[g] && groups[g].active === false && ms.size === 1) { const nm = [...ms][0]; const a = artists.find(x => x.name.ko === nm && (x.groups || []).some(y => y && y.ko === g)); return { name: a ? (isEn ? a.name.en || a.name.ko : a.displayName || a.name.ko) : nm, href: a ? `${SITE}/${memberPagePath(a, isEn ? 'en' : 'ko')}` : '' }; }
     return { name: gName(g, isEn), href: groups[g] ? `${SITE}/${groupPagePath(g, isEn ? 'en' : 'ko')}` : '' };
@@ -2617,9 +2642,16 @@ async function buildShowPages() {
   const ORDER = ['stage', 'encore', 'fullcam', 'fancam', 'facecam'];
   for (const e of eps) for (const lang of ['ko', 'en']) {
     const isEn = lang === 'en', s = e.s, sName = isEn ? s.en : s.key;
-    const teams = new Map(); e.list.forEach(r => { if (!teams.has(r.v.group_ko)) teams.set(r.v.group_ko, []); teams.get(r.v.group_ko).push(r); });
+    const byG = new Map(); e.list.forEach(r => { if (!byG.has(r.v.group_ko)) byG.set(r.v.group_ko, []); byG.get(r.v.group_ko).push(r); });
+    // 그 회차에 그룹 전체(멤버 비었거나 둘 이상) 영상이 하나도 없으면 멤버 한 명씩 따로 — 솔로 출연(2026-11-12 Codex: 샤오쥔이 WayV, 지수가 BLACKPINK, 워너원 한 칸에 김재환·박우진)
+    const teams = new Map();
+    for (const [g, l] of byG) {
+      const groupWide = l.some(r => (r.v.members || []).length !== 1);
+      if (groupWide) { teams.set(g, l); continue; }
+      l.forEach(r => { const k = g + '|' + r.v.members[0]; if (!teams.has(k)) teams.set(k, []); teams.get(k).push(r); });
+    }
     const wins = winsBy[s.key + '|' + e.date] || [];
-    const winG = new Set(wins.map(w => w.group_ko).filter(Boolean));
+    const winG = new Set(wins.flatMap(w => [w.group_ko, w.group_ko && w.member_ko ? w.group_ko + '|' + w.member_ko : null, w.member_ko]).filter(Boolean));
     const tl = [...teams.entries()].sort((x, y) => winG.has(y[0]) - winG.has(x[0]) || y[1].length - x[1].length);
     const cnt = k => e.list.filter(r => r.kind === k).length;
     const cams = cnt('fancam') + cnt('facecam') + cnt('fullcam');
