@@ -14,7 +14,7 @@ const sandbox={path,ROOT:'/fixture',SITE:'https://example.test',pages,
   ]),songPageCount:0,memberSongPageCount:0,
   songPagePath:(g,b,l)=>`${l}/${g}/s/${b}/`,
   memberSongPagePath:(a,b,l)=>`${l}/${a.slug}/s/${b}/`,
-  songLikePageHtml:()=>'<html/>',redirectMergedSongPages:()=>{},
+  songLikePageHtml:()=>'<html/>',redirectMergedSongPages:()=>{},retireStaleSongPages:()=>{},
   fs:{mkdirSync:()=>{},writeFileSync:(p,v)=>writes.set(p.replace(/\\/g,'/'),v)}
 };
 vm.createContext(sandbox);

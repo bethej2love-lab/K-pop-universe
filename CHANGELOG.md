@@ -2,6 +2,12 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-12 (Claude Code — 한글 곡 공식 영문 제목 5,089곡: 아이튠즈 미국 스토어)
+- 사용자: "영어권엔 영문 제목('오늘만 I LOVE YOU' → 'IF I SAY, I LOVE YOU')". 멜론 디스코엔 한글 정본만 있고 스포티파이는 호출 제한(100회/24시간 잠김)이라 **tools/itunes_en_titles.mjs** 신설: 주인 영문명으로 아이튠즈 앨범 검색(아티스트명 정확히 일치) → 우리 앨범과 발매일 ±3일·곡 수 같음·후보 하나 → 양쪽 다 영어인 곡 제목 일치율 ≥0.6(짝 검증) → 트랙 번호로 곡 en. 본 제목에 한글 있고 아이튠즈 이름에 한글 없을 때만, 이미 en·별칭 있으면 안 건드림. 라이브·콘서트 앨범 제외(H.O.T. Forever 2001 Live 순서 어긋남). 결과 곡 en + shared.js _SONG_ALIASES(검색·영상 연결). 809팀 앨범 2,673장 짝, **5,089곡**(후보 여럿 155·짝 검증 실패 31 버림). 요청 1,283(캐시 ~/Downloads/melon_disco_audit/itunes).
+- 예: 오늘만 I LOVE YOU → IF I SAY, I LOVE YOU, 21세기 소녀 → 21st Century Girl, 잘 하고 있어 → Grow Up, 늪 → Six Feet Under. 영어 화면은 _songTitleFor가 en을 먼저 쓴다. `_SONG_RULES_VER` v8(영문 제목 영상도 곡에 연결 — 루틴 전량).
+- validate·disco 4종·song-link·matching·cover-resolve·win-title-canon·song-share-preview(테스트 함수 목록에 retireStaleSongPages 추가)·syntax 통과.
+- ⏳ 새 앨범은 자동으로 안 채워진다(검색 캐시) — 주기 실행(캐시 비우고 --fetch, 1시간쯤)을 workflow로 붙일지 결정. 매일 신보 수집(disco-daily)에 melon_bilingual_titles 단계도.
+
 ## 2026-11-12 (Claude Code — Codex 11-12 검수 처리 ④: 개별 오귀속 18개)
 - **[SQL 실행] sql/2026-11-12_codex_mistag_batch.sql**(+undo, 백업 `_bak_codex_mistag_20261112`, 전부 tags_manual=false·현재 값 조건): god 퇴근길 LIVE → (여자)아이들 / 드림캐쳐 수아 ← 첫사랑(CSR) 수아 직캠 → 무관(첫사랑 미등록) / 미래소년 이준혁 ← 배우 이준혁 냉터뷰 → 무관 / 소녀시대 효리수 3개 → members 효연·유리·수영(태연 카드에 붙던 것) / 이승철 '소녀시대' → 무관 / 애프터스쿨 ← 위클리 'After School' 2·소디엑 현식 1·After School Club 누에라·이펙스 → 각 그룹 / 앤더블 장하오 ← 보이넥스트도어 이한 'White' → 이한·원곡 핑클 / 이즈나 정세비 'FIESTA' with 피에스타 → 아이즈원 곡 커버 / 크레용팝 ← 퀸덤2 효린 → 씨스타 효린 / TXT 'The Biggest Winner' 위너 칩 제거 / 피에스타 ← 아이즈원 'FIESTA' 무대·발매 인사 → 아이즈원. 곡 키는 tools/song_keys_for_ids.mjs로 재계산.
 - ⏳ 그대로 둔 것: 박진영×선미 듀엣(POFSaR1v0wc, 원더걸스)·현아 'I'm Not Cool'(uoZKR8vA1xE, 포미닛 — 현아 솔로 키가 동명이인 2명이라 이름#id 확인 필요)·한승우 'Dive Into'(XddimyWY6Gg, 엑스원) — 카드 맨 위 대표에선 이미 밀려남(①). 미래소년 KO1KEYZ 시영(w1K2ZcqHqTU)은 옛 멤버 박시영과 같은 사람인지 근거 없음. 고강훈 드럼캠(JUbvYMG1p-U)이 더보이즈 선우 직캠으로 — 촬영 대상≠참여자 판정은 별도 과제. 대표 임베드 차단 3개.
