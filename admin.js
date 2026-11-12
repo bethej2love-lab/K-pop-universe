@@ -4894,7 +4894,7 @@ async function _ytSweepSongLinks(){
     const probe=await sb.from(_YT_TABLE).select('song_keys').limit(1);
     if(probe.error){_ytSetProg('[곡 연결] song_keys 칸이 아직 없어요 — sql/song_keys_2026-10-16.sql 실행 후 동작');return;}
     // 규칙(shared.js _songLinkBases·_SONG_COMMON)이나 곡 목록 해석을 바꾸면 이 문자열도 바꿀 것 → 다음 한 번 전량
-    const _SONG_RULES_VER='2026-11-11-v5'; // v2: 유닛 곡·별칭(한영 표기·약자)·한글 3글자·기본형=첫 괄호 앞 / v3: '가수 - 곡'·🎵곡·폭 0 문자 / v4: 한글 소리 표기(_SONG_KO_NICK) / v5: 공식 영문 제목 별칭(_SONG_ALIASES)·판본 곡 합치기·'곡 - (G)I-DLE' 괄호 주인
+    const _SONG_RULES_VER='2026-11-12-v6'; // v6: 영어로만 들어왔던 663곡 한글 정본 + 영문 별칭(melon_bilingual_titles) / v2: 유닛 곡·별칭(한영 표기·약자)·한글 3글자·기본형=첫 괄호 앞 / v3: '가수 - 곡'·🎵곡·폭 0 문자 / v4: 한글 소리 표기(_SONG_KO_NICK) / v5: 공식 영문 제목 별칭(_SONG_ALIASES)·판본 곡 합치기·'곡 - (G)I-DLE' 괄호 주인
     // ⚠️ 전량은 50만 행이라 한 회차에 안 끝난다(2026-10-16 첫 실행: 루틴 끝자락에 시작 → 135분 제한에 잘려 0건 저장 —
     //    다 읽은 뒤 한꺼번에 쓰는 구조라 잘리면 아무것도 안 남았다). 그래서 전량은 **1000개씩 읽고→계산→저장하고 커서를 남기는**
     //    이어달리기로 돈다. 커서는 localStorage(러너 프로필은 매 회차 캐시로 이어짐 — daily-routine.yml always() 저장).
@@ -13217,3 +13217,47 @@ async function _admDailyDigest(force){
 }
 document.getElementById('sp-digest-btn')?.addEventListener('click',()=>{_admDailyDigest(true);});
 setTimeout(()=>{_admDailyDigest();},4000);
+// ── 관리자 즐겨찾기 요약(2026-11-12) — 사용자 "즐겨찾기된 그룹/멤버를 많은 순으로 쫙, 전체 즐겨찾기한 사람 n명·그룹 n개·멤버 n개, 0은 빼고 —
+// 그 그룹/멤버 위주로 태깅 신경 쓰게". get_fav_summary(sql/2026-11-12_fav_summary.sql, 자동 테스트·관리자 본인 제외).
+// 설정 › 관리자 '⭐ 즐겨찾기'. 이름을 누르면 그 카드가 열린다. 닫기는 Daily와 같이 ×·바깥 탭·Esc.
+async function _admFavSummary(){
+  let d;
+  try{const{data,error}=await sb.rpc('get_fav_summary');if(error)throw error;d=typeof data==='string'?JSON.parse(data):data;}
+  catch(e){if(typeof _showToast==='function')_showToast('즐겨찾기 조회 실패');return;}
+  document.getElementById('adm-favsum')?.remove();
+  const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const G=d.groups||[],M=d.members||[];
+  const max=Math.max(1,...G.map(x=>x.n),...M.map(x=>x.n));
+  const row=(x,kind)=>{
+    let nm=x.k,sub='';
+    if(kind==='m'){const i=String(x.k).indexOf(':');if(i>0){sub=x.k.slice(0,i);nm=x.k.slice(i+1);}}
+    return `<button type="button" class="afs-r" data-kind="${kind}" data-k="${esc(x.k)}" style="display:flex;align-items:center;gap:10px;width:100%;background:none;border:0;padding:5px 0;color:#e8edf8;font-size:13px;text-align:left;cursor:pointer">`
+      +`<span style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(nm)}${sub?` <span style="color:rgba(200,212,240,0.5);font-size:11.5px">${esc(sub)}</span>`:''}</span>`
+      +`<span style="width:60px;height:4px;border-radius:2px;background:rgba(150,175,225,0.12);flex:none;overflow:hidden"><span style="display:block;height:100%;width:${Math.round(x.n/max*100)}%;background:rgba(138,176,255,0.7)"></span></span>`
+      +`<b style="width:30px;text-align:right;flex:none">${x.n}</b></button>`;
+  };
+  const sec=(t,arr,kind)=>`<div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(150,175,225,0.15)"><div style="font-size:11px;color:rgba(150,175,225,0.75);margin-bottom:2px">${t} ${arr.length}</div>`
+    +(arr.length?arr.map(x=>row(x,kind)).join(''):`<div style="font-size:12px;color:rgba(200,212,240,0.5);padding:4px 0">아직 없음</div>`)+'</div>';
+  const box=document.createElement('div');box.id='adm-favsum';box.setAttribute('role','dialog');
+  box.style.cssText='position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(340px,calc(100vw - 32px));max-height:min(70vh,560px);overflow-y:auto;box-sizing:border-box;padding:14px 16px 12px;border-radius:16px;background:rgba(14,18,34,0.96);border:1px solid rgba(150,175,225,0.25);box-shadow:0 10px 30px rgba(0,0,0,0.45);color:#e8edf8;font-size:13px;';
+  box.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:baseline"><b style="font-size:15px">즐겨찾기</b><span style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;color:rgba(150,175,225,0.75)">봇·테스트·관리자 제외</span><button type="button" id="adm-favsum-x" aria-label="닫기" style="background:none;border:0;color:rgba(200,212,240,0.6);font-size:17px;line-height:1;padding:2px 2px 2px 6px;cursor:pointer">×</button></span></div>`
+    +`<div style="margin-top:6px;color:rgba(200,212,240,0.8)">즐겨찾기한 사람 <b style="color:#fff">${d.users??0}명</b> · 그룹 <b style="color:#fff">${G.length}</b> · 멤버 <b style="color:#fff">${M.length}</b></div>`
+    +sec('그룹',G,'g')+sec('멤버',M,'m');
+  document.body.appendChild(box);
+  if(typeof _bringToFront==='function')_bringToFront(box);
+  const close=()=>{box.remove();document.removeEventListener('pointerdown',outside,true);document.removeEventListener('keydown',escK,true);};
+  const outside=ev=>{if(!box.contains(ev.target))close();};
+  const escK=ev=>{if(ev.key==='Escape')close();};
+  setTimeout(()=>{if(box.isConnected){document.addEventListener('pointerdown',outside,true);document.addEventListener('keydown',escK,true);}},0);
+  box.addEventListener('click',ev=>{
+    if(ev.target.id==='adm-favsum-x'){close();return;}
+    const r=ev.target.closest('.afs-r');if(!r)return;
+    const k=r.getAttribute('data-k'),kind=r.getAttribute('data-kind');close();
+    try{
+      if(kind==='g'){if(GROUPS[k])showGC(k,innerWidth/2,innerHeight*0.4,false,false,'skip');}
+      else{const i=k.indexOf(':');const a=_artistByGroupName(k.slice(0,i),k.slice(i+1));if(a){if(a._worldPos)flyTo(a._worldPos);showT(a,innerWidth/2,innerHeight*0.4,false,'skip');}}
+    }catch(e){}
+  });
+}
+document.getElementById('sp-favsum-btn')?.addEventListener('click',()=>{_admFavSummary();});
+

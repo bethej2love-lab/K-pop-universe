@@ -27277,8 +27277,12 @@ async function _vidSongList(ko,memberKo,histKos){
     (data||[]).forEach(r=>(r.song_keys||[]).forEach(k=>{const o=k.slice(0,k.indexOf(':'));if(owners.has(o))cnt.set(k,(cnt.get(k)||0)+1);}));
     // 곡 이름 — 그룹·멤버 디스코그래피에서 기본형이 같은 첫 표기(꼬리·두 번째 괄호 표기 뗌)
     const names=new Map();
-    const take=(owner,disco)=>(disco||[]).forEach(al=>[al.titleTrack,...(al.tracks||[]).map(t=>t&&(t.title||t))].forEach(t=>{
-      if(!t)return;const key=owner+':'+_songBase(t);if(!names.has(key))names.set(key,_songStripTail(String(t)).split(/\s*[\(\[]/)[0].trim()||String(t));
+    // 2026-11-12: 언어별 표기(_songTitleFor) — 한국어는 정본 그대로('산소 같은 너 (Love Like Oxygen)', 피처링 괄호만 뗌), 영어는 영문 제목
+    const lang=currentLang==='en'?'en':'ko';
+    const take=(owner,disco)=>(disco||[]).forEach(al=>[...(al.tracks||[]).map(t=>t&&(typeof t==='string'?{title:t}:t)),{title:al.titleTrack}].forEach(o=>{
+      const t=o&&o.title;if(!t)return;const key=owner+':'+_songBase(t);if(names.has(key))return;
+      const raw=_songStripTail(String(t)).replace(/\s*[\(\[](feat|ft)\.?\s[^\)\]]*[\)\]]/gi,'').trim()||String(t);
+      names.set(key,_songTitleFor(owner,raw,lang,o.en));
     }));
     owners.forEach(o=>{if(GROUPS[o])take(o,GROUPS[o].discography);const a=ARTISTS.find(x=>x.name&&x.name.ko===o&&(!GROUPS[x.group&&x.group.ko]||x.group.ko===ko));if(a)take(o,a.discography);});
     if(memberKo){const a=ARTISTS.find(x=>x.name&&x.name.ko===memberKo&&x.group&&x.group.ko===ko);if(a)take(memberKo,a.discography);}

@@ -47,11 +47,11 @@
     +'.kpu-pl-n:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18)}'
     +'.kpu-pl-n img{width:68px;height:42px;border-radius:9px;object-fit:cover;flex:none;background:#141a30}'
     +'.kpu-pl-n i{display:block;font-style:normal;min-width:0;flex:1}'
-    +'.kpu-pl-n .k{display:block;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:rgba(165,185,240,.65)}'
+    +'.kpu-pl-n .k{display:block;font-size:11px;color:rgba(165,185,240,.65)}'
     +'.kpu-pl-n .t{display:block;font-size:13.5px;font-weight:650;color:#f1f4ff;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
     +'.kpu-pl-n .s{display:block;font-size:11.5px;color:rgba(190,205,240,.58);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
     +'.kpu-pl-n b{font-weight:400;color:rgba(200,212,245,.45);font-size:17px;flex:none}'
-    +'.kpu-pl-h{color:rgba(190,205,240,.75);font-size:12px;font-weight:700;letter-spacing:.08em;margin:6px 2px 10px}'
+    +'.kpu-pl-h{color:rgba(190,205,240,.75);font-size:13px;font-weight:600;margin:6px 2px 10px}'
     +'.kpu-pl-g{display:grid;grid-template-columns:1fr 1fr;gap:12px}'
     +'.kpu-pl-c{display:block;text-decoration:none;color:#dfe6ff;font-size:12.5px;line-height:1.35;cursor:pointer}'
     +'.kpu-pl-c img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;display:block;background:#141a30}'
@@ -69,6 +69,59 @@
     var tx=document.createElement('div');tx.appendChild(h1);if(sub)tx.appendChild(sub);hd.appendChild(cv);hd.appendChild(tx);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',compactHead);else compactHead();
+  // ── 정적 페이지 겉모습(2026-11-12) — 정적 페이지 유입이 앱보다 훨씬 많다. 사용자 "정적 페이지와 본 사이트의 경계가 흐려지고,
+  // 케이팝 유니버스 자체가 브랜딩이 되면". 모든 템플릿에 한 번에 적용되도록 여기서:
+  // ① 왼쪽 위 'K-POP UNIVERSE' 글자 → 앱 아이콘 + 이름(로고). ② 하단 보라 버튼 → 우주 위에 뜬 반투명 카드 한 장
+  //    (아이콘·이름 / 이 페이지 주인 / 어디로 가는지 ›), 내려 읽을 땐 숨고 올리거나 끝에 닿으면 나타난다(콘텐츠를 가리지 않게).
+  // ③ 곡 페이지(song-page.css)는 넓은 화면에서 대표 영상 옆에 정보·카드를 두는 2단(웹 = 폰 확대판 금지, TASTE.md 4장).
+  // '앱에서 보기' 같은 말은 쓰지 않는다 — 다음에 볼 것을 보여준다(메모리: 정적→앱 유도 문구 금지).
+  var ICON='https://kpop-universe.kr/icons/icon-192.png';
+  css+='a.brand{vertical-align:middle}.kpu-logo{display:inline-flex!important;align-items:center;gap:8px;font-size:13px!important;font-weight:600;letter-spacing:.01em!important;color:rgba(234,239,255,.9)!important}'
+    +'.kpu-logo img{width:22px;height:22px;border-radius:7px;display:block}'
+    +'.cta-dock.kpu-dk{position:fixed!important;left:0;right:0;bottom:0;margin:0!important;padding:0 12px calc(12px + env(safe-area-inset-bottom))!important;background:none!important;pointer-events:none;z-index:50;transition:transform .3s ease,opacity .3s ease}'
+    +'.kpu-dk.hid{transform:translateY(calc(100% + 6px));opacity:0}'
+    +'body.kpu-has-dk{padding-bottom:88px}'
+    +'a.cta.kpu-card{pointer-events:auto;display:flex!important;align-items:center;gap:11px;box-sizing:border-box;max-width:440px;margin:0 auto;padding:8px 14px 8px 8px!important;border-radius:18px!important;background:rgba(18,22,44,.74)!important;-webkit-backdrop-filter:blur(18px) saturate(140%);backdrop-filter:blur(18px) saturate(140%);border:1px solid rgba(255,255,255,.1)!important;box-shadow:0 10px 30px rgba(0,0,0,.45);text-align:left!important;font-weight:400!important;color:#f1f4ff!important;text-decoration:none!important;transition:background .15s,border-color .15s}'
+    +'a.cta.kpu-card:hover{background:rgba(30,36,66,.82)!important;border-color:rgba(255,255,255,.16)!important}'
+    +'.kpu-card>img{width:64px;height:40px;border-radius:9px;object-fit:cover;flex:none;background:#141a30}'
+    +'.kpu-card i{display:block;font-style:normal;min-width:0;flex:1}'
+    +'.kpu-card .k{display:flex;align-items:center;gap:5px;font-size:11px;color:rgba(170,190,240,.7)}.kpu-card .k img{width:13px;height:13px;border-radius:4px}'
+    +'.kpu-card .t{display:block;font-size:14px;font-weight:650;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
+    +'.kpu-card .s{display:block;font-size:11.5px;color:rgba(190,205,240,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
+    +'.kpu-card>b{font-weight:400;color:rgba(200,212,245,.5);font-size:18px;flex:none}'
+    +'.kpu-side-cta{display:none}'
+    +'@media(min-width:1000px){body.kpu-song .cta-dock.kpu-dk{display:none}body.kpu-song.kpu-has-dk{padding-bottom:0}.kpu-side-cta{display:block;margin-top:14px}.kpu-side-cta a.cta.kpu-card{max-width:none;margin:0;box-shadow:none;background:rgba(255,255,255,.05)!important}}';
+  function shell(){
+    var b=document.querySelector('a.brand');
+    if(b&&!b.classList.contains('kpu-logo')&&/K-POP UNIVERSE/.test(b.textContent)){b.classList.add('kpu-logo');var li=document.createElement('img');li.src=ICON;li.alt='';b.insertBefore(li,b.firstChild);}
+    var d=document.querySelector('.cta-dock'),a=d&&d.querySelector('a.cta');
+    if(a&&!a.classList.contains('kpu-card')){
+      var label=(a.textContent||'').replace(/\s*[→›]\s*$/,'').trim();
+      var og=document.querySelector('meta[property="og:image"]'),src=og&&og.getAttribute('content')||'';
+      src=src.replace(/\/(maxresdefault|hq720|hqdefault|sddefault)\.jpg/,'/mqdefault.jpg');
+      a.textContent='';a.classList.add('kpu-card');
+      if(src&&!/og-image\.png$/.test(src)){var im=document.createElement('img');im.alt='';im.src=src;im.onerror=function(){im.remove();};a.appendChild(im);}
+      var tx=document.createElement('i'),k=document.createElement('span');k.className='k';var ki=document.createElement('img');ki.src=ICON;ki.alt='';k.appendChild(ki);k.appendChild(document.createTextNode('K-POP UNIVERSE'));tx.appendChild(k);
+      var t=document.createElement('span');t.className='t';t.textContent=entity||label;tx.appendChild(t);
+      if(entity){var s=document.createElement('span');s.className='s';s.textContent=label;tx.appendChild(s);}
+      a.appendChild(tx);var ar=document.createElement('b');ar.textContent='›';a.appendChild(ar);
+      d.classList.add('kpu-dk');document.body.classList.add('kpu-has-dk');
+      var y0=scrollY,tick=false;
+      addEventListener('scroll',function(){if(tick)return;tick=true;requestAnimationFrame(function(){tick=false;var y=scrollY,end=innerHeight+y>=document.documentElement.scrollHeight-140;
+        if(end||y<160||y<y0-8)d.classList.remove('hid');else if(y>y0+8)d.classList.add('hid');if(Math.abs(y-y0)>8)y0=y;});},{passive:true});
+    }
+    // 곡 페이지 2단: 대표 영상(.hero) 옆에 경로·칩·카드(폰에선 그대로 위아래)
+    var hero=document.querySelector('.wrap>.hero');
+    if(hero&&/song-page\.css/.test((document.querySelector('link[href*="song-page.css"]')||{}).href||'')&&!document.querySelector('.kpu-top')){
+      document.body.classList.add('kpu-song');
+      var top=document.createElement('div');top.className='kpu-top';hero.parentNode.insertBefore(top,hero);top.appendChild(hero);
+      var side=document.createElement('div');side.className='kpu-side';top.appendChild(side);
+      var h1=hero.querySelector('h1'),sb=hero.querySelector('.sub');if(h1){var sh=document.createElement('div');sh.className='kpu-side-h';sh.setAttribute('aria-hidden','true');var st1=document.createElement('div');st1.className='h'+(h1.textContent.length>22?' long':'');st1.textContent=h1.textContent;sh.appendChild(st1);if(sb){var st2=document.createElement('div');st2.className='sb';st2.textContent=sb.textContent;sh.appendChild(st2);}side.appendChild(sh);}
+      var n=top.nextElementSibling;while(n&&n.matches&&n.matches('.crumbs,.hub-back,.lead,.chips')&&!(n.matches('.chips')&&n.children.length>5)){var nx=n.nextElementSibling;side.appendChild(n);n=nx;}
+      if(a){var sc=document.createElement('div');sc.className='kpu-side-cta';var cl=a.cloneNode(true);var ct=cl.querySelector('.t'),cs=cl.querySelector('.s');if(ct&&cs){ct.textContent=cs.textContent;cs.remove();}sc.appendChild(cl);side.appendChild(sc);}
+    }
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',shell);else shell();
   var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
   function titleOf(a){var t=(a.getAttribute('title')||'').trim();if(t)return t;var x=a.querySelector('.mf-t,.title,b,strong');t=((x&&x.textContent)||a.textContent||'').replace(/\s+/g,' ').trim();if(!t){var im=a.querySelector('img');t=im&&im.alt||'';}return t.slice(0,140);}
   function allLinks(){var seen={},out=[];[].forEach.call(document.querySelectorAll('a[href]'),function(a){if(a.closest&&a.closest('.kpu-pl'))return;var v=vidOf(a);if(!v||seen[v])return;seen[v]=1;out.push({v:v,a:a,t:titleOf(a),sh:isShort(a)});});return out;}

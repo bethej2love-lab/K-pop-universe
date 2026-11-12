@@ -61258,7 +61258,7 @@
           {
             "no": 3,
             "title": "SECRET (feat. Raf Sandou)",
-            "isTitle": false,
+            "isTitle": true,
             "songId": "602992651"
           },
           {
@@ -61388,7 +61388,7 @@
           {
             "no": 4,
             "title": "BLESSIN",
-            "isTitle": false,
+            "isTitle": true,
             "songId": "601135386"
           },
           {
@@ -61421,12 +61421,12 @@
         "cover": "https://i.scdn.co/image/ab67616d0000b2737fc9d13357801ca67dcdc479",
         "releaseDate": "2025.11.14",
         "trackCount": 3,
-        "titleTrack": null,
+        "titleTrack": "ON THE TABLE (feat. Sik-K)",
         "tracks": [
           {
             "no": 1,
             "title": "ON THE TABLE (feat. Sik-K)",
-            "isTitle": false,
+            "isTitle": true,
             "songId": "600501350"
           },
           {
@@ -61453,18 +61453,18 @@
         "cover": "https://i.scdn.co/image/ab67616d0000b273cc8c54553644a0349c8f0bff",
         "releaseDate": "2025.08.23",
         "trackCount": 2,
-        "titleTrack": null,
+        "titleTrack": "SLIDE",
         "tracks": [
           {
             "no": 1,
             "title": "SLIDE",
-            "isTitle": false,
+            "isTitle": true,
             "songId": "39683970"
           },
           {
             "no": 2,
             "title": "SLOW",
-            "isTitle": false,
+            "isTitle": true,
             "songId": "39683971"
           }
         ],
@@ -61479,18 +61479,18 @@
         "cover": "https://i.scdn.co/image/ab67616d0000b2732df517f7300722708488c097",
         "releaseDate": "2025.07.16",
         "trackCount": 2,
-        "titleTrack": null,
+        "titleTrack": "PORTAL",
         "tracks": [
           {
             "no": 1,
             "title": "PORTAL",
-            "isTitle": false,
+            "isTitle": true,
             "songId": "39319536"
           },
           {
             "no": 2,
             "title": "LIKE THAT",
-            "isTitle": false,
+            "isTitle": true,
             "songId": "39319539"
           }
         ],
@@ -89840,20 +89840,22 @@
             "cover": "https://cdnimg.melon.co.kr/cm/album/images/020/09/206/2009206_500.jpg",
             "releaseDate": "2011.08.24",
             "trackCount": 2,
-            "titleTrack": "太完美 (Perfection) (Japanese Ver.)",
+            "titleTrack": "태완미 / 太完美 (Perfection) (Japanese Ver.)",
             "melon_album_id": "2009206",
             "tracks": [
               {
                 "no": 1,
-                "title": "太完美 (Perfection) (Japanese Ver.)",
+                "title": "태완미 / 太完美 (Perfection) (Japanese Ver.)",
                 "isTitle": true,
-                "songId": "3538057"
+                "songId": "3538057",
+                "en": "太完美 (Perfection) (Japanese Ver.)"
               },
               {
                 "no": 2,
-                "title": "命運線 (Destiny) (Japanese Ver.)",
+                "title": "명운선 / 命運線 (Destiny) (Japanese Ver.)",
                 "isTitle": false,
-                "songId": "3538058"
+                "songId": "3538058",
+                "en": "命運線 (Destiny) (Japanese Ver.)"
               }
             ],
             "melonAlbumId": "2009206"
@@ -90718,20 +90720,22 @@
             "cover": "https://cdnimg.melon.co.kr/cm/album/images/020/09/206/2009206_500.jpg",
             "releaseDate": "2011.08.24",
             "trackCount": 2,
-            "titleTrack": "太完美 (Perfection) (Japanese Ver.)",
+            "titleTrack": "태완미 / 太完美 (Perfection) (Japanese Ver.)",
             "melon_album_id": "2009206",
             "tracks": [
               {
                 "no": 1,
-                "title": "太完美 (Perfection) (Japanese Ver.)",
+                "title": "태완미 / 太完美 (Perfection) (Japanese Ver.)",
                 "isTitle": true,
-                "songId": "3538057"
+                "songId": "3538057",
+                "en": "太完美 (Perfection) (Japanese Ver.)"
               },
               {
                 "no": 2,
-                "title": "命運線 (Destiny) (Japanese Ver.)",
+                "title": "명운선 / 命運線 (Destiny) (Japanese Ver.)",
                 "isTitle": false,
-                "songId": "3538058"
+                "songId": "3538058",
+                "en": "命運線 (Destiny) (Japanese Ver.)"
               }
             ],
             "melonAlbumId": "2009206"
@@ -92816,20 +92820,22 @@
             "cover": "https://cdnimg.melon.co.kr/cm/album/images/020/09/206/2009206_500.jpg",
             "releaseDate": "2011.08.24",
             "trackCount": 2,
-            "titleTrack": "太完美 (Perfection) (Japanese Ver.)",
+            "titleTrack": "태완미 / 太完美 (Perfection) (Japanese Ver.)",
             "melon_album_id": "2009206",
             "tracks": [
               {
                 "no": 1,
-                "title": "太完美 (Perfection) (Japanese Ver.)",
+                "title": "태완미 / 太完美 (Perfection) (Japanese Ver.)",
                 "isTitle": true,
-                "songId": "3538057"
+                "songId": "3538057",
+                "en": "太完美 (Perfection) (Japanese Ver.)"
               },
               {
                 "no": 2,
-                "title": "命運線 (Destiny) (Japanese Ver.)",
+                "title": "명운선 / 命運線 (Destiny) (Japanese Ver.)",
                 "isTitle": false,
-                "songId": "3538058"
+                "songId": "3538058",
+                "en": "命運線 (Destiny) (Japanese Ver.)"
               }
             ],
             "melonAlbumId": "2009206"
@@ -94224,20 +94230,22 @@
             "cover": "https://cdnimg.melon.co.kr/cm/album/images/020/09/206/2009206_500.jpg",
             "releaseDate": "2011.08.24",
             "trackCount": 2,
-            "titleTrack": "太完美 (Perfection) (Japanese Ver.)",
+            "titleTrack": "태완미 / 太完美 (Perfection) (Japanese Ver.)",
             "melon_album_id": "2009206",
             "tracks": [
               {
                 "no": 1,
-                "title": "太完美 (Perfection) (Japanese Ver.)",
+                "title": "태완미 / 太完美 (Perfection) (Japanese Ver.)",
                 "isTitle": true,
-                "songId": "3538057"
+                "songId": "3538057",
+                "en": "太完美 (Perfection) (Japanese Ver.)"
               },
               {
                 "no": 2,
-                "title": "命運線 (Destiny) (Japanese Ver.)",
+                "title": "명운선 / 命運線 (Destiny) (Japanese Ver.)",
                 "isTitle": false,
-                "songId": "3538058"
+                "songId": "3538058",
+                "en": "命運線 (Destiny) (Japanese Ver.)"
               }
             ],
             "melonAlbumId": "2009206"
@@ -96124,20 +96132,22 @@
             "cover": "https://cdnimg.melon.co.kr/cm/album/images/020/09/206/2009206_500.jpg",
             "releaseDate": "2011.08.24",
             "trackCount": 2,
-            "titleTrack": "太完美 (Perfection) (Japanese Ver.)",
+            "titleTrack": "태완미 / 太完美 (Perfection) (Japanese Ver.)",
             "melon_album_id": "2009206",
             "tracks": [
               {
                 "no": 1,
-                "title": "太完美 (Perfection) (Japanese Ver.)",
+                "title": "태완미 / 太完美 (Perfection) (Japanese Ver.)",
                 "isTitle": true,
-                "songId": "3538057"
+                "songId": "3538057",
+                "en": "太完美 (Perfection) (Japanese Ver.)"
               },
               {
                 "no": 2,
-                "title": "命運線 (Destiny) (Japanese Ver.)",
+                "title": "명운선 / 命運線 (Destiny) (Japanese Ver.)",
                 "isTitle": false,
-                "songId": "3538058"
+                "songId": "3538058",
+                "en": "命運線 (Destiny) (Japanese Ver.)"
               }
             ],
             "melonAlbumId": "2009206"
@@ -98553,20 +98563,22 @@
             "cover": "https://cdnimg.melon.co.kr/cm/album/images/020/09/206/2009206_500.jpg",
             "releaseDate": "2011.08.24",
             "trackCount": 2,
-            "titleTrack": "太完美 (Perfection) (Japanese Ver.)",
+            "titleTrack": "태완미 / 太完美 (Perfection) (Japanese Ver.)",
             "melon_album_id": "2009206",
             "tracks": [
               {
                 "no": 1,
-                "title": "太完美 (Perfection) (Japanese Ver.)",
+                "title": "태완미 / 太完美 (Perfection) (Japanese Ver.)",
                 "isTitle": true,
-                "songId": "3538057"
+                "songId": "3538057",
+                "en": "太完美 (Perfection) (Japanese Ver.)"
               },
               {
                 "no": 2,
-                "title": "命運線 (Destiny) (Japanese Ver.)",
+                "title": "명운선 / 命運線 (Destiny) (Japanese Ver.)",
                 "isTitle": false,
-                "songId": "3538058"
+                "songId": "3538058",
+                "en": "命運線 (Destiny) (Japanese Ver.)"
               }
             ],
             "melonAlbumId": "2009206"
@@ -99460,20 +99472,22 @@
             "cover": "https://cdnimg.melon.co.kr/cm/album/images/020/09/206/2009206_500.jpg",
             "releaseDate": "2011.08.24",
             "trackCount": 2,
-            "titleTrack": "太完美 (Perfection) (Japanese Ver.)",
+            "titleTrack": "태완미 / 太完美 (Perfection) (Japanese Ver.)",
             "melon_album_id": "2009206",
             "tracks": [
               {
                 "no": 1,
-                "title": "太完美 (Perfection) (Japanese Ver.)",
+                "title": "태완미 / 太完美 (Perfection) (Japanese Ver.)",
                 "isTitle": true,
-                "songId": "3538057"
+                "songId": "3538057",
+                "en": "太完美 (Perfection) (Japanese Ver.)"
               },
               {
                 "no": 2,
-                "title": "命運線 (Destiny) (Japanese Ver.)",
+                "title": "명운선 / 命運線 (Destiny) (Japanese Ver.)",
                 "isTitle": false,
-                "songId": "3538058"
+                "songId": "3538058",
+                "en": "命運線 (Destiny) (Japanese Ver.)"
               }
             ],
             "melonAlbumId": "2009206"
@@ -111584,33 +111598,39 @@
               {
                 "no": 1,
                 "title": "Victorious Way",
-                "songId": "4009750"
+                "songId": "4009750",
+                "isTitle": false
               },
               {
                 "no": 2,
                 "title": "Special Girl (Feat. Bumkey)",
-                "songId": "4009751"
+                "songId": "4009751",
+                "isTitle": true
               },
               {
                 "no": 3,
                 "title": "니가 없을 때 (Feat. Zion.T)",
-                "songId": "4009752"
+                "songId": "4009752",
+                "isTitle": false
               },
               {
                 "no": 4,
                 "title": "못해 (Feat. 개코 Of Dynamic Duo)",
-                "songId": "4009753"
+                "songId": "4009753",
+                "isTitle": false
               },
               {
                 "no": 5,
                 "title": "Fly High (Feat. 베이비 소울)",
-                "songId": "4009754"
+                "songId": "4009754",
+                "isTitle": false
               }
             ],
             "img": "https://cdnimg.melon.co.kr/cm/album/images/021/72/287/2172287_500.jpg",
             "type": "미니",
             "isMain": true,
-            "melonAlbumId": "2172287"
+            "melonAlbumId": "2172287",
+            "titleTrack": "Special Girl (Feat. Bumkey)"
           },
           {
             "albumId": 2301442,
@@ -111620,43 +111640,51 @@
               {
                 "no": 1,
                 "title": "Fly Again (Feat. DJ IT)",
-                "songId": "5562519"
+                "songId": "5562519",
+                "isTitle": false
               },
               {
                 "no": 2,
                 "title": "예뻐",
-                "songId": "5562520"
+                "songId": "5562520",
+                "isTitle": true
               },
               {
                 "no": 3,
                 "title": "어디 안 가 (Feat. 양다일)",
-                "songId": "5562521"
+                "songId": "5562521",
+                "isTitle": false
               },
               {
                 "no": 4,
                 "title": "부딪쳐 (Feat. 류수정 of 러블리즈)",
-                "songId": "5562522"
+                "songId": "5562522",
+                "isTitle": false
               },
               {
                 "no": 5,
                 "title": "바빠서 Sorry (Feat. 스윙스, 샴페인 of 샴페인&캔들)",
-                "songId": "5562523"
+                "songId": "5562523",
+                "isTitle": false
               },
               {
                 "no": 6,
                 "title": "지킬 앤 하이드 (Feat. 태완)",
-                "songId": "5562524"
+                "songId": "5562524",
+                "isTitle": false
               },
               {
                 "no": 7,
                 "title": "니가 미치지 않고서야 (Feat. 산체스 of 팬텀)",
-                "songId": "5562525"
+                "songId": "5562525",
+                "isTitle": false
               }
             ],
             "img": "https://cdnimg.melon.co.kr/cm/album/images/023/01/442/2301442_500.jpg",
             "type": "정규",
             "isMain": true,
-            "melonAlbumId": "2301442"
+            "melonAlbumId": "2301442",
+            "titleTrack": "예뻐"
           }
         ]
       }
@@ -112619,23 +112647,27 @@
               {
                 "no": 1,
                 "title": "가슴이 뛴다",
-                "songId": "5450019"
+                "songId": "5450019",
+                "isTitle": true
               },
               {
                 "no": 2,
                 "title": "너라서",
-                "songId": "5484264"
+                "songId": "5484264",
+                "isTitle": false
               },
               {
                 "no": 3,
                 "title": "My Girl",
-                "songId": "5484289"
+                "songId": "5484289",
+                "isTitle": false
               }
             ],
             "img": "https://cdnimg.melon.co.kr/cm/album/images/022/89/439/2289439_500.jpg",
             "type": "싱글",
             "isMain": true,
-            "melonAlbumId": "2289439"
+            "melonAlbumId": "2289439",
+            "titleTrack": "가슴이 뛴다"
           }
         ]
       }
@@ -112711,23 +112743,27 @@
               {
                 "no": 1,
                 "title": "가슴이 뛴다",
-                "songId": "5450019"
+                "songId": "5450019",
+                "isTitle": true
               },
               {
                 "no": 2,
                 "title": "너라서",
-                "songId": "5484264"
+                "songId": "5484264",
+                "isTitle": false
               },
               {
                 "no": 3,
                 "title": "My Girl",
-                "songId": "5484289"
+                "songId": "5484289",
+                "isTitle": false
               }
             ],
             "img": "https://cdnimg.melon.co.kr/cm/album/images/022/89/439/2289439_500.jpg",
             "type": "싱글",
             "isMain": true,
-            "melonAlbumId": "2289439"
+            "melonAlbumId": "2289439",
+            "titleTrack": "가슴이 뛴다"
           }
         ]
       }
@@ -112993,23 +113029,27 @@
               {
                 "no": 1,
                 "title": "가슴이 뛴다",
-                "songId": "5450019"
+                "songId": "5450019",
+                "isTitle": true
               },
               {
                 "no": 2,
                 "title": "너라서",
-                "songId": "5484264"
+                "songId": "5484264",
+                "isTitle": false
               },
               {
                 "no": 3,
                 "title": "My Girl",
-                "songId": "5484289"
+                "songId": "5484289",
+                "isTitle": false
               }
             ],
             "img": "https://cdnimg.melon.co.kr/cm/album/images/022/89/439/2289439_500.jpg",
             "type": "싱글",
             "isMain": true,
-            "melonAlbumId": "2289439"
+            "melonAlbumId": "2289439",
+            "titleTrack": "가슴이 뛴다"
           }
         ]
       }
@@ -113099,33 +113139,39 @@
               {
                 "no": 1,
                 "title": "Victorious Way",
-                "songId": "4009750"
+                "songId": "4009750",
+                "isTitle": false
               },
               {
                 "no": 2,
                 "title": "Special Girl (Feat. Bumkey)",
-                "songId": "4009751"
+                "songId": "4009751",
+                "isTitle": true
               },
               {
                 "no": 3,
                 "title": "니가 없을 때 (Feat. Zion.T)",
-                "songId": "4009752"
+                "songId": "4009752",
+                "isTitle": false
               },
               {
                 "no": 4,
                 "title": "못해 (Feat. 개코 Of Dynamic Duo)",
-                "songId": "4009753"
+                "songId": "4009753",
+                "isTitle": false
               },
               {
                 "no": 5,
                 "title": "Fly High (Feat. 베이비 소울)",
-                "songId": "4009754"
+                "songId": "4009754",
+                "isTitle": false
               }
             ],
             "img": "https://cdnimg.melon.co.kr/cm/album/images/021/72/287/2172287_500.jpg",
             "type": "미니",
             "isMain": true,
-            "melonAlbumId": "2172287"
+            "melonAlbumId": "2172287",
+            "titleTrack": "Special Girl (Feat. Bumkey)"
           },
           {
             "albumId": 2301442,
@@ -113135,43 +113181,51 @@
               {
                 "no": 1,
                 "title": "Fly Again (Feat. DJ IT)",
-                "songId": "5562519"
+                "songId": "5562519",
+                "isTitle": false
               },
               {
                 "no": 2,
                 "title": "예뻐",
-                "songId": "5562520"
+                "songId": "5562520",
+                "isTitle": true
               },
               {
                 "no": 3,
                 "title": "어디 안 가 (Feat. 양다일)",
-                "songId": "5562521"
+                "songId": "5562521",
+                "isTitle": false
               },
               {
                 "no": 4,
                 "title": "부딪쳐 (Feat. 류수정 of 러블리즈)",
-                "songId": "5562522"
+                "songId": "5562522",
+                "isTitle": false
               },
               {
                 "no": 5,
                 "title": "바빠서 Sorry (Feat. 스윙스, 샴페인 of 샴페인&캔들)",
-                "songId": "5562523"
+                "songId": "5562523",
+                "isTitle": false
               },
               {
                 "no": 6,
                 "title": "지킬 앤 하이드 (Feat. 태완)",
-                "songId": "5562524"
+                "songId": "5562524",
+                "isTitle": false
               },
               {
                 "no": 7,
                 "title": "니가 미치지 않고서야 (Feat. 산체스 of 팬텀)",
-                "songId": "5562525"
+                "songId": "5562525",
+                "isTitle": false
               }
             ],
             "img": "https://cdnimg.melon.co.kr/cm/album/images/023/01/442/2301442_500.jpg",
             "type": "정규",
             "isMain": true,
-            "melonAlbumId": "2301442"
+            "melonAlbumId": "2301442",
+            "titleTrack": "예뻐"
           }
         ]
       }
@@ -120691,18 +120745,18 @@
         "cover": "https://i.scdn.co/image/ab67616d0000b273d3ec445f902107a725eab6b2",
         "releaseDate": "2024.05.02",
         "trackCount": 4,
-        "titleTrack": "Attitude",
+        "titleTrack": "Q&A",
         "tracks": [
           {
             "no": 1,
             "title": "Attitude",
-            "isTitle": true,
+            "isTitle": false,
             "songId": "37473051"
           },
           {
             "no": 2,
             "title": "Q&A",
-            "isTitle": false,
+            "isTitle": true,
             "songId": "37473052"
           },
           {
@@ -127248,32 +127302,38 @@
               {
                 "no": 1,
                 "title": "Into the New Heart",
-                "songId": "30299271"
+                "songId": "30299271",
+                "isTitle": false
               },
               {
                 "no": 2,
                 "title": "지금, 좋아해 (Love & Live)",
-                "songId": "30299272"
+                "songId": "30299272",
+                "isTitle": true
               },
               {
                 "no": 3,
                 "title": "You and Me Together",
-                "songId": "30299273"
+                "songId": "30299273",
+                "isTitle": false
               },
               {
                 "no": 4,
                 "title": "Fairy Tale",
-                "songId": "30299274"
+                "songId": "30299274",
+                "isTitle": false
               },
               {
                 "no": 5,
                 "title": "3월을 기다려 (Valentine Girl)",
-                "songId": "30299275"
+                "songId": "30299275",
+                "isTitle": false
               }
             ],
             "type": "미니",
             "isMain": true,
-            "melonAlbumId": "10045343"
+            "melonAlbumId": "10045343",
+            "titleTrack": "지금, 좋아해 (Love & Live)"
           },
           {
             "albumId": 10058607,
@@ -127284,52 +127344,62 @@
               {
                 "no": 1,
                 "title": "Love & Evil",
-                "songId": "30390126"
+                "songId": "30390126",
+                "isTitle": false
               },
               {
                 "no": 2,
                 "title": "알 수 없는 비밀 (Sonatine)",
-                "songId": "30390127"
+                "songId": "30390127",
+                "isTitle": true
               },
               {
                 "no": 3,
                 "title": "비의 목소리 51db (Rain 51db)",
-                "songId": "30390128"
+                "songId": "30390128",
+                "isTitle": false
               },
               {
                 "no": 4,
                 "title": "지금, 좋아해 (Love & Live)",
-                "songId": "30390129"
+                "songId": "30390129",
+                "isTitle": false
               },
               {
                 "no": 5,
                 "title": "You and Me Together",
-                "songId": "30390130"
+                "songId": "30390130",
+                "isTitle": false
               },
               {
                 "no": 6,
                 "title": "Fairy Tale",
-                "songId": "30390131"
+                "songId": "30390131",
+                "isTitle": false
               },
               {
                 "no": 7,
                 "title": "3월을 기다려 (Valentine Girl)",
-                "songId": "30390132"
+                "songId": "30390132",
+                "isTitle": false
               },
               {
                 "no": 8,
                 "title": "지금, 좋아해 (Love & Live) (Remix)",
-                "songId": "30390133"
+                "songId": "30390133",
+                "isTitle": false
               },
               {
                 "no": 9,
                 "title": "You and Me Together (Remix)",
-                "songId": "30390134"
+                "songId": "30390134",
+                "isTitle": false
               }
             ],
             "type": "정규",
             "isMain": true,
-            "melonAlbumId": "10058607"
+            "melonAlbumId": "10058607",
+            "titleTrack": "알 수 없는 비밀 (Sonatine)"
           }
         ]
       }
@@ -127575,32 +127645,38 @@
               {
                 "no": 1,
                 "title": "Into the New Heart",
-                "songId": "30299271"
+                "songId": "30299271",
+                "isTitle": false
               },
               {
                 "no": 2,
                 "title": "지금, 좋아해 (Love & Live)",
-                "songId": "30299272"
+                "songId": "30299272",
+                "isTitle": true
               },
               {
                 "no": 3,
                 "title": "You and Me Together",
-                "songId": "30299273"
+                "songId": "30299273",
+                "isTitle": false
               },
               {
                 "no": 4,
                 "title": "Fairy Tale",
-                "songId": "30299274"
+                "songId": "30299274",
+                "isTitle": false
               },
               {
                 "no": 5,
                 "title": "3월을 기다려 (Valentine Girl)",
-                "songId": "30299275"
+                "songId": "30299275",
+                "isTitle": false
               }
             ],
             "type": "미니",
             "isMain": true,
-            "melonAlbumId": "10045343"
+            "melonAlbumId": "10045343",
+            "titleTrack": "지금, 좋아해 (Love & Live)"
           },
           {
             "albumId": 10058607,
@@ -127611,52 +127687,62 @@
               {
                 "no": 1,
                 "title": "Love & Evil",
-                "songId": "30390126"
+                "songId": "30390126",
+                "isTitle": false
               },
               {
                 "no": 2,
                 "title": "알 수 없는 비밀 (Sonatine)",
-                "songId": "30390127"
+                "songId": "30390127",
+                "isTitle": true
               },
               {
                 "no": 3,
                 "title": "비의 목소리 51db (Rain 51db)",
-                "songId": "30390128"
+                "songId": "30390128",
+                "isTitle": false
               },
               {
                 "no": 4,
                 "title": "지금, 좋아해 (Love & Live)",
-                "songId": "30390129"
+                "songId": "30390129",
+                "isTitle": false
               },
               {
                 "no": 5,
                 "title": "You and Me Together",
-                "songId": "30390130"
+                "songId": "30390130",
+                "isTitle": false
               },
               {
                 "no": 6,
                 "title": "Fairy Tale",
-                "songId": "30390131"
+                "songId": "30390131",
+                "isTitle": false
               },
               {
                 "no": 7,
                 "title": "3월을 기다려 (Valentine Girl)",
-                "songId": "30390132"
+                "songId": "30390132",
+                "isTitle": false
               },
               {
                 "no": 8,
                 "title": "지금, 좋아해 (Love & Live) (Remix)",
-                "songId": "30390133"
+                "songId": "30390133",
+                "isTitle": false
               },
               {
                 "no": 9,
                 "title": "You and Me Together (Remix)",
-                "songId": "30390134"
+                "songId": "30390134",
+                "isTitle": false
               }
             ],
             "type": "정규",
             "isMain": true,
-            "melonAlbumId": "10058607"
+            "melonAlbumId": "10058607",
+            "titleTrack": "알 수 없는 비밀 (Sonatine)"
           }
         ]
       }
@@ -127837,37 +127923,44 @@
               {
                 "no": 1,
                 "title": "기다렸어? (Did You Wait?)",
-                "songId": "36607469"
+                "songId": "36607469",
+                "isTitle": false
               },
               {
                 "no": 2,
                 "title": "Air Force One",
-                "songId": "36607470"
+                "songId": "36607470",
+                "isTitle": true
               },
               {
                 "no": 3,
                 "title": "Je Ne Sais Quoi",
-                "songId": "36607471"
+                "songId": "36607471",
+                "isTitle": false
               },
               {
                 "no": 4,
                 "title": "Lucid",
-                "songId": "36607472"
+                "songId": "36607472",
+                "isTitle": false
               },
               {
                 "no": 5,
                 "title": "Love Me Like",
-                "songId": "36607473"
+                "songId": "36607473",
+                "isTitle": false
               },
               {
                 "no": 6,
                 "title": "My Secret Playlist",
-                "songId": "36607474"
+                "songId": "36607474",
+                "isTitle": false
               }
             ],
             "type": "미니",
             "isMain": true,
-            "melonAlbumId": "11283575"
+            "melonAlbumId": "11283575",
+            "titleTrack": "Air Force One"
           },
           {
             "albumId": 11372400,
@@ -127878,12 +127971,14 @@
               {
                 "no": 1,
                 "title": "Sweet Crazy Love (Eng Ver.)",
-                "songId": "37001987"
+                "songId": "37001987",
+                "isTitle": true
               }
             ],
             "type": "싱글",
             "isMain": true,
-            "melonAlbumId": "11372400"
+            "melonAlbumId": "11372400",
+            "titleTrack": "Sweet Crazy Love (Eng Ver.)"
           }
         ]
       }
@@ -127991,37 +128086,44 @@
               {
                 "no": 1,
                 "title": "기다렸어? (Did You Wait?)",
-                "songId": "36607469"
+                "songId": "36607469",
+                "isTitle": false
               },
               {
                 "no": 2,
                 "title": "Air Force One",
-                "songId": "36607470"
+                "songId": "36607470",
+                "isTitle": true
               },
               {
                 "no": 3,
                 "title": "Je Ne Sais Quoi",
-                "songId": "36607471"
+                "songId": "36607471",
+                "isTitle": false
               },
               {
                 "no": 4,
                 "title": "Lucid",
-                "songId": "36607472"
+                "songId": "36607472",
+                "isTitle": false
               },
               {
                 "no": 5,
                 "title": "Love Me Like",
-                "songId": "36607473"
+                "songId": "36607473",
+                "isTitle": false
               },
               {
                 "no": 6,
                 "title": "My Secret Playlist",
-                "songId": "36607474"
+                "songId": "36607474",
+                "isTitle": false
               }
             ],
             "type": "미니",
             "isMain": true,
-            "melonAlbumId": "11283575"
+            "melonAlbumId": "11283575",
+            "titleTrack": "Air Force One"
           },
           {
             "albumId": 11372400,
@@ -128032,12 +128134,14 @@
               {
                 "no": 1,
                 "title": "Sweet Crazy Love (Eng Ver.)",
-                "songId": "37001987"
+                "songId": "37001987",
+                "isTitle": true
               }
             ],
             "type": "싱글",
             "isMain": true,
-            "melonAlbumId": "11372400"
+            "melonAlbumId": "11372400",
+            "titleTrack": "Sweet Crazy Love (Eng Ver.)"
           }
         ]
       }
@@ -128143,37 +128247,44 @@
               {
                 "no": 1,
                 "title": "기다렸어? (Did You Wait?)",
-                "songId": "36607469"
+                "songId": "36607469",
+                "isTitle": false
               },
               {
                 "no": 2,
                 "title": "Air Force One",
-                "songId": "36607470"
+                "songId": "36607470",
+                "isTitle": true
               },
               {
                 "no": 3,
                 "title": "Je Ne Sais Quoi",
-                "songId": "36607471"
+                "songId": "36607471",
+                "isTitle": false
               },
               {
                 "no": 4,
                 "title": "Lucid",
-                "songId": "36607472"
+                "songId": "36607472",
+                "isTitle": false
               },
               {
                 "no": 5,
                 "title": "Love Me Like",
-                "songId": "36607473"
+                "songId": "36607473",
+                "isTitle": false
               },
               {
                 "no": 6,
                 "title": "My Secret Playlist",
-                "songId": "36607474"
+                "songId": "36607474",
+                "isTitle": false
               }
             ],
             "type": "미니",
             "isMain": true,
-            "melonAlbumId": "11283575"
+            "melonAlbumId": "11283575",
+            "titleTrack": "Air Force One"
           },
           {
             "albumId": 11372400,
@@ -128184,12 +128295,14 @@
               {
                 "no": 1,
                 "title": "Sweet Crazy Love (Eng Ver.)",
-                "songId": "37001987"
+                "songId": "37001987",
+                "isTitle": true
               }
             ],
             "type": "싱글",
             "isMain": true,
-            "melonAlbumId": "11372400"
+            "melonAlbumId": "11372400",
+            "titleTrack": "Sweet Crazy Love (Eng Ver.)"
           }
         ]
       }
@@ -128272,32 +128385,38 @@
               {
                 "no": 1,
                 "title": "Into the New Heart",
-                "songId": "30299271"
+                "songId": "30299271",
+                "isTitle": false
               },
               {
                 "no": 2,
                 "title": "지금, 좋아해 (Love & Live)",
-                "songId": "30299272"
+                "songId": "30299272",
+                "isTitle": true
               },
               {
                 "no": 3,
                 "title": "You and Me Together",
-                "songId": "30299273"
+                "songId": "30299273",
+                "isTitle": false
               },
               {
                 "no": 4,
                 "title": "Fairy Tale",
-                "songId": "30299274"
+                "songId": "30299274",
+                "isTitle": false
               },
               {
                 "no": 5,
                 "title": "3월을 기다려 (Valentine Girl)",
-                "songId": "30299275"
+                "songId": "30299275",
+                "isTitle": false
               }
             ],
             "type": "미니",
             "isMain": true,
-            "melonAlbumId": "10045343"
+            "melonAlbumId": "10045343",
+            "titleTrack": "지금, 좋아해 (Love & Live)"
           },
           {
             "albumId": 10058607,
@@ -128308,52 +128427,62 @@
               {
                 "no": 1,
                 "title": "Love & Evil",
-                "songId": "30390126"
+                "songId": "30390126",
+                "isTitle": false
               },
               {
                 "no": 2,
                 "title": "알 수 없는 비밀 (Sonatine)",
-                "songId": "30390127"
+                "songId": "30390127",
+                "isTitle": true
               },
               {
                 "no": 3,
                 "title": "비의 목소리 51db (Rain 51db)",
-                "songId": "30390128"
+                "songId": "30390128",
+                "isTitle": false
               },
               {
                 "no": 4,
                 "title": "지금, 좋아해 (Love & Live)",
-                "songId": "30390129"
+                "songId": "30390129",
+                "isTitle": false
               },
               {
                 "no": 5,
                 "title": "You and Me Together",
-                "songId": "30390130"
+                "songId": "30390130",
+                "isTitle": false
               },
               {
                 "no": 6,
                 "title": "Fairy Tale",
-                "songId": "30390131"
+                "songId": "30390131",
+                "isTitle": false
               },
               {
                 "no": 7,
                 "title": "3월을 기다려 (Valentine Girl)",
-                "songId": "30390132"
+                "songId": "30390132",
+                "isTitle": false
               },
               {
                 "no": 8,
                 "title": "지금, 좋아해 (Love & Live) (Remix)",
-                "songId": "30390133"
+                "songId": "30390133",
+                "isTitle": false
               },
               {
                 "no": 9,
                 "title": "You and Me Together (Remix)",
-                "songId": "30390134"
+                "songId": "30390134",
+                "isTitle": false
               }
             ],
             "type": "정규",
             "isMain": true,
-            "melonAlbumId": "10058607"
+            "melonAlbumId": "10058607",
+            "titleTrack": "알 수 없는 비밀 (Sonatine)"
           }
         ]
       }
@@ -128442,32 +128571,38 @@
               {
                 "no": 1,
                 "title": "Into the New Heart",
-                "songId": "30299271"
+                "songId": "30299271",
+                "isTitle": false
               },
               {
                 "no": 2,
                 "title": "지금, 좋아해 (Love & Live)",
-                "songId": "30299272"
+                "songId": "30299272",
+                "isTitle": true
               },
               {
                 "no": 3,
                 "title": "You and Me Together",
-                "songId": "30299273"
+                "songId": "30299273",
+                "isTitle": false
               },
               {
                 "no": 4,
                 "title": "Fairy Tale",
-                "songId": "30299274"
+                "songId": "30299274",
+                "isTitle": false
               },
               {
                 "no": 5,
                 "title": "3월을 기다려 (Valentine Girl)",
-                "songId": "30299275"
+                "songId": "30299275",
+                "isTitle": false
               }
             ],
             "type": "미니",
             "isMain": true,
-            "melonAlbumId": "10045343"
+            "melonAlbumId": "10045343",
+            "titleTrack": "지금, 좋아해 (Love & Live)"
           },
           {
             "albumId": 10058607,
@@ -128478,52 +128613,62 @@
               {
                 "no": 1,
                 "title": "Love & Evil",
-                "songId": "30390126"
+                "songId": "30390126",
+                "isTitle": false
               },
               {
                 "no": 2,
                 "title": "알 수 없는 비밀 (Sonatine)",
-                "songId": "30390127"
+                "songId": "30390127",
+                "isTitle": true
               },
               {
                 "no": 3,
                 "title": "비의 목소리 51db (Rain 51db)",
-                "songId": "30390128"
+                "songId": "30390128",
+                "isTitle": false
               },
               {
                 "no": 4,
                 "title": "지금, 좋아해 (Love & Live)",
-                "songId": "30390129"
+                "songId": "30390129",
+                "isTitle": false
               },
               {
                 "no": 5,
                 "title": "You and Me Together",
-                "songId": "30390130"
+                "songId": "30390130",
+                "isTitle": false
               },
               {
                 "no": 6,
                 "title": "Fairy Tale",
-                "songId": "30390131"
+                "songId": "30390131",
+                "isTitle": false
               },
               {
                 "no": 7,
                 "title": "3월을 기다려 (Valentine Girl)",
-                "songId": "30390132"
+                "songId": "30390132",
+                "isTitle": false
               },
               {
                 "no": 8,
                 "title": "지금, 좋아해 (Love & Live) (Remix)",
-                "songId": "30390133"
+                "songId": "30390133",
+                "isTitle": false
               },
               {
                 "no": 9,
                 "title": "You and Me Together (Remix)",
-                "songId": "30390134"
+                "songId": "30390134",
+                "isTitle": false
               }
             ],
             "type": "정규",
             "isMain": true,
-            "melonAlbumId": "10058607"
+            "melonAlbumId": "10058607",
+            "titleTrack": "알 수 없는 비밀 (Sonatine)"
           }
         ]
       }
@@ -128666,32 +128811,38 @@
               {
                 "no": 1,
                 "title": "Into the New Heart",
-                "songId": "30299271"
+                "songId": "30299271",
+                "isTitle": false
               },
               {
                 "no": 2,
                 "title": "지금, 좋아해 (Love & Live)",
-                "songId": "30299272"
+                "songId": "30299272",
+                "isTitle": true
               },
               {
                 "no": 3,
                 "title": "You and Me Together",
-                "songId": "30299273"
+                "songId": "30299273",
+                "isTitle": false
               },
               {
                 "no": 4,
                 "title": "Fairy Tale",
-                "songId": "30299274"
+                "songId": "30299274",
+                "isTitle": false
               },
               {
                 "no": 5,
                 "title": "3월을 기다려 (Valentine Girl)",
-                "songId": "30299275"
+                "songId": "30299275",
+                "isTitle": false
               }
             ],
             "type": "미니",
             "isMain": true,
-            "melonAlbumId": "10045343"
+            "melonAlbumId": "10045343",
+            "titleTrack": "지금, 좋아해 (Love & Live)"
           },
           {
             "albumId": 10058607,
@@ -128702,52 +128853,62 @@
               {
                 "no": 1,
                 "title": "Love & Evil",
-                "songId": "30390126"
+                "songId": "30390126",
+                "isTitle": false
               },
               {
                 "no": 2,
                 "title": "알 수 없는 비밀 (Sonatine)",
-                "songId": "30390127"
+                "songId": "30390127",
+                "isTitle": true
               },
               {
                 "no": 3,
                 "title": "비의 목소리 51db (Rain 51db)",
-                "songId": "30390128"
+                "songId": "30390128",
+                "isTitle": false
               },
               {
                 "no": 4,
                 "title": "지금, 좋아해 (Love & Live)",
-                "songId": "30390129"
+                "songId": "30390129",
+                "isTitle": false
               },
               {
                 "no": 5,
                 "title": "You and Me Together",
-                "songId": "30390130"
+                "songId": "30390130",
+                "isTitle": false
               },
               {
                 "no": 6,
                 "title": "Fairy Tale",
-                "songId": "30390131"
+                "songId": "30390131",
+                "isTitle": false
               },
               {
                 "no": 7,
                 "title": "3월을 기다려 (Valentine Girl)",
-                "songId": "30390132"
+                "songId": "30390132",
+                "isTitle": false
               },
               {
                 "no": 8,
                 "title": "지금, 좋아해 (Love & Live) (Remix)",
-                "songId": "30390133"
+                "songId": "30390133",
+                "isTitle": false
               },
               {
                 "no": 9,
                 "title": "You and Me Together (Remix)",
-                "songId": "30390134"
+                "songId": "30390134",
+                "isTitle": false
               }
             ],
             "type": "정규",
             "isMain": true,
-            "melonAlbumId": "10058607"
+            "melonAlbumId": "10058607",
+            "titleTrack": "알 수 없는 비밀 (Sonatine)"
           }
         ]
       }
@@ -128810,32 +128971,38 @@
               {
                 "no": 1,
                 "title": "dal segno",
-                "songId": "31103684"
+                "songId": "31103684",
+                "isTitle": false
               },
               {
                 "no": 2,
                 "title": "love4eva (Feat. Grimes)",
-                "songId": "31103685"
+                "songId": "31103685",
+                "isTitle": true
               },
               {
                 "no": 3,
                 "title": "frozen",
-                "songId": "31103686"
+                "songId": "31103686",
+                "isTitle": false
               },
               {
                 "no": 4,
                 "title": "one way",
-                "songId": "31103687"
+                "songId": "31103687",
+                "isTitle": false
               },
               {
                 "no": 5,
                 "title": "rendezvous 18.6y",
-                "songId": "31103688"
+                "songId": "31103688",
+                "isTitle": false
               }
             ],
             "type": "미니",
             "isMain": true,
-            "melonAlbumId": "10171806"
+            "melonAlbumId": "10171806",
+            "titleTrack": "love4eva (Feat. Grimes)"
           }
         ]
       }
@@ -128897,32 +129064,38 @@
               {
                 "no": 1,
                 "title": "dal segno",
-                "songId": "31103684"
+                "songId": "31103684",
+                "isTitle": false
               },
               {
                 "no": 2,
                 "title": "love4eva (Feat. Grimes)",
-                "songId": "31103685"
+                "songId": "31103685",
+                "isTitle": true
               },
               {
                 "no": 3,
                 "title": "frozen",
-                "songId": "31103686"
+                "songId": "31103686",
+                "isTitle": false
               },
               {
                 "no": 4,
                 "title": "one way",
-                "songId": "31103687"
+                "songId": "31103687",
+                "isTitle": false
               },
               {
                 "no": 5,
                 "title": "rendezvous 18.6y",
-                "songId": "31103688"
+                "songId": "31103688",
+                "isTitle": false
               }
             ],
             "type": "미니",
             "isMain": true,
-            "melonAlbumId": "10171806"
+            "melonAlbumId": "10171806",
+            "titleTrack": "love4eva (Feat. Grimes)"
           }
         ]
       }
@@ -128969,32 +129142,38 @@
               {
                 "no": 1,
                 "title": "dal segno",
-                "songId": "31103684"
+                "songId": "31103684",
+                "isTitle": false
               },
               {
                 "no": 2,
                 "title": "love4eva (Feat. Grimes)",
-                "songId": "31103685"
+                "songId": "31103685",
+                "isTitle": true
               },
               {
                 "no": 3,
                 "title": "frozen",
-                "songId": "31103686"
+                "songId": "31103686",
+                "isTitle": false
               },
               {
                 "no": 4,
                 "title": "one way",
-                "songId": "31103687"
+                "songId": "31103687",
+                "isTitle": false
               },
               {
                 "no": 5,
                 "title": "rendezvous 18.6y",
-                "songId": "31103688"
+                "songId": "31103688",
+                "isTitle": false
               }
             ],
             "type": "미니",
             "isMain": true,
-            "melonAlbumId": "10171806"
+            "melonAlbumId": "10171806",
+            "titleTrack": "love4eva (Feat. Grimes)"
           }
         ]
       }
@@ -129445,32 +129624,38 @@
               {
                 "no": 1,
                 "title": "dal segno",
-                "songId": "31103684"
+                "songId": "31103684",
+                "isTitle": false
               },
               {
                 "no": 2,
                 "title": "love4eva (Feat. Grimes)",
-                "songId": "31103685"
+                "songId": "31103685",
+                "isTitle": true
               },
               {
                 "no": 3,
                 "title": "frozen",
-                "songId": "31103686"
+                "songId": "31103686",
+                "isTitle": false
               },
               {
                 "no": 4,
                 "title": "one way",
-                "songId": "31103687"
+                "songId": "31103687",
+                "isTitle": false
               },
               {
                 "no": 5,
                 "title": "rendezvous 18.6y",
-                "songId": "31103688"
+                "songId": "31103688",
+                "isTitle": false
               }
             ],
             "type": "미니",
             "isMain": true,
-            "melonAlbumId": "10171806"
+            "melonAlbumId": "10171806",
+            "titleTrack": "love4eva (Feat. Grimes)"
           }
         ]
       }
@@ -130560,9 +130745,10 @@
               },
               {
                 "no": 2,
-                "title": "Sad Story",
+                "title": "사랑 모두 거짓말 (Sad Story)",
                 "isTitle": false,
-                "songId": "37165830"
+                "songId": "37165830",
+                "en": "Sad Story"
               }
             ],
             "src": "spotify",
@@ -130649,9 +130835,10 @@
               },
               {
                 "no": 2,
-                "title": "Sad Story",
+                "title": "사랑 모두 거짓말 (Sad Story)",
                 "isTitle": false,
-                "songId": "37165830"
+                "songId": "37165830",
+                "en": "Sad Story"
               }
             ],
             "src": "spotify",
@@ -131242,14 +131429,15 @@
         "cover": "https://i.scdn.co/image/ab67616d0000b273345e51df13d9731c1d41d8bf",
         "releaseDate": "2026.05.12",
         "trackCount": 4,
-        "titleTrack": "Scent of Memories",
+        "titleTrack": "기억의 향기",
         "region": "jp",
         "tracks": [
           {
             "no": 1,
-            "title": "Scent of Memories (Japanese Ver.)",
+            "title": "기억의 향기 (Japanese Ver.)",
             "isTitle": false,
-            "songId": "601969462"
+            "songId": "601969462",
+            "en": "Scent of Memories (Japanese Ver.)"
           },
           {
             "no": 2,
@@ -131259,9 +131447,10 @@
           },
           {
             "no": 3,
-            "title": "Scent of Memories",
+            "title": "기억의 향기",
             "isTitle": true,
-            "songId": "601969464"
+            "songId": "601969464",
+            "en": "Scent of Memories"
           },
           {
             "no": 4,
@@ -131301,7 +131490,7 @@
         "cover": "https://i.scdn.co/image/ab67616d0000b2737d9adc3323854dac485925c4",
         "releaseDate": "2023.04.13",
         "trackCount": 2,
-        "titleTrack": null,
+        "titleTrack": "Cherry Coke",
         "tracks": [
           {
             "no": 1,
@@ -131312,7 +131501,7 @@
           {
             "no": 2,
             "title": "Cherry Coke",
-            "isTitle": false,
+            "isTitle": true,
             "songId": "36367601"
           }
         ],
@@ -134407,15 +134596,17 @@
               },
               {
                 "no": 5,
-                "title": "Fallen Leaves",
+                "title": "낙엽 (Fallen Leaves)",
                 "isTitle": false,
-                "songId": "3632137"
+                "songId": "3632137",
+                "en": "Fallen Leaves"
               },
               {
                 "no": 6,
-                "title": "The Boy's Letter",
+                "title": "소년의 편지 (The Boy's Letter)",
                 "isTitle": false,
-                "songId": "3632138"
+                "songId": "3632138",
+                "en": "The Boy's Letter"
               },
               {
                 "no": 7,
@@ -134457,31 +134648,33 @@
             "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/95/73/c7/9573c748-b008-8a6e-80e6-b57db41d63d2/8806384557367.jpg/600x600bb.jpg",
             "releaseDate": "2011.09.15",
             "trackCount": 9,
-            "titleTrack": "Get Out",
+            "titleTrack": "In Heaven (Narration 김정은 Version)",
             "tracks": [
               {
                 "no": 1,
                 "title": "Get Out",
-                "isTitle": true,
+                "isTitle": false,
                 "songId": "3550110"
               },
               {
                 "no": 2,
                 "title": "In Heaven (Narration 김정은 Version)",
-                "isTitle": false,
+                "isTitle": true,
                 "songId": "3550111"
               },
               {
                 "no": 3,
-                "title": "Fallen Leaves",
+                "title": "낙엽 (Fallen Leaves)",
                 "isTitle": false,
-                "songId": "3550112"
+                "songId": "3550112",
+                "en": "Fallen Leaves"
               },
               {
                 "no": 4,
-                "title": "The Boy's Letter",
+                "title": "소년의 편지 (The Boy's Letter)",
                 "isTitle": false,
-                "songId": "3550113"
+                "songId": "3550113",
+                "en": "The Boy's Letter"
               },
               {
                 "no": 5,
@@ -134542,7 +134735,7 @@
             "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/37/9c/10/379c10c8-75fb-282a-1595-8afb14770fb1/8809649890674.jpg/600x600bb.jpg",
             "releaseDate": "2010.10.14",
             "trackCount": 8,
-            "titleTrack": "Ayyy Girl (feat. Kanye West & Malik Yusef)",
+            "titleTrack": "Empty",
             "tracks": [
               {
                 "no": 1,
@@ -134553,13 +134746,13 @@
               {
                 "no": 2,
                 "title": "Ayyy Girl (feat. Kanye West & Malik Yusef)",
-                "isTitle": true,
+                "isTitle": false,
                 "songId": "2969364"
               },
               {
                 "no": 3,
                 "title": "Empty",
-                "isTitle": false,
+                "isTitle": true,
                 "songId": "2969365"
               },
               {
@@ -136279,15 +136472,17 @@
               },
               {
                 "no": 5,
-                "title": "Fallen Leaves",
+                "title": "낙엽 (Fallen Leaves)",
                 "isTitle": false,
-                "songId": "3632137"
+                "songId": "3632137",
+                "en": "Fallen Leaves"
               },
               {
                 "no": 6,
-                "title": "The Boy's Letter",
+                "title": "소년의 편지 (The Boy's Letter)",
                 "isTitle": false,
-                "songId": "3632138"
+                "songId": "3632138",
+                "en": "The Boy's Letter"
               },
               {
                 "no": 7,
@@ -136329,31 +136524,33 @@
             "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/95/73/c7/9573c748-b008-8a6e-80e6-b57db41d63d2/8806384557367.jpg/600x600bb.jpg",
             "releaseDate": "2011.09.15",
             "trackCount": 9,
-            "titleTrack": "Get Out",
+            "titleTrack": "In Heaven (Narration 김정은 Version)",
             "tracks": [
               {
                 "no": 1,
                 "title": "Get Out",
-                "isTitle": true,
+                "isTitle": false,
                 "songId": "3550110"
               },
               {
                 "no": 2,
                 "title": "In Heaven (Narration 김정은 Version)",
-                "isTitle": false,
+                "isTitle": true,
                 "songId": "3550111"
               },
               {
                 "no": 3,
-                "title": "Fallen Leaves",
+                "title": "낙엽 (Fallen Leaves)",
                 "isTitle": false,
-                "songId": "3550112"
+                "songId": "3550112",
+                "en": "Fallen Leaves"
               },
               {
                 "no": 4,
-                "title": "The Boy's Letter",
+                "title": "소년의 편지 (The Boy's Letter)",
                 "isTitle": false,
-                "songId": "3550113"
+                "songId": "3550113",
+                "en": "The Boy's Letter"
               },
               {
                 "no": 5,
@@ -136414,7 +136611,7 @@
             "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/37/9c/10/379c10c8-75fb-282a-1595-8afb14770fb1/8809649890674.jpg/600x600bb.jpg",
             "releaseDate": "2010.10.14",
             "trackCount": 8,
-            "titleTrack": "Ayyy Girl (feat. Kanye West & Malik Yusef)",
+            "titleTrack": "Empty",
             "tracks": [
               {
                 "no": 1,
@@ -136425,13 +136622,13 @@
               {
                 "no": 2,
                 "title": "Ayyy Girl (feat. Kanye West & Malik Yusef)",
-                "isTitle": true,
+                "isTitle": false,
                 "songId": "2969364"
               },
               {
                 "no": 3,
                 "title": "Empty",
-                "isTitle": false,
+                "isTitle": true,
                 "songId": "2969365"
               },
               {
@@ -137145,15 +137342,17 @@
               },
               {
                 "no": 5,
-                "title": "Fallen Leaves",
+                "title": "낙엽 (Fallen Leaves)",
                 "isTitle": false,
-                "songId": "3632137"
+                "songId": "3632137",
+                "en": "Fallen Leaves"
               },
               {
                 "no": 6,
-                "title": "The Boy's Letter",
+                "title": "소년의 편지 (The Boy's Letter)",
                 "isTitle": false,
-                "songId": "3632138"
+                "songId": "3632138",
+                "en": "The Boy's Letter"
               },
               {
                 "no": 7,
@@ -137195,31 +137394,33 @@
             "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/95/73/c7/9573c748-b008-8a6e-80e6-b57db41d63d2/8806384557367.jpg/600x600bb.jpg",
             "releaseDate": "2011.09.15",
             "trackCount": 9,
-            "titleTrack": "Get Out",
+            "titleTrack": "In Heaven (Narration 김정은 Version)",
             "tracks": [
               {
                 "no": 1,
                 "title": "Get Out",
-                "isTitle": true,
+                "isTitle": false,
                 "songId": "3550110"
               },
               {
                 "no": 2,
                 "title": "In Heaven (Narration 김정은 Version)",
-                "isTitle": false,
+                "isTitle": true,
                 "songId": "3550111"
               },
               {
                 "no": 3,
-                "title": "Fallen Leaves",
+                "title": "낙엽 (Fallen Leaves)",
                 "isTitle": false,
-                "songId": "3550112"
+                "songId": "3550112",
+                "en": "Fallen Leaves"
               },
               {
                 "no": 4,
-                "title": "The Boy's Letter",
+                "title": "소년의 편지 (The Boy's Letter)",
                 "isTitle": false,
-                "songId": "3550113"
+                "songId": "3550113",
+                "en": "The Boy's Letter"
               },
               {
                 "no": 5,
@@ -137280,7 +137481,7 @@
             "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/37/9c/10/379c10c8-75fb-282a-1595-8afb14770fb1/8809649890674.jpg/600x600bb.jpg",
             "releaseDate": "2010.10.14",
             "trackCount": 8,
-            "titleTrack": "Ayyy Girl (feat. Kanye West & Malik Yusef)",
+            "titleTrack": "Empty",
             "tracks": [
               {
                 "no": 1,
@@ -137291,13 +137492,13 @@
               {
                 "no": 2,
                 "title": "Ayyy Girl (feat. Kanye West & Malik Yusef)",
-                "isTitle": true,
+                "isTitle": false,
                 "songId": "2969364"
               },
               {
                 "no": 3,
                 "title": "Empty",
-                "isTitle": false,
+                "isTitle": true,
                 "songId": "2969365"
               },
               {
@@ -145299,12 +145500,12 @@
             "cover": "https://i.scdn.co/image/ab67616d0000b27376e0f4008314865ea2791b34",
             "releaseDate": "2025.06.12",
             "trackCount": 6,
-            "titleTrack": null,
+            "titleTrack": "On the Rocks with Kiss",
             "tracks": [
               {
                 "no": 1,
                 "title": "On the Rocks with Kiss",
-                "isTitle": false,
+                "isTitle": true,
                 "songId": "39139746"
               },
               {
@@ -153081,9 +153282,10 @@
           },
           {
             "no": 12,
-            "title": "B.I",
+            "title": "열아홉 (NINETEEN)",
             "isTitle": false,
-            "songId": "36491338"
+            "songId": "36491338",
+            "en": "B.I"
           },
           {
             "no": 13,
@@ -164971,18 +165173,21 @@
               {
                 "no": 1,
                 "title": "내 곁에 서 있어줘",
-                "songId": "9647328"
+                "songId": "9647328",
+                "isTitle": true
               },
               {
                 "no": 2,
                 "title": "내 곁에 서 있어줘 (Inst.)",
-                "songId": "9647329"
+                "songId": "9647329",
+                "isTitle": false
               }
             ],
             "img": "https://cdnimg.melon.co.kr/cm/album/images/027/11/211/2711211_500.jpg",
             "type": "싱글",
             "isMain": true,
-            "melonAlbumId": "2711211"
+            "melonAlbumId": "2711211",
+            "titleTrack": "내 곁에 서 있어줘"
           },
           {
             "albumId": 10190843,
@@ -164992,18 +165197,21 @@
               {
                 "no": 1,
                 "title": "비가 내리면",
-                "songId": "31224264"
+                "songId": "31224264",
+                "isTitle": true
               },
               {
                 "no": 2,
                 "title": "비가 내리면 (Inst.)",
-                "songId": "31224265"
+                "songId": "31224265",
+                "isTitle": false
               }
             ],
             "img": "https://cdnimg.melon.co.kr/cm/album/images/101/90/843/10190843_500.jpg",
             "type": "싱글",
             "isMain": true,
-            "melonAlbumId": "10190843"
+            "melonAlbumId": "10190843",
+            "titleTrack": "비가 내리면"
           }
         ]
       },
@@ -165018,33 +165226,39 @@
               {
                 "no": 1,
                 "title": "Show Your Love",
-                "songId": "33064572"
+                "songId": "33064572",
+                "isTitle": true
               },
               {
                 "no": 2,
                 "title": "Tension",
-                "songId": "33064573"
+                "songId": "33064573",
+                "isTitle": false
               },
               {
                 "no": 3,
                 "title": "Bull's Eye",
-                "songId": "33064574"
+                "songId": "33064574",
+                "isTitle": false
               },
               {
                 "no": 4,
                 "title": "신기루",
-                "songId": "33064575"
+                "songId": "33064575",
+                "isTitle": false
               },
               {
                 "no": 5,
                 "title": "그대로예요",
-                "songId": "33064576"
+                "songId": "33064576",
+                "isTitle": false
               }
             ],
             "img": "https://cdnimg.melon.co.kr/cm/album/images/105/18/744/10518744_500.jpg",
             "type": "미니",
             "isMain": true,
-            "melonAlbumId": "10518744"
+            "melonAlbumId": "10518744",
+            "titleTrack": "Show Your Love"
           },
           {
             "albumId": 10527012,
@@ -165054,13 +165268,15 @@
               {
                 "no": 1,
                 "title": "Show Your Love (Japanese Ver.)",
-                "songId": "33102826"
+                "songId": "33102826",
+                "isTitle": true
               }
             ],
             "img": "https://cdnimg.melon.co.kr/cm/album/images/105/27/012/10527012_500.jpg",
             "type": "싱글",
             "isMain": false,
-            "melonAlbumId": "10527012"
+            "melonAlbumId": "10527012",
+            "titleTrack": "Show Your Love (Japanese Ver.)"
           }
         ]
       }
@@ -165812,33 +166028,39 @@
               {
                 "no": 1,
                 "title": "Show Your Love",
-                "songId": "33064572"
+                "songId": "33064572",
+                "isTitle": true
               },
               {
                 "no": 2,
                 "title": "Tension",
-                "songId": "33064573"
+                "songId": "33064573",
+                "isTitle": false
               },
               {
                 "no": 3,
                 "title": "Bull's Eye",
-                "songId": "33064574"
+                "songId": "33064574",
+                "isTitle": false
               },
               {
                 "no": 4,
                 "title": "신기루",
-                "songId": "33064575"
+                "songId": "33064575",
+                "isTitle": false
               },
               {
                 "no": 5,
                 "title": "그대로예요",
-                "songId": "33064576"
+                "songId": "33064576",
+                "isTitle": false
               }
             ],
             "img": "https://cdnimg.melon.co.kr/cm/album/images/105/18/744/10518744_500.jpg",
             "type": "미니",
             "isMain": true,
-            "melonAlbumId": "10518744"
+            "melonAlbumId": "10518744",
+            "titleTrack": "Show Your Love"
           },
           {
             "albumId": 10527012,
@@ -165848,13 +166070,15 @@
               {
                 "no": 1,
                 "title": "Show Your Love (Japanese Ver.)",
-                "songId": "33102826"
+                "songId": "33102826",
+                "isTitle": true
               }
             ],
             "img": "https://cdnimg.melon.co.kr/cm/album/images/105/27/012/10527012_500.jpg",
             "type": "싱글",
             "isMain": false,
-            "melonAlbumId": "10527012"
+            "melonAlbumId": "10527012",
+            "titleTrack": "Show Your Love (Japanese Ver.)"
           }
         ]
       }
@@ -166260,18 +166484,21 @@
               {
                 "no": 1,
                 "title": "내 곁에 서 있어줘",
-                "songId": "9647328"
+                "songId": "9647328",
+                "isTitle": true
               },
               {
                 "no": 2,
                 "title": "내 곁에 서 있어줘 (Inst.)",
-                "songId": "9647329"
+                "songId": "9647329",
+                "isTitle": false
               }
             ],
             "img": "https://cdnimg.melon.co.kr/cm/album/images/027/11/211/2711211_500.jpg",
             "type": "싱글",
             "isMain": true,
-            "melonAlbumId": "2711211"
+            "melonAlbumId": "2711211",
+            "titleTrack": "내 곁에 서 있어줘"
           },
           {
             "albumId": 10190843,
@@ -166281,18 +166508,21 @@
               {
                 "no": 1,
                 "title": "비가 내리면",
-                "songId": "31224264"
+                "songId": "31224264",
+                "isTitle": true
               },
               {
                 "no": 2,
                 "title": "비가 내리면 (Inst.)",
-                "songId": "31224265"
+                "songId": "31224265",
+                "isTitle": false
               }
             ],
             "img": "https://cdnimg.melon.co.kr/cm/album/images/101/90/843/10190843_500.jpg",
             "type": "싱글",
             "isMain": true,
-            "melonAlbumId": "10190843"
+            "melonAlbumId": "10190843",
+            "titleTrack": "비가 내리면"
           }
         ]
       },
@@ -166307,33 +166537,39 @@
               {
                 "no": 1,
                 "title": "Show Your Love",
-                "songId": "33064572"
+                "songId": "33064572",
+                "isTitle": true
               },
               {
                 "no": 2,
                 "title": "Tension",
-                "songId": "33064573"
+                "songId": "33064573",
+                "isTitle": false
               },
               {
                 "no": 3,
                 "title": "Bull's Eye",
-                "songId": "33064574"
+                "songId": "33064574",
+                "isTitle": false
               },
               {
                 "no": 4,
                 "title": "신기루",
-                "songId": "33064575"
+                "songId": "33064575",
+                "isTitle": false
               },
               {
                 "no": 5,
                 "title": "그대로예요",
-                "songId": "33064576"
+                "songId": "33064576",
+                "isTitle": false
               }
             ],
             "img": "https://cdnimg.melon.co.kr/cm/album/images/105/18/744/10518744_500.jpg",
             "type": "미니",
             "isMain": true,
-            "melonAlbumId": "10518744"
+            "melonAlbumId": "10518744",
+            "titleTrack": "Show Your Love"
           },
           {
             "albumId": 10527012,
@@ -166343,13 +166579,15 @@
               {
                 "no": 1,
                 "title": "Show Your Love (Japanese Ver.)",
-                "songId": "33102826"
+                "songId": "33102826",
+                "isTitle": true
               }
             ],
             "img": "https://cdnimg.melon.co.kr/cm/album/images/105/27/012/10527012_500.jpg",
             "type": "싱글",
             "isMain": false,
-            "melonAlbumId": "10527012"
+            "melonAlbumId": "10527012",
+            "titleTrack": "Show Your Love (Japanese Ver.)"
           }
         ]
       }
@@ -167277,18 +167515,21 @@
               {
                 "no": 1,
                 "title": "내 곁에 서 있어줘",
-                "songId": "9647328"
+                "songId": "9647328",
+                "isTitle": true
               },
               {
                 "no": 2,
                 "title": "내 곁에 서 있어줘 (Inst.)",
-                "songId": "9647329"
+                "songId": "9647329",
+                "isTitle": false
               }
             ],
             "img": "https://cdnimg.melon.co.kr/cm/album/images/027/11/211/2711211_500.jpg",
             "type": "싱글",
             "isMain": true,
-            "melonAlbumId": "2711211"
+            "melonAlbumId": "2711211",
+            "titleTrack": "내 곁에 서 있어줘"
           },
           {
             "albumId": 10190843,
@@ -167298,18 +167539,21 @@
               {
                 "no": 1,
                 "title": "비가 내리면",
-                "songId": "31224264"
+                "songId": "31224264",
+                "isTitle": true
               },
               {
                 "no": 2,
                 "title": "비가 내리면 (Inst.)",
-                "songId": "31224265"
+                "songId": "31224265",
+                "isTitle": false
               }
             ],
             "img": "https://cdnimg.melon.co.kr/cm/album/images/101/90/843/10190843_500.jpg",
             "type": "싱글",
             "isMain": true,
-            "melonAlbumId": "10190843"
+            "melonAlbumId": "10190843",
+            "titleTrack": "비가 내리면"
           }
         ]
       }
@@ -167630,33 +167874,39 @@
               {
                 "no": 1,
                 "title": "Show Your Love",
-                "songId": "33064572"
+                "songId": "33064572",
+                "isTitle": true
               },
               {
                 "no": 2,
                 "title": "Tension",
-                "songId": "33064573"
+                "songId": "33064573",
+                "isTitle": false
               },
               {
                 "no": 3,
                 "title": "Bull's Eye",
-                "songId": "33064574"
+                "songId": "33064574",
+                "isTitle": false
               },
               {
                 "no": 4,
                 "title": "신기루",
-                "songId": "33064575"
+                "songId": "33064575",
+                "isTitle": false
               },
               {
                 "no": 5,
                 "title": "그대로예요",
-                "songId": "33064576"
+                "songId": "33064576",
+                "isTitle": false
               }
             ],
             "img": "https://cdnimg.melon.co.kr/cm/album/images/105/18/744/10518744_500.jpg",
             "type": "미니",
             "isMain": true,
-            "melonAlbumId": "10518744"
+            "melonAlbumId": "10518744",
+            "titleTrack": "Show Your Love"
           },
           {
             "albumId": 10527012,
@@ -167666,13 +167916,15 @@
               {
                 "no": 1,
                 "title": "Show Your Love (Japanese Ver.)",
-                "songId": "33102826"
+                "songId": "33102826",
+                "isTitle": true
               }
             ],
             "img": "https://cdnimg.melon.co.kr/cm/album/images/105/27/012/10527012_500.jpg",
             "type": "싱글",
             "isMain": false,
-            "melonAlbumId": "10527012"
+            "melonAlbumId": "10527012",
+            "titleTrack": "Show Your Love (Japanese Ver.)"
           }
         ]
       }
@@ -167883,18 +168135,21 @@
               {
                 "no": 1,
                 "title": "내 곁에 서 있어줘",
-                "songId": "9647328"
+                "songId": "9647328",
+                "isTitle": true
               },
               {
                 "no": 2,
                 "title": "내 곁에 서 있어줘 (Inst.)",
-                "songId": "9647329"
+                "songId": "9647329",
+                "isTitle": false
               }
             ],
             "img": "https://cdnimg.melon.co.kr/cm/album/images/027/11/211/2711211_500.jpg",
             "type": "싱글",
             "isMain": true,
-            "melonAlbumId": "2711211"
+            "melonAlbumId": "2711211",
+            "titleTrack": "내 곁에 서 있어줘"
           },
           {
             "albumId": 10190843,
@@ -167904,18 +168159,21 @@
               {
                 "no": 1,
                 "title": "비가 내리면",
-                "songId": "31224264"
+                "songId": "31224264",
+                "isTitle": true
               },
               {
                 "no": 2,
                 "title": "비가 내리면 (Inst.)",
-                "songId": "31224265"
+                "songId": "31224265",
+                "isTitle": false
               }
             ],
             "img": "https://cdnimg.melon.co.kr/cm/album/images/101/90/843/10190843_500.jpg",
             "type": "싱글",
             "isMain": true,
-            "melonAlbumId": "10190843"
+            "melonAlbumId": "10190843",
+            "titleTrack": "비가 내리면"
           }
         ]
       }
@@ -226475,12 +226733,12 @@
         "cover": "https://i.scdn.co/image/ab67616d0000b273a118c4dd370fa5f8615d744e",
         "releaseDate": "2026.06.29",
         "trackCount": 2,
-        "titleTrack": null,
+        "titleTrack": "시편 24편 King of Glory Psalms 24",
         "tracks": [
           {
             "no": 1,
             "title": "시편 24편 King of Glory Psalms 24",
-            "isTitle": false,
+            "isTitle": true,
             "songId": "602380256"
           },
           {
@@ -274930,12 +275188,12 @@
             "cover": "https://i.scdn.co/image/ab67616d0000b27376e0f4008314865ea2791b34",
             "releaseDate": "2025.06.12",
             "trackCount": 6,
-            "titleTrack": null,
+            "titleTrack": "On the Rocks with Kiss",
             "tracks": [
               {
                 "no": 1,
                 "title": "On the Rocks with Kiss",
-                "isTitle": false,
+                "isTitle": true,
                 "songId": "39139746"
               },
               {
@@ -275030,12 +275288,12 @@
             "cover": "https://i.scdn.co/image/ab67616d0000b27376e0f4008314865ea2791b34",
             "releaseDate": "2025.06.12",
             "trackCount": 6,
-            "titleTrack": null,
+            "titleTrack": "On the Rocks with Kiss",
             "tracks": [
               {
                 "no": 1,
                 "title": "On the Rocks with Kiss",
-                "isTitle": false,
+                "isTitle": true,
                 "songId": "39139746"
               },
               {
@@ -275130,12 +275388,12 @@
             "cover": "https://i.scdn.co/image/ab67616d0000b27376e0f4008314865ea2791b34",
             "releaseDate": "2025.06.12",
             "trackCount": 6,
-            "titleTrack": null,
+            "titleTrack": "On the Rocks with Kiss",
             "tracks": [
               {
                 "no": 1,
                 "title": "On the Rocks with Kiss",
-                "isTitle": false,
+                "isTitle": true,
                 "songId": "39139746"
               },
               {
@@ -275263,9 +275521,10 @@
               },
               {
                 "no": 2,
-                "title": "Sad Story",
+                "title": "사랑 모두 거짓말 (Sad Story)",
                 "isTitle": false,
-                "songId": "37165830"
+                "songId": "37165830",
+                "en": "Sad Story"
               }
             ],
             "src": "spotify",
@@ -275284,12 +275543,12 @@
             "cover": "https://i.scdn.co/image/ab67616d0000b27376e0f4008314865ea2791b34",
             "releaseDate": "2025.06.12",
             "trackCount": 6,
-            "titleTrack": null,
+            "titleTrack": "On the Rocks with Kiss",
             "tracks": [
               {
                 "no": 1,
                 "title": "On the Rocks with Kiss",
-                "isTitle": false,
+                "isTitle": true,
                 "songId": "39139746"
               },
               {
@@ -275381,12 +275640,12 @@
             "cover": "https://i.scdn.co/image/ab67616d0000b27376e0f4008314865ea2791b34",
             "releaseDate": "2025.06.12",
             "trackCount": 6,
-            "titleTrack": null,
+            "titleTrack": "On the Rocks with Kiss",
             "tracks": [
               {
                 "no": 1,
                 "title": "On the Rocks with Kiss",
-                "isTitle": false,
+                "isTitle": true,
                 "songId": "39139746"
               },
               {
@@ -275505,9 +275764,10 @@
               },
               {
                 "no": 2,
-                "title": "Sad Story",
+                "title": "사랑 모두 거짓말 (Sad Story)",
                 "isTitle": false,
-                "songId": "37165830"
+                "songId": "37165830",
+                "en": "Sad Story"
               }
             ],
             "src": "spotify",
@@ -278261,9 +278521,10 @@
               },
               {
                 "no": 5,
-                "title": "Lip 2 Lip (Inst.)",
+                "title": "입술에 입술 (Lip 2 Lip) (Inst.)",
                 "isTitle": false,
-                "songId": "8298666"
+                "songId": "8298666",
+                "en": "Lip 2 Lip (Inst.)"
               }
             ],
             "melonAlbumId": "2702234"
@@ -278592,9 +278853,10 @@
               },
               {
                 "no": 5,
-                "title": "Lip 2 Lip (Inst.)",
+                "title": "입술에 입술 (Lip 2 Lip) (Inst.)",
                 "isTitle": false,
-                "songId": "8298666"
+                "songId": "8298666",
+                "en": "Lip 2 Lip (Inst.)"
               }
             ],
             "melonAlbumId": "2702234"
@@ -278812,9 +279074,10 @@
               },
               {
                 "no": 5,
-                "title": "Lip 2 Lip (Inst.)",
+                "title": "입술에 입술 (Lip 2 Lip) (Inst.)",
                 "isTitle": false,
-                "songId": "8298666"
+                "songId": "8298666",
+                "en": "Lip 2 Lip (Inst.)"
               }
             ],
             "melonAlbumId": "2702234"
@@ -278901,9 +279164,10 @@
               },
               {
                 "no": 5,
-                "title": "Lip 2 Lip (Inst.)",
+                "title": "입술에 입술 (Lip 2 Lip) (Inst.)",
                 "isTitle": false,
-                "songId": "8298666"
+                "songId": "8298666",
+                "en": "Lip 2 Lip (Inst.)"
               }
             ],
             "melonAlbumId": "2702234"
@@ -288236,12 +288500,12 @@
             "cover": "https://i.scdn.co/image/ab67616d0000b27376e0f4008314865ea2791b34",
             "releaseDate": "2025.06.12",
             "trackCount": 6,
-            "titleTrack": null,
+            "titleTrack": "On the Rocks with Kiss",
             "tracks": [
               {
                 "no": 1,
                 "title": "On the Rocks with Kiss",
-                "isTitle": false,
+                "isTitle": true,
                 "songId": "39139746"
               },
               {
@@ -288366,9 +288630,10 @@
               },
               {
                 "no": 2,
-                "title": "Sad Story",
+                "title": "사랑 모두 거짓말 (Sad Story)",
                 "isTitle": false,
-                "songId": "37165830"
+                "songId": "37165830",
+                "en": "Sad Story"
               }
             ],
             "src": "spotify",
@@ -288387,12 +288652,12 @@
             "cover": "https://i.scdn.co/image/ab67616d0000b27376e0f4008314865ea2791b34",
             "releaseDate": "2025.06.12",
             "trackCount": 6,
-            "titleTrack": null,
+            "titleTrack": "On the Rocks with Kiss",
             "tracks": [
               {
                 "no": 1,
                 "title": "On the Rocks with Kiss",
-                "isTitle": false,
+                "isTitle": true,
                 "songId": "39139746"
               },
               {
@@ -288491,9 +288756,10 @@
               },
               {
                 "no": 2,
-                "title": "Sad Story",
+                "title": "사랑 모두 거짓말 (Sad Story)",
                 "isTitle": false,
-                "songId": "37165830"
+                "songId": "37165830",
+                "en": "Sad Story"
               }
             ],
             "src": "spotify",
@@ -288512,12 +288778,12 @@
             "cover": "https://i.scdn.co/image/ab67616d0000b27376e0f4008314865ea2791b34",
             "releaseDate": "2025.06.12",
             "trackCount": 6,
-            "titleTrack": null,
+            "titleTrack": "On the Rocks with Kiss",
             "tracks": [
               {
                 "no": 1,
                 "title": "On the Rocks with Kiss",
-                "isTitle": false,
+                "isTitle": true,
                 "songId": "39139746"
               },
               {
@@ -288605,12 +288871,12 @@
             "cover": "https://i.scdn.co/image/ab67616d0000b27376e0f4008314865ea2791b34",
             "releaseDate": "2025.06.12",
             "trackCount": 6,
-            "titleTrack": null,
+            "titleTrack": "On the Rocks with Kiss",
             "tracks": [
               {
                 "no": 1,
                 "title": "On the Rocks with Kiss",
-                "isTitle": false,
+                "isTitle": true,
                 "songId": "39139746"
               },
               {
@@ -288692,12 +288958,12 @@
             "cover": "https://i.scdn.co/image/ab67616d0000b27376e0f4008314865ea2791b34",
             "releaseDate": "2025.06.12",
             "trackCount": 6,
-            "titleTrack": null,
+            "titleTrack": "On the Rocks with Kiss",
             "tracks": [
               {
                 "no": 1,
                 "title": "On the Rocks with Kiss",
-                "isTitle": false,
+                "isTitle": true,
                 "songId": "39139746"
               },
               {

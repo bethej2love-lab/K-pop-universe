@@ -69,3 +69,28 @@ h2{font-size:17px;margin:26px 0 12px;color:#fff;}
 .win-tbl th{text-align:left;font-weight:600;color:rgba(170,190,235,0.7);padding:6px 4px;border-bottom:0.5px solid rgba(255,255,255,0.1);}
 .win-tbl td{padding:6px 4px;border-bottom:0.5px solid rgba(255,255,255,0.05);color:rgba(220,230,255,0.88);}
 .win-tbl a{color:inherit;}
+/* 넓은 화면 2단(2026-11-12) — 웹이 폰 화면을 늘린 760px 기둥이던 것. seo_play.js가 .hero와 경로·칩을 .kpu-top/.kpu-side로 묶는다.
+   대표 영상 왼쪽, 정보·이어서 카드 오른쪽, 아래 영상 4열·다른 곡 7열. 폰은 묶여도 위아래 그대로. */
+.kpu-side{min-width:0;}
+@media(min-width:1000px){
+  .wrap{max-width:1120px;padding:22px 32px 40px;}
+  .kpu-top{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:32px;align-items:end;margin:14px 0 6px;}
+  .kpu-top .hero{margin:0;}
+  .kpu-top + .chips{margin-top:18px;}
+  .kpu-side .crumbs{margin:0 0 12px;font-size:14px;}
+  .kpu-side .chips{margin:0;}
+  .kpu-side .lead{margin:0 0 14px;}
+  .grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
+  .sp-tiles{grid-template-columns:repeat(7,minmax(0,1fr));}
+  h2{font-size:20px;margin:36px 0 14px;}
+}
+.kpu-side-h{display:none;}
+@media(min-width:1000px){
+  .kpu-side{display:flex;flex-direction:column;justify-content:flex-end;align-self:stretch;}
+  .kpu-side-h{display:block;margin:0 0 18px;}
+  .kpu-side-h .h{font-size:34px;line-height:1.15;font-weight:700;color:#fff;word-break:keep-all;}
+  .kpu-side-h .h.long{font-size:27px;line-height:1.22;}
+  .kpu-side-h .sb{font-size:15px;color:rgba(205,218,255,0.75);margin-top:6px;}
+  .kpu-top .hero-txt{display:none;}
+  .kpu-top .hero::after{background:none;}
+}

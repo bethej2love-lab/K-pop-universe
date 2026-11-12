@@ -1725,7 +1725,7 @@ function memberFaceUrl(a, gko) {
   return id ? ytThumb(id, 'mqdefault') : null;
 }
 // 스타일은 저장소의 song-page.css 한 파일(페이지마다 넣으면 3만 쪽 × 5KB) — 바꾸면 SONG_CSS_V를 올릴 것
-const SONG_CSS_V = 4;
+const SONG_CSS_V = 5;
 function songShareVideo(vids) {
   return vids.find(v => (v.category === 'live' || FANCAM_RE.test(v.title || ''))
     && !/\bM\/?V\b|music\s*video|뮤직비디오|\bteaser\b|티저/i.test(v.title || '')) || vids[0];
@@ -1737,7 +1737,7 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
   const yr = date.slice(0, 4);
   const gName = isEn ? (info.en || gko) : gko;
   const gFull = isEn ? bilingualLabel(gName,gko) : bilingualLabel(gko,info.en);
-  const songLabel = s.bilingualTitle || s.title;
+  const songLabel = isEn ? (s.enTitle || s.bilingualTitle || s.title) : (s.bilingualTitle || s.title); // 영어 페이지는 영문 제목만(2026-11-12)
   const cr = s.cr || {};
   const L = credit(cr.l), C = credit(cr.c), A = credit(cr.a);
   const ms = member || null;
@@ -1827,6 +1827,32 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
   </ul>${hubUrl ? `
   <p class="lead"><a href="${hubUrl}">${isEn ? `All ${hubTotal} ${mName} fancams by song →` : `${mName} 직캠 전체 ${hubTotal}개 보기 →`}</a></p>` : ''}` : hubUrl ? `
   <p class="lead"><a href="${hubUrl}">${isEn ? `All ${hubTotal} ${mName} fancams by song →` : `${mName} 직캠 전체 ${hubTotal}개 보기 →`}</a></p>` : '';
+  // '이어서' 카드(2026-11-12) — 정적 페이지 유입의 70%가 곡 페이지인데 재생 화면 '이어서'는 기본 카드 1개뿐이었다.
+  // 멤버 페이지 nextItemsJson과 같은 모양({k,t,s,img|im,h,m}), 링크는 앱 딥링크라 누르면 그 화면이 바로 열린다.
+  const songNext = (() => {
+    const topV = vs => (vs || []).slice().sort((p, q) => (q.view_count || 0) - (p.view_count || 0))[0];
+    const memItem = (x, title) => { const v = topV(x.vids); const nm = isEn ? x.nmEn : x.nm;
+      return { k: isEn ? 'Member fancams' : '멤버 직캠', t: `${nm} · ${title}`, s: isEn ? `${x.vids.length} fancams` : `직캠 ${x.vids.length}개`, img: v ? v.id : '', m: title, h: `${SITE}/#g=${hashEsc(gko)}&m=${hashEsc(x.a.name.ko)}&song=${hashEsc(s.title)}` }; };
+    const grpItem = () => { const gi = ogImageForGroup(gko, info);
+      return { k: isEn ? 'Group' : '그룹', t: gName, s: isEn ? 'Stages · MVs · members' : '무대 · 뮤비 · 멤버', im: /og-image\.png$/.test(gi) ? '' : gi.replace('/maxresdefault.', '/mqdefault.').replace('/hq720.', '/mqdefault.'), h: `${SITE}/#g=${hashEsc(gko)}` }; };
+    const items = [];
+    if (ms) {
+      const mate = msList.filter(x => x.a !== ms.a).sort((p, q) => q.vids.length - p.vids.length)[0];
+      if (mate) items.push(memItem(mate, s.title));
+      const o = (MEMBER_SONGS_BY_ARTIST.get(ms.a) || []).filter(x => x.s.b !== s.b)[0];
+      if (o) { const om = (MEMBER_SONGS_BY_SONG.get(gko + '|' + o.s.b) || []).find(y => y.a === ms.a); const v = om && topV(om.vids);
+        items.push({ k: isEn ? 'Another song' : '다른 곡', t: `${mName} · ${o.s.title}`, s: isEn ? `${o.n} fancams` : `직캠 ${o.n}개`, img: v ? v.id : '', m: o.s.title, h: `${SITE}/#g=${hashEsc(gko)}&m=${hashEsc(ms.a.name.ko)}&song=${hashEsc(o.s.title)}` }); }
+      const sv = topV(s.vids);
+      items.push({ k: isEn ? 'Whole song' : '곡 전체', t: s.title, s: isEn ? `${s.vids.length} fancams & stages` : `직캠·무대 ${s.vids.length}개`, img: sv ? sv.id : '', h: `${SITE}/#g=${hashEsc(gko)}&song=${hashEsc(s.title)}` });
+      items.push(grpItem());
+    } else {
+      msList.slice().sort((p, q) => q.vids.length - p.vids.length).slice(0, 2).forEach(x => items.push(memItem(x, s.title)));
+      const o = (others || []).find(x => x.b !== s.b);
+      if (o) items.push({ k: isEn ? 'Another song' : '다른 곡', t: o.title, s: isEn ? `${o.vids.length} videos` : `영상 ${o.vids.length}개`, im: o.cover || '', h: `${SITE}/#g=${hashEsc(gko)}&song=${hashEsc(o.title)}` });
+      items.push(grpItem());
+    }
+    return `<script type="application/json" id="kpu-next">${JSON.stringify(items).replace(/</g, '\\u003c')}</script>`;
+  })();
   const crumbs = ms
     ? `<div class="crumbs"><a href="${SITE}/${groupPagePath(gko, lang)}">${escHtml(gName)}</a> › <a href="${SITE}/${memberPagePath(ms.a, lang)}">${escHtml(mName)}</a> › <a href="${songUrl}">${escHtml(s.bilingualTitle || s.title)}</a></div>${hubUrl ? `
   <p class="hub-back"><a href="${hubUrl}" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:20px;background:rgba(150,175,255,0.1);border:0.5px solid rgba(150,175,255,0.3);color:#dce6ff;text-decoration:none;font-size:13.5px">${isEn ? `← All ${mName} fancams (${hubTotal})` : `← ${mName} 직캠 전체 보기 (${hubTotal})`}</a></p>` : ''}`
@@ -1888,6 +1914,7 @@ ${LIST_FWD}
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a> · <a href="${SITE}/about.html">${isEn ? 'About · removal requests' : '사이트 소개 · 삭제 요청'}</a></div>
   <div class="cta-dock"><a class="cta" href="${SITE}/#g=${hashEsc(gko)}${ms ? '&m=' + hashEsc(ms.a.name.ko) : ''}&song=${hashEsc(s.title)}">${isEn ? 'View videos in the Universe →' : '직캠·영상 아카이브 보기 →'}</a></div>
 </div>
+${songNext}
 </body>
 </html>
 `;

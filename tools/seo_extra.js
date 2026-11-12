@@ -233,7 +233,7 @@ let _SL = null;
 function songLib(ROOT) {
   if (_SL) return _SL;
   const ctx = {}; vm.createContext(ctx);
-  vm.runInContext(fs.readFileSync(path.join(ROOT, 'shared.js'), 'utf8') + ';this.f=_songLinkBases;this.L=_songListFromDisco;this.B=_songBase;this.N=_songNorm;this.D=_groupJoinOrDebut;this.A=_songAliasesFor;this.K=_songAddNicks;', ctx);
+  vm.runInContext(fs.readFileSync(path.join(ROOT, 'shared.js'), 'utf8') + ';this.f=_songLinkBases;this.L=_songListFromDisco;this.B=_songBase;this.N=_songNorm;this.D=_groupJoinOrDebut;this.A=_songAliasesFor;this.K=_songAddNicks;this.T=_songTitleFor;', ctx);
   return (_SL = ctx);
 }
 // 그룹별 영상 전부(가로 영상, 노출 가능한 것만) — id 순 페이지 넘김(정렬 없는 페이지 나눔은 중복·누락 — 메모리)
@@ -287,6 +287,8 @@ function buildSongs({ ROOT, groups, artists, EX, vids, minVids = 4 }) {
       if(!m.bilingualTitle)m.bilingualTitle=bilingualSongTitle(tr.title,null);
       // 공식 영문 제목이 따로 있는 곡은 '한글 제목 English Title'(괄호 없이 — 원래 제목에 괄호 영문이 붙은 곡과 구분, docs/NAMING.md)
       if(!m.bilingualTitle){const al=S.A&&(S.A(g,tr.title)||S.A(g,m.name));if(al&&al[0])m.bilingualTitle=m.name+' '+al[0];}
+      // 영어 화면 표기(2026-11-12 사용자 — 영어권엔 영문 제목만, 한글 없는 제목은 그대로): shared.js _songTitleFor
+      if(!m.enTitle&&S.T){const e=S.T(g,String(tr.title).replace(/\s*[\(\[](feat|ft)\.?\s[^\)\]]*[\)\]]/gi,'').trim(),'en',tr.en);if(e&&!/[가-힣]/.test(e))m.enTitle=e;}
       if (tr.isTitle) m.isTitle = true;
       if (!m.cr && tr.cr) m.cr = tr.cr;
       if (!m.melonId && tr.songId) m.melonId = tr.songId;

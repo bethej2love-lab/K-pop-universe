@@ -26,6 +26,12 @@
 - 저장되는 곡 제목(예: 음방 1위 `music_show_wins.song_title`)은 디스코 표기로. 위키 영문('Red Flavor'·'Palette')·대소문자('Love Dive')·판본 꼬리('Seven (feat. Latto) - Clean Ver.')는 정리한다. 멜론의 휜 따옴표(’)·전각 기호(＆)는 일반 문자로.
   - 수집기 `tools/wiki_music_wins.mjs` `_canonWinTitle`이 새 기록을 들어올 때 정리(디스코 대조 → `_SONG_ALIASES`). 테스트 `tests/win-title-canon.test.js`.
   - 11-11 일괄 정정: sql/2026-11-11_win_titles_disco.sql(1,560행, 백업 `_bak_win_titles_20261111`). 남은 55종(94행)은 디스코에 없거나 한글 원제를 확신 못 한 것 — 확인되면 정정 + 별칭 추가.
+- **화면 언어별 표기(2026-11-12 사용자)** — 공용 함수 shared.js `_songTitleFor(owner, title, lang, en)`:
+  - 한국어 화면 = 정본 그대로: '내 안의 모든 시와 소설은', '산소 같은 너 (Love Like Oxygen)', '오늘만 I LOVE YOU'.
+  - 영어 화면 = 영문 제목: 곡의 `en` → `_SONG_ALIASES` → '한글 (English)'의 괄호 속 영어('Love Like Oxygen') → 한글이 없으면 그대로('404 (New Era)', 'LOVE DIVE').
+  - 한국어·영어가 섞인 제목('오늘만 I LOVE YOU' = 'IF I SAY, I LOVE YOU')은 영문 제목이 `en`·별칭에 있어야 영어 화면에 나온다.
+  - 쓰는 곳: 앱 카드 '♪ 곡' 고르기(app.js `_vidSongList`), 정적 영어 곡 페이지(tools/seo_extra.js `enTitle` → build_group_pages.js `songLabel`). 정적 한국어 페이지는 검색용 '한글 English'(위) 유지.
+- 영어로만 들어온 곡(스포티파이·애플 수집분): `tools/melon_bilingual_titles.mjs`가 멜론 곡 번호(songId)로 맞춰 정본을 멜론 한글 제목으로, 원래 영어 제목은 곡의 `en`과 `_SONG_ALIASES`에 남긴다(11-12 663곡, 클로즈유어아이즈 'All My Poetry' → '내 안의 모든 시와 소설은'). 피처링 이름에만 한글이 있는 곡('Baby Bossa Nova (ft. 주혜린)')은 영어 제목이라 그대로.
 - 영상 ↔ 곡 연결(shared.js `_songAddNicks`): `_SONG_ALIASES` 영문 별칭도 쓴다. 짧거나(7글자 이하) 한 낱말인 별칭('Super'·'Fighting')은 따옴표·'가수 - 곡'에서만. 판본 곡('plot twist (Japanese ver.)'·'FIRE (Japanese Ver.)')이 원곡의 별칭과 같으면 원곡 하나로 합친다(따로 있던 곡 페이지는 원곡 페이지로 넘김).
 
 ## 아직 안 맞춘 곳
