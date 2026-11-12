@@ -1441,11 +1441,17 @@ const MEMBER_SONGS_BY_ARTIST = new Map(); // artist → [{gko, s, n}]
 let memberSongPageCount = 0;
 // 멤버 개인 직캠(2026-10-30 사용자 "'성현 직캠'만 검색해도 우리 성현 직캠 모음 페이지로") — 그 멤버 한 명만 태깅 + 제목에 직캠 표시, 조회수 순
 const MEMBER_FANCAM_MIN = 3;
-const FANCAM_RE = /(직캠|페이스캠|얼빡|fan ?cam|face ?cam|focus(ed)?|unfiltered cam|세로캠|close-?up ?cam)/i;
+const FANCAM_RE = /(직캠|페이스캠|얼빡|원픽캠|fan ?cam|face ?cam|focus(ed)?|unfiltered cam|세로캠|close-?up ?cam)/i;
+// 음악 공연이 아닌 직캠(2026-11-12 Codex 검수 — 놀토·사전녹화 비하인드·공항 출국·출근길·포토월·셀프 리뷰·리액션·소감이 직캠 허브에).
+// 제목 한 단어로 일괄 빼지 않게: '(+ Behind cam)' 붙은 챌린지 공연과 '#아돌라비하인드' 같은 프로그램 해시태그는 무시, 곡 이름 'Interview'·'Red Carpet'·
+// '인천공항 스카이 페스티벌' 무대는 남는다. 10분 넘는 영상 기준은 콘서트 풀캠·메들리까지 빼서 쓰지 않는다. 표본 27개(Codex 제외 17·보존 10) 일치.
+const FANCAM_NONPERF_RE = /(비하인드|behind|출국|입국|공항\s*도착|출근길?|퇴근길(?!\s*live)|포토월|photo\s?wall|놀라운\s?토요일|놀토|셀프\s?리뷰|리액션|reaction|브이로그|vlog|소감|airport\s*(arrival|departure))/i;
+const isPerfFancam = v => FANCAM_RE.test(v.title || '') && v.category !== 'variety'
+  && !FANCAM_NONPERF_RE.test(String(v.title || '').replace(/\(\+\s*behind[^)]*\)/ig, ' ').replace(/#\S*비하인드\S*/g, ' '));
 function memberFancams(a, gko) {
   const ge = (a.groups || []).find(g => g && g.ko === gko);
   const names = new Set([a.name.ko, ge && ge.name].filter(Boolean));
-  return (VIDS[gko] || []).filter(v => Array.isArray(v.members) && v.members.length === 1 && names.has(v.members[0]) && FANCAM_RE.test(v.title || ''))
+  return (VIDS[gko] || []).filter(v => Array.isArray(v.members) && v.members.length === 1 && names.has(v.members[0]) && isPerfFancam(v))
     .sort((x, y) => (y.view_count || 0) - (x.view_count || 0));
 }
 // 그룹 직캠·무대(2026-10-30 — '코르티스 직캠' 검색 착지) — 퍼포먼스 분류(live) 또는 제목에 직캠 표시, 뮤비 제외, 조회수 순
@@ -1932,7 +1938,7 @@ function buildRankPages() {
     if (!groups[gko]) continue;
     const byName = new Map(); membersOf(gko).forEach(a => { byName.set(a.name.ko, a); const ge = (a.groups || []).find(g => g && g.ko === gko); if (ge && ge.name) byName.set(ge.name, a); });
     for (const v of VIDS[gko]) {
-      if (!Array.isArray(v.members) || v.members.length !== 1 || !FANCAM_RE.test(v.title || '')) continue;
+      if (!Array.isArray(v.members) || v.members.length !== 1 || !isPerfFancam(v)) continue; // 비공연(예능·비하인드·공항·리액션) 제외 — memberFancams와 같은 기준(2026-11-12)
       const a = byName.get(v.members[0]); if (!a) continue;
       all.push({ v, a, gko, g: groups[gko].gender });
     }

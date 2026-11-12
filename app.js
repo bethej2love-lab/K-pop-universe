@@ -7781,8 +7781,11 @@ function _makeWithLine(song,ctx){
       if(withTargets.every(t=>ud.members.some(m=>m.mko===t.name.ko)))return un;
     }
     // ② 제목 근거가 없으면 기존 규칙 — 빠진 유닛 멤버가 없거나 전부 지금 카드 그룹 소속일 때만
+    // ⚠️ 영상 소속 그룹이 유닛을 이루는 그룹일 때만(2026-11-12 Codex 검수 — 프리스틴 'WEE WOO' 직캠에 주결경 이름이 겹쳐 'I.O.I (7인 유닛)' 칩이 붙었다)
+    const _vg=song._apiGroupKo||song.groupKo||null;
     for(const[un,ud]of Object.entries(_PROJECT_UNITS)){
       const um=ud.members;
+      if(_vg&&!um.some(m=>m.gko===_vg))continue;
       if(!withTargets.every(t=>um.some(m=>m.mko===t.name.ko)))continue;
       const miss=um.filter(m=>!withTargets.some(t=>t.name.ko===m.mko));
       if(!miss.length||miss.every(m=>m.gko===ctx.groupKo))return un;

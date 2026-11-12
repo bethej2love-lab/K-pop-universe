@@ -2,6 +2,12 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-12 (Claude Code — Codex 11-12 검수 처리 ②: 임나영↔라잇썸 나영·유닛 칩·직캠 허브 비공연)
+- **[SQL 실행] sql/2026-11-12_lightsum_nayoung_fix.sql**(+undo, 백업 `_bak_lightsum_nayoung_20261112`): 제목에 '라잇썸 나영/LIGHTSUM NAYOUNG'인데 아이오아이 임나영으로 저장된 방송사 직캠 **29개**(Codex 확인 18 + 같은 유형 11, 1개는 최유정까지 붙음 — 라잇썸 유정 혼동) → group_ko 라잇썸·members 나영. 전부 tags_manual=true라 헌법 예외(근거 있는 한정 정정: 백업 → 풀기 → 정정 → 재잠금). 곡 키는 새 도구 **tools/song_keys_for_ids.mjs**(지정 영상만 루틴 규칙으로 재계산)로 28개 라잇썸 곡에 다시 연결.
+- **[app.js _makeWithLine] 'I.O.I (7인 유닛)' 칩 오표시**: 유닛 판정 ②가 이름만 비교해 프리스틴 'WEE WOO' 직캠(주결경 이름 겹침)에 I.O.I 유닛 칩이 붙었다 → 영상 소속 그룹(_apiGroupKo)이 유닛을 이루는 그룹일 때만. 아이오아이 영상(Whatta Man)은 그대로.
+- **[build_group_pages.js] 직캠 허브·순위의 비공연 영상**: `isPerfFancam` — FANCAM_RE(+원픽캠) 맞고 예능 분류 아님 + 비공연 신호(비하인드·출국·입국·공항 도착·Airport Arrival·출근길·포토월·놀토·셀프 리뷰·리액션·브이로그·소감) 없음. '(+ Behind cam)' 붙은 챌린지 공연·'#아돌라비하인드' 같은 프로그램 해시태그는 무시. 곡 이름 'Interview'·'Red Carpet', '인천공항 스카이 페스티벌' 무대는 남음. 10분 넘는 영상 기준은 콘서트 풀캠·메들리까지 빼서 안 씀(표본 확인). Codex 표본 27개(제외 17·보존 10) 전부 일치, 전체 개인 직캠 81,414개 중 비공연 신호 330개·예능 18개. memberFancams(허브·곡별 묶음·VideoObject·공유 이미지)와 buildRankPages(순위) 같은 기준. 다음 CI 빌드부터 반영.
+- ⏳ Codex 남은 것: 2PM 옛 곡 페이지 6곡 12주소 잔존·'Solo' 경로, 태연 카드 효리수 유닛 영상, 매처 혼동(위클리 After School·이승철 소녀시대·TXT The Biggest Winner·드림캐쳐 카드 첫사랑 수아·피에스타 FIESTA 원본 태그), 미래소년 카드 KO1KEYZ·배우 이준혁, 대표 임베드 차단(소녀시대 Lion Heart·달샤벳 JOKER·헬로비너스 위글위글), 촬영 대상≠참여자(고강훈 드럼캠이 선우 직캠으로).
+
 ## 2026-11-12 (Claude Code — Codex 11-12 검수 처리 ①: 곡 바로가기 크레딧·카드 맨 위 대표 영상)
 - 출처: Codex 11-12 검수 5묶음(.audit-worktrees/audit-fixes-20261105/CHANGELOG.md에만 있던 것 — 아래 남은 일에 요약).
 - **[app.js] 곡 바로가기 크레딧 동명이곡 혼입(16곡)**: `#g=…&song=…`로 곡 화면을 열면 songMeta가 null → `_renderCreditsInto`가 주인 없이 제목만으로 전체 크레딧을 합쳤다(블랙핑크 STAY에 RM·진, 뉴진스 OMG에 강승윤·송민호·우지…, 고스트나인 Moonlight에 양요섭 등). openSongAfter가 그룹 주인 meta를 넘기고, `_openSongVideos`는 주인이 없어도 곡 화면 gko로 좁힌다. 헤드리스: STAY 14명→0, OMG 6→하니, Moonlight 12→0(틀린 이름 대신 빈칸). song-credit-strip·song-video-recovery 통과.
