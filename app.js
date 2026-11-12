@@ -27293,7 +27293,10 @@ function _songNameMap(ko,memberKo,histKos){
     const take=(owner,disco)=>(disco||[]).forEach(al=>[...(al.tracks||[]).map(t=>t&&(typeof t==='string'?{title:t}:t)),{title:al.titleTrack}].forEach(o=>{
       const t=o&&o.title;if(!t)return;const key=owner+':'+_songBase(t);if(names.has(key))return;
       const raw=_songStripTail(String(t)).replace(/\s*[\(\[](feat|ft)\.?\s[^\)\]]*[\)\]]/gi,'').trim()||String(t);
-      names.set(key,_songTitleFor(owner,raw,lang,o.en));
+      const disp=_songTitleFor(owner,raw,lang,o.en);
+      names.set(key,disp);
+      // 영문 제목·별칭으로 된 곡 키도 같은 이름으로(2026-11-12 — 곡 키가 아직 옛 영어 제목 'allmypoetry'면 키 글자가 그대로 보였다)
+      [o.en,...(_songAliasesFor(owner,String(t))||[])].forEach(x=>{if(!x)return;const k2=owner+':'+_songBase(x);if(!names.has(k2))names.set(k2,disp);});
     }));
     owners.forEach(o=>{if(GROUPS[o])take(o,GROUPS[o].discography);const a=ARTISTS.find(x=>x.name&&x.name.ko===o&&(!GROUPS[x.group&&x.group.ko]||x.group.ko===ko));if(a)take(o,a.discography);});
     if(memberKo){const a=ARTISTS.find(x=>x.name&&x.name.ko===memberKo&&x.group&&x.group.ko===ko);if(a)take(memberKo,a.discography);}
