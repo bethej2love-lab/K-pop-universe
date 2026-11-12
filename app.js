@@ -4077,8 +4077,22 @@ async function _renderCreditsInto(el,titles,showSongs=false,ownerName=null){
   const sorted=[...map.values()].sort((a,b)=>(b.l+b.c)-(a.l+a.c));
   const lbl=document.createElement('div');lbl.className='gcdc-lbl';lbl.textContent='크레딧';
   const list=document.createElement('div');list.className=showSongs?'gcdc-list':'gcdc-chips';
+  // 단독 판정(2026-11-12 사용자 "단독도 따로 표기"): 우리 크레딧 표(artist_credits)엔 등록 아티스트만 있어서 혼자 썼는지 모른다 —
+  // 한 곡 화면이면 그 곡의 멜론 전체 크레딧(디스코 트랙 cr.l·cr.c)에서 그 역할 인원이 1명이고 그 사람이면 '단독'. cr이 없으면 '단독'을 쓰지 않는다.
+  let _crSolo=null;
+  if(!showSongs&&titles.length===1&&ownerName){try{
+    const discs=[...((GROUPS[ownerName]&&GROUPS[ownerName].discography)||[]),...ARTISTS.filter(a=>a.name&&a.name.ko===ownerName).flatMap(a=>a.discography||[])];
+    const tn=_titleNorm(titles[0]);let cr=null;
+    for(const al of discs){const t=(al.tracks||[]).find(x=>x&&x.cr&&_titleNorm(x.title)===tn);if(t){cr=t.cr;break;}}
+    // 멜론 표기 '지젤 (GISELLE)'도 우리 '지젤'과 맞게 괄호 안·밖 이름 둘 다 후보로
+    if(cr){const one=a=>{if(!Array.isArray(a)||a.length!==1)return null;const raw=String(Array.isArray(a[0])?a[0][0]:a[0]||'');return raw.split(/[()]/).concat(raw).map(x=>x.toLowerCase().replace(/\s+/g,'')).filter(Boolean);};_crSolo={l:one(cr.l),c:one(cr.c)};}
+  }catch(e){}}
+  const _ko=currentLang==='ko';
   sorted.slice(0,14).forEach(({name,l,c,lSongs,cSongs,keys})=>{
-    const role=l&&c?'작사/작곡':l?'작사':'작곡';
+    const _n=String(name).toLowerCase().replace(/\s+/g,'');
+    const _sl=!!(_crSolo&&_crSolo.l&&_crSolo.l.includes(_n)),_sc=!!(_crSolo&&_crSolo.c&&_crSolo.c.includes(_n));
+    const _L=(_sl?(_ko?'단독 ':'Sole '):'')+(_ko?'작사':'Lyrics'),_C=(_sc?(_ko?'단독 ':'Sole '):'')+(_ko?'작곡':'Music');
+    const role=l&&c?(_sl&&_sc?(_ko?'단독 작사·작곡':'Sole lyrics · music'):_L+' · '+_C):l?_L:_C;
     if(showSongs){
       // 앨범 모드: 이름·역할·곡 목록을 한 행으로
       const row=document.createElement('div');row.className='gcdc-row';
@@ -13800,10 +13814,23 @@ function _songTitleAmbiguous(index,gko,memberKo,base){
   }
   return false;
 }
+// ── 창 안 이전(2026-11-12 사용자 "창이 다 이전 버튼이 있어야지") ──
+// 곡 창·목록 창은 안에서 다른 곡(크레딧 → 곡)·다른 목록(멤버 → 함께한 사람)으로 넘어가면 내용이 통째로 바뀌어 돌아갈 길이 없었다.
+// 창마다 넘어오기 전 화면(여는 함수 인자)을 쌓고 '‹'로 하나씩 되돌린다. 같은 제목(필터 칩으로 같은 목록 다시 열기)은 안 쌓는다. 닫으면 비움.
+const _winHist={song:[],list:[]},_winCur={song:null,list:null};let _winBackNav=false;
+function _winEnter(k,open,args,title){
+  if(!_winBackNav&&open&&_winCur[k]&&_winCur[k].title!==title){_winHist[k].push(_winCur[k]);if(_winHist[k].length>20)_winHist[k].shift();}
+  if(!open)_winHist[k]=[];
+  _winCur[k]={args,title};_winSyncBack(k);
+}
+function _winSyncBack(k){const b=document.getElementById(k==='song'?'gc-track-videos-back':'feed-list-back');if(b)b.hidden=!_winHist[k].length;}
+function _winClear(k){_winHist[k]=[];_winCur[k]=null;_winSyncBack(k);}
+function _winBack(k){const p=_winHist[k].pop();_winSyncBack(k);if(!p)return;_winBackNav=true;try{(k==='song'?_openSongVideos:_openFeedListOverlay).apply(null,p.args);}finally{_winBackNav=false;}}
 async function _openSongVideos(title,owner,songMeta,opt){
   const gko=owner&&owner.gko,memberKo=(owner&&owner.memberKo)||null;
   if(!gko||!sb)return;
   const inAlbum=!!(opt&&opt.inAlbum);
+  if(!inAlbum)_winEnter('song',!!document.getElementById('gc-track-videos-overlay')?.classList.contains('open'),[title,owner,songMeta,opt],title);
   // 따로 여는 곡 오버레이면 앨범 패널에 옮겨 둔 부품을 되찾아 온다
   if(!inAlbum){if(_albSong){_albSong=null;_albSongApply();}_albSongMount(false);}
   const _hostOpen=()=>inAlbum?(_albSong===title&&document.getElementById('gc-discog-detail')?.classList.contains('open')):overlay.classList.contains('open');
@@ -14062,7 +14089,9 @@ document.getElementById('gc-track-videos-sort')?.addEventListener('click',e=>{
   st.sort=st.sort==='views'?'latest':'views';
   _renderSongVideoTabs();
 });
-document.getElementById('gc-track-videos-close')?.addEventListener('click',e=>{e.stopPropagation();document.getElementById('gc-track-videos-overlay').classList.remove('open');});
+document.getElementById('gc-track-videos-close')?.addEventListener('click',e=>{e.stopPropagation();document.getElementById('gc-track-videos-overlay').classList.remove('open');_winClear('song');});
+document.getElementById('gc-track-videos-back')?.addEventListener('click',e=>{e.stopPropagation();_winBack('song');});
+document.getElementById('feed-list-back')?.addEventListener('click',e=>{e.stopPropagation();_winBack('list');});
 document.getElementById('gc-track-videos-overlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
 
 // ══ 조합 패널(2026-09-02) — 앵커 없는 대등 멤버 조합 → 함께 나온 영상 + 공유 ═══════════════════════
@@ -22594,6 +22623,7 @@ function _renderFeedListFacet(ctx){
   });
 }
 function _openFeedListOverlay(title,sub,songs,ctx){
+  _winEnter('list',!!document.getElementById('feed-list-overlay')?.classList.contains('open'),[title,sub,songs,ctx],title);
   ++_feedListIntent;++_feedListCloseSeq;
   {const _ca=document.getElementById('feed-list-chem-add');if(_ca)_ca.style.display=ctx&&ctx.chem?'':'none';} // Chemistry 사람 추가(+)는 그 화면에서만
   document.getElementById('feed-list-hd-title').textContent=title;
@@ -22870,6 +22900,7 @@ function _openFeedListOverlay(title,sub,songs,ctx){
   renderNextBatch();
 }
 function _closeFeedListOverlay(){
+  _winClear('list');
   ++_feedListIntent;
   const closeSeq=++_feedListCloseSeq;
   const _flOv=document.getElementById('feed-list-overlay');

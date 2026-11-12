@@ -3381,6 +3381,10 @@
   #gc-track-videos-close{position:absolute;top:10px;right:12px;background:none;border:none;color:rgba(190,205,240,0.66);font-size:20px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;padding:4px;line-height:1;z-index:2;}
   /* 곡 상세 헤더 — 앨범커버 + (제목/아티스트·앨범·연도). 커버·메타는 로드 후 채워짐(2026-09-02) */
   #gc-track-videos-header{display:flex;gap:11px;align-items:center;flex-shrink:0;}
+  /* 창 안 이전(2026-11-12 사용자 "창이 다 이전 버튼이 있어야지") — 창 안에서 다른 곡·목록으로 넘어갔을 때만 보인다 */
+  .win-back{flex:none;display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0;border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(232,236,248,0.9);cursor:pointer;transition:background .15s;}
+  .win-back:hover{background:rgba(255,255,255,0.12);}.win-back svg{width:16px;height:16px;}.win-back[hidden]{display:none;}
+  #feed-list-hd .win-back{margin-top:1px;}
   #gc-track-videos-cover{width:52px;height:52px;border-radius:8px;object-fit:cover;flex-shrink:0;box-shadow:0 2px 12px rgba(0,0,0,0.45);}
   #gc-track-videos-cover[hidden]{display:none;}
   #gc-track-videos-head-txt{min-width:0;flex:1;} /* min-width:0 — 긴 곡명 세로줄바꿈 방지(flex 텍스트 원칙) */
