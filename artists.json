@@ -18111,6 +18111,30 @@
     },
     "discography": [
       {
+        "title": "Baby Come Home",
+        "type": "싱글",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/145/71/239/14571239_20260921121629_500.jpg",
+        "releaseDate": "2026.09.22",
+        "trackCount": 2,
+        "titleTrack": "Baby Come Home",
+        "region": "cn",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Baby Come Home",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Baby Come Home (English Ver.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14571239"
+      },
+      {
         "title": "耳朵",
         "type": "싱글",
         "releaseDate": "2026.07.22",
@@ -18200,6 +18224,55 @@
       "namu": "https://namu.wiki/w/준(세븐틴)"
     },
     "discography": [
+      {
+        "title": "준 ‘9’ 1st EP CHINA",
+        "type": "미니",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/145/77/679/14577679_20260922182229_500.jpg",
+        "releaseDate": "2026.09.28",
+        "trackCount": 7,
+        "titleTrack": "9",
+        "region": "cn",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "360 (Feat. Mabelz PiXXiE)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "月背",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "I See You",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "Dexire",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "寻途 (Inward)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "4give",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "9",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14577679"
+      },
       {
         "title": "焚月 (《长安二十四计》电视剧插曲)（ 타오르는 달<장안24계>드라마 주제곡）",
         "type": "OST",
@@ -86524,6 +86597,80 @@
       }
     ],
     "discography": [
+      {
+        "title": "Where We Are",
+        "type": "정규 2집",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/145/76/316/14576316_20261002163359_500.jpg",
+        "releaseDate": "2026.10.06",
+        "trackCount": 12,
+        "titleTrack": "Pedazos",
+        "region": "jp",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Winds of Time",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Pedazos",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "Lonely Night",
+            "isTitle": false
+          },
+          {
+            "no": 4,
+            "title": "순정만화 (And then, Tomorrow)",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "춤춰 (Let’s Dance)",
+            "isTitle": false
+          },
+          {
+            "no": 6,
+            "title": "시간은 우리 편 (Time Will Heal)",
+            "isTitle": false
+          },
+          {
+            "no": 7,
+            "title": "まただよ (MATADAYO)",
+            "isTitle": false
+          },
+          {
+            "no": 8,
+            "title": "여전히 영원히 (靑春)",
+            "isTitle": false
+          },
+          {
+            "no": 9,
+            "title": "Ordinary Miracles",
+            "isTitle": false
+          },
+          {
+            "no": 10,
+            "title": "여우비 (The Rain Between Us)",
+            "isTitle": false
+          },
+          {
+            "no": 11,
+            "title": "숲 (The Forest Dwellers)",
+            "isTitle": false
+          },
+          {
+            "no": 12,
+            "title": "After the Dream (梦屿)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14576316"
+      },
       {
         "title": "咲き誇る時を待つのは／Sakihokoru Toki o Matsu no wa",
         "type": "정규",
