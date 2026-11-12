@@ -2,6 +2,11 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-12 (Claude Code — 정적 페이지 하트 → 유니버스 즐겨찾기)
+- [완료][seo_play.js·app.js·SQL] 사용자 "직캠 페이지 보는 사람은 그 멤버·그룹이 좋아서 온 것 — 하트를 유도하고 누르면 맞춤 기능을 스무스하게". 멤버·그룹·직캠 모음 정적 페이지 제목 옆 하트(36px, 누르면 분홍·튀는 모션) → 이 기기 저장소 kpu_fav_pending에 {g,m} → 안내 한 장(♥ 새 직캠·무대가 올라오면 내 우주에 모아둘게요 / 내 우주 보기 ›, 영어 페이지는 영어) → 유니버스에 들어오면 2.6초 뒤(카드 열림·로그인 동기화 뒤) app.js _importStaticFavs가 기존 toggleFavGroup/Member로 옮김(서버 동기화·기록·첫 하트 우주 연출 그대로). 정적·앱이 같은 주소라 저장소 공유, 가입 없음. 이미 앱에서 즐겨찾기한 대상은 처음부터 채워진 하트·누르면 "이미 내 우주에 있어요". 다시 누르면 취소(앱 가기 전). 기록: seo_events 'fav'(log_seo_event 허용 목록, sql/2026-11-12_seo_fav_event.sql), 앱 app_events from_seo k=fav.
+  · 헤드리스 확인(1440 영어 멤버 페이지·390 한국어 그룹 페이지): 하트→안내→앱 → favMembers [코르티스:건호]/favGroups [코르티스], pending 비움, 다시 정적 페이지 → 채워진 하트.
+- ⏳ 다음: "이번 주 많이 본 직캠" 줄(정적+앱 재생 합산, 매시간 집계 파일) → 그룹·곡 "이번 주 n명"(기준 이상만). 숫자: 정적 사람 하루 ~200(대부분 영어 페이지), 2~3일 그룹별 코르티스 57·스키즈 30·에이티즈 32.
+
 ## 2026-11-12 (Claude Code — Codex 검수 ⑧: 앨범 수록곡 복원 50장)
 - [완료][groups.json] 음원 번호 없는 앨범 중 수록곡이 통째로 엉뚱했던 것 → 멜론 공식 목록(곡 번호·타이틀 표시)으로 교체. tools/album_restore_reference.mjs(새): 멜론 앨범 번호·발매일 일치할 때만, 같은 곡이면 en·작사작곡 유지, 빠지는 곡은 이 앨범에서만 뺌. ① Codex album-melon-audit 41장(데이식스 Band Aid·크래비티 4·SF9 3·AB6IX 3·하이라이트·우주소녀 4·B1A4·비투비 8·펜타곤 2·AOA 3·미쓰에이·빅스 3·씨엔블루·에이프릴 5·트레저) — 근거 tools/data/album_restore_melon_2026-11-12.json. 신화 Winter Story(토크 트랙 포함 14곡)는 정책 없어 건너뜀. ② tools/album_restore_fetch.mjs(새)로 멜론 상세를 받아(번호 없는 앨범은 커버 번호, 앨범명 대조) 9장: SF9 The Wave OF9·빅스 CONTINUUM·비투비 Brother Act.·Complete·펜타곤 LOVE or TAKE·에이프릴 Da Capo·오마이걸 Golden Hourglass·Coloring Book(앞 두 곡 순서)·AB6IX 6IXENSE — 발매일도 멜론 값(6IXENSE 2021.07.26→2019.10.07 등 5장), 근거 tools/data/album_restore_melon_2026-11-12b.json.
 - [완료] 악뮤 '항해 (SAILING)' 2019.10.16 레코드 삭제(존재하지 않는 리패키지, 정본 '항해'와 같은 커버 번호, 낙하 feat. CHANYEOL 등 근거 없음 — 같은 주소에서 정본 대신 노출). 앨범 대표곡 필드를 트랙 타이틀 표시와 맞춤: 신화 Unchanging Pt.1→오렌지·9집→RUN·8집→Once In A Lifetime, 핑클 Fin.K.L→FINKL. _SONG_RULES_VER v10.

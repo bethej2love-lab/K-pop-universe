@@ -122,6 +122,60 @@
     }
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',shell);else shell();
+  // ── 하트(2026-11-12 사용자 "그 멤버·그룹이 좋아서 보는 거니 하트를 유도하고, 누르면 맞춤 기능이 많다는 걸 스무스하게") ──
+  // 멤버·그룹·직캠 모음 페이지 제목 옆 하트. 누르면 이 기기(같은 주소라 앱과 저장소 공유)에 'kpu_fav_pending'으로 남기고,
+  // 유니버스에 들어오는 순간 app.js _importStaticFavs가 진짜 즐겨찾기로 옮긴다(첫 하트면 우주 연출). 가입·로그인 없음.
+  // 이미 앱에서 즐겨찾기한 대상은 처음부터 채워진 하트.
+  function heart(){
+    if(!/^(group|member|fancams)$/.test(PTYPE))return;
+    var h1=document.querySelector('h1'),cta=document.querySelector('a.cta[href*="#g="]');
+    if(!h1||!cta||h1.querySelector('.kpu-heart'))return;
+    var hp;try{hp=new URLSearchParams(new URL(cta.href).hash.slice(1));}catch(e){return;}
+    var g=hp.get('g'),m=hp.get('m');if(!g)return;
+    var name=(h1.textContent||'').replace(/\s*\(.*$/,'').replace(/\s+(Fancams?|직캠.*)$/i,'').trim()||g;
+    function rd(k){try{return JSON.parse(localStorage.getItem(k)||'[]')||[];}catch(e){return [];}}
+    function inApp(){return m?rd('kpu_fav_members').indexOf(g+':'+m)>=0:rd('kpu_fav_groups').indexOf(g)>=0;}
+    function pending(){return rd('kpu_fav_pending').some(function(x){return x&&x.g===g&&(x.m||'')===(m||'');});}
+    var H=EN?{add:'Add to favorites',on:'In your favorites',t:'New fancams & stages of '+name+' will gather in your universe',go:'Open my universe',had:name+' is already in your universe'}
+      :{add:'즐겨찾기',on:'즐겨찾기함',t:name+' 새 직캠·무대가 올라오면 내 우주에 모아둘게요',go:'내 우주 보기',had:name+' — 이미 내 우주에 있어요'};
+    var st=document.createElement('style');st.textContent=
+      '.kpu-heart{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;width:36px;height:36px;margin:-4px 0 0 10px;padding:0;border-radius:50%;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:rgba(230,235,250,.82);cursor:pointer;transition:background .15s,border-color .15s,transform .15s}'
+      +'.kpu-heart:hover{background:rgba(255,255,255,.09)}.kpu-heart svg{width:18px;height:18px}'
+      +'.kpu-heart.on{color:#ff5c8a;border-color:rgba(255,92,138,.45);background:rgba(255,92,138,.1)}.kpu-heart.on path{fill:currentColor}'
+      +'.kpu-heart.pop{animation:kpu-hp .42s cubic-bezier(.2,1.6,.4,1)}@keyframes kpu-hp{0%{transform:scale(.7)}60%{transform:scale(1.18)}100%{transform:scale(1)}}'
+      +'.kpu-ft{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));z-index:2147482000;transform:translate(-50%,12px);opacity:0;transition:opacity .22s,transform .22s;width:min(420px,calc(100vw - 24px));box-sizing:border-box;padding:12px 14px;border-radius:16px;background:rgba(19,19,22,.94);border:1px solid rgba(255,255,255,.1);box-shadow:0 10px 32px rgba(0,0,0,.45);color:#e8ecf6;font-size:13.5px;line-height:1.45;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}'
+      +'.kpu-ft.in{opacity:1;transform:translate(-50%,0)}.kpu-ft b{color:#ff5c8a;font-weight:600;margin-right:6px}'
+      +'.kpu-ft a{display:inline-block;margin-top:8px;color:#fff;font-weight:600;text-decoration:none;padding:7px 12px;border-radius:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12)}.kpu-ft a:hover{background:rgba(255,255,255,.14)}'
+      +'body:not(.kpu-has-dk) .kpu-ft{bottom:calc(20px + env(safe-area-inset-bottom))}';
+    document.head.appendChild(st);
+    var b=document.createElement('button');b.type='button';b.className='kpu-heart';
+    b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.4C1.5 7.8 3.6 4.5 7 4.5c2 0 3.4 1.1 5 3 1.6-1.9 3-3 5-3 3.4 0 5.5 3.3 4.3 6.6-1.8 4.8-9.3 9.4-9.3 9.4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
+    function sync(){var on=inApp()||pending();b.classList.toggle('on',on);b.setAttribute('aria-pressed',on?'true':'false');b.title=on?H.on:H.add;b.setAttribute('aria-label',(on?H.on:H.add)+' — '+name);}
+    sync();h1.appendChild(b);
+    var ft=null,ftT=0;
+    function toast(msg,first){
+      if(!ft){ft=document.createElement('div');ft.className='kpu-ft';ft.setAttribute('role','status');document.body.appendChild(ft);}
+      ft.textContent='';
+      var p=document.createElement('div');if(first){var hb=document.createElement('b');hb.textContent='♥';p.appendChild(hb);}p.appendChild(document.createTextNode(msg));ft.appendChild(p);
+      var a=document.createElement('a');a.href=cta.href;a.textContent=H.go+' ›';a.addEventListener('click',function(){log('to_app');});ft.appendChild(a);
+      requestAnimationFrame(function(){ft.classList.add('in');});
+      clearTimeout(ftT);ftT=setTimeout(function(){ft.classList.remove('in');},7000);
+    }
+    b.addEventListener('click',function(e){
+      e.preventDefault();e.stopPropagation();
+      if(inApp()){toast(H.had,false);return;}
+      if(pending()){ // 다시 누르면 취소(앱으로 넘어가기 전이라 이 기기에만 있는 표시)
+        try{localStorage.setItem('kpu_fav_pending',JSON.stringify(rd('kpu_fav_pending').filter(function(x){return !(x&&x.g===g&&(x.m||'')===(m||''));})));}catch(_){}
+        sync();if(ft)ft.classList.remove('in');return;
+      }
+      try{var L=rd('kpu_fav_pending');L.push({g:g,m:m||'',at:Date.now()});localStorage.setItem('kpu_fav_pending',JSON.stringify(L.slice(-10)));}catch(_){}
+      sync();b.classList.remove('pop');void b.offsetWidth;b.classList.add('pop');
+      log('fav');ga('seo_fav',{entity_name:name});
+      toast(H.t,true);
+    });
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',heart);else heart();
+
   var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
   function titleOf(a){var t=(a.getAttribute('title')||'').trim();if(t)return t;var x=a.querySelector('.mf-t,.title,b,strong');t=((x&&x.textContent)||a.textContent||'').replace(/\s+/g,' ').trim();if(!t){var im=a.querySelector('img');t=im&&im.alt||'';}return t.slice(0,140);}
   function allLinks(){var seen={},out=[];[].forEach.call(document.querySelectorAll('a[href]'),function(a){if(a.closest&&a.closest('.kpu-pl'))return;var v=vidOf(a);if(!v||seen[v])return;seen[v]=1;out.push({v:v,a:a,t:titleOf(a),sh:isShort(a)});});return out;}

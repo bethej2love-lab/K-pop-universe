@@ -2012,6 +2012,7 @@ async function buildUniverse(){
   if(myStarSprite)placeMyStarInUniverse();
   // URL 해시로 공유된 그룹/멤버 카드가 있으면 로딩 완료 직후 바로 열기 (딥링크)
   _histSuppress=true;_openFromHash();_histSuppress=false;
+  setTimeout(()=>{try{_importStaticFavs();}catch(e){}},2600); // 정적 페이지에서 누른 하트 → 즐겨찾기(카드가 열리고 로그인 동기화가 끝난 뒤)
   const _elapsed=performance.now()-_loadT0;
   // "Loading universe…" 최소 노출 시간 — 로딩이 너무 빨라서 텍스트가 안 읽히는 문제 방지.
   // 3회차부터는 이 문구를 이미 여러 번 본 사용자라 짧게 지나간다(2026-09-02) — 첫 인상은 지키되
@@ -18600,6 +18601,26 @@ function _saveFavs(){
   _sbPushColumn('fav_members',[...favMembers]);
 }
 function _mFavKey(a){return a.group.ko+':'+a.name.ko;}
+// 정적 페이지 하트(2026-11-12) — seo_play.js가 이 기기 저장소(같은 주소) 'kpu_fav_pending'에 [{g,m,at}]를 남기면
+// 유니버스에 들어온 뒤 진짜 즐겨찾기로 옮긴다. 기존 토글을 그대로 써서 서버 동기화·기록·첫 하트 우주 연출이 똑같이 돈다.
+// 로그인 계정은 앱을 열 때 서버 값으로 덮어쓰므로(_pullServerToLocal) 그 뒤에 돌도록 늦게 부른다. 이미 즐겨찾기면 건너뜀.
+function _importStaticFavs(){
+  let list=[];try{list=JSON.parse(localStorage.getItem('kpu_fav_pending')||'[]');}catch(e){}
+  if(!Array.isArray(list)||!list.length)return;
+  try{localStorage.removeItem('kpu_fav_pending');}catch(e){}
+  list.slice(-10).forEach((x,i)=>setTimeout(()=>{try{
+    if(!x||!x.g)return;
+    if(x.m){
+      const a=ARTISTS.find(y=>y&&y.name&&y.name.ko===x.m&&(y.group.ko===x.g||_artistGroups(y).some(g=>g&&g.ko===x.g)));
+      if(!a||favMembers.has(_mFavKey(a)))return;
+      toggleFavMember(a);
+    }else{
+      if(!GROUPS[x.g]||favGroups.has(x.g))return;
+      toggleFavGroup(x.g);
+    }
+    _appEvent('from_seo','fav');
+  }catch(e){}},i*1200));
+}
 
 // 즐겨찾기 추가 직전에 보고 있던 카드 — 해제(undo)하면 그 카드로 되돌아가기 위해 기억해둠
 let _preHeartCard=null; // {heartedType,heartedKey,card:{type:'group',ko}|{type:'member',artist}}
