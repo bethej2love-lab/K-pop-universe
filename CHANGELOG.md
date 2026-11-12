@@ -2,6 +2,10 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-12 (Claude Code — Codex 검수 ⑥: 영문 곡명 짝 오류 정리 + 재발 방지)
+- [완료][tools/en_title_audit.mjs(새)·itunes_en_titles.mjs] Codex "오마이걸 여름이 들려→Celebrate, 컬러링북→Real World/Coloring Book (Japanese Version), 빅뱅 눈물뿐인 바보→This Love, 여자친구 바람 바람 바람→Summer Rain, 에이프릴 인형→Oh! My Mistake". 원인: 아이튠즈 트랙 번호 짝인데 우리 저장 순서가 공식과 다른 앨범(앞 두 곡 역순·타 앨범 곡 혼입). 판정(같은 앨범 안): ① 다른 곡 제목과 같은 영문 ② 두 곡이 같은 영문 ③ 일본어·인스트·리믹스·라이브 판본 이름인데 우리 제목엔 없음 ④ 제목 앞 괄호의 공식 영문과 전혀 다름. 곡 en 106개 삭제 + 손으로 확인한 별칭 충돌 18개(tools/en_title_manual_remove.json). 지운 곡은 별칭→괄호 영문→한글 제목 순으로 보임(여름이 들려→Summer Comes, 바람 바람 바람→Windy Windy). 아이튠즈 수집기에 같은 판정 → 캐시로 전량 재실행 시 다시 붙는 것 0·버림 15. _SONG_RULES_VER v9(별칭이 바뀐 곡 키 재계산).
+- ⏳ iKON WELCOME BACK 12번 '왜 또 (HOLUP!)' — 제목 자체가 BOBBY 꽐라(HOLUP!)와 섞임, 앨범 수록곡 복원 묶음에서 멜론 대조로.
+
 ## 2026-11-12 (Claude Code — 남색검정 → 중립 검정: 우주 배경·카드·재생 화면·정적 페이지)
 - [완료] 사용자 "우주의 남색과 검정 사이 뿌연 느낌이 별로, 재생 화면은 검정인데 카드는 남색 — 간극"(참고: 문서 폴더 천체 사진 1~5, 진짜 검정·선명한 점별). 1단계 = 색만.
   · tools/neutralize_navy.cjs(새): 세 채널 ≤64·파랑-빨강 ≥6인 어두운 색만 지각 밝기 유지·푸른 기 제거(r=g=L, b=L+3). 글자·강조색은 안 건드림. kpop_universe.css 129·app.js 22·song-page.css 11·build_group_pages.js 11·seo_play.js 6·admin.js 3·seo_extra 2·index/privacy/terms/about 5곳.

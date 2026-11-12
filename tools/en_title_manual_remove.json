@@ -1,0 +1,23 @@
+{
+  "_why": "2026-11-12 Codex 검수 후속 — 같은 영문 별칭을 서로 다른 곡이 나눠 쓰던 것 중 틀린 쪽(정본 곡은 유지). tools/en_title_audit.mjs --apply가 함께 지운다.",
+  "remove": [
+    ["동키즈", "호랑이가 쫓아온다 (Uh-Heung)", "Complete Me (2023 Remaster)"],
+    ["빅톤", "뒤돌지마", "Stay with Me"],
+    ["빅톤", "뺏길까봐", "Stay With Me"],
+    ["세븐틴", "아주 NICE", "Cheers to youth"],
+    ["스트레이키즈", "좋으니까 (창빈, 필릭스)", "Hug Me (I.N)"],
+    ["스트레이키즈", "외계인 (Alien) (한)", "Stars and Raindrops (Seungmin)"],
+    ["아이유", "아이유", "Through the Night"],
+    ["아이유", "아이유", "Can't Love You Anymore (with OHHYUK)"],
+    ["에이프릴", "인형", "Oh! my mistake"],
+    ["에이프릴", "시간차 (CD Only)", "Now (Inst.)"],
+    ["여자친구", "바람 바람 바람 (Windy Windy)", "Summer Rain"],
+    ["우주소녀", "주세요 (Say Yes)", "Miracle"],
+    ["유주", "미워도 사랑하니까", "Lalala"],
+    ["유주", "미워도 사랑하니까 (inst.)", "Lalala (inst.)"],
+    ["젝스키스", "쉬어가기", "Love (Remix Version)"],
+    ["젝스키스", "학교별곡 (Inst.)", "The Way This Guy Lives (Remix Version)"],
+    ["펜타곤", "정신 못 차려도 돼", "Runaway (Inst.)"],
+    ["하이라이트", "위험해", "Plz Don't Be Sad"]
+  ]
+}

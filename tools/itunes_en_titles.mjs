@@ -49,6 +49,18 @@ async function getJson(key, url) {
   }
   fail++; return null;
 }
+// 짝 검증 2(2026-11-12 Codex — 우리 트랙 순서가 공식과 달라 '여름이 들려'→Celebrate, '컬러링북'→Real World, '컬러링북'→Coloring Book (Japanese Version)):
+//   · 같은 앨범 다른 곡 제목과 같은 영문 → 번호가 어긋난 것
+//   · 같은 앨범에서 두 곡이 같은 영문 → 둘 다 버림
+//   · 일본어·인스트·리믹스·라이브 판본 이름인데 우리 제목엔 그 표시가 없음 → 다른 판본
+//   · 우리 제목 앞 괄호의 공식 영문 표기와 전혀 다름 → 버림(괄호 영문이 그대로 영어 화면에 쓰인다)
+// 판정은 tools/en_title_audit.mjs와 같은 규칙.
+const VERS = [[/japanese|japan ver/i, /japanese|일본|jap/i], [/chinese/i, /chinese|중국|chn/i], [/\binst(\.|rumental)?\b/i, /inst|lnst|\bmr\b|반주/i], [/remix/i, /remix|mix|리믹스/i], [/acoustic/i, /acoustic|어쿠스틱/i], [/[(\[-]\s*live\b|\blive\s*(ver|version)\b|\blive\)/i, /live|라이브/i]];
+const verBad = (en, t) => VERS.some(([e, k]) => e.test(en) && !k.test(t));
+const nz = x => String(x || '').toLowerCase().normalize('NFKC').replace(/[^0-9a-z]/g, '');
+const parenBad = (t, en) => { const m = /^(.+?)\s*\(([^()]*[A-Za-z][^()]*)\)/.exec(String(t)); if (!m || /[가-힣ㄱ-ㅎㅏ-ㅣ]/.test(m[2]) || /\([^()]*\(/.test(String(t))) return false; const p = m[2].trim();
+  if (/^(feat|ft|prod|with|inst|english|japanese|chinese|korean|remix|live)\b/i.test(p) || /ver\b|ver\.|version|solo|mix|unit|team|remake|reverb|slowed|limited|edit|orchestra|piano|acoustic|\d{4}|&|,|\bmr\b|intro|outro|re-?master|duet|narr|\bwith\b|prod|\bx\b/i.test(p)) return false;
+  const pb = nz(p), eb = nz(en); return !!pb && !(eb.includes(pb) || pb.includes(eb)); };
 const day = s => { const m = String(s || '').match(/(\d{4})\D?(\d{1,2})\D?(\d{1,2})/); return m ? Date.UTC(+m[1], +m[2] - 1, +m[3]) / 864e5 : null; };
 
 const groups = JSON.parse(fs.readFileSync(P('groups.json'), 'utf8'));
@@ -98,11 +110,19 @@ for (const o of owners) {
     ours.forEach((t, i) => { const r = byNo.get(t.no || i + 1); if (r && !HAN.test(t.title || '') && !HAN.test(r.trackName || '')) { both++; if (norm(t.title) === norm(r.trackName) || norm(t.title).includes(norm(r.trackName)) || norm(r.trackName).includes(norm(t.title))) same++; } });
     if (both && same / both < 0.6) { st.verifyFail++; log.push(`  ✗ 짝 검증 실패 ${o.who || o.key} | ${al.title} ↔ ${c.collectionName} (${same}/${both})`); continue; }
     st.matched++;
+    const prop = new Map();
     ours.forEach((t, i) => {
       if (!baseHan(t.title) || t.en || (ctx.A(o.key, t.title) || [])[0]) return;
       const r = byNo.get(t.no || i + 1); if (!r) return;
       const en = String(r.trackName || '').trim();
       if (!en || HAN.test(en)) return;
+      if (ours.some(o2 => o2 !== t && norm(o2.title) && norm(o2.title) === norm(en)) || verBad(en, t.title) || parenBad(t.title, en)) { st.reject = (st.reject || 0) + 1; return; }
+      prop.set(t, en);
+    });
+    const cnt = new Map(); [...prop.values()].forEach(e => cnt.set(norm(e), (cnt.get(norm(e)) || 0) + 1));
+    ours.forEach(t => {
+      const en = prop.get(t); if (!en) return;
+      if (cnt.get(norm(en)) > 1) { st.reject = (st.reject || 0) + 1; return; }
       t.en = en; st.en++;
       log.push(`  + ${o.who || o.key} | ${al.title} | ${t.title} → ${en}`);
       const m = (aliases[o.key] = aliases[o.key] || {});
@@ -111,7 +131,7 @@ for (const o of owners) {
   }
 }
 console.log(log.join('\n'));
-console.log(`대상 주인 ${st.owners} · 영문 필요 앨범 ${st.albumsNeed} · 짝 ${st.matched} · 후보 여럿 ${st.ambiguous} · 짝 검증 실패 ${st.verifyFail} · 영문 제목 ${st.en}곡 · 요청 ${req} 캐시 ${hit} 실패 ${fail}${APPLY ? ' · 저장함' : ' · 읽기 전용'}`);
+console.log(`대상 주인 ${st.owners} · 영문 필요 앨범 ${st.albumsNeed} · 짝 ${st.matched} · 후보 여럿 ${st.ambiguous} · 짝 검증 실패 ${st.verifyFail} · 영문 제목 ${st.en}곡 · 짝 의심 버림 ${st.reject || 0} · 요청 ${req} 캐시 ${hit} 실패 ${fail}${APPLY ? ' · 저장함' : ' · 읽기 전용'}`);
 if (APPLY && st.en) {
   const keep = f => { const raw = fs.readFileSync(P(f), 'utf8'); return { ind: ((/^[[{]\r?\n([ \t]+)/.exec(raw) || [])[1] || '  ').length, crlf: /\r\n/.test(raw.slice(0, 200)) }; };
   for (const [f, obj] of [['groups.json', groups], ['artists.json', artists]]) {
