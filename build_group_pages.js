@@ -1484,10 +1484,22 @@ const FANCAM_RE = /(직캠|페이스캠|얼빡|원픽캠|fan ?cam|face ?cam|focu
 const FANCAM_NONPERF_RE = /(비하인드|behind|출국|입국|공항\s*도착|출근길?|퇴근길(?!\s*live)|포토월|photo\s?wall|놀라운\s?토요일|놀토|셀프\s?리뷰|리액션|reaction|브이로그|vlog|소감|airport\s*(arrival|departure))/i;
 const isPerfFancam = v => FANCAM_RE.test(v.title || '') && v.category !== 'variety'
   && !FANCAM_NONPERF_RE.test(String(v.title || '').replace(/\(\+\s*behind[^)]*\)/ig, ' ').replace(/#\S*비하인드\S*/g, ' '));
+// 악기 캠(드럼·기타·베이스·키보드 직캠)은 밴드 무대에 피처링한 사람까지 태그돼 있다(2026-11-12 Codex — 드래곤포니 고강훈 드럼캠이
+// 피처링 더보이즈 선우 'AURA' 직캠으로). 악기 캠은 제목에 그 멤버 이름(한글·영문·그룹 활동명)이 있을 때만 그 사람 직캠으로.
+const INSTR_CAM_RE = /(드럼|기타|베이스|키보드|drum|guitar|bass|keyboard)\s*(직캠|캠|cam)/i;
+function camTargetOk(v, a, gko) {
+  const t = String(v.title || '');
+  if (!INSTR_CAM_RE.test(t)) return true;
+  const ge = (a.groups || []).find(g => g && g.ko === gko);
+  const ns = [a.name && a.name.ko, a.name && a.name.en, ge && ge.name, ge && ge.nameEn].filter(Boolean);
+  const tu = t.toUpperCase();
+  const wordHit = n => { const N = String(n).toUpperCase(); let i = tu.indexOf(N); while (i >= 0) { if (!/[A-Z0-9]/.test(tu[i - 1] || '') && !/[A-Z0-9]/.test(tu[i + N.length] || '')) return true; i = tu.indexOf(N, i + 1); } return false; };
+  return ns.some(n => /[A-Za-z]/.test(n) ? wordHit(n) : t.includes(n));
+}
 function memberFancams(a, gko) {
   const ge = (a.groups || []).find(g => g && g.ko === gko);
   const names = new Set([a.name.ko, ge && ge.name].filter(Boolean));
-  return (VIDS[gko] || []).filter(v => Array.isArray(v.members) && v.members.length === 1 && names.has(v.members[0]) && isPerfFancam(v))
+  return (VIDS[gko] || []).filter(v => Array.isArray(v.members) && v.members.length === 1 && names.has(v.members[0]) && isPerfFancam(v) && camTargetOk(v, a, gko))
     .sort((x, y) => (y.view_count || 0) - (x.view_count || 0));
 }
 // 그룹 직캠·무대(2026-10-30 — '코르티스 직캠' 검색 착지) — 퍼포먼스 분류(live) 또는 제목에 직캠 표시, 뮤비 제외, 조회수 순
@@ -1975,7 +1987,7 @@ function buildRankPages() {
     const byName = new Map(); membersOf(gko).forEach(a => { byName.set(a.name.ko, a); const ge = (a.groups || []).find(g => g && g.ko === gko); if (ge && ge.name) byName.set(ge.name, a); });
     for (const v of VIDS[gko]) {
       if (!Array.isArray(v.members) || v.members.length !== 1 || !isPerfFancam(v)) continue; // 비공연(예능·비하인드·공항·리액션) 제외 — memberFancams와 같은 기준(2026-11-12)
-      const a = byName.get(v.members[0]); if (!a) continue;
+      const a = byName.get(v.members[0]); if (!a || !camTargetOk(v, a, gko)) continue;
       all.push({ v, a, gko, g: groups[gko].gender });
     }
   }

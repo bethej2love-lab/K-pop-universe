@@ -3538,6 +3538,9 @@ function _srAvUrl(a){
 // ⚠️ 아티스트별로 결과(Promise)를 기억한다 — 검색 아바타와 카드 위쪽 영상(_cardHeroCands)이 같은 목록을 쓴다.
 //    검색에서 넘어온 카드는 추가 조회 없이 위쪽 영상이 바로 뜬다(2026-10-13, 사용자 — "썸네일 뜨는 속도가 너무 느림").
 //    정렬: 직캠 → 퍼포먼스(category='live') → 가로 → 조회수. 카드 렌더에 필요한 열까지 같이 받는다.
+// 퍼가기 막힌 영상(embed_blocked_at — 재생창이 유튜브 오류 101·150을 받으면 report_embed_blocked로 찍힘, 2026-11-12 Codex 검수
+// 소녀시대 Lion Heart·달샤벳 JOKER·헬로비너스 위글위글 인기가요가 대표인데 눌러도 '유튜브에서만'). 대표 후보에서만 맨 뒤로, 180일 지나면 다시 후보.
+const _embBlk=v=>!!(v&&v.embed_blocked_at)&&Date.now()-Date.parse(v.embed_blocked_at)<180*864e5;
 const _soloCamMemo=new WeakMap();
 function _fetchSoloCamThumbs(a){
   if(!sb||!a||!a.name)return Promise.resolve([]);
@@ -3547,7 +3550,7 @@ function _fetchSoloCamThumbs(a){
     const gkos=new Set(_artistGroups(a).map(g=>g.ko).filter(k=>GROUPS[k]));
     {const sk=_soloNameKeyOf(a);if(sk)gkos.add(sk);} // 이름 키는 유일하거나 주인일 때만, 동명이인 솔로는 이름#id(2026-10-19)
     try{
-      let q=sb.from(_YT_TABLE).select('id,title,thumb,view_count,is_short,published_at,group_ko,members,category,content_flag'+_durCol())
+      let q=sb.from(_YT_TABLE).select('id,title,thumb,view_count,is_short,published_at,group_ko,members,category,content_flag,embed_blocked_at'+_durCol())
         .in('group_ko',[...gkos]).filter('members','eq',`{${_pgFilterVal(mko)}}`).is('unavailable_at',null)
         .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
         .or('content_flag.is.null,content_flag.neq.hidden').or('content_flag.is.null,content_flag.neq.개별출연');
@@ -3563,7 +3566,7 @@ function _fetchSoloCamThumbs(a){
       const pool=(horiz.length?horiz:data.filter(v=>v.thumb));
       // 긴 방송 클립·예능·비하인드는 뒤로(2026-11-12 Codex 검수 — 태연 대표가 19분 놀라운 토요일 클립, 백현 대표가 20분 투어 비하인드)
       const okFmt=v=>!(v.duration_sec>600)&&v.category!=='variety'&&!/비하인드|behind/i.test(v.title||'');
-      return pool.sort((x,y)=>(okFmt(y)-okFmt(x))||(nameHit(y)-nameHit(x))||(isCam(y)-isCam(x))||((y.category==='live')-(x.category==='live'))||((y.view_count||0)-(x.view_count||0)));
+      return pool.sort((x,y)=>(_embBlk(x)-_embBlk(y))||(okFmt(y)-okFmt(x))||(nameHit(y)-nameHit(x))||(isCam(y)-isCam(x))||((y.category==='live')-(x.category==='live'))||((y.view_count||0)-(x.view_count||0)));
     }catch(e){return [];}
   })();
   _soloCamMemo.set(a,p);
@@ -3577,11 +3580,11 @@ function _fetchGroupHeroCands(gko){
   if(_groupHeroCandP.has(gko))return _groupHeroCandP.get(gko);
   const p=(async()=>{
     const own=gko+':';
-    const tier=v=>{const solo=!(v.with_groups||[]).length&&!(v.with_members||[]).length,cover=(v.cover_of_groups||[]).length||(v.cover_of_members||[]).length;
+    const tier=v=>{if(_embBlk(v))return 3;const solo=!(v.with_groups||[]).length&&!(v.with_members||[]).length,cover=(v.cover_of_groups||[]).length||(v.cover_of_members||[]).length;
       if(solo&&!cover&&(v.song_keys||[]).some(k=>String(k).startsWith(own)))return 0;return solo&&!cover?1:2;};
     const run=async live=>{
       // 유닛 카드(2026-10-14): 유닛 영상 범위(_applyUnitScope) 안의 퍼포먼스 — 유닛 영상은 유닛원이 태깅돼 있어 members 빈 조건을 안 건다
-      let q=sb.from(_YT_TABLE).select('id,title,thumb,view_count,is_short,published_at,group_ko,members,category,content_flag,with_groups,with_members,cover_of_groups,cover_of_members'+(_songKeysCol===false?'':',song_keys')+_durCol());
+      let q=sb.from(_YT_TABLE).select('id,title,thumb,view_count,is_short,published_at,group_ko,members,category,content_flag,with_groups,with_members,cover_of_groups,cover_of_members,embed_blocked_at'+(_songKeysCol===false?'':',song_keys')+_durCol());
       q=(_isUnitKey(gko)?_applyUnitScope(q,gko.slice(_UNIT_KEY.length)):q.eq('group_ko',gko).filter('members','eq','{}')).eq('is_short',false).is('unavailable_at',null)
         .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
         .or('content_flag.is.null,content_flag.neq.hidden').or('content_flag.is.null,content_flag.neq.개별출연')
@@ -7195,8 +7198,11 @@ let _lbHistPushed=false,_lbIgnorePop=false,_lbFromPop=false;
 // 유튜브가 '퍼가기 금지'(오류 101·150)·삭제/비공개(100) 등을 알려오면 로딩을 끄고 유튜브로 가는 안내를 띄운다(2026-11-04 Codex 139·142차 —
 // 인기가요 Somebody 2·리쿠 으쌰으쌰처럼 원본은 살아 있는데 외부 재생만 막힌 영상). 예전엔 오류 신호를 안 받아 로딩 표시가 5초 돌았다.
 // 영상 행을 무관·삭제로 바꾸지 않는다 — 원본은 유튜브에서 정상이다.
+const _embReported=new Set();
 function _lbEmbedBlocked(code){
   _lbHideLoading();
+  // 막힘을 기록해 다음 방문부터 카드 대표에서 뒤로(오류 101·150만 — 100은 삭제·비공개라 삭제 감지 루틴 몫)
+  if((code===101||code===150)&&_lbActiveVid&&sb&&!_embReported.has(_lbActiveVid)){_embReported.add(_lbActiveVid);try{sb.rpc('report_embed_blocked',{p_id:_lbActiveVid,p_code:code}).then(()=>{},()=>{});}catch(_){}}
   const box=document.getElementById('yt-lb-video-box');if(!box||!_lbActiveVid)return;
   box.querySelector('.yt-lb-blocked')?.remove();
   const ko=currentLang==='ko',gone=code===100;
