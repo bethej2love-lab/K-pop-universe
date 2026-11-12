@@ -3548,10 +3548,10 @@ function _fetchSoloCamThumbs(a){
     {const sk=_soloNameKeyOf(a);if(sk)gkos.add(sk);} // 이름 키는 유일하거나 주인일 때만, 동명이인 솔로는 이름#id(2026-10-19)
     try{
       let q=sb.from(_YT_TABLE).select('id,title,thumb,view_count,is_short,published_at,group_ko,members,category,content_flag'+_durCol())
-        .in('group_ko',[...gkos]).filter('members','eq',`{${_pgFilterVal(mko)}}`)
+        .in('group_ko',[...gkos]).filter('members','eq',`{${_pgFilterVal(mko)}}`).is('unavailable_at',null)
         .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
         .or('content_flag.is.null,content_flag.neq.hidden').or('content_flag.is.null,content_flag.neq.개별출연');
-      const{data,error}=await q.order('published_at',{ascending:false}).limit(60);
+      const{data,error}=await q.order('published_at',{ascending:false}).limit(150);
       if(error||!data)return [];
       const isCam=v=>_isFancamLike(v.title)&&!_FANCAM_PROMO_RE.test(v.title||'');
       // 제목에 본인 이름(한글·영문·별칭·그룹 시절 활동명)이 있는 영상을 맨 앞으로(2026-10-21 사용자 "대표 영상 썸네일 얼굴 안 맞는 애들") —
@@ -3561,7 +3561,9 @@ function _fetchSoloCamThumbs(a){
       // 가로 우선 정렬: is_short=false가 앞에, 같은 조건이면 이름 든 제목>직캠>라이브>조회수 순
       const horiz=data.filter(v=>v.thumb&&!v.is_short);
       const pool=(horiz.length?horiz:data.filter(v=>v.thumb));
-      return pool.sort((x,y)=>(nameHit(y)-nameHit(x))||(isCam(y)-isCam(x))||((y.category==='live')-(x.category==='live'))||((y.view_count||0)-(x.view_count||0)));
+      // 긴 방송 클립·예능·비하인드는 뒤로(2026-11-12 Codex 검수 — 태연 대표가 19분 놀라운 토요일 클립, 백현 대표가 20분 투어 비하인드)
+      const okFmt=v=>!(v.duration_sec>600)&&v.category!=='variety'&&!/비하인드|behind/i.test(v.title||'');
+      return pool.sort((x,y)=>(okFmt(y)-okFmt(x))||(nameHit(y)-nameHit(x))||(isCam(y)-isCam(x))||((y.category==='live')-(x.category==='live'))||((y.view_count||0)-(x.view_count||0)));
     }catch(e){return [];}
   })();
   _soloCamMemo.set(a,p);
@@ -3574,18 +3576,24 @@ function _fetchGroupHeroCands(gko){
   if(!sb||!gko)return Promise.resolve([]);
   if(_groupHeroCandP.has(gko))return _groupHeroCandP.get(gko);
   const p=(async()=>{
+    const own=gko+':';
+    const tier=v=>{const solo=!(v.with_groups||[]).length&&!(v.with_members||[]).length,cover=(v.cover_of_groups||[]).length||(v.cover_of_members||[]).length;
+      if(solo&&!cover&&(v.song_keys||[]).some(k=>String(k).startsWith(own)))return 0;return solo&&!cover?1:2;};
     const run=async live=>{
       // 유닛 카드(2026-10-14): 유닛 영상 범위(_applyUnitScope) 안의 퍼포먼스 — 유닛 영상은 유닛원이 태깅돼 있어 members 빈 조건을 안 건다
-      let q=sb.from(_YT_TABLE).select('id,title,thumb,view_count,is_short,published_at,group_ko,members,category,content_flag'+_durCol());
-      q=(_isUnitKey(gko)?_applyUnitScope(q,gko.slice(_UNIT_KEY.length)):q.eq('group_ko',gko).filter('members','eq','{}')).eq('is_short',false)
+      let q=sb.from(_YT_TABLE).select('id,title,thumb,view_count,is_short,published_at,group_ko,members,category,content_flag,with_groups,with_members,cover_of_groups,cover_of_members'+(_songKeysCol===false?'':',song_keys')+_durCol());
+      q=(_isUnitKey(gko)?_applyUnitScope(q,gko.slice(_UNIT_KEY.length)):q.eq('group_ko',gko).filter('members','eq','{}')).eq('is_short',false).is('unavailable_at',null)
         .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
         .or('content_flag.is.null,content_flag.neq.hidden').or('content_flag.is.null,content_flag.neq.개별출연')
         .or('content_flag.is.null,content_flag.neq.기타');
       if(live)q=_applyLiveExclude(q.eq('category','live')); // 라이브 제외 규칙은 category='live' 조회 전부에(tests/live-tab)
-      const{data,error}=await q.order('published_at',{ascending:false}).limit(60);
-      return (error||!data)?[]:data.filter(v=>v.thumb).sort((x,y)=>(y.view_count||0)-(x.view_count||0));
+      const{data,error}=await q.order('view_count',{ascending:false,nullsFirst:false}).order('id',{ascending:false}).limit(200);
+      // 맨 위 대표 단계(2026-11-12 Codex 검수 — 웨이션브이×라이즈 'Tempo', 아이즈원 'FIESTA'가 피에스타 대표, 오디션 커버·활동 후 솔로곡이 대표):
+      //  0 단독(다른 그룹·멤버 없음) + 커버 아님 + 이 그룹 디스코 곡에 연결된 영상 → 1 단독 + 커버 아님 → 2 나머지. 단계 안에선 조회수 순.
+      return (error||!data)?[]:data.filter(v=>v.thumb).sort((x,y)=>tier(x)-tier(y)||(y.view_count||0)-(x.view_count||0));
     };
-    try{const a=await run(true);return a.length?a:await run(false);}catch(e){return [];}
+    // 퍼포먼스 후보가 남의 무대·커버뿐이면(핑클: 최근 퍼포먼스가 오디션 커버) 퍼포먼스 밖(MV·안무 등)에서 본인 영상을 찾는다
+    try{const a=await run(true);if(a.length&&tier(a[0])<2)return a;const b=await run(false);return (b.length&&(!a.length||tier(b[0])<tier(a[0])))?b:(a.length?a:b);}catch(e){return [];}
   })();
   _groupHeroCandP.set(gko,p);
   return p;
@@ -10401,7 +10409,8 @@ function _openFromHash(){
   // &song=곡 이름(2026-10-30 사용자 "곡 페이지의 '직캠·영상 아카이브 보기'를 누르면 그룹 카드만 열린다 — 그 곡 영상 패널까지").
   // 카드를 연 뒤 그 곡 영상 패널을 열고, 멤버(m=)가 있으면 '멤버 ▾'를 그 멤버로 미리 골라 둔다(멤버×곡 페이지 성현 ACAI).
   const songParam=params.get('song');
-  const openSongAfter=()=>{if(songParam&&GROUPS[gko])setTimeout(()=>_openSongVideos(songParam,{gko},null,mko?{member:mko}:undefined),700);};
+  // 곡 주인 정보(songMeta)를 같이 넘긴다 — null이면 크레딧이 제목만으로 전체를 합쳐 동명이곡 작사·작곡가가 섞였다(Codex 11-12: 고스트나인 Moonlight·블랙핑크 STAY 등 16곡)
+  const openSongAfter=()=>{if(songParam&&GROUPS[gko])setTimeout(()=>_openSongVideos(songParam,{gko},{ownerType:'group',gko,artist:null,album:'',ownerName:gko},mko?{member:mko}:undefined),700);};
   _setPendingVidPreset(params,mko?'tv':'gc'); // 영상 목록 공유 링크(&vf=…) — 카드가 목록을 그릴 때 꺼내 씀
   // 솔로 전용 해시(#m=이름, g= 없음) — 새 포맷. 구 포맷(#g=솔로&m=이름)도 아래에서 계속 지원.
   if(!gko&&mko){
@@ -13787,7 +13796,8 @@ async function _openSongVideos(title,owner,songMeta,opt){
   document.getElementById('gc-track-videos-title').textContent=title;
   _fillSongMeta(title,songMeta,myReq);
   const credEl=document.getElementById('gc-track-videos-credits');
-  if(credEl)_renderCreditsInto(credEl,[title],false,songMeta?.ownerName||null);
+  // 주인 없이 부르는 경로가 남아 있어도 곡 화면의 주인(gko)으로 좁힌다 — 제목 전체 폴백 금지(동명이곡 크레딧 혼입)
+  if(credEl)_renderCreditsInto(credEl,[title],false,songMeta?.ownerName||gko||null);
   tabsEl.classList.add('hidden');tabsEl.innerHTML='';
   document.getElementById('gc-track-videos-actions')?.classList.add('hidden');
   listEl.innerHTML=`<div class="tvf-empty">${currentLang==='ko'?'불러오는 중…':'Loading…'}</div>`;

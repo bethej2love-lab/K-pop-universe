@@ -2,6 +2,16 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-12 (Claude Code — Codex 11-12 검수 처리 ①: 곡 바로가기 크레딧·카드 맨 위 대표 영상)
+- 출처: Codex 11-12 검수 5묶음(.audit-worktrees/audit-fixes-20261105/CHANGELOG.md에만 있던 것 — 아래 남은 일에 요약).
+- **[app.js] 곡 바로가기 크레딧 동명이곡 혼입(16곡)**: `#g=…&song=…`로 곡 화면을 열면 songMeta가 null → `_renderCreditsInto`가 주인 없이 제목만으로 전체 크레딧을 합쳤다(블랙핑크 STAY에 RM·진, 뉴진스 OMG에 강승윤·송민호·우지…, 고스트나인 Moonlight에 양요섭 등). openSongAfter가 그룹 주인 meta를 넘기고, `_openSongVideos`는 주인이 없어도 곡 화면 gko로 좁힌다. 헤드리스: STAY 14명→0, OMG 6→하니, Moonlight 12→0(틀린 이름 대신 빈칸). song-credit-strip·song-video-recovery 통과.
+- **[app.js _fetchGroupHeroCands] 그룹 카드 맨 위 대표**: 11-11 '단독 우선'은 아래 그리드(_pickFeaturedVidFromDB)에만 들어가 맨 위는 그대로였다. 단계 정렬 — 0 단독(with_groups·with_members 없음)+커버 아님+그룹 디스코 곡에 연결(song_keys) / 1 단독+커버 아님 / 2 나머지, 단계 안은 조회수. 후보는 최신 120개 → 조회수 순 200개(핑클처럼 최근 영상이 남의 커버뿐이면 본인 무대가 후보에 못 들었다), 재생 불가(unavailable_at) 제외, 퍼포먼스 후보가 전부 2단계면 퍼포먼스 밖(MV·안무)에서 본인 영상. 결과(헤드리스): 웨이션브이 Tempo→Kick Back 컴백 무대, 원더걸스 박진영 듀엣→Nobody, 엑스원 한승우 솔로→Like always, 온앤오프 베리베리 커버→신세계, 핑클 김수민 커버→영원한 사랑, 클로즈유어아이즈 벨리곰 라이브→내 안의 모든 시와 소설은 퍼포먼스, 피에스타 FIESTA(아이즈원)→VISTA, 포미닛·크레용팝·애프터스쿨·르세라핌·아이브 본인 무대.
+- **[app.js _fetchSoloCamThumbs] 멤버 대표**: 10분 넘는 클립·예능·'비하인드' 제목은 뒤로, 재생 불가 제외, 후보 60→150. 태연 놀토 19분 클립→'사계' 직캠, 백현 투어 비하인드→'Love Comes Back' 라이브 클립.
+- **[SQL 실행] sql/2026-11-12_hero_cover_misattrib.sql**(+undo, 전부 tags_manual=false): 3v028rIpFyQ 베리베리의 온앤오프 곡 커버 → group_ko 베리베리·cover_of_groups 온앤오프 / 6itY9tdrrMI 유니버스 티켓 참가자 김수민 'White' → 트리플에스 김수민 오태그 제거·cover_of_groups 핑클 / lTGaCt415CI 김우석 솔로 'Sugar' 앵콜 직캠 → members 김우석.
+- group-name-boundary·live-tab·smoke·song-credit-strip·syntax 통과.
+- ⏳ 소녀시대 대표 'Lion Heart' 인기가요(a3ZwmFvB_9U)는 유튜브 외부 재생 차단 — DB에 임베드 차단 표시가 없어 코드로 못 거름(달샤벳 JOKER·헬로비너스 위글위글도 같음). 대책 후보: 재생 오류(101/150) 때 다음 후보로 넘기고 서버에 기록.
+- ⏳ Codex 11-12 남은 것: ① 아이오아이 임나영(a0312)에 라잇썸 나영(a0917) 직캠 18개 혼입(근거 mistag-identity-sources.json — 원본·조회수 보존, 소속만 정정) ② 임나영 카드 프리스틴 WEE WOO 직캠 2개에 'I.O.I (7인 유닛)' 칩 ③ 정적 직캠 허브의 예능·비하인드·공항·포토월(memberFancams 판정, 회귀 표본은 Codex 메모) ④ 2PM 옛 곡 페이지 6곡 12주소 잔존·'Solo' 곡 경로 ⑤ 태연 카드에 효리수 유닛 영상 ⑥ 매처 혼동(위클리 After School·이승철 소녀시대·TXT The Biggest Winner·드림캐쳐 카드에 첫사랑 수아) ⑦ 미래소년 카드에 KO1KEYZ·배우 이준혁.
+
 ## 2026-11-12 (Claude Code — 곡 키 즉시 정정: 카드 ♪ 곡 목록에 'allmypoetry' 키 글자가 보이던 것)
 - 사용자: "클로즈유어아이즈 곡 필터에 'allmypoetry'로 뜬다 — 한국어 모드면 '내 안의 모든 시와 소설은', 영문도 띄어쓰기가 없다". 원인: 영상 song_keys가 아직 옛 영어 제목 기준이라(루틴 재계산 전) 디스코 이름 표에서 못 찾고 키 글자를 그대로 보였다.
 - **[app.js _songNameMap]** 곡의 en·영문 별칭으로 된 키도 같은 표시 이름으로 — 옛 키가 남아 있어도 정본 제목이 보인다.
