@@ -733,6 +733,9 @@
     /* 카드 열린 만큼 라이트박스 오른쪽·위쪽을 카드 영역에 맞춰 비운다.
        side-panel 없이 member/conn만 남은 경우(side 닫고 이동) — member가 right:0으로 당겨지므로
        라이트박스는 남은 카드 1장(440px)만 비우면 됨. */
+    /* 2026-11-12 사용자: 영상만 남아도 맨 위 K-POP UNIVERSE·탭바 줄은 그대로 두고 그 아래부터 — 예전엔 카드를 닫으면 inset:0 풀스크린으로
+       바뀌며 헤더를 덮고, 세로 가운데 정렬이라 영상 위가 화면 밖으로 잘렸다(1440×820에서 -31px). */
+    #yt-lightbox{top:64px;}
     body:has(#side-panel.open) #yt-lightbox{right:440px;top:64px;}
     body:has(#side-panel.open):has(#member-panel.open) #yt-lightbox{right:880px;top:64px;}
     body:has(#side-panel.open):has(#conn-panel.open) #yt-lightbox{right:880px;top:64px;}
@@ -1028,8 +1031,9 @@
     /* 데스크톱: 좌측(재생 중) + 우측(추천 목록) 2열 — 모바일 세로 스택과 다르게 별도 설계 */
     /* 2026-11-03 웹 화면 조합 점검: 카드 없이 재생할 때(재생만·나침반+재생) wrap이 1080px 고정이라 1920에서 영상이 734px, 화면 39%가 비었다.
        카드 있을 때(아래 side-panel 규칙)와 같은 원칙 — 남는 폭을 채우고(좌우 28px), 높이가 모자라면 영상 높이 기준으로 상한 */
-    #yt-lightbox.lb-browse{padding:0 28px;box-sizing:border-box;}
-    #yt-lightbox.lb-browse #yt-lb-wrap{width:100%;max-width:calc((100vh - 280px) * 16 / 9 + 346px);display:flex;align-items:flex-start;gap:26px;}
+    /* 높이가 넘치면 위가 잘리지 않게 safe center(넘치면 위에서부터) + 스크롤 */
+    #yt-lightbox.lb-browse{padding:24px 28px;box-sizing:border-box;align-items:safe center;overflow-y:auto;overscroll-behavior:contain;}
+    #yt-lightbox.lb-browse #yt-lb-wrap{width:100%;max-width:calc((100vh - 330px) * 16 / 9 + 346px);display:flex;align-items:flex-start;gap:26px;}
     #yt-lightbox.lb-browse #yt-lb-main{flex:1;min-width:0;}
     #yt-lightbox.lb-browse #yt-lb-uplist{width:320px;flex-shrink:0;max-height:min(80vh,720px);overflow-y:auto;padding-left:2px;overscroll-behavior:contain;will-change:transform;}
     #yt-lightbox.lb-browse #yt-lb-uplist-scroll{padding-bottom:8px;}

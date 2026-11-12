@@ -2,6 +2,9 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-12 (Claude Code — 웹: 영상만 남아도 맨 위 줄 유지)
+- [완료][kpop_universe.css] 사용자 "카드+영상에서 카드를 닫으면 재생 화면이 꽉 차며 위가 잘림, 상단 타이틀·탭바 줄은 그대로 두고 그 아래부터". 데스크톱 #yt-lightbox 기본 top:64px(카드·나침반·도킹 때와 같은 자리) + lb-browse는 align-items:safe center·overflow-y:auto·위아래 24px, 영상 상한 (100vh-330px)×16/9. 헤드리스 1440×820: 닫은 뒤 영상 위 -31px → 88px, 1280×720도 확인. lb-every-entry 8/8·lb-history-back 10/10·card-title-visibility 4/4.
+
 ## 2026-11-12 (Claude Code — Codex 11-12 검수 처리 ⑤: 퍼가기 막힌 대표 영상·활동 후 솔로 영상·악기 캠)
 - [완료][app.js][SQL] **퍼가기 막힌 영상은 카드 대표에서 뒤로.** `yt_channel_videos.embed_blocked_at` 추가 + `report_embed_blocked(id,code)`(anon 실행, 101·150만, 30일에 한 번 갱신). 재생창 `_lbEmbedBlocked`가 막힘을 받으면 기록 → `_fetchGroupHeroCands`(단계 3=맨 뒤)·`_fetchSoloCamThumbs`가 180일 동안 뒤로(`_embBlk`). 목록·검색은 그대로. Codex 확인 3개(소녀시대 Lion Heart a3ZwmFvB_9U·달샤벳 JOKER x-j_4z1uGtw·헬로비너스 위글위글 nGLGeuNi_aE) 표식 → 대표가 APafAyReBYI·rAiGYFWk0Hs·wLFJqua1H4k. 2PM KbvpBcO4n3A(검수 환경 국가 제한)는 표식 안 함 — 해외 사용자가 막히면 자동 기록됨. anon RPC 204 확인. sql/2026-11-12_embed_blocked_and_hero_tags(.sql/_undo).
 - [완료][SQL] **활동 후 솔로 영상 4개 → 본인 솔로 키**(백업 _bak_hero_solo_20261112): 현아 I'm Not Cool uoZKR8vA1xE(포미닛→현아)·박진영 When We Disco 듀엣 선미 POFSaR1v0wc(원더걸스→선미, 박진영 미등록)·한승우 Dive Into XddimyWY6Gg(엑스원→한승우)·KO1KEYZ 시영 w1K2ZcqHqTU(미래소년→박시영, 같은 사람 — 박해곤에서 개명, KO1KEYZ 미등록). 곡 키 재계산(현아:imnotcool·한승우:diveinto). 대표 모의 계산 15팀(소녀시대·달샤벳·헬로비너스·원더걸스·포미닛·엑스원·미래소년·피에스타·god·온앤오프·핑클·크레용팝·드리핀·웨이션브이·애프터스쿨) 전부 본인 곡 단계 0 영상.
