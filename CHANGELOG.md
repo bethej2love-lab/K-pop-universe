@@ -2,6 +2,11 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-12 (Claude Code — Codex 검수 ⑧: 앨범 수록곡 복원 50장)
+- [완료][groups.json] 음원 번호 없는 앨범 중 수록곡이 통째로 엉뚱했던 것 → 멜론 공식 목록(곡 번호·타이틀 표시)으로 교체. tools/album_restore_reference.mjs(새): 멜론 앨범 번호·발매일 일치할 때만, 같은 곡이면 en·작사작곡 유지, 빠지는 곡은 이 앨범에서만 뺌. ① Codex album-melon-audit 41장(데이식스 Band Aid·크래비티 4·SF9 3·AB6IX 3·하이라이트·우주소녀 4·B1A4·비투비 8·펜타곤 2·AOA 3·미쓰에이·빅스 3·씨엔블루·에이프릴 5·트레저) — 근거 tools/data/album_restore_melon_2026-11-12.json. 신화 Winter Story(토크 트랙 포함 14곡)는 정책 없어 건너뜀. ② tools/album_restore_fetch.mjs(새)로 멜론 상세를 받아(번호 없는 앨범은 커버 번호, 앨범명 대조) 9장: SF9 The Wave OF9·빅스 CONTINUUM·비투비 Brother Act.·Complete·펜타곤 LOVE or TAKE·에이프릴 Da Capo·오마이걸 Golden Hourglass·Coloring Book(앞 두 곡 순서)·AB6IX 6IXENSE — 발매일도 멜론 값(6IXENSE 2021.07.26→2019.10.07 등 5장), 근거 tools/data/album_restore_melon_2026-11-12b.json.
+- [완료] 악뮤 '항해 (SAILING)' 2019.10.16 레코드 삭제(존재하지 않는 리패키지, 정본 '항해'와 같은 커버 번호, 낙하 feat. CHANYEOL 등 근거 없음 — 같은 주소에서 정본 대신 노출). 앨범 대표곡 필드를 트랙 타이틀 표시와 맞춤: 신화 Unchanging Pt.1→오렌지·9집→RUN·8집→Once In A Lifetime, 핑클 Fin.K.L→FINKL. _SONG_RULES_VER v10.
+- ⏳ iKON WELCOME BACK(우리 2015.10.01 15곡, 멜론 2640151은 2015.11.16 8곡 — 하프/풀 앨범 구분 필요), 베이비복스 Ride West·젝스키스 Blue Note 설명(판본 확인 전 보류), 신화 Winter Story, 중복 곡 canonical 63묶음.
+
 ## 2026-11-12 (Claude Code — Codex 검수 ⑦: 직캠 순위 단체 영상·옛 직캠 페이지·곡 바로가기 정본 앨범·음방 솔로 표기)
 - [완료][SQL] 개인 직캠으로 잘못 태그된 9개(백업 _bak_codex_fancam_person_20261112): 하츠투하츠 STUDIO CHOOM Full Focused 3개·ITZY Close-up CAM 단체 안무 → 그룹 전체, 한국예지동아리 채널의 채령 2·류진·유나 직캠(예지로 태그) → 제목의 본인, 싸이커스 Kick It MINJAE FANCAM(세은) → 민재.
 - [완료][build_group_pages.js] 직캠 허브·순위: 단체 풀캠 표시(Full Focused·풀캠·Close-up CAM·단체 직캠)는 제목에 그 멤버 이름이 있을 때만 개인 직캠(카이 '음' Full Focused는 남음) + 팬사인회 직캠은 비공연. 기준(10개) 아래로 내려간 멤버의 옛 /fancams/ 페이지 → 멤버 페이지로 넘김·noindex(허브 200명 미만이면 조회 덜 된 빌드로 보고 건너뜀) — 임나영 옛 허브.

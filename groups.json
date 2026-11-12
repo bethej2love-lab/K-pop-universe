@@ -94312,36 +94312,48 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/108/68/472/10868472_20220215111825_500.jpg",
     "releaseDate": "2022.02.15",
-    "trackCount": 5,
-    "titleTrack": "JIKJIN",
+    "trackCount": 6,
+    "titleTrack": "직진 (JIKJIN)",
     "tracks": [
      {
       "no": 1,
-      "title": "JIKJIN",
+      "title": "직진 (JIKJIN)",
+      "songId": "34643252",
       "isTitle": true
      },
      {
       "no": 2,
-      "title": "BONA BONA",
+      "title": "U",
+      "songId": "34643253",
       "isTitle": false
      },
      {
       "no": 3,
-      "title": "BEAUTIFUL",
+      "title": "다라리 (DARARI)",
+      "songId": "34643254",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "DARARI",
+      "title": "괜찮아질 거야 (IT'S OKAY)",
+      "songId": "34643255",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "HELLO (Japanese Ver.)",
+      "title": "BFF (Best Friend Forever) (CD only)",
+      "songId": "34643256",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "Gonna Be Fine (CD only)",
+      "songId": "34643257",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "10868472"
+    "melonAlbumId": "10868472",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "THE FIRST STEP : TREASURE EFFECT",
@@ -95157,36 +95169,48 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/18/005/11318005_20230911131859_500.jpg",
     "releaseDate": "2023.09.11",
-    "trackCount": 5,
-    "titleTrack": "SUN SEEKER",
+    "trackCount": 6,
+    "titleTrack": "Cheese / Ready or Not",
     "tracks": [
      {
       "no": 1,
-      "title": "SUN SEEKER",
+      "title": "Cheese",
+      "songId": "36753786",
       "isTitle": true
      },
      {
       "no": 2,
-      "title": "Groovy (New Ver.)",
-      "isTitle": false
+      "title": "Ready or Not",
+      "songId": "36781903",
+      "isTitle": true
      },
      {
       "no": 3,
-      "title": "Shine",
+      "title": "MEGAPHONE",
+      "songId": "36781904",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "Sweet Love",
+      "title": "Vibration",
+      "songId": "36781905",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "Good Times",
+      "title": "9 o’clock",
+      "songId": "36781906",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "LOVE FIRE",
+      "songId": "36781907",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "11318005"
+    "melonAlbumId": "11318005",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "Cheese",
@@ -95266,36 +95290,48 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/111/96/069/11196069_20230306110246_500.jpg",
     "releaseDate": "2023.03.06",
-    "trackCount": 5,
-    "titleTrack": "Masterpiece",
+    "trackCount": 6,
+    "titleTrack": "Groovy",
     "tracks": [
      {
       "no": 1,
-      "title": "Masterpiece",
+      "title": "Groovy",
+      "songId": "36246285",
       "isTitle": true
      },
      {
       "no": 2,
-      "title": "더 단단하게 (Harder)",
+      "title": "FLY",
+      "songId": "36246286",
       "isTitle": false
      },
      {
       "no": 3,
-      "title": "COOL",
+      "title": "Get Lifted",
+      "songId": "36246287",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "Rush",
+      "title": "Baddie",
+      "songId": "36246288",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "Hello Stranger",
+      "title": "A to Z",
+      "songId": "36246289",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "Light the way",
+      "songId": "36246290",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "11196069"
+    "melonAlbumId": "11196069",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "NEW WAVE",
@@ -95303,36 +95339,48 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/110/64/954/11064954_20220927100944_500.jpg",
     "releaseDate": "2022.09.27",
-    "trackCount": 5,
-    "titleTrack": "TIED UP",
+    "trackCount": 6,
+    "titleTrack": "PARTY ROCK",
     "tracks": [
      {
       "no": 1,
-      "title": "TIED UP",
-      "isTitle": true
-     },
-     {
-      "no": 2,
-      "title": "Hallelujah",
+      "title": "Boogie Woogie",
+      "songId": "35674993",
       "isTitle": false
      },
      {
+      "no": 2,
+      "title": "PARTY ROCK",
+      "songId": "35674994",
+      "isTitle": true
+     },
+     {
       "no": 3,
-      "title": "Beautiful",
+      "title": "New Addiction",
+      "songId": "35674995",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "Crazy",
+      "title": "AUTOMATIC",
+      "songId": "35674996",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "Perfect Day",
+      "title": "Colorful",
+      "songId": "35674997",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "Knock Knock",
+      "songId": "35674998",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "11064954"
+    "melonAlbumId": "11064954",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "Boogie Woogie",
@@ -95382,41 +95430,60 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/108/95/690/10895690_20220322110013_500.jpg",
     "releaseDate": "2022.03.22",
-    "trackCount": 6,
-    "titleTrack": "Party Rock",
+    "trackCount": 8,
+    "titleTrack": "Adrenaline",
     "tracks": [
      {
       "no": 1,
-      "title": "Party Rock",
+      "title": "Adrenaline",
+      "songId": "34777047",
       "isTitle": true
      },
      {
       "no": 2,
-      "title": "Road to Freedom",
+      "title": "POW!",
+      "songId": "34777048",
       "isTitle": false
      },
      {
       "no": 3,
-      "title": "Love Me Now",
+      "title": "BOPPIN’",
+      "songId": "34777049",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "U&ME",
+      "title": "Chandelier",
+      "songId": "34777050",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "Shining",
+      "title": "FLIP THE FRAME",
+      "songId": "34777051",
       "isTitle": false
      },
      {
       "no": 6,
-      "title": "Outro: LIBERTY",
+      "title": "좋아하나봐",
+      "songId": "34777052",
+      "isTitle": false
+     },
+     {
+      "no": 7,
+      "title": "Late Night",
+      "songId": "34777053",
+      "isTitle": false
+     },
+     {
+      "no": 8,
+      "title": "Outro : In Our Cosmos",
+      "songId": "34777054",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "10895690"
+    "melonAlbumId": "10895690",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "THE AWAKENING: WRITTEN IN THE STARS",
@@ -112010,41 +112077,49 @@
     "type": "미니 11집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/110/03/062/11003062_20220712171506_500.jpg",
-    "releaseDate": "2022.07.05",
+    "releaseDate": "2022.07.13",
     "trackCount": 6,
-    "titleTrack": "BLINDFOLDED",
+    "titleTrack": "SCREAM",
     "tracks": [
      {
       "no": 1,
-      "title": "BLINDFOLDED",
+      "title": "SCREAM",
+      "songId": "35400814",
       "isTitle": true
      },
      {
       "no": 2,
-      "title": "CAUGHT U",
+      "title": "OK OK",
+      "songId": "35400815",
       "isTitle": false
      },
      {
       "no": 3,
-      "title": "Ashes",
+      "title": "Summertime Bounce (Don’t Kill My Vibe)",
+      "songId": "35400816",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "날아가 (Fly Away)",
+      "title": "Driver",
+      "songId": "35400817",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "Poke it Out",
+      "title": "Crazy Crazy Love",
+      "songId": "35400818",
       "isTitle": false
      },
      {
       "no": 6,
-      "title": "BLINDFOLDED (Inst.)",
+      "title": "Butterfly",
+      "songId": "35400819",
       "isTitle": false
      }
-    ]
+    ],
+    "tracksSource": "melon-reference-2026-11-12",
+    "melonAlbumId": "11003062"
    },
    {
     "title": "THE BEST ~Dear Fantasy~",
@@ -113611,36 +113686,48 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/01/834/10101834_500.jpg",
     "releaseDate": "2017.10.12",
-    "trackCount": 5,
-    "titleTrack": "O Sole Mio",
+    "trackCount": 6,
+    "titleTrack": "오솔레미오 (O Sole Mio)",
     "tracks": [
      {
       "no": 1,
-      "title": "O Sole Mio",
-      "isTitle": true
-     },
-     {
-      "no": 2,
-      "title": "Paper Cuts",
+      "title": "詩 ; 00:00",
+      "songId": "30667265",
       "isTitle": false
      },
      {
+      "no": 2,
+      "title": "오솔레미오 (O Sole Mio)",
+      "songId": "30667266",
+      "isTitle": true
+     },
+     {
       "no": 3,
-      "title": "Just Am I",
+      "title": "나랑 놀자",
+      "songId": "30667267",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "1 Million",
+      "title": "빈칸",
+      "songId": "30667268",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "Knights of the Sun",
+      "title": "불호령",
+      "songId": "30667269",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "웬 감성팔이야",
+      "songId": "30667270",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "10101834"
+    "melonAlbumId": "10101834",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "Breaking Sensation",
@@ -113648,36 +113735,48 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/55/773/10055773_500.jpg",
     "releaseDate": "2017.04.18",
-    "trackCount": 5,
-    "titleTrack": "Easy Love",
+    "trackCount": 6,
+    "titleTrack": "쉽다 (Easy Love)",
     "tracks": [
      {
       "no": 1,
-      "title": "Easy Love",
-      "isTitle": true
-     },
-     {
-      "no": 2,
-      "title": "Time Lapse",
+      "title": "Intro;이별 즈음에",
+      "songId": "30371259",
       "isTitle": false
      },
      {
+      "no": 2,
+      "title": "쉽다 (Easy Love)",
+      "songId": "30371260",
+      "isTitle": true
+     },
+     {
       "no": 3,
-      "title": "All For You",
+      "title": "Watch Out",
+      "songId": "30371261",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "Fanfare",
+      "title": "머리카락 보일라 (Hide and Seek)",
+      "songId": "30371262",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "Breaking Sensation",
+      "title": "이러다가 울겠어 (Fall Down)",
+      "songId": "30371263",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "왜 이래 (Why)",
+      "songId": "30371264",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "10055773"
+    "melonAlbumId": "10055773",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "Burning Sensation",
@@ -113685,36 +113784,48 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/36/162/10036162_500.jpg/melon/resize/260/quality/80/optimize",
     "releaseDate": "2017.02.06",
-    "trackCount": 5,
-    "titleTrack": "Roar",
+    "trackCount": 6,
+    "titleTrack": "부르릉 (ROAR)",
     "tracks": [
      {
       "no": 1,
-      "title": "Roar",
-      "isTitle": true
-     },
-     {
-      "no": 2,
-      "title": "Watch Out",
+      "title": "靑春;tell me what it is",
+      "songId": "30233011",
       "isTitle": false
      },
      {
+      "no": 2,
+      "title": "부르릉 (ROAR)",
+      "songId": "30233012",
+      "isTitle": true
+     },
+     {
       "no": 3,
-      "title": "Easy Love",
+      "title": "여전히 예뻐 (Still My Lady)",
+      "songId": "30233013",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "오늘만 살자 (Let's Live Only Today)",
+      "title": "Shut Up N' Lemme Go",
+      "songId": "30233014",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "Burning Sensation",
+      "title": "4 Step",
+      "songId": "30233015",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "Jungle Game",
+      "songId": "30233016",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "10036162"
+    "melonAlbumId": "10036162",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "SF9 Special Digital Single '너와 함께라면 (So Beautiful)'",
@@ -116400,15 +116511,15 @@
     "tracks": [
      {
       "no": 1,
-      "title": "여름이 들려 (Summer Comes)",
-      "isTitle": true,
-      "songId": "36637828"
-     },
-     {
-      "no": 2,
       "title": "Celebrate",
       "isTitle": false,
       "songId": "36637827"
+     },
+     {
+      "no": 2,
+      "title": "여름이 들려 (Summer Comes)",
+      "isTitle": true,
+      "songId": "36637828"
      },
      {
       "no": 3,
@@ -116431,13 +116542,14 @@
      },
      {
       "no": 6,
-      "title": "미라클",
+      "title": "미라클 (Miracle)",
       "isTitle": false,
       "songId": "36637832",
       "en": "Miracle"
      }
     ],
-    "melonAlbumId": "11290943"
+    "melonAlbumId": "11290943",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "Miracle",
@@ -117628,19 +117740,19 @@
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/51/269/10051269_500.jpg",
     "releaseDate": "2017.04.03",
     "trackCount": 5,
-    "titleTrack": "컬러링북",
+    "titleTrack": "컬러링북 (Coloring Book)",
     "tracks": [
      {
       "no": 1,
-      "title": "Real world",
-      "isTitle": false,
-      "songId": "30338501"
+      "title": "컬러링북 (Coloring Book)",
+      "isTitle": true,
+      "songId": "30338500"
      },
      {
       "no": 2,
-      "title": "컬러링북",
-      "isTitle": true,
-      "songId": "30338500"
+      "title": "Real World",
+      "isTitle": false,
+      "songId": "30338501"
      },
      {
       "no": 3,
@@ -117661,7 +117773,8 @@
       "songId": "30338504"
      }
     ],
-    "melonAlbumId": "10051269"
+    "melonAlbumId": "10051269",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "신비아파트 : 고스트볼의 비밀 OST",
@@ -125201,41 +125314,54 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/110/69/758/11069758_20221004112957_500.jpg",
     "releaseDate": "2022.10.04",
-    "trackCount": 6,
-    "titleTrack": "SUPADUPA",
+    "trackCount": 7,
+    "titleTrack": "Sugarcoat",
     "tracks": [
      {
       "no": 1,
-      "title": "SUPADUPA",
-      "isTitle": true
-     },
-     {
-      "no": 2,
-      "title": "SHAKE IT",
+      "title": "Paranoia",
+      "songId": "35693506",
       "isTitle": false
      },
      {
+      "no": 2,
+      "title": "Sugarcoat",
+      "songId": "35693507",
+      "isTitle": true
+     },
+     {
       "no": 3,
-      "title": "THRILL",
+      "title": "Weightless",
+      "songId": "35693508",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "POKE IT",
+      "title": "Complicated",
+      "songId": "35693509",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "FIREWORK",
+      "title": "공명 (共鳴) (Resonance)",
+      "songId": "35693510",
       "isTitle": false
      },
      {
       "no": 6,
-      "title": "TAKE A CHANCE",
+      "title": "Crow",
+      "songId": "35693511",
+      "isTitle": false
+     },
+     {
+      "no": 7,
+      "title": "CHANCE (Korean Ver.)",
+      "songId": "35693512",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "11069758"
+    "melonAlbumId": "11069758",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "Moonlight",
@@ -125619,74 +125745,80 @@
     "type": "정규 1집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/103/35/957/10335957_500.jpg",
-    "releaseDate": "2021.07.26",
-    "trackCount": 12,
-    "titleTrack": "사랑이 안 보여 (BLIND FOR LOVE)",
+    "releaseDate": "2019.10.07",
+    "trackCount": 11,
+    "titleTrack": "BLIND FOR LOVE",
     "tracks": [
      {
       "no": 1,
-      "title": "SUPADUPA",
+      "title": "기대 (BE THERE)",
+      "songId": "32082053",
       "isTitle": false
      },
      {
       "no": 2,
-      "title": "BREATHE",
-      "isTitle": false,
-      "songId": "34349086"
+      "title": "BLIND FOR LOVE",
+      "songId": "32082054",
+      "isTitle": true
      },
      {
       "no": 3,
-      "title": "CLOSE",
-      "isTitle": false,
-      "songId": "34349088"
+      "title": "민들레꽃 (DANDELION)",
+      "songId": "32082055",
+      "isTitle": false
      },
      {
       "no": 4,
-      "title": "THE REAL",
+      "title": "SUNSET",
+      "songId": "32082056",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "MOON CHILD",
+      "title": "_AND ME",
+      "songId": "32082057",
       "isTitle": false
      },
      {
       "no": 6,
-      "title": "STAY",
+      "title": "LOVE AIR",
+      "songId": "32082058",
       "isTitle": false
      },
      {
       "no": 7,
-      "title": "RUNWAY",
+      "title": "이쁨이 지나치면 죄야 죄 (PRETTY)",
+      "songId": "32082059",
       "isTitle": false
      },
      {
       "no": 8,
-      "title": "REMEMBER US",
+      "title": "SHADOW",
+      "songId": "32082060",
       "isTitle": false
      },
      {
       "no": 9,
-      "title": "SECRET",
+      "title": "DEEP INSIDE",
+      "songId": "32082061",
       "isTitle": false
      },
      {
       "no": 10,
-      "title": "A DAY",
+      "title": "D.R.E.A.M.",
+      "songId": "32082062",
       "isTitle": false
      },
      {
       "no": 11,
-      "title": "HIDDEN SIDE",
-      "isTitle": false
-     },
-     {
-      "no": 12,
-      "title": "SERENADE",
+      "title": "NOTHING WITHOUT YOU",
+      "songId": "32082063",
       "isTitle": false
      }
     ],
-    "melonVia": "11069758"
+    "melonVia": "11069758",
+    "tracksSource": "melon-reference-2026-11-12",
+    "melonAlbumId": "10335957"
    },
    {
     "title": "GEMINI",
@@ -125713,46 +125845,42 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/105/98/320/10598320_20210426151902_500.jpg",
     "releaseDate": "2021.04.26",
-    "trackCount": 7,
-    "titleTrack": "CLOSE",
+    "trackCount": 5,
+    "titleTrack": "감아 (CLOSE)",
     "tracks": [
      {
       "no": 1,
-      "title": "CLOSE",
-      "isTitle": true
-     },
-     {
-      "no": 2,
-      "title": "MOON CHILD",
+      "title": "HEADLINE",
+      "songId": "33437472",
       "isTitle": false
      },
      {
+      "no": 2,
+      "title": "감아 (CLOSE)",
+      "songId": "33437473",
+      "isTitle": true
+     },
+     {
       "no": 3,
-      "title": "SAVIOR",
+      "title": "룰루랄라 (LULULALA)",
+      "songId": "33437474",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "FADE OUT",
+      "title": "회전목마 (MERRY-GO-ROUND)",
+      "songId": "33437475",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "10AM",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "ESCAPE",
-      "isTitle": false
-     },
-     {
-      "no": 7,
-      "title": "HIDDEN SIDE",
+      "title": "아직도 겨울 (A LONG WINTER)",
+      "songId": "33437476",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "10598320"
+    "melonAlbumId": "10598320",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "SALUTE : A NEW HOPE",
@@ -125934,46 +126062,48 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/104/52/432/10452432_20200629162615_500.jpg",
     "releaseDate": "2020.06.29",
-    "trackCount": 7,
-    "titleTrack": "BLIND FOR LOVE",
+    "trackCount": 6,
+    "titleTrack": "답을 줘 (THE ANSWER)",
     "tracks": [
      {
       "no": 1,
-      "title": "BLIND FOR LOVE",
-      "isTitle": true
+      "title": "RED UP",
+      "songId": "32725549",
+      "isTitle": false
      },
      {
       "no": 2,
-      "title": "RUN AWAY",
+      "title": "VIVID",
+      "songId": "32725550",
       "isTitle": false
      },
      {
       "no": 3,
-      "title": "ZONE",
-      "isTitle": false
+      "title": "답을 줘 (THE ANSWER)",
+      "songId": "32725551",
+      "isTitle": true
      },
      {
       "no": 4,
-      "title": "CHERRY (AB6IX Ver.)",
+      "title": "초현실 (SURREAL)",
+      "songId": "32725552",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "YOUNG",
+      "title": "MIDNIGHT BLUE",
+      "songId": "32725553",
       "isTitle": false
      },
      {
       "no": 6,
-      "title": "SURREAL",
-      "isTitle": false
-     },
-     {
-      "no": 7,
-      "title": "FEELING GOOD",
+      "title": "끈 (HOLD TIGHT)",
+      "songId": "32725554",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "10452432"
+    "melonAlbumId": "10452432",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "5NALLY",
@@ -126297,36 +126427,36 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/117/72/903/11772903_20250428154703_500.jpg",
     "releaseDate": "2025.04.28",
-    "trackCount": 5,
-    "titleTrack": "RIDE OR DIE",
+    "trackCount": 4,
+    "titleTrack": "Chains",
     "tracks": [
      {
       "no": 1,
-      "title": "RIDE OR DIE",
+      "title": "Chains",
+      "songId": "38868787",
       "isTitle": true
      },
      {
       "no": 2,
-      "title": "HERE I AM",
+      "title": "없는 엔딩 (Endless Ending)",
+      "songId": "38793366",
       "isTitle": false
      },
      {
       "no": 3,
-      "title": "우리의 이야기 (Our Story)",
+      "title": "Good Day to You",
+      "songId": "38868788",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "SIGNAL",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "RIDE OR DIE (Inst.)",
+      "title": "Follow Me",
+      "songId": "38868789",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "11772903"
+    "melonAlbumId": "11772903",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "Switch On",
@@ -158870,36 +159000,54 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/103/53/510/10353510_500.jpg",
     "releaseDate": "2019.11.19",
-    "trackCount": 5,
-    "titleTrack": "As You Wish",
+    "trackCount": 7,
+    "titleTrack": "이루리",
     "tracks": [
      {
       "no": 1,
-      "title": "As You Wish",
+      "title": "이루리",
+      "songId": "32185128",
       "isTitle": true
      },
      {
       "no": 2,
-      "title": "Laser",
+      "title": "행운을 빌어",
+      "songId": "32185129",
       "isTitle": false
      },
      {
       "no": 3,
-      "title": "주인공 (Protagonist)",
+      "title": "야광별",
+      "songId": "32185130",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "같이가자 (Together)",
+      "title": "우와",
+      "songId": "32185131",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "나의 마음 (My Heart)",
+      "title": "BADABOOM (바다붐)",
+      "songId": "32185132",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "Full Moon",
+      "songId": "32185133",
+      "isTitle": false
+     },
+     {
+      "no": 7,
+      "title": "Don’t Touch",
+      "songId": "32185134",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "10353510"
+    "melonAlbumId": "10353510",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "SPECIAL ALBUM [For the Summer]",
@@ -158969,36 +159117,54 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/40/550/10240550_500.jpg",
     "releaseDate": "2019.01.08",
-    "trackCount": 5,
-    "titleTrack": "이러지마 제발 (STOP IT)",
+    "trackCount": 7,
+    "titleTrack": "La La Love",
     "tracks": [
      {
       "no": 1,
-      "title": "이러지마 제발 (STOP IT)",
+      "title": "La La Love",
+      "songId": "31545466",
       "isTitle": true
      },
      {
       "no": 2,
-      "title": "Boogie Up",
+      "title": "You Got",
+      "songId": "31545467",
       "isTitle": false
      },
      {
       "no": 3,
-      "title": "Salty",
+      "title": "1억개의 별",
+      "songId": "31545468",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "Everyday",
+      "title": "그때 우리",
+      "songId": "31545469",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "미워 (I Hate You)",
+      "title": "칸타빌레(노래하듯이)",
+      "songId": "31545470",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "12 O'clock",
+      "songId": "31545471",
+      "isTitle": false
+     },
+     {
+      "no": 7,
+      "title": "우주정거장",
+      "songId": "31545472",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "10240550"
+    "melonAlbumId": "10240550",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "WJ PLEASE?",
@@ -159043,36 +159209,48 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/43/117/10143117_500.jpg",
     "releaseDate": "2018.02.27",
-    "trackCount": 5,
-    "titleTrack": "Dreams Come True",
+    "trackCount": 6,
+    "titleTrack": "꿈꾸는 마음으로",
     "tracks": [
      {
       "no": 1,
-      "title": "Dreams Come True",
+      "title": "꿈꾸는 마음으로",
+      "songId": "30921323",
       "isTitle": true
      },
      {
       "no": 2,
-      "title": "Dream Your Dream",
+      "title": "호두까기 인형",
+      "songId": "30921324",
       "isTitle": false
      },
      {
       "no": 3,
-      "title": "이룰게 (Make It Happen)",
+      "title": "르네상스",
+      "songId": "30921325",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "너에게 닿기를 (Reach You)",
+      "title": "설레는 밤",
+      "songId": "30921326",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "겨울 꿈 (Winter Dream)",
+      "title": "겨울잠",
+      "songId": "30921327",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "꿈꾸는 마음으로 (Chinese Ver.)",
+      "songId": "30921328",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "10143117"
+    "melonAlbumId": "10143117",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "KISS ME",
@@ -159224,41 +159402,54 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/027/04/598/2704598_500.jpg",
     "releaseDate": "2016.08.17",
-    "trackCount": 6,
-    "titleTrack": "Secret",
+    "trackCount": 7,
+    "titleTrack": "비밀이야 (Secret)",
     "tracks": [
      {
       "no": 1,
-      "title": "Secret",
+      "title": "비밀이야 (Secret)",
+      "songId": "9604600",
       "isTitle": true
      },
      {
       "no": 2,
-      "title": "운명이야 (Destiny)",
+      "title": "BeBe",
+      "songId": "9604601",
       "isTitle": false
      },
      {
       "no": 3,
-      "title": "Hide & Seek",
+      "title": "우주키스미 (Would You Kiss Me?)",
+      "songId": "9604602",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "Special Love",
+      "title": "짠! (Prince)",
+      "songId": "9604603",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "La La La Love Song",
+      "title": "ROBOT",
+      "songId": "9604604",
       "isTitle": false
      },
      {
       "no": 6,
-      "title": "For the Summer",
+      "title": "이층침대 (Good Night)",
+      "songId": "9604605",
+      "isTitle": false
+     },
+     {
+      "no": 7,
+      "title": "비밀이야 (Chinese Ver.)",
+      "songId": "9604606",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "2704598"
+    "melonAlbumId": "2704598",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "Would You Like?",
@@ -164547,71 +164738,78 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/020/93/187/2093187_500.jpg",
     "releaseDate": "2012.03.14",
-    "trackCount": 12,
-    "titleTrack": "Only Learned Bad Things",
+    "trackCount": 11,
+    "titleTrack": "BABY I'M SORRY",
     "tracks": [
      {
       "no": 1,
-      "title": "Only Learned Bad Things",
+      "title": "BABY I'M SORRY",
+      "songId": "3734722",
       "isTitle": true
      },
      {
       "no": 2,
-      "title": "이게 무슨 일이야 (What's Going On?)",
+      "title": "THIS TIME IS OVER",
+      "songId": "3734723",
       "isTitle": false
      },
      {
       "no": 3,
-      "title": "My Love",
+      "title": "SO FINE",
+      "songId": "3734724",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "If...",
+      "title": "SUPER SONIC",
+      "songId": "3734725",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "잘자요 굿나잇 (Good Night)",
+      "title": "둘만 있으면 (바로 Solo) (Feat. 민 Of miss A)",
+      "songId": "3734726",
       "isTitle": false
      },
      {
       "no": 6,
-      "title": "Angel",
+      "title": "웃어봐",
+      "songId": "3734727",
       "isTitle": false
      },
      {
       "no": 7,
-      "title": "Hello Pretty Girl",
+      "title": "FEELING",
+      "songId": "3734728",
       "isTitle": false
      },
      {
       "no": 8,
-      "title": "Stay With Me",
+      "title": "짝사랑 (산들 Solo)",
+      "songId": "3734729",
       "isTitle": false
      },
      {
       "no": 9,
-      "title": "Who Am I",
+      "title": "YOU ARE MY GIRL",
+      "songId": "3734730",
       "isTitle": false
      },
      {
       "no": 10,
-      "title": "그래 (Yeah)",
+      "title": "WONDERFUL TONIGHT (Unplugged Remix)",
+      "songId": "3734731",
       "isTitle": false
      },
      {
       "no": 11,
-      "title": "A Beautiful Eternity",
-      "isTitle": false
-     },
-     {
-      "no": 12,
-      "title": "Miracle",
+      "title": "BABY I'M SORRY (Inst.)",
+      "songId": "3734732",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "2093187"
+    "melonAlbumId": "2093187",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "This Time Is Over",
@@ -168043,41 +168241,60 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/115/80/616/11580616_20240830171855_500.jpg",
     "releaseDate": "2024.09.02",
-    "trackCount": 6,
-    "titleTrack": "It's Melting",
+    "trackCount": 8,
+    "titleTrack": "녹아내려요",
     "tracks": [
      {
       "no": 1,
-      "title": "It's Melting",
-      "isTitle": true
-     },
-     {
-      "no": 2,
-      "title": "Sad Song",
+      "title": "괴물",
+      "songId": "37946920",
       "isTitle": false
      },
      {
+      "no": 2,
+      "title": "녹아내려요",
+      "songId": "37946921",
+      "isTitle": true
+     },
+     {
       "no": 3,
-      "title": "Way Back Home",
+      "title": "그녀가 웃었다",
+      "songId": "37946922",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "Right Here Right Now",
+      "title": "망겜",
+      "songId": "37946923",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "Band Aid",
+      "title": "도와줘요 Rock&Roll",
+      "songId": "37946924",
       "isTitle": false
      },
      {
       "no": 6,
-      "title": "Falling",
+      "title": "COUNTER",
+      "songId": "37946925",
+      "isTitle": false
+     },
+     {
+      "no": 7,
+      "title": "I’m Fine",
+      "songId": "37946926",
+      "isTitle": false
+     },
+     {
+      "no": 8,
+      "title": "아직 거기 살아",
+      "songId": "37946927",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "11580616"
+    "melonAlbumId": "11580616",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "Fourever",
@@ -169185,41 +169402,42 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/112/35/799/11235799_20230502104633_500.jpg",
     "releaseDate": "2023.05.02",
-    "trackCount": 6,
-    "titleTrack": "Wind and Wish",
+    "trackCount": 5,
+    "titleTrack": "나의 바람 (Wind And Wish)",
     "tracks": [
      {
       "no": 1,
-      "title": "Wind and Wish",
+      "title": "나의 바람 (Wind And Wish)",
+      "songId": "36414423",
       "isTitle": true
      },
      {
       "no": 2,
-      "title": "그게 다야 (That's All)",
+      "title": "Heaven",
+      "songId": "36414424",
       "isTitle": false
      },
      {
       "no": 3,
-      "title": "무지개 (Rainbow)",
+      "title": "Day&Night",
+      "songId": "36414425",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "봄의 노래 (Song of Spring)",
+      "title": "Moon Ride",
+      "songId": "36414426",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "Good Night",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "Wind and Wish (Inst.)",
+      "title": "Your Love",
+      "songId": "36414427",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "11235799"
+    "melonAlbumId": "11235799",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "Be Together",
@@ -169227,61 +169445,90 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/108/73/531/10873531_20220221102734_500.jpg",
     "releaseDate": "2022.02.21",
-    "trackCount": 10,
-    "titleTrack": "Outsider",
+    "trackCount": 13,
+    "titleTrack": "노래 (The Song)",
     "tracks": [
      {
       "no": 1,
-      "title": "Outsider",
-      "isTitle": true
-     },
-     {
-      "no": 2,
-      "title": "LOST",
+      "title": "Intro : 발자취",
+      "songId": "34667572",
       "isTitle": false
      },
      {
+      "no": 2,
+      "title": "노래 (The Song)",
+      "songId": "34667573",
+      "isTitle": true
+     },
+     {
       "no": 3,
-      "title": "Dear Papa",
+      "title": "봄이 피어나",
+      "songId": "34667574",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "언젠가 (Someday)",
+      "title": "우리 (Be Together)",
+      "songId": "34667575",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "눈물이 나 (Tears)",
+      "title": "My Way",
+      "songId": "34667576",
       "isTitle": false
      },
      {
       "no": 6,
-      "title": "그리고 너 (And You)",
+      "title": "Whiskey",
+      "songId": "34667577",
       "isTitle": false
      },
      {
       "no": 7,
-      "title": "Same Day",
+      "title": "Interlude : Re",
+      "songId": "34667578",
       "isTitle": false
      },
      {
       "no": 8,
-      "title": "약속해 (Promise)",
+      "title": "Lonely",
+      "songId": "34667579",
       "isTitle": false
      },
      {
       "no": 9,
-      "title": "오늘처럼 (Like Today)",
+      "title": "춤 (Dance With Me)",
+      "songId": "34667580",
       "isTitle": false
      },
      {
       "no": 10,
-      "title": "Outsider (Inst.)",
+      "title": "Higher",
+      "songId": "34667581",
+      "isTitle": false
+     },
+     {
+      "no": 11,
+      "title": "Thank You",
+      "songId": "34667582",
+      "isTitle": false
+     },
+     {
+      "no": 12,
+      "title": "흘려보내",
+      "songId": "34667583",
+      "isTitle": false
+     },
+     {
+      "no": 13,
+      "title": "Outro : Encore",
+      "songId": "34667584",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "10873531"
+    "melonAlbumId": "10873531",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "Outsider",
@@ -169459,46 +169706,48 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/102/15/293/10215293_500.jpg",
     "releaseDate": "2018.11.12",
-    "trackCount": 7,
-    "titleTrack": "아름답고도 아프다 (Beautiful Pain)",
+    "trackCount": 6,
+    "titleTrack": "아름답고도 아프구나",
     "tracks": [
      {
       "no": 1,
-      "title": "아름답고도 아프다 (Beautiful Pain)",
-      "isTitle": true
+      "title": "Friend",
+      "songId": "31376228",
+      "isTitle": false
      },
      {
       "no": 2,
-      "title": "그리고, 남은 것들 (And, The Remaining)",
+      "title": "Like It",
+      "songId": "31417919",
       "isTitle": false
      },
      {
       "no": 3,
-      "title": "약속 (Promise)",
+      "title": "나비",
+      "songId": "31417920",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "지독하게 (Desperately)",
+      "title": "제발",
+      "songId": "31417921",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "흔들리다 (Shaking)",
-      "isTitle": false
+      "title": "아름답고도 아프구나",
+      "songId": "31417922",
+      "isTitle": true
      },
      {
       "no": 6,
-      "title": "거리에서",
-      "isTitle": false
-     },
-     {
-      "no": 7,
-      "title": "아름답고도 아프다 (Inst.)",
+      "title": "아름답고도 아프구나 (Inst.)",
+      "songId": "31417923",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "10215293"
+    "melonAlbumId": "10215293",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "This Is Us",
@@ -169506,113 +169755,146 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/75/106/10175106_500.jpg",
     "releaseDate": "2018.06.18",
-    "trackCount": 6,
-    "titleTrack": "MOVIE",
+    "trackCount": 7,
+    "titleTrack": "너 없인 안 된다",
     "tracks": [
      {
       "no": 1,
-      "title": "MOVIE",
-      "isTitle": true
-     },
-     {
-      "no": 2,
-      "title": "Blowin Up",
+      "title": "Call me",
+      "songId": "31133897",
       "isTitle": false
      },
      {
+      "no": 2,
+      "title": "너 없인 안 된다",
+      "songId": "31133898",
+      "isTitle": true
+     },
+     {
       "no": 3,
-      "title": "Space",
+      "title": "Yeah",
+      "songId": "31133899",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "봄날의 기억 II",
+      "title": "Blue Moon",
+      "songId": "31133900",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "그 날에서 (That Day)",
+      "title": "IceBreaker",
+      "songId": "31133905",
       "isTitle": false
      },
      {
       "no": 6,
-      "title": "MOVIE (Inst.)",
+      "title": "1, 2, 3",
+      "songId": "31133906",
+      "isTitle": false
+     },
+     {
+      "no": 7,
+      "title": "The Feeling",
+      "songId": "31123630",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "10175106"
+    "melonAlbumId": "10175106",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "Brother Act.",
     "type": "정규 2집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/02/658/10102658_500.jpg",
-    "releaseDate": "2017.10.26",
-    "trackCount": 12,
-    "titleTrack": "Movie",
+    "releaseDate": "2017.10.16",
+    "trackCount": 13,
+    "titleTrack": "그리워하다",
     "tracks": [
      {
       "no": 1,
-      "title": "Movie",
-      "isTitle": true
-     },
-     {
-      "no": 2,
-      "title": "Stand By Me",
+      "title": "Prelude : 하루",
+      "songId": "30672528",
       "isTitle": false
      },
      {
+      "no": 2,
+      "title": "그리워하다",
+      "songId": "30672529",
+      "isTitle": true
+     },
+     {
       "no": 3,
-      "title": "봄날의 기억",
+      "title": "My Lady",
+      "songId": "30672530",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "시간이 지나면",
+      "title": "새빨간 거짓말",
+      "songId": "30672531",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "내가 이래서",
+      "title": "신바람",
+      "songId": "30672532",
       "isTitle": false
      },
      {
       "no": 6,
-      "title": "스물다섯",
+      "title": "Interlude : Brother Act.",
+      "songId": "30672533",
       "isTitle": false
      },
      {
       "no": 7,
-      "title": "나 혼자서",
+      "title": "나나나",
+      "songId": "30672534",
       "isTitle": false
      },
      {
       "no": 8,
-      "title": "하루 한번",
+      "title": "꿈에",
+      "songId": "30672535",
       "isTitle": false
      },
      {
       "no": 9,
-      "title": "그리워하다 II",
+      "title": "Guitar (Stroke of Love)",
+      "songId": "30672536",
       "isTitle": false
      },
      {
       "no": 10,
-      "title": "잠을 자도",
+      "title": "이별을 만나다",
+      "songId": "30672537",
       "isTitle": false
      },
      {
       "no": 11,
-      "title": "사랑이 지나가면",
+      "title": "Fly Away",
+      "songId": "30672538",
       "isTitle": false
      },
      {
       "no": 12,
-      "title": "이별이 싫어서",
+      "title": "Finale : 우리들의 콘서트",
+      "songId": "30672539",
+      "isTitle": false
+     },
+     {
+      "no": 13,
+      "title": "속삭임 (CD Only)",
+      "songId": "30672540",
       "isTitle": false
      }
     ],
-    "melonVia": "10175106"
+    "melonVia": "10175106",
+    "tracksSource": "melon-reference-2026-11-12",
+    "melonAlbumId": "10102658"
    },
    {
     "title": "Brand new days ~ どんな未来を ~ / Brand new days ~어떤 미래를~",
@@ -169698,41 +169980,42 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/41/603/10041603_500.jpg",
     "releaseDate": "2017.03.06",
-    "trackCount": 6,
-    "titleTrack": "Missing You",
+    "trackCount": 5,
+    "titleTrack": "MOVIE",
     "tracks": [
      {
       "no": 1,
-      "title": "Missing You",
-      "isTitle": true
-     },
-     {
-      "no": 2,
-      "title": "친구라도 될걸 그랬어 (I Should Have Stayed Friends)",
+      "title": "말만 해",
+      "songId": "30286428",
       "isTitle": false
      },
      {
+      "no": 2,
+      "title": "MOVIE",
+      "songId": "30286429",
+      "isTitle": true
+     },
+     {
       "no": 3,
-      "title": "나 혼자서 (By Myself)",
+      "title": "ABOUT TIME",
+      "songId": "30286430",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "Blue",
+      "title": "빨리 뛰어 (ROCK N HIPHOP)",
+      "songId": "30286434",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "봄날의 기억 (Spring Memories)",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "Missing You (Inst.)",
+      "title": "언젠가 (SOMEDAY)",
+      "songId": "30272285",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "10041603"
+    "melonAlbumId": "10041603",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "더 미라클 OST Part.3",
@@ -169862,41 +170145,54 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/12/901/10012901_500.jpg",
     "releaseDate": "2016.11.07",
-    "trackCount": 6,
-    "titleTrack": "Way Back Home",
+    "trackCount": 7,
+    "titleTrack": "기도 (I'll Be Your Man)",
     "tracks": [
      {
       "no": 1,
-      "title": "Way Back Home",
-      "isTitle": true
-     },
-     {
-      "no": 2,
-      "title": "우리 (Us)",
+      "title": "NEW MEN",
+      "songId": "30079093",
       "isTitle": false
      },
      {
+      "no": 2,
+      "title": "기도 (I'll Be Your Man)",
+      "songId": "30079094",
+      "isTitle": true
+     },
+     {
       "no": 3,
-      "title": "힘내",
+      "title": "취해",
+      "songId": "30079095",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "별 볼일 없는 이야기",
+      "title": "무료해 (콕 To Me)",
+      "songId": "30079096",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "언제나 (Always)",
+      "title": "Yes I Am",
+      "songId": "30079097",
       "isTitle": false
      },
      {
       "no": 6,
-      "title": "Way Back Home (Inst.)",
+      "title": "놀러와",
+      "songId": "30079098",
+      "isTitle": false
+     },
+     {
+      "no": 7,
+      "title": "예지앞사",
+      "songId": "30079099",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "10012901"
+    "melonAlbumId": "10012901",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "신데렐라와 네 명의 기사 OST Part.1",
@@ -169999,41 +170295,54 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/026/75/661/2675661_500.jpg",
     "releaseDate": "2016.03.28",
-    "trackCount": 6,
-    "titleTrack": "기도 (Prayer)",
+    "trackCount": 7,
+    "titleTrack": "봄날의 기억",
     "tracks": [
      {
       "no": 1,
-      "title": "기도 (Prayer)",
-      "isTitle": true
+      "title": "Killing Me",
+      "songId": "8115190",
+      "isTitle": false
      },
      {
       "no": 2,
-      "title": "Remember That",
+      "title": "그려본다 (내가 그린 그림)",
+      "songId": "8115191",
       "isTitle": false
      },
      {
       "no": 3,
-      "title": "Beautiful Pain",
-      "isTitle": false
+      "title": "봄날의 기억",
+      "songId": "8115192",
+      "isTitle": true
      },
      {
       "no": 4,
-      "title": "그림 (Painting)",
+      "title": "Anymore",
+      "songId": "8115193",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "끝인데 이제 (It's the End)",
+      "title": "So Pretty",
+      "songId": "8115194",
       "isTitle": false
      },
      {
       "no": 6,
-      "title": "기도 (Prayer) (Inst.)",
+      "title": "너 같아서",
+      "songId": "8115195",
+      "isTitle": false
+     },
+     {
+      "no": 7,
+      "title": "자리비움",
+      "songId": "8115196",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "2675661"
+    "melonAlbumId": "2675661",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "Dear Bride",
@@ -170216,72 +170525,90 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/023/26/467/2326467_500.jpg",
     "releaseDate": "2015.06.29",
-    "trackCount": 12,
-    "titleTrack": "뛰뛰빵빵 (Beep Beep)",
+    "trackCount": 13,
+    "titleTrack": "괜찮아요",
     "tracks": [
      {
       "no": 1,
-      "title": "가슴 아파도 (Missing You)",
+      "title": "Complete (Intro)",
+      "songId": "5756879",
       "isTitle": false
      },
      {
       "no": 2,
-      "title": "뛰뛰빵빵 (Beep Beep)",
-      "isTitle": true
+      "title": "괜찮아요",
+      "isTitle": true,
+      "songId": "5756880"
      },
      {
       "no": 3,
-      "title": "어떻게 이별까지 사랑하겠어 (How Can I Love the Heartbreak)",
+      "title": "너나 잘 살아",
+      "songId": "5756881",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "그리워하다 (Miss You)",
+      "title": "북 치고 장구 치고",
+      "songId": "5756882",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "이게 무슨 일이야",
+      "title": "Summer Romance",
+      "songId": "5756883",
       "isTitle": false
      },
      {
       "no": 6,
-      "title": "Stay",
+      "title": "친구의 여자친구",
+      "songId": "5756884",
       "isTitle": false
      },
      {
       "no": 7,
-      "title": "Good Boy",
+      "title": "꽃보다 그녀",
+      "songId": "5756885",
       "isTitle": false
      },
      {
       "no": 8,
-      "title": "여기 있을게 (Stay Here)",
+      "title": "보고파",
+      "songId": "5756886",
       "isTitle": false
      },
      {
       "no": 9,
-      "title": "괜찮아요 (It's Okay)",
-      "isTitle": false,
-      "songId": "5756880"
+      "title": "어기여차 디여차",
+      "songId": "5756887",
+      "isTitle": false
      },
      {
       "no": 10,
-      "title": "시 (Poem)",
+      "title": "Open",
+      "songId": "5756888",
       "isTitle": false
      },
      {
       "no": 11,
-      "title": "Something Like Love",
+      "title": "비밀 (Insane) (Acoustic Ver.)",
+      "songId": "5756889",
       "isTitle": false
      },
      {
       "no": 12,
-      "title": "나쁜 X",
+      "title": "Shake It",
+      "songId": "5756890",
+      "isTitle": false
+     },
+     {
+      "no": 13,
+      "title": "Everything's Good - 일훈 Solo (Outro)",
+      "songId": "5756891",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "2326467"
+    "melonAlbumId": "2326467",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "未來（あした）/ 미래",
@@ -170451,41 +170778,42 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/022/33/451/2233451_500.jpg/melon/resize/260/quality/80/optimize",
     "releaseDate": "2014.02.17",
-    "trackCount": 6,
-    "titleTrack": "Beep Beep",
+    "trackCount": 5,
+    "titleTrack": "뛰뛰빵빵",
     "tracks": [
      {
       "no": 1,
-      "title": "Beep Beep",
+      "title": "뛰뛰빵빵",
+      "songId": "4454340",
       "isTitle": true
      },
      {
       "no": 2,
-      "title": "It's Okay",
+      "title": "끝난 건가요",
+      "songId": "4454341",
       "isTitle": false
      },
      {
       "no": 3,
-      "title": "Missing You",
+      "title": "여보세요",
+      "songId": "4454342",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "내 눈에 보이니 (I See You)",
+      "title": "Hello Mello",
+      "songId": "4454343",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "시 (Poem)",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "Beep Beep (Inst.)",
+      "title": "끝나지 않을 (Melody)",
+      "songId": "4454344",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "2233451"
+    "melonAlbumId": "2233451",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "스릴러 (Thriller)",
@@ -176234,7 +176562,7 @@
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/2a/3b/ee/2a3beefb-a61e-b4e5-9a75-f99664b6e5f4/8809649883812.jpg/600x600bb.jpg",
     "releaseDate": "2016.11.29",
     "trackCount": 5,
-    "titleTrack": "All Your Dreams",
+    "titleTrack": "오렌지",
     "tracks": [
      {
       "no": 1,
@@ -176620,7 +176948,7 @@
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music/98/c8/0b/mzi.icsrdyfy.jpg/600x600bb.jpg",
     "releaseDate": "2008.04.03",
     "trackCount": 10,
-    "titleTrack": "어울림",
+    "titleTrack": "RUN",
     "tracks": [
      {
       "no": 1,
@@ -176991,7 +177319,7 @@
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/7c/69/de/7c69de57-78a4-7fb4-21af-45b85ba541b0/stateofart.jpg/600x600bb.jpg",
     "releaseDate": "2006.05.11",
     "trackCount": 12,
-    "titleTrack": "I'm Gonna Get You",
+    "titleTrack": "Once In A Lifetime",
     "tracks": [
      {
       "no": 1,
@@ -181489,7 +181817,7 @@
     "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/df/d7/55/dfd7558d-028e-4495-c30b-814e8999ab9a/cover-.jpg/600x600bb.jpg",
     "releaseDate": "2005.10.26",
     "trackCount": 3,
-    "titleTrack": "Sweet Dreams",
+    "titleTrack": "FINKL",
     "tracks": [
      {
       "no": 1,
@@ -192654,42 +192982,56 @@
     "type": "미니 11집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/105/77/623/10577623_20210315140620_500.jpg",
-    "releaseDate": "2021.04.13",
-    "trackCount": 6,
-    "titleTrack": "IN:VITE U",
+    "releaseDate": "2021.03.15",
+    "trackCount": 7,
+    "titleTrack": "DO or NOT",
     "tracks": [
      {
       "no": 1,
-      "title": "IN:VITE U",
-      "isTitle": true
-     },
-     {
-      "no": 2,
-      "title": "Naughty Boy (Original Ver.)",
+      "title": "10초 전",
+      "songId": "33348949",
       "isTitle": false
      },
      {
+      "no": 2,
+      "title": "DO or NOT",
+      "songId": "33348950",
+      "isTitle": true
+     },
+     {
       "no": 3,
-      "title": "Colored",
+      "title": "1+1",
+      "songId": "33348951",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "BFF",
+      "title": "Baby I Love You",
+      "songId": "33348952",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "Drive",
+      "title": "That's Me",
+      "songId": "33348953",
       "isTitle": false
      },
      {
       "no": 6,
-      "title": "IN:VITE U (Inst.)",
+      "title": "노래해",
+      "songId": "33348954",
+      "isTitle": false
+     },
+     {
+      "no": 7,
+      "title": "소년감성 (후이 Solo) [Bonus Track]",
+      "songId": "33348955",
       "isTitle": false
      }
     ],
-    "melonVia": "10494336"
+    "melonVia": "10494336",
+    "tracksSource": "melon-reference-2026-11-12",
+    "melonAlbumId": "10577623"
    },
    {
     "title": "DO or NOT",
@@ -193171,41 +193513,36 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/103/08/186/10308186_500.jpg",
     "releaseDate": "2019.07.17",
-    "trackCount": 6,
-    "titleTrack": "Sum (me:r)",
+    "trackCount": 4,
+    "titleTrack": "접근금지 (Prod. By 기리보이)",
     "tracks": [
      {
       "no": 1,
-      "title": "Sum (me:r)",
+      "title": "접근금지 (Prod. By 기리보이)",
+      "songId": "31932365",
       "isTitle": true
      },
      {
       "no": 2,
-      "title": "청개구리 영어 Ver.",
+      "title": "판타지스틱 (Prod. By 기리보이)",
+      "songId": "31932366",
       "isTitle": false
      },
      {
       "no": 3,
-      "title": "Feelin' Like",
+      "title": "SUMMER!",
+      "songId": "31932367",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "Violet",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "불필요한 거짓말 (Unnecessary Lie)",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "Sum (me:r) (Inst.)",
+      "title": "Round 2 (Bonus Track)",
+      "songId": "31932368",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "10308186"
+    "melonAlbumId": "10308186",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "Genie:us",
@@ -193554,36 +193891,54 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/70/254/10070254_500.jpg",
     "releaseDate": "2017.06.12",
-    "trackCount": 5,
-    "titleTrack": "Critical Beauty",
+    "trackCount": 7,
+    "titleTrack": "예뻐죽겠네",
     "tracks": [
      {
       "no": 1,
-      "title": "Critical Beauty",
+      "title": "예뻐죽겠네",
+      "songId": "30465008",
       "isTitle": true
      },
      {
       "no": 2,
-      "title": "Cannot",
+      "title": "Lucky",
+      "songId": "30465009",
       "isTitle": false
      },
      {
       "no": 3,
-      "title": "파도가 지나가면 (When the Wave Is Gone)",
+      "title": "소중한 약속 (To Universe)",
+      "songId": "30465010",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "A Cat, a Dog... and Me",
+      "title": "Nothing",
+      "songId": "30465011",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "Critical Beauty (Inst.)",
+      "title": "스펙터클 해",
+      "songId": "30465012",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "고마워 (진호, 후이)",
+      "songId": "30465013",
+      "isTitle": false
+     },
+     {
+      "no": 7,
+      "title": "Beautiful (Prod. by 정일훈 Of BTOB)",
+      "songId": "30465014",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "10070254"
+    "melonAlbumId": "10070254",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "Beautiful (Prod. by 정일훈 Of BTOB)",
@@ -204080,36 +204435,72 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/27/430/10027430_500.jpg/melon/resize/260/quality/80/optimize",
     "releaseDate": "2017.01.02",
-    "trackCount": 5,
-    "titleTrack": "너나 해 (Excuse Me)",
+    "trackCount": 10,
+    "titleTrack": "Excuse Me / 빙빙 (Bing Bing)",
     "tracks": [
      {
       "no": 1,
-      "title": "너나 해 (Excuse Me)",
+      "title": "Excuse Me",
+      "songId": "30179099",
       "isTitle": true
      },
      {
       "no": 2,
-      "title": "STAR",
-      "isTitle": false
+      "title": "빙빙 (Bing Bing)",
+      "songId": "30179100",
+      "isTitle": true
      },
      {
       "no": 3,
-      "title": "Red Motion",
+      "title": "Three Out",
+      "songId": "30179101",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "봄바람 (Spring Wind)",
+      "title": "느낌이 오니 (Feeling)",
+      "songId": "30179102",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "너나 해 (Inst.)",
+      "title": "불면증 (Can't Sleep)",
+      "songId": "30179103",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "Lily (Feat. 로운 of SF9)",
+      "songId": "30179104",
+      "isTitle": false
+     },
+     {
+      "no": 7,
+      "title": "Melting Love",
+      "songId": "30179105",
+      "isTitle": false
+     },
+     {
+      "no": 8,
+      "title": "너 때문에 (Help Me)",
+      "songId": "30179106",
+      "isTitle": false
+     },
+     {
+      "no": 9,
+      "title": "Oh Boy",
+      "songId": "30179107",
+      "isTitle": false
+     },
+     {
+      "no": 10,
+      "title": "With ELVIS",
+      "songId": "30179108",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "10027430"
+    "melonAlbumId": "10027430",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "Good Luck",
@@ -204159,36 +204550,48 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/023/25/321/2325321_500.jpg/melon/resize/260/quality/80/optimize",
     "releaseDate": "2015.06.22",
-    "trackCount": 5,
-    "titleTrack": "Heart Attack",
+    "trackCount": 6,
+    "titleTrack": "심쿵해 (Heart Attack)",
     "tracks": [
      {
       "no": 1,
-      "title": "Heart Attack",
+      "title": "심쿵해 (Heart Attack)",
+      "songId": "5748406",
       "isTitle": true
      },
      {
       "no": 2,
-      "title": "전화해 (Call Me)",
+      "title": "Luv me",
+      "songId": "5748407",
       "isTitle": false
      },
      {
       "no": 3,
-      "title": "질투 나요 Baby (Jealous)",
+      "title": "들어와 (Come To Me)",
+      "songId": "5748408",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "Wanna Be",
+      "title": "한 개 (One Thing)",
+      "songId": "5748409",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "Heart Attack (Inst.)",
+      "title": "진짜 (Really Really)",
+      "songId": "5748410",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "Chocolate",
+      "songId": "5748411",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "2325321"
+    "melonAlbumId": "2325321",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "사뿐사뿐",
@@ -204445,41 +204848,36 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/021/38/811/2138811_500.jpg",
     "releaseDate": "2012.07.30",
-    "trackCount": 6,
-    "titleTrack": "사뿐사뿐 (Like a Cat)",
+    "trackCount": 4,
+    "titleTrack": "ELVIS",
     "tracks": [
      {
       "no": 1,
-      "title": "사뿐사뿐 (Like a Cat)",
+      "title": "ELVIS",
+      "songId": "3866261",
       "isTitle": true
      },
      {
       "no": 2,
-      "title": "흔들려 (Tempted)",
+      "title": "Love Is Only You",
+      "songId": "3866262",
       "isTitle": false
      },
      {
       "no": 3,
-      "title": "다시 만나다 (Comeback)",
+      "title": "Temptation",
+      "songId": "3866263",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "JINA'S PIANO",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "Get Out",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "사뿐사뿐 (Inst.)",
+      "title": "ELVIS (Band Ver.)",
+      "songId": "3866264",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "2138811"
+    "melonAlbumId": "2138811",
+    "tracksSource": "melon-reference-2026-11-12"
    }
   ],
   "pri": 4,
@@ -207111,36 +207509,48 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/023/11/419/2311419_500.jpg",
     "releaseDate": "2015.03.30",
-    "trackCount": 5,
-    "titleTrack": "Only You",
+    "trackCount": 6,
+    "titleTrack": "다른 남자 말고 너",
     "tracks": [
      {
       "no": 1,
-      "title": "Only You",
-      "isTitle": true
-     },
-     {
-      "no": 2,
-      "title": "드림 어스 (Dream Us)",
+      "title": "한걸음",
+      "songId": "5644635",
       "isTitle": false
      },
      {
+      "no": 2,
+      "title": "다른 남자 말고 너",
+      "songId": "5644636",
+      "isTitle": true
+     },
+     {
       "no": 3,
-      "title": "반해 (Half)",
+      "title": "Love Song",
+      "songId": "5644637",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "쉿 (Shhh)",
+      "title": "녹아",
+      "songId": "5644638",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "Kisses",
+      "title": "I Caught Ya",
+      "songId": "5644639",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "Stuck",
+      "songId": "5644640",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "2311419"
+    "melonAlbumId": "2311419",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "Hush",
@@ -210706,37 +211116,44 @@
     "type": "미니 5집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/113/69/120/11369120_20231120173809_500.jpg",
-    "releaseDate": "2023.11.10",
+    "releaseDate": "2023.11.21",
     "trackCount": 5,
-    "titleTrack": "Parallel",
+    "titleTrack": "Amnesia",
     "tracks": [
      {
       "no": 1,
-      "title": "Parallel",
+      "title": "Amnesia",
+      "songId": "36985882",
       "isTitle": true
      },
      {
       "no": 2,
-      "title": "Into the Dark",
+      "title": "Chemical",
+      "songId": "36985883",
       "isTitle": false
      },
      {
       "no": 3,
-      "title": "가면 (Mask)",
+      "title": "라일락 (LILAC)",
+      "songId": "36985884",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "잠못드는 밤 (Sleepless Night)",
+      "title": "SAVAGE",
+      "songId": "36985885",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "Parallel (Inst.)",
+      "title": "If You Come Tonight",
+      "songId": "36985886",
       "isTitle": false
      }
     ],
-    "melonVia": "10159010"
+    "melonVia": "10159010",
+    "tracksSource": "melon-reference-2026-11-12",
+    "melonAlbumId": "11369120"
    },
    {
     "title": "Gonna Be Alright",
@@ -210829,61 +211246,84 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/59/010/10159010_500.jpg",
     "releaseDate": "2018.04.17",
-    "trackCount": 10,
-    "titleTrack": "평화로운 소녀 (Scentist)",
+    "trackCount": 12,
+    "titleTrack": "향 (Scentist)",
     "tracks": [
      {
       "no": 1,
-      "title": "평화로운 소녀 (Scentist)",
+      "title": "향 (Scentist)",
+      "songId": "31025182",
       "isTitle": true
      },
      {
       "no": 2,
-      "title": "Desperate",
+      "title": "Odd Sense",
+      "songId": "31025183",
       "isTitle": false
      },
      {
       "no": 3,
-      "title": "Parallel",
+      "title": "Silence",
+      "songId": "31025184",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "Fantasy",
+      "title": "My Valentine",
+      "songId": "31025185",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "La La La",
+      "title": "Circle",
+      "songId": "31025186",
       "isTitle": false
      },
      {
       "no": 6,
-      "title": "Memories",
+      "title": "Good Day",
+      "songId": "31025187",
       "isTitle": false
      },
      {
       "no": 7,
-      "title": "Light Me Up",
+      "title": "Escape",
+      "songId": "31025188",
       "isTitle": false
      },
      {
       "no": 8,
-      "title": "Promise Me",
+      "title": "Trigger",
+      "songId": "31025189",
       "isTitle": false
      },
      {
       "no": 9,
-      "title": "Overload",
+      "title": "닮아",
+      "songId": "31025190",
       "isTitle": false
      },
      {
       "no": 10,
-      "title": "Scentist (Inst.)",
+      "title": "Navy & Shining Gold",
+      "songId": "31025191",
+      "isTitle": false
+     },
+     {
+      "no": 11,
+      "title": "도원경 (桃源境)",
+      "songId": "31025192",
+      "isTitle": false
+     },
+     {
+      "no": 12,
+      "title": "향 (Scentist) (Inst.)",
+      "songId": "31025193",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "10159010"
+    "melonAlbumId": "10159010",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "Shangri-La",
@@ -210891,36 +211331,48 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/62/190/10062190_500.jpg",
     "releaseDate": "2017.05.15",
-    "trackCount": 5,
-    "titleTrack": "Shangri-La",
+    "trackCount": 6,
+    "titleTrack": "도원경 (桃源境)",
     "tracks": [
      {
       "no": 1,
-      "title": "Shangri-La",
+      "title": "도원경 (桃源境)",
+      "songId": "30413431",
       "isTitle": true
      },
      {
       "no": 2,
-      "title": "평행선 (Parallel Line)",
+      "title": "INTO THE VOID",
+      "songId": "30413432",
       "isTitle": false
      },
      {
       "no": 3,
-      "title": "Illusion",
+      "title": "Black Out",
+      "songId": "30413433",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "이 별 (This Star)",
+      "title": "다가오네",
+      "songId": "30413434",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "Shangri-La (Inst.)",
+      "title": "우리에게",
+      "songId": "30413435",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "도원경 (桃源境) (Inst.)",
+      "songId": "30413436",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "10062190"
+    "melonAlbumId": "10062190",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "맨투맨 OST Part.1",
@@ -211159,61 +211611,96 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/026/49/810/2649810_500.jpg",
     "releaseDate": "2015.11.10",
-    "trackCount": 10,
-    "titleTrack": "Chained Up",
+    "trackCount": 14,
+    "titleTrack": "사슬 (Chained Up)",
     "tracks": [
      {
       "no": 1,
-      "title": "Chained Up",
-      "isTitle": true
-     },
-     {
-      "no": 2,
-      "title": "Beautiful Liar",
+      "title": "Mistress (Intro)",
+      "songId": "7924214",
       "isTitle": false
      },
      {
+      "no": 2,
+      "title": "사슬 (Chained Up)",
+      "songId": "7924215",
+      "isTitle": true
+     },
+     {
       "no": 3,
-      "title": "사랑스러워 (Loveable) (New Ver.)",
+      "title": "MAZE",
+      "songId": "7924216",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "Love Me Do",
+      "title": "Stop It Girl",
+      "songId": "7924217",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "다시 만날 수 있을까 (Can We Meet Again?)",
+      "title": "Hot Enough",
+      "songId": "7924218",
       "isTitle": false
      },
      {
       "no": 6,
-      "title": "그래 (Alright)",
+      "title": "Spider",
+      "songId": "7924219",
       "isTitle": false
      },
      {
       "no": 7,
-      "title": "상처 (Scar) (New Ver.)",
+      "title": "부시시",
+      "songId": "7924220",
       "isTitle": false
      },
      {
       "no": 8,
-      "title": "이별공식 (The Formula of Goodbye) (New Ver.)",
+      "title": "Heaven",
+      "songId": "7924221",
       "isTitle": false
      },
      {
       "no": 9,
-      "title": "Eternity (New Ver.)",
+      "title": "지금 우린",
+      "songId": "7924222",
       "isTitle": false
      },
      {
       "no": 10,
-      "title": "Chained Up (Inst.)",
+      "title": "기적 (Eternity)",
+      "songId": "7924223",
+      "isTitle": false
+     },
+     {
+      "no": 11,
+      "title": "Error",
+      "songId": "7924224",
+      "isTitle": false
+     },
+     {
+      "no": 12,
+      "title": "Can't Say",
+      "songId": "7924225",
+      "isTitle": false
+     },
+     {
+      "no": 13,
+      "title": "사슬 (Chained Up) (Inst.)",
+      "songId": "7924226",
+      "isTitle": false
+     },
+     {
+      "no": 14,
+      "title": "사슬 (Chained Up) (Chinese Ver.)",
+      "songId": "7956377",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "2649810"
+    "melonAlbumId": "2649810",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "Boys' Record",
@@ -220920,41 +221407,42 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/105/19/139/10519139_20201117105832_500.jpg",
     "releaseDate": "2020.11.17",
-    "trackCount": 6,
-    "titleTrack": "Zoom",
+    "trackCount": 5,
+    "titleTrack": "과거 현재 미래 (Then, Now and Forever)",
     "tracks": [
      {
       "no": 1,
-      "title": "Zoom",
+      "title": "과거 현재 미래 (Then, Now and Forever)",
+      "songId": "33066531",
       "isTitle": true
      },
      {
       "no": 2,
-      "title": "Love Shake",
+      "title": "오늘은 이만 (Till Then)",
+      "songId": "33066532",
       "isTitle": false
      },
      {
       "no": 3,
-      "title": "Sleepless Night",
+      "title": "없다 (In Time)",
+      "songId": "33066533",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "Like It",
+      "title": "추워졌네. (Winter Again.)",
+      "songId": "33066534",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "Oasis",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "Zoom (Inst.)",
+      "title": "Blue Stars",
+      "songId": "33066535",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "10519139"
+    "melonAlbumId": "10519139",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "Live 2017 FNC KINGDOM -MIDNIGHT CIRCUS-",
@@ -233440,36 +233928,36 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/104/68/661/10468661_20200729151014_500.jpg",
     "releaseDate": "2020.07.29",
-    "trackCount": 5,
-    "titleTrack": "계절의 끝 (Season's Greetings)",
+    "trackCount": 4,
+    "titleTrack": "Now or Never",
     "tracks": [
      {
       "no": 1,
-      "title": "계절의 끝 (Season's Greetings)",
+      "title": "Now or Never",
+      "songId": "32821268",
       "isTitle": true
      },
      {
       "no": 2,
-      "title": "She Just Wanna Have Fun",
+      "title": "PARADISE",
+      "songId": "32821269",
       "isTitle": false
      },
      {
       "no": 3,
-      "title": "여름의 끝자락에서 (End of Summer)",
+      "title": "Now or Never (Inst.)",
+      "songId": "32821270",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "Sunshine",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "계절의 끝 (Inst.)",
+      "title": "PARADISE (Inst.)",
+      "songId": "32821271",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "10468661"
+    "melonAlbumId": "10468661",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "편의점 샛별이 OST Part.2",
@@ -233503,12 +233991,12 @@
     "cover": "https://cdnimg.melon.co.kr/cm2/album/images/104/21/256/10421256_20200422151947_500.jpg",
     "releaseDate": "2020.04.22",
     "trackCount": 6,
-    "titleTrack": "Now",
+    "titleTrack": "LALALILALA",
     "tracks": [
      {
       "no": 1,
-      "title": "Now",
-      "isTitle": true,
+      "title": "Oops I’m Sorry",
+      "isTitle": false,
       "songId": "32550256"
      },
      {
@@ -233519,19 +234007,19 @@
      },
      {
       "no": 3,
-      "title": "April, Stay By My Side",
-      "isTitle": false,
+      "title": "LALALILALA",
+      "isTitle": true,
       "songId": "32550258"
      },
      {
       "no": 4,
-      "title": "이별을 맞이하며 (Saying Goodbye)",
+      "title": "1,2,3,4",
       "isTitle": false,
       "songId": "32550259"
      },
      {
       "no": 5,
-      "title": "어딘가에 있을 너에게 (To You Somewhere)",
+      "title": "너.zip",
       "isTitle": false,
       "songId": "32550260"
      },
@@ -233542,7 +234030,8 @@
       "songId": "32550261"
      }
     ],
-    "melonAlbumId": "10421256"
+    "melonAlbumId": "10421256",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "어쩌다 발견한 하루 OST Part.1",
@@ -233664,36 +234153,48 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/101/46/919/10146919_500.jpg",
     "releaseDate": "2018.03.12",
-    "trackCount": 5,
-    "titleTrack": "Take my hand",
+    "trackCount": 6,
+    "titleTrack": "파랑새",
     "tracks": [
      {
       "no": 1,
-      "title": "Take my hand",
+      "title": "파랑새",
+      "songId": "30945748",
       "isTitle": true
      },
      {
       "no": 2,
-      "title": "온기 (Warmth)",
+      "title": "BEEP",
+      "songId": "30945750",
       "isTitle": false
      },
      {
       "no": 3,
-      "title": "무서운 이야기 (Scary Story)",
+      "title": "Angel Song",
+      "songId": "30945751",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "새벽 세시 반 (3:30 AM)",
+      "title": "숨바꼭질",
+      "songId": "30945753",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "Take my hand (Inst.)",
+      "title": "아쉬워",
+      "songId": "30945755",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "파랑새 (Inst.)",
+      "songId": "30945758",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "10146919"
+    "melonAlbumId": "10146919",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "Eternity",
@@ -233701,36 +234202,48 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/100/97/778/10097778_500.jpg",
     "releaseDate": "2017.09.20",
-    "trackCount": 5,
-    "titleTrack": "Lost My Mind",
+    "trackCount": 6,
+    "titleTrack": "손을 잡아줘",
     "tracks": [
      {
       "no": 1,
-      "title": "Lost My Mind",
+      "title": "손을 잡아줘",
+      "songId": "30642138",
       "isTitle": true
      },
      {
       "no": 2,
-      "title": "팬클럽 (Fan Club)",
+      "title": "띵",
+      "songId": "30642139",
       "isTitle": false
      },
      {
       "no": 3,
-      "title": "아직 너야 (Still You)",
+      "title": "Magic In Love",
+      "songId": "30642140",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "기다리다 (Waiting)",
+      "title": "Hey Yo Hey",
+      "songId": "30642141",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "Lost My Mind (Inst.)",
+      "title": "찌릿찌릿",
+      "songId": "30642142",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "사랑해도 될까요",
+      "songId": "30642143",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "10097778"
+    "melonAlbumId": "10097778",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "에이프릴(APRIL) 2nd Single Album 'MAYDAY'",
@@ -233854,36 +234367,48 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/026/81/814/2681814_500.jpg",
     "releaseDate": "2016.04.27",
-    "trackCount": 5,
-    "titleTrack": "MAYDAY",
+    "trackCount": 6,
+    "titleTrack": "팅커벨",
     "tracks": [
      {
       "no": 1,
-      "title": "MAYDAY",
-      "isTitle": true
-     },
-     {
-      "no": 2,
-      "title": "봄의 노래 (Song of Spring)",
+      "title": "Wake Up",
+      "songId": "8161229",
       "isTitle": false
      },
      {
+      "no": 2,
+      "title": "팅커벨",
+      "songId": "8161230",
+      "isTitle": true
+     },
+     {
       "no": 3,
-      "title": "APRIL STORY (Inst.)",
+      "title": "M.F.B.F. (내 미래의 남자친구에게)",
+      "songId": "8161231",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "하루의 끝에서 (Inst.)",
+      "title": "눈을 뜨면",
+      "songId": "8161232",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "MAYDAY (Inst.)",
+      "title": "Jelly",
+      "songId": "8161233",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "팅커벨 (Inst.)",
+      "songId": "8161234",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "2681814"
+    "melonAlbumId": "2681814",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "에이프릴(APRIL) Winter Special Album 'Snowman'",
@@ -233947,36 +234472,48 @@
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/023/36/221/2336221_500.jpg",
     "releaseDate": "2015.08.24",
-    "trackCount": 5,
-    "titleTrack": "Boing Boing",
+    "trackCount": 6,
+    "titleTrack": "꿈사탕",
     "tracks": [
      {
       "no": 1,
-      "title": "Boing Boing",
+      "title": "꿈사탕",
+      "songId": "5826644",
       "isTitle": true
      },
      {
       "no": 2,
-      "title": "APRIL Story",
+      "title": "Hurry Hurry",
+      "songId": "5826645",
       "isTitle": false
      },
      {
       "no": 3,
-      "title": "이별이 아프고 싶어 (Lovesick)",
+      "title": "Knock Knock",
+      "songId": "5826646",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "하루의 끝에서 (At the End of Day)",
+      "title": "느낌",
+      "songId": "5826647",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "Boing Boing (Inst.)",
+      "title": "Luv Me x3",
+      "songId": "5826648",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "스릴러",
+      "songId": "5826649",
       "isTitle": false
      }
     ],
-    "melonAlbumId": "2336221"
+    "melonAlbumId": "2336221",
+    "tracksSource": "melon-reference-2026-11-12"
    }
   ],
   "disbanded": "2022.01.28",
@@ -248073,68 +248610,6 @@
     ],
     "src": "melon",
     "melonAlbumId": "10455249"
-   },
-   {
-    "title": "항해 (SAILING)",
-    "type": "리패키지",
-    "isMain": true,
-    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/103/31/947/10331947_500.jpg?c6e307f67cf7124ec13127cd60ab569f/melon/resize/260/quality/80/optimize",
-    "releaseDate": "2019.10.16",
-    "trackCount": 10,
-    "titleTrack": "How can I love the heartbreak",
-    "tracks": [
-     {
-      "no": 1,
-      "title": "How can I love the heartbreak, you're the one I love",
-      "isTitle": false
-     },
-     {
-      "no": 2,
-      "title": "수고했어 오늘도 (Work Hard)",
-      "isTitle": false
-     },
-     {
-      "no": 3,
-      "title": "신호등 (Traffic Light)",
-      "isTitle": false
-     },
-     {
-      "no": 4,
-      "title": "자격지심 (Underdog)",
-      "isTitle": false
-     },
-     {
-      "no": 5,
-      "title": "야",
-      "isTitle": false
-     },
-     {
-      "no": 6,
-      "title": "야간비행 (Night Flight)",
-      "isTitle": false
-     },
-     {
-      "no": 7,
-      "title": "풍 (Pung)",
-      "isTitle": false
-     },
-     {
-      "no": 8,
-      "title": "항해 (Sailing)",
-      "isTitle": false
-     },
-     {
-      "no": 9,
-      "title": "낙하 (Fall) (feat. CHANYEOL)",
-      "isTitle": false
-     },
-     {
-      "no": 10,
-      "title": "어디까지",
-      "isTitle": false
-     }
-    ],
-    "melonVia": "10661658"
    },
    {
     "title": "항해",
