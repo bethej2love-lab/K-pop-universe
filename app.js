@@ -22571,6 +22571,7 @@ function _openFeedListOverlay(title,sub,songs,ctx){
     // ⚠️ 정적 z-index:65라 카드(_bringToFront로 131+)에서 열면 카드 뒤로 깔렸다(2026-09-05 제보 — 프로그램
     // 컬렉션 칩에서 열 때). 다른 오버레이들처럼 열릴 때 맨 위로 올린다. 그 위 재생 플레이어(openLightbox)는
     // 자기도 _bringToFront라 여전히 이 오버레이 위로 뜬다(두더지잡기 없음).
+    _flOv.classList.toggle('fl-wide',!!(ctx&&ctx.wide)); // 카드 '넓게 보기'(2026-11-12) — 무대 폭을 다 쓰고 넓으면 6칸
     _bringToFront(_flOv);
     _flStageOpen(); // 웹: 무대로(위 _flPlace 주석)
   }
@@ -27275,7 +27276,17 @@ async function _vidSongList(ko,memberKo,histKos){
     const owners=new Set([ko,memberKo,...(histKos||[])].filter(Boolean));
     const cnt=new Map();
     (data||[]).forEach(r=>(r.song_keys||[]).forEach(k=>{const o=k.slice(0,k.indexOf(':'));if(owners.has(o))cnt.set(k,(cnt.get(k)||0)+1);}));
-    // 곡 이름 — 그룹·멤버 디스코그래피에서 기본형이 같은 첫 표기(꼬리·두 번째 괄호 표기 뗌)
+    const names=_songNameMap(ko,memberKo,histKos);
+    return [...cnt.entries()].filter(([,n])=>n>=2).sort((a,b)=>b[1]-a[1]).slice(0,40)
+      .map(([key,n])=>({key,n,label:names.get(key)||key.slice(key.indexOf(':')+1)}));
+  })();
+  _vidSongListCache.set(ck,p);
+  p.then(v=>{if(!v.length)_vidSongListCache.delete(ck);},()=>_vidSongListCache.delete(ck));
+  return p;
+}
+// 곡 키(주인:기본형) → 화면 이름. 그룹·멤버 디스코그래피에서 기본형이 같은 첫 표기(꼬리·피처링 괄호 뗌), 언어별 표기는 _songTitleFor.
+function _songNameMap(ko,memberKo,histKos){
+    const owners=new Set([ko,memberKo,...(histKos||[])].filter(Boolean));
     const names=new Map();
     // 2026-11-12: 언어별 표기(_songTitleFor) — 한국어는 정본 그대로('산소 같은 너 (Love Like Oxygen)', 피처링 괄호만 뗌), 영어는 영문 제목
     const lang=currentLang==='en'?'en':'ko';
@@ -27286,12 +27297,7 @@ async function _vidSongList(ko,memberKo,histKos){
     }));
     owners.forEach(o=>{if(GROUPS[o])take(o,GROUPS[o].discography);const a=ARTISTS.find(x=>x.name&&x.name.ko===o&&(!GROUPS[x.group&&x.group.ko]||x.group.ko===ko));if(a)take(o,a.discography);});
     if(memberKo){const a=ARTISTS.find(x=>x.name&&x.name.ko===memberKo&&x.group&&x.group.ko===ko);if(a)take(memberKo,a.discography);}
-    return [...cnt.entries()].filter(([,n])=>n>=2).sort((a,b)=>b[1]-a[1]).slice(0,40)
-      .map(([key,n])=>({key,n,label:names.get(key)||key.slice(key.indexOf(':')+1)}));
-  })();
-  _vidSongListCache.set(ck,p);
-  p.then(v=>{if(!v.length)_vidSongListCache.delete(ck);},()=>_vidSongListCache.delete(ck));
-  return p;
+    return names;
 }
 function _openVidSongSheet(ko,memberKo,histKos,onPick){
   const ko_=currentLang==='ko';
@@ -27878,6 +27884,8 @@ function _makeChVidController(contId){
       }
     };
     const{filter,offset}=state;
+    // 넓게 보기(2026-11-12)가 카드와 같은 조건(탭·곡·검색·단독만)으로 조회수 순 목록을 받게 — cols를 주면 count 없는 select
+    state._wideQ=cols=>buildBaseQuery(false,cols).order('view_count',{ascending:false,nullsFirst:false}).order('id',{ascending:false});
     // 필터 조건만 담당(정렬/범위는 호출부에서 붙임) — 청크 랜덤 샘플링 시 같은 조건으로 여러 번 독립 호출해야 함
     // forCount=true면 행 데이터 없이(head:true) 총 개수만 가볍게 물어보는 전용 변형 — 카드를 처음 열 때
     // 배경에서 총 개수를 채우는 용도(아래 reset&&!randomize 분기)로 씀.
@@ -28335,6 +28343,15 @@ function _makeChVidController(contId){
       else{selBtn.classList.add('active');selBtn.textContent=T[currentLang].cancel;}
     });
     cont.querySelector('.gc-ch-hd').appendChild(selBtn);
+    // 넓게 보기(2026-11-12 사용자 "정적 페이지처럼 시원하게 한눈에 — 카드 옆에 붙여서 카드랑 같이") — 웹만. 카드 옆 무대(목록 창)에
+    // 조회수 많은 영상 + 곡별 묶음을 4칸으로 펼친다. 지금 고른 탭·곡·검색·단독만을 그대로 이어받는다. 폰은 카드가 곧 전체 화면이라 없음.
+    if(!state.unitKey&&!isMob()){
+      const wideBtn=document.createElement('button');wideBtn.type='button';wideBtn.className='gc-ch-search-toggle gc-ch-wide-btn';
+      const _wt=currentLang==='ko'?'넓게 보기':'Wide view';wideBtn.title=_wt;wideBtn.setAttribute('aria-label',_wt);
+      wideBtn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>';
+      wideBtn.addEventListener('click',e=>{e.stopPropagation();openWide();});
+      const _st=cont.querySelector('.gc-ch-search-toggle');if(_st)_st.before(wideBtn);else cont.querySelector('.gc-ch-hd').appendChild(wideBtn);
+    }
     // 영상 줄 정리(2026-10-27 사용자 "카드 영상 탭 한 줄에 뭐가 너무 많다") — 탭 오른쪽에 단독만·🔍·⋮·선택 넷이 붙박이라 폭 절반을
     // 먹고 탭은 3개만 보였다. 🔍(자주 씀)만 밖에 두고 선택·단독만은 ⋮ 메뉴 항목으로 켠다. 켜져 있는 동안만 줄에 "취소"/"단독만 ✕"로
     // 보여서 바로 끌 수 있다(CSS .gc-ch-hd .gc-ch-sel-btn:not(.active) 숨김). 버튼 자체는 그대로라 일괄 선택 바 연결은 안 바뀐다.
@@ -28871,7 +28888,41 @@ function _makeChVidController(contId){
     const cont=document.getElementById(contId);
     if(cont)_loadCoverOfSection(cont,state.ko,state.memberKo);
   }
-  return{build,reloadIfShowing,patchItem,setUnitFilter,refreshCoverOf};
+  // 넓게 보기 — 조회수 순 400개까지 받아 '조회수 많은 영상' 12개 + 곡별 묶음(곡마다 12개, 영상 3개 이상인 곡 15개까지).
+  // 곡을 골라 둔 상태면 그 곡 영상만. 목록 창(_openFeedListOverlay)의 섹션 = Chemistry와 같은 모양, 재생·담기도 그대로.
+  let _wideReq=0;
+  async function openWide(){
+    if(!state._wideQ||!sb)return;
+    const ko=state.ko,mk=state.memberKo,L=currentLang==='ko',my=++_wideReq;
+    const who=mk?(typeof _dispName==='function'&&_openTArtist&&_openTArtist.name.ko===mk?_dispName(_openTArtist):mk):(L?ko:((GROUPS[ko]&&GROUPS[ko].en)||ko));
+    const tab=state.viewMode==='format'&&state.formatFilter?state.formatFilter:(state.filter!=='all'?_catLabel(state.filter):(L?'전체':'All'));
+    _openFeedListOverlay(who,L?'불러오는 중…':'Loading…',[],{wide:true});
+    let rows=[];
+    try{
+      const res=await _withTimeout(()=>state._wideQ('id,title,thumb,category,is_short,content_flag,group_ko,members,with_members,with_groups,cover_of_members,cover_of_groups,published_at,view_count,song_keys'+_durCol()).range(0,399),15000);
+      if(res.error)throw res.error;rows=_filterBannedVideos(res.data||[]);
+      if(mk)rows=rows.filter(v=>v.content_flag!=='기타');
+    }catch(e){if(my===_wideReq)document.getElementById('feed-list-sub').textContent=L?'불러오지 못했어요. 잠시 후 다시 열어 주세요.':'Could not load. Please try again.';return;}
+    if(my!==_wideReq)return;
+    if(mk){const mine=v=>(v.members||[]).includes(mk)||(v.with_members||[]).some(w=>String(w).startsWith(mk+'('));
+      rows=[...rows.filter(mine),...rows.filter(v=>!mine(v))];}
+    const sections=[];
+    if(state.songKey){
+      sections.push({title:state.songLabel||state.songKey.slice(state.songKey.indexOf(':')+1),songs:rows.map(_chemSong)});
+    }else{
+      sections.push({title:mk?(L?'조회수 많은 '+who+' 영상':'Most viewed — '+who):(L?'조회수 많은 영상':'Most viewed'),songs:rows.slice(0,12).map(_chemSong)});
+      const labels=_songNameMap(ko,mk,state.histKos);
+      const owners=new Set([ko,mk,...(state.histKos||[])].filter(Boolean)),by=new Map();
+      rows.forEach(v=>(v.song_keys||[]).forEach(k=>{if(!owners.has(k.slice(0,k.indexOf(':'))))return;if(!by.has(k))by.set(k,[]);by.get(k).push(v);}));
+      [...by].filter(([,l])=>l.length>=3).sort((a,b)=>b[1].length-a[1].length).slice(0,15)
+        .forEach(([k,l])=>sections.push({title:'♪ '+(labels.get(k)||k.slice(k.indexOf(':')+1)),songs:l.slice(0,12).map(_chemSong)}));
+    }
+    const n=rows.length,more=n>=400?'+':'';
+    const sub=L?`${tab} · 조회수 순 ${n}${more}개${state.searchQ?' · “'+state.searchQ+'”':''}${state.onlyMe?' · 단독만':''}`:`${tab} · ${n}${more} videos by views${state.searchQ?' · “'+state.searchQ+'”':''}`;
+    try{_gaEvent('card_wide_open',{target:mk?'member':'group',gko:ko,song:state.songKey?1:0});}catch(e){}
+    _openFeedListOverlay(who,sub,sections.flatMap(x=>x.songs),{sections:sections.filter(x=>x.songs.length),wide:true});
+  }
+  return{build,reloadIfShowing,patchItem,setUnitFilter,refreshCoverOf,openWide};
 }
 const _gcChVidCtl=_makeChVidController('gc-ch-vid');
 const _ttChVidCtl=_makeChVidController('tv');

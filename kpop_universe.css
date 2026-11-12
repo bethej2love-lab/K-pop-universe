@@ -5614,3 +5614,12 @@
 .sp-adv-sum::before{content:'▸ ';}
 .sp-adv[open]>.sp-adv-sum::before{content:'▾ ';}
 .sp-adv-sum span{font-weight:400;opacity:.6;}
+
+/* 카드 '넓게 보기'(2026-11-12 사용자 "정적 페이지처럼 시원하게 한눈에, 카드 옆에서") — 무대 목록 창이 무대 폭을 다 쓰고(기본 680px 상한 해제),
+   창 폭이 1000px 이상이면 6칸(가로 영상 3개·쇼츠 6개). 칸 수는 화면이 아니라 창 폭 기준(컨테이너 쿼리) — 나침반·카드 폭에 따라 무대가 달라서. */
+@media(min-width:1024px){
+  #feed-list-overlay.fl-wide #feed-list-panel{width:100%;container-type:inline-size;}
+  @container (min-width:1000px){
+    #feed-list-overlay.fl-wide #feed-list-grid.gc-ch-grid{grid-template-columns:repeat(6,1fr);}
+  }
+}
