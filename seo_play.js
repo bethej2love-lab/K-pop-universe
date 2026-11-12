@@ -12,7 +12,7 @@
   function vidOf(a){var m=RE.exec(a&&a.getAttribute('href')||'');return m?m[1]:null;}
   function isShort(a){return /\/shorts\//.test(a.getAttribute('href')||'');}
   function ga(n,p){try{if(typeof gtag==='function')gtag('event',n,p||{});}catch(e){}
-    var m={seo_play:'play',seo_play_cta:'to_app',seo_play_youtube:'yt'}[n];if(m)log(m);}
+    var m={seo_play:'play',seo_play_cta:'to_app',seo_play_youtube:'yt'}[n];if(m)log(m,p&&p.video_id);}
   // ── 우리 쪽 전환 기록(2026-11-10) — GA는 우리가 못 읽어서 정적 페이지 → 앱 흐름을 Supabase seo_events에도 남긴다.
   // land(페이지 열림)·play(페이지 안 재생)·cta·to_app(앱으로 가는 클릭)·yt(유튜브로 나감). 자동 접속(헤드리스·봇)은 안 센다(GA 차단과 같은 기준).
   // did는 이 기기 무작위 ID — 사람 수를 세려는 것뿐, 앱 계정과 잇지 않는다. 실패해도 페이지 동작엔 영향 없음.
@@ -20,9 +20,9 @@
   var DID=(function(){try{var d=localStorage.getItem('kpu_seo_did');if(!d){d=Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem('kpu_seo_did',d);}return d;}catch(e){return '';}})();
   var SRC=(function(){try{var u=new URLSearchParams(location.search).get('utm_source');if(u)return u;var h=document.referrer?new URL(document.referrer).hostname.replace(/^www\./,''):'';return h&&!/kpop-universe\.kr$/.test(h)?h:'';}catch(e){return '';}})();
   var PTYPE=(function(){var p=location.pathname.split('/').filter(Boolean);if(p[0]==='en')p.shift();if(p[0]!=='g')return p[0]?'other':'group_list';if(p.indexOf('fancams')>0)return 'fancams';if(p.indexOf('s')>0)return 'song';if(p.indexOf('a')>0)return 'album';if(p.indexOf('credits')>0)return 'credits';return p.length>=3?'member':'group';})();
-  function log(ev){if(BOT)return;try{fetch('https://dukgguehegnembimqvkm.supabase.co/rest/v1/rpc/log_seo_event',{method:'POST',keepalive:true,
+  function log(ev,vid){if(BOT)return;try{fetch('https://dukgguehegnembimqvkm.supabase.co/rest/v1/rpc/log_seo_event',{method:'POST',keepalive:true,
     headers:{'Content-Type':'application/json',apikey:'sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0',Authorization:'Bearer sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0'},
-    body:JSON.stringify({p_ev:ev,p_type:PTYPE,p_path:decodeURIComponent(location.pathname).slice(0,200),p_src:SRC,p_did:DID,p_ua:ev==='land'?String(navigator.userAgent||'').slice(0,160):null})}).catch(function(){});}catch(e){}}
+    body:JSON.stringify({p_ev:ev,p_type:PTYPE,p_path:decodeURIComponent(location.pathname).slice(0,200),p_src:SRC,p_did:DID,p_ua:ev==='land'?String(navigator.userAgent||'').slice(0,160):null,p_vid:vid||null})}).catch(function(){});}catch(e){}}
   log('land');
   // 사람 신호(2026-11-12): 봇 표시 없이 JS를 돌리는 크롤러가 land만 잔뜩 남겨서(하루 ~950기기) — 첫 스크롤·터치·키 입력 때 한 번 'eng'.
   // 집계(seo_human_land)는 출처가 있거나 이런 행동이 있는 기기만 센다.
@@ -175,6 +175,54 @@
     });
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',heart);else heart();
+  // ── 이번 주 많이 본 직캠(2026-11-12 사용자 "정적 페이지 반응을 모아 보여주면 궁금해서 들어온다") ──
+  // 서버 get_hot_fancams(1시간 캐시): 최근 7일 게시 직캠을 유튜브 조회수 순, 한 그룹 최대 2개, 12개.
+  // 우리 사이트 재생(seo_events vid, 7일)이 쌓이면 그 영상이 앞으로 온다. 카드는 유튜브 링크라 이 페이지 안 재생기로 열린다.
+  function hot(){
+    if(/^(other|group_list)$/.test(PTYPE)&&!/^\/(en\/)?show\//.test(location.pathname))return;
+    if(/\/rank\//.test(location.pathname)||document.querySelector('.kpu-hot'))return;
+    var KEY='kpu_hot_v1',data=null;
+    try{var c=JSON.parse(sessionStorage.getItem(KEY)||'null');if(c&&Date.now()-c.t<30*60e3)data=c.d;}catch(e){}
+    function draw(d){
+      var items=(d&&d.items||[]).filter(function(x){return x&&x.id;});if(items.length<4)return;
+      var st=document.createElement('style');st.textContent=
+        '.kpu-hot{margin:34px 0 8px}.kpu-hot-h{display:flex;align-items:baseline;gap:10px;margin:0 0 4px}'
+        +'.kpu-hot-h h2{margin:0;font-size:17px;font-weight:700;color:#eef1fa}.kpu-hot-h a{margin-left:auto;font-size:12.5px;color:rgba(190,205,240,.7);text-decoration:none;white-space:nowrap}.kpu-hot-h a:hover{color:#fff}'
+        +'.kpu-hot-s{font-size:12px;color:rgba(190,205,240,.55);margin:0 0 12px}'
+        +'.kpu-hot-r{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}'
+        +'.kpu-hot-c{flex:0 0 200px;scroll-snap-align:start;text-decoration:none;color:#e6eaf5;min-width:0}'
+        +'.kpu-hot-c .th{position:relative;display:block;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#1b1b1e}.kpu-hot-c img{width:100%;height:100%;object-fit:cover;display:block}'
+        +'.kpu-hot-c .n{position:absolute;left:7px;top:6px;font-size:12px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.8)}'
+        +'.kpu-hot-c .t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.38;margin-top:7px}'
+        +'.kpu-hot-c .v{display:block;font-size:11.5px;color:rgba(190,205,240,.55);margin-top:3px}'
+        +'@media(min-width:900px){.kpu-hot-c{flex-basis:220px}}';
+      document.head.appendChild(st);
+      var fmt=function(n){n=+n||0;if(EN)return n>=1e6?(n/1e6).toFixed(n>=1e7?0:1)+'M views':n>=1e3?Math.round(n/1e3)+'K views':n+' views';return n>=1e4?(n>=1e5?Math.round(n/1e4):(n/1e4).toFixed(1))+'만 회':n.toLocaleString()+'회';};
+      var sec=document.createElement('section');sec.className='kpu-hot';
+      var hd=document.createElement('div');hd.className='kpu-hot-h';var h2=document.createElement('h2');h2.textContent=EN?'Most-watched fancams this week':'이번 주 많이 본 직캠';hd.appendChild(h2);
+      var more=document.createElement('a');more.href=(EN?'/en':'')+'/rank/fancam/'+new Date().getFullYear()+'/';more.textContent=(EN?'Rankings':'직캠 순위')+' ›';hd.appendChild(more);sec.appendChild(hd);
+      var sb=document.createElement('p');sb.className='kpu-hot-s';sb.textContent=EN?'Fancams posted in the last 7 days, by views':'최근 7일 올라온 직캠 · 조회수 순';sec.appendChild(sb);
+      var row=document.createElement('div');row.className='kpu-hot-r';
+      items.slice(0,12).forEach(function(x,i){
+        var a=document.createElement('a');a.className='kpu-hot-c';a.href='https://www.youtube.com/watch?v='+x.id;a.target='_blank';a.rel='noopener';
+        var th=document.createElement('span');th.className='th';var im=document.createElement('img');im.loading='lazy';im.alt='';im.src='https://i.ytimg.com/vi/'+x.id+'/mqdefault.jpg';th.appendChild(im);
+        var n=document.createElement('span');n.className='n';n.textContent=String(i+1);th.appendChild(n);a.appendChild(th);
+        var t=document.createElement('span');t.className='t';t.textContent=x.t||'';a.appendChild(t);
+        var v=document.createElement('span');v.className='v';v.textContent=fmt(x.vc);a.appendChild(v);
+        row.appendChild(a);
+      });
+      sec.appendChild(row);
+      // 바닥 언어 전환·사이트 소개 줄(.lang-switch) 위에 — 없으면 앱 카드 위, 그것도 없으면 본문 끝
+      var foot=document.querySelector('.lang-switch'),dock=document.querySelector('.cta-dock'),wrap=document.querySelector('.wrap')||document.querySelector('main')||document.body;
+      var at=foot||dock;if(at&&at.parentNode)at.parentNode.insertBefore(sec,at);else wrap.appendChild(sec);
+    }
+    if(data){draw(data);return;}
+    try{fetch('https://dukgguehegnembimqvkm.supabase.co/rest/v1/rpc/get_hot_fancams',{method:'POST',
+      headers:{'Content-Type':'application/json',apikey:'sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0',Authorization:'Bearer sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0'},body:'{}'})
+      .then(function(r){return r.ok?r.json():null;}).then(function(d){if(!d)return;try{sessionStorage.setItem(KEY,JSON.stringify({t:Date.now(),d:d}));}catch(e){}draw(d);}).catch(function(){});}catch(e){}
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',hot);else hot();
+
 
   var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
   function titleOf(a){var t=(a.getAttribute('title')||'').trim();if(t)return t;var x=a.querySelector('.mf-t,.title,b,strong');t=((x&&x.textContent)||a.textContent||'').replace(/\s+/g,' ').trim();if(!t){var im=a.querySelector('img');t=im&&im.alt||'';}return t.slice(0,140);}
