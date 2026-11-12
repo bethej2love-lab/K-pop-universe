@@ -2081,6 +2081,24 @@
   },
   "discography": [
    {
+    "title": "Santa Baby",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/25/762/15125762_20261104150716_500.jpg",
+    "releaseDate": "2026.11.13",
+    "trackCount": 1,
+    "titleTrack": "Santa Baby",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Santa Baby",
+      "isTitle": true
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15125762"
+   },
+   {
     "title": "SYNK : COMPLaeXITY",
     "type": "싱글",
     "isMain": true,
@@ -242728,6 +242746,29 @@
    "x": "https://x.com/GIRLSETofficial"
   },
   "discography": [
+   {
+    "title": "young & dumb",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/55/590/15155590_20261112121345_500.jpg",
+    "releaseDate": "2026.11.13",
+    "trackCount": 2,
+    "titleTrack": "young & dumb",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "young & dumb",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "young & dumb",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15155590"
+   },
    {
     "title": "Glown Up",
     "type": "싱글",
