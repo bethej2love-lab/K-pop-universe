@@ -2,6 +2,10 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-12 (Claude Code — Codex 11-12 검수 처리 ④: 개별 오귀속 18개)
+- **[SQL 실행] sql/2026-11-12_codex_mistag_batch.sql**(+undo, 백업 `_bak_codex_mistag_20261112`, 전부 tags_manual=false·현재 값 조건): god 퇴근길 LIVE → (여자)아이들 / 드림캐쳐 수아 ← 첫사랑(CSR) 수아 직캠 → 무관(첫사랑 미등록) / 미래소년 이준혁 ← 배우 이준혁 냉터뷰 → 무관 / 소녀시대 효리수 3개 → members 효연·유리·수영(태연 카드에 붙던 것) / 이승철 '소녀시대' → 무관 / 애프터스쿨 ← 위클리 'After School' 2·소디엑 현식 1·After School Club 누에라·이펙스 → 각 그룹 / 앤더블 장하오 ← 보이넥스트도어 이한 'White' → 이한·원곡 핑클 / 이즈나 정세비 'FIESTA' with 피에스타 → 아이즈원 곡 커버 / 크레용팝 ← 퀸덤2 효린 → 씨스타 효린 / TXT 'The Biggest Winner' 위너 칩 제거 / 피에스타 ← 아이즈원 'FIESTA' 무대·발매 인사 → 아이즈원. 곡 키는 tools/song_keys_for_ids.mjs로 재계산.
+- ⏳ 그대로 둔 것: 박진영×선미 듀엣(POFSaR1v0wc, 원더걸스)·현아 'I'm Not Cool'(uoZKR8vA1xE, 포미닛 — 현아 솔로 키가 동명이인 2명이라 이름#id 확인 필요)·한승우 'Dive Into'(XddimyWY6Gg, 엑스원) — 카드 맨 위 대표에선 이미 밀려남(①). 미래소년 KO1KEYZ 시영(w1K2ZcqHqTU)은 옛 멤버 박시영과 같은 사람인지 근거 없음. 고강훈 드럼캠(JUbvYMG1p-U)이 더보이즈 선우 직캠으로 — 촬영 대상≠참여자 판정은 별도 과제. 대표 임베드 차단 3개.
+
 ## 2026-11-12 (Claude Code — Codex 11-12 검수 처리 ③: 옛 곡 페이지 잔존·흔한 단어 곡 'Solo')
 - **[build_group_pages.js] `retireStaleSongPages`**: 이번 빌드에서 안 만든 옛 곡 페이지(그룹·멤버×곡, 한·영)를 noindex + 그룹(멤버) 페이지로 넘기는 페이지로 바꾼다. 관계 페이지엔 이 정리가 있었는데 곡 페이지엔 없어, 11-09 태그 정정 뒤에도 2PM 'All I Wanna Do'·'Abandoned'·'Candy'·'Drive'·'Yesterday'·'오늘밤'이 11-05 생성본 그대로 200이었다(박재범 솔로·I-LAND 커버 링크). 이번 빌드에서 곡 목록을 만든 그룹만(조회 실패로 비면 손대지 않음), 이미 넘김 페이지는 그대로. 현재 그룹 곡 페이지(ko) 기준 45개(블락비 '쇼챔피언'처럼 곡이 아닌 이름 포함). 다음 CI 빌드에서 적용.
 - **[shared.js _SONG_COMMON] solo·encore 추가**: 2PM 곡 목록(멤버 솔로 포함)의 박재범 'Solo'에 '준호 Solo Concert'가, 블랙핑크 'SOLO'에 로제 'Solo Seoul'·'Solo Stage' 직캠이 묶였다. 이제 따옴표·'가수 - 곡'일 때만. `_SONG_RULES_VER` v7. **[SQL 실행]** tools/song_keys_for_ids.mjs로 ':solo'·':encore' 키 영상 104개 재계산 → 77개 정정(진짜 제니 'SOLO' 연결 27개는 유지). song-link 47·matching 246·cover-resolve 75 통과.
