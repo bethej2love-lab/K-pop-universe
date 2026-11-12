@@ -35,7 +35,7 @@
   }
   /* 더블탭 시 브라우저 네이티브 확대가 실수로 걸리는 걸 막음(2026-08-13, 사용자 제보) — pinch-zoom은
      허용값이라 3D 지도의 OrbitControls 핀치 확대에는 영향 없음, manipulation은 더블탭줌만 끈다. */
-  html{background:#060612;-webkit-text-size-adjust:100%;text-size-adjust:100%;touch-action:manipulation;}
+  html{background:#07070a;-webkit-text-size-adjust:100%;text-size-adjust:100%;touch-action:manipulation;}
   /* 아이폰 웹앱이 화면을 상태바만큼 위로 밀어 그리는 상태에서만(_pwaViewportFix가 감지해 html.vp-shift) 페이지 전체를 그만큼 내린다(2026-10-23).
      body에 transform을 걸면 fixed 요소들의 기준이 body가 되므로 높이를 화면(100%)으로 못박아 둔다 — 안 그러면 inset:0 오버레이가 접힌다. */
   html.vp-shift,html.vp-shift body{height:100%;}
@@ -44,13 +44,13 @@
      그래서 버튼은 영역 안(bottom:gap)에 두고, 홈 인디케이터 몫 아래 여백 대신 배경만 화면 맨 아래까지 이어 붙여(::after) 빈 띠가 안 보이게 한다. */
   /* 내림(--vp-shift)이 0이어도(상단 인셋은 제대로 온 경우, 2026-10-26) 탭바는 터치 영역 맨 아래, 배경만 화면 끝까지 */
   html.vp-shift #tabbar{bottom:var(--vp-shift,0px);padding-bottom:11px;}
-  html.vp-shift #tabbar::after{content:'';position:absolute;left:0;right:0;top:100%;height:var(--vp-gap,0px);background:rgba(14,18,36,0.92);pointer-events:none;}
+  html.vp-shift #tabbar::after{content:'';position:absolute;left:0;right:0;top:100%;height:var(--vp-gap,0px);background:rgba(19,19,22,0.92);pointer-events:none;}
   body{
     background:radial-gradient(ellipse at 50% 38%,
-      #12112a 0%,
-      #0d0c20 30%,
-      #09091a 60%,
-      #060612 100%
+      #0c0c0f 0%,
+      #08080a 30%,
+      #050507 60%,
+      #020203 100%
     );
     overflow:hidden;transition:background 0.9s ease;
     /* 폰트 미지정 요소(라이트박스 제목·uplist·with칩·리액션 등)가 브라우저 기본 세리프(Times)로 숫자·영문을
@@ -166,7 +166,7 @@
   #tabbar{
     position:fixed;bottom:0;left:0;right:0;
     display:flex;align-items:center;justify-content:space-around;gap:0;
-    background:rgba(14,18,36,0.92);
+    background:rgba(19,19,22,0.92);
     backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
     border-top:0.5px solid rgba(255,255,255,0.07);
     border-radius:0;padding:9px 0 max(11px, env(safe-area-inset-bottom,0px));z-index:40;
@@ -230,7 +230,7 @@
   #mob-sr{
     position:fixed;left:28px;right:28px;
     bottom:var(--sheet-bottom,73px);
-    background:rgba(14,18,36,0.96);border-radius:16px 16px 0 0;
+    background:rgba(19,19,22,0.96);border-radius:16px 16px 0 0;
     border:0.5px solid rgba(255,255,255,0.09);border-bottom:none;
     backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);
     box-shadow:0 -4px 32px rgba(0,0,0,0.45);
@@ -250,7 +250,7 @@
       position:fixed;top:0;left:0;right:0;
       display:flex;align-items:center;justify-content:space-between;
       padding:calc(14px + env(safe-area-inset-top,0px)) 18px 15px;
-      background:linear-gradient(to bottom,rgba(9,9,26,0.38) 0%,rgba(9,9,26,0.0) 80%);
+      background:linear-gradient(to bottom,rgba(10,10,13,0.38) 0%,rgba(10,10,13,0.0) 80%);
       backdrop-filter:blur(8px) saturate(1.1);-webkit-backdrop-filter:blur(8px) saturate(1.1);
       -webkit-mask-image:linear-gradient(to bottom,black 35%,rgba(0,0,0,0.5) 65%,transparent 100%);
       mask-image:linear-gradient(to bottom,black 35%,rgba(0,0,0,0.5) 65%,transparent 100%);
@@ -293,7 +293,7 @@
   /* 즐겨찾기 유도 말풍선 — 첫 즐겨찾기 전까지 탐색 버튼을 가리킨다 */
   #fav-hint-callout{
     position:fixed;top:58px;z-index:39;
-    background:rgba(16,20,40,0.94);
+    background:rgba(21,21,24,0.94);
     backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
     box-shadow:0 8px 28px rgba(0,0,0,0.52);
     border:0.5px solid rgba(140,175,255,0.22);border-radius:14px;
@@ -304,12 +304,12 @@
     display:flex;flex-direction:column;gap:3px;
   }
   #fav-hint-callout.show{opacity:1;transform:translateY(0);}
-  #fav-hint-callout:hover{background:rgba(20,26,50,0.97);border-color:rgba(160,195,255,0.38);}
+  #fav-hint-callout:hover{background:rgba(27,27,30,0.97);border-color:rgba(160,195,255,0.38);}
   #fhc-main{display:inline;font-weight:700;}
   #fhc-sub{display:block;font-size:11px;font-weight:400;color:rgba(180,200,240,0.62);margin-top:1px;letter-spacing:.01em;}
   #fhc-arrow{
     position:absolute;top:-5px;left:22px;width:9px;height:9px;
-    background:rgba(16,20,40,0.94);
+    background:rgba(21,21,24,0.94);
     border-left:0.5px solid rgba(140,175,255,0.22);border-top:0.5px solid rgba(140,175,255,0.22);
     transform:rotate(45deg);
   }
@@ -326,7 +326,7 @@
   body:has(#ob-tips.show) #zoom-ctrl{opacity:0;pointer-events:none;transition:opacity .3s;} /* 안내 중엔 줌 막대를 숨긴다 — 폰 '나' 탭 선·글과 겹침 */
   #ob-tips-line.is-h{background:linear-gradient(90deg,rgba(214,226,255,0.55),rgba(214,226,255,0.15));}
   #ob-tips-box{position:absolute;pointer-events:auto;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
-  #ob-tips-box::before{content:'';position:absolute;inset:-28px;background:radial-gradient(ellipse at 35% 50%,rgba(4,5,14,0.72),rgba(4,5,14,0) 70%);z-index:-1;pointer-events:none;}
+  #ob-tips-box::before{content:'';position:absolute;inset:-28px;background:radial-gradient(ellipse at 35% 50%,rgba(6,6,9,0.72),rgba(6,6,9,0) 70%);z-index:-1;pointer-events:none;}
   #ob-tips-step{font-size:11px;color:rgba(214,224,248,0.42);font-variant-numeric:tabular-nums;letter-spacing:.02em;margin-bottom:10px;}
   #ob-tips-h{font-size:17px;font-weight:500;line-height:1.45;color:rgba(240,244,255,0.94);letter-spacing:-.01em;}
   #ob-tips-b{font-size:13.5px;font-weight:400;line-height:1.65;color:rgba(214,224,248,0.66);margin-top:6px;}
@@ -340,7 +340,7 @@
   #ob-tips-act button:focus-visible{outline:1px solid rgba(169,195,255,0.8);outline-offset:3px;border-radius:2px;}
   #dh-right{pointer-events:all;}
   #dh-right{
-    background:rgba(18,22,40,0.82);
+    background:rgba(23,23,26,0.82);
     backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
     box-shadow:0 4px 24px rgba(0,0,0,0.45);
     border-radius:22px;padding:4px 6px;display:flex;align-items:center;gap:2px;
@@ -364,7 +364,7 @@
   /* ── Settings panel ─────────────────────────────── */
   #settings-panel{
     position:fixed;bottom:78px;right:16px;width:252px;
-    background:rgba(18,22,40,0.94);
+    background:rgba(23,23,26,0.94);
     backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);
     box-shadow:0 8px 32px rgba(0,0,0,0.5);
     border-radius:16px;padding:25px 25px 16px;z-index:68;display:none;
@@ -453,7 +453,7 @@
   /* ── K-pop 링크 모음 오버레이 ──────────────────────── */
   #kpop-links-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:68;display:none;align-items:center;justify-content:center;}
   #kpop-links-overlay.open{display:flex;}
-  #kpop-links-panel{width:min(540px,calc(100vw - 32px));max-height:84vh;display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
+  #kpop-links-panel{width:min(540px,calc(100vw - 32px));max-height:84vh;display:flex;flex-direction:column;background:rgba(18,18,21,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
   .klp-hd{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:0.5px solid rgba(255,255,255,0.08);font-size:15px;font-weight:600;color:#e8eaf6;flex-shrink:0;}
   .klp-close{background:none;border:none;color:rgba(200,210,255,0.5);font-size:22px;line-height:1;cursor:var(--kpu-cursor-pointer,pointer);padding:0 2px;transition:color .15s;}
   .klp-close:hover{color:#fff;}
@@ -506,7 +506,7 @@
   }
   /* ── Cards ───────────────────────────────────── */
   #tt,#gc{
-    background:rgba(16,20,36,0.68);
+    background:rgba(21,21,24,0.68);
     backdrop-filter:blur(36px) saturate(180%);
     -webkit-backdrop-filter:blur(36px) saturate(180%);
     border-radius:16px;
@@ -663,7 +663,7 @@
     bottom:var(--sheet-bottom,73px);
     min-height:calc(60vh + var(--sheet-grow,0px));max-height:calc(60vh + var(--sheet-grow,0px));
     border-radius:20px 20px 0 0;
-    background:rgba(16,20,36,0.96);
+    background:rgba(21,21,24,0.96);
     backdrop-filter:blur(36px);-webkit-backdrop-filter:blur(36px);
     border:0.5px solid rgba(255,255,255,0.10);
     box-shadow:0 1px 0 rgba(255,255,255,0.06) inset,0 -8px 32px rgba(0,0,0,0.55);
@@ -680,7 +680,7 @@
     display:none;position:fixed;left:0;right:0;
     bottom:var(--sheet-bottom,73px);min-height:calc(60vh + var(--sheet-grow,0px));max-height:calc(60vh + var(--sheet-grow,0px));
     border-radius:20px 20px 0 0;overflow:hidden;
-    background:rgba(14,18,36,0.97);
+    background:rgba(19,19,22,0.97);
     backdrop-filter:blur(36px);-webkit-backdrop-filter:blur(36px);
     border:0.5px solid rgba(255,255,255,0.10);
     box-shadow:0 1px 0 rgba(255,255,255,0.06) inset,0 -8px 32px rgba(0,0,0,0.55);
@@ -718,7 +718,7 @@
   /* 브라우즈 모드는 화면 전체를 덮는 실제 페이지형 시트라, 반투명(0.9)이면 뒤에 여전히 마운트돼있는
      카드의 제목 텍스트 등이 10%만큼 비쳐 보이는 문제가 있었음(작은 중앙 박스였던 기존 모드는 겹칠
      일이 거의 없어서 안 드러났었음, 2026-08-11 스크린샷으로 실측 확인) — 완전 불투명으로. */
-  #yt-lightbox.lb-browse{background:#08091a;will-change:transform;}
+  #yt-lightbox.lb-browse{background:#0d0d10;will-change:transform;}
   #yt-lightbox.open{display:flex;}
   #yt-lightbox.lb-closing{animation:lb-close-down .2s ease forwards;pointer-events:none;}
   @keyframes lb-close-down{from{opacity:1;transform:translateY(0);}to{opacity:0;transform:translateY(5%);}}
@@ -792,7 +792,7 @@
   #yt-lb-speed-badge.is-on{display:block;}
   /* 브라우즈 모드 연속재생 카운트다운 — 유튜브/넷플릭스식 "다음 영상 N초" 배너(2026-08-21).
      쇼츠 모드는 카운트다운 없이 곧장 넘어가서 이 배너 자체가 필요 없음. */
-  #yt-lb-autonext{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);z-index:3;display:flex;align-items:center;gap:10px;background:rgba(10,10,20,0.88);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:0.5px solid rgba(255,255,255,0.14);border-radius:20px;padding:8px 8px 8px 16px;box-shadow:0 6px 24px rgba(0,0,0,0.4);}
+  #yt-lb-autonext{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);z-index:3;display:flex;align-items:center;gap:10px;background:rgba(11,11,14,0.88);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:0.5px solid rgba(255,255,255,0.14);border-radius:20px;padding:8px 8px 8px 16px;box-shadow:0 6px 24px rgba(0,0,0,0.4);}
   #yt-lb-autonext-text{color:#fff;font-size:13px;font-weight:600;white-space:nowrap;}
   #yt-lb-autonext-cancel{background:rgba(255,255,255,0.12);border:0.5px solid rgba(255,255,255,0.18);color:#fff;font-size:12px;font-weight:700;padding:6px 12px;border-radius:14px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;font-family:inherit;white-space:nowrap;transition:background .15s;}
   #yt-lb-autonext-cancel:hover{background:rgba(255,255,255,0.22);}
@@ -803,7 +803,7 @@
      모아서 상단바를 정리(2026-08-12, 사용자 요청). 기본(쇼츠 모드)은 아예 없음. */
   .lb-menu-wrap{display:none;position:relative;}
   #yt-lb-menu-panel{display:none;position:absolute;top:calc(100% + 6px);right:0;min-width:140px;
-    border-radius:10px;background:rgba(20,24,44,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    border-radius:10px;background:rgba(25,25,28,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
     border:0.5px solid rgba(255,255,255,0.10);box-shadow:0 8px 24px rgba(0,0,0,0.45);padding:4px;z-index:3;}
   .lb-menu-wrap.open #yt-lb-menu-panel{display:block;}
   #yt-lb-menu-panel #yt-lb-conn-btn{width:100%;box-sizing:border-box;text-align:left;margin-top:0;
@@ -950,7 +950,7 @@
   .surf-r-name{font-size:13px;font-weight:600;color:rgba(225,235,255,0.92);}
   .surf-r-rel{font-size:11px;color:rgba(150,170,210,0.61);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .surf-stack{display:flex;align-items:center;}
-  .surf-stack img{width:32px;height:18px;object-fit:cover;border-radius:4px;border:1.5px solid #10122a;margin-left:-10px;display:block;background:rgba(255,255,255,0.06);}
+  .surf-stack img{width:32px;height:18px;object-fit:cover;border-radius:4px;border:1.5px solid #141417;margin-left:-10px;display:block;background:rgba(255,255,255,0.06);}
   .surf-stack img:first-child{margin-left:0;}
   .surf-stack b{font-size:11px;font-weight:500;color:rgba(150,170,210,0.61);margin-left:7px;font-variant-numeric:tabular-nums;}
   .surf-chev{width:7px;height:12px;stroke:rgba(150,170,210,0.61);fill:none;stroke-width:2;transition:transform .2s;}
@@ -958,7 +958,7 @@
   .surf-chips{display:flex;gap:6px;overflow-x:auto;padding:0 12px 10px;scrollbar-width:none;overscroll-behavior-x:contain;}
   .surf-chips::-webkit-scrollbar{display:none;}
   .surf-chip{flex:none;border:0.5px solid rgba(255,255,255,0.14);background:none;color:rgba(195,210,240,0.78);font:500 11.5px/1 inherit;font-family:inherit;padding:6px 11px;border-radius:999px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;white-space:nowrap;}
-  .surf-chip.on{background:rgba(225,235,255,0.92);border-color:transparent;color:#0b0d20;font-weight:600;}
+  .surf-chip.on{background:rgba(225,235,255,0.92);border-color:transparent;color:#0e0e11;font-weight:600;}
   .surf-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 8px;padding:2px 12px 12px;}
   .surf-tile{background:none;border:none;padding:0;text-align:left;color:inherit;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;display:flex;flex-direction:column;gap:5px;font-family:inherit;min-width:0;}
   .surf-tile img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:7px;display:block;background:rgba(255,255,255,0.06);}
@@ -974,14 +974,14 @@
   .surf-save.col-on svg{fill:currentColor;}
   /* Today's Path 시트 — ⚠️ backdrop-filter 금지(영상 위 blur는 모바일 발열 1순위, PERFORMANCE.md). 불투명 배경으로. */
   #surf-recap{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:6;
-    width:min(420px,calc(100vw - 20px));box-sizing:border-box;background:#171b36;border:0.5px solid rgba(255,255,255,0.1);
+    width:min(420px,calc(100vw - 20px));box-sizing:border-box;background:#1c1c1f;border:0.5px solid rgba(255,255,255,0.1);
     border-radius:22px;padding:20px 20px 12px;box-shadow:0 18px 50px rgba(0,0,0,0.55);display:flex;flex-direction:column;gap:8px;}
   .surf-recap-t{font-size:17px;font-weight:700;color:#eef4ff;letter-spacing:-.02em;}
   .surf-recap-path{font-size:13px;line-height:1.6;color:rgba(195,210,240,0.72);word-break:keep-all;}
   .surf-recap-path b{color:#eef4ff;font-weight:600;}
   .surf-recap-meta{font-size:12px;color:rgba(150,170,210,0.61);}
   .surf-recap-btns{display:grid;gap:4px;margin-top:6px;}
-  .surf-recap-save{background:rgba(130,155,255,0.9);color:#0b0d20;border:none;border-radius:13px;padding:12px 0;font-size:14px;font-weight:600;font-family:inherit;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;}
+  .surf-recap-save{background:rgba(130,155,255,0.9);color:#0e0e11;border:none;border-radius:13px;padding:12px 0;font-size:14px;font-weight:600;font-family:inherit;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;}
   .surf-recap-cont{background:none;border:none;color:rgba(170,190,255,0.95);padding:9px 0;font-size:14px;font-weight:500;font-family:inherit;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;}
   @media (prefers-reduced-motion:no-preference){#surf-recap{animation:surfRecapIn .32s cubic-bezier(.2,.8,.2,1) both;}
     @keyframes surfRecapIn{from{opacity:0;transform:translate(-50%,30px);}to{opacity:1;transform:translate(-50%,0);}}}
@@ -1019,7 +1019,7 @@
     opacity:0;pointer-events:none;transition:opacity .25s;}
   #yt-lb-queue-backdrop.open{opacity:1;pointer-events:auto;}
   #yt-lb-queue-sheet{position:fixed;left:0;right:0;bottom:0;z-index:193;
-    background:#0c0f1f;border-radius:18px 18px 0 0;
+    background:#101013;border-radius:18px 18px 0 0;
     display:flex;flex-direction:column;
     transform:translateY(100%);transition:transform .3s cubic-bezier(.2,.9,.3,1);
     max-height:82vh;overflow:hidden;}
@@ -1032,7 +1032,7 @@
     /* 2026-11-03 웹 화면 조합 점검: 카드 없이 재생할 때(재생만·나침반+재생) wrap이 1080px 고정이라 1920에서 영상이 734px, 화면 39%가 비었다.
        카드 있을 때(아래 side-panel 규칙)와 같은 원칙 — 남는 폭을 채우고(좌우 28px), 높이가 모자라면 영상 높이 기준으로 상한 */
     /* 높이가 넘치면 위가 잘리지 않게 safe center(넘치면 위에서부터) + 스크롤 */
-    #yt-lightbox.lb-browse{padding:24px 28px;box-sizing:border-box;align-items:safe center;overflow-y:auto;overscroll-behavior:contain;}
+    #yt-lightbox.lb-browse{padding:44px 28px 24px;box-sizing:border-box;align-items:safe center;overflow-y:auto;overscroll-behavior:contain;}
     #yt-lightbox.lb-browse #yt-lb-wrap{width:100%;max-width:calc((100vh - 330px) * 16 / 9 + 346px);display:flex;align-items:flex-start;gap:26px;}
     #yt-lightbox.lb-browse #yt-lb-main{flex:1;min-width:0;}
     #yt-lightbox.lb-browse #yt-lb-uplist{width:320px;flex-shrink:0;max-height:min(80vh,720px);overflow-y:auto;padding-left:2px;overscroll-behavior:contain;will-change:transform;}
@@ -1114,8 +1114,8 @@
     /* 발열(2026-09-22): 모바일에선 라이트박스가 열린 동안 배경을 완전 불투명으로 깐다. 기본값
        rgba(0,0,0,0.9)는 뒤의 우주 캔버스가 10% 비치는데, 그 10% 때문에 컴포지터가 전체화면 WebGL
        캔버스를 계속 합성 대상으로 붙들고 있어야 한다. 불투명이면 index.html의 animate()가 캔버스를
-       visibility:hidden으로 빼도 시각차가 0이다. 색은 브라우즈 모드(#08091a)와 같아 그 경로는 변화 없음. */
-    #yt-lightbox.open{background:#08091a;}
+       visibility:hidden으로 빼도 시각차가 0이다. 색은 브라우즈 모드(#0a0a0d)와 같아 그 경로는 변화 없음. */
+    #yt-lightbox.open{background:#0a0a0d;}
     /* 같은 이유로, 라이트박스 뒤에 가려진 탭바 배지의 무한 펄스도 멈춘다 — 보이지도 않으면서
        매 프레임 합성을 유발한다(실측에서 영상 재생 중 살아있던 애니메이션 2개 중 하나). */
     body:has(#yt-lightbox.open) .tab-badge-dot{animation:none;}
@@ -1381,13 +1381,13 @@
     transform:translateX(100%);
     visibility:hidden;
     transition:transform 0.26s cubic-bezier(0.32,0,0.15,1),visibility 0s 0.26s;
-    background:rgba(16,20,36,0.84);
+    background:rgba(13,13,16,0.9);
   }
   #side-panel.open{
     transform:translateX(0);pointer-events:all;
     visibility:visible;
     transition:transform 0.26s cubic-bezier(0.32,0,0.15,1),visibility 0s 0s;
-    backdrop-filter:blur(40px) saturate(190%);-webkit-backdrop-filter:blur(40px) saturate(190%);
+    backdrop-filter:blur(40px) saturate(130%);-webkit-backdrop-filter:blur(40px) saturate(130%);
     box-shadow:-8px 0 40px rgba(0,0,0,0.55);
   }
   #side-panel>#tt,#side-panel>#gc{
@@ -1411,13 +1411,13 @@
     transform:translateX(100%);
     visibility:hidden;
     transition:transform 0.26s cubic-bezier(0.32,0,0.15,1),right 0.26s cubic-bezier(0.32,0,0.15,1),visibility 0s 0.26s;
-    background:rgba(16,20,36,0.84);
+    background:rgba(13,13,16,0.9);
   }
   #member-panel.open{
     transform:translateX(0);pointer-events:all;
     visibility:visible;
     transition:transform 0.26s cubic-bezier(0.32,0,0.15,1),right 0.26s cubic-bezier(0.32,0,0.15,1),visibility 0s 0s;
-    backdrop-filter:blur(40px) saturate(190%);-webkit-backdrop-filter:blur(40px) saturate(190%);
+    backdrop-filter:blur(40px) saturate(130%);-webkit-backdrop-filter:blur(40px) saturate(130%);
     box-shadow:-8px 0 40px rgba(0,0,0,0.45);
   }
   #member-panel>#tt{
@@ -1444,7 +1444,7 @@
   #tt-collapse{
     position:fixed;right:880px;top:50%;
     width:22px;height:44px;border:none;border-radius:8px 0 0 8px;
-    background:rgba(20,24,44,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    background:rgba(25,25,28,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
     color:rgba(160,185,230,0.80);font-size:16px;line-height:1;
     cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;padding:0;z-index:62;
     opacity:0;pointer-events:none;
@@ -1458,7 +1458,7 @@
   #conn-collapse{
     position:fixed;right:1320px;top:50%;
     width:22px;height:44px;border:none;border-radius:8px 0 0 8px;
-    background:rgba(20,24,44,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    background:rgba(25,25,28,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
     color:rgba(160,185,230,0.80);font-size:16px;line-height:1;
     cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;padding:0;z-index:61;
     opacity:0;pointer-events:none;
@@ -1602,7 +1602,7 @@
   /* 2행(공식 외 계정) — 1행과 같은 크기, 칸 아래쪽에 매체 이름 */
   .ig-strip[hidden]{display:none;}
   .ig-mag-strip{margin-top:5px;}
-  .ig-src{position:absolute;left:6px;bottom:6px;z-index:4;max-width:calc(100% - 12px);font-size:10.5px;font-weight:600;line-height:1.3;color:#fff;background:rgba(6,8,18,0.55);padding:2px 6px;border-radius:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;}
+  .ig-src{position:absolute;left:6px;bottom:6px;z-index:4;max-width:calc(100% - 12px);font-size:10.5px;font-weight:600;line-height:1.3;color:#fff;background:rgba(8,8,11,0.55);padding:2px 6px;border-radius:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;}
   .ig-play{position:absolute;top:4px;right:5px;z-index:4;font-size:10px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.7);pointer-events:none;}
   /* 인스타 사진은 세로 4:5가 표준이라 칸도 4:5(2026-10-19, 사용자: "정사각이 최선일까?") — 세로 사진은 거의 안 잘리고, 정사각·가로만 양옆이 조금 잘린다 */
   /* 여러 장 게시물 묶음 — 디스코 활동기 묶음(.gc-discog-deck)과 같은 겹침 */
@@ -1643,7 +1643,7 @@
   /* 사이트 안 인스타 사진 뷰어(2026-10-19) — 웹: 사진 | 계정·본문 패널, 모바일: 위 사진 · 아래 본문 */
   #igv-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:81;display:none;align-items:center;justify-content:center;}
   #igv-overlay.open{display:flex;}
-  #igv-panel{position:relative;display:flex;max-width:min(1100px,calc(100vw - 48px));height:min(86vh,820px);background:rgb(12,16,32);border-radius:14px;overflow:hidden;box-shadow:0 20px 64px rgba(0,0,0,0.78);border:0.5px solid rgba(255,255,255,0.10);}
+  #igv-panel{position:relative;display:flex;max-width:min(1100px,calc(100vw - 48px));height:min(86vh,820px);background:rgb(17,17,20);border-radius:14px;overflow:hidden;box-shadow:0 20px 64px rgba(0,0,0,0.78);border:0.5px solid rgba(255,255,255,0.10);}
   #igv-close{position:absolute;top:10px;right:12px;z-index:3;background:rgba(0,0,0,0.35);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:16px;cursor:var(--kpu-cursor-pointer,pointer);}
   #igv-media{position:relative;flex:0 1 auto;display:flex;align-items:center;justify-content:center;background:#000;min-width:320px;overflow:hidden;touch-action:pan-y;}
   /* 옆으로 넘기기(2026-11-02) — 양옆 장은 틀 밖에 대기, 손가락 따라 같이 움직인다. 미끄러짐은 .igv-anim일 때만 */
@@ -1828,7 +1828,7 @@
   .gc-ch-sort-btn{background:none;border:none;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;color:rgba(155,178,228,0.46);font-size:15px;padding:4px 5px;transition:color .15s;font-family:inherit;line-height:1;}
   .gc-ch-sort-btn:hover,.gc-ch-sort-btn.active{color:#c0d6f0;}
   .gc-ch-sort-menu{display:none;position:absolute;right:0;top:calc(100% + 4px);min-width:114px;border-radius:18px;
-    background:rgba(20,24,44,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    background:rgba(25,25,28,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
     border:0.5px solid rgba(255,255,255,0.10);box-shadow:0 8px 24px rgba(0,0,0,0.45);z-index:5;overflow:hidden;padding:5px;}
   .gc-ch-sort-menu.open{display:block;}
   .gc-ch-sort-item,.gc-ch-view-toggle{display:flex;align-items:center;gap:6px;width:100%;background:none;border:none;text-align:left;
@@ -1940,10 +1940,10 @@
   .gc-vid-pick-sep{flex:0 0 auto;width:0.5px;height:16px;background:rgba(255,255,255,0.16);margin:0 6px 0 4px;}
   @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){.gc-vid-pick{font-size:11px;}}
   /* 곡 목록 시트 — 아래에서 올라옴(데스크톱은 가운데 좁은 시트) */
-  #vid-song-sheet-ov{position:fixed;inset:0;z-index:140;background:rgba(4,6,16,0);transition:background .22s;}
-  #vid-song-sheet-ov.open{background:rgba(4,6,16,0.45);}
+  #vid-song-sheet-ov{position:fixed;inset:0;z-index:140;background:rgba(6,6,9,0);transition:background .22s;}
+  #vid-song-sheet-ov.open{background:rgba(6,6,9,0.45);}
   .vid-song-sheet{position:absolute;left:0;right:0;bottom:0;max-width:480px;margin:0 auto;max-height:70vh;display:flex;flex-direction:column;
-    background:rgba(18,22,40,0.99);border-radius:18px 18px 0 0;border:0.5px solid rgba(255,255,255,0.08);border-bottom:none;
+    background:rgba(23,23,26,0.99);border-radius:18px 18px 0 0;border:0.5px solid rgba(255,255,255,0.08);border-bottom:none;
     padding:8px 16px calc(14px + env(safe-area-inset-bottom,0px));box-shadow:0 -10px 30px rgba(0,0,0,0.5);
     transform:translateY(100%);transition:transform .24s cubic-bezier(0.32,0.72,0,1);}
   #vid-song-sheet-ov.open .vid-song-sheet{transform:translateY(0);}
@@ -1998,7 +1998,7 @@
   .gc-ch-grid>.gc-ch-item.is-short.featured{grid-column:auto;}
   /* 순위 배지 — 순위와 변동은 다른 정보라 크기·굵기·색으로 위계를 나눈다(2026-09-18).
      baseline 정렬이라 폰트 크기가 달라도 숫자 밑선이 맞는다. tabular-nums로 자릿수가 바뀌어도 안 흔들림. */
-  .gc-ch-rank-badge{position:absolute;top:4px;left:4px;z-index:2;display:flex;align-items:baseline;gap:3px;padding:2px 6px;border-radius:4px;background:rgba(10,14,24,0.72);backdrop-filter:blur(2px);font-variant-numeric:tabular-nums;}
+  .gc-ch-rank-badge{position:absolute;top:4px;left:4px;z-index:2;display:flex;align-items:baseline;gap:3px;padding:2px 6px;border-radius:4px;background:rgba(14,14,17,0.72);backdrop-filter:blur(2px);font-variant-numeric:tabular-nums;}
   .gc-ch-rank-badge .rk-num{font-size:12px;font-weight:800;color:#fff;line-height:1;}
   .gc-ch-rank-badge .rk-delta{font-size:9px;font-weight:700;line-height:1;letter-spacing:.02em;}
   .gc-ch-rank-badge .rk-delta.rd-up{color:#5ee6a0;}
@@ -2014,7 +2014,7 @@
   .gc-ch-dur{
     position:absolute;right:4px;z-index:2;transform:translateY(calc(-100% - 4px));
     font-size:10px;font-weight:600;padding:1px 4px;border-radius:3px;letter-spacing:0.2px;
-    background:rgba(8,11,20,0.78);color:rgba(240,246,255,0.94);pointer-events:none;
+    background:rgba(11,11,14,0.78);color:rgba(240,246,255,0.94);pointer-events:none;
   }
   /* 시청 진행 바 — YouTube 빨간 줄과 동일 컨셉. top은 JS(_placeProgBar)로 이미지 밑선에 맞춤 */
   .gc-ch-prog{
@@ -2028,7 +2028,7 @@
   /* ── 관리자 전용: 영상 출연 멤버 태깅 (그룹/멤버/연결 카드 썸네일 공용) ───────────────── */
   .vid-edit-btn{
     width:22px;height:22px;border-radius:50%;
-    background:rgba(10,14,28,0.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    background:rgba(14,14,17,0.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
     border:0.5px solid rgba(255,255,255,0.22);color:rgba(230,238,255,0.95);font-size:11px;
     display:flex;align-items:center;justify-content:center;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;font-family:inherit;flex-shrink:0;
   }
@@ -2044,7 +2044,7 @@
   .gc-ch-selall-btn{background:rgba(100,160,255,0.10);border-color:rgba(100,160,255,0.32);color:#9ab8e0;}
   .gc-ch-selall-btn:hover{background:rgba(100,160,255,0.18);}
   .gc-ch-sel-btn.active{background:rgba(100,160,255,0.18);border-color:rgba(100,160,255,0.4);color:#a8d0ff;}
-  #admin-bulk-bar,#user-bulk-bar{position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:rgba(14,20,40,0.96);border:1px solid rgba(100,160,255,0.28);border-radius:22px;padding:9px 16px;display:flex;align-items:center;gap:10px;z-index:9990;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 4px 28px rgba(0,0,0,0.55);font-size:13px;color:#9ab8e0;white-space:nowrap;transition:opacity .18s;}
+  #admin-bulk-bar,#user-bulk-bar{position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:rgba(20,20,23,0.96);border:1px solid rgba(100,160,255,0.28);border-radius:22px;padding:9px 16px;display:flex;align-items:center;gap:10px;z-index:9990;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 4px 28px rgba(0,0,0,0.55);font-size:13px;color:#9ab8e0;white-space:nowrap;transition:opacity .18s;}
   #admin-bulk-bar.hidden,#user-bulk-bar.hidden{display:none;}
   /* 관리자 바는 버튼이 최대 7개(편집·이 멤버 제외·이 그룹 제외·함께한 태그 제거·무관·보류·숨김·취소)라
      좁은 화면에서 가로로 넘친다 — 실측(2026-08-27, 헤드리스): 390px 뷰포트에서 바 폭이 일반 조합 475px,
@@ -2083,7 +2083,7 @@
   #vid-tag-overlay.open{display:flex;}
   #vm-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
   #vm-overlay.open{display:flex;}
-  #vm-panel{width:min(560px,calc(100vw - 32px));max-height:86vh;display:flex;flex-direction:column;background:rgba(12,16,32,0.98);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:20px;box-shadow:0 20px 64px rgba(0,0,0,0.78);border:0.5px solid rgba(255,255,255,0.10);overflow:hidden;}
+  #vm-panel{width:min(560px,calc(100vw - 32px));max-height:86vh;display:flex;flex-direction:column;background:rgba(17,17,20,0.98);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:20px;box-shadow:0 20px 64px rgba(0,0,0,0.78);border:0.5px solid rgba(255,255,255,0.10);overflow:hidden;}
   /* 데스크톱은 높이도 고정(2026-08-27, 사용자 요청 "패널 크기가 계속 바뀌기보단 고정이면 더 보기 좋다").
      width는 원래 560px 고정이었고 max-height라 **높이만** 내용에 따라 늘었다 줄었다 했다 — 탭을 옮길 때마다
      패널이 출렁이고, 목록이 짧으면 스크롤바도 사라져 위치 감각이 리셋된다. 모바일은 화면이 좁아 짧은 목록에
@@ -2197,7 +2197,7 @@
   .vm-flag-hold{background:rgba(180,140,230,0.12);border-color:rgba(180,140,230,0.35);color:rgba(205,175,240,0.9);}
   .vm-flag-other{background:rgba(155,178,228,0.12);border-color:rgba(155,178,228,0.35);color:rgba(190,205,240,0.9);}
   .vm-all-btn{background:rgba(80,140,255,0.12);border-color:rgba(100,160,255,0.35);color:rgba(150,200,255,0.9);}
-  .vm-flag-mini{position:absolute;right:36px;top:50%;transform:translateY(-50%);background:rgba(13,17,34,0.98);border:0.5px solid rgba(255,255,255,0.12);border-radius:9px;padding:5px;display:flex;flex-direction:column;gap:3px;z-index:10;box-shadow:0 4px 16px rgba(0,0,0,0.5);}
+  .vm-flag-mini{position:absolute;right:36px;top:50%;transform:translateY(-50%);background:rgba(18,18,21,0.98);border:0.5px solid rgba(255,255,255,0.12);border-radius:9px;padding:5px;display:flex;flex-direction:column;gap:3px;z-index:10;box-shadow:0 4px 16px rgba(0,0,0,0.5);}
   #vm-ch-inner{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;}
   #vm-ch-tabs{display:flex;gap:5px;padding:8px 16px 0;flex-shrink:0;}
   .vm-ch-tab{flex:1;padding:6px 0;border-radius:8px;border:0.5px solid rgba(255,255,255,0.10);background:rgba(255,255,255,0.04);color:rgba(170,190,225,0.66);font-size:11px;font-weight:600;font-family:inherit;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;transition:background .13s,color .13s,border-color .13s;}
@@ -2233,7 +2233,7 @@
      답답하고 탭 타겟도 좁아진다. */
   #adm-home-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
   #adm-home-overlay.open{display:flex;}
-  #adm-home-panel{width:min(600px,calc(100vw - 24px));max-height:86vh;display:flex;flex-direction:column;background:rgba(12,16,32,0.98);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,0.55);border:0.5px solid rgba(255,255,255,0.10);overflow:hidden;}
+  #adm-home-panel{width:min(600px,calc(100vw - 24px));max-height:86vh;display:flex;flex-direction:column;background:rgba(17,17,20,0.98);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,0.55);border:0.5px solid rgba(255,255,255,0.10);overflow:hidden;}
   #adm-home-hd{display:flex;align-items:center;gap:10px;padding:14px 16px;flex-shrink:0;border-bottom:0.5px solid rgba(255,255,255,0.08);}
   #adm-home-title{flex:1;font-size:13px;font-weight:700;color:rgba(220,230,255,0.9);letter-spacing:-.01em;}
   #adm-home-close{background:none;border:none;padding:4px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;color:rgba(150,175,225,0.55);display:flex;align-items:center;}
@@ -2278,7 +2278,7 @@
   }
   #hnn-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
   #hnn-overlay.open{display:flex;}
-  #hnn-panel{width:min(540px,calc(100vw - 24px));max-height:86vh;display:flex;flex-direction:column;background:rgba(12,16,32,0.98);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:20px;box-shadow:0 20px 64px rgba(0,0,0,0.78);border:0.5px solid rgba(255,255,255,0.10);overflow:hidden;}
+  #hnn-panel{width:min(540px,calc(100vw - 24px));max-height:86vh;display:flex;flex-direction:column;background:rgba(17,17,20,0.98);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:20px;box-shadow:0 20px 64px rgba(0,0,0,0.78);border:0.5px solid rgba(255,255,255,0.10);overflow:hidden;}
   #hnn-hd{display:flex;align-items:center;gap:10px;padding:14px 16px 0;flex-shrink:0;}
   #hnn-hd-title{font-size:13px;font-weight:700;color:rgba(220,230,255,0.9);letter-spacing:-.01em;flex-shrink:0;}
   #hnn-tabs{display:flex;flex:1;gap:2px;background:rgba(255,255,255,0.06);border-radius:10px;padding:2px;margin:0 6px;}
@@ -2353,7 +2353,7 @@
   /* 그룹 우선순위(어드민 전용, 유저 비노출) — 검수 센터(#hnn-overlay)와 같은 팝업 톤 재사용 */
   #gp-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
   #gp-overlay.open{display:flex;}
-  #gp-panel{width:min(460px,calc(100vw - 24px));max-height:86vh;display:flex;flex-direction:column;background:rgba(12,16,32,0.98);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:20px;box-shadow:0 20px 64px rgba(0,0,0,0.78);border:0.5px solid rgba(255,255,255,0.10);overflow:hidden;}
+  #gp-panel{width:min(460px,calc(100vw - 24px));max-height:86vh;display:flex;flex-direction:column;background:rgba(17,17,20,0.98);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:20px;box-shadow:0 20px 64px rgba(0,0,0,0.78);border:0.5px solid rgba(255,255,255,0.10);overflow:hidden;}
   #gp-hd{display:flex;align-items:center;gap:10px;padding:14px 16px;flex-shrink:0;border-bottom:0.5px solid rgba(255,255,255,0.07);}
   #gp-hd-title{font-size:13px;font-weight:700;color:rgba(220,230,255,0.9);letter-spacing:-.01em;flex:1;}
   #gp-close{background:none;border:none;color:rgba(180,195,230,0.56);font-size:18px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;padding:0;line-height:1;flex-shrink:0;}
@@ -2443,7 +2443,7 @@
 
   #fbv-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
   #fbv-overlay.open{display:flex;}
-  #fbv-panel{width:min(460px,calc(100vw - 24px));max-height:86vh;display:flex;flex-direction:column;background:rgba(12,16,32,0.98);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:20px;box-shadow:0 20px 64px rgba(0,0,0,0.78);border:0.5px solid rgba(255,255,255,0.10);overflow:hidden;}
+  #fbv-panel{width:min(460px,calc(100vw - 24px));max-height:86vh;display:flex;flex-direction:column;background:rgba(17,17,20,0.98);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:20px;box-shadow:0 20px 64px rgba(0,0,0,0.78);border:0.5px solid rgba(255,255,255,0.10);overflow:hidden;}
   #fbv-hd{display:flex;align-items:center;gap:10px;padding:14px 16px;flex-shrink:0;border-bottom:0.5px solid rgba(255,255,255,0.07);}
   #fbv-hd-title{font-size:13px;font-weight:700;color:rgba(220,230,255,0.9);letter-spacing:-.01em;flex:1;}
   #fbv-close{background:none;border:none;color:rgba(180,195,230,0.56);font-size:18px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;padding:0;line-height:1;}
@@ -2471,7 +2471,7 @@
      라이트박스가 이 오버레이 위로 열리는 구조라 67보다 낮아야 함. */
   #feed-list-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:68;display:none;align-items:center;justify-content:center;}
   #feed-list-overlay.open{display:flex;}
-  #feed-list-panel{width:min(560px,calc(100vw - 32px));max-height:90vh;min-height:min(600px,84vh);display:flex;flex-direction:column;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
+  #feed-list-panel{width:min(560px,calc(100vw - 32px));max-height:90vh;min-height:min(600px,84vh);display:flex;flex-direction:column;background:rgba(18,18,21,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);}
   #feed-list-hd{display:flex;align-items:flex-start;justify-content:space-between;padding:16px 18px 12px;flex-shrink:0;gap:10px;}
   #feed-list-hd-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
   #feed-list-hd-title{font-size:var(--fz-title);font-weight:600;color:rgba(220,230,255,0.9);}
@@ -2551,7 +2551,7 @@
   /* 320 → 560(2026-09-04, admin_improvement_plan P2-6). 이 모달은 소속 그룹·멤버 체크박스·콜라보·
      원곡·카테고리·플래그를 한 화면에 담는데 320px에선 멤버 칩이 서너 개마다 줄바꿈돼 스크롤이 길어진다.
      좁은 화면에선 기존처럼 화면 폭에 맞춘다(min). */
-  #vid-tag-panel{width:min(560px,calc(100vw - 40px));max-height:82vh;overflow-y:auto;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  #vid-tag-panel{width:min(560px,calc(100vw - 40px));max-height:82vh;overflow-y:auto;background:rgba(18,18,21,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   #vid-tag-vidtitle{font-size:11px;color:rgba(160,182,222,0.71);margin:6px 0 14px;line-height:1.4;}
   #vid-tag-members{display:flex;flex-wrap:wrap;gap:7px;}
   .vid-tag-mem{display:flex;align-items:center;gap:6px;font-size:13px;color:rgba(220,230,250,0.88);background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.08);border-radius:10px;padding:6px 10px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;}
@@ -2594,13 +2594,13 @@
   #pp-bias-add-row{position:relative;margin-top:8px;}
   #pp-bias-add-row #pp-bias-search{margin:0;}
   /* 프로필 카드 높이가 검색 결과 개수에 따라 출렁이지 않도록 절대배치 오버레이로 띄워서 아래 내용을 덮게 함 */
-  #pp-bias-search-results{position:absolute;left:0;right:0;top:calc(100% + 4px);max-height:180px;overflow-y:auto;border-radius:10px;background:rgba(20,24,44,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.10);box-shadow:0 8px 24px rgba(0,0,0,0.45);z-index:5;}
+  #pp-bias-search-results{position:absolute;left:0;right:0;top:calc(100% + 4px);max-height:180px;overflow-y:auto;border-radius:10px;background:rgba(25,25,28,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.10);box-shadow:0 8px 24px rgba(0,0,0,0.45);z-index:5;}
   #pp-bias-search-results:empty{display:none;}
   .pp-bias-opt{padding:7px 10px;font-size:12px;color:rgba(220,230,250,0.85);cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;}
   .pp-bias-opt:hover{background:rgba(255,255,255,0.08);}
   #pp-bias-emoji-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:80;display:none;align-items:center;justify-content:center;}
   #pp-bias-emoji-overlay.open{display:flex;}
-  #pp-bias-emoji-panel{width:min(320px,calc(100vw - 40px));background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  #pp-bias-emoji-panel{width:min(320px,calc(100vw - 40px));background:rgba(18,18,21,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   #pp-bias-emoji-target{font-size:12px;color:rgba(160,182,222,0.72);margin:4px 0 10px;}
   #pp-bias-emoji-native{display:flex;flex-direction:column;align-items:center;gap:12px;padding:18px 0 8px;}
   #pp-bias-emoji-native-hint{font-size:12px;color:rgba(160,182,222,0.55);}
@@ -2706,7 +2706,7 @@
   @media(max-width:768px),(pointer:coarse) and (max-height:500px){#search-kbd{display:none;}}
   #search-wrap.open{
     display:block;
-    background:rgba(16,20,40,0.96);
+    background:rgba(21,21,24,0.96);
     border:0.5px solid rgba(255,255,255,0.10);
     border-radius:12px;
     backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
@@ -2751,7 +2751,7 @@
     position:fixed;top:0;left:0;right:0;
     bottom:var(--sheet-bottom,calc(64px + env(safe-area-inset-bottom,0px)));
     z-index:69;display:none;flex-direction:column;
-    background:rgba(9,12,26,0.97);
+    background:rgba(13,13,16,0.97);
     backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
     /* 2026-10-27 "검색창 맨 윗부분이 살짝 블러": iOS 웹앱이 상태바 아래 ~65px을 스스로 흐리게 덮는다(캡처 픽셀: 위 0~64px이 시트색보다 어두운 그라데이션).
        +6px(검색창 윗변 61px)로는 검색창 윗부분이 그 안에 걸려 뿌옜다 → 웹앱에선 윗변 ~77px로 흐림 구간 밖에 둔다. */
@@ -2930,7 +2930,7 @@
   /* ── Journal sidebar ─────────────────────────────── */
   #journal-sidebar{
     position:fixed;top:0;left:0;height:100%;width:300px;
-    background:rgba(14,18,34,0.82);
+    background:rgba(19,19,22,0.82);
     backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
     border-right:0.5px solid rgba(255,255,255,0.10);
     box-shadow:4px 0 24px rgba(0,0,0,0.35);
@@ -2943,7 +2943,7 @@
   .journal-toggle-placeholder{
     position:absolute;top:50%;right:-26px;transform:translateY(-50%);
     width:26px;
-    background:rgba(14,18,34,0.75);
+    background:rgba(19,19,22,0.75);
     backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
     border:0.5px solid rgba(255,255,255,0.10);border-left:none;
     border-radius:0 10px 10px 0;
@@ -2973,14 +2973,14 @@
     transform:translateX(calc(100% + 880px));
     visibility:hidden;
     transition:transform 0.26s cubic-bezier(0.32,0,0.15,1),right 0.26s cubic-bezier(0.32,0,0.15,1),visibility 0s 0.26s;
-    background:rgba(16,20,36,0.88);
+    background:rgba(13,13,16,0.9);
     font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
   }
   #conn-panel.open{
     transform:translateX(0);pointer-events:all;
     visibility:visible;
     transition:transform 0.26s cubic-bezier(0.32,0,0.15,1),visibility 0s 0s;
-    backdrop-filter:blur(40px) saturate(190%);-webkit-backdrop-filter:blur(40px) saturate(190%);
+    backdrop-filter:blur(40px) saturate(130%);-webkit-backdrop-filter:blur(40px) saturate(130%);
     box-shadow:-6px 0 32px rgba(0,0,0,0.45);
   }
   @media(max-width:768px),(pointer:coarse) and (max-height:500px){#conn-panel{display:none;}}
@@ -2989,7 +2989,7 @@
     display:none;position:fixed;left:0;right:0;
     bottom:var(--sheet-bottom,73px);min-height:calc(60vh + var(--sheet-grow,0px));max-height:calc(60vh + var(--sheet-grow,0px));
     border-radius:20px 20px 0 0;overflow:hidden;
-    background:rgba(14,18,36,0.97);
+    background:rgba(19,19,22,0.97);
     backdrop-filter:blur(36px);-webkit-backdrop-filter:blur(36px);
     border:0.5px solid rgba(255,255,255,0.10);
     box-shadow:0 1px 0 rgba(255,255,255,0.06) inset,0 -8px 32px rgba(0,0,0,0.60);
@@ -3011,7 +3011,7 @@
     display:none;position:fixed;left:0;right:0;
     bottom:var(--sheet-bottom,73px);height:58vh;min-height:58vh;max-height:58vh;
     border-radius:20px 20px 0 0;overflow:hidden;
-    background:rgba(14,18,34,0.97);
+    background:rgba(19,19,22,0.97);
     backdrop-filter:blur(36px);-webkit-backdrop-filter:blur(36px);
     border:0.5px solid rgba(255,255,255,0.10);
     box-shadow:0 1px 0 rgba(255,255,255,0.06) inset,0 -8px 32px rgba(0,0,0,0.60);
@@ -3212,7 +3212,7 @@
     #gc-discog-detail-handle{display:block;width:36px;height:4px;background:rgba(255,255,255,0.18);border-radius:2px;margin:-12px auto 12px;}
     #gc-discog-detail #gc-discog-detail-close{display:none;}
   }
-  #gc-discog-detail-sheet{position:relative;width:100%;background:rgba(14,18,38,0.98);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-radius:20px 20px 0 0;padding:22px 22px calc(22px + env(safe-area-inset-bottom,0px));box-sizing:border-box;z-index:1;text-align:center;}
+  #gc-discog-detail-sheet{position:relative;width:100%;background:rgba(19,19,22,0.98);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-radius:20px 20px 0 0;padding:22px 22px calc(22px + env(safe-area-inset-bottom,0px));box-sizing:border-box;z-index:1;text-align:center;}
   /* 데스크톱: 상단 기준으로 고정한다(2026-09-15 사용자 제보 — "곡 수마다 창 세로 길이가 바뀌어도
      위줄 위치는 고정돼야 한다"). 예전엔 컨테이너가 align-items:flex-end라 시트가 **아래에 붙어 위로
      자랐고**, 트랙 목록이 0~200px까지 늘어나는 만큼 상단이 그대로 튀었다. ‹ › 로 앨범을 넘길 때마다
@@ -3264,7 +3264,7 @@
       margin-top:clamp(56px,12vh,120px);
       max-height:calc(100dvh - clamp(56px,12vh,120px) - 24px);
       overflow-y:auto;
-      background:rgba(14,18,38,0.98);
+      background:rgba(19,19,22,0.98);
       backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
       border-radius:0 18px 18px 0;
       border-left:0.5px solid rgba(255,255,255,0.07);
@@ -3340,7 +3340,7 @@
   /* 유니버스 밖 아티스트 "함께한 앨범" 시트(2026-10-19) */
   #ecx-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
   #ecx-overlay.open{display:flex;}
-  #ecx-panel{width:min(560px,calc(100vw - 24px));max-height:min(80vh,720px);display:flex;flex-direction:column;background:rgba(12,16,32,0.98);border-radius:20px;box-shadow:0 20px 64px rgba(0,0,0,0.78);border:0.5px solid rgba(255,255,255,0.10);overflow:hidden;}
+  #ecx-panel{width:min(560px,calc(100vw - 24px));max-height:min(80vh,720px);display:flex;flex-direction:column;background:rgba(17,17,20,0.98);border-radius:20px;box-shadow:0 20px 64px rgba(0,0,0,0.78);border:0.5px solid rgba(255,255,255,0.10);overflow:hidden;}
   #ecx-hd{position:relative;padding:18px 48px 12px 20px;border-bottom:0.5px solid rgba(255,255,255,0.07);flex-shrink:0;}
   #ecx-title{font-size:16px;font-weight:700;color:#e4ecff;}
   #ecx-sub{font-size:12px;color:rgba(150,170,210,0.66);margin-top:3px;}
@@ -3373,7 +3373,7 @@
   #gc-track-videos-bg{position:absolute;inset:0;background:rgba(0,0,0,0.55);}
   /* 고정 높이 — 내용 로드에 따라 창이 커지는 "점프"를 없앤다(2026-09-02 제보 "채워진 정도와 무관하게 크기 고정").
      열리는 순간부터 78vh, 리스트가 내부 스크롤로 채워진다(#...-list flex:1). 큰 콘텐츠 창의 표준 패턴. */
-  #gc-track-videos-sheet{position:relative;width:100%;height:78vh;display:flex;flex-direction:column;background:rgba(14,18,38,0.98);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-radius:20px 20px 0 0;padding:22px 22px calc(16px + env(safe-area-inset-bottom,0px));box-sizing:border-box;z-index:1;}
+  #gc-track-videos-sheet{position:relative;width:100%;height:78vh;display:flex;flex-direction:column;background:rgba(19,19,22,0.98);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-radius:20px 20px 0 0;padding:22px 22px calc(16px + env(safe-area-inset-bottom,0px));box-sizing:border-box;z-index:1;}
   @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){
     #gc-track-videos-overlay{align-items:center;}
     #gc-track-videos-sheet{max-width:580px;width:580px;height:min(85vh,780px);border-radius:18px;margin-bottom:0;}
@@ -3422,7 +3422,7 @@
   #combo-overlay{position:fixed;inset:0;z-index:112;display:none;align-items:flex-end;justify-content:center;}
   #combo-overlay.open{display:flex;}
   #combo-bg{position:absolute;inset:0;background:rgba(0,0,0,0.55);}
-  #combo-sheet{position:relative;width:100%;height:82vh;display:flex;flex-direction:column;overflow-y:auto;background:rgba(14,18,38,0.98);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-radius:20px 20px 0 0;padding:20px 20px calc(16px + env(safe-area-inset-bottom,0px));box-sizing:border-box;}
+  #combo-sheet{position:relative;width:100%;height:82vh;display:flex;flex-direction:column;overflow-y:auto;background:rgba(19,19,22,0.98);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-radius:20px 20px 0 0;padding:20px 20px calc(16px + env(safe-area-inset-bottom,0px));box-sizing:border-box;}
   @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){#combo-sheet{max-width:430px;height:min(82vh,640px);border-radius:18px;margin-bottom:70px;}}
   #combo-close{position:absolute;top:10px;right:12px;background:none;border:none;color:rgba(190,205,240,0.66);font-size:20px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;padding:4px;line-height:1;z-index:2;}
   #combo-hd{display:flex;align-items:baseline;gap:8px;flex-shrink:0;padding-right:24px;}
@@ -3457,10 +3457,10 @@
   /* ── 발자국(2026-09-02) — 방금 본 카드로 되돌아가기. 카드 닫혀 우주로 돌아왔을 때만 좌하단에 뜬다(클린 유지).
      기본은 🐾 토글만, 누르면 최근 카드 칩 트레일. localStorage라 닫혀도·재방문에도 남는다. ── */
   #footprint-bar{position:fixed;left:12px;bottom:calc(74px + env(safe-area-inset-bottom,0px));z-index:41;display:none;align-items:center;gap:8px;max-width:calc(100vw - 24px);}
-  #fp-toggle{flex-shrink:0;width:38px;height:38px;border-radius:50%;background:rgba(16,20,44,0.9);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:0.5px solid rgba(140,170,240,0.22);color:#c8d8f0;font-size:16px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;box-shadow:0 3px 14px rgba(0,0,0,0.4);line-height:1;padding:0;}
+  #fp-toggle{flex-shrink:0;width:38px;height:38px;border-radius:50%;background:rgba(21,21,24,0.9);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:0.5px solid rgba(140,170,240,0.22);color:#c8d8f0;font-size:16px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;box-shadow:0 3px 14px rgba(0,0,0,0.4);line-height:1;padding:0;}
   #fp-trail{display:none;gap:6px;overflow-x:auto;padding:2px 2px 4px;-webkit-overflow-scrolling:touch;}
   #footprint-bar.open #fp-trail{display:flex;}
-  .fp-chip{flex-shrink:0;display:inline-flex;align-items:center;gap:5px;background:rgba(16,20,44,0.9);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:0.5px solid rgba(140,170,240,0.2);border-radius:16px;padding:6px 12px;color:#dbe4fa;font-size:12px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;white-space:nowrap;font-family:inherit;box-shadow:0 3px 12px rgba(0,0,0,0.35);}
+  .fp-chip{flex-shrink:0;display:inline-flex;align-items:center;gap:5px;background:rgba(21,21,24,0.9);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:0.5px solid rgba(140,170,240,0.2);border-radius:16px;padding:6px 12px;color:#dbe4fa;font-size:12px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;white-space:nowrap;font-family:inherit;box-shadow:0 3px 12px rgba(0,0,0,0.35);}
   .fp-ic{font-size:9px;color:rgba(150,180,255,0.75);}
   /* ── 이어서 발견(2026-09-02) — 멤버 카드 하단 컨텍스트 홉. 탐험 루프 엔진 ── */
   #tt-discover{margin-top:8px;padding-top:12px;border-top:0.5px solid rgba(255,255,255,0.07);}
@@ -3477,7 +3477,7 @@
   .tvf-thumb-wrap{position:relative;width:88px;flex-shrink:0;line-height:0;}
   .tvf-thumb{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:7px;background:rgba(255,255,255,0.06);display:block;}
   /* 공용 재생시간 배지(_vdur, 2026-10-23) — .gc-ch-dur/.feed-card-dur/.tvf-dur와 같은 생김새. 썸네일 래퍼가 position:relative여야 한다 */
-  .vdur{position:absolute;right:4px;bottom:4px;z-index:2;font-size:10px;font-weight:600;padding:1px 4px;border-radius:3px;letter-spacing:0.2px;background:rgba(8,11,20,0.78);color:rgba(240,246,255,0.94);pointer-events:none;line-height:1.35;}
+  .vdur{position:absolute;right:4px;bottom:4px;z-index:2;font-size:10px;font-weight:600;padding:1px 4px;border-radius:3px;letter-spacing:0.2px;background:rgba(11,11,14,0.78);color:rgba(240,246,255,0.94);pointer-events:none;line-height:1.35;}
   .adv-thumb-wrap,.surf-tw,.feed-news-tw{position:relative;display:block;}
   .feed-news-tw{flex-shrink:0;}
   .feed-recent-thumb-wrap,.flag-thumb-wrap,.fnh-media{position:relative;}
@@ -3489,7 +3489,7 @@
   .lb-uplist-tw>.lb-uplist-thumb.lb-uplist-thumb,.lb-preview-tw>.lb-preview-thumb.lb-preview-thumb{width:100%;height:100%;aspect-ratio:auto;}
   .lb-preview-tw .vdur,.lb-uplist-tw.is-shorts .vdur{font-size:8.5px;padding:0 3px;right:2px;bottom:2px;}
   .lb-preview-tw.is-shorts .vdur{display:none;} /* 21px 폭엔 숫자가 썸네일을 다 덮는다 */
-  .tvf-dur{position:absolute;right:4px;bottom:4px;z-index:2;font-size:10px;font-weight:600;padding:1px 4px;border-radius:3px;letter-spacing:0.2px;background:rgba(8,11,20,0.78);color:rgba(240,246,255,0.94);pointer-events:none;line-height:1.35;}
+  .tvf-dur{position:absolute;right:4px;bottom:4px;z-index:2;font-size:10px;font-weight:600;padding:1px 4px;border-radius:3px;letter-spacing:0.2px;background:rgba(11,11,14,0.78);color:rgba(240,246,255,0.94);pointer-events:none;line-height:1.35;}
   .tvf-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;} /* min-width:0 — 긴 제목이 썸네일을 밀지 않게 */
   .tvf-title{font-size:var(--fz-body);color:rgba(210,225,255,0.85);line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
   .tvf-meta{font-size:var(--fz-meta);color:rgba(160,182,224,0.66);line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -3562,7 +3562,7 @@
   .gc-collection-chip-mine{position:absolute;top:3px;right:3px;width:6px;height:6px;border-radius:50%;background:rgba(130,185,255,0.95);box-shadow:0 0 5px rgba(130,185,255,0.7);}
   .gc-collection-chip-name{margin-top:4px;font-size:11px;color:rgba(200,220,255,0.8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .gc-collection-chip-cnt{font-size:10px;color:rgba(120,145,190,0.54);}
-  .gc-collection-chip-del{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:rgba(20,26,48,0.72);border:0.5px solid rgba(130,185,255,0.3);color:rgba(210,228,255,0.85);font-size:13px;line-height:1;padding:0;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.15s,background 0.15s;}
+  .gc-collection-chip-del{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:rgba(27,27,30,0.72);border:0.5px solid rgba(130,185,255,0.3);color:rgba(210,228,255,0.85);font-size:13px;line-height:1;padding:0;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.15s,background 0.15s;}
   .gc-collection-chip:hover .gc-collection-chip-del{opacity:1;}
   .gc-collection-chip-del:hover{background:rgba(130,185,255,0.35);color:#fff;}
   /* 폰엔 hover가 없어 삭제 버튼이 영영 안 보이고 못 눌렀다(2026-09-05 UX감사 #1) — scrap-btn/col-btn과
@@ -3570,7 +3570,7 @@
   @media(hover:none){ .gc-collection-chip-del{opacity:0.6;} }
   #venue-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:80;display:none;align-items:center;justify-content:center;}
   #venue-overlay.open{display:flex;}
-  #venue-panel{position:relative;width:min(320px,calc(100vw - 40px));max-height:min(480px,calc(100vh - 80px));overflow-y:auto;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  #venue-panel{position:relative;width:min(320px,calc(100vw - 40px));max-height:min(480px,calc(100vh - 80px));overflow-y:auto;background:rgba(18,18,21,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   #venue-panel-close{position:absolute;top:14px;right:14px;}
   #venue-panel-list{display:flex;flex-direction:column;gap:8px;margin-top:6px;}
   .venue-item{background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:8px 10px;font-size:12px;color:rgba(200,220,255,0.85);}
@@ -3584,7 +3584,7 @@
   .trophy-btn:active{transform:scale(0.9);}
   #trophy-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:80;display:none;align-items:center;justify-content:center;}
   #trophy-overlay.open{display:flex;}
-  #trophy-panel{position:relative;width:min(320px,calc(100vw - 40px));max-height:min(480px,calc(100vh - 80px));overflow-y:auto;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  #trophy-panel{position:relative;width:min(320px,calc(100vw - 40px));max-height:min(480px,calc(100vh - 80px));overflow-y:auto;background:rgba(18,18,21,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   #trophy-panel-close{position:absolute;top:14px;right:14px;}
   #trophy-panel-tabs{margin-top:12px;}
   #trophy-panel-list{display:flex;flex-direction:column;gap:6px;margin-top:10px;}
@@ -3650,7 +3650,7 @@
   /* ── Filter panel (journal-sidebar 내) ───────────── */
   #filter-panel{display:none;}
   /* ── Zoom slider ────────────────────────────────── */
-  #zoom-ctrl{position:fixed;left:18px;bottom:24px;display:flex;flex-direction:column;align-items:center;gap:0;z-index:50;user-select:none;width:30px;background:rgba(12,16,36,0.60);border:1px solid rgba(140,165,220,0.16);border-radius:14px;padding:10px 0;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 2px 14px rgba(0,0,0,0.22);transition:left 0.32s cubic-bezier(0.4,0,0.2,1);}
+  #zoom-ctrl{position:fixed;left:18px;bottom:24px;display:flex;flex-direction:column;align-items:center;gap:0;z-index:50;user-select:none;width:30px;background:rgba(17,17,20,0.60);border:1px solid rgba(140,165,220,0.16);border-radius:14px;padding:10px 0;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 2px 14px rgba(0,0,0,0.22);transition:left 0.32s cubic-bezier(0.4,0,0.2,1);}
   #journal-sidebar.open~#zoom-ctrl{left:318px;} /* 저널 사이드바는 300px 그대로 */
   #zoom-ctrl.zoom-feed-open{left:calc(var(--fw-w,440px) - 2px);} /* 탐험 레일 폭 - 2px */
   /* 모바일 줌 컨트롤(2026-08-31, 사용자 요청) — 예전엔 모바일에서 통째로 숨겼는데(핀치 줌이 있으니),
@@ -3664,7 +3664,7 @@
       display:flex;
       left:auto;right:12px;
       bottom:calc(78px + env(safe-area-inset-bottom,0px)); /* 탭바(패딩 9+11 + 버튼) 위 */
-      background:rgba(12,16,36,0.52);
+      background:rgba(17,17,20,0.52);
     }
     /* 터치 타깃 확보 — 데스크톱 10px 점은 손가락으로 못 집는다([[모바일 터치 타겟 수정]]과 같은 이유).
        ⚠️ 다만 그때 시각 크기까지 18px로 키웠더니 "원이 너무 크고 눈에 띈다"는 제보(2026-09-02).
@@ -3813,22 +3813,22 @@
   }
   /* 계정 연결 안내(2026-09-29) — 즐겨찾기 3개째·10개째 한 번씩. 불투명 배경(blur 없음 — 발열 기준) */
   #link-nudge{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:190;
-    width:min(380px,calc(100vw - 24px));box-sizing:border-box;background:#171b36;border:0.5px solid rgba(255,255,255,0.12);border-radius:18px;
+    width:min(380px,calc(100vw - 24px));box-sizing:border-box;background:#1c1c1f;border:0.5px solid rgba(255,255,255,0.12);border-radius:18px;
     padding:16px 16px 12px;box-shadow:0 14px 40px rgba(0,0,0,0.5);font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   #link-nudge .ln-t{font-size:15px;font-weight:700;color:#eef4ff;letter-spacing:-.01em;}
   #link-nudge .ln-d{margin-top:6px;font-size:12.5px;line-height:1.5;color:rgba(195,210,240,0.75);word-break:keep-all;}
   #link-nudge .ln-btns{display:flex;gap:8px;margin-top:12px;align-items:center;}
-  #link-nudge .ln-go{flex:1;background:rgba(130,155,255,0.9);color:#0b0d20;border:none;border-radius:11px;padding:9px 0;font-size:13px;font-weight:600;font-family:inherit;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;}
+  #link-nudge .ln-go{flex:1;background:rgba(130,155,255,0.9);color:#0e0e11;border:none;border-radius:11px;padding:9px 0;font-size:13px;font-weight:600;font-family:inherit;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;}
   #link-nudge .ln-later{background:none;border:none;color:rgba(170,190,255,0.85);font-size:13px;font-family:inherit;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;padding:9px 6px;}
   @media(max-width:768px),(pointer:coarse) and (max-height:500px){#link-nudge{bottom:calc(84px + env(safe-area-inset-bottom,0px));}}
-  #share-toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(12px);background:rgba(20,24,40,0.94);color:rgba(230,238,255,0.95);font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:13px;font-weight:600;padding:9px 16px;border-radius:20px;box-shadow:0 6px 24px rgba(0,0,0,0.35);z-index:200;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;white-space:nowrap;}
+  #share-toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(12px);background:rgba(25,25,28,0.94);color:rgba(230,238,255,0.95);font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:13px;font-weight:600;padding:9px 16px;border-radius:20px;box-shadow:0 6px 24px rgba(0,0,0,0.35);z-index:200;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;white-space:nowrap;}
   #share-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   /* 업데이트 소식(2026-11-02) — 아래 작은 띠(누르면 시트) + 시트. 띠는 탭바 위 */
-  #upd-toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(12px);z-index:200;background:rgba(20,24,40,0.94);color:rgba(230,238,255,0.95);border:0.5px solid rgba(255,255,255,0.12);font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:13px;font-weight:600;padding:10px 16px;border-radius:20px;box-shadow:0 6px 24px rgba(0,0,0,0.35);opacity:0;transition:opacity .25s ease,transform .25s ease;white-space:nowrap;cursor:var(--kpu-cursor-pointer,pointer);}
+  #upd-toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(12px);z-index:200;background:rgba(25,25,28,0.94);color:rgba(230,238,255,0.95);border:0.5px solid rgba(255,255,255,0.12);font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:13px;font-weight:600;padding:10px 16px;border-radius:20px;box-shadow:0 6px 24px rgba(0,0,0,0.35);opacity:0;transition:opacity .25s ease,transform .25s ease;white-space:nowrap;cursor:var(--kpu-cursor-pointer,pointer);}
   #upd-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   #upd-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);z-index:70;display:none;align-items:center;justify-content:center;}
   #upd-overlay.open{display:flex;}
-  #upd-panel{position:relative;width:min(380px,calc(100vw - 40px));max-height:min(70vh,560px);display:flex;flex-direction:column;background:rgba(13,17,34,0.98);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;transition:transform .22s cubic-bezier(0.32,0.72,0,1);}
+  #upd-panel{position:relative;width:min(380px,calc(100vw - 40px));max-height:min(70vh,560px);display:flex;flex-direction:column;background:rgba(18,18,21,0.98);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;transition:transform .22s cubic-bezier(0.32,0.72,0,1);}
   .upd-handle{display:none;}
   #upd-list{overflow-y:auto;overscroll-behavior:contain;margin-top:10px;}
   .upd-sec+.upd-sec{margin-top:16px;padding-top:14px;border-top:0.5px solid rgba(255,255,255,0.07);}
@@ -3842,7 +3842,7 @@
     #upd-panel{width:100vw;max-width:100vw;border-radius:18px 18px 0 0;padding:14px 20px calc(env(safe-area-inset-bottom,0px) + 22px);max-height:72dvh;}
     .upd-handle{display:block;width:38px;height:4px;margin:0 auto 12px;border-radius:2px;background:rgba(255,255,255,0.28);}
   }
-  #discover-toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(12px);display:flex;align-items:center;gap:9px;background:rgba(20,24,40,0.94);color:rgba(230,238,255,0.95);font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:12px;font-weight:600;padding:6px 16px 6px 6px;border-radius:24px;box-shadow:0 6px 24px rgba(0,0,0,0.35);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;white-space:nowrap;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;}
+  #discover-toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(12px);display:flex;align-items:center;gap:9px;background:rgba(25,25,28,0.94);color:rgba(230,238,255,0.95);font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:12px;font-weight:600;padding:6px 16px 6px 6px;border-radius:24px;box-shadow:0 6px 24px rgba(0,0,0,0.35);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;white-space:nowrap;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;}
   #discover-toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto;}
   #discover-toast-thumb{width:44px;height:28px;border-radius:6px;object-fit:cover;flex-shrink:0;display:none;background:rgba(255,255,255,0.08);}
   #discover-toast-thumb.has-img{display:block;}
@@ -3855,10 +3855,10 @@
   #tt-info-side{flex:1;min-width:0;overflow:hidden;}
   /* 어드민 프로필 사진 업로드 버튼 — 크기는 #tt-insta-pic-wrap과 항상 동일해야 함(사진 있고 없고에 따라
      이 자리를 서로 대신 차지하므로) */
-  .tt-insta-cam-btn{flex-shrink:0;order:-1;width:78px;height:78px;border-radius:50%;border:1.5px dashed rgba(130,155,200,0.35);background:rgba(10,14,32,0.55);cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;display:flex;align-items:center;justify-content:center;color:rgba(140,165,220,0.56);transition:border-color .15s,color .15s;z-index:5;padding:0;}
+  .tt-insta-cam-btn{flex-shrink:0;order:-1;width:78px;height:78px;border-radius:50%;border:1.5px dashed rgba(130,155,200,0.35);background:rgba(15,15,18,0.55);cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;display:flex;align-items:center;justify-content:center;color:rgba(140,165,220,0.56);transition:border-color .15s,color .15s;z-index:5;padding:0;}
   .tt-insta-cam-btn:hover{border-color:rgba(140,165,220,0.65);color:rgba(180,205,255,0.85);}
   .tt-insta-cam-btn svg{width:20px;height:20px;pointer-events:none;}
-  .tt-insta-cam-btn.cam-overlay{position:absolute;width:20px;height:20px;left:calc(4px + 54px);top:54px;border:none;background:rgba(10,14,32,0.68);backdrop-filter:blur(3px);}
+  .tt-insta-cam-btn.cam-overlay{position:absolute;width:20px;height:20px;left:calc(4px + 54px);top:54px;border:none;background:rgba(15,15,18,0.68);backdrop-filter:blur(3px);}
   .tt-insta-cam-btn.cam-overlay svg{width:11px;height:11px;}
   .tt-insta-cam-btn.cam-uploading{opacity:.5;pointer-events:none;}
   #tt-insta-pic-wrap{display:block;position:relative;flex-shrink:0;width:78px;height:78px;border-radius:50%;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;text-decoration:none;}
@@ -3881,12 +3881,12 @@
   @keyframes tt-pic-shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
   /* 인스타 브랜드 그라데이션(주황~빨강) → 인디고~마젠타 성운 톤(2026-08-11 1차) → 그마저도 컬러감이
      남아있어서 블랙앤화이트에 가까운 톤으로 재조정(2026-08-11 2차, 사용자 제보) — 검정~은색~흰색을
-     도는 메탈릭한 느낌만 남김. 가장 어두운 지점이 배경(#060612 계열)이랑 거의 같은 밝기라 링과
+     도는 메탈릭한 느낌만 남김. 가장 어두운 지점이 배경(#07070a 계열)이랑 거의 같은 밝기라 링과
      배경 경계가 안 보인다는 재제보(2026-08-11 3차) — 최저 밝기만 살짝 올림. */
-  .tt-insta-ring{display:block;width:100%;height:100%;border-radius:50%;padding:1.5px;background:conic-gradient(from 0deg,#1e1e26,#50505c,#eceef2,#50505c,#1e1e26);}
-  #tt-insta-pic,#gc-pic{display:block;width:100%;height:100%;border-radius:50%;object-fit:cover;border:2px solid rgba(14,18,38,0.98);opacity:0;transition:opacity .3s ease;}
+  .tt-insta-ring{display:block;width:100%;height:100%;border-radius:50%;padding:1.5px;background:conic-gradient(from 0deg,#1f1f22,#50505c,#eceef2,#50505c,#1f1f22);}
+  #tt-insta-pic,#gc-pic{display:block;width:100%;height:100%;border-radius:50%;object-fit:cover;border:2px solid rgba(19,19,22,0.98);opacity:0;transition:opacity .3s ease;}
   /* 사진 미등록 멤버 — 본인 직캠 썸네일을 얼굴 쪽으로 확대해 원에 담는다(2026-10-13). 원 밖으로 넘치지 않게 래퍼를 자르고 테두리는 래퍼 그림자로 */
-  #tt-insta-pic-wrap.tt-pic-fromvid,#tt-insta-pic-wrap.tt-pic-fromshort{overflow:hidden;box-shadow:0 0 0 2px rgba(14,18,38,0.98),0 0 0 3px rgba(150,175,225,0.25);}
+  #tt-insta-pic-wrap.tt-pic-fromvid,#tt-insta-pic-wrap.tt-pic-fromshort{overflow:hidden;box-shadow:0 0 0 2px rgba(19,19,22,0.98),0 0 0 3px rgba(150,175,225,0.25);}
   /* 가로 직캠 썸네일은 왼쪽 아래에 자막·로고가 몰리고 얼굴이 살짝 오른쪽이라(사용자 관찰, 2026-10-14) 잘라 쓰는 창을 오른쪽으로 */
   #tt-insta-pic-wrap.tt-pic-fromvid #tt-insta-pic{border:none;object-position:66% 50%;transform:scale(1.3);transform-origin:58% 32%;}
   #tt-insta-pic-wrap.tt-pic-fromshort #tt-insta-pic{border:none;transform:scale(2.6);transform-origin:50% 34%;}
@@ -3978,7 +3978,7 @@
   /* ── Profile panel ───────────────────────────────── */
   #profile-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:69;display:none;align-items:center;justify-content:center;}
   #profile-overlay.open{display:flex;}
-  #profile-panel{width:min(320px,calc(100vw - 32px));background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:20px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:22px 22px 24px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  #profile-panel{width:min(320px,calc(100vw - 32px));background:rgba(18,18,21,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:20px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:22px 22px 24px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   .pp-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
   .pp-title{font-size:14px;font-weight:700;color:rgba(210,225,255,0.88);letter-spacing:.04em;}
   /* 선택 입력 안내 — 제목보다 한 톤 낮춰야 "필수"로 안 읽힌다. \n을 줄바꿈으로 살리려고 pre-line. */
@@ -3999,7 +3999,7 @@
   .pp-toggle-opt:hover{background:rgba(255,255,255,0.09);color:#fff;}
   .pp-toggle-opt.active{background:rgba(100,150,255,0.18);border-color:rgba(100,150,255,0.55);color:#fff;}
   /* 즐겨찾기 행 케밥(⋮) 팝업 — 기념일 수정 + 순서 이동. body에 붙여 패널 overflow 클리핑을 피함 */
-  .fav-kebab-menu{position:fixed;z-index:100000;background:rgba(18,22,38,0.98);border:0.5px solid rgba(140,165,220,0.22);border-radius:11px;padding:5px;box-shadow:0 10px 30px rgba(0,0,0,0.55);min-width:132px;backdrop-filter:blur(8px);}
+  .fav-kebab-menu{position:fixed;z-index:100000;background:rgba(23,23,26,0.98);border:0.5px solid rgba(140,165,220,0.22);border-radius:11px;padding:5px;box-shadow:0 10px 30px rgba(0,0,0,0.55);min-width:132px;backdrop-filter:blur(8px);}
   .fav-kebab-item{display:block;width:100%;text-align:left;background:none;border:0;color:rgba(200,216,240,0.9);font-family:inherit;font-size:13px;font-weight:600;letter-spacing:.02em;padding:10px 12px;border-radius:7px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;white-space:nowrap;transition:background .12s,color .12s;}
   .fav-kebab-item:hover{background:rgba(100,150,255,0.16);color:#fff;}
   #pp-nick-random{flex-shrink:0;background:rgba(255,255,255,0.055);border:0.5px solid rgba(255,255,255,0.09);border-radius:10px;color:rgba(170,195,240,0.71);font-size:15px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;transition:background .13s,transform .15s;padding:0;}
@@ -4020,7 +4020,7 @@
   /* ── 즐겨찾기 해제 확인 / 기념일 날짜 수정 / 계정 연결 확인 팝업 ────── */
   #unfav-confirm-overlay,#date-edit-overlay,#link-confirm-overlay,#logout-confirm-overlay,#generic-confirm-overlay,#generic-prompt-overlay,#welcome-choice-overlay,#welcome-login-overlay,#uc-card-overlay,#debut-card-overlay,#col-card-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:70;display:none;align-items:center;justify-content:center;}
   #unfav-confirm-overlay.open,#date-edit-overlay.open,#link-confirm-overlay.open,#logout-confirm-overlay.open,#generic-confirm-overlay.open,#generic-prompt-overlay.open,#welcome-choice-overlay.open,#welcome-login-overlay.open,#uc-card-overlay.open,#debut-card-overlay.open,#col-card-overlay.open{display:flex;}
-  #unfav-confirm-panel,#date-edit-panel,#link-confirm-panel,#logout-confirm-panel,#generic-confirm-panel,#generic-prompt-panel,#welcome-choice-panel,#welcome-login-panel{width:min(280px,calc(100vw - 40px));background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  #unfav-confirm-panel,#date-edit-panel,#link-confirm-panel,#logout-confirm-panel,#generic-confirm-panel,#generic-prompt-panel,#welcome-choice-panel,#welcome-login-panel{width:min(280px,calc(100vw - 40px));background:rgba(18,18,21,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   #unfav-confirm-msg,#link-confirm-msg,#logout-confirm-msg,#generic-confirm-msg,#welcome-choice-msg,#welcome-login-msg{font-size:var(--fz-body);color:rgba(160,182,222,0.72);line-height:1.5;margin-top:8px;}
   /* 줄바꿈 보존 — 어드민 스윕 확인창처럼 여러 줄 요약을 넘기는 호출이 생겼다(2026-08-31). 한 줄짜리
      기존 호출부엔 영향 없음. .wide는 그런 긴 요약일 때만 켜지는 옵트인 모드(_confirmDialog{wide:true}). */
@@ -4037,7 +4037,7 @@
   /* ── 피드백 보내기 ─────────────────────────────────── */
   #feedback-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:70;display:none;align-items:center;justify-content:center;}
   #feedback-overlay.open{display:flex;}
-  #feedback-panel{width:min(340px,calc(100vw - 40px));background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  #feedback-panel{width:min(340px,calc(100vw - 40px));background:rgba(18,18,21,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   /* Chemistry(2026-11-02) — 목록 화면 머리·섹션. 영상 칸은 목록 화면 그대로 */
   .chem-head{grid-column:1/-1;padding:6px 4px 4px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   .chem-people{display:flex;justify-content:center;align-items:flex-start;gap:0;}
@@ -4132,7 +4132,7 @@
   .drag-handle{background:none;border:none;color:rgba(140,165,220,0.38);cursor:grab;padding:4px 6px;flex-shrink:0;touch-action:none;font-size:13px;line-height:1;letter-spacing:1px;}
   .drag-handle:hover{color:rgba(180,200,240,0.66);}
   .drag-reorder-item{position:relative;}
-  .drag-reorder-item.dragging{opacity:1;background:rgba(18,22,46,0.98);box-shadow:0 8px 28px rgba(0,0,0,0.55);border-radius:8px;z-index:20;cursor:grabbing;}
+  .drag-reorder-item.dragging{opacity:1;background:rgba(23,23,26,0.98);box-shadow:0 8px 28px rgba(0,0,0,0.55);border-radius:8px;z-index:20;cursor:grabbing;}
   .drag-reorder-item.dragging .drag-handle{cursor:grabbing;color:rgba(160,195,255,0.9);}
   /* 콜렉션 상세(내 것일 때만) — 사진 그리드 대신 재생목록처럼 세로 리스트로 보여줘야 드래그 재정렬이
      자연스러워서(스포티파이/유튜브뮤직 플레이리스트 편집 화면 참고, 2026-08-12) 사진 그리드(.gc-ch-item)와
@@ -4165,7 +4165,7 @@
   /* ── 내 우주 카드 (2026-08-18) ─────────────────────────── */
   /* #uc-card-btn의 옛 점선 슬롯 스타일은 제거됨(2026-09-18) — #col-create-btn과 픽셀 단위로 같아서
      "새로 만들기" 칸으로 오인됐다. 지금은 .fav-hd-right 안의 .share-btn이라 별도 룰이 필요 없다. */
-  #uc-card-panel{width:min(340px,calc(100vw - 40px));background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  #uc-card-panel{width:min(340px,calc(100vw - 40px));background:rgba(18,18,21,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   #uc-card-imgwrap{margin-top:12px;border-radius:14px;overflow:hidden;background:rgba(255,255,255,0.03);aspect-ratio:4/5;display:flex;align-items:center;justify-content:center;}
   #uc-card-img{width:100%;height:100%;object-fit:cover;display:none;}
   #uc-card-img.loaded{display:block;}
@@ -4173,14 +4173,14 @@
   #uc-card-btns{display:flex;gap:8px;margin-top:14px;}
   /* 데뷔 기념일 카드 — 내 우주 카드(uc-card-*)와 동일 톤/구조, 세로 비율만 9:16으로 다르게(스토리 공유
      용도, 2026-08-19 사용자 요청 — "이미지 자체는 세로가 긴 게 좋을 듯"). */
-  #debut-card-panel{width:min(320px,calc(100vw - 40px));background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  #debut-card-panel{width:min(320px,calc(100vw - 40px));background:rgba(18,18,21,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   #debut-card-imgwrap{margin-top:12px;border-radius:14px;overflow:hidden;background:rgba(255,255,255,0.03);aspect-ratio:9/16;display:flex;align-items:center;justify-content:center;}
   #debut-card-img{width:100%;height:100%;object-fit:cover;display:none;}
   #debut-card-img.loaded{display:block;}
   #debut-card-status{font-size:12px;color:rgba(160,182,222,0.65);margin-top:10px;text-align:center;min-height:14px;}
   #debut-card-btns{display:flex;gap:8px;margin-top:14px;}
   /* 컬렉션 공유 카드 — 위 두 카드와 동일 톤/구조, 4:5(인스타 피드 비율, 2026-08-21). */
-  #col-card-panel{width:min(340px,calc(100vw - 40px));background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  #col-card-panel{width:min(340px,calc(100vw - 40px));background:rgba(18,18,21,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   #col-card-imgwrap{margin-top:12px;border-radius:14px;overflow:hidden;background:rgba(255,255,255,0.03);aspect-ratio:4/5;display:flex;align-items:center;justify-content:center;}
   #col-card-img{width:100%;height:100%;object-fit:cover;display:none;}
   #col-card-img.loaded{display:block;}
@@ -4193,7 +4193,7 @@
   #col-picker{position:fixed;inset:0;z-index:9990;display:none;align-items:flex-end;justify-content:center;}
   #col-picker.open{display:flex;}
   #col-picker-bg{position:absolute;inset:0;background:rgba(0,0,0,0.5);}
-  #col-picker-sheet{position:relative;width:100%;background:rgba(14,18,38,0.98);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-radius:20px 20px 0 0;padding-bottom:env(safe-area-inset-bottom,0px);max-height:72vh;display:flex;flex-direction:column;z-index:1;}
+  #col-picker-sheet{position:relative;width:100%;background:rgba(19,19,22,0.98);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-radius:20px 20px 0 0;padding-bottom:env(safe-area-inset-bottom,0px);max-height:72vh;display:flex;flex-direction:column;z-index:1;}
   @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){#col-picker-sheet{max-width:380px;border-radius:18px;margin-bottom:100px;}}
   .col-picker-hd{padding:16px 18px 10px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
   .col-picker-title{font-size:13px;font-weight:700;color:rgba(200,220,255,0.88);letter-spacing:.03em;}
@@ -4263,7 +4263,7 @@
   @media(hover:none){
     .scrap-btn,.col-btn{display:none;}
   }
-  #col-quick-toast{position:fixed;bottom:calc(80px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(10px);background:rgba(16,20,44,0.96);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:0.5px solid rgba(140,170,240,0.18);border-radius:14px;padding:10px 16px;display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(200,220,255,0.88);white-space:nowrap;z-index:120;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;}
+  #col-quick-toast{position:fixed;bottom:calc(80px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(10px);background:rgba(21,21,24,0.96);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:0.5px solid rgba(140,170,240,0.18);border-radius:14px;padding:10px 16px;display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(200,220,255,0.88);white-space:nowrap;z-index:120;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;}
   #col-quick-toast.show{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0);}
   #col-quick-toast-check{color:rgba(130,185,255,0.9);font-size:13px;}
   #col-quick-toast-name{font-weight:600;max-width:150px;overflow:hidden;text-overflow:ellipsis;}
@@ -4283,7 +4283,7 @@
       /* 오른쪽 카드 레일(#side-panel)과 좌우 짝이라 폭을 맞춘다: 320→380(2026-09-09) → 440(2026-10-02).
          ⚠️ 카드 폭을 바꾸면 여기·아래 translateX·#zoom-ctrl.zoom-feed-open도 같이 바꿀 것. */
       display:flex;inset:auto;top:0;left:0;height:100%;width:var(--fw-w,440px); /* 웹 ≥1024는 _feedWideSync가 3단계 폭을 --fw-w로 넣는다(2026-11-03) */
-      background:rgba(14,18,34,0.92);
+      background:rgba(19,19,22,0.92);
       backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
       border-right:0.5px solid rgba(255,255,255,0.10);
       box-shadow:4px 0 24px rgba(0,0,0,0.35);
@@ -4300,9 +4300,9 @@
        #fav-list 등 다른 패널이 쓰는 손잡이 패턴(rgba(140,165,220,...))을 따르되, 선반 사이 틈을 정확히
        노리지 않고도 드래그로 내릴 수 있게 폭만 살짝 더 넓힌다(3px→6px, 목록 하나보다 패널 전체 스크롤이라
        그랩 타겟이 더 커야 함). 트랙도 옅게 남겨 "더 있다"는 게 호버 없이도 보이게 한다. */
-    .feed-pane{padding-bottom:20px;scrollbar-width:thin;scrollbar-color:rgba(140,165,220,0.28) rgba(10,13,28,0.70);}
+    .feed-pane{padding-bottom:20px;scrollbar-width:thin;scrollbar-color:rgba(140,165,220,0.28) rgba(14,14,17,0.70);}
     .feed-pane::-webkit-scrollbar{-webkit-appearance:none;width:6px;}
-    .feed-pane::-webkit-scrollbar-track{-webkit-appearance:none;background:rgba(10,13,28,0.70);border-radius:3px;}
+    .feed-pane::-webkit-scrollbar-track{-webkit-appearance:none;background:rgba(14,14,17,0.70);border-radius:3px;}
     .feed-pane::-webkit-scrollbar-thumb{-webkit-appearance:none;background:rgba(140,165,220,0.28);border-radius:3px;}
     .feed-pane::-webkit-scrollbar-thumb:hover{background:rgba(155,180,240,0.48);}
   }
@@ -4311,7 +4311,7 @@
   body.feed-open:not(:has(#feed-overlay.peek)) #mob-top-bar{display:none!important;}
   /* #feed-body와 배경/블러가 달라서(0.97 vs 0.78 + blur) 그 경계에 얇은 색 차이가 보이는 문제가
      있었음(2026-08-13, 사용자 제보) — 같은 배경/블러로 맞춰서 손잡이만 떠있는 이음새 없는 시트로 보이게. */
-  #feed-hd{display:flex;align-items:center;justify-content:flex-end;padding:calc(env(safe-area-inset-top,0px) + 16px) 20px 14px;background:rgba(8,11,24,0.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);flex-shrink:0;}
+  #feed-hd{display:flex;align-items:center;justify-content:flex-end;padding:calc(env(safe-area-inset-top,0px) + 16px) 20px 14px;background:rgba(12,12,15,0.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);flex-shrink:0;}
   #feed-peek-handle{display:none;}
   #feed-close{display:none;}
   #feed-close:active{color:rgba(200,218,255,0.85);transform:scale(0.86);transition:transform .07s;}
@@ -4319,7 +4319,7 @@
      여백이 80px로 박혀 있으면 탭바가 사라져도 빈칸이 그대로 남아 "숨은 의미"가 없다.
      ⚠️ env(safe-area-inset-bottom)을 따로 더하지 않는다 — --sheet-bottom은 탭바의 offsetHeight
      실측값이고 탭바 자신의 padding-bottom이 이미 safe-area를 품고 있어서, 더하면 이중 계산이 된다. */
-  #feed-body{flex:1;overflow:hidden;background:rgba(8,11,24,0.88);display:flex;flex-direction:column;}
+  #feed-body{flex:1;overflow:hidden;background:rgba(12,12,15,0.88);display:flex;flex-direction:column;}
   /* 2탭(For You / Discover) — 스크롤해도 위에 붙어있게 sticky. 배경은 #feed-body와 맞춰 콘텐츠가 비쳐도 안 지저분하게. */
   /* 탐험 패널 탭 — X(트위터)식 언더라인 방식(2026-08-31 사용자 요청). 예전엔 알약 버튼(배경+테두리)이라
      존재감이 컸는데, 배경을 거의 없애고 **탭이 폭을 정확히 반씩 나눠 갖고 활성 탭 글자 밑에만 밑줄**이
@@ -4327,7 +4327,7 @@
      최상위 탭이고, .seg-control은 목록 안의 필터다([[세그먼트 컨트롤 컴포넌트]]).
      ⚠️ 밑줄은 버튼이 아니라 **안쪽 span**에 건다. 버튼에 걸면 반쪽 폭 전체에 밑줄이 그어져서
         X처럼 안 보인다(글자 폭에 맞아야 함). */
-  #feed-tabs{position:sticky;top:0;z-index:3;display:flex;flex-shrink:0;gap:0;padding:0;background:rgba(8,11,24,0.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:0.5px solid rgba(255,255,255,0.09);}
+  #feed-tabs{position:sticky;top:0;z-index:3;display:flex;flex-shrink:0;gap:0;padding:0;background:rgba(12,12,15,0.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:0.5px solid rgba(255,255,255,0.09);}
   .feed-tab{flex:1 1 0;display:flex;align-items:center;justify-content:center;padding:14px 4px 0;border:none;border-radius:0;background:none;color:rgba(200,215,250,0.52);font-size:14px;font-weight:700;letter-spacing:.01em;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;-webkit-tap-highlight-color:transparent;transition:color .16s,background .16s;}
   .feed-tab>span{position:relative;display:inline-block;padding-bottom:13px;white-space:nowrap;}
   /* 밑줄은 탭마다 따로가 아니라 하나(#feed-tab-ind)가 두 글자 사이를 미끄러진다(2026-10-23, X식 가로 페이징 — 위치·폭은 _feedTabPos가 계산) */
@@ -4370,10 +4370,10 @@
      인디고~마젠타 성운 톤으로 바꿨다가(2026-08-11 1차), 그마저 컬러감이 남아있다는 재재제보(2차)로
      .tt-insta-ring과 같은 블랙앤화이트 메탈릭 톤으로 통일. 밝기 범위는 원래 톤 그대로 유지.
      최저 밝기가 배경과 안 구분된다는 재제보(2026-08-11 3차)로 .tt-insta-ring과 함께 최저 밝기만 올림. */
-  .feed-strip-thumb-wrap{width:68px;height:68px;border-radius:50%;padding:2px;flex-shrink:0;position:relative;overflow:hidden;background:conic-gradient(from 180deg,#1e1e26,#38383f,#48484f,#26262c,#1e1e26);}
-  .feed-strip-thumb{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;border:2px solid #0b0f1f;box-sizing:border-box;opacity:0;transition:opacity .25s ease;}
+  .feed-strip-thumb-wrap{width:68px;height:68px;border-radius:50%;padding:2px;flex-shrink:0;position:relative;overflow:hidden;background:conic-gradient(from 180deg,#1f1f22,#39393c,#48484f,#27272a,#1f1f22);}
+  .feed-strip-thumb{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;border:2px solid #101013;box-sizing:border-box;opacity:0;transition:opacity .25s ease;}
   .feed-strip-thumb.loaded{opacity:1;}
-  .feed-strip-icon{width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;background:rgba(16,20,38,0.96);border:2px solid #0b0f1f;box-sizing:border-box;}
+  .feed-strip-icon{width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;background:rgba(21,21,24,0.96);border:2px solid #101013;box-sizing:border-box;}
   .feed-strip-name{font-size:11px;font-weight:600;color:rgba(215,228,255,0.85);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:78px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   /* 둘째 서브줄(생년월일)은 윗줄(그룹명)에 더 붙여서 한 덩어리로 읽히게 — item gap 7px를 상쇄 */
   .feed-strip-sub+.feed-strip-sub{margin-top:-7px;}
@@ -4497,7 +4497,7 @@
   .fnh-media .feed-news-badge,.fnr-media .feed-news-badge,.feed-card-thumb-wrap .feed-news-badge{position:absolute;top:8px;left:8px;z-index:2;min-width:0;}
   /* 썸네일 위 뱃지는 배경을 어둡게(2026-10-15, 사용자: 조회수 뱃지 글자가 안 보임) — 색 배경 0.13은 사진이 그대로 비쳐 글자가 묻혔다.
      종류 구분은 글자색으로 그대로 둔다. 목록 줄 안 뱃지(.fnr-row 등)는 바탕이 어두워 원래 값 유지. */
-  .fnh-media .feed-news-badge,.fnr-media .feed-news-badge,.feed-card-thumb-wrap .feed-news-badge{background:rgba(10,14,28,0.8);}
+  .fnh-media .feed-news-badge,.fnr-media .feed-news-badge,.feed-card-thumb-wrap .feed-news-badge{background:rgba(14,14,17,0.8);}
   /* backdrop-filter 금지(2026-11-02) — 뒤 썸네일을 별도 레이어로 떼어 블러 처리해야 해서 조회수 배지 달린 쇼츠가 아이폰에서 뿌옇게 그려졌다. 불투명도만 올림. */
   .feed-news-more{display:block;margin:4px 20px 2px;padding:8px 0;width:calc(100% - 40px);background:none;border:0;border-top:0.5px solid rgba(255,255,255,0.06);color:rgba(150,175,222,0.8);font-size:12px;font-weight:600;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   /* 조회수 돌파 쇼츠 2열(2026-10-12) — 영상 그리드(.feed-grid)와 같은 세로 카드. 좌우는 아래 앨범 그리드(20px)에 맞춘다. */
@@ -4594,7 +4594,7 @@
   .feed-card-dur{
     position:absolute;right:5px;bottom:5px;z-index:3;
     font-size:10px;font-weight:600;padding:1px 4px;border-radius:3px;letter-spacing:0.2px;
-    background:rgba(8,11,20,0.78);color:rgba(240,246,255,0.94);pointer-events:none;
+    background:rgba(11,11,14,0.78);color:rgba(240,246,255,0.94);pointer-events:none;
   }
   .feed-card-thumb.loaded{opacity:1;}
   .feed-card-icon-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:34px;background:linear-gradient(135deg,rgba(100,130,255,0.16),rgba(255,255,255,0.03));}
@@ -4691,7 +4691,7 @@
   #ob-sr{
     position:fixed;left:24px;right:24px;
     top:calc(env(safe-area-inset-top,0px) + 76px + 50px);
-    background:rgba(14,18,36,0.97);border-radius:0 0 16px 16px;
+    background:rgba(19,19,22,0.97);border-radius:0 0 16px 16px;
     border:0.5px solid rgba(255,255,255,0.09);border-top:none;
     backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);
     box-shadow:0 8px 32px rgba(0,0,0,0.45);
@@ -4712,12 +4712,12 @@
       border-radius:20px 20px 0 0;
       border-top:0.5px solid rgba(255,255,255,0.10);
       box-shadow:0 -8px 32px rgba(0,0,0,0.35);
-      background:rgba(8,11,24,0.97);
+      background:rgba(12,12,15,0.97);
     }
     /* peek 상태: X버튼 없으니 헤더 완전 축소, 핸들 바로 아래에 콘텐츠 */
     #feed-overlay.open.peek #feed-hd{padding:0;height:0;overflow:hidden;}
     /* peek 상태: 불투명하게(backdrop-filter 제거) */
-    #feed-overlay.open.peek #feed-body{background:rgba(8,11,24,0.97);backdrop-filter:none;-webkit-backdrop-filter:none;}
+    #feed-overlay.open.peek #feed-body{background:rgba(12,12,15,0.97);backdrop-filter:none;-webkit-backdrop-filter:none;}
     /* 전체 열림(non-peek): 오버레이 바닥을 --sheet-bottom에 물려서 카드 시트처럼 탭바 숨을 때 같이 확장.
        padding-bottom도 맞춰 줄여 빈칸 없이 / safe-area는 오버레이가 덮지 않는 구간이므로 env()로 보정. */
     #feed-overlay.open:not(.peek){bottom:var(--sheet-bottom,73px);}
@@ -4727,7 +4727,7 @@
     /* 완전 불투명(2026-10-15, 사용자 — 우주가 비침). 10-09 스크롤 성능 때문에 #feed-body 블러를 빼면서 0.88만 남아
        별이 또렷하게 비쳤다. 0.97로도 행성이 희미하게 남았고, 손잡이 줄(#feed-overlay 자체)은 배경이 없어 그대로 보였다.
        블러는 계속 빼고(성능) 패널 바탕·헤더·본문을 같은 불투명 색으로. */
-    #feed-overlay.open,#feed-overlay.open #feed-body,#feed-overlay.open #feed-hd{background:rgb(8,11,24);backdrop-filter:none;-webkit-backdrop-filter:none;}
+    #feed-overlay.open,#feed-overlay.open #feed-body,#feed-overlay.open #feed-hd{background:rgb(12,12,15);backdrop-filter:none;-webkit-backdrop-filter:none;}
     /* peek든 전체든 손잡이는 항상 떠있게(#mob-sheet-handle과 동일 패턴) — "끌 수 있다"는 걸 늘 알려줌 */
     #feed-overlay.open #feed-peek-handle{display:block;width:36px;height:4px;background:rgba(255,255,255,0.18);border-radius:2px;margin:10px auto 0;}
   }
@@ -4854,7 +4854,7 @@
      겹침은 원 지름의 약 1/3(-12px)만 — 더 겹치면 얼굴이 가려지고 덜 겹치면 목록이 옆으로 길어진다.
      테두리를 배경색으로 둘러 원끼리 경계가 분명하게 보이도록 한다. */
   .fav-avatar-stack{display:flex;align-items:center;flex-shrink:0;}
-  .fav-avatar-stack .fav-avatar{border:2px solid #0d1226;box-sizing:border-box;}
+  .fav-avatar-stack .fav-avatar{border:2px solid #131316;box-sizing:border-box;}
   .fav-avatar-stack .fav-avatar+.fav-avatar{margin-left:-12px;}
   /* 뒤쪽 원이 앞쪽 위로 올라오지 않게 — 왼쪽이 위에 오도록 쌓는다(읽는 방향과 같게) */
   .fav-avatar-stack .fav-avatar:nth-child(1){z-index:3;}
@@ -4870,7 +4870,7 @@
         그 위엔 아무것도 안 뜨므로 vid-tag(82)보다 낮게 둔다(2026-08-28). ── */
   #ev-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:81;display:none;align-items:center;justify-content:center;}
   #ev-overlay.open{display:flex;}
-  #ev-panel{width:min(380px,calc(100vw - 32px));max-height:86vh;overflow-y:auto;background:rgba(13,17,34,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  #ev-panel{width:min(380px,calc(100vw - 32px));max-height:86vh;overflow-y:auto;background:rgba(18,18,21,0.97);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);border-radius:18px;box-shadow:0 16px 56px rgba(0,0,0,0.72);border:0.5px solid rgba(255,255,255,0.10);padding:20px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   #ev-panel .pp-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
   #ev-close{background:none;border:none;color:rgba(155,178,228,0.6);font-size:15px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;padding:0 2px;line-height:1;}
   #ev-close:hover{color:rgba(210,225,255,0.9);}
@@ -4951,7 +4951,7 @@
 .mx-card:active{transform:scale(0.96);}
 .mx-card-av{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;}
 /* 사진 없는 멤버 = 멤버 색 구슬. 왼쪽 위 하이라이트 + 오른쪽 아래 그늘로 우주의 행성처럼 입체감만, 글자 없음 */
-.mx-card-av.is-orb{background:radial-gradient(circle at 34% 30%,rgba(255,255,255,0.5),rgba(255,255,255,0) 40%),radial-gradient(circle at 50% 50%,var(--orb) 0 55%,color-mix(in srgb,var(--orb) 50%,#0a0b16) 100%);box-shadow:inset -6px -8px 14px rgba(0,0,0,0.32),0 0 14px color-mix(in srgb,var(--orb) 30%,transparent);}
+.mx-card-av.is-orb{background:radial-gradient(circle at 34% 30%,rgba(255,255,255,0.5),rgba(255,255,255,0) 40%),radial-gradient(circle at 50% 50%,var(--orb) 0 55%,color-mix(in srgb,var(--orb) 50%,#0c0c0f) 100%);box-shadow:inset -6px -8px 14px rgba(0,0,0,0.32),0 0 14px color-mix(in srgb,var(--orb) 30%,transparent);}
 .mx-card-av img{width:100%;height:100%;object-fit:cover;}
 .mx-card-name{font-size:12px;font-weight:600;color:#fff;line-height:1.3;word-break:keep-all;}
 .mx-card-group{font-size:10px;color:rgba(255,255,255,0.45);word-break:keep-all;}
@@ -5074,7 +5074,7 @@
 .mx-fig.intro .mx-med,.mx-fig.intro .mx-med-lbl,.mx-fig.intro .mx-young{animation:mxFade .6s ease-out 1s both;}
 @keyframes mxIn{from{opacity:0;transform:translateY(6px);}}
 @keyframes mxFade{from{opacity:0;}}
-.mx-tip{all:unset;box-sizing:border-box;position:absolute;transform:translate(-50%,calc(-100% - 12px));display:flex;flex-direction:column;gap:1px;padding:7px 10px 8px;border-radius:10px;background:rgba(22,22,30,0.94);border:1px solid rgba(255,255,255,0.14);box-shadow:0 6px 20px rgba(0,0,0,.45);backdrop-filter:blur(6px);cursor:var(--kpu-cursor-pointer,pointer);white-space:nowrap;z-index:2;}
+.mx-tip{all:unset;box-sizing:border-box;position:absolute;transform:translate(-50%,calc(-100% - 12px));display:flex;flex-direction:column;gap:1px;padding:7px 10px 8px;border-radius:10px;background:rgba(23,23,26,0.94);border:1px solid rgba(255,255,255,0.14);box-shadow:0 6px 20px rgba(0,0,0,.45);backdrop-filter:blur(6px);cursor:var(--kpu-cursor-pointer,pointer);white-space:nowrap;z-index:2;}
 .mx-tip.below{transform:translate(-50%,12px);}
 .mx-tip b{font-size:13px;font-weight:600;color:#fff;}
 .mx-tip span{font-size:11px;color:rgba(255,255,255,0.55);}
@@ -5148,7 +5148,7 @@
    (쇼츠 화면은 같은 버튼들을 id로 오른쪽 세로 줄에 고정 배치하므로 DOM을 옮기면 그쪽이 깨진다). 가끔 쓰는 버튼(입덕·전체·소리·편집)은
    그리드에서 빼고 ··· 메뉴가 원래 버튼을 대신 눌러 준다. 이전/다음은 아래 목록 머리의 ‹ › 로. */
 #yt-lb-people,#yt-lb-more-wrap{display:none;}
-#yt-lightbox.lb-browse.open{background:linear-gradient(180deg,rgba(var(--lb-tint,8,9,26),0.24) 0,rgba(8,9,26,1) 420px),#08091a;}
+#yt-lightbox.lb-browse.open{background:linear-gradient(180deg,rgba(var(--lb-tint,8,9,26),0.24) 0,rgba(13,13,16,1) 420px),#0d0d10;}
 #yt-lightbox.lb-browse #yt-lb-main{display:grid;grid-template-columns:minmax(0,1fr) 44px 44px 44px;column-gap:2px;align-items:center;}
 #yt-lightbox.lb-browse #yt-lb-video-box{grid-column:1/-1;grid-row:1;}
 #yt-lightbox.lb-browse #yt-lb-video-box.is-shorts{justify-self:center;}
@@ -5170,7 +5170,7 @@
 #yt-lightbox.lb-browse #yt-lb-more-wrap{display:block;grid-column:4;grid-row:3;margin-top:10px;position:relative;justify-self:center;}
 #yt-lb-more svg{width:20px;height:20px;fill:currentColor;}
 #yt-lightbox.lb-browse #yt-lb-scrap:hover,#yt-lightbox.lb-browse #yt-lb-rotate:hover,#yt-lightbox.lb-browse #yt-lb-col:hover,#yt-lightbox.lb-browse #yt-lb-more:hover{background:rgba(255,255,255,0.08);}
-#yt-lb-more-panel{position:absolute;top:calc(100% + 4px);right:0;z-index:6;min-width:196px;padding:6px;border-radius:14px;background:#171a30;border:1px solid rgba(255,255,255,0.1);box-shadow:0 14px 34px rgba(0,0,0,0.55);display:flex;flex-direction:column;max-height:min(280px,60vh);overflow-y:auto;}
+#yt-lb-more-panel{position:absolute;top:calc(100% + 4px);right:0;z-index:6;min-width:196px;padding:6px;border-radius:14px;background:#1b1b1e;border:1px solid rgba(255,255,255,0.1);box-shadow:0 14px 34px rgba(0,0,0,0.55);display:flex;flex-direction:column;max-height:min(280px,60vh);overflow-y:auto;}
 #yt-lb-more-panel[hidden]{display:none;}
 .lb-more-item{all:unset;box-sizing:border-box;display:flex;align-items:center;min-height:44px;padding:0 12px;border-radius:9px;font-size:14px;color:rgba(228,236,255,0.92);cursor:var(--kpu-cursor-pointer,pointer);white-space:nowrap;}
 .lb-more-item:hover{background:rgba(255,255,255,0.07);}
@@ -5193,12 +5193,12 @@
 .lb-person:active{background:rgba(255,255,255,0.06);}
 .lb-person:focus-visible{outline:2px solid rgba(150,180,255,0.85);outline-offset:1px;}
 .lb-person-av{width:48px;height:48px;border-radius:50%;overflow:hidden;flex-shrink:0;
-  background:radial-gradient(circle at 34% 30%,rgba(255,255,255,0.5),rgba(255,255,255,0) 40%),radial-gradient(circle at 50% 50%,var(--orb) 0 55%,color-mix(in srgb,var(--orb) 50%,#0a0b16) 100%);}
-.lb-person-av.has-pic{background:#1a1d33;}
+  background:radial-gradient(circle at 34% 30%,rgba(255,255,255,0.5),rgba(255,255,255,0) 40%),radial-gradient(circle at 50% 50%,var(--orb) 0 55%,color-mix(in srgb,var(--orb) 50%,#0c0c0f) 100%);}
+.lb-person-av.has-pic{background:#1e1e21;}
 .lb-person-av img{width:100%;height:100%;object-fit:cover;display:block;}
 .lb-person-av.is-thumb img{object-position:66% 50%;transform:scale(1.3);transform-origin:58% 30%;} /* 직캠 썸네일은 얼굴 쪽 확대 — 검색 아바타(.sr-av.is-thumb)와 같은 값 */
 .lb-person-av.is-short img{transform:scale(2.6);transform-origin:50% 32%;}
-.lb-person.is-group .lb-person-av{box-shadow:0 0 0 2px #0e1024,0 0 0 3px rgba(255,255,255,0.45);}
+.lb-person.is-group .lb-person-av{box-shadow:0 0 0 2px #111114,0 0 0 3px rgba(255,255,255,0.45);}
 .lb-person-nm{max-width:100%;font-size:11px;color:rgba(220,232,255,0.82);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;}
 #yt-lightbox.lb-browse #yt-lb-uplist-preview{grid-column:1/-1;grid-row:6;}
 /* 곡 카드(2026-10-20) — 보던 영상의 곡이 든 앨범으로. 출연자 카드 아래 한 줄. 곡 키가 없는 영상은 hidden */
@@ -5529,7 +5529,7 @@
 }
 
 /* 재생 화면 — 유튜브 외부 재생 금지 안내(app.js _lbEmbedBlocked, 2026-11-04) */
-#yt-lb-video-box .yt-lb-blocked{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:rgba(6,8,18,.94);color:#e6ecff;text-align:center;padding:16px;}
+#yt-lb-video-box .yt-lb-blocked{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:rgba(8,8,11,.94);color:#e6ecff;text-align:center;padding:16px;}
 #yt-lb-video-box .yt-lb-blocked p{margin:0;font-size:14px;font-weight:600;}
 #yt-lb-video-box .yt-lb-blocked a{padding:9px 18px;border-radius:20px;background:rgba(255,255,255,.12);color:#fff;text-decoration:none;font-size:13px;font-weight:600;}
 /* 웹(마우스) — 탐험 가로 선반 아래 얇은 스크롤바(2026-11-05 사용자 "세로 휠이 막혀 불편, 보조로 가로 스크롤바").

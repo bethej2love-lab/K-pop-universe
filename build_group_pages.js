@@ -480,7 +480,7 @@ ${LIST_FWD}
 <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>
 <style>
   :root{color-scheme:dark;}
-  body{margin:0;background:#09091a;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
+  body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
   .wrap{max-width:640px;margin:0 auto;padding:32px 20px 20px;}
   .brand{font-size:12px;letter-spacing:.08em;color:rgba(150,175,255,0.6);text-decoration:none;}
   h1{font-size:28px;margin:14px 0 2px;color:#fff;}
@@ -496,7 +496,7 @@ ${LIST_FWD}
   .member-list a{color:rgba(210,225,255,0.95);text-decoration:none;}
   .tag{font-size:10px;color:rgba(150,175,255,0.6);}
   .yr{color:rgba(150,175,255,0.55);font-size:12px;}
-  .cta-dock{position:sticky;bottom:0;z-index:5;margin-top:30px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#09091a 62%,rgba(9,9,26,0));}
+  .cta-dock{position:sticky;bottom:0;z-index:5;margin-top:30px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#0a0a0d 62%,rgba(10,10,13,0));}
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
@@ -728,7 +728,7 @@ ${LIST_FWD}
 <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>
 <style>
   :root{color-scheme:dark;}
-  body{margin:0;background:#09091a;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
+  body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
   .wrap{max-width:640px;margin:0 auto;padding:32px 20px 20px;}
   .brand{font-size:12px;letter-spacing:.08em;color:rgba(150,175,255,0.6);text-decoration:none;}
   h1{font-size:28px;margin:14px 0 2px;color:#fff;}
@@ -744,7 +744,7 @@ ${LIST_FWD}
   .member-list a{color:rgba(210,225,255,0.95);text-decoration:none;}
   .tag{font-size:10px;color:rgba(150,175,255,0.6);}
   .yr{color:rgba(150,175,255,0.55);font-size:12px;}
-  .cta-dock{position:sticky;bottom:0;z-index:5;margin-top:30px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#09091a 62%,rgba(9,9,26,0));}
+  .cta-dock{position:sticky;bottom:0;z-index:5;margin-top:30px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#0a0a0d 62%,rgba(10,10,13,0));}
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
@@ -844,7 +844,7 @@ function writeSoloDisambigPages() {
 <meta name="robots" content="noindex,follow">
 <meta property="og:title" content="${escHtml(name)} — K-POP UNIVERSE">
 <meta property="og:image" content="${ogImageForMember(list[0].a)}">
-<style>body{font-family:system-ui,sans-serif;background:#0b0f20;color:#dfe7ff;padding:40px 20px;max-width:560px;margin:auto}a{color:#9fb8ff}li{margin:10px 0}</style>
+<style>body{font-family:system-ui,sans-serif;background:#101013;color:#dfe7ff;padding:40px 20px;max-width:560px;margin:auto}a{color:#9fb8ff}li{margin:10px 0}</style>
 </head><body><h1>${escHtml(name)}</h1><p>${en ? 'Several artists share this name:' : '같은 이름의 아티스트가 여러 명이에요:'}</p><ul>
 ${items}
 </ul></body></html>
@@ -968,7 +968,7 @@ function hubPageHtml(lang, relLinks) {
 <link rel="icon" href="${SITE}/icons/icon-192.png" type="image/png">
 <style>
   :root{color-scheme:dark;}
-  body{margin:0;background:#09091a;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
+  body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
   .wrap{max-width:760px;margin:0 auto;padding:32px 20px 80px;}
   .brand{font-size:12px;letter-spacing:.08em;color:rgba(150,175,255,0.6);text-decoration:none;}
   h1{font-size:26px;margin:14px 0 6px;color:#fff;}
@@ -1131,7 +1131,7 @@ function relPageHtml(o) {
 <link rel="icon" href="${SITE}/icons/icon-192.png" type="image/png">
 <style>
   :root{color-scheme:dark;}
-  body{margin:0;background:#09091a;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
+  body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
   .wrap{max-width:720px;margin:0 auto;padding:32px 20px 20px;}
   .brand{font-size:12px;letter-spacing:.08em;color:rgba(150,175,255,0.6);text-decoration:none;}
   h1{font-size:24px;margin:14px 0 4px;color:#fff;}
@@ -1142,7 +1142,7 @@ function relPageHtml(o) {
   .vid-list li{padding:5px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);font-size:13.5px;}
   .vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}
   .yr{color:rgba(150,175,255,0.55);font-size:12px;}
-  .cta-dock{position:sticky;bottom:0;z-index:5;margin-top:28px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#09091a 62%,rgba(9,9,26,0));}
+  .cta-dock{position:sticky;bottom:0;z-index:5;margin-top:28px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#0a0a0d 62%,rgba(10,10,13,0));}
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:36px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}

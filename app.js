@@ -126,7 +126,8 @@ document.body.appendChild(renderer.domElement);
 // 그라데이션은 kpop_universe.css의 body 배경과 **같은 값**이다(ellipse at 50% 38%, farthest-corner) — 캔버스를
 // 숨기는 순간(로딩 연출·visibility 토글)에도 이음매 없이 같은 화면이어야 해서. 바꾸면 둘 다 바꿀 것.
 // ⚠️ 투명 PNG가 필요한 캡처(_renderMyUniverseSnapshotDataURL 등)는 그동안만 배경을 뺀다(_snapRender).
-const _UNI_BG_STOPS=[[0,'#12112a'],[0.30,'#0d0c20'],[0.60,'#09091a'],[1,'#060612']];
+// 2026-11-12 사용자 "남색검정의 뿌연 느낌이 별로 — 검정에 가깝게"(참고 사진: 천체 사진의 진짜 검정). 예전 #12112a→#060612 남색.
+const _UNI_BG_STOPS=[[0,'#0c0c0f'],[0.30,'#08080a'],[0.60,'#050507'],[1,'#020203']];
 let _uniBgTex=null;
 function _buildUniverseBg(){
   const w=Math.max(2,Math.round(window.innerWidth/2)),h=Math.max(2,Math.round(window.innerHeight/2)); // 절반 해상도면 충분(부드러운 그라데이션)
@@ -2380,7 +2381,7 @@ function animate(){
   if(_lbEl.classList.contains('open')){
     // 캔버스를 합성에서까지 빼는 건 라이트박스가 뒤를 **완전히** 가릴 때만 — 안 그러면 우주가
     // 사라진 게 눈에 보인다. 가리는 경우: 모바일(아래 CSS에서 .open 배경을 불투명으로 깔았다) 또는
-    // 브라우즈 모드(#08091a 불투명). 데스크톱 "카드 보며 재생"은 라이트박스가 우측을 비워 그
+    // 브라우즈 모드(#0a0a0d 불투명). 데스크톱 "카드 보며 재생"은 라이트박스가 우측을 비워 그
     // 너머로 우주가 보이므로 제외한다.
     const _cardOpen=!!document.querySelector('#side-panel.open,#member-panel.open');
     _setUniverseCanvasVisible(!(!_cardOpen&&(isMob()||_lbEl.classList.contains('lb-browse'))));
@@ -2402,7 +2403,7 @@ function animate(){
   if(_FULLSCREEN_OVERLAY_IDS.some(id=>document.getElementById(id)?.classList.contains('open')))return;
   // 탐험 패널 **전체 열림**(모바일, peek 아님)도 스킵(2026-09-28, 사용자 제보 — "탐험 패널 둘러보는데 발열 심함").
   // 위 ⚠️의 제외 사유는 peek(반만 덮음) 때문이었다. 전체 열림은 화면을 탭바까지 다 덮고, 뒤는
-  // rgba(8,11,24,0.78)+blur(18px)라 느린 자동회전이 멈춰도 눈에 안 띈다 — 반대로 계속 그리면 매 프레임
+  // rgba(12,12,15,0.78)+blur(18px)라 느린 자동회전이 멈춰도 눈에 안 띈다 — 반대로 계속 그리면 매 프레임
   // 전체화면 블러 재계산까지 겹친다(#feed-list-overlay와 같은 이중 부담). 데스크톱은 옆 패널이라 제외.
   if(isMob()){const _fo=document.getElementById('feed-overlay');if(_fo&&_fo.classList.contains('open')&&!_fo.classList.contains('peek'))return;}
   // col-photo-overlay(사진 그리드)·col-target-overlay(대상 선택기)는 display:flex/none·DOM생성/제거로
@@ -3298,7 +3299,7 @@ function _appendTrendingSection(hits,res,mobSearch,obSearch){
     const disc=document.createElement('span');disc.className='sr-orb-disc';
     const c=GROUPS[ko]&&GROUPS[ko].color;
     const col=Array.isArray(c)?`rgb(${c[0]},${c[1]},${c[2]})`:'#7e9cff';
-    disc.style.background=`radial-gradient(circle at 34% 28%, ${col}, rgba(6,9,20,0.55))`;
+    disc.style.background=`radial-gradient(circle at 34% 28%, ${col}, rgba(9,9,12,0.55))`;
     const nm=document.createElement('span');nm.className='sr-orb-name';nm.textContent=h.name;
     tile.appendChild(disc);tile.appendChild(nm);
     tile.addEventListener('click',()=>wired.click());
@@ -3634,7 +3635,7 @@ function _srAvPaint(av,url){
 function _srAvatarEl(h){
   const av=document.createElement('span');av.className='sr-av';
   const c=h.type==='group'?(GROUPS[h.data]&&GROUPS[h.data].color):(h.data&&h.data.color);
-  if(Array.isArray(c))av.style.background=`radial-gradient(circle at 34% 28%, rgb(${c[0]},${c[1]},${c[2]}), rgba(6,9,20,0.6))`;
+  if(Array.isArray(c))av.style.background=`radial-gradient(circle at 34% 28%, rgb(${c[0]},${c[1]},${c[2]}), rgba(9,9,12,0.6))`;
   if(h.type==='group'){
     _groupAvUrl(h.data).then(u=>_srAvPaint(av,u)).catch(()=>{}); // 카드와 같은 순서(인스타→등록 사진→img)
     return av;
@@ -14677,7 +14678,7 @@ function _paintDiscoverHops(sec,hops,card,fromArtist){
     const row=document.createElement('button');row.type='button';row.className='ttd-hop';
     const disc=document.createElement('span');disc.className='ttd-orb';
     const c=GROUPS[gko]&&GROUPS[gko].color;
-    disc.style.background=Array.isArray(c)?`radial-gradient(circle at 34% 28%, rgb(${c[0]},${c[1]},${c[2]}), rgba(6,9,20,0.55))`:'rgba(120,150,255,0.28)';
+    disc.style.background=Array.isArray(c)?`radial-gradient(circle at 34% 28%, rgb(${c[0]},${c[1]},${c[2]}), rgba(9,9,12,0.55))`:'rgba(120,150,255,0.28)';
     const txt=document.createElement('span');txt.className='ttd-txt';
     const main=document.createElement('span');main.className='ttd-main';main.textContent=h.label+(h.sub?(' · '+h.sub):'');
     const note=document.createElement('span');note.className='ttd-note';note.textContent=h.note;
@@ -15770,7 +15771,7 @@ function updateSheetBottom(){
   _ensureTabbarIfUnscrollable(); // 회전/뷰포트 변화로 카드가 더는 안 스크롤되게 됐으면 탭바 복구
 }
 // ── 아이폰 웹앱(홈 화면) 화면이 상태바 높이만큼 위로 밀려 그려지는 것 보정(2026-10-23 사용자 제보 "위는 잘리고 아래 여백이 크다") ──
-// 사용자 캡처 실측: 아래 47px이 페이지 배경색(#060612) 띠, 카드 손잡이·사진이 정상 위치(헤드리스 58·92px)보다 정확히 47px 위.
+// 사용자 캡처 실측: 아래 47px이 페이지 배경색(#07070a) 띠, 카드 손잡이·사진이 정상 위치(헤드리스 58·92px)보다 정확히 47px 위.
 // 즉 iOS가 이 앱에 화면 높이를 상태바만큼 덜 주고(innerHeight = 화면 − 47) 상단 세이프에어리어도 0으로 알려 주면서 맨 위부터 그린다.
 // 그 상태일 때만(웹앱 + 세로 + 상단 인셋 0 + 모자란 높이 15~80px) 페이지 전체를 모자란 만큼 내린다(html.vp-shift → body transform).
 // 3D 클릭 판정은 캔버스 getBoundingClientRect 기준이라 같이 내려가도 맞는다. 키보드가 올라와 높이가 크게 줄면 범위 밖이라 안 건드린다.
@@ -17923,7 +17924,7 @@ function _createCollection(name,kind){
 function _openCardMenu(btn,ctx){
   document.getElementById('card-menu-pop')?.remove();
   const pop=document.createElement('div');pop.id='card-menu-pop';
-  pop.style.cssText='position:fixed;background:rgba(20,25,44,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.12);border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,0.5);padding:5px;min-width:190px;';
+  pop.style.cssText='position:fixed;background:rgba(26,26,29,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.12);border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,0.5);padding:5px;min-width:190px;';
   const item=(label,onClick)=>{const b=document.createElement('button');b.textContent=label;b.style.cssText='display:block;width:100%;text-align:left;background:none;border:none;color:#e6edff;font-family:inherit;font-size:13px;padding:10px 12px;border-radius:8px;cursor:var(--kpu-cursor-pointer,pointer);white-space:nowrap;';b.addEventListener('click',e=>{e.stopPropagation();pop.remove();onClick();});pop.appendChild(b);};
   item(currentLang==='ko'?'+ 사진 컬렉션 만들기':'+ New photo collection',()=>_createPhotoColFromCard(ctx));
   if(ctx&&ctx.memberKo&&ctx.groupKo)item('Chemistry',()=>_chemPickPartner(ctx.groupKo,ctx.memberKo)); // 이 멤버와 함께 나온 사람 → Chemistry
@@ -18014,7 +18015,7 @@ function _colHasTarget(col){return!!((col.targetGroupKos&&col.targetGroupKos.len
 function _pickColTarget(col,onDone){
   let ov=document.getElementById('col-target-overlay');if(ov)ov.remove();
   ov=document.createElement('div');ov.id='col-target-overlay';
-  ov.style.cssText='position:fixed;inset:0;z-index:130;background:rgba(8,10,22,0.985);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;flex-direction:column;';
+  ov.style.cssText='position:fixed;inset:0;z-index:130;background:rgba(11,11,14,0.985);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;flex-direction:column;';
   document.body.appendChild(ov);
   const hd=document.createElement('div');hd.style.cssText='display:flex;align-items:center;gap:8px;padding:calc(14px + env(safe-area-inset-top,0px)) 16px 8px;';
   const ttl=document.createElement('div');ttl.style.cssText='flex:1;font-size:15px;font-weight:700;color:#eef4ff;';ttl.textContent=currentLang==='ko'?'누구 사진인가요?':'Whose photos?';
@@ -18066,7 +18067,7 @@ function _pickColTarget(col,onDone){
 function _openPublicColPhotoGrid(col){
   const photos=(col.photos||[]).map(p=>typeof p==='string'?{u:p}:p);
   let ov=document.getElementById('col-photo-overlay');
-  if(!ov){ov=document.createElement('div');ov.id='col-photo-overlay';ov.style.cssText='position:fixed;inset:0;z-index:120;background:rgba(8,10,22,0.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:none;flex-direction:column;';document.body.appendChild(ov);}
+  if(!ov){ov=document.createElement('div');ov.id='col-photo-overlay';ov.style.cssText='position:fixed;inset:0;z-index:120;background:rgba(11,11,14,0.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:none;flex-direction:column;';document.body.appendChild(ov);}
   ov.innerHTML='';
   const hd=document.createElement('div');hd.style.cssText='display:flex;align-items:center;gap:8px;padding:calc(14px + env(safe-area-inset-top,0px)) 16px 10px;';
   const tw=document.createElement('div');tw.style.cssText='flex:1;min-width:0;';
@@ -18100,7 +18101,7 @@ function _openColPhotoGrid(colId){
   let ov=document.getElementById('col-photo-overlay');
   if(!ov){
     ov=document.createElement('div');ov.id='col-photo-overlay';
-    ov.style.cssText='position:fixed;inset:0;z-index:120;background:rgba(8,10,22,0.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:none;flex-direction:column;';
+    ov.style.cssText='position:fixed;inset:0;z-index:120;background:rgba(11,11,14,0.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:none;flex-direction:column;';
     document.body.appendChild(ov);
   }
   ov.innerHTML='';
@@ -18981,14 +18982,14 @@ function _tipsLayout(){
   const mob=isMob(),W=innerWidth,H=innerHeight,bh=box.offsetHeight||150,bw=mob?W-56:320;
   box.style.width=bw+'px';
   if(!r){ // 대상을 못 찾음(화면 밖 등) — 어둠만 깔고 글은 아래쪽에
-    dim.style.background='rgba(4,5,14,0.6)';[ring,d1,d2,line].forEach(e=>e.style.display='none');
+    dim.style.background='rgba(6,6,9,0.6)';[ring,d1,d2,line].forEach(e=>e.style.display='none');
     box.style.left=(mob?28:Math.round((W-bw)/2))+'px';box.style.top=Math.round(H*0.62-bh/2)+'px';return;
   }
   [ring,d1,line].forEach(e=>e.style.display='');
   line.style.width='';line.classList.remove('is-h');
   const cx=(r.left+r.right)/2,cy=(r.top+r.bottom)/2;
   // 어둠: 대상 둘레는 투명, 바깥으로 갈수록 0.7까지(시안 1안 0.62·부드러움 ↔ 스포트라이트 0.78·딱 끊김의 중간)
-  dim.style.background=`radial-gradient(ellipse ${Math.round(r.width/2+70)}px ${Math.round(r.height/2+70)}px at ${Math.round(cx)}px ${Math.round(cy)}px, rgba(4,5,14,0) 0, rgba(4,5,14,0) 52%, rgba(4,5,14,0.7) 100%), linear-gradient(rgba(4,5,14,0),rgba(4,5,14,0))`;
+  dim.style.background=`radial-gradient(ellipse ${Math.round(r.width/2+70)}px ${Math.round(r.height/2+70)}px at ${Math.round(cx)}px ${Math.round(cy)}px, rgba(6,6,9,0) 0, rgba(6,6,9,0) 52%, rgba(6,6,9,0.7) 100%), linear-gradient(rgba(6,6,9,0),rgba(6,6,9,0))`;
   const pad=5;
   Object.assign(ring.style,{left:(r.left-pad)+'px',top:(r.top-pad)+'px',width:(r.width+pad*2)+'px',height:(r.height+pad*2)+'px'});
   const wide=r.width>200; // 폰 상단 검색창처럼 넓은 대상은 왼쪽에서 선을 내린다
@@ -19673,7 +19674,7 @@ async function _buildMyUniverseCardDataURL(){
   const hubX=W*0.5,hubY=H*0.5;
   const bg=ctx.createRadialGradient(hubX,hubY,0,hubX,hubY,H*0.38);
   bg.addColorStop(0,`rgba(${col[0]},${col[1]},${col[2]},0.22)`);
-  bg.addColorStop(0.5,'#0a0918');
+  bg.addColorStop(0.5,'#0a0a0d');
   bg.addColorStop(1,'#040309');
   ctx.fillStyle='#040309';ctx.fillRect(0,0,W,H); // 그라데이션 바깥(반경 밖)도 확실히 어두운 바탕으로 깔아둠
   ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
@@ -19872,7 +19873,7 @@ async function _buildDebutAnniversaryCardDataURL(ko){
 
   const bg=ctx.createRadialGradient(W*0.5,H*0.34,0,W*0.5,H*0.34,H*0.8);
   bg.addColorStop(0,`rgba(${col[0]},${col[1]},${col[2]},0.20)`);
-  bg.addColorStop(0.42,'#0d0c22');
+  bg.addColorStop(0.42,'#0e0e11');
   bg.addColorStop(1,'#040309');
   ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
   ctx.drawImage(img,0,0,W,H);

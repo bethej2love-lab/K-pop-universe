@@ -32,9 +32,9 @@
   document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href]');if(!a||(a.closest&&a.closest('.kpu-pl')))return;
     try{var u=new URL(a.href,location.href);if(/kpop-universe\.kr$/.test(u.hostname)&&(u.pathname==='/'||u.pathname==='/index.html'))log(a.classList.contains('cta')?'cta':'to_app');}catch(_){}},true);
   var entity=((document.querySelector('h1')||{}).textContent||'').trim();
-  var css='.kpu-pl{position:fixed;inset:0;z-index:2147483000;background:#05070f;display:flex;justify-content:center;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}'
+  var css='.kpu-pl{position:fixed;inset:0;z-index:2147483000;background:#07070a;display:flex;justify-content:center;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}'
     +'.kpu-pl-in{width:100%;max-width:760px;padding:56px 16px 32px;box-sizing:border-box}'
-    +'.kpu-pl-x{position:fixed;top:12px;right:12px;width:40px;height:40px;border-radius:20px;border:1px solid rgba(255,255,255,.18);background:rgba(20,24,44,.85);color:#fff;font-size:20px;line-height:38px;text-align:center;cursor:pointer;z-index:2}'
+    +'.kpu-pl-x{position:fixed;top:12px;right:12px;width:40px;height:40px;border-radius:20px;border:1px solid rgba(255,255,255,.18);background:rgba(25,25,28,.85);color:#fff;font-size:20px;line-height:38px;text-align:center;cursor:pointer;z-index:2}'
     +'.kpu-pl-v{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden}'
     +'.kpu-pl-v.sh{aspect-ratio:9/16;max-width:min(100%,calc((100vh - 120px)*9/16));margin:0 auto}'
     +'.kpu-pl-v iframe{position:absolute;inset:0;width:100%;height:100%;border:0}'
@@ -45,7 +45,7 @@
     +'@media(min-width:640px){.kpu-pl-nx{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible;margin:2px 0 22px;padding:0}.kpu-pl-n:nth-child(n+4){display:none}}'
     +'.kpu-pl-n{flex:0 0 252px;box-sizing:border-box;display:flex;align-items:center;gap:11px;min-width:0;padding:8px 12px 8px 8px;border-radius:16px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.1);text-decoration:none;transition:background .15s,border-color .15s}'
     +'.kpu-pl-n:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18)}'
-    +'.kpu-pl-n img{width:68px;height:42px;border-radius:9px;object-fit:cover;flex:none;background:#141a30}'
+    +'.kpu-pl-n img{width:68px;height:42px;border-radius:9px;object-fit:cover;flex:none;background:#1b1b1e}'
     +'.kpu-pl-n i{display:block;font-style:normal;min-width:0;flex:1}'
     +'.kpu-pl-n .k{display:block;font-size:11px;color:rgba(165,185,240,.65)}'
     +'.kpu-pl-n .t{display:block;font-size:13.5px;font-weight:650;color:#f1f4ff;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
@@ -54,7 +54,7 @@
     +'.kpu-pl-h{color:rgba(190,205,240,.75);font-size:13px;font-weight:600;margin:6px 2px 10px}'
     +'.kpu-pl-g{display:grid;grid-template-columns:1fr 1fr;gap:12px}'
     +'.kpu-pl-c{display:block;text-decoration:none;color:#dfe6ff;font-size:12.5px;line-height:1.35;cursor:pointer}'
-    +'.kpu-pl-c img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;display:block;background:#141a30}'
+    +'.kpu-pl-c img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;display:block;background:#1b1b1e}'
     +'.kpu-pl-c span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:6px}'
     +'html.kpu-pl-open,html.kpu-pl-open body{overflow:hidden}'
     // 폰 첫 화면 보정(2026-11-04 이탈 개선 2단계): 대표 이미지가 첫 화면의 절반(약 400px)을 차지해 직캠 목록이 거의 안 보였다 →
@@ -81,9 +81,9 @@
     +'.cta-dock.kpu-dk{position:fixed!important;left:0;right:0;bottom:0;margin:0!important;padding:0 12px calc(12px + env(safe-area-inset-bottom))!important;background:none!important;pointer-events:none;z-index:50;transition:transform .3s ease,opacity .3s ease}'
     +'.kpu-dk.hid{transform:translateY(calc(100% + 6px));opacity:0}'
     +'body.kpu-has-dk{padding-bottom:88px}'
-    +'a.cta.kpu-card{pointer-events:auto;display:flex!important;align-items:center;gap:11px;box-sizing:border-box;max-width:440px;margin:0 auto;padding:8px 14px 8px 8px!important;border-radius:18px!important;background:rgba(18,22,44,.74)!important;-webkit-backdrop-filter:blur(18px) saturate(140%);backdrop-filter:blur(18px) saturate(140%);border:1px solid rgba(255,255,255,.1)!important;box-shadow:0 10px 30px rgba(0,0,0,.45);text-align:left!important;font-weight:400!important;color:#f1f4ff!important;text-decoration:none!important;transition:background .15s,border-color .15s}'
+    +'a.cta.kpu-card{pointer-events:auto;display:flex!important;align-items:center;gap:11px;box-sizing:border-box;max-width:440px;margin:0 auto;padding:8px 14px 8px 8px!important;border-radius:18px!important;background:rgba(23,23,26,.74)!important;-webkit-backdrop-filter:blur(18px) saturate(140%);backdrop-filter:blur(18px) saturate(140%);border:1px solid rgba(255,255,255,.1)!important;box-shadow:0 10px 30px rgba(0,0,0,.45);text-align:left!important;font-weight:400!important;color:#f1f4ff!important;text-decoration:none!important;transition:background .15s,border-color .15s}'
     +'a.cta.kpu-card:hover{background:rgba(30,36,66,.82)!important;border-color:rgba(255,255,255,.16)!important}'
-    +'.kpu-card>img{width:64px;height:40px;border-radius:9px;object-fit:cover;flex:none;background:#141a30}'
+    +'.kpu-card>img{width:64px;height:40px;border-radius:9px;object-fit:cover;flex:none;background:#1b1b1e}'
     +'.kpu-card i{display:block;font-style:normal;min-width:0;flex:1}'
     +'.kpu-card .k{display:flex;align-items:center;gap:5px;font-size:11px;color:rgba(170,190,240,.7)}.kpu-card .k img{width:13px;height:13px;border-radius:4px}'
     +'.kpu-card .t{display:block;font-size:14px;font-weight:650;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'

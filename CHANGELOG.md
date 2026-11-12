@@ -2,6 +2,16 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-12 (Claude Code — 남색검정 → 중립 검정: 우주 배경·카드·재생 화면·정적 페이지)
+- [완료] 사용자 "우주의 남색과 검정 사이 뿌연 느낌이 별로, 재생 화면은 검정인데 카드는 남색 — 간극"(참고: 문서 폴더 천체 사진 1~5, 진짜 검정·선명한 점별). 1단계 = 색만.
+  · tools/neutralize_navy.cjs(새): 세 채널 ≤64·파랑-빨강 ≥6인 어두운 색만 지각 밝기 유지·푸른 기 제거(r=g=L, b=L+3). 글자·강조색은 안 건드림. kpop_universe.css 129·app.js 22·song-page.css 11·build_group_pages.js 11·seo_play.js 6·admin.js 3·seo_extra 2·index/privacy/terms/about 5곳.
+  · 우주 배경 _UNI_BG_STOPS·body: #12112a→#060612 남색 → #0c0c0f→#020203.
+  · 카드(#side-panel·#member-panel·연결 패널) rgba(13,13,16,.9) + 뒤 비침 채도 190%→130%(남색 우주를 키우던 원인), 재생 화면 #0d0d10 — 같은 표면.
+  · 정적 페이지 body #09091a→#0a0a0d(CI 재생성 시 반영).
+  · 카드 닫힌 재생 화면 위 여백 24→44px(카드 열린 때와 같게) — '>' 접기 버튼이 상단 줄에 붙어 보이던 것(사용자 캡처 14:46).
+  · 확인: 헤드리스 우주·그룹 카드+재생·멤버 카드+재생·카드 닫힘 캡처, universe-render-parity·card-title-visibility 4/4·lb-every-entry 8/8·syntax.
+- ⏳ 재생 화면 위쪽 그룹색 띠(--lb-tint) → 영상 대표색 빛으로 바꿀지 사용자 결정 대기(시안 Downloads/amb_*.png — 실시간 아님, 썸네일 색). 별·행성 모양 리디자인은 별도 큰 작업.
+
 ## 2026-11-12 (Claude Code — 웹: 영상만 남아도 맨 위 줄 유지)
 - [완료][kpop_universe.css] 사용자 "카드+영상에서 카드를 닫으면 재생 화면이 꽉 차며 위가 잘림, 상단 타이틀·탭바 줄은 그대로 두고 그 아래부터". 데스크톱 #yt-lightbox 기본 top:64px(카드·나침반·도킹 때와 같은 자리) + lb-browse는 align-items:safe center·overflow-y:auto·위아래 24px, 영상 상한 (100vh-330px)×16/9. 헤드리스 1440×820: 닫은 뒤 영상 위 -31px → 88px, 1280×720도 확인. lb-every-entry 8/8·lb-history-back 10/10·card-title-visibility 4/4.
 

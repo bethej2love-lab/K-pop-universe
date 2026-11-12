@@ -4336,7 +4336,7 @@ async function _openTagReviewQueue(){
   if(!sb){alert('Supabase 연결 없음');return;}
   let ov=document.getElementById('tagq-overlay');if(ov)ov.remove();
   ov=document.createElement('div');ov.id='tagq-overlay';
-  ov.style.cssText='position:fixed;inset:0;z-index:125;background:rgba(8,10,22,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;flex-direction:column;';
+  ov.style.cssText='position:fixed;inset:0;z-index:125;background:rgba(11,11,14,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;flex-direction:column;';
   document.body.appendChild(ov);
   const hd=document.createElement('div');hd.style.cssText='display:flex;align-items:center;gap:8px;padding:calc(14px + env(safe-area-inset-top,0px)) 16px 10px;';
   const ttl=document.createElement('div');ttl.style.cssText='flex:1;font-size:15px;font-weight:700;color:#eef4ff;';ttl.textContent='검수 대기';
@@ -13150,7 +13150,7 @@ function _admDigestRender(m,day,t){
   document.getElementById('adm-digest-x')?.click();document.getElementById('adm-digest')?.remove();
   const box=document.createElement('div');
   box.id='adm-digest';box.setAttribute('role','status');
-  box.style.cssText='position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(320px,calc(100vw - 32px));box-sizing:border-box;padding:14px 16px 12px;border-radius:16px;background:rgba(14,18,34,0.94);border:1px solid rgba(150,175,225,0.25);box-shadow:0 10px 30px rgba(0,0,0,0.45);color:#e8edf8;font-size:13px;cursor:pointer;';
+  box.style.cssText='position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(320px,calc(100vw - 32px));box-sizing:border-box;padding:14px 16px 12px;border-radius:16px;background:rgba(19,19,22,0.94);border:1px solid rgba(150,175,225,0.25);box-shadow:0 10px 30px rgba(0,0,0,0.45);color:#e8edf8;font-size:13px;cursor:pointer;';
   const dim=t=>` <span style="font-weight:400;color:rgba(200,212,240,0.6)">${t}</span>`;
   const row=(lbl,val,tip)=>`<div style="display:flex;justify-content:space-between;gap:12px;padding:3px 0"${tip?` title="${tip}"`:''}><span style="color:rgba(200,212,240,0.75)">${lbl}</span><b>${val}</b></div>`;
   const nv=m.new_visitors??0,v=m.visitors??0,back=Math.max(0,v-nv);
@@ -13239,7 +13239,7 @@ async function _admFavSummary(){
   const sec=(t,arr,kind)=>`<div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(150,175,225,0.15)"><div style="font-size:11px;color:rgba(150,175,225,0.75);margin-bottom:2px">${t} ${arr.length}</div>`
     +(arr.length?arr.map(x=>row(x,kind)).join(''):`<div style="font-size:12px;color:rgba(200,212,240,0.5);padding:4px 0">아직 없음</div>`)+'</div>';
   const box=document.createElement('div');box.id='adm-favsum';box.setAttribute('role','dialog');
-  box.style.cssText='position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(340px,calc(100vw - 32px));max-height:min(70vh,560px);overflow-y:auto;box-sizing:border-box;padding:14px 16px 12px;border-radius:16px;background:rgba(14,18,34,0.96);border:1px solid rgba(150,175,225,0.25);box-shadow:0 10px 30px rgba(0,0,0,0.45);color:#e8edf8;font-size:13px;';
+  box.style.cssText='position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(340px,calc(100vw - 32px));max-height:min(70vh,560px);overflow-y:auto;box-sizing:border-box;padding:14px 16px 12px;border-radius:16px;background:rgba(19,19,22,0.96);border:1px solid rgba(150,175,225,0.25);box-shadow:0 10px 30px rgba(0,0,0,0.45);color:#e8edf8;font-size:13px;';
   box.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:baseline"><b style="font-size:15px">즐겨찾기</b><span style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;color:rgba(150,175,225,0.75)">봇·테스트·관리자 제외</span><button type="button" id="adm-favsum-x" aria-label="닫기" style="background:none;border:0;color:rgba(200,212,240,0.6);font-size:17px;line-height:1;padding:2px 2px 2px 6px;cursor:pointer">×</button></span></div>`
     +`<div style="margin-top:6px;color:rgba(200,212,240,0.8)">즐겨찾기한 사람 <b style="color:#fff">${d.users??0}명</b> · 그룹 <b style="color:#fff">${G.length}</b> · 멤버 <b style="color:#fff">${M.length}</b></div>`
     +sec('그룹',G,'g')+sec('멤버',M,'m');
