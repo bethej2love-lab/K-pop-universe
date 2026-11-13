@@ -2,6 +2,35 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-14 (Claude Code — 영상 오태깅 보류 처리: The_FirstTake·JTBCvoyage·maxaieni 등)
+- [DB] The_FirstTake(일본 음악 채널) 에프엑스 오태깅 2건 → 보류 (채널: "福島拓人 from Amber's" = 일본 밴드, 에프엑스 앰버로 오인식).
+- [DB] The_FirstTake 메이브 오태깅 3건 → 보류 (채널: "ASTERISM & Marty Friedman" = 일본 밴드+미국 기타리스트, 메이브 멤버 "마티"로 오인식).
+- [DB] The_FirstTake 소녀시대 오태깅 1건 → 보류 (채널: "Novelbright - Sunny drop" = 일본 밴드, 소녀시대 써니로 오인식).
+- [DB] JTBCvoyage 아이들 오태깅 2건 → 보류 ("아이들 태우고 과속", "아이들 방치하던 부부" — children 의미로 쓰인 단어를 그룹 (여자)아이들로 오매칭).
+- [DB] JTBCvoyage 하이라이트 오태깅 1건 → 보류 (미스터 비스트 더빙료 클립, 하이라이트 그룹과 무관).
+- [DB] Diggle 있지 오태깅 2건 → 보류 (조동사 "있지"를 그룹 ITZY로 오매칭).
+- [DB] Diggle 하이라이트 오태깅 3건 → 보류 ("#하이라이트" 해시태그를 그룹 하이라이트로 오매칭).
+- [DB] stardailynews 하이라이트 오태깅 2건 → 보류 (드라마 "비스트" 관련 영상; 그룹 비스트=하이라이트와 무관).
+- [DB] halmyungsoo(박명수 채널) 하이라이트 오태깅 2건 → 보류 ("#하이라이트" = 요약 영상이라는 뜻, 그룹 하이라이트 아님).
+- [DB] koreaunivktn 하이라이트 오태깅 1건 → 보류 (고연전 농구 "#하이라이트" = 경기 요약본, 그룹 하이라이트 아님).
+- [DB] ggondaehee 여자친구 오태깅 1건 → 보류 ("저 XX 여자친구 있어" — girlfriend 의미).
+- [DB] mimiminu_official 여자친구 오태깅 1건 → 보류 ("정원규 재수시절 여자친구 언급" — girlfriend 의미).
+- [DB] selbbar 여자친구 오태깅 1건 → 보류 ("보미 누나 같은 여자친구 사귀려면" — girlfriend 의미).
+- [DB] fernhoon_12psh59 다이아 오태깅 1건 → 보류 ("Dia Frampton" = 외국 가수, 그룹 다이아 아님).
+- [DB] ggondaehee 다이아 오태깅 1건 → 보류 ("다이아💎" = 다이아몬드/게임 티어, 그룹 다이아 아님).
+- [DB] iamdongbaek 다이아 오태깅 1건 → 보류 ("다이아 박힌 우정 반지" = 보석 의미, 그룹 다이아 아님).
+
+## 2026-11-14 (Claude Code — 영상 오태깅 보류 처리: maxaieni·SBSenter·AmazingSaturday·MBCkpop)
+- [DB] maxaieni 채널(FT ISLAND 이홍기 직캠) 엑소 오태깅 189건 → 보류 (채널 제목·해시태그 전부 #FTISLAND #leehongki·FT ISLAND 곡명; 블랙핑크 1건·소녀시대 티파니 1건은 올바른 태깅으로 보존).
+- [DB] SBSenter.official 여자친구 오태깅 36건 → 보류 (예능 클립 제목 "여자친구" = girlfriend 단어, 그룹 여자친구 클립 아님).
+- [DB] SBSenter.official 다이아 오태깅 7건 → 보류 (다이아몬드/보석류 단어가 그룹 다이아로 오매칭).
+- [DB] SBSenter.official 아이들 오태깅 12건 → 보류 (children 뜻의 "아이들" 단어가 그룹 (여자)아이들로 오매칭).
+- [DB] SBSenter.official 있지 오태깅 8건 → 보류 (조동사/표현 "있지"가 그룹 ITZY로 오매칭).
+- [DB] AmazingSaturday 제국의아이들 오태깅 1건(보아 무대) → 보류.
+- [DB] AmazingSaturday 있지 오태깅 3건(조동사 표현) → 보류.
+- [DB] AmazingSaturday 여자친구 오태깅 2건(다른 가수 노래 제목 내 단어) → 보류.
+- [DB] MBCkpop 인피니트 오태깅 3건(VIXX 무한동전 챌린지 클립) → 보류.
+
 ## 2026-11-13 (Claude Code — 영상 오태깅 보류 처리: AAA채널·아리랑ASC·thekpop)
 - [DB] AsiaArtistAwards_official 채널 트리플에스 오태깅 384건 → 보류 (tag_patrol A유형; 최대훈·우즈·세븐틴 등 무관 영상에 트리플에스 멤버 태깅됨, 맞는 2건 o7TcEzNDBUI·hTxJfNxzZV0 보존).
 - [DB] arirangworld(아리랑TV) 애프터스쿨 오태깅 1180건 → 보류 (After School Club 프로그램명 → 애프터스쿨 그룹 오매칭; tags_manual=false 전건).
