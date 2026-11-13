@@ -2,6 +2,15 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-13 (Claude Code — 디스코 보강 4: ③순서 오류 차수 수정)
+- [artists.json] 지수연 종이더미 "미니" → "미니 1집" (첫 EP 확인).
+- [artists.json] 진호(펜타곤) CHO:RD "미니 2집" → "미니 1집" (멜론 설명 "JINHO 1st Mini Album" 명시).
+- [artists.json] 김형준(SS501) Escape "싱글" → "미니 2집" (AM to PM 설명에 "2012년 두 번째 미니앨범 Escape" 명시).
+- [artists.json] 이진혁(업텐션) S.O.L "솔로 1집" → "미니 1집" (멜론 설명 "1st SOLO ALBUM", NEW QUEST가 "6th Mini Album" 역산).
+- [artists.json] 이민우(신화) The Sentimental Reason "싱글" → "미니 1집" (Minnovation 설명 "2008년 발표한 [The Sentimental Reason] 이후 2번째").
+- [groups.json] 티에이엔 1TAN "미니" → "미니 1집", 2TAN(wish/we) "미니" → "미니 2집".
+- 보류(멜론·나무위키 미확인): 티아라 미니 1집, 엠블랙 미니 1·2집, 유키스 미니 1~3집, SS501 미니 1집, 파이브돌스 미니 2집, 슈가 정규 1집, 디모렉스 미니 1·2집, 레이(엑소) 정규 1·2집.
+
 ## 2026-11-13 (Claude Code — 디스코 보강 3: 디모렉스 차수 수정·기타 보류 처리)
 - [artists.json] 디모렉스 미니 차수 오등록 수정(나무위키 근거): INTOXICATED 4집→3집, ANTIDOTE 5집→4집, METAMORPHOSIS 6집→5집. 방예담 명의 1·2집 이후 싱글 3장 → 미니 3집 INTOXICATED로 직행(멜론 소개의 "4번째 EP"는 오류 또는 싱글 계산 방식 차이).
 - 이세계아이돌 STARBOUND·메이브 PARADOX·아이칠린 Glitch Mode: 멜론 2026.10 발매 앨범 미등록 — Spotify ID 이미 있음, 현재 상태 유지.
