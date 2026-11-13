@@ -191018,7 +191018,7 @@
     "title": "S.W.I.S.H.",
     "type": "미니",
     "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b2731f2c372605d00f9f80f087b3",
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/07/233/15007233_20261020135543_500.jpg",
     "releaseDate": "2026.11.10",
     "trackCount": 5,
     "titleTrack": "Bananas",
@@ -191026,50 +191026,38 @@
      {
       "no": 1,
       "title": "Masterpiece",
-      "isTitle": false
+      "isTitle": false,
+      "songId": "603577089"
      },
      {
       "no": 2,
       "title": "Bananas",
-      "isTitle": true
+      "isTitle": true,
+      "songId": "603744728"
      },
      {
       "no": 3,
       "title": "Wanna Go",
-      "isTitle": false
+      "isTitle": false,
+      "songId": "603744729"
      },
      {
       "no": 4,
       "title": "Up & Away",
-      "isTitle": false
+      "isTitle": false,
+      "songId": "603744730"
      },
      {
       "no": 5,
       "title": "Beep Beep",
-      "isTitle": false
-     }
-    ],
-    "src": "spotify",
-    "spotifyId": "0ulLmM5roN7ywJVZblQasC",
-    "copyright": "2026 MORE VISION,under license to Kakao Entertainment"
-   },
-   {
-    "title": "Masterpiece",
-    "type": "싱글",
-    "isMain": true,
-    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/07/233/15007233_20261020135543_500.jpg",
-    "releaseDate": "2026.10.21",
-    "trackCount": 1,
-    "titleTrack": "Masterpiece",
-    "tracks": [
-     {
-      "no": 1,
-      "title": "Masterpiece",
-      "isTitle": true
+      "isTitle": false,
+      "songId": "603744731"
      }
     ],
     "src": "melon",
-    "melonAlbumId": "15007233"
+    "spotifyId": "0ulLmM5roN7ywJVZblQasC",
+    "melonAlbumId": "15007233",
+    "copyright": "2026 MORE VISION,under license to Kakao Entertainment"
    },
    {
     "title": "Fire With Fire (Inspired by the Original Motion Picture K-POPS!)",
