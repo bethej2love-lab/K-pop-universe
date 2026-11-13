@@ -89689,7 +89689,7 @@
     "title": "See You",
     "type": "싱글",
     "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b27367d89b54baf901b6d47eb1b6",
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/82/613/15082613_20261026181611_500.jpg",
     "releaseDate": "2026.11.01",
     "trackCount": 1,
     "titleTrack": "See You",
@@ -89697,12 +89697,14 @@
      {
       "no": 1,
       "title": "See You",
-      "isTitle": true
+      "isTitle": true,
+      "songId": "603714292"
      }
     ],
-    "src": "spotify",
+    "src": "melon",
     "spotifyId": "2PJMSsEmAKDCepByndDhXg",
-    "copyright": "(P) 2026 MODHAUS"
+    "copyright": "(P) 2026 MODHAUS",
+    "melonAlbumId": "15082613"
    },
    {
     "title": "<LOVE&POP> pt.2",
@@ -221093,7 +221095,7 @@
     "title": "FULL CIRCLE",
     "type": "정규",
     "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b27352c19ece6fcfc59c14831b9d",
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/149/12/109/14912109_20261018152807_500.jpg",
     "releaseDate": "2026.10.21",
     "trackCount": 10,
     "titleTrack": null,
@@ -221101,58 +221103,69 @@
      {
       "no": 1,
       "title": "360°",
-      "isTitle": false
+      "isTitle": false,
+      "songId": "603535607"
      },
      {
       "no": 2,
       "title": "DEVIL",
-      "isTitle": false
+      "isTitle": false,
+      "songId": "603535608"
      },
      {
       "no": 3,
       "title": "Countdown (feat. TAKUYA∞) - 2026 Remaster",
-      "isTitle": false
+      "isTitle": false,
+      "songId": "603535609"
      },
      {
       "no": 4,
       "title": "人生賛歌 - 2026 Remaster",
-      "isTitle": false
+      "isTitle": false,
+      "songId": "603535610"
      },
      {
       "no": 5,
       "title": "Ender",
-      "isTitle": false
+      "isTitle": false,
+      "songId": "603535611"
      },
      {
       "no": 6,
       "title": "Slow motion - 2026 Remaster",
-      "isTitle": false
+      "isTitle": false,
+      "songId": "603535612"
      },
      {
       "no": 7,
       "title": "Pebbles",
-      "isTitle": false
+      "isTitle": false,
+      "songId": "603535613"
      },
      {
       "no": 8,
       "title": "Swim Across The Sea",
-      "isTitle": false
+      "isTitle": false,
+      "songId": "603535614"
      },
      {
       "no": 9,
       "title": "心盗夜 - 2026 Remaster",
-      "isTitle": false
+      "isTitle": false,
+      "songId": "603535615"
      },
      {
       "no": 10,
       "title": "A Sleepless Night - Japanese ver.",
-      "isTitle": false
+      "isTitle": false,
+      "songId": "603535616"
      }
     ],
-    "src": "spotify",
+    "src": "melon",
     "spotifyId": "6jXNxLGVIQEaVbjLb6b7VN",
     "copyright": "© 2026 FNC ENTERTAINMENT JAPAN INC.",
-    "region": "jp"
+    "region": "jp",
+    "melonAlbumId": "14912109"
    },
    {
     "title": "360°",
@@ -266641,7 +266654,7 @@
     "title": "Boy",
     "type": "싱글",
     "isMain": true,
-    "cover": "https://i.scdn.co/image/ab67616d0000b2734712bceb53996ecb3d1bfd3b",
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/92/070/15092070_20261028182131_500.jpg",
     "releaseDate": "2026.10.30",
     "trackCount": 1,
     "titleTrack": "Boy",
@@ -266649,12 +266662,14 @@
      {
       "no": 1,
       "title": "Boy",
-      "isTitle": true
+      "isTitle": true,
+      "songId": "603746061"
      }
     ],
-    "src": "spotify",
+    "src": "melon",
     "spotifyId": "1N1b05jJmdKyVd8vXHZISH",
-    "copyright": "© 2026 FNC ENTERTAINMENT JAPAN"
+    "copyright": "© 2026 FNC ENTERTAINMENT JAPAN",
+    "melonAlbumId": "15092070"
    },
    {
     "title": "Smile",
