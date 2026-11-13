@@ -58,6 +58,10 @@ jobs:
             rm -f "$out"
             # 매시간 워치독(12틱 = 60분). 첫 틱에도 한 번.
             if [ $((i % 12)) -eq 0 ]; then gh workflow run sync-watchdog.yml --ref main -R "$GH_REPO" || true; fi
+            # 인스타 최신 수집·과거 채우기도 2시간마다 여기서(2026-11-13 — cron '2시간마다'가 실제로는 ~9시간에 한 번, 과거 채우기 cron은 첫날 한 번도 안 돎).
+            # 둘은 한 시간 엇갈려 앱 호출 한도(시간당 ~200)를 나눠 쓴다. 각자 사용량 90%·80%에서 스스로 멈춘다.
+            if [ $((i % 24)) -eq 6 ]; then gh workflow run ig-stats.yml --ref main -R "$GH_REPO" || true; fi
+            if [ $((i % 24)) -eq 18 ]; then gh workflow run ig-backfill.yml --ref main -R "$GH_REPO" || true; fi
             i=$((i+1))
             sleep 300
           done
