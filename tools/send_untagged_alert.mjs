@@ -18,7 +18,9 @@ import https from 'node:https';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import webpush from 'web-push';
+import * as webpushNs from 'web-push';
+// web-push는 판마다 default가 있기도 없기도 하다(설치 판이 바뀌어 'does not provide an export named default'로 매시간 실패, 2026-11-13)
+const webpush = webpushNs.default || webpushNs;
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DRY = process.env.DRY === '1';

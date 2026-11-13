@@ -51,6 +51,8 @@ const EXPECT = {
   ig_accounts:                  { read: 'public', write: 'locked' },
   // 인스타 사진별 멤버 태그(sql/2026-11-06_ig_photo_tags.sql). 읽기 공개, 쓰기는 관리자만.
   ig_photo_tags:                { read: 'public', write: 'locked' },
+  // 인스타 게시물 보관함(sql/2026-11-13_ig_media_archive.sql). 읽기 공개(카드 '전체 보기'), 쓰기는 수집기(service_role)만.
+  ig_media:                     { read: 'public', write: 'locked' },
   name_match_whitelist:         { read: 'public', write: 'locked' },
   kpop_events:                  { read: 'public', write: 'locked' },
   melon_yearly_top100:          { read: 'public', write: 'locked' },

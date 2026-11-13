@@ -40,4 +40,9 @@ jobs:
         run: |
           set -o pipefail
           if [ -n "${{ github.event.inputs.only }}" ]; then ARG="--only=${{ github.event.inputs.only }}"; fi
-          node tools/ig_backfill.mjs $ARG | tee -a "$GITHUB_STEP_SUMMARY"
+          # DB·네트워크 일시 장애(fetch failed·5xx·타임아웃)는 다음 회차에 이어지므로 경고만 — 토큰 만료·앱 차단·코드 오류는 그대로 실패(메일)(2026-11-13)
+          set +e
+          node tools/ig_backfill.mjs $ARG > /tmp/out.txt 2>&1; code=$?
+          cat /tmp/out.txt | tee -a "$GITHUB_STEP_SUMMARY"
+          if [ $code -ne 0 ] && ! grep -qE "토큰 만료|차단|권한 오류" /tmp/out.txt && grep -qiE "fetch failed|Failed to fetch|HeadersTimeout|ETIMEDOUT|ECONNRESET|저장 실패 5[0-9][0-9]|조회 실패 5[0-9][0-9]" /tmp/out.txt; then echo "::warning title=일시적 실패::다음 회차에 이어서 진행"; exit 0; fi
+          exit $code

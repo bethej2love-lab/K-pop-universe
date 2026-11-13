@@ -71,7 +71,8 @@ jobs:
       - name: Desktop and fresh mobile smoke
         env:
           KPU_BROWSER_PATH: /usr/bin/google-chrome
-        run: node tests/smoke.test.js
+        # 라이브 데이터 응답이 느린 순간(카드 영상 20초 대기 초과 등)엔 한 번 더 — 두 번 다 실패할 때만 실패(메일)(2026-11-13)
+        run: node tests/smoke.test.js || { echo "::warning title=스모크 재시도::첫 실행 실패 — 30초 뒤 한 번 더"; sleep 30; node tests/smoke.test.js; }
 
   flows:
     name: browser (${{ matrix.suite }}${{ matrix.lang && format(' {0}', matrix.lang) || '' }})
@@ -107,7 +108,7 @@ jobs:
         env:
           KPU_TEST_LANG: ${{ matrix.lang }}
           KPU_BROWSER_ARTIFACT_DIR: ${{ runner.temp }}/kpu-first-visit-artifacts
-        run: node tests/${{ matrix.suite }}.test.js
+        run: node tests/${{ matrix.suite }}.test.js || { echo "::warning title=재시도::첫 실행 실패 — 30초 뒤 한 번 더"; sleep 30; node tests/${{ matrix.suite }}.test.js; }
       - name: Upload first-visit screenshots
         if: always() && matrix.suite == 'mobile-first-visit'
         uses: actions/upload-artifact@v4

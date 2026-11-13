@@ -113,6 +113,7 @@ jobs:
 
       - name: 미태깅 알림 전송
         if: steps.gate.outputs.run == 'true'
+        continue-on-error: true   # 부가 알림 — 실패해도 동기화 실행을 실패(메일)로 만들지 않는다(2026-11-13)
         env:
           VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}

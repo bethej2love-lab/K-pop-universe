@@ -2,6 +2,15 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-13 (Claude Code — 실패 메일 줄이기: 사람이 고칠 때만 실패)
+- 사용자 "run fail 될 때마다 지메일로 알림 — 너무 많다, 꼭 확인할 때만". 지난 7일 실패 140건 중 영상 동기화 59(대부분 유튜브 일일 할당량 초과·DB/네트워크 일시 장애 — 다음 회차에 저절로 풀림), 테스트 37(낡은 테스트), 브라우저 스모크 15(라이브 데이터 느린 순간), 매일 루틴 8·정합성 청소 3(같은 실행기), RLS 감사 4(새 표 기대값 누락), 페이지 배포 7(GitHub 쪽 시간 초과).
+- [tools/run_daily_routine.cjs] 실패 단계가 전부 일시적 원인(quotaExceeded·Failed to fetch·5xx·타임아웃)이면 경고(::warning)만 남기고 성공 처리 — 매시간 동기화·매일 루틴·정합성 청소 공통. 비번·키 누락·코드 오류는 그대로 실패. 수집이 실제로 오래 멈추면 수집 워치독(sync-watchdog.yml)이 이슈로 알림.
+- [tools/send_untagged_alert.mjs] web-push default export가 없는 판에서 매시간 실패하던 것 → 네임스페이스로 받기. sync-hourly.yml 알림 단계 continue-on-error(부가 기능).
+- [ig-stats.yml·ig-backfill.yml] DB·네트워크 일시 장애는 경고만, 토큰 만료·앱 차단·권한 오류는 실패.
+- [browser-smoke.yml] 실패하면 30초 뒤 한 번 더 — 두 번 다 실패할 때만 실패.
+- [tests/rls.test.js] ig_media 기대값(읽기 공개·쓰기 잠금). 로컬 실행 통과.
+- ⏳ 사용자 쪽: GitHub 설정 → Notifications → Actions에서 "Only notify for failed workflows"(이미 그럴 가능성)·메일 대신 웹 알림만 고를 수 있음. 페이지 배포(pages-build-deployment) 시간 초과는 GitHub 내부라 코드로 못 줄임.
+
 ## 2026-11-13 (Claude Code — 인스타 게시물 보관함: 누적 저장·과거 채우기·전체 보기·태그된 사진)
 - 사용자 "인스타 최근 것까지만? 전체 못 봐? 그럴 거면 사진 태깅이 무슨 의미가 있어". 원인: ig_accounts.media를 매 수집 최신 몇 개로 **덮어써서** 지난 글·태깅한 사진이 카드에서 사라졌다(태그 113장 중 53장의 글이 이미 목록 밖 — 태그 자체는 DB에 남아 있음).
 - [SQL 실행] sql/2026-11-13_ig_media_archive.sql: `ig_media`(post_key 키, 계정·시각 색인, anon 읽기) + ig_accounts bf_cursor/bf_done/bf_count. 지금 목록 6,779개 먼저 옮김.

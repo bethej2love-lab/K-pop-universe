@@ -180,6 +180,7 @@ async function main() {
   const perfLines = [];
   let ok = false;
   let summary = '';
+  let errMsg = '';
   let cdp = null;
 
   try {
@@ -275,7 +276,8 @@ async function main() {
     if (failedSteps) console.error(`[routine] 실패한 단계 ${failedSteps}개`);
     } // end IS_CLEANUP else
   } catch (e) {
-    console.error('\n❌ ' + (e && e.message ? e.message : e));
+    errMsg = String(e && e.message ? e.message : e);
+    console.error('\n❌ ' + errMsg);
     if (errors.length) console.error('페이지 콘솔 예외:\n  ' + errors.slice(0, 8).join('\n  '));
   } finally {
     try { if (cdp) cdp.close(); } catch (e) {}
@@ -290,6 +292,18 @@ async function main() {
       fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,
         `## ${SYNC_ONLY ? '매시간 동기화' : '매일 루틴'} ${ok ? '✅ 완료' : '⚠️ 문제 있음'}\n\n\`\`\`\n${summary}\n\`\`\`\n${perf}`);
     } catch (e) {}
+  }
+  // 실패 메일은 사람이 고쳐야 할 때만(2026-11-13 사용자 "run fail 메일이 너무 많다 — 꼭 확인할 때만").
+  // 유튜브 하루 할당량 초과·일시적 네트워크/DB 장애(Failed to fetch·5xx·타임아웃)는 다음 회차에 저절로 풀린다 → 경고만 남기고 성공 처리.
+  // 수집이 실제로 오래 멈추면 수집 워치독(sync-watchdog.yml)이 이슈로 알린다. 비번·키 누락·코드 오류 같은 건 그대로 실패.
+  if (!ok) {
+    const fails = (summary.match(/^.*❌.*$/gm) || []).concat(errMsg ? [errMsg] : []);
+    const TRANSIENT = /quotaExceeded|quota|Failed to fetch|fetch failed|ETIMEDOUT|ECONNRESET|ENOTFOUND|socket hang up|Headers Timeout|timeout|타임아웃|시간 안에 끝나지 않음|\b5\d\d\b/i;
+    const detail = x => { const i = summary.indexOf(x); return i < 0 ? x : summary.slice(i, i + 400); }; // 단계 줄 다음의 원인 줄까지 본다
+    if (fails.length && fails.every(x => TRANSIENT.test(detail(x)))) {
+      console.log(`::warning title=일시적 실패(다음 회차에 재시도)::${fails.map(x => x.trim()).join(' / ').slice(0, 300)}`);
+      process.exit(0);
+    }
   }
   process.exit(ok ? 0 : 1);
 }
