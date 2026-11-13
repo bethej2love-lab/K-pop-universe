@@ -6,6 +6,7 @@
 - [DB] AsiaArtistAwards_official 채널 트리플에스 오태깅 384건 → 보류 (tag_patrol A유형; 최대훈·우즈·세븐틴 등 무관 영상에 트리플에스 멤버 태깅됨, 맞는 2건 o7TcEzNDBUI·hTxJfNxzZV0 보존).
 - [DB] arirangworld(아리랑TV) 애프터스쿨 오태깅 1180건 → 보류 (After School Club 프로그램명 → 애프터스쿨 그룹 오매칭; tags_manual=false 전건).
 - [DB] thekpop 채널 "#k_link_Festival" 해시태그의 영문 K를 앤팀 케이로 오인식한 오태깅 30건 → 보류 (에스파·샤이니·트리플에스 등 무관 영상, 앤팀 텍스트 없는 것만 처리).
+- [DB] officialstonemusic·studio_donuts·SBS_Radio·arirangradio·radiombc·KBS_CoolFM 채널에서 솔로 Kei(케이, 러블리즈 출신)/K-pop 해시태그를 앤팀 케이로 오인식한 오태깅 57건 → 보류 (동명이인: 앤팀 케이 vs 솔로 케이Kei/김지연; 솔로 케이 처리 방침 정해지면 재배정).
 
 ## 2026-11-13 (Claude Code — 디스코 보강 4: ③순서 오류 차수 수정)
 - [artists.json] 지수연 종이더미 "미니" → "미니 1집" (첫 EP 확인).
