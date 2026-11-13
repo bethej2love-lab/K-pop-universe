@@ -2,6 +2,9 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-13 (Claude Code — 인스타 여러 장 표시: 위쪽 막대 → 아래 점)
+- [kpop_universe.css .ig-bars] 사용자 "X 막대 말고 인스타처럼 사진 하단에 원 다다다". 카드 인스타 줄·발견/For You·매거진·보관함 격자 공통 — 아래 가운데 5px 점, 지금 장만 흰색. 표시 함수 _igBars는 그대로(CSS만).
+
 ## 2026-11-13 (Claude Code — 지난 인스타 여러 장 글도 모든 장·태깅: 열 때 새 주소 받기)
 - 사용자 "최근 사진은 다 태깅되는데 지난 여러 장 글은 안 되는 게 이해가 안 돼". 원인: 인스타 사진 주소는 1.8~3.8일이면 만료(실측), 최근 글은 2시간마다 새로 받아 살아 있지만 지난 글은 한 번 받고 끝. 공개 주소로는 첫 장만 다시 받을 수 있음.
 - [SQL 실행 sql/2026-11-13_ig_fresh.sql] app_secrets(잠긴 칸 — 정책 없음·anon/authenticated 권한 회수, tests/rls.test.js 기대값) + ig_media.pc('커서|한 쪽 개수').

@@ -1618,10 +1618,11 @@
   .ig-cap-txt{margin-top:1px;font-size:11.5px;color:rgba(200,212,240,0.75);}
   .ig-cap-ago{margin-top:1px;font-size:10.5px;color:rgba(150,175,222,0.55);}
   /* 여러 장 막대 줄(X 스타일, 2026-10-22) — 앞 장 위쪽 가로로, 첫 막대만 밝게 */
-  .ig-bars{position:absolute;top:6px;left:6px;z-index:4;display:flex;gap:3px;width:calc(var(--ig-thumb) - 12px);max-width:calc(100% - 12px);pointer-events:none;}
-  .ig-bars i{flex:0 1 14px;height:3px;border-radius:2px;background:rgba(255,255,255,0.22);box-shadow:0 0 2px rgba(0,0,0,0.22);}
+  /* 2026-11-13 사용자 "인스타처럼 사진 하단에 원 다다다로" — 막대 줄 → 아래 가운데 점 */
+  .ig-bars{position:absolute;bottom:7px;left:6px;z-index:4;display:flex;justify-content:center;align-items:center;gap:4px;width:calc(var(--ig-thumb) - 12px);max-width:calc(100% - 12px);pointer-events:none;}
+  .ig-bars i{flex:0 0 5px;width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.45);box-shadow:0 0 2px rgba(0,0,0,0.35);}
   /* 2026-10-23 사용자 "줄바 더 투명하게(은은하게)" — 0.45/흰색 → 0.22/0.62, 그림자도 옅게 */
-  .ig-bars i.on{flex-basis:22px;background:rgba(255,255,255,0.62);}
+  .ig-bars i.on{background:#fff;}
   .ig-deck{width:calc(var(--ig-thumb) + 20px);background:none;overflow:visible;cursor:var(--kpu-cursor-pointer,pointer);}
   .ig-deck img{position:absolute;top:0;left:0;width:var(--ig-thumb);height:100%;object-fit:cover;border-radius:8px;transition:transform .2s ease;}
   .ig-deck-front{z-index:3;box-shadow:0 3px 10px rgba(0,0,0,0.35);}
@@ -5660,7 +5661,7 @@
 .iga-tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
 .iga-ph{display:flex;align-items:flex-end;}
 .iga-ph-d{font-size:11px;color:rgba(170,185,225,0.6);padding:6px;}
-.iga-tile .ig-bars{top:6px;}
+.iga-tile .ig-bars{bottom:6px;}
 #iga-more{text-align:center;font-size:12px;color:rgba(170,185,225,0.6);padding:18px 0 4px;min-height:1px;}
 #ige-overlay{position:fixed;inset:0;z-index:83;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.78);}
 #ige-overlay.open{display:flex;}
