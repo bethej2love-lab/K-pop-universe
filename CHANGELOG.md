@@ -2,6 +2,13 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-13 (Claude Code — 디스코 보강 2: 차수 번호 오등록 수정·KO1KEYZ·CUTIE STREET 판단)
+- [groups.json] 마마무 Piano Man "싱글" → "미니 2집", Pink Funky "미니 2집" → "미니 3집" (멜론 공식·위키 확인 — 2집과 3집이 뒤바뀌어 있었음).
+- [artists.json] 현아 A Talk "싱글" → "미니 3집" (타이틀 트랙 '빨개요', 2014.07.28 발매 — 멜론 2269895).
+- 헬로비너스 미니 4집: 멜론 목록에 없음 — "5th Mini Album 난 예술이야"·"6th Mini Album Mystery of VENUS" 멜론 공식 타이틀에 차수 명시, 현재 등록 맞음(미니 4집은 발매 안 됨).
+- KO1KEYZ: 한일 동시 데뷔(2026.10.07, LAPONE)·KCON LA 출연·한국 멤버 2명(시영·신행) → 등록 대상. 멜론 ID 미확인, Spotify/나무위키 조회 후 별도 추가 예정.
+- CUTIE STREET: 순수 J팝 그룹(KAWAII LAB.) → 등록 제외.
+
 ## 2026-11-13 (Claude Code — 디스코 보강: 멜론 ID·앨범 차수 번호 추가)
 - [groups.json·artists.json] 최근 신보 앨범 차수 번호 추가 (8그룹+채령): 에이티즈 15집·피원하모니 11집·롱샷 3집·키빗업 2집·이세계아이돌 2집·엔시티 드림 정규 6집·하트오브우먼 1집·시크릿 6집, 채령(있지) 미니 1집.
 - [groups.json] 멜론 ID 없던 10~11월 신보에 ID·커버·songId 추가: 트리플에스 See You(15082613)·씨엔블루 FULL CIRCLE(14912109, 10트랙 603535607~616)·하이파이유니콘 Boy(15092070).
