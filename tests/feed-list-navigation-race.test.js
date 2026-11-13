@@ -5,7 +5,9 @@ const src=fs.readFileSync(path.join(__dirname,'..','app.js'),'utf8');
 function fn(name){const a=src.indexOf('function '+name+'('),start=src.slice(a-6,a)==='async '?a-6:a;assert(a>=0,name);return src.slice(start,src.indexOf('\n}',a)+2);}
 const renderer=fn('_openFeedListOverlay'),renderEntry=renderer.slice(0,renderer.indexOf("  document.getElementById('feed-list-hd-title')"))+'  __record(title,sub,songs,ctx);\n}';
 const declarations=(src.match(/^let _(?:feedListIntent|feedListCloseSeq|chartViewSeq)=0;$/gm)||[]).join('\n');
-const code=declarations+'\n'+['_openProgramCollection','_programFacetView','_openChartList','_openEventPage','_openCollectionFromHash','_closeFeedListOverlay'].map(fn).join('\n')+'\n'+renderEntry;
+// 창 안 이전 기록(_winEnter·_winClear, 2026-11-12)은 이 검사와 무관 — 빈 함수로(없으면 진입점이 ReferenceError)
+const winStubs='function _winEnter(){}\nfunction _winClear(){}\nfunction _winSyncBack(){}';
+const code=declarations+'\n'+winStubs+'\n'+['_openProgramCollection','_programFacetView','_openChartList','_openEventPage','_openCollectionFromHash','_closeFeedListOverlay'].map(fn).join('\n')+'\n'+renderEntry;
 function fixture(mobile=false){
  const pending=[],views=[],timers=[],classes=new Set(['open']),panel={style:{}},overlay={classList:{contains:x=>classes.has(x),add:x=>classes.add(x),remove:x=>classes.delete(x)}};
  const defer=(kind,id)=>{let resolve,reject;const p=new Promise((a,b)=>{resolve=a;reject=b;});pending.push({kind,id,resolve,reject});return p;};

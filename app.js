@@ -11259,8 +11259,8 @@ function _closeTopOverlay(){
   // 인스타 사진 뷰어·외부 아티스트 '함께한 앨범' 창(2026-10-19)은 카드·라이트박스 위에 뜨는 맨 위 층 — 먼저 벗긴다
   // (안 넣으면 Esc가 뷰어는 둔 채 그 밑의 카드를 닫았다)
   if(document.getElementById('igv-overlay')?.classList.contains('open')){_closeIgViewer();return true;}
-  if(_closeIgEmbed())return true; // 인스타 공식 임베드·보관함 격자(2026-11-13) — 사진 창 밑, 카드 위
-  if(_closeIgArchive())return true;
+  if(typeof _closeIgEmbed==='function'&&_closeIgEmbed())return true; // 인스타 공식 임베드·보관함 격자(2026-11-13) — 사진 창 밑, 카드 위
+  if(typeof _closeIgArchive==='function'&&_closeIgArchive())return true;
   if(document.getElementById('ecx-overlay')?.classList.contains('open')){_closeCollabExt();return true;}
   const lb=document.getElementById('yt-lightbox');
   // 하프시트(라이트박스 위로 올라온 카드)가 가장 위 층이다 — ESC/뒤로 한 번은 여기부터 벗긴다.
