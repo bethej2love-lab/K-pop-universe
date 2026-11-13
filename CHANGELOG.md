@@ -11,7 +11,8 @@
 - 확인: 헤드리스 폰 390·웹 1440에서 고르기 → 성현×건호(사진 5) → 카리나×장원영(LINKED BY 5명) → 안유진 눌러 셋 → 쉼표·영문 "karina x wonyoung" 검색 → Chemistry 열림, 콘솔 오류 0. tests/between-search(입구 9건 추가)·combo-query-state·combo-search-navigation·mobile-first-visit·feed-list-navigation-race·desktop-search-front·syntax 통과.
 - [app.js _chemExamples·kpop_universe.css] **검색 첫 화면 Chemistry 입구에 실제 조합 예시 3줄**(사진 둘 + 이름 + 그룹, 누르면 바로 Chemistry): chem/index.json에서 즐겨찾기 그룹 먼저, 없으면 유명 그룹에서 그룹당 한 쌍, 열 때마다 섞음(DB 안 침). 아래 '둘 이상 고르기'는 그대로. GA `chem_example`.
 - [kpop_universe.css .tco] 멤버 카드 정보 줄(생일·소속·국적)을 가로 스크롤 → 줄바꿈: 폰에서 마지막 칸(국적)이 7px 넘쳐 잘린 채 보였다(성현 카드). 칸 안에서는 안 끊김.
-- ⏳ 남은 것: 그룹도 대상으로(에스파 × 아이브, 멤버 × 그룹), 사진을 여러 장 글에서 그 장으로 바로 열기(지금은 글 첫 장), 작사·작곡 겹침, 다른 그룹 조합의 정적 페이지. LINKED BY 숫자(자기 그룹 영상 기준)와 관계도 숫자(커버 포함)가 조금 다르다.
+- [app.js _chemClause·_chemIsG·_chemParse 등] **그룹도 대상**(에스파 × 아이브, 카리나 × 아이브): 대상 = 사람 {name,group} 또는 그룹 {name:'',group,g:true}. 그룹이 "나왔다" = 그 그룹 영상 or with_groups or 그 그룹 멤버가 게스트(전부 색인 조건, 에스파×아이브 0.6~1.3초·26개). 검색 "에스파 아이브"·"카리나, 아이브"·"aespa x ive", 고르기 창 검색에 그룹 줄, 그룹 카드 ⋮ → Chemistry, 공유 주소는 그룹이면 이름만(#chem=카리나~에스파,아이브). 그룹이 섞이면 '이 조합만'·듀엣 무대 요약·관계도·사진·LINKED BY는 안 쓰고 섹션은 STAGE/TOGETHER. "에스파 카리나"(그룹+그 멤버)·"에스파 직캠"은 Chemistry로 안 봄. 그룹의 '함께 많이 나온 사람'은 손님이 태깅된 영상만 훑음(idx_ytv_has_with_tags). tests/between-search 그룹 5건.
+- ⏳ 남은 것: 사진을 여러 장 글에서 그 장으로 바로 열기(지금은 글 첫 장), 작사·작곡 겹침, 다른 그룹 조합의 정적 페이지. LINKED BY 숫자(자기 그룹 영상 기준)와 관계도 숫자(커버 포함)가 조금 다르다.
 - ⏳ 둘러보며 본 디자인 후보(미착수): 탐험 탭 이름 "For You / 발견" 한·영 섞임, 웹 고르기 창이 화면 아래 가운데 작은 창, Chemistry 머리 버튼 5개(선택·저장·+·공유·닫기).
 
 ## 2026-11-13 (Claude Code — 업데이트 소식 11-13)

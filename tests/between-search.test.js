@@ -51,13 +51,23 @@ ck(rA && rB && rA !== rB, '두 이름 모두 해석되고 서로 다름 → betw
 // Chemistry 입구 통일(2026-11-13) — 띄어쓰기·쉼표·x·& 어느 쪽으로 쳐도 _chemParse가 같은 두 사람을 잡아야 한다
 // (예전엔 쉼표면 _chemParse가 못 잡아 다른 화면(연결 카드)으로 갔다).
 {
-  const chemParse = new Function('ARTISTS', '_CHEM_MAX', '_ytGroupKoFor',
-    extractBraces(html, /^function _chemParse\(/m, '_chemParse') + '\nreturn _chemParse;')(ARTISTS, 4, a => a.group.ko);
+  const GROUPS = JSON.parse(fs.readFileSync(path.join(ROOT, 'groups.json'), 'utf8'));
+  const one = re => { const m = re.exec(html); if (!m) throw new Error('[harness] 줄을 못 찾음: ' + re); return m[0]; };
+  const chemParse = new Function('ARTISTS', 'GROUPS', '_CHEM_MAX', '_ytGroupKoFor',
+    one(/^const _chemIsG=.*$/m) + '\n' + one(/^const _chemKey1=.*$/m) + '\n' +
+    extractBraces(html, /^function _chemParse\(/m, '_chemParse') + '\nreturn _chemParse;')(ARTISTS, GROUPS, 4, a => a.group.ko);
   const names = q => { const r = chemParse(q); return r ? r.map(x => x.name).join('+') : null; };
   ['카리나 장원영', '카리나, 장원영', '카리나,장원영', '카리나 x 장원영', '카리나 & 장원영', '카리나 × 장원영', 'karina vs wonyoung']
     .forEach(q => ck(names(q) === '카리나+장원영', `Chemistry 입구: "${q}"`));
   ck(names('카리나') === null, 'Chemistry 입구: 한 명이면 아님');
   ck(names('카리나, 없는이름일걸') === null, 'Chemistry 입구: 모르는 이름이 섞이면 아님');
+  // 그룹도 대상(2026-11-13)
+  const keys = q => { const r = chemParse(q); return r ? r.map(x => x.g ? 'G:' + x.group : x.name).join('+') : null; };
+  ck(keys('에스파 아이브') === 'G:에스파+G:아이브', 'Chemistry 입구: 그룹 × 그룹');
+  ck(keys('카리나, 아이브') === '카리나+G:아이브', 'Chemistry 입구: 멤버 × 그룹');
+  ck(keys('aespa x ive') === 'G:에스파+G:아이브', 'Chemistry 입구: 영문 그룹 이름');
+  ck(keys('에스파 카리나') === null, 'Chemistry 입구: 그룹 + 그 그룹 멤버는 보통 검색');
+  ck(keys('에스파 직캠') === null, 'Chemistry 입구: 그룹 + 일반 낱말은 아님');
 }
 
 console.log(fail ? `\n✗ ${fail}건 실패` : '\n✅ 두 사람 검색 하네스 통과');
