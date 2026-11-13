@@ -2,6 +2,11 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-13 (Claude Code — Codex 11-13 후속: 멤버×곡 대표가 티저·단체 무대)
+- [build_group_pages.js memberSongVidOk] 개인 곡 페이지 영상은 제목에 그 멤버 이름(한글·영문·그룹 활동명, 'Ye-on'='YEON'='YE ON')이 있어야 — 한 명으로 잘못 태그된 단체 무대(예온 'Lemon Tang' 9개·STUDIO CHOOM 단체)가 대표·목록에서 빠짐(그룹 곡 페이지엔 그대로). 비공연 신호에 티저·무드 샘플러·프로모션·아는 형님·핫소스 추가(베이비몬스터 SHEESH·블랙핑크 Pink Venom 티저 대표). 다음 CI 빌드부터.
+- 이미 처리돼 있던 것: YUHZ 준성·윤서빈·러블리즈 Kei가 다른 사람 프로필·직캠 모음에(DB 정정 완료, 다음 빌드), 목록 race 테스트(_winEnter).
+- ⏳ Codex 제안(승인 대기): 카드 '공식 소식' 줄 — X 공식 위젯(무료)·위버스 원문 링크. X API 자동 수집은 유료(게시물 1건 $0.005).
+
 ## 2026-11-13 (Claude Code — Codex 11-13 남은 검수: 첫 수록 앨범·솔로 동명곡·옛 주소·앨범 2장)
 - [groups.json] 수록곡이 통째로 틀린 앨범 2장 멜론 정본으로: AOA 'Good Luck'(곡 번호는 맞는데 제목이 Angel's Knock 곡 — Excuse Me·Bing Bing·Bad Girl → 10 Seconds·Cherry Pop·Crazy Boy·Still Falls The Rain), CNBLUE 'BLUEMING'(2015.04.06·엉뚱한 5곡 → 2016.04.04 이렇게 예뻤나 외). 스트레이키즈 'SUIATSU' 싱글 region jp(일본 미니 4집 선공개).
 - [tools/seo_extra.js buildSongs] 곡 첫 수록 앨범 = 본판 우선(일본반·라이브·컴필레이션·리믹스·베스트는 뒤), 반주 트랙은 본곡이 있으면 판정에 안 씀 → CNBLUE 과거 현재 미래=RE-CODE, B1A4 이게 무슨 일이야=2013 미니 4집, AOA 빙빙=Angel's Knock, 크래비티 My Turn=HIDEOUT S3. 멤버 솔로 앨범에만 있는 곡은 그 멤버가 태그된 영상만(백현 'Diamond'에 EXO 단체 무대, 예성 '우리의 시간'·규현 '투게더'에 다른 OST, 니엘 '전화해'에 틴탑 Call Me).

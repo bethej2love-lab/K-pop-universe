@@ -1562,6 +1562,13 @@ const INSTR_CAM_RE = /(드럼|기타|베이스|키보드|drum|guitar|bass|keyboa
 // 단체 풀캠도 같은 방식(2026-11-12 Codex — STUDIO CHOOM 하츠투하츠 'Full Focused'·ITZY 'Close-up CAM' 단체 안무가 예온·유나 개인 순위 2·3위).
 // 솔로 'Full Focused'(카이 '음')는 제목에 이름이 있어 남는다.
 const GROUP_CAM_RE = /(full\s*focus(ed)?|풀\s*캠|full\s*cam|close-?up\s*cam|(단체|전체)\s*(직캠|캠)|group\s*(fan)?cam)/i;
+function memberNameInTitle(v, a, gko) {
+  const t = String(v.title || ''), tu = t.toUpperCase();
+  const ge = (a.groups || []).find(g => g && g.ko === gko);
+  const ns = [a.name && a.name.ko, a.name && a.name.en, ge && ge.name, ge && ge.nameEn, a.displayName].filter(Boolean);
+  const wordHit = n => { const w = String(n).toLowerCase().match(/[a-z0-9]+/g); return !!w && new RegExp('(^|[^a-z0-9])' + w.join('[\\s\\-.]*') + '(?![a-z0-9])', 'i').test(t); };
+  return ns.some(n => /[A-Za-z]/.test(n) ? wordHit(n) : t.includes(n));
+}
 function camTargetOk(v, a, gko) {
   const t = String(v.title || '');
   if (!INSTR_CAM_RE.test(t) && !GROUP_CAM_RE.test(t)) return true;
@@ -1592,13 +1599,16 @@ function memberSongPagePath(a, b, lang) { return `${memberPagePath(a, lang)}s/${
 // 'Lovesick Girls'에 인터뷰감옥, 라비 'Radio'에 보이는 라디오, 가을 'Baddie'에 아이브 Full Focused 단체 안무). 직캠 표시가 없어도 되는 대신
 // (솔로 무대·라이브 클립) 공연이 아닌 표시가 있으면 뺀다. 팬사인회 중 실제 개인 무대(모모 MOONLIGHT SUNRISE)는 남긴다.
 const MEMBER_SONG_NONPERF_FMT = new Set(['브이로그', '비하인드', '인터뷰', '라디오']);
-const MEMBER_SONG_NONPERF_RE = /(비하인드|behind|브이로그|vlog|인터뷰|interview|보이는\s?라디오|visual\s?radio|여행|녹음|예고편|출국|입국|공항|airport|출근길?|퇴근길(?!\s*live)|포토월|photo\s?wall|리액션|reaction|소감)/i;
+const MEMBER_SONG_NONPERF_RE = /(비하인드|behind|브이로그|vlog|인터뷰|interview|보이는\s?라디오|visual\s?radio|여행|녹음|예고편|출국|입국|공항|airport|출근길?|퇴근길(?!\s*live)|포토월|photo\s?wall|리액션|reaction|소감|teaser|티저|mood\s?sampler|무드\s?샘플러|promotion|프로모션|아는\s?형님|핫소스)/i;
 function memberSongVidOk(v, a, gko, song) {
   if (v.category === 'variety') return false;
   if ((v.content_formats || []).some(x => MEMBER_SONG_NONPERF_FMT.has(x))) return false;
   const t = String(v.title || '').replace(/\(\+\s*behind[^)]*\)/ig, ' ').replace(/#\S*비하인드\S*/g, ' ');
   const ts = song && song.title && song.title.length > 1 ? t.split(song.title).join(' ') : t; // 곡 이름 자체('여행'·'Interview')는 신호가 아니다
   if (MEMBER_SONG_NONPERF_RE.test(ts) || redCarpetEvent(ts)) return false;
+  // 개인 곡 페이지 = 그 멤버 개인 영상 — 제목에 그 멤버 이름(한글·영문·그룹 활동명)이 있어야 한다(2026-11-13 Codex — 예온 'Lemon Tang'에
+  // 예온 한 명으로 잘못 태그된 단체 무대 9개·STUDIO CHOOM 단체 퍼포먼스가 대표로). 이름 없는 단체 무대는 그룹 곡 페이지에 그대로 있다.
+  if (!memberNameInTitle(v, a, gko)) return false;
   return camTargetOk(v, a, gko);
 }
 function computeMemberSongs() {
