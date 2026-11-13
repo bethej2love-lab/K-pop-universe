@@ -2,6 +2,10 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-13 (Claude Code — 디스코 보강 3: 디모렉스 차수 수정·기타 보류 처리)
+- [artists.json] 디모렉스 미니 차수 오등록 수정(나무위키 근거): INTOXICATED 4집→3집, ANTIDOTE 5집→4집, METAMORPHOSIS 6집→5집. 방예담 명의 1·2집 이후 싱글 3장 → 미니 3집 INTOXICATED로 직행(멜론 소개의 "4번째 EP"는 오류 또는 싱글 계산 방식 차이).
+- 이세계아이돌 STARBOUND·메이브 PARADOX·아이칠린 Glitch Mode: 멜론 2026.10 발매 앨범 미등록 — Spotify ID 이미 있음, 현재 상태 유지.
+
 ## 2026-11-13 (Claude Code — 디스코 보강 2: 차수 번호 오등록 수정·KO1KEYZ·CUTIE STREET 판단)
 - [groups.json] 마마무 Piano Man "싱글" → "미니 2집", Pink Funky "미니 2집" → "미니 3집" (멜론 공식·위키 확인 — 2집과 3집이 뒤바뀌어 있었음).
 - [artists.json] 현아 A Talk "싱글" → "미니 3집" (타이틀 트랙 '빨개요', 2014.07.28 발매 — 멜론 2269895).
