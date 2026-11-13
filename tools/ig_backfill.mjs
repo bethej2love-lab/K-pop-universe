@@ -64,9 +64,9 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 let calls = 0, saved = 0, finished = 0, stoppedBy = '';
 outer:
 for (const a of queue) {
-  let cursor = a.bf_cursor || null, count = a.bf_count || 0;
+  let cursor = a.bf_cursor || null, count = a.bf_count || 0, lim = 50; // 응답이 크면 메타가 "reduce the amount of data"로 거절 — 25·12로 줄여 같은 자리에서 다시
   while (calls < MAX) {
-    const media = `media${cursor ? `.after(${cursor})` : ''}.limit(50){id,media_type,permalink,timestamp,caption,like_count,comments_count,children{id,media_type}}`;
+    const media = `media${cursor ? `.after(${cursor})` : ''}.limit(${lim}){id,media_type,permalink,timestamp,caption,like_count,comments_count,children{id,media_type}}`;
     const url = `${GRAPH}/${IG_USER}?fields=business_discovery.username(${encodeURIComponent(a.handle)}){${media}}&access_token=${encodeURIComponent(TOKEN)}`;
     let r, j;
     try { r = await fetch(url); j = await r.json(); } catch (e) { stoppedBy = '네트워크 ' + e.message; break outer; }
@@ -76,6 +76,7 @@ for (const a of queue) {
       if (c === 190) { console.error('❌ 토큰 만료/무효:', j.error.message); process.exitCode = 2; break outer; }
       if ([4, 17, 32, 613, 80002].includes(c)) { stoppedBy = `호출 한도(${c})`; break outer; }
       if (c === 200 && /access blocked/i.test(j.error.message || '')) { console.error('❌ 메타 앱 차단:', j.error.message); process.exitCode = 3; break outer; }
+      if (/reduce the amount of data/i.test(j.error.message || '') && lim > 6) { lim = Math.floor(lim / 2); continue; }
       // 커서가 만료됐으면 처음부터 다시(이미 있는 글은 건너뛰니 손해는 호출 몇 번)
       if (cursor) { console.warn(`  ${a.handle}: 커서 오류 → 처음부터 (${String(j.error.message).slice(0, 80)})`); cursor = null; await sbWrite('PATCH', `ig_accounts?handle=eq.${encodeURIComponent(a.handle)}`, { bf_cursor: null }); continue; }
       console.warn(`  ${a.handle}: 건너뜀 (${String(j.error.message).slice(0, 120)})`); break;
