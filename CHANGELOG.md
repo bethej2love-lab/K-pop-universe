@@ -2,6 +2,10 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-13 (Claude Code — 디스코 보강: 멜론 ID·앨범 차수 번호 추가)
+- [groups.json·artists.json] 최근 신보 앨범 차수 번호 추가 (8그룹+채령): 에이티즈 15집·피원하모니 11집·롱샷 3집·키빗업 2집·이세계아이돌 2집·엔시티 드림 정규 6집·하트오브우먼 1집·시크릿 6집, 채령(있지) 미니 1집.
+- [groups.json] 멜론 ID 없던 10~11월 신보에 ID·커버·songId 추가: 트리플에스 See You(15082613)·씨엔블루 FULL CIRCLE(14912109, 10트랙 603535607~616)·하이파이유니콘 Boy(15092070).
+
 ## 2026-11-13 (Claude Code — Codex 11-13 잔여 검수: LNGSHOT S.W.I.S.H. EP 멜론 병합)
 - [groups.json] LNGSHOT 'Masterpiece' 싱글 레코드가 멜론 앨범 15007233을 쥐고 있었으나, 15007233은 발매일 2026.11.10·트랙 5개(Masterpiece+Bananas 등)인 S.W.I.S.H. EP의 ID. 싱글 레코드 삭제 → S.W.I.S.H. EP에 melonAlbumId·멜론 커버·5트랙 songId(603577089 Masterpiece, 603744728 Bananas, ~603744731 Beep Beep) 추가, src=melon.
 - 79번줄 ⏳ 나머지 항목들: 퍼플키스 Swan·결경 → 50번줄 세션에서 처리, EXO Diamond → 49번줄 세션에서 처리, 슈퍼주니어 솔로 동명곡 → 49번줄 세션(규현·예성 OST 오탐 포함) 처리, H.O.T. 멘트 ID → variant:true+melonVia 의도적 구조(이슈 아님).
