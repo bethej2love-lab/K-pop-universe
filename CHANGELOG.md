@@ -2,6 +2,13 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-13 (Claude Code — Codex 11-13 남은 검수: 첫 수록 앨범·솔로 동명곡·옛 주소·앨범 2장)
+- [groups.json] 수록곡이 통째로 틀린 앨범 2장 멜론 정본으로: AOA 'Good Luck'(곡 번호는 맞는데 제목이 Angel's Knock 곡 — Excuse Me·Bing Bing·Bad Girl → 10 Seconds·Cherry Pop·Crazy Boy·Still Falls The Rain), CNBLUE 'BLUEMING'(2015.04.06·엉뚱한 5곡 → 2016.04.04 이렇게 예뻤나 외). 스트레이키즈 'SUIATSU' 싱글 region jp(일본 미니 4집 선공개).
+- [tools/seo_extra.js buildSongs] 곡 첫 수록 앨범 = 본판 우선(일본반·라이브·컴필레이션·리믹스·베스트는 뒤), 반주 트랙은 본곡이 있으면 판정에 안 씀 → CNBLUE 과거 현재 미래=RE-CODE, B1A4 이게 무슨 일이야=2013 미니 4집, AOA 빙빙=Angel's Knock, 크래비티 My Turn=HIDEOUT S3. 멤버 솔로 앨범에만 있는 곡은 그 멤버가 태그된 영상만(백현 'Diamond'에 EXO 단체 무대, 예성 '우리의 시간'·규현 '투게더'에 다른 OST, 니엘 '전화해'에 틴탑 Call Me).
+- [build_group_pages.js·tools/data/stale_member_aliases.json] 이름이 바뀌어 자동 매칭이 못 찾던 옛 주소를 지금 그 사람 주소로: 프리스틴 '결경'(→ 주결경, 예전엔 영어 전환이 카일라로), 퍼플키스 en 'swan'(→ 수안), en/member/swan/(→ 박지은, 곡 페이지 5개 포함). 그룹 prevEn(다이몬 DAIMON → DXMON) 옛 en/g/daimon/ 아래 전부 넘김. 카일라 영문명 '카일라'(한글이라 슬러그가 'group') → 'Kyla', 리오(알파드라이브원) prevEn Rio, 리오(니쥬) prevEn Riho. 다음 CI 빌드부터.
+- [app.js] 태그된 사진 조회 상한 명시(select-pagination).
+- ⏳ 블락비 Jackpot(일본판 ID 공유·HER 표지)은 실물 판본 근거 확인 전 보류. 나나·준서 옛 소속 주소는 같은 사람이라 의도대로.
+
 ## 2026-11-13 (Claude Code — 실패 메일 줄이기: 사람이 고칠 때만 실패)
 - 사용자 "run fail 될 때마다 지메일로 알림 — 너무 많다, 꼭 확인할 때만". 지난 7일 실패 140건 중 영상 동기화 59(대부분 유튜브 일일 할당량 초과·DB/네트워크 일시 장애 — 다음 회차에 저절로 풀림), 테스트 37(낡은 테스트), 브라우저 스모크 15(라이브 데이터 느린 순간), 매일 루틴 8·정합성 청소 3(같은 실행기), RLS 감사 4(새 표 기대값 누락), 페이지 배포 7(GitHub 쪽 시간 초과).
 - [tools/run_daily_routine.cjs] 실패 단계가 전부 일시적 원인(quotaExceeded·Failed to fetch·5xx·타임아웃)이면 경고(::warning)만 남기고 성공 처리 — 매시간 동기화·매일 루틴·정합성 청소 공통. 비번·키 누락·코드 오류는 그대로 실패. 수집이 실제로 오래 멈추면 수집 워치독(sync-watchdog.yml)이 이슈로 알림.

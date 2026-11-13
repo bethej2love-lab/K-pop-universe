@@ -12281,7 +12281,7 @@ async function _renderIgTagged(prefix,a){
     const{data:tags,error}=await sb.from('ig_photo_tags').select('post_key,handle').contains('artist_ids',[a.id]).limit(400);
     if(error||box.dataset.a!==a.id||!tags||!tags.length)return;
     const keys=[...new Set(tags.map(t=>t.post_key))];
-    const{data:rows}=await sb.from('ig_media').select('post_key,handle,media_id,t,ty,p,u,c,mi,n,cap,lk,cm').in('post_key',keys.slice(0,200));
+    const{data:rows}=await sb.from('ig_media').select('post_key,handle,media_id,t,ty,p,u,c,mi,n,cap,lk,cm').in('post_key',keys.slice(0,200)).limit(200);
     if(box.dataset.a!==a.id||!rows||!rows.length)return;
     rows.sort((x,y)=>String(y.t).localeCompare(String(x.t))).forEach(r=>strip.appendChild(_igRowTile(r,r.handle,'ig-item igtag-tile')));
     box.querySelector('.igtag-hd').textContent=(currentLang==='ko'?'태그된 사진':'Tagged photos')+' '+rows.length;

@@ -41954,7 +41954,8 @@
     ],
     "src": "spotify",
     "spotifyId": "3d1bp6IA5a0k1r7lQDWQgG",
-    "copyright": "2026 JYP Entertainment"
+    "copyright": "2026 JYP Entertainment",
+    "region": "jp"
    },
    {
     "title": "11월 11일 (November 11th)",
@@ -204615,30 +204616,31 @@
      },
      {
       "no": 2,
-      "title": "너나 해 (Excuse Me)",
+      "title": "10 Seconds",
       "isTitle": false,
       "songId": "8181756"
      },
      {
       "no": 3,
-      "title": "Bing Bing",
+      "title": "Cherry Pop",
       "isTitle": false,
       "songId": "8181757"
      },
      {
       "no": 4,
-      "title": "배드걸 (Bad Girl)",
+      "title": "Crazy Boy",
       "isTitle": false,
       "songId": "8181758"
      },
      {
       "no": 5,
-      "title": "Good Luck (Inst.)",
+      "title": "Still Falls The Rain",
       "isTitle": false,
       "songId": "8181759"
      }
     ],
-    "melonAlbumId": "2684922"
+    "melonAlbumId": "2684922",
+    "tracksSource": "melon-reference-2026-11-12"
    },
    {
     "title": "Heart Attack",
@@ -225417,40 +225419,44 @@
     "type": "미니 6집",
     "isMain": true,
     "cover": "https://cdnimg.melon.co.kr/cm/album/images/026/77/189/2677189_500.jpg",
-    "releaseDate": "2015.04.06",
+    "releaseDate": "2016.04.04",
     "trackCount": 5,
-    "titleTrack": "CINDERELLA",
+    "titleTrack": "이렇게 예뻤나 (YOU'RE SO FINE)",
     "tracks": [
      {
       "no": 1,
-      "title": "CINDERELLA",
-      "isTitle": true,
-      "songId": "33035184"
+      "title": "이렇게 예뻤나 (YOU'RE SO FINE)",
+      "songId": "8126691",
+      "isTitle": true
      },
      {
       "no": 2,
-      "title": "LOVE",
-      "isTitle": false,
-      "songId": "33015666"
+      "title": "THE SEASONS",
+      "songId": "8126692",
+      "isTitle": false
      },
      {
       "no": 3,
-      "title": "Then, Now and Forever",
+      "title": "YOUNG FOREVER",
+      "songId": "8126693",
       "isTitle": false
      },
      {
       "no": 4,
-      "title": "지나오다 (Passing By)",
+      "title": "WITHOUT YOU",
+      "songId": "8126694",
       "isTitle": false
      },
      {
       "no": 5,
-      "title": "Get Away",
-      "isTitle": false,
-      "songId": "33035178"
+      "title": "STAY SOBER",
+      "songId": "8126695",
+      "isTitle": false
      }
     ],
-    "melonVia": "10512748"
+    "melonVia": "10512748",
+    "tracksSource": "melon-reference-2026-11-12",
+    "melonAlbumId": "2677189"
    },
    {
     "title": "Ryu Can Do It",
@@ -268626,7 +268632,10 @@
   "fandom": {
    "ko": "몬스",
    "en": "MONS"
-  }
+  },
+  "prevEn": [
+   "DAIMON"
+  ]
  },
  "비비업": {
   "en": "VVUP",

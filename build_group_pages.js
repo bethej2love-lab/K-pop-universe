@@ -924,6 +924,51 @@ function redirectStaleMemberPages() {
       }
     }
   }
+  // 이름이 바뀌어 자동 매칭이 못 찾는 옛 주소(2026-11-13 Codex — 옛 '결경'·'Swan' 주소의 언어 전환이 다른 멤버(카일라·박지은)로 갔다).
+  // tools/data/stale_member_aliases.json에 적은 것만, 그 사람의 지금 주소로 넘긴다. songs:true면 그 아래 곡 페이지도 같은 사람 곡으로.
+  const redirectPage = (url, nm, lang) => `<!doctype html>
+<html lang="${lang}"><head><meta charset="utf-8"><title>${escHtml(nm)} — K-POP UNIVERSE</title>
+<link rel="canonical" href="${url}"><meta name="robots" content="noindex">
+<meta http-equiv="refresh" content="0; url=${url}">
+</head><body><a href="${url}">${escHtml(nm)}</a></body></html>
+`;
+  let aliasList = [];
+  try { aliasList = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools/data/stale_member_aliases.json'), 'utf8')).list || []; } catch (e) {}
+  for (const o of aliasList) {
+    const a = artists.find(x => x && x.id === o.id); if (!a) continue;
+    const now = memberPagePath(a, o.lang), dir = path.join(ROOT, o.rel);
+    if (!now || now === o.rel || !memberPagesMade.has(now) || !fs.existsSync(path.join(dir, 'index.html'))) continue;
+    const nm = o.lang === 'en' ? (a.name.en || a.name.ko) : a.name.ko;
+    fs.writeFileSync(path.join(dir, 'index.html'), redirectPage(`${SITE}/${now}`, nm, o.lang)); redir++;
+    const sDir = path.join(dir, 's');
+    if (o.songs && fs.existsSync(sDir)) for (const sd of fs.readdirSync(sDir, { withFileTypes: true })) {
+      if (!sd.isDirectory() || !fs.existsSync(path.join(sDir, sd.name, 'index.html'))) continue;
+      const nowSong = `${now}s/${sd.name}/`;
+      fs.writeFileSync(path.join(sDir, sd.name, 'index.html'), redirectPage(fs.existsSync(path.join(ROOT, nowSong, 'index.html')) ? `${SITE}/${nowSong}` : `${SITE}/${now}`, nm, o.lang)); redir++;
+    }
+  }
+  // 그룹 영문명이 바뀐 경우(groups.json prevEn — 다이몬 DAIMON → DXMON): 옛 en/g/<옛 슬러그>/ 아래 전부를 지금 주소의 같은 자리로
+  for (const g of Object.keys(groups)) {
+    const cur = groupPagePath(g, 'en'); if (!cur) continue;
+    for (const pe of (groups[g].prevEn || [])) {
+      const oldRel = `en/g/${slugify(pe, g)}/`, oldDir = path.join(ROOT, oldRel);
+      if (oldRel === cur || !fs.existsSync(oldDir)) continue;
+      const nm = groups[g].en || g;
+      const walk = (dirAbs, relTail) => {
+        for (const e of fs.readdirSync(dirAbs, { withFileTypes: true })) {
+          if (!e.isDirectory()) continue;
+          const sub = path.join(dirAbs, e.name), tail = relTail + e.name + '/';
+          if (fs.existsSync(path.join(sub, 'index.html'))) {
+            const to = fs.existsSync(path.join(ROOT, cur + tail, 'index.html')) ? `${SITE}/${cur}${tail}` : `${SITE}/${cur}`;
+            fs.writeFileSync(path.join(sub, 'index.html'), redirectPage(to, nm, 'en')); redir++;
+          }
+          walk(sub, tail);
+        }
+      };
+      if (fs.existsSync(path.join(oldDir, 'index.html'))) { fs.writeFileSync(path.join(oldDir, 'index.html'), redirectPage(`${SITE}/${cur}`, nm, 'en')); redir++; }
+      walk(oldDir, '');
+    }
+  }
   if (redir || kept) console.log(`옛 멤버 페이지 정리: 새 주소로 넘김 ${redir}개 · 그대로 둠(주소 못 찾음·동명이인) ${kept}개`);
 }
 

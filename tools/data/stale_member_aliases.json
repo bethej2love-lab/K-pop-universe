@@ -1,0 +1,10 @@
+{
+  "_note": "옛 멤버 주소 → 지금 그 사람(id). 이름이 바뀌어 자동 매칭(redirectStaleMemberPages)이 못 찾는 것만. songs:true면 그 아래 s/곡/도 같은 사람 곡 페이지로(2026-11-13 Codex).",
+  "list": [
+    { "rel": "g/프리스틴/결경/", "id": "a1048", "lang": "ko" },
+    { "rel": "en/g/purple-kiss/swan/", "id": "a1150", "lang": "en" },
+    { "rel": "en/member/swan/", "id": "a1151", "lang": "en", "songs": true },
+    { "rel": "en/g/pristin/group/", "id": "a1052", "lang": "en" },
+    { "rel": "en/member/group-a1052/", "id": "a1052", "lang": "en" }
+  ]
+}

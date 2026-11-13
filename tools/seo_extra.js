@@ -281,8 +281,15 @@ function buildSongs({ ROOT, groups, artists, EX, vids, minVids = 4 }) {
     if (!songs.length) continue;
     // 곡 → 처음 실린 앨범(가장 이른 발매)·타이틀곡 여부·크레딧
     const meta = {};
-    albums.slice().sort((x, y) => String(x.releaseDate || '').localeCompare(String(y.releaseDate || ''))).forEach(al => (al.tracks || []).forEach(tr => {
+    // 첫 수록 앨범은 본판 우선(2026-11-13 Codex — B1A4 '이게 무슨 일이야'가 앞 앨범의 반주 트랙 때문에 'In the Wind'로, 일본반·라이브·베스트가
+    // 원곡 앨범보다 먼저 잡히던 것). 같은 등급 안에선 발매일 순. 반주(Inst.) 트랙은 첫 수록 판정에 안 쓴다(본곡이 어디에도 없을 때만).
+    const alRank = al => (al.region === 'jp' || /라이브|컴필레이션|리믹스|베스트/.test(al.type || '') || /\b(live|concert|remix(es)?|best|tour)\b|라이브|콘서트/i.test(al.title || '')) ? 1 : 0;
+    const isInst = t => /\((inst\.?|instrumental|mr)\)\s*$/i.test(String(t || ''));
+    const ordered = albums.slice().sort((x, y) => alRank(x) - alRank(y) || String(x.releaseDate || '').localeCompare(String(y.releaseDate || '')));
+    const hasMain = new Set(); ordered.forEach(al => (al.tracks || []).forEach(tr => { if (tr && tr.title && !isInst(tr.title)) hasMain.add(S.B(tr.title)); }));
+    ordered.forEach(al => (al.tracks || []).forEach(tr => {
       if (!tr || !tr.title) return;
+      if (isInst(tr.title) && hasMain.has(S.B(tr.title))) return;
       const b = S.B(tr.title); if (!b) return;
       // 표시 이름은 가장 먼저 나온 원곡 제목(띄어 쓴 첫 괄호 앞 — 붙은 괄호는 이름의 일부: FRI(END)S) — 곡 목록 순서대로 쓰면 'LOVE DIVE -Japanese version-'이 이름이 됐다
       const m = meta[b] || (meta[b] = { name: String(tr.title).replace(/\s*-[^-]*\bver(?:sion)?\b\.?[^-]*-\s*$/i, '').split(/\s+[\(\[]/)[0].trim(), album: al.title, date: al.releaseDate || '', isTitle: false, cr: null, melonId: null, cover: al.cover || null });
@@ -296,6 +303,11 @@ function buildSongs({ ROOT, groups, artists, EX, vids, minVids = 4 }) {
       if (!m.melonId && tr.songId) m.melonId = tr.songId;
       if (!m.cover && al.cover) m.cover = al.cover; // 곡 타일 이미지(2026-10-30)
     }));
+    // 멤버 솔로 앨범에만 있는 곡은 그 멤버가 태그된 영상만(2026-11-13 Codex — 백현 솔로 'Diamond'에 EXO 단체 무대, 예성 '우리의 시간'·규현 '투게더'에
+    // 다른 OST, 니엘 '전화해'에 틴탑 'Call Me' 무대). 그룹 앨범에도 있는 곡은 그대로.
+    const groupB = new Set(Object.values(d.g || {}).flatMap(al => (al.tracks || []).map(tr => S.B(tr && tr.title || ''))));
+    const soloOnly = new Map();
+    Object.entries(d.m || {}).forEach(([nm, x]) => [...(x.d || []), ...(x.u || []).flatMap(u => (u && u.albums) || [])].forEach(al => (al.tracks || []).forEach(tr => { const b = S.B(tr && tr.title || ''); if (!b || groupB.has(b)) return; (soloOnly.get(b) || soloOnly.set(b, new Set()).get(b)).add(nm); })));
     const bucket = new Map(songs.map(s => [s.b, { b: s.b, title: s.title.replace(/\s*[\(\[].*$/, '') || s.title, vids: [] }]));
     const names = [g, groups[g].en || ''];
     for (const v of vids[g]) {
@@ -306,7 +318,7 @@ function buildSongs({ ROOT, groups, artists, EX, vids, minVids = 4 }) {
       if (ev.size) bs = bs.filter(x => !ev.has(x));
       if (bs.length > 1) { const tn = [...String(v.title || '').matchAll(TOUR_NAME_RE)].map(m => S.N(m[2])).filter(Boolean);
         if (tn.length) { const keep = bs.filter(x => !tn.some(n => n.includes(x))); if (keep.length) bs = keep; } }
-      for (const b of bs) { const s = bucket.get(b); if (s) s.vids.push(v); }
+      for (const b of bs) { const s = bucket.get(b); if (!s) continue; const own = soloOnly.get(b); if (own && !(v.members || []).some(m => own.has(m))) continue; s.vids.push(v); }
     }
     // 1위 기록은 곡 제목이 영어로 저장된 경우가 있다('HEYA'·'God of Music') — 별칭으로도 기본형을 찾는다
     const toBase = new Map(); songs.forEach(s => { toBase.set(s.b, s.b); (s.alias || []).forEach(al => { if (!toBase.has(al.n)) toBase.set(al.n, s.b); }); });
