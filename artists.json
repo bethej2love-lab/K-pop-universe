@@ -109621,6 +109621,31 @@
         "active": false,
         "left": "2024.07.09"
       }
+    ],
+    "discography": [
+      {
+        "title": "돌싱N모솔 시즌2",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/06/948/15106948_20261030182449_500.jpg",
+        "releaseDate": "2026.11.03",
+        "trackCount": 2,
+        "titleTrack": "Love Class",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Love Class",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Love Class.INST",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15106948"
+      }
     ]
   },
   {
@@ -147654,6 +147679,29 @@
     "left": "2017.01.06",
     "discography": [
       {
+        "title": "그대에게",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/05/794/15105794_20261030121859_500.jpg",
+        "releaseDate": "2026.11.02",
+        "trackCount": 2,
+        "titleTrack": "그대에게(To You)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "그대에게(To You)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "그대에게(To You) (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15105794"
+      },
+      {
         "title": "우리가 헤어지지 않았더라면",
         "type": "싱글",
         "isMain": true,
@@ -163608,6 +163656,66 @@
     },
     "discography": [
       {
+        "title": "1017 (Feat. Deevs) (Explicit Ver.)",
+        "type": "싱글",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/145/97/485/14597485_20260929041212_500.jpg",
+        "releaseDate": "2026.10.02",
+        "trackCount": 1,
+        "titleTrack": "1017 (Feat. Deevs) (Explicit Ver.)",
+        "variant": true,
+        "tracks": [
+          {
+            "no": 1,
+            "title": "1017 (Feat. Deevs) (Explicit Ver.)",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14597485"
+      },
+      {
+        "title": "Miracle",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/148/83/603/14883603_20261018025846_500.jpg",
+        "releaseDate": "2026.03.30",
+        "trackCount": 1,
+        "titleTrack": "Miracle",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Miracle",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14883603"
+      },
+      {
+        "title": "Inbox",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/148/80/960/14880960_20261018015311_500.jpg",
+        "releaseDate": "2026.03.26",
+        "trackCount": 2,
+        "titleTrack": "A Letter to Miss Spineless",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "A Letter to Miss Spineless",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "A Letter to the Special One (Feat. Aafi)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14880960"
+      },
+      {
         "title": "F KILLER",
         "type": "싱글",
         "releaseDate": "2026.03.21",
@@ -163834,7 +163942,32 @@
       "namu": "https://namu.wiki/w/제현(OMEGA X)",
       "instagram": "https://www.instagram.com/nuyhejnoom"
     },
-    "id": "a0771"
+    "id": "a0771",
+    "discography": [
+      {
+        "title": "ironic",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/147/64/112/14764112_20261015182324_500.jpg",
+        "releaseDate": "2026.10.22",
+        "trackCount": 2,
+        "titleTrack": "Love and Hate",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Love and Hate",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Natural",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14764112"
+      }
+    ]
   },
   {
     "name": {
@@ -197831,6 +197964,29 @@
       "namu": "https://namu.wiki/w/Y(%EA%B3%A8%EB%93%A0%EC%B0%A8%EC%9D%BC%EB%93%9C)"
     },
     "discography": [
+      {
+        "title": "돌싱N모솔 시즌2",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/06/950/15106950_20261030182549_500.jpg",
+        "releaseDate": "2026.11.03",
+        "trackCount": 2,
+        "titleTrack": "다른 시간,다른 상처",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "다른 시간,다른 상처",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "다른 시간,다른 상처.INST",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15106950"
+      },
       {
         "title": "하절기 OST",
         "type": "OST",
@@ -270045,6 +270201,24 @@
     },
     "left": "2026.04.30",
     "discography": [
+      {
+        "title": "남은 평생",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/145/65/209/14565209_20260918124538_500.jpg",
+        "releaseDate": "2026.09.24",
+        "trackCount": 1,
+        "titleTrack": "남은 평생",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "남은 평생",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14565209"
+      },
       {
         "title": "여름이 될 수 있게",
         "type": "싱글",
