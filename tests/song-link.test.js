@@ -51,6 +51,11 @@ vm.runInContext('this.AN=_albumNormFor;this.AH=_albumTitleHit;', ctx);
   eq(g('에스파', 'aespa')('[2024 MBC 가요대제전] 에스파 - 인트로 + 슈퍼노바 + 위플래시 (aespa - Intro + Supernova + Whiplash), MBC 250130 방송').includes('supernova'), true, '괄호 안이 곡 나열이면 메들리 유지');
   eq(g('데이식스', 'DAY6')("2023 DAY6 Christmas Special Concert 'The Present : You are My Day' LIVE｜Love me or Leave me"), ['lovemeorleaveme'], '콘서트 이름 속 곡(My Day)은 뺌');
 }
+{ const g = (n, en) => t => ctx.f(t, songsOf(n), [n, en]);
+  eq(g('엔시티 위시', 'NCT WISH')("NCT WISH 엔시티 위시 'NASA' Performance Video"), ['nasa'], "그룹 이름 'NCT WISH' 속 곡 'WISH'는 안 잡힘");
+  eq(g('라이즈', 'RIIZE')("RIIZE 라이즈 '모든 하루의 끝 (The End of the Day)' MV | ODYSSEY - The 1st Album"), ['모든하루의끝'], '앨범 이름 속 곡(ODYSSEY)은 뺌');
+  eq(g('이엑스아이디', 'EXID')('EXID - 위아래(Up&Down)- 뮤직뱅크 Musicbank 20141205'), ['위아래'], "'위아래(Up&Down)' 괄호 영문과 같은 다른 곡(OST 'Up & Down')은 뺌");
+}
 eq(ctx.AN('REVIVE+', new Set(['attitude']), ['아이브', 'IVE']), 'revive', '앨범명 정규형');
 eq(ctx.AN('BANG BANG', new Set(['bangbang']), ['아이브', 'IVE']), null, '앨범명=곡명(싱글)이면 곡 키가 모으니 앨범명으로 안 찾음');
 eq(ctx.AN('New Jeans', new Set(['attention']), ['뉴진스', 'NewJeans']), null, '앨범명=그룹명이면 그룹 영상 전부에 걸려서 막음');

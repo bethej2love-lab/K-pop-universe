@@ -537,10 +537,12 @@ function _songLinkBases(title,songs,blockNames){
   const body=_songNorm(noTags);
   const tl=noTags.toLowerCase().normalize('NFKC').replace(_SONG_ZW,''); // 단어 경계 검사용(공백·기호 살아 있는 소문자, 폭 0 문자는 뺌)
   const hits=[];
+  // 주인 이름(4글자↑)을 지운 본문 — 'NCT WISH' 안의 곡 'WISH'가 모든 영상에 걸리던 것(2026-11-13 Codex). 따옴표 속 곡은 ①에서 이미 잡힌다
+  const bodyNO=[...blocked].filter(o=>o.length>=4).reduce((x,o)=>x.split(o).join('|'),body);
   for(const s of songs){
     // 길이 문턱: 한글만으로 된 곡명은 3글자부터('아낀다'·'손오공'), 나머지는 4글자부터(영어 'ON'·'HOT' 같은 짧은 낱말 오탐)
     if((/^[가-힣]+$/.test(s.b)?s.b.length<3:s.b.length<4)||_SONG_COMMON.has(s.b)||blocked.has(s.b))continue;
-    if(!body.includes(s.b))continue;
+    if(!body.includes(s.b)||(!bodyNO.includes(s.b)&&![...blocked].some(n=>n.length>=4&&s.b.includes(n))))continue; // 곡 이름에 그룹 이름이 든 곡(SHINee In The House)은 그대로
     // 영어 곡명은 단어 단위로만 — 'ICON'이 '[Dicon]' 안에 걸리던 오탐(2026-10-16 표본). 원제목 낱말을 공백·기호 무관하게 이어 붙인 정규식
     if(/^[a-z0-9]+$/.test(s.b)&&s.title){
       if(s.re===undefined){
@@ -579,20 +581,24 @@ function _songLinkBases(title,songs,blockNames){
     const formsOf=b=>{const s=sOf.get(b);return [b,...((s&&s.alias)||[]).map(a=>a.n)].filter(x=>x&&x.length>=2);};
     const inBody=b=>formsOf(b).filter(f=>body.includes(f));
     const wide=new Map(out.map(o=>[o,inBody(o)]));
+    const eqOK=new Map(out.map(o=>[o,new Set()])); // 그 곡 바로 뒤 괄호와 똑같은 다른 곡 기본형 = 이 곡의 별칭
+    out.forEach(o=>{const s=sOf.get(o);if(s&&s.title)for(const m of String(s.title).matchAll(/[\(\[]([^)\]]{4,80})[\)\]]/g)){const n=_songNorm(m[1]);if(n&&body.includes(n))wide.get(o).push(n);}});
     for(const m of noTags.matchAll(/([^()（）\[\]'"‘’“”|｜]{1,40}?)\s*[\(（]([^)）]{2,60})[\)）]/g)){
-      if(/[+,&＋]|\s[-–—]\s/.test(m[2]))continue; // 괄호 안이 곡 나열('aespa - Intro + Supernova + Whiplash')이면 별칭이 아니다
+      if(/[+,＋]|\s[-–—]\s/.test(m[2]))continue; // 괄호 안이 곡 나열('aespa - Intro + Supernova + Whiplash')이면 별칭이 아니다
       const L=_songNorm(m[1]),P=_songNorm(m[2]);if(!L||!P)continue;
-      const own=out.find(o=>formsOf(o).some(f=>L.endsWith(f)||f===P));
-      if(own&&own!==P)wide.get(own).push(P); // 그 곡 바로 뒤 괄호 = 그 곡의 다른 표기(앞 구간 전체는 메들리일 수 있어 안 씀)
+      const own=out.find(o=>formsOf(o).some(f=>L.endsWith(f)));
+      if(own&&own!==P){wide.get(own).push(P);eqOK.get(own).add(P);} // 그 곡 바로 뒤 괄호 = 그 곡의 다른 표기(앞 구간 전체는 메들리일 수 있어 안 씀)
     }
     const keep=out.filter(b=>{const mine=wide.get(b).filter(f=>formsOf(b).includes(f));if(!mine.length)return true;
-      return !mine.every(f=>out.some(o=>o!==b&&wide.get(o).some(g=>g!==f&&g.length>f.length&&g.includes(f))));});
+      return !mine.every(f=>out.some(o=>o!==b&&(eqOK.get(o).has(f)||wide.get(o).some(g=>g!==f&&g.length>f.length&&g.includes(f)))));});
     if(keep.length)out.splice(0,out.length,...keep);
   }
   // ⑤ 투어·콘서트·팬미팅 이름 속 곡(2026-11-13 Codex — 'ITZY 2ND WORLD TOUR [ BORN TO BE ]' 직캠이 'BORN TO BE'로, DAY6 콘서트
   //    'You are My Day'의 다른 곡 무대가 'My Day'로). 다른 곡도 잡힌 영상에서만 뺀다(투어 이름 곡 자체 무대는 남는다).
   if(out.length>1){
     const tn=[...t.matchAll(/(tour|투어|concert|콘서트|fan\s*-?\s*meeting|팬미팅|fan-?con|팬콘)\s*[\[<'"‘“《〈「(]\s*([^\]>'"’”》〉」)]{2,60})/ig)].map(m=>_songNorm(m[2])).filter(Boolean);
+    for(const m of t.matchAll(/(?:^|[|｜@])\s*([^|｜@'"‘’“”\[\]]{2,40}?)\s*(?:-\s*the\s*\d+(?:st|nd|rd|th)\s*(?:mini\s*)?album|showcase|쇼케이스)/ig))tn.push(_songNorm(m[1]));
+    const lead=/^\s*\[([^\]]{3,60})\]/.exec(t);if(lead&&!/\s[-–—]\s/.test(lead[1])&&!/\b(mv|m\/v|4k|8k|직캠|fancam|live|stage)\b/i.test(lead[1]))tn.push(_songNorm(lead[1]));
     if(tn.length){const keep=out.filter(b=>!tn.some(n=>n.includes(b)));if(keep.length)out.splice(0,out.length,...keep);}
   }
   return out;
@@ -798,9 +804,12 @@ function _msKind(t) {
   // 직캠으로 끝나서 '최애직캠 모음집'(23분, 여러 곡)·'직캠보고서 … 사전녹화 비하인드'가 직캠이 됐고, MC 컷 모음·인생극장(예능)은 제외 목록에 없어 무대가 됐다.
   // 회차 묶기에서만 빠진다 — 아티스트 카드의 영상은 그대로. 'zip' 하나로는 막지 않는다(곡명·그룹명 오인).
   if (/모음집|mc\s*컷|mc\s*cut|mc\s*talk|mc석|인생극장|zip캠|최애\s*zip|직캠\s*보고서|비하인드|behind|수상소감/i.test(t)) return null;
+  // 더쇼 인터뷰 코너 'JJaeLiView'·전체 생방송('[🔴LIVE] 2026 THE SHOW Ep.403 … RESCENE, xikers, …, etc.')도 회차 무대가 아니다(2026-11-13 Codex)
+  if (/jjaeliview|짹?리뷰\]|🔴|\bfull\s*episode\b|전체\s*방송|,\s*etc\.?\s*$/i.test(t)) return null;
   if (/페이스캠|face\s*cam/i.test(t)) return 'facecam';
   if (/풀캠|full\s*cam/i.test(t)) return 'fullcam';
-  if (/직캠|fan\s*cam|focus|원픽캠/i.test(t)) return 'fancam'; // 원픽캠 = 쇼챔 멤버 한 명 직캠(예전엔 '무대'로 갔다)
+  if (/직캠|fan\s*cam|focus|원픽캠|fan\s*pick\s*cam|캐치캠|catch\s*cam/i.test(t)) return 'fancam'; // 원픽캠 = 쇼챔 멤버 한 명 직캠(예전엔 '무대'로 갔다) · 더쇼 FAN PICK CAM·쇼케이팝 캐치캠(2026-11-13)
+  if (/the\s*show\s*choice/i.test(t)) return 'encore'; // 더쇼 1위 앵콜 이름
   if (/앵콜|encore/i.test(t)) return 'encore';
   if (/interview|인터뷰|behind|비하인드|challenge|챌린지|\.zip|#shorts|엔딩요정|MC석|코너|선공개|티저|teaser/i.test(t)) return null;
   return 'stage';

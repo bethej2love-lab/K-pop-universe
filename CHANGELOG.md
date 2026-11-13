@@ -2,6 +2,12 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-13 (Claude Code — Codex 11-13 검수 2차: 음방 동명이인·회차 유형·곡 매처 추가)
+- [SQL 실행] sql/2026-11-13_codex_show_namesakes.sql(+undo, 백업 _bak_codex_show_20261113) 26행: 리코브 니나 'Why' 6·후지모토 아야카 3(NiziU) → 무관, 러블리즈 Kei '투비' 4(&TEAM K) → 러블리즈 Kei, MMZ 모모·윤서빈·YUHZ 준성·엔탑 강현 2·2Z 정현 → 무관, 하츠웨이브 리안 'ALIVE (Feat. 성찬)' → 하츠웨이브 리안(성찬 아님), 음중 MC 규빈×도훈 개인 직캠 뒤바뀜 정정·풀캠 with 도훈, 올아워즈 HOP·하츠투하츠 Lemon Tang 단체 무대 멤버 태그 제거, 더쇼 전체 생방송(피원하모니로) 무관. 곡 키 재계산.
+- [완료][shared.js _msKind] 더쇼 'FAN PICK CAM'·쇼케이팝 '캐치캠' = 직캠, 'THE SHOW CHOICE' = 앵콜, 'JJaeLiView' 인터뷰 코너·'[🔴LIVE] … etc.' 전체 생방송 = 회차 무대 아님.
+- [완료][shared.js _songLinkBases] ② 주인 이름 속 곡 안 잡음('NCT WISH' → 'WISH', 곡 이름에 그룹 이름 든 곡은 그대로) ④ 곡 이름 괄호 표기 전부를 넓은 표기로(ATEEZ 'From' ⇐ 'Symphony No.9 "From The Wonderland"'), 곡 바로 뒤 괄호가 다른 곡 기본형과 같으면 그 곡 별칭(EXID '위아래(Up&Down)' ⇏ OST 'Up & Down', 나인뮤지스 '기억해 (Remember)', AOA '빙빙 (Bing Bing)') ⑤ 앨범·쇼케이스 이름('| ODYSSEY - The 1st Album'·'RIIZE ODYSSEY SHOWCASE')·맨 앞 [프로그램 이름]('[Thank you for L.O.ㅅ.E]', '가수 - 곡' 꼴은 제외) 속 곡도 투어 이름처럼. 차분 25그룹 12만 2천 제목 767건 변경 확인. `_SONG_RULES_VER` v12. song-link 테스트 3건 추가.
+- ⏳ 남은 Codex 11-13: 퍼플키스 Swan·프리스틴 결경 옛 주소 언어 전환이 다른 멤버로, EXO Diamond(백현 솔로 vs 단체)·슈퍼주니어 솔로 동명곡이 그룹 곡 페이지에, 곡 첫 수록 앨범이 일본반·라이브로(CNBLUE THEN NOW AND FOREVER 등), 블락비 Jackpot·H.O.T. 멘트 ID, LNGSHOT S.W.I.S.H. 타이틀 표시.
+
 ## 2026-11-13 (Claude Code — 정적 곡 페이지 크레딧·앨범별 다른 곡 + 재생 화면 빛 + Codex 11-12·11-13 검수 처리)
 - [완료][build_group_pages.js·song-page.css] 어제 stash해 둔 곡 페이지 B·C 배포: 크레딧 = 사람마다 이름+역할 칩(혼자면 '단독'), "다른 곡" = 앨범별 묶음. 로컬 전체 빌드 캡처에서 앨범 묶음이 곡 1개짜리도 큰 정사각 커버를 차지해 폰에서 너무 길어 → 64px 커버 + 오른쪽 수록곡 줄(넓은 화면 3열, 폰 1열). 확인: 아이브 Blue Heart(390)·코르티스 ACAI(1280). ⚠️ 로컬 확인 땐 페이지가 라이브 song-page.css를 불러가므로 로컬 파일로 바꿔 봐야 함.
 - [완료][app.js·kpop_universe.css] 사용자 "그룹색 띠보다 영상 대표색이 낫다, 덜 튀게": 재생 화면 위쪽 빛(--lb-tint) = 썸네일(i.ytimg.com, CORS 허용) 16×9 평균색(채도 있는 칸 가중) → 채도 ≤0.38·밝기 0.42로 눌러서, 진하기 0.24→0.15·길이 420→380px. 영상마다 캐시, 실패하면 무색. 헤드리스 3영상 확인.
