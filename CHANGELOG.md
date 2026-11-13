@@ -2,6 +2,16 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-13 (Claude Code · Fable — Chemistry 보강: 입구 통일·빈 화면 없애기·함께 태깅된 사진·고르기 추천)
+- 사용자 "두 사람 검색 chemistry 좀 잘 갖춰보고, 사진 태깅 정보도 들어가면 좋을 듯". 지금 앱을 폰 390·웹 1440으로 캡처해 보고 정한 것.
+- [app.js _chemParse·doSearch] **입구 통일**: "카리나 장원영"은 Chemistry, "카리나, 장원영"은 연결 카드(그것도 상대가 안 골라진 채 카리나 연결 목록만)로 가던 것 → 띄어쓰기·쉼표·×·&·/·vs·x 어느 쪽이든 Chemistry 한 화면. 검색 결과 라벨 '둘 사이' → Chemistry. `_openBetweenConn`은 멤버 카드 "같이 작업해요"에서만 계속 쓴다.
+- [app.js _chemFacts·_chemExtras] **빈 화면 없애기**: 다른 그룹 둘(카리나 × 장원영)은 "0개 · 이 조합만 0개"만 뜨고 끝났다 → 0개 줄은 안 쓰고, 다른 그룹끼리면 같은 소속사·같은 해 데뷔·두 사람 출생 연도·처음 함께 나온 때를 쓴다. 함께 나온 영상이 6개 미만이면 **LINKED BY**(둘 각각과 함께 나온 사람, "카리나 2 · 장원영 70") — 누르면 셋의 Chemistry(관계도 + 일부만 함께 나온 영상).
+- [app.js _chemExtras] **PHOTOS**: 고른 사람이 모두 태깅된 인스타 사진(ig_photo_tags.artist_ids가 전원 포함 → ig_media) 줄을 사실 줄 아래에. 카드 '태그된 사진'과 같은 칸(_igRowTile)이라 지난 글도 중계 함수로 뜬다. 지금은 코르티스만 태깅돼 있어 그쪽에서만 보인다.
+- [app.js _comboRenderRecs·_chemCoOf] **고르기 창 추천**: 빈 입력칸뿐이던 창에 즐겨찾기 멤버(없으면 유명 그룹 멤버) → 한 명 고르면 "○○와 함께 많이 나온 사람"(영상 수) → 누르면 바로 Chemistry. 함께 나온 사람 조회는 `_chemCoOf` 한 곳(세션 캐시)으로 — 멤버 카드 ⋮ Chemistry도 같이 쓴다(개별출연·보류 제외로 기준 맞춤).
+- 확인: 헤드리스 폰 390·웹 1440에서 고르기 → 성현×건호(사진 5) → 카리나×장원영(LINKED BY 5명) → 안유진 눌러 셋 → 쉼표·영문 "karina x wonyoung" 검색 → Chemistry 열림, 콘솔 오류 0. tests/between-search(입구 9건 추가)·combo-query-state·combo-search-navigation·mobile-first-visit·feed-list-navigation-race·desktop-search-front·syntax 통과.
+- ⏳ 남은 것: 그룹도 대상으로(에스파 × 아이브, 멤버 × 그룹), 사진을 여러 장 글에서 그 장으로 바로 열기(지금은 글 첫 장), 작사·작곡 겹침, 검색 첫 화면 Chemistry 입구에 실제 조합 예시, 다른 그룹 조합의 정적 페이지. LINKED BY 숫자(자기 그룹 영상 기준)와 관계도 숫자(커버 포함)가 조금 다르다.
+- ⏳ 둘러보며 본 디자인 후보(미착수): 멤버 카드 메타 줄이 폰에서 오른쪽이 잘림(국적), 탐험 탭 이름 "For You / 발견" 한·영 섞임, 웹 고르기 창이 화면 아래 가운데 작은 창, 검색 첫 화면 아래 절반이 빈칸, Chemistry 머리 버튼 5개(선택·저장·+·공유·닫기).
+
 ## 2026-11-13 (Claude Code — 업데이트 소식 11-13)
 - [완료][updates.json] 이번 주 사용자 눈에 보이는 변화 5줄: 인스타 전체 보기·인스타 영상 사이트 안 재생·멤버 '태그된 사진'·곡 화면 작사·작곡 역할과 창 안 이전·앨범 수록곡/영상↔곡 연결 정정.
 

@@ -3338,7 +3338,7 @@ function _appendTrendingSection(hits,res,mobSearch,obSearch){
 function _appendSearchSections(out,res,mobSearch,obSearch){
   const label={video:{ko:'영상',en:'Videos'},event:{ko:'공연',en:'Events'},venue:{ko:'공연장',en:'Venues'},
     group:{ko:'그룹',en:'Groups'},member:{ko:'멤버',en:'Members'},song:{ko:'곡',en:'Songs'},
-    program:{ko:'컬렉션',en:'Collections'},between:{ko:'둘 사이',en:'Between'}};
+    program:{ko:'컬렉션',en:'Collections'},between:{ko:'Chemistry',en:'Chemistry'}};
   // 이전 요청이 붙여둔 서버 섹션은 걷어낸다(같은 검색어로 두 번 붙는 것 방지)
   res.querySelectorAll('.sr-remote').forEach(el=>el.remove());
   const hasAny=(out.event&&out.event.length)||(out.venue&&out.venue.length)||(out.video&&out.video.length);
@@ -3709,6 +3709,15 @@ function _makeSearchItem(h,res,mobSearch,obSearch){
       if(h.data&&h.data.__festival)_openEventPage(h.data.__festival);else _openProgramCollection(h.data);
       return;
     }
+    // 두 사람 검색 — 연결 카드 대신 Chemistry 한 화면으로(2026-11-13 입구 통일. 예전엔 A 카드 위에 연결 카드를 열고 B를 골라 줬는데
+    // B가 A의 연결 목록에 없으면 아무것도 안 골라진 채 A의 연결 목록만 떴다 — 카리나 × 장원영).
+    if(h.type==='between'&&h._betweenB){
+      if(obSearch)exitObSearch();else if(mobSearch)exitMobSearch();
+      else if(typeof _msIsOpen==='function'&&_msIsOpen())closeMobSearchSheet();
+      else{document.getElementById('search-input').value='';res.style.display='none';}
+      _openChem([h.data,h._betweenB].map(a=>({name:a.name.ko,group:_ytGroupKoFor(a)})));
+      return;
+    }
     _recordRecentSearch((h.type==='song'||h.type==='event')?{type:h.ownerType,data:h.data}:(h.type==='between'?{type:'member',data:h.data}:h));
     _closeFeedOverlay();
     closeCards();
@@ -3770,7 +3779,7 @@ function _renderSearchHits(hits,res,mobSearch,isRecent,obSearch){
   // 최근 검색·온보딩 검색(5칸)은 섹션 없이 기존 그대로.
   const _secLabel={group:{ko:'그룹',en:'Groups'},member:{ko:'멤버',en:'Members'},
     song:{ko:'곡',en:'Songs'},video:{ko:'영상',en:'Videos'},event:{ko:'공연',en:'Events'},
-    program:{ko:'컬렉션',en:'Collections'},between:{ko:'둘 사이',en:'Between'}};
+    program:{ko:'컬렉션',en:'Collections'},between:{ko:'Chemistry',en:'Chemistry'}};
   let _secOrder=[];const _byType=new Map();
   if(!isRecent&&!obSearch){
     hits.forEach(h=>{const t=h.type;if(!_byType.has(t)){_byType.set(t,[]);_secOrder.push(t);}_byType.get(t).push(h);});
@@ -4574,9 +4583,10 @@ function doSearch(q){
     const _parts=q.split(/\s*(?:,|·|&|×|\/|\bvs\b| x )\s*/i).map(s=>s.trim()).filter(Boolean);
     if(_parts.length===2){
       const _A=_resolveArtistByStr(_parts[0]),_B=_resolveArtistByStr(_parts[1]);
-      if(_A&&_B&&_A!==_B){
+      // Chemistry 진입 줄(_chemParse)이 이미 같은 두 사람을 잡으면 이 줄은 안 넣는다(같은 곳으로 가는 줄 2개 방지, 2026-11-13)
+      if(_A&&_B&&_A!==_B&&!_chemParse(q)){
         hits.push({type:'between',name:`${_dispName(_A)} × ${_dispName(_B)}`,
-          sub:currentLang==='ko'?'함께 보기':'Between',pos:_A._worldPos,data:_A,ownerType:'member',_betweenB:_B,score:0.2});
+          sub:'Chemistry',pos:_A._worldPos,data:_A,ownerType:'member',_betweenB:_B,score:0.2});
       }
     }
   }
@@ -14265,7 +14275,7 @@ function _comboAdd(name,group){
   const s=document.getElementById('combo-search');if(s){s.value='';s.focus();}
   _comboRenderSuggest('');_comboRenderChips();
 }
-function _comboRemove(name,group){_comboSel=_comboSel.filter(m=>!(m.name===name&&m.group===group));_comboInvalidateResults();_comboRenderChips();}
+function _comboRemove(name,group){_comboSel=_comboSel.filter(m=>!(m.name===name&&m.group===group));_comboInvalidateResults();_comboRenderSuggest(document.getElementById('combo-search')?.value||'');_comboRenderChips();}
 function _comboRenderChips(){
   const el=document.getElementById('combo-chips');if(!el)return;
   el.innerHTML='';
@@ -14285,7 +14295,8 @@ function _comboRenderChips(){
 function _comboRenderSuggest(q){
   const el=document.getElementById('combo-suggest');if(!el)return;
   el.innerHTML='';q=(q||'').trim().toLowerCase();
-  if(!q)return;
+  el.classList.toggle('combo-rec',!q);
+  if(!q){_comboRenderRecs(el);return;}
   const chosen=new Set(_comboSel.map(m=>m.name+'|'+m.group));
   let n=0;
   for(const a of ARTISTS){
@@ -14300,6 +14311,52 @@ function _comboRenderSuggest(q){
     row.addEventListener('click',()=>_comboAdd(a.name.ko,a.group.ko));
     el.appendChild(row);
     if(++n>=20)break;
+  }
+}
+// 검색어가 비어 있을 때의 추천(2026-11-13 — 빈 입력칸만 있어 뭘 해야 할지 몰랐다).
+//   아무도 안 골랐으면: 즐겨찾기한 멤버(없으면 유명 그룹 멤버) → 누르면 고른 사람으로
+//   한 명 골랐으면: 그 사람과 함께 많이 나온 사람(영상 수) → 누르면 바로 Chemistry(셋째·넷째는 그 화면의 +로)
+function _comboRecRow(a,name,group,right,onClick){
+  const ko=currentLang==='ko';
+  const row=document.createElement('button');row.type='button';row.className='combo-sug combo-rec-row';
+  const av=document.createElement('span');av.className='chem-br-av';
+  if(a){const col=a.color||(GROUPS[group]&&GROUPS[group].color);if(Array.isArray(col))av.style.background=`rgba(${col[0]},${col[1]},${col[2]},0.35)`;
+    _srAvUrl(a).then(u=>{if(!u)return;_avImg(u,img=>{av.replaceChildren(img);});}).catch(()=>{});}
+  const nm=document.createElement('span');nm.className='combo-rec-n';nm.textContent=a?_dispName(a,group):name;
+  const gp=document.createElement('span');gp.className='combo-sug-g';gp.textContent=GROUPS[group]?(ko?_gLabelKo(group):(GROUPS[group].en||group)):'';
+  row.append(av,nm,gp);
+  if(right!=null){const r=document.createElement('span');r.className='combo-rec-c';r.textContent=right;row.appendChild(r);}
+  row.addEventListener('click',onClick);
+  return row;
+}
+function _comboRenderRecs(el){
+  const ko=currentLang==='ko',myReq=_comboReq;
+  const label=t=>{const l=document.createElement('div');l.className='combo-rec-l';l.textContent=t;return l;};
+  if(_comboSel.length===0){
+    let list=[];
+    try{list=ARTISTS.filter(a=>a&&a.name&&a.group&&favMembers.has(_mFavKey(a))).slice(0,8);}catch(e){}
+    let lbl=ko?'즐겨찾기':'Favorites';
+    if(!list.length){
+      const gs=Object.keys(GROUPS).filter(g=>(GROUPS[g].pri||0)>=1.5&&!GROUPS[g].disbanded).sort((a,b)=>(GROUPS[b].pri||0)-(GROUPS[a].pri||0)).slice(0,14);
+      const pick=_shuffle(gs).slice(0,2);
+      list=ARTISTS.filter(a=>a&&a.name&&a.group&&a.active!==false&&pick.includes(a.group.ko)).slice(0,10);
+      lbl=ko?'여기서 시작해 보세요':'Start here';
+    }
+    if(!list.length)return;
+    el.appendChild(label(lbl));
+    list.forEach(a=>el.appendChild(_comboRecRow(a,a.name.ko,a.group.ko,null,()=>_comboAdd(a.name.ko,a.group.ko))));
+    return;
+  }
+  if(_comboSel.length===1&&sb){
+    const me=_comboSel[0];
+    el.appendChild(label(ko?`${me.name}와 함께 많이 나온 사람`:`Often with ${me.name}`));
+    const wait=document.createElement('div');wait.className='combo-rec-wait';wait.textContent=ko?'불러오는 중…':'Loading…';el.appendChild(wait);
+    _chemCoOf(me).then(cs=>{
+      if(myReq!==_comboReq||!wait.isConnected)return;
+      wait.remove();
+      if(!cs.length){const e=document.createElement('div');e.className='combo-rec-wait';e.textContent=ko?'이름을 검색해서 골라 주세요':'Search a name to add';el.appendChild(e);return;}
+      cs.slice(0,12).forEach(c=>el.appendChild(_comboRecRow(_chemArtist(c),c.name,c.group,c.n,()=>{_comboSel=[me,{name:c.name,group:c.group}];_comboSearch();})));
+    });
   }
 }
 // ⭐2026-11-10 멤버 조합 찾기 → Chemistry 통합(사용자 "성격이 너무 비슷 — 정비", "시안 없이 바로"). 이 패널은 이제 사람 고르는 창이고
@@ -14562,11 +14619,18 @@ function _chemFacts(people,rows,exact){
   }else{
     out.push([ko?'사이':'Groups',groups.map(g=>GROUPS[g]?(ko?_gLabelKo(g):(GROUPS[g].en||g)):(ko?'솔로':'Solo')).filter((x,i,a)=>a.indexOf(x)===i).join(' · ')]);
   }
+  // 다른 그룹끼리일 때만 — 같은 소속사·같은 해 데뷔(같은 그룹이면 당연한 말이라 안 쓴다). 2026-11-13: 함께 나온 영상이 0이어도 화면이 비지 않게.
+  if(groups.length>1){
+    const cos=[...new Set(arts.map(a=>a&&a.co).filter(Boolean))];
+    if(arts.every(a=>a&&a.co)&&cos.length===1)out.push([ko?'소속':'Label',cos[0]]);
+    const dys=groups.map(g=>GROUPS[g]&&/^\d{4}/.test(String(GROUPS[g].debut||''))?String(GROUPS[g].debut).slice(0,4):null);
+    if(dys.every(Boolean)&&new Set(dys).size===1)out.push([ko?'데뷔':'Debut',ko?`${dys[0]}년 데뷔 동기`:`Both debuted in ${dys[0]}`]);
+  }
   const yrs=arts.map(a=>a&&/^\d{4}/.test(a.bday||'')?+String(a.bday).slice(0,4):null);
   if(yrs.every(Boolean)){
     const u=[...new Set(yrs)].sort();
     if(u.length===1)out.push([ko?'나이':'Age',ko?`${String(u[0]).slice(2)}라인 — ${u[0]}년생`:`Born ${u[0]}`]);
-    else if(u.length===2&&u[1]-u[0]===1)out.push([ko?'나이':'Age',ko?`${u[0]}·${u[1]}년생`:`Born ${u[0]}–${u[1]}`]);
+    else if(people.length===2)out.push([ko?'나이':'Age',ko?`${yrs[0]} · ${yrs[1]}년생`:`Born ${yrs[0]} · ${yrs[1]}`]);
   }
   const stages=exact.filter(v=>v.category==='live');
   if(stages.length){
@@ -14574,9 +14638,87 @@ function _chemFacts(people,rows,exact){
     const kind=people.length===2?(ko?'듀엣 무대':'duet stage'):(ko?'무대':'stage');
     out.push([ko?'같은 무대':'Stage',nm?(ko?`${nm} ${kind}`:`${kind} on ${nm}`)+(stages.length>1?(ko?` 외 ${stages.length-1}`:` +${stages.length-1}`):''):(ko?`${kind} ${stages.length}개`:`${stages.length} ${kind}s`)]);
   }
-  const n=rows.length>=1500?'1,500+':String(rows.length);
-  out.push([ko?'같이 나옴':'Together',ko?`${n}개 · 이 조합만 ${exact.length}개`:`${n} · only them ${exact.length}`]);
+  if(rows.length){ // 0개면 줄을 안 쓴다("0개 · 이 조합만 0개"는 정보가 아니다)
+    const n=rows.length>=1500?'1,500+':String(rows.length);
+    out.push([ko?'같이 나옴':'Together',ko?`${n}개 · 이 조합만 ${exact.length}개`:`${n} · only them ${exact.length}`]);
+    // 다른 그룹끼리면 처음 함께 나온 때 · 가장 최근(같은 그룹은 데뷔일과 같아 생략)
+    if(groups.length>1&&rows.length<1500){
+      const ds=rows.map(v=>String(v.published_at||'').slice(0,7)).filter(d=>/^\d{4}-\d{2}$/.test(d)).sort();
+      if(ds.length){const f=ds[0].replace('-','.'),l=ds[ds.length-1].replace('-','.');out.push([ko?'처음':'First',f===l?f:(ko?`${f} · 최근 ${l}`:`${f} · latest ${l}`)]);}
+    }
+  }
   return out;
+}
+// 한 사람과 함께 나온 사람들(많이 나온 순) — 고르기 창 추천·멤버 카드 ⋮·'잇는 사람'이 같이 쓴다. 세션 동안 사람마다 한 번만 받는다.
+const _chemCoCache=new Map();
+function _chemCoOf(p){
+  const k=p.name+'~'+p.group;
+  if(_chemCoCache.has(k))return _chemCoCache.get(k);
+  const esc=s=>String(s).replace(/["\\]/g,'');
+  const pr=(async()=>{
+    const{data}=await _withTimeout(()=>sb.from(_YT_TABLE).select('group_ko,members,with_members')
+      .or(`and(group_ko.eq.${_pgFilterVal(p.group)},members.cs.{"${esc(p.name)}"}),with_members.cs.{"${esc(p.name)}(${esc(p.group)})"}`)
+      .or('content_flag.is.null,content_flag.not.in.("무관","보류","hidden","개별출연")').limit(3000),12000)||{};
+    return _chemCoStars([p],data||[]);
+  })().catch(()=>{_chemCoCache.delete(k);return [];});
+  _chemCoCache.set(k,pr);
+  return pr;
+}
+// Chemistry 머리 아래에 늦게 붙는 것(2026-11-13) — ① PHOTOS: 고른 사람이 **모두** 태깅된 인스타 사진(ig_photo_tags, 관리자가 태깅한 것만)
+// ② LINKED BY: 두 사람이 함께 나온 영상이 거의 없을 때, 둘 **각각**과 함께 나온 사람(둘을 잇는 사람). 누르면 셋의 Chemistry(관계도 + 일부만 함께 나온 영상).
+// 둘 다 실패해도 화면은 그대로 — 붙일 게 있을 때만 붙는다.
+async function _chemExtras(people,head,rows){
+  const ko=currentLang==='ko';
+  const live=()=>head.isConnected;
+  const ids=people.map(p=>{const a=_chemArtist(p);return a&&a.id;});
+  const photos=(async()=>{
+    if(!ids.every(Boolean))return;
+    const{data:tags,error}=await sb.from('ig_photo_tags').select('post_key,handle').contains('artist_ids',ids).limit(400);
+    if(error||!tags||!tags.length||!live())return;
+    const keys=[...new Set(tags.map(t=>t.post_key))];
+    const{data:rws}=await sb.from('ig_media').select('post_key,handle,media_id,t,ty,p,u,c,mi,n,cap,lk,cm').in('post_key',keys.slice(0,200)).limit(200);
+    if(!rws||!rws.length||!live())return;
+    const box=document.createElement('div');box.className='chem-photos';
+    const t=document.createElement('div');t.className='chem-sec-t';t.textContent='PHOTOS';const n=document.createElement('i');n.textContent=rws.length;t.appendChild(n);
+    const strip=document.createElement('div');strip.className='ig-strip chem-photo-strip hscroll-drag';
+    rws.sort((x,y)=>String(y.t).localeCompare(String(x.t))).forEach(r=>strip.appendChild(_igRowTile(r,r.handle,'ig-item igtag-tile')));
+    box.append(t,strip);
+    // 사실 줄 바로 아래(관계도·잇는 사람보다 위) — 사진이 먼저 눈에 들어오게
+    const after=head.querySelector('.chem-more')||head.querySelector('.chem-facts');
+    if(after)after.insertAdjacentElement('afterend',box);else head.appendChild(box);
+    try{_enableDragScroll(strip);}catch(e){}
+  })().catch(()=>{});
+  const bridge=(async()=>{
+    if(people.length!==2||rows.length>=6)return;
+    const[ca,cb]=await Promise.all(people.map(_chemCoOf));
+    if(!live())return;
+    const mb=new Map(cb.map(c=>[c.name+'~'+c.group,c.n]));
+    const br=ca.filter(c=>mb.has(c.name+'~'+c.group)).map(c=>({...c,nb:mb.get(c.name+'~'+c.group)}))
+      .sort((x,y)=>Math.min(y.n,y.nb)-Math.min(x.n,x.nb)||(y.n+y.nb)-(x.n+x.nb)).slice(0,8);
+    if(!br.length)return;
+    const box=document.createElement('div');box.className='chem-bridge';
+    const t=document.createElement('div');t.className='chem-sec-t';t.textContent='LINKED BY';
+    const s=document.createElement('div');s.className='chem-bridge-s';s.textContent=ko?`${people[0].name}와도 ${people[1].name}와도 함께 나온 사람`:`Appeared with both`;
+    const list=document.createElement('div');list.className='chem-bridge-list';
+    br.forEach(c=>{
+      const a=_chemArtist(c);
+      const b=document.createElement('button');b.type='button';b.className='chem-br';
+      const av=document.createElement('span');av.className='chem-br-av';
+      if(a){const col=a.color||(GROUPS[c.group]&&GROUPS[c.group].color);if(Array.isArray(col))av.style.background=`rgba(${col[0]},${col[1]},${col[2]},0.35)`;
+        _srAvUrl(a).then(u=>{if(!u)return;_avImg(u,img=>{av.replaceChildren(img);});}).catch(()=>{});}
+      const nm=document.createElement('span');nm.className='chem-br-n';nm.textContent=a?_dispName(a,c.group):c.name;
+      const g=document.createElement('span');g.className='chem-br-g';g.textContent=people[0].name+' '+c.n+' · '+people[1].name+' '+c.nb;
+      
+      const tx=document.createElement('span');tx.className='chem-br-tx';tx.append(nm,g);
+      b.append(av,tx);
+      b.addEventListener('click',e=>{e.stopPropagation();_gaEvent('chem_bridge',{target:c.name});_openChem([...people,{name:c.name,group:c.group}]);});
+      list.appendChild(b);
+    });
+    box.append(t,s,list);
+    const emp=head.querySelector('.chem-empty');
+    if(emp)emp.insertAdjacentElement('afterend',box);else head.appendChild(box);
+  })().catch(()=>{});
+  await Promise.all([photos,bridge]);
 }
 // 함께 많이 나온 다른 사람 — 사람 추가 후보(지금 영상들에서 같이 태깅된 사람 순)
 function _chemCoStars(people,rows){
@@ -14675,8 +14817,9 @@ async function _openChem(people,opt){
       // 선(두 사람)을 누르면 그 둘의 Chemistry로 — 목록이 바로 아래라 "거기만"을 이 화면에서 따로 거르지 않는다. 막대(연도)는 그림 안 요약만.
       const draw=()=>{if(_comboViz.pair){const ppl=_comboViz.pair.map(k=>people.find(p=>_comboKey(p)===k)).filter(Boolean);_comboViz={pair:null,year:null};if(ppl.length===2){_openChem(ppl);return;}}box.replaceChildren(_comboBuildFig(pairRows,draw));};draw();head.appendChild(box);}catch(e){console.warn('[chem] 관계도 실패',e);}
   }
-  if(!rows.length){const e=document.createElement('div');e.className='chem-empty';e.textContent=partial.length?(ko?'모두 함께 나온 영상은 아직 없어요 — 일부만 함께 나온 영상':'Not all together yet — some of them together'):(ko?'아직 모두 함께 나온 영상이 없어요':'No videos with all of them yet');head.appendChild(e);}
+  if(!rows.length){const e=document.createElement('div');e.className='chem-empty';e.textContent=partial.length?(ko?'모두 함께 나온 영상은 아직 없어요 — 일부만 함께 나온 영상':'Not all together yet — some of them together'):(ko?(people.length===2?'아직 함께 나온 영상이 없어요':'아직 모두 함께 나온 영상이 없어요'):(people.length===2?'No videos together yet':'No videos with all of them yet'));head.appendChild(e);}
   _openFeedListOverlay(title,sub,sections.flatMap(s=>s.songs),{chem:people,head,sections,facets:rows.length?[facet]:[]});
+  if(!o.cat)_chemExtras(people,head,rows); // 사진·잇는 사람(종류 탭을 고른 화면에선 영상에 집중)
   // + 사람 추가(오른쪽 위) — 함께 많이 나온 사람부터, 아래 검색창으로 다른 사람도
   const plus=document.getElementById('feed-list-chem-add');
   if(plus){plus.style.display=people.length<_CHEM_MAX?'':'none';plus.onclick=e=>{e.stopPropagation();
@@ -14701,7 +14844,8 @@ function _chemFromHash(param){
 }
 // 검색어가 아는 사람 이름 2~4개면 Chemistry 진입(같은 이름이 여럿이면 같은 그룹끼리 맞는 쪽을 고른다)
 function _chemParse(q){
-  const toks=String(q||'').trim().split(/\s+/);
+  // 띄어쓰기뿐 아니라 쉼표·×·&·/·vs·x로 나눠 쳐도 같은 입구(2026-11-13 — 쉼표로 치면 다른 화면(연결 카드)이 열리던 것 통일)
+  const toks=String(q||'').trim().split(/\s*(?:,|·|&|×|\/|\bvs\b|\s+x\s+|\s)\s*/i).filter(Boolean);
   if(toks.length<2||toks.length>_CHEM_MAX)return null;
   const cands=toks.map(t=>ARTISTS.filter(a=>a.name.ko===t||(a.displayName&&a.displayName===t)||(a.name.en&&a.name.en.toLowerCase()===t.toLowerCase())));
   if(cands.some(c=>!c.length))return null;
@@ -14733,10 +14877,7 @@ function _appendChemEntry(res,people){
 async function _chemPickPartner(groupKo,memberKo){
   const ko=currentLang==='ko',me={name:memberKo,group:groupKo};
   const itemsP=(async()=>{
-    const{data}=await _withTimeout(()=>sb.from(_YT_TABLE).select('group_ko,members,with_members')
-      .or(`and(group_ko.eq.${_pgFilterVal(groupKo)},members.cs.{"${String(memberKo).replace(/["\\]/g,'')}"}),with_members.cs.{"${String(memberKo).replace(/["\\]/g,'')}(${String(groupKo).replace(/["\\]/g,'')})"}`)
-      .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.hidden').limit(3000),12000)||{};
-    return _chemCoStars([me],data||[]).slice(0,40).map(c=>({key:c.name+'~'+c.group,label:c.name+(c.group!==groupKo&&GROUPS[c.group]?` (${_gLabelKo(c.group)})`:''),n:c.n,alt:[c.name,c.group].join(' ')}));
+    return (await _chemCoOf(me)).slice(0,40).map(c=>({key:c.name+'~'+c.group,label:c.name+(c.group!==groupKo&&GROUPS[c.group]?` (${_gLabelKo(c.group)})`:''),n:c.n,alt:[c.name,c.group].join(' ')}));
   })().catch(()=>[]);
   _openPickSheet(ko?'함께 나온 사람':'Appears with',ko?'함께 나온 사람이 아직 없어요':'No one yet',itemsP,k=>{const i=k.indexOf('~');_openChem([me,{name:k.slice(0,i),group:k.slice(i+1)}]);});
 }
