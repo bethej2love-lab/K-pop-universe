@@ -50,6 +50,8 @@ async function sbWrite(method, qs, body, prefer) {
   if (!r.ok) throw new Error(`${qs} 저장 실패 ${r.status} ${(await r.text()).slice(0, 300)}`);
 }
 
+// 서버 함수 ig-fresh(지난 글 열 때 새 주소)가 쓸 인스타 키 — 잠긴 칸 app_secrets에(2026-11-13). 방문자는 못 읽는다.
+await sbWrite('POST', 'app_secrets?on_conflict=k', [{ k: 'meta_ig_token', v: TOKEN, updated_at: new Date().toISOString() }], 'resolution=merge-duplicates,return=minimal');
 const accts = await sbGetAll('ig_accounts?select=handle,status,media_count,bf_cursor,bf_done,bf_count&status=eq.ok&order=handle');
 const tagged = new Set((await sbGetAll('ig_photo_tags?select=handle')).map(r => r.handle));
 const rank = h => tagged.has(h) ? 0 : groupHandles.has(h) ? 1 : memberHandles.has(h) ? 2 : MAG.has(h) ? 3 : 9;
@@ -88,11 +90,12 @@ for (const a of queue) {
       const kids = ((x.children && x.children.data) || []).slice(0, 20);
       const o = { post_key, handle: a.handle, media_id: x.id ? String(x.id) : null, t: x.timestamp || null, ty: x.media_type || null, p: x.permalink,
         u: null, c: null, mi: kids.length > 1 ? kids.map(k => ({ id: k.id ? String(k.id) : null, ty: k.media_type })) : null, n: kids.length > 1 ? kids.length : 1,
-        cap: x.caption ? String(x.caption).slice(0, 300) : null, lk: x.like_count ?? null, cm: x.comments_count ?? null, m: null, src: 'backfill' };
+        cap: x.caption ? String(x.caption).slice(0, 300) : null, lk: x.like_count ?? null, cm: x.comments_count ?? null, m: null, src: 'backfill', pc: (cursor || '') + '|' + lim };
       if (isMag) { o.m = mentionsOf(x.caption); if (!o.m.length) return null; }
       return o;
     }).filter(Boolean);
     if (rows.length) await sbWrite('POST', 'ig_media?on_conflict=post_key', rows, 'resolution=ignore-duplicates,return=minimal');
+    if (rows.length) await sbWrite('POST', 'ig_media?on_conflict=post_key&columns=post_key,handle,pc', rows.map(o => ({ post_key: o.post_key, handle: o.handle, pc: o.pc })), 'resolution=merge-duplicates,return=minimal');
     saved += rows.length; count += (m.data || []).length;
     const next = m.paging && m.paging.cursors && m.paging.cursors.after;
     // Business Discovery 안쪽 media는 paging.next 없이 cursors.after만 준다 — 커서가 없거나 빈 페이지일 때만 끝

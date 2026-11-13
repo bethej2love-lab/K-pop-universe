@@ -12219,7 +12219,30 @@ function _igRowToM(r){
   else if(r.media_id&&(r.n||1)===1&&r.ty!=='CAROUSEL_ALBUM')m.mi=[{id:String(r.media_id),ty:r.ty||'IMAGE'}]; // 한 장 글은 글 id = 사진 id(수집기와 같은 기준) — 태그 키가 중계 주소 이름으로 안 가게
   return m;
 }
-function _igOpenRow(r,h){
+// 지난 글 새 주소 받기(서버 함수 ig-fresh, 2026-11-13) — 글이 있던 목록 쪽만 인스타에 다시 물어 모든 장·영상 파일 새 주소. 실패하면 null(아래 예전 방식).
+const _igFreshDone=new Map();
+async function _igFetchFresh(r){
+  if(!r||!r.post_key)return null;
+  if(_igFreshDone.has(r.post_key))return _igFreshDone.get(r.post_key);
+  const p=(async()=>{try{
+    const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),9000);
+    const res=await fetch(SUPABASE_URL+'/functions/v1/ig-fresh?c='+encodeURIComponent(r.post_key),{signal:ctl.signal});clearTimeout(t);
+    if(!res.ok)return null;const j=await res.json();return j&&j.post_key?j:null;
+  }catch(e){return null;}})();
+  _igFreshDone.set(r.post_key,p);p.then(v=>{if(!v)_igFreshDone.delete(r.post_key);});
+  return p;
+}
+async function _igOpenRow(r,h,el){
+  const needVid=r.ty==='VIDEO'&&!(r.v&&_igFresh(r.v)),needSet=r.ty!=='VIDEO'&&(r.n||1)>1&&!_igRowFreshSet(r);
+  if(needVid||needSet){
+    el&&el.classList.add('iga-busy');
+    const f=await _igFetchFresh(r);
+    el&&el.classList.remove('iga-busy');
+    if(f){['u','c','mi','v','n'].forEach(k=>{if(f[k]!=null)r[k]=f[k];});}
+  }
+  return _igOpenRow0(r,h);
+}
+function _igOpenRow0(r,h){
   // 영상 → 영상 파일이 살아 있으면 사이트 안 플레이어, 아니면 인스타 공식 임베드.
   // 여러 장인데 장별 주소가 만료된 지난 글 → 사이트 안 사진 창에 첫 장(중계 함수, 태그 가능) + 'n장 모두 보기'(임베드)
   // (2026-11-13 사용자 "전체 보기에서 사진 누르면 인스타 화면이 떠서 태깅을 못 해" — 인스타는 첫 장만 공개 주소로 준다)
@@ -12235,7 +12258,7 @@ function _igRowTile(r,h,cls){
   b.appendChild(img);
   if(r.ty==='VIDEO'){const p=document.createElement('span');p.className='ig-play';p.textContent='▶';b.appendChild(p);}
   else if((r.n||1)>1)b.appendChild(_igBars(r.n));
-  b.addEventListener('click',e=>{e.stopPropagation();_igOpenRow(r,h);});
+  b.addEventListener('click',e=>{e.stopPropagation();if(b.classList.contains('iga-busy'))return;_igOpenRow(r,h,b);});
   return b;
 }
 // 인스타 공식 임베드 창

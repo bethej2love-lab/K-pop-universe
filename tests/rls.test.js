@@ -53,6 +53,8 @@ const EXPECT = {
   ig_photo_tags:                { read: 'public', write: 'locked' },
   // 인스타 게시물 보관함(sql/2026-11-13_ig_media_archive.sql). 읽기 공개(카드 '전체 보기'), 쓰기는 수집기(service_role)만.
   ig_media:                     { read: 'public', write: 'locked' },
+  // 서버 함수 전용 키 칸(sql/2026-11-13_ig_fresh.sql) — 익명은 읽기·쓰기 모두 막혀야 함
+  app_secrets:                  { read: 'locked', write: 'locked' },
   name_match_whitelist:         { read: 'public', write: 'locked' },
   kpop_events:                  { read: 'public', write: 'locked' },
   melon_yearly_top100:          { read: 'public', write: 'locked' },
