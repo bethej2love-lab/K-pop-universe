@@ -2,6 +2,9 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-13 (Claude Code — 업데이트 소식 11-13)
+- [완료][updates.json] 이번 주 사용자 눈에 보이는 변화 5줄: 인스타 전체 보기·인스타 영상 사이트 안 재생·멤버 '태그된 사진'·곡 화면 작사·작곡 역할과 창 안 이전·앨범 수록곡/영상↔곡 연결 정정.
+
 ## 2026-11-13 (Claude Code — Codex 11-13 후속: 멤버×곡 대표가 티저·단체 무대)
 - [build_group_pages.js memberSongVidOk] 개인 곡 페이지 영상은 제목에 그 멤버 이름(한글·영문·그룹 활동명, 'Ye-on'='YEON'='YE ON')이 있어야 — 한 명으로 잘못 태그된 단체 무대(예온 'Lemon Tang' 9개·STUDIO CHOOM 단체)가 대표·목록에서 빠짐(그룹 곡 페이지엔 그대로). 비공연 신호에 티저·무드 샘플러·프로모션·아는 형님·핫소스 추가(베이비몬스터 SHEESH·블랙핑크 Pink Venom 티저 대표). 다음 CI 빌드부터.
 - 이미 처리돼 있던 것: YUHZ 준성·윤서빈·러블리즈 Kei가 다른 사람 프로필·직캠 모음에(DB 정정 완료, 다음 빌드), 목록 race 테스트(_winEnter).
