@@ -2,9 +2,10 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
-## 2026-11-13 (Claude Code — 영상 오태깅 보류 처리: AAA채널·아리랑ASC)
+## 2026-11-13 (Claude Code — 영상 오태깅 보류 처리: AAA채널·아리랑ASC·thekpop)
 - [DB] AsiaArtistAwards_official 채널 트리플에스 오태깅 384건 → 보류 (tag_patrol A유형; 최대훈·우즈·세븐틴 등 무관 영상에 트리플에스 멤버 태깅됨, 맞는 2건 o7TcEzNDBUI·hTxJfNxzZV0 보존).
 - [DB] arirangworld(아리랑TV) 애프터스쿨 오태깅 1180건 → 보류 (After School Club 프로그램명 → 애프터스쿨 그룹 오매칭; tags_manual=false 전건).
+- [DB] thekpop 채널 "#k_link_Festival" 해시태그의 영문 K를 앤팀 케이로 오인식한 오태깅 30건 → 보류 (에스파·샤이니·트리플에스 등 무관 영상, 앤팀 텍스트 없는 것만 처리).
 
 ## 2026-11-13 (Claude Code — 디스코 보강 4: ③순서 오류 차수 수정)
 - [artists.json] 지수연 종이더미 "미니" → "미니 1집" (첫 EP 확인).
