@@ -160744,6 +160744,24 @@
   },
   "discography": [
    {
+    "title": "Unbelievable",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/51/338/15151338_20261111151251_500.jpg",
+    "releaseDate": "2026.11.13",
+    "trackCount": 1,
+    "titleTrack": "Unbelievable",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Unbelievable",
+      "isTitle": true
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15151338"
+   },
+   {
     "title": "We’re Happy",
     "type": "싱글",
     "isMain": true,
@@ -191059,6 +191077,25 @@
     "src": "melon",
     "spotifyId": "0ulLmM5roN7ywJVZblQasC",
     "melonAlbumId": "15007233",
+    "copyright": "2026 MORE VISION,under license to Kakao Entertainment"
+   },
+   {
+    "title": "Masterpiece",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://i.scdn.co/image/ab67616d0000b273e6561f613149e24f1afd976b",
+    "releaseDate": "2026.10.21",
+    "trackCount": 1,
+    "titleTrack": "Masterpiece",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "Masterpiece",
+      "isTitle": true
+     }
+    ],
+    "src": "spotify",
+    "spotifyId": "2mCoRKgz1QeoSZETF68AY6",
     "copyright": "2026 MORE VISION,under license to Kakao Entertainment"
    },
    {

@@ -106967,7 +106967,32 @@
       "instagram": "https://www.instagram.com/keumdhyun"
     },
     "left": "2025.11.21",
-    "id": "a0429"
+    "id": "a0429",
+    "discography": [
+      {
+        "title": "자꾸 생각나 (On My Mind)",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/34/400/15134400_20261106112148_500.jpg",
+        "releaseDate": "2026.11.10",
+        "trackCount": 2,
+        "titleTrack": "자꾸 생각나 (On My Mind)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "자꾸 생각나 (On My Mind)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "자꾸 생각나 (On My Mind) (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15134400"
+      }
+    ]
   },
   {
     "name": {
