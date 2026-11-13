@@ -1,0 +1,43 @@
+name: 인스타 과거 게시물 채우기 (2시간마다, 홀수 시)
+
+# tools/ig_backfill.mjs — 계정별 과거 게시물을 페이지 넘겨 ig_media에 쌓는다(2026-11-13).
+# 앱 호출 한도(시간당 ~200)를 최신 수집(ig-stats.yml, 짝수 시 :23)과 나눠 쓰려고 홀수 시 :53에 돈다.
+# 전부 채우면(모든 계정 bf_done) 호출 없이 바로 끝난다. 빨간불은 대개 토큰 만료 — ig-stats.yml과 같은 META_IG_TOKEN.
+
+on:
+  schedule:
+    - cron: '53 1-23/2 * * *'
+  workflow_dispatch:
+    inputs:
+      max:
+        description: "이번 회차 최대 호출 수"
+        required: false
+        default: '180'
+      only:
+        description: "이 핸들 하나만(시험용)"
+        required: false
+        default: ''
+
+concurrency:
+  group: ig-stats
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: 과거 게시물 채우기
+        shell: bash
+        env:
+          META_IG_TOKEN: ${{ secrets.META_IG_TOKEN }}
+          SUPABASE_SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE }}
+          IG_BF_MAX: ${{ github.event.inputs.max || '180' }}
+        run: |
+          set -o pipefail
+          if [ -n "${{ github.event.inputs.only }}" ]; then ARG="--only=${{ github.event.inputs.only }}"; fi
+          node tools/ig_backfill.mjs $ARG | tee -a "$GITHUB_STEP_SUMMARY"

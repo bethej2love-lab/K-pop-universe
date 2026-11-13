@@ -11259,6 +11259,8 @@ function _closeTopOverlay(){
   // 인스타 사진 뷰어·외부 아티스트 '함께한 앨범' 창(2026-10-19)은 카드·라이트박스 위에 뜨는 맨 위 층 — 먼저 벗긴다
   // (안 넣으면 Esc가 뷰어는 둔 채 그 밑의 카드를 닫았다)
   if(document.getElementById('igv-overlay')?.classList.contains('open')){_closeIgViewer();return true;}
+  if(_closeIgEmbed())return true; // 인스타 공식 임베드·보관함 격자(2026-11-13) — 사진 창 밑, 카드 위
+  if(_closeIgArchive())return true;
   if(document.getElementById('ecx-overlay')?.classList.contains('open')){_closeCollabExt();return true;}
   const lb=document.getElementById('yt-lightbox');
   // 하프시트(라이트박스 위로 올라온 카드)가 가장 위 층이다 — ESC/뒤로 한 번은 여기부터 벗긴다.
@@ -11445,6 +11447,7 @@ function showT(a,cx,cy,keepNavStack,urlMode,_unusedPushMobNav,noFly){
   _appendDeceasedStar(tnEl,a);_appendSubName(tnEl,a);
   _renderGcLinks(_withIdolChannelLink(a),'tt-links',{gkos:_artistGroups(a).filter(g=>_activeInGroup(a,g.ko)).map(g=>g.ko),mko:a.name.ko});
   _renderIgStrip('tt',a.links?.instagram);
+  _renderIgTagged('tt',a);
   _renderIgMagStrip('tt',[_igHandle(a.links?.instagram)].filter(Boolean));
   const tgEl=document.getElementById('tg');
   tgEl.innerHTML='';tgEl.onclick=null;
@@ -12107,7 +12110,7 @@ function _igCell(item,cap){const c=document.createElement('div');c.className='ig
 function _igSecSync(sec){if(sec)sec.hidden=!sec.querySelector('.ig-item');}
 function _igMagTile(m){
   const a=document.createElement('a');a.className='ig-item ig-mag-item';a.href=m.p;a.target='_blank';a.rel='noopener noreferrer';
-  a.addEventListener('click',e=>{e.stopPropagation();if(m.ty==='VIDEO')return;e.preventDefault();_openIgViewer(m,m.h,0);});
+  a.addEventListener('click',e=>{e.stopPropagation();e.preventDefault();if(m.ty==='VIDEO'){const k=_igPostKey(m.p);if(k)_openIgEmbed({post_key:k});else window.open(m.p,'_blank','noopener');return;}_openIgViewer(m,m.h,0);});
   const img=document.createElement('img');img.loading='lazy';img.alt='';img.src=m.u;
   img.addEventListener('error',()=>{const sec=a.closest('.ig-section'),cell=a.closest('.ig-cell')||a,st=cell.parentElement;cell.remove();if(st&&!st.children.length)st.hidden=true;_igSecSync(sec);});
   a.appendChild(img);
@@ -12130,11 +12133,12 @@ async function _renderIgMagStrip(prefix,handles){
 async function _renderIgStrip(prefix,url){
   const sec=document.getElementById(prefix+'-ig-section'),strip=document.getElementById(prefix+'-ig-strip');
   if(!sec||!strip)return;
-  sec.hidden=true;strip.innerHTML='';
+  sec.hidden=true;strip.innerHTML='';sec.querySelector('.tt-timeline-hd .ig-all')?.remove();
   const h=_igHandle(url);strip.dataset.h=h||'';
   if(!h||!sb)return;
   let media=null;
-  try{const{data}=await sb.from('ig_accounts').select('media').eq('handle',h).maybeSingle();media=data&&data.media;}catch(e){}
+  let mcount=0;
+  try{const{data}=await sb.from('ig_accounts').select('media,media_count').eq('handle',h).maybeSingle();media=data&&data.media;mcount=(data&&data.media_count)||0;}catch(e){}
   if(strip.dataset.h!==h||!Array.isArray(media)||!media.length)return; // 그새 다른 카드로 넘어갔으면 버린다
   const ko=currentLang==='ko';
   const who=(_igOwners().get(h)||{}).name||h;
@@ -12142,7 +12146,7 @@ async function _renderIgStrip(prefix,url){
   const mk=(src,m,i)=>{
     const href=m.p,ty=i?'IMAGE':m.ty;
     const a=document.createElement('a');a.className='ig-item';a.href=href;a.target='_blank';a.rel='noopener noreferrer';
-    a.addEventListener('click',e=>{e.stopPropagation();if(ty==='VIDEO')return;e.preventDefault();_openIgViewer(m,h,i||0);});
+    a.addEventListener('click',e=>{e.stopPropagation();e.preventDefault();if(ty==='VIDEO'){const k=_igPostKey(m.p);if(k)_openIgEmbed({post_key:k});else window.open(href,'_blank','noopener');return;}_openIgViewer(m,h,i||0);}); // 영상은 인스타 공식 임베드로 사이트 안에서 재생(2026-11-13)
     const img=document.createElement('img');img.loading='lazy';img.alt='';img.src=src;
     img.addEventListener('error',()=>{(a.closest('.ig-cell')||a).remove();if(!strip.children.length)_igSecSync(sec);});
     a.appendChild(img);
@@ -12171,6 +12175,118 @@ async function _renderIgStrip(prefix,url){
   });
   sec.hidden=false;
   _enableDragScroll(strip);
+  _igSetAllBtn(sec,h,who,media.length,Math.max(mcount||0,media.length+1));
+}
+// ── 인스타 게시물 보관함(2026-11-13, 사용자 "인스타 최근 것까지만? 전체 못 봐? 그럴 거면 사진 태깅이 무슨 의미가 있어") ──────────────
+// 게시물은 이제 ig_media에 쌓인다(최신 수집 + 과거 채우기 tools/ig_backfill.mjs). 카드 인스타 칸 제목 옆 '전체 보기'로 그 계정 전체를 격자로,
+// 멤버 카드엔 관리자가 그 멤버를 태깅한 사진(ig_photo_tags)을 '태그된 사진' 줄로 — 그룹 계정의 지난 글이어도 남는다.
+// 사진 주소(cdninstagram, oe=)는 4~5일이면 만료라, 만료된 글은 게시물 코드로 살아 있는 주소를 받아 오는 중계 함수(ig-img)를 쓴다.
+// 여러 장·영상인데 주소가 만료된 글은 인스타 공식 임베드로 연다(장 넘기기·재생이 그쪽에서 된다).
+const _igImgFn=()=>SUPABASE_URL+'/functions/v1/ig-img'; // SUPABASE_URL은 더 아래에서 선언 — 함수로 늦게 읽는다(최상위에서 바로 읽으면 앱 전체가 안 뜬다)
+function _igFresh(u){if(!u)return false;const m=/[?&]oe=([0-9A-Fa-f]{6,})/.exec(u);return !m||parseInt(m[1],16)*1000>Date.now()+3600e3;}
+function _igRowImg(r,size){return _igFresh(r.u)?r.u:(r.post_key?_igImgFn()+'?c='+encodeURIComponent(r.post_key)+'&s='+(size||'m'):'');}
+function _igRowFreshSet(r){return Array.isArray(r.c)&&r.c.length>1&&r.c.every(_igFresh);}
+function _igRowToM(r){
+  const m={u:_igRowImg(r,'l'),p:r.p,t:r.t,ty:r.ty,cap:r.cap||'',lk:r.lk,cm:r.cm,id:r.media_id||undefined};
+  if(_igRowFreshSet(r)){m.c=r.c;if(Array.isArray(r.mi))m.mi=r.mi;}
+  else if(Array.isArray(r.mi)&&r.mi.length===1)m.mi=r.mi;
+  return m;
+}
+function _igOpenRow(r,h){
+  // 여러 장인데 장별 주소가 없거나 만료 · 영상 → 인스타 공식 임베드. 나머지는 사이트 안 사진 창(멤버 태그 칩 포함)
+  if(r.ty==='VIDEO'||((r.n||1)>1&&!_igRowFreshSet(r)))return _openIgEmbed(r);
+  _openIgViewer(_igRowToM(r),h,0);
+}
+function _igRowTile(r,h,cls){
+  const b=document.createElement('button');b.type='button';b.className=cls||'iga-tile';
+  const img=document.createElement('img');img.loading='lazy';img.alt='';img.src=_igRowImg(r,'m');
+  img.addEventListener('error',()=>{b.classList.add('iga-ph');img.remove();const d=document.createElement('span');d.className='iga-ph-d';d.textContent=r.t?String(r.t).slice(0,10).replace(/-/g,'.'):'';b.appendChild(d);});
+  b.appendChild(img);
+  if(r.ty==='VIDEO'){const p=document.createElement('span');p.className='ig-play';p.textContent='▶';b.appendChild(p);}
+  else if((r.n||1)>1)b.appendChild(_igBars(r.n));
+  b.addEventListener('click',e=>{e.stopPropagation();_igOpenRow(r,h);});
+  return b;
+}
+// 인스타 공식 임베드 창
+function _openIgEmbed(r){
+  let ov=document.getElementById('ige-overlay');
+  if(!ov){
+    ov=document.createElement('div');ov.id='ige-overlay';ov.setAttribute('data-modal','');
+    ov.innerHTML='<div id="ige-panel"><button id="ige-close" type="button" aria-label="닫기">✕</button><iframe id="ige-frame" title="Instagram" allowtransparency="true" scrolling="yes"></iframe></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click',e=>{if(e.target===ov)_closeIgEmbed();});
+    ov.querySelector('#ige-close').addEventListener('click',_closeIgEmbed);
+  }
+  ov.querySelector('#ige-frame').src='https://www.instagram.com/p/'+encodeURIComponent(r.post_key)+'/embed/captioned/';
+  ov.classList.add('open');_bringToFront(ov);
+}
+function _closeIgEmbed(){const ov=document.getElementById('ige-overlay');if(!ov||!ov.classList.contains('open'))return false;ov.classList.remove('open');ov.querySelector('#ige-frame').src='about:blank';return true;}
+// 보관함 격자 창
+let _iga=null;
+function _closeIgArchive(){const ov=document.getElementById('iga-overlay');if(!ov||!ov.classList.contains('open'))return false;ov.classList.remove('open');if(_iga&&_iga.io)_iga.io.disconnect();_iga=null;return true;}
+async function _openIgArchive(h,who){
+  if(!h||!sb)return;
+  const ko=currentLang==='ko';
+  let ov=document.getElementById('iga-overlay');
+  if(!ov){
+    ov=document.createElement('div');ov.id='iga-overlay';ov.setAttribute('data-modal','');
+    ov.innerHTML='<div id="iga-panel"><div id="iga-hd"><div id="iga-title"><b></b><span></span></div><button id="iga-close" type="button" aria-label="닫기">✕</button></div><div id="iga-note"></div><div id="iga-grid"></div><div id="iga-more"></div></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click',e=>{if(e.target===ov)_closeIgArchive();});
+    ov.querySelector('#iga-close').addEventListener('click',_closeIgArchive);
+  }
+  if(_iga&&_iga.io)_iga.io.disconnect();
+  const st=_iga={h,from:0,done:false,loading:false,io:null};
+  ov.querySelector('#iga-title b').textContent=who||h;
+  ov.querySelector('#iga-title span').textContent='@'+h;
+  const grid=ov.querySelector('#iga-grid'),note=ov.querySelector('#iga-note'),more=ov.querySelector('#iga-more');
+  grid.replaceChildren();note.textContent='';more.textContent=ko?'불러오는 중…':'Loading…';
+  ov.classList.add('open');_bringToFront(ov);ov.querySelector('#iga-panel').scrollTop=0;
+  // 아직 과거 채우기 중이면 한 줄 안내(쌓인 수 / 계정 전체 게시물 수)
+  Promise.all([sb.from('ig_accounts').select('media_count,bf_done').eq('handle',h).maybeSingle(),sb.from('ig_media').select('post_key',{count:'exact',head:true}).eq('handle',h)]).then(([a,c])=>{
+    if(_iga!==st)return;const tot=a&&a.data&&a.data.media_count,have=c&&c.count;
+    if(a&&a.data&&!a.data.bf_done&&tot&&have!=null&&have<tot)note.textContent=ko?`지난 게시물을 모으는 중이에요 · ${have.toLocaleString()} / ${tot.toLocaleString()}`:`Still collecting older posts · ${have.toLocaleString()} / ${tot.toLocaleString()}`;
+  }).catch(()=>{});
+  const page=async()=>{
+    if(st.loading||st.done||_iga!==st)return;st.loading=true;
+    try{
+      const{data,error}=await sb.from('ig_media').select('post_key,media_id,t,ty,p,u,c,mi,n,cap,lk,cm').eq('handle',h).order('t',{ascending:false}).range(st.from,st.from+59);
+      if(error)throw error;if(_iga!==st)return;
+      (data||[]).forEach(r=>grid.appendChild(_igRowTile(r,h)));
+      st.from+=(data||[]).length;
+      if(!data||data.length<60){st.done=true;more.textContent=st.from?'':(ko?'아직 모은 게시물이 없어요':'No posts yet');}
+    }catch(e){more.textContent=ko?'불러오지 못했어요':'Could not load';st.done=true;}
+    finally{st.loading=false;}
+  };
+  await page();
+  if(!st.done&&'IntersectionObserver' in window){st.io=new IntersectionObserver(es=>{if(es.some(x=>x.isIntersecting))page();},{root:ov.querySelector('#iga-panel'),rootMargin:'600px'});st.io.observe(more);}
+}
+// 인스타 칸 제목 옆 '전체 보기'
+function _igSetAllBtn(sec,h,who,shown,total){
+  const hd=sec&&sec.querySelector('.tt-timeline-hd');if(!hd)return;
+  hd.querySelector('.ig-all')?.remove();
+  if(!h||!(total>shown))return;
+  const b=document.createElement('button');b.type='button';b.className='ig-all';
+  b.textContent=(currentLang==='ko'?'전체 보기':'See all')+' ›';
+  b.addEventListener('click',e=>{e.stopPropagation();_openIgArchive(h,who);});
+  hd.appendChild(b);
+}
+// 멤버 카드 '태그된 사진' — 관리자가 이 멤버를 태깅한 인스타 사진(그룹 계정 글 포함), 최신순
+async function _renderIgTagged(prefix,a){
+  const sec=document.getElementById(prefix+'-ig-section');if(!sec||!a||!a.id||!sb)return;
+  let box=document.getElementById(prefix+'-igtag');
+  if(!box){box=document.createElement('div');box.id=prefix+'-igtag';box.className='igtag-wrap';box.innerHTML='<div class="igtag-hd"></div><div class="ig-strip igtag-strip hscroll-drag"></div>';sec.appendChild(box);}
+  const strip=box.querySelector('.igtag-strip');box.dataset.a=a.id;box.hidden=true;strip.replaceChildren();
+  try{
+    const{data:tags,error}=await sb.from('ig_photo_tags').select('post_key,handle').contains('artist_ids',[a.id]).limit(400);
+    if(error||box.dataset.a!==a.id||!tags||!tags.length)return;
+    const keys=[...new Set(tags.map(t=>t.post_key))];
+    const{data:rows}=await sb.from('ig_media').select('post_key,handle,media_id,t,ty,p,u,c,mi,n,cap,lk,cm').in('post_key',keys.slice(0,200));
+    if(box.dataset.a!==a.id||!rows||!rows.length)return;
+    rows.sort((x,y)=>String(y.t).localeCompare(String(x.t))).forEach(r=>strip.appendChild(_igRowTile(r,r.handle,'ig-item igtag-tile')));
+    box.querySelector('.igtag-hd').textContent=(currentLang==='ko'?'태그된 사진':'Tagged photos')+' '+rows.length;
+    box.hidden=false;sec.hidden=false;_enableDragScroll(strip);
+  }catch(e){}
 }
 const _LINK_DEFS=[
   {key:'youtube',label:'YouTube',svg:'<svg viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="4" stroke="currentColor" stroke-width="1.6"/><path d="M10 9.5l5 2.5-5 2.5z" fill="currentColor"/></svg>'},

@@ -5632,3 +5632,39 @@
     #feed-list-overlay.fl-wide #feed-list-grid.gc-ch-grid{grid-template-columns:repeat(6,1fr);}
   }
 }
+
+/* ── 인스타 보관함(2026-11-13) — 카드 인스타 칸 '전체 보기' 격자 · 멤버 '태그된 사진' 줄 · 공식 임베드 창 ── */
+.ig-section .tt-timeline-hd{display:flex;align-items:baseline;justify-content:space-between;gap:8px;}
+.ig-all{flex:none;background:none;border:0;padding:4px 0 4px 8px;font:inherit;font-size:12px;font-weight:600;letter-spacing:0;text-transform:none;color:rgba(190,205,240,0.75);cursor:pointer;}
+.ig-all:hover{color:#fff;}
+.igtag-wrap{margin-top:10px;}
+.igtag-wrap[hidden]{display:none;}
+.igtag-hd{font-size:12px;font-weight:600;color:rgba(190,205,240,0.7);margin:0 0 -8px;}
+.igtag-tile{border:0;padding:0;cursor:pointer;}
+.igtag-tile.iga-ph{display:flex;align-items:flex-end;}
+#iga-overlay{position:fixed;inset:0;z-index:82;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+#iga-overlay.open{display:flex;}
+#iga-panel{width:min(920px,100vw);height:min(88vh,100%);overflow-y:auto;overscroll-behavior:contain;background:#0d0d10;border-radius:16px;padding:0 16px 24px;box-sizing:border-box;}
+#iga-hd{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 0 12px;background:#0d0d10;}
+#iga-title{min-width:0;display:flex;align-items:baseline;gap:8px;}
+#iga-title b{font-size:16px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
+#iga-title span{flex:none;font-size:12px;color:rgba(170,185,225,0.6);}
+#iga-close,#ige-close{flex:none;width:36px;height:36px;border-radius:50%;border:0;background:rgba(255,255,255,0.08);color:#fff;font-size:15px;cursor:pointer;}
+#iga-note{font-size:12px;color:rgba(170,185,225,0.65);margin:0 0 10px;}
+#iga-note:empty{display:none;}
+#iga-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;}
+@media(min-width:620px){#iga-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;}}
+.iga-tile{position:relative;display:block;aspect-ratio:4/5;border:0;padding:0;margin:0;border-radius:4px;overflow:hidden;background:rgba(255,255,255,0.05);cursor:pointer;}
+.iga-tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
+.iga-ph{display:flex;align-items:flex-end;}
+.iga-ph-d{font-size:11px;color:rgba(170,185,225,0.6);padding:6px;}
+.iga-tile .ig-bars{top:6px;}
+#iga-more{text-align:center;font-size:12px;color:rgba(170,185,225,0.6);padding:18px 0 4px;min-height:1px;}
+#ige-overlay{position:fixed;inset:0;z-index:83;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.78);}
+#ige-overlay.open{display:flex;}
+#ige-panel{position:relative;width:min(480px,94vw);height:min(86vh,820px);background:#fff;border-radius:12px;overflow:hidden;}
+#ige-frame{width:100%;height:100%;border:0;display:block;}
+#ige-close{position:absolute;top:8px;right:8px;z-index:2;background:rgba(0,0,0,0.55);}
+@media(max-width:620px){#iga-panel{height:100%;border-radius:0;}}
+.tt-ig-out{margin-top:7px;padding-top:10px;border-top:0.5px solid rgba(255,255,255,0.10);}
+.ig-section>.ig-strip:empty{display:none;}

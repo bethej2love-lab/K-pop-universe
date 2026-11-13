@@ -132,7 +132,7 @@ let ok = 0, nf = 0, stoppedBy = '';
 // 여러 장 게시물(캐러셀)은 안의 사진까지(children) 받는다(2026-10-19, 카드에서 겹친 묶음→펼치기). children 중첩이 막혀 있으면
 // (오류 100) 그 회차는 children 없이 다시 시도한다 — 한 필드 때문에 전체가 실패하지 않게.
 let withChildren = true;
-const fieldsFor = h => `business_discovery.username(${encodeURIComponent(h)}){username,name,followers_count,media_count,profile_picture_url,media.limit(${MAG.has(h) ? 50 : 9}){id,media_type,media_url,thumbnail_url,permalink,timestamp,caption,like_count,comments_count${withChildren ? ',children{id,media_type,media_url,thumbnail_url}' : ''}}}`;
+const fieldsFor = h => `business_discovery.username(${encodeURIComponent(h)}){username,name,followers_count,media_count,profile_picture_url,media.limit(${MAG.has(h) ? 50 : 12}){id,media_type,media_url,thumbnail_url,permalink,timestamp,caption,like_count,comments_count${withChildren ? ',children{id,media_type,media_url,thumbnail_url}' : ''}}}`;
 for (const h of queue) {
   const url = `${GRAPH}/${IG_USER}?fields=${fieldsFor(h)}&access_token=${encodeURIComponent(TOKEN)}`;
   let r, j;
@@ -171,7 +171,7 @@ for (const h of queue) {
       const singlePhotoId=visibleChildren[0]?.id||(m.media_type==='CAROUSEL_ALBUM'?null:m.id);
       o.mi=cs.length>1?visibleChildren.slice(0,20).map(x=>({id:x.id?String(x.id):null,u:img(x),ty:x.media_type})):[{id:singlePhotoId?String(singlePhotoId):null,u:o.u,ty:visibleChildren[0]?.media_type||m.media_type}];
       return o;
-    }).filter(m => m.u && m.p && (!isMag || m.m.length)).slice(0, isMag ? 50 : 6);
+    }).filter(m => m.u && m.p && (!isMag || m.m.length)).slice(0, isMag ? 50 : 12);
     acc.push({ handle: h, ig_id: b.id || null, name: b.name || null, followers: b.followers_count ?? null, media_count: b.media_count ?? null, pic_url: b.profile_picture_url || null, media, status: 'ok', note: null, fetched_at: new Date().toISOString() });
     if (b.followers_count != null) daily.push({ handle: h, day, followers: b.followers_count });
     ok++;
@@ -186,5 +186,15 @@ const byShape = new Map();
 for (const row of acc) { const k = Object.keys(row).sort().join(','); (byShape.get(k) || byShape.set(k, []).get(k)).push(row); }
 for (const rows of byShape.values()) await sbUpsert('ig_accounts', rows, 'handle');
 await sbUpsert('ig_follower_daily', daily, 'handle,day');
+// 받은 최신 게시물은 ig_media에도 쌓는다(2026-11-13 — ig_accounts.media는 덮어써져서 지난 글·태깅한 사진이 사라졌다).
+// 최신 수집분은 사진 주소·캐러셀까지 담은 풍부한 줄이라 과거 채우기(ig_backfill.mjs)의 가벼운 줄을 덮어쓴다.
+const keyOf = p => (String(p || '').match(/instagram\.com\/(?:p|reel|tv)\/([A-Za-z0-9_-]+)/) || [])[1] || null;
+const archive = [];
+for (const row of acc) for (const m of (row.status === 'ok' ? row.media : []) || []) {
+  const post_key = keyOf(m.p); if (!post_key) continue;
+  archive.push({ post_key, handle: row.handle, media_id: m.id || null, t: m.t || null, ty: m.ty || null, p: m.p, u: m.u || null, c: m.c || null, mi: m.mi || null,
+    n: Array.isArray(m.c) && m.c.length ? m.c.length : 1, cap: m.cap || null, lk: m.lk ?? null, cm: m.cm ?? null, m: Array.isArray(m.m) ? m.m : null, src: 'recent', seen_at: new Date().toISOString() });
+}
+for (let i = 0; i < archive.length; i += 500) await sbUpsert('ig_media', archive.slice(i, i + 500), 'post_key');
 console.log(`인스타 계정 ${handles.size}개 중 이번 ${acc.length}개 — 성공 ${ok} · 조회 불가 ${nf}${coolingCount ? ' · Invalid user 재시도 대기 ' + coolingCount : ''}${stoppedBy ? ' · 중단: ' + stoppedBy : ''}`);
 console.log('실제 처리 배분 ' + JSON.stringify(laneCounts(acc.map(r => r.handle))));
