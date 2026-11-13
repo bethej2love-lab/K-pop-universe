@@ -95,7 +95,8 @@ for (const a of queue) {
     if (rows.length) await sbWrite('POST', 'ig_media?on_conflict=post_key', rows, 'resolution=ignore-duplicates,return=minimal');
     saved += rows.length; count += (m.data || []).length;
     const next = m.paging && m.paging.cursors && m.paging.cursors.after;
-    const done = !(m.paging && m.paging.next) || !(m.data || []).length;
+    // Business Discovery 안쪽 media는 paging.next 없이 cursors.after만 준다 — 커서가 없거나 빈 페이지일 때만 끝
+    const done = !next || !(m.data || []).length;
     cursor = done ? null : next;
     await sbWrite('PATCH', `ig_accounts?handle=eq.${encodeURIComponent(a.handle)}`, { bf_cursor: cursor, bf_done: done, bf_count: count });
     if (done) { finished++; break; }
