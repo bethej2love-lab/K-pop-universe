@@ -5697,9 +5697,9 @@ function _lbRenderPeople({artist,groupKo,gName,multi,withList,anchorG,fullTagged
   }
   (withList||[]).forEach(it=>{if(it.group)addG(it.group);else addM(_findArtistByConnName(it.n,artist?artist.group.ko:groupKo));});
   box.replaceChildren();
+  // 위쪽 빛(--lb-tint)은 그룹색 대신 영상 썸네일 대표색 — _lbAmbientTint(2026-11-13). 여기선 이전 영상 색만 지운다.
   const lb=document.getElementById('yt-lightbox');
-  const gc=GROUPS[groupKo]?.color||(artist&&artist.color);
-  if(lb){if(Array.isArray(gc))lb.style.setProperty('--lb-tint',gc.slice(0,3).join(','));else lb.style.removeProperty('--lb-tint');}
+  if(lb)lb.style.removeProperty('--lb-tint');
   if(!items.length)return;
   const hd=document.createElement('div');hd.className='lb-people-hd';hd.textContent=isKo?'이 영상에 나온 아티스트':'Artists in this video';box.appendChild(hd);
   const row=document.createElement('div');row.className='lb-people-row hscroll-drag';
@@ -5752,6 +5752,34 @@ document.getElementById('yt-lb-more')?.addEventListener('click',e=>{e.stopPropag
 document.addEventListener('pointerdown',e=>{const w=document.getElementById('yt-lb-more-wrap');if(w&&!w.contains(e.target))_lbMoreClose();},true);
 // 브라우즈 모드 전용 — 이 영상의 주 인물(그룹/멤버) 표시, 함께 출연한 멤버 칩, 연결 카드 진입 버튼.
 // 쇼츠(스와이프) 모드에선 #yt-lb-member-info 자체가 CSS로 숨겨져 있어 호출부에서부터 걸러짐.
+// 재생 화면 위쪽 빛 = 영상 썸네일 대표색(2026-11-13 사용자 "그룹색 띠보다 영상 대표색이 낫다, 덜 튀게").
+// 썸네일(i.ytimg.com은 CORS 허용)을 16×9로 줄여 평균 → 채도·밝기를 눌러 은은하게. 실패하면 _lbRenderPeople이 깐 그룹색 그대로.
+const _lbAmbCache=new Map();
+function _lbAmbientTint(s){
+  const lb=document.getElementById('yt-lightbox');if(!lb||!s)return;
+  const id=_lbApiId(s)||ytId(s.u);if(!id)return;
+  const apply=rgb=>{if(rgb&&_lbPlaylist&&_lbPlaylist[_lbIdx]===s)lb.style.setProperty('--lb-tint',rgb);};
+  if(_lbAmbCache.has(id)){apply(_lbAmbCache.get(id));return;}
+  const img=new Image();img.crossOrigin='anonymous';
+  img.onload=()=>{try{
+    const c=document.createElement('canvas');c.width=16;c.height=9;const x=c.getContext('2d',{willReadFrequently:true});
+    x.drawImage(img,0,0,16,9);const d=x.getImageData(0,0,16,9).data;
+    let r=0,g=0,b=0,w=0;
+    for(let i=0;i<d.length;i+=4){const mx=Math.max(d[i],d[i+1],d[i+2]),mn=Math.min(d[i],d[i+1],d[i+2]);
+      const wt=1+(mx-mn)/64; // 색 있는 칸을 조금 더(회색 평균으로 죽지 않게)
+      r+=d[i]*wt;g+=d[i+1]*wt;b+=d[i+2]*wt;w+=wt;}
+    r/=w;g/=w;b/=w;
+    // HSL로 채도 ≤0.38, 밝기 0.42 고정 — 쨍한 썸네일도 같은 톤
+    const R=r/255,G=g/255,B=b/255,M=Math.max(R,G,B),m=Math.min(R,G,B),l=(M+m)/2;let h=0,sat=0;
+    if(M!==m){const dd=M-m;sat=l>.5?dd/(2-M-m):dd/(M+m);h=M===R?((G-B)/dd+(G<B?6:0)):M===G?((B-R)/dd+2):((R-G)/dd+4);h/=6;}
+    sat=Math.min(sat,.38);const L=.42,q=L<.5?L*(1+sat):L+sat-L*sat,p=2*L-q;
+    const f=t=>{t=(t+1)%1;return t<1/6?p+(q-p)*6*t:t<.5?q:t<2/3?p+(q-p)*(2/3-t)*6:p;};
+    const rgb=[f(h+1/3),f(h),f(h-1/3)].map(v=>Math.round(v*255)).join(',');
+    _lbAmbCache.set(id,rgb);apply(rgb);
+  }catch(e){_lbAmbCache.set(id,null);}};
+  img.onerror=()=>_lbAmbCache.set(id,null);
+  img.src='https://i.ytimg.com/vi/'+id+'/mqdefault.jpg';
+}
 function _lbUpdateMemberInfo(){
   const wrap=document.getElementById('yt-lb-member-info');
   if(!wrap)return;
@@ -5854,6 +5882,7 @@ function _lbUpdateMemberInfo(){
     withEl.appendChild(chip);
   });
   _lbRenderPeople({artist,groupKo,gName,multi:_multiChips?_multi:[],withList:_withList,anchorG:_anchorG,fullTagged:_multiChips?[]:_multi});
+  _lbAmbientTint(s);
   const hasCollab=!!(artist&&_getCollabMembers(artist).length>0);
   connBtn.style.display=hasCollab?'':'none';
   document.getElementById('yt-lightbox')?.classList.toggle('lb-has-chips',withEl.children.length>0); // 칩 줄만큼 영상 내림(CSS 주석)

@@ -1419,6 +1419,28 @@ function retireStaleSongPages() {
   }
   if (retiredSongPages) console.log(`이번에 안 만든 옛 곡 페이지 → 그룹·멤버 페이지로 넘김 ${retiredSongPages}개`);
 }
+// 이번 빌드에서 안 만든 하위 페이지 폴더(앨범 a/·조합 chem/)를 noindex + 상위 페이지 넘김으로(2026-11-13 Codex —
+// 제로베이스원 'AFTERGLOW'(근거 없는 레코드 삭제)·조합 목록에서 빠진 9쌍이 옛 내용 그대로 200·색인 허용으로 남아 있었다).
+// dir 아래 폴더 중 relBase+이름+'/'가 이번 빌드 pages에 없으면 넘김. 이미 넘김 페이지면 그대로.
+function retireStaleDirs(dir, relBase, toUrl, nm, lang) {
+  if (!fs.existsSync(dir)) return 0;
+  const madeRel = new Set(pages.map(p => decodeURI(p.loc.slice(SITE.length + 1))));
+  let n = 0;
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (!e.isDirectory()) continue;
+    const f = path.join(dir, e.name, 'index.html');
+    if (madeRel.has(relBase + e.name + '/') || !fs.existsSync(f)) continue;
+    if (/http-equiv="refresh"/.test(fs.readFileSync(f, 'utf8').slice(0, 600))) continue;
+    fs.writeFileSync(f, `<!doctype html>
+<html lang="${lang}"><head><meta charset="utf-8"><title>${escHtml(nm)} — K-POP UNIVERSE</title>
+<link rel="canonical" href="${toUrl}"><meta name="robots" content="noindex">
+<meta http-equiv="refresh" content="0; url=${toUrl}">
+</head><body><a href="${toUrl}">${escHtml(nm)}</a></body></html>
+`);
+    n++;
+  }
+  return n;
+}
 function buildSongPages() {
   const shareRoutes = Object.fromEntries(Object.keys(groups).map(g => [g, {g: [], m: {}}]));
   const memberRouteOwners = new Map();
@@ -1482,14 +1504,19 @@ const FANCAM_RE = /(직캠|페이스캠|얼빡|원픽캠|fan ?cam|face ?cam|focu
 // 제목 한 단어로 일괄 빼지 않게: '(+ Behind cam)' 붙은 챌린지 공연과 '#아돌라비하인드' 같은 프로그램 해시태그는 무시, 곡 이름 'Interview'·'Red Carpet'·
 // '인천공항 스카이 페스티벌' 무대는 남는다. 10분 넘는 영상 기준은 콘서트 풀캠·메들리까지 빼서 쓰지 않는다. 표본 27개(Codex 제외 17·보존 10) 일치.
 const FANCAM_NONPERF_RE = /(팬\s*싸인회|팬사인회|팬싸|fan\s*sign|비하인드|behind|출국|입국|공항\s*도착|출근길?|퇴근길(?!\s*live)|포토월|photo\s?wall|놀라운\s?토요일|놀토|셀프\s?리뷰|리액션|reaction|브이로그|vlog|소감|airport\s*(arrival|departure))/i;
+// 레드카펫·포토타임(2026-11-13 Codex — 아이브 W Korea 'Love Your W Red Carpet'·TMA Red Carpet Focus가 직캠 허브에).
+// 곡 'Red Carpet'(따옴표 안 — 에이핑크 'Nothing X Red Carpet')과 '더 시즌즈-이효리의 레드카펫' 무대는 남는다.
+const RED_CARPET_RE = /(레드\s?카펫|red\s?carpet|포토\s?타임|photo\s?time)/i;
+const redCarpetEvent = t => RED_CARPET_RE.test(String(t).replace(/['‘"“][^'’"”]*['’"”]/g, ' ').replace(/이효리의\s*레드\s?카펫/g, ' '));
 const isPerfFancam = v => FANCAM_RE.test(v.title || '') && v.category !== 'variety'
-  && !FANCAM_NONPERF_RE.test(String(v.title || '').replace(/\(\+\s*behind[^)]*\)/ig, ' ').replace(/#\S*비하인드\S*/g, ' '));
+  && !FANCAM_NONPERF_RE.test(String(v.title || '').replace(/\(\+\s*behind[^)]*\)/ig, ' ').replace(/#\S*비하인드\S*/g, ' '))
+  && !redCarpetEvent(v.title || '');
 // 악기 캠(드럼·기타·베이스·키보드 직캠)은 밴드 무대에 피처링한 사람까지 태그돼 있다(2026-11-12 Codex — 드래곤포니 고강훈 드럼캠이
 // 피처링 더보이즈 선우 'AURA' 직캠으로). 악기 캠은 제목에 그 멤버 이름(한글·영문·그룹 활동명)이 있을 때만 그 사람 직캠으로.
 const INSTR_CAM_RE = /(드럼|기타|베이스|키보드|drum|guitar|bass|keyboard)\s*(직캠|캠|cam)/i;
 // 단체 풀캠도 같은 방식(2026-11-12 Codex — STUDIO CHOOM 하츠투하츠 'Full Focused'·ITZY 'Close-up CAM' 단체 안무가 예온·유나 개인 순위 2·3위).
 // 솔로 'Full Focused'(카이 '음')는 제목에 이름이 있어 남는다.
-const GROUP_CAM_RE = /(full\s*focus(ed)?|풀\s*캠|full\s*cam|close-?up\s*cam|단체\s*(직캠|캠)|group\s*(fan)?cam)/i;
+const GROUP_CAM_RE = /(full\s*focus(ed)?|풀\s*캠|full\s*cam|close-?up\s*cam|(단체|전체)\s*(직캠|캠)|group\s*(fan)?cam)/i;
 function camTargetOk(v, a, gko) {
   const t = String(v.title || '');
   if (!INSTR_CAM_RE.test(t) && !GROUP_CAM_RE.test(t)) return true;
@@ -1516,6 +1543,19 @@ function vidCardsHtml(list, isEn) {
   return list.map(v => `<a class="mf-card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">${escHtml(v.title)}</span><span class="mf-y">${[v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? (isEn ? `${SEO.fmtViews(v.view_count, isEn)} views` : `조회수 ${SEO.fmtViews(v.view_count, isEn)}`) : ''].filter(Boolean).join(' · ')}</span></a>`).join('');
 }
 function memberSongPagePath(a, b, lang) { return `${memberPagePath(a, lang)}s/${b}/`; }
+// 멤버×곡 페이지에 들어갈 개인 영상(2026-11-13 Codex — 윤호 'Guerrilla'에 일본 여행 브이로그, 지민 'Black Swan'에 비하인드, 로제
+// 'Lovesick Girls'에 인터뷰감옥, 라비 'Radio'에 보이는 라디오, 가을 'Baddie'에 아이브 Full Focused 단체 안무). 직캠 표시가 없어도 되는 대신
+// (솔로 무대·라이브 클립) 공연이 아닌 표시가 있으면 뺀다. 팬사인회 중 실제 개인 무대(모모 MOONLIGHT SUNRISE)는 남긴다.
+const MEMBER_SONG_NONPERF_FMT = new Set(['브이로그', '비하인드', '인터뷰', '라디오']);
+const MEMBER_SONG_NONPERF_RE = /(비하인드|behind|브이로그|vlog|인터뷰|interview|보이는\s?라디오|visual\s?radio|여행|녹음|예고편|출국|입국|공항|airport|출근길?|퇴근길(?!\s*live)|포토월|photo\s?wall|리액션|reaction|소감)/i;
+function memberSongVidOk(v, a, gko, song) {
+  if (v.category === 'variety') return false;
+  if ((v.content_formats || []).some(x => MEMBER_SONG_NONPERF_FMT.has(x))) return false;
+  const t = String(v.title || '').replace(/\(\+\s*behind[^)]*\)/ig, ' ').replace(/#\S*비하인드\S*/g, ' ');
+  const ts = song && song.title && song.title.length > 1 ? t.split(song.title).join(' ') : t; // 곡 이름 자체('여행'·'Interview')는 신호가 아니다
+  if (MEMBER_SONG_NONPERF_RE.test(ts) || redCarpetEvent(ts)) return false;
+  return camTargetOk(v, a, gko);
+}
 function computeMemberSongs() {
   const made = new Set();
   for (const gko of Object.keys(SONGS)) {
@@ -1524,7 +1564,7 @@ function computeMemberSongs() {
     members.forEach(a => { byName.set(a.name.ko, a); const ge = (a.groups || []).find(g => g && g.ko === gko); if (ge && ge.name) byName.set(ge.name, a); });
     for (const s of SONGS[gko]) {
       const solo = new Map();
-      s.vids.forEach(v => { const m = v.members || []; if (m.length !== 1) return; const a = byName.get(m[0]); if (!a) return; if (!solo.has(a)) solo.set(a, []); solo.get(a).push(v); });
+      s.vids.forEach(v => { const m = v.members || []; if (m.length !== 1) return; const a = byName.get(m[0]); if (!a || !memberSongVidOk(v, a, gko, s)) return; if (!solo.has(a)) solo.set(a, []); solo.get(a).push(v); });
       const list = [];
       for (const [a, vids] of solo) {
         if (vids.length < MEMBER_SONG_MIN) continue;
@@ -1803,7 +1843,7 @@ function memberFaceUrl(a, gko) {
   return id ? ytThumb(id, 'mqdefault') : null;
 }
 // 스타일은 저장소의 song-page.css 한 파일(페이지마다 넣으면 3만 쪽 × 5KB) — 바꾸면 SONG_CSS_V를 올릴 것
-const SONG_CSS_V = 5;
+const SONG_CSS_V = 6;
 function songShareVideo(vids) {
   return vids.find(v => (v.category === 'live' || FANCAM_RE.test(v.title || ''))
     && !/\bM\/?V\b|music\s*video|뮤직비디오|\bteaser\b|티저/i.test(v.title || '')) || vids[0];
@@ -1885,15 +1925,34 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
   const chipsHtml = `<ul class="chips">
     ${chip(isEn ? 'Release' : '발매', date)}${chip(isEn ? 'Album' : '앨범', s.album)}${s.wins ? `<li><b>${isEn ? 'Music show wins' : '음악방송 1위'}</b>${s.wins}${isEn ? '' : '회'}</li>` : ''}
   </ul>`;
-  const creditRow = (k, arr) => arr.length ? `<span><b>${k}</b>${escHtml(arr.slice(0, 6).join(', '))}</span> ` : '';
-  const creditsHtml = (L.length || C.length || A.length) ? `<p class="credits">${creditRow(isEn ? 'Lyrics' : '작사', L)}${creditRow(isEn ? 'Composition' : '작곡', C)}${creditRow(isEn ? 'Arrangement' : '편곡', A)}</p>` : '';
+  // 크레딧(2026-11-12 사용자 "작사작곡은 뭔 기준? 작사인지 작곡인지 구분, 단독도 따로"): 예전엔 '작사 A, B…(6명) 작곡 A, B…(6명)'을 페이지 맨 아래
+  // '다른 곡' 타일 밑에 붙여서 어느 곡 얘기인지, 누가 무엇을 했는지 안 읽혔다. 이제 이 곡 기준으로 사람마다 한 칩: 이름 + 역할(작사·작곡·편곡),
+  // 그 역할을 혼자 했으면 '단독 작사'. 멜론 곡 크레딧(cr) 그대로, 제목 아래 정보 칩 바로 다음.
+  const people = []; const pIdx = new Map();
+  [['l', L], ['c', C], ['a', A]].forEach(([k, arr]) => arr.forEach(n => { if (!pIdx.has(n)) { pIdx.set(n, people.length); people.push({ n, r: new Set() }); } people[pIdx.get(n)].r.add(k); }));
+  const RL = isEn ? { l: 'Lyrics', c: 'Music', a: 'Arrangement', solo: 'Sole ' } : { l: '작사', c: '작곡', a: '편곡', solo: '단독 ' };
+  const soloOf = { l: L.length === 1, c: C.length === 1, a: A.length === 1 };
+  const roleTxt = p => ['l', 'c', 'a'].filter(k => p.r.has(k)).map(k => (soloOf[k] ? RL.solo : '') + RL[k]).join(' · ');
+  const CR_MAX = 16;
+  const crItems = people.slice(0, CR_MAX).map(p => '<li><span class="cp-n">' + escHtml(p.n) + '</span><span class="cp-r">' + escHtml(roleTxt(p)) + '</span></li>').join('')
+    + (people.length > CR_MAX ? '<li class="cp-more">' + (isEn ? '+' + (people.length - CR_MAX) + ' more' : '외 ' + (people.length - CR_MAX) + '명') + '</li>' : '');
+  const creditsHtml = people.length ? '<div class="credits"><b class="credits-h">' + (isEn ? 'Credits' : '크레딧') + '</b><ul class="credit-ppl">' + crItems + '</ul></div>' : '';
   const grid = top.slice(1).map(v => `<a class="card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="${ytThumb(v.id, 'mqdefault')}" alt="" loading="lazy"></span><span class="card-t">${escHtml(v.title)}</span><span class="card-y">${[v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? (isEn ? `${SEO.fmtViews(v.view_count, isEn)} views` : `조회수 ${SEO.fmtViews(v.view_count, isEn)}`) : ''].filter(Boolean).join(' · ')}</span></a>`).join('\n    ');
   // 멤버×곡 페이지엔 '그룹의 다른 곡'을 싣지 않는다 — 곡 페이지에 있고, 1만 쪽에 같은 타일을 반복하면 용량만 커진다
-  const otherTiles = !ms && (others || []).length ? `
-  <h2>${isEn ? `More songs by ${gName}` : `${gko}의 다른 곡`}</h2>
-  <div class="sp-tiles">
-    ${others.map(o => `<a class="sp-tile" href="${SITE}/${songPagePath(gko, o.b, lang)}">${o.cover ? `<img src="${escHtml(o.cover)}" alt="" loading="lazy">` : `<span class="sp-tile-ph"></span>`}<span class="sp-tile-t">${escHtml(o.title)}</span><span class="sp-tile-n">${isEn ? `${o.vids.length} videos` : `영상 ${o.vids.length}`}</span></a>`).join('\n    ')}
-  </div>` : '';
+  // 다른 곡 — 앨범별로 묶어 커버 한 번 + 그 아래 수록곡 목록(2026-11-12 사용자 "같은 커버가 10장씩 반복돼 정신 사납다, 앨범 썸네일 아래에 곡 정보 쭉").
+  // 앨범 순서는 그 앨범 곡들의 영상 수 합, 앨범 안은 영상 많은 순(예전 타일 순서와 같은 기준).
+  const albumGroups = [];
+  if (!ms) {
+    const byAl = new Map();
+    (others || []).forEach(o => { const k = o.album || o.title; if (!byAl.has(k)) { byAl.set(k, { name: o.album || '', cover: o.cover || '', date: String(o.date || '').slice(0, 4), songs: [], n: 0 }); albumGroups.push(byAl.get(k)); } const g = byAl.get(k); g.songs.push(o); g.n += o.vids.length; if (!g.cover && o.cover) g.cover = o.cover; });
+    albumGroups.sort((x, y) => y.n - x.n);
+  }
+  const songName = o => isEn ? (o.enTitle || o.bilingualTitle || o.title) : (o.bilingualTitle || o.title);
+  const otherTiles = albumGroups.length ? '\n  <h2>' + (isEn ? 'More songs by ' + escHtml(gName) : escHtml(gko) + '의 다른 곡') + '</h2>\n  <div class="sp-albums">\n    '
+    + albumGroups.map(g => '<div class="sp-al">' + (g.cover ? '<img class="sp-al-c" src="' + escHtml(g.cover) + '" alt="" loading="lazy">' : '<span class="sp-al-c sp-tile-ph"></span>')
+      + '<div class="sp-al-h">' + (g.name ? '<b>' + escHtml(g.name) + '</b>' : '') + (g.date ? '<span>' + g.date + '</span>' : '') + '</div><ol class="sp-al-l">'
+      + g.songs.map(o => '<li><a href="' + SITE + '/' + songPagePath(gko, o.b, lang) + '"><span class="t">' + escHtml(songName(o)) + '</span><span class="n">' + (isEn ? o.vids.length + ' videos' : '영상 ' + o.vids.length) + '</span></a></li>').join('')
+      + '</ol></div>').join('\n    ') + '\n  </div>' : '';
   // 멤버×곡 ↔ 멤버 직캠 전체 페이지 오가기(2026-11-11) — 위에 '← 직캠 전체', 아래에 같은 멤버의 다른 곡 직캠
   const hubUrl = ms && FANCAM_HUB.has(ms.a) ? `${SITE}/${memberFancamPagePath(ms.a, lang)}` : '';
   const hubTotal = hubUrl ? FANCAM_HUB.get(ms.a).length : 0;
@@ -1977,6 +2036,7 @@ ${LIST_FWD}
   ${crumbs}
   ${lead ? `<p class="lead">${escHtml(lead)}</p>` : ''}
   ${chipsHtml}
+  ${creditsHtml}
   ${top.length > 1 ? `
   <h2>${ms ? (isEn ? 'Most viewed fancams' : '조회수 많은 직캠') : (isEn ? 'Most viewed fancams & stages' : '조회수 많은 직캠·무대')}</h2>
   <div class="grid">
@@ -1988,7 +2048,6 @@ ${LIST_FWD}
   <h2>${isEn ? `All "${songLabel}" videos` : `'${songLabel}' 전체 영상`}</h2>
   <p class="lead"><a href="${songUrl}">${escHtml(isEn ? `${gName} "${songLabel}" fancams & stages (${s.vids.length})` : `${gko} '${songLabel}' 직캠·무대 모음 (${s.vids.length}개)`)} ›</a></p>${mySongsHtml}` : ''}
   ${otherTiles}
-  ${creditsHtml}
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a> · <a href="${SITE}/about.html">${isEn ? 'About · removal requests' : '사이트 소개 · 삭제 요청'}</a></div>
   <div class="cta-dock"><a class="cta" href="${SITE}/#g=${hashEsc(gko)}${ms ? '&m=' + hashEsc(ms.a.name.ko) : ''}&song=${hashEsc(s.title)}">${isEn ? 'View videos in the Universe →' : '직캠·영상 아카이브 보기 →'}</a></div>
 </div>
@@ -2445,6 +2504,15 @@ ${others.length ? `  <h2 class="rank-h">${isEn ? 'More pairs' : '다른 조합'}
   }
   fs.mkdirSync(path.join(ROOT, 'chem'), { recursive: true });
   fs.writeFileSync(path.join(ROOT, 'chem', 'index.json'), JSON.stringify(index));
+  if (pairs.length >= 500) { // 조회가 덜 된 빌드(쌍이 적음)에선 멀쩡한 페이지를 넘기지 않는다
+    let rc = 0;
+    for (const g of groupKos) { if (!groups[g]) continue;
+      for (const lang of ['ko', 'en']) {
+        const base = lang === 'en' ? `en/chem/${slugify(groups[g].en || g, g)}/` : `chem/${urlSafeKo(g)}/`;
+        rc += retireStaleDirs(path.join(ROOT, base), base, `${SITE}/${groupPagePath(g, lang)}`, lang === 'en' ? (groups[g].en || g) : g, lang);
+      } }
+    if (rc) console.log(`조합 목록에서 빠진 옛 조합 페이지 → 그룹 페이지로 넘김 ${rc}개`);
+  }
   console.log(`조합 페이지 ${pairs.length}쌍 × 2개 언어 (함께 나온 영상 ${CHEM_MIN}개 이상, 같은 그룹)`);
 }
 // ── 작사·작곡 페이지(2026-11-04, 검색 유입 확대 ⑨) ───────────────────────────────────────────
@@ -2476,7 +2544,17 @@ function creditLinkHtml(a, lang) {
 }
 function buildCreditPages() {
   let n = 0;
-  const songHref = (a, b, lang) => { for (const g of [a.group, ...(a.groups || [])]) { if (!g || !g.ko) continue; if ((SONGS[g.ko] || []).some(s => s.b === b)) return `${SITE}/${songPagePath(g.ko, b, lang)}`; } return null; };
+  // 곡 페이지 링크는 제목 기본형 + 멜론 곡 번호가 맞을 때만(2026-11-13 Codex — 소연이 JBJ에 써 준 'Say My Name'이 같은 그룹 미연 솔로
+  // 'Say My Name' 페이지로, 창조 OST '안녕'이 틴탑 '안녕'으로 이어졌다). 그 곡 페이지 쪽 디스코에 번호가 하나도 없으면 예전처럼 제목만.
+  const gbIds = new Map();
+  const idsOf = g => { if (gbIds.has(g)) return gbIds.get(g); const m = new Map();
+    let d = null; try { d = JSON.parse(fs.readFileSync(path.join(ROOT, 'disco/g', g.replace(/[\/\\]/g, '_').replace(/[.\s]+$/, '') + '.json'), 'utf8')); } catch (e) {}
+    const albums = d ? [...Object.values(d.g || {}), ...Object.values(d.m || {}).flatMap(x => [...(x.d || []), ...(x.u || []).flatMap(u => (u && u.albums) || [])])] : [];
+    albums.forEach(al => (al && al.tracks || []).forEach(t => { if (!t || !t.title) return; const k = _CRED_SB(t.title); if (!m.has(k)) m.set(k, new Set()); if (t.songId) m.get(k).add(String(t.songId)); }));
+    gbIds.set(g, m); return m; };
+  const songHref = (a, s, lang) => { const b = s.b; for (const g of [a.group, ...(a.groups || [])]) { if (!g || !g.ko) continue; if (!(SONGS[g.ko] || []).some(x => x.b === b)) continue;
+    const own = idsOf(g.ko).get(b); if (own && own.size && (s.ids || []).length && !(s.ids || []).some(i => own.has(i))) continue;
+    return `${SITE}/${songPagePath(g.ko, b, lang)}`; } return null; };
   for (const a of artists) {
     const c = creditsFor(a); if (!c) continue;
     for (const lang of ['ko', 'en']) {
@@ -2485,7 +2563,7 @@ function buildCreditPages() {
       const gk = a.group && a.group.ko, gd = groups[gk] ? (isEn ? groups[gk].en || gk : gk) : '';
       const who = gd ? (isEn ? `${gd} ${nm}` : `${gd} ${nm}`) : nm;
       const both = new Set(c.ly.map(s => s.b).filter(b => c.co.some(s => s.b === b)));
-      const li = s => { const h = songHref(a, s.b, lang); const t = escHtml(s.title); return `<li>${h ? `<a href="${h}">${t}</a>` : t}${both.has(s.b) ? (isEn ? ' <span class="yr">lyrics & music</span>' : ' <span class="yr">작사·작곡</span>') : ''}</li>`; };
+      const li = s => { const h = songHref(a, s, lang); const t = escHtml(s.title); return `<li>${h ? `<a href="${h}">${t}</a>` : t}${both.has(s.b) ? (isEn ? ' <span class="yr">lyrics & music</span>' : ' <span class="yr">작사·작곡</span>') : ''}</li>`; };
       const h1 = isEn ? `${nm} — songs written & composed` : `${nm} 작사·작곡 곡`;
       const title = isEn ? `${who} Songwriting Credits — ${c.ly.length} Lyrics · ${c.co.length} Compositions | K-POP UNIVERSE` : `${who} 작사·작곡 곡 목록 — 작사 ${c.ly.length}곡 · 작곡 ${c.co.length}곡 | K-POP UNIVERSE`;
       const top = [...new Set([...c.ly, ...c.co].map(s => s.title))].slice(0, 5).join(isEn ? ', ' : '·');
@@ -2796,7 +2874,12 @@ else (async () => {
   buildProgramPages();
   buildYearPages();
   buildAgencyPages();
-  try { buildAlbumPages(); } catch (e) { console.error('⚠️ 앨범 페이지 실패 — 이 단계만 건너뜀:', e.message); }
+  try { buildAlbumPages();
+    let ra = 0;
+    for (const g of Object.keys(groups)) { if (!albumsFor(g).length) continue;
+      for (const lang of ['ko', 'en']) { const gp = groupPagePath(g, lang); if (gp) ra += retireStaleDirs(path.join(ROOT, gp, 'a'), `${gp}a/`, `${SITE}/${gp}`, lang === 'en' ? (groups[g].en || g) : g, lang); } }
+    if (ra) console.log(`이번에 안 만든 옛 앨범 페이지 → 그룹 페이지로 넘김 ${ra}개`);
+  } catch (e) { console.error('⚠️ 앨범 페이지 실패 — 이 단계만 건너뜀:', e.message); }
   try { buildCreditPages(); } catch (e) { console.error('⚠️ 작사·작곡 페이지 실패 — 이 단계만 건너뜀:', e.message); } // 새 단계라 실패해도 전체 빌드는 계속(2026-11-04)
   try { await buildShowPages(); } catch (e) { console.warn(`⚠️ 음방 회차 페이지 건너뜀: ${e.message}`); }
   buildWinsPages();

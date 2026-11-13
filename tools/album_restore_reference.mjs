@@ -17,7 +17,7 @@ const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const P = f => path.join(ROOT, f);
 const APPLY = process.argv.includes('--apply');
 const SRC = process.argv.slice(2).find(a => !a.startsWith('--'));
-const SKIP = new Set(['신화|Winter Story']);
+const SKIP = new Set(['신화|Winter Story', ...((process.argv.find(a => a.startsWith('--skip=')) || '').slice(7).split(',').filter(Boolean))]); // --skip=주인|제목,… (번역 표기만 다른 앨범 등)
 const ctx = {}; vm.createContext(ctx); vm.runInContext(fs.readFileSync(P('shared.js'), 'utf8') + ';this.B=_songBase;', ctx);
 const B = t => ctx.B(String(t || ''));
 const dec = s => String(s || '').replace(/&#x([0-9a-f]+);/gi, (m, h) => String.fromCodePoint(parseInt(h, 16))).replace(/&#(\d+);/g, (m, d) => String.fromCodePoint(+d)).replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&apos;/g, "'");
@@ -35,13 +35,21 @@ for (const r of list) {
   const old = (al.tracks || []).filter(t => t && typeof t === 'object');
   const byId = new Map(old.filter(t => t.songId).map(t => [String(t.songId), t]));
   const byB = new Map(old.map(t => [B(t.title), t]));
+  // 같은 곡의 다른 표기(영문 ↔ 한글 정본 '열대야 (Fever)')도 같은 곡으로 — en·작사작곡을 이어받는다(2026-11-13)
+  const paren = s => (String(s || '').match(/\(([^()]+)\)/) || [])[1] || '';
+  const byAlt = new Map(); old.forEach(t => [t.en, paren(t.title)].map(B).filter(k => k && (k.length > 1 || /[가-힣]/.test(k))).forEach(k => { if (!byAlt.has(k)) byAlt.set(k, t); }));
+  const used = new Set();
   const tracks = r.reference.map((x, i) => {
     const title = dec(x.title).trim();
-    const prev = byId.get(String(x.id)) || byB.get(B(title));
+    let prev = byId.get(String(x.id)) || byB.get(B(title)) || byAlt.get(B(title)) || (paren(title) && (byB.get(B(paren(title))) || byAlt.get(B(paren(title)))));
+    if (prev && used.has(prev)) prev = null; if (prev) used.add(prev);
+    const sameSong = prev && (B(prev.title) === B(title) || [prev.en, paren(prev.title), prev.title].map(B).some(k => k && (k === B(title) || k === B(paren(title)))));
     const t = { ...(prev || {}) };
     t.no = i + 1; t.title = title; t.songId = String(x.id); t.isTitle = !!x.isTitle;
     // 옛 곡의 영문 제목은 같은 곡일 때만(제목 기본형이 같아야) — 번호만 같은 남의 곡 en을 옮기지 않는다
-    if (prev && B(prev.title) !== B(title)) { delete t.en; delete t.cr; }
+    if (prev && !sameSong) { delete t.en; delete t.cr; }
+    // 같은 곡인데 표기만 다르면('Fever' ↔ '열대야 (Fever)') 기존 제목을 그대로 둔다 — 곡 키·영상 연결·별칭이 기존 제목 기준이라 바꾸면 끊긴다
+    if (prev && sameSong && B(prev.title) !== B(title)) { t.title = prev.title; t.melonTitle = title; }
     return t;
   });
   const before = old.map(t => t.title), after = tracks.map(t => t.title);

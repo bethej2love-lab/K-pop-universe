@@ -5153,7 +5153,7 @@
    (쇼츠 화면은 같은 버튼들을 id로 오른쪽 세로 줄에 고정 배치하므로 DOM을 옮기면 그쪽이 깨진다). 가끔 쓰는 버튼(입덕·전체·소리·편집)은
    그리드에서 빼고 ··· 메뉴가 원래 버튼을 대신 눌러 준다. 이전/다음은 아래 목록 머리의 ‹ › 로. */
 #yt-lb-people,#yt-lb-more-wrap{display:none;}
-#yt-lightbox.lb-browse.open{background:linear-gradient(180deg,rgba(var(--lb-tint,8,9,26),0.24) 0,rgba(13,13,16,1) 420px),#0d0d10;}
+#yt-lightbox.lb-browse.open{background:linear-gradient(180deg,rgba(var(--lb-tint,8,9,26),0.15) 0,rgba(13,13,16,1) 380px),#0d0d10;}
 #yt-lightbox.lb-browse #yt-lb-main{display:grid;grid-template-columns:minmax(0,1fr) 44px 44px 44px;column-gap:2px;align-items:center;}
 #yt-lightbox.lb-browse #yt-lb-video-box{grid-column:1/-1;grid-row:1;}
 #yt-lightbox.lb-browse #yt-lb-video-box.is-shorts{justify-self:center;}

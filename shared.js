@@ -571,6 +571,30 @@ function _songLinkBases(title,songs,blockNames){
     const uniq=[...new Set(tags)];
     if(uniq.length===1)add(uniq[0]);
   }
+  // ④ 다른 곡 이름 속 짧은 곡(2026-11-13 Codex — 세븐틴 'CHEERS' ⇐ '청춘찬가 (Cheers to youth)', 동방신기 'Down' ⇐ 'Keep Your Head Down',
+  //    비투비 'Stay' ⇐ '불씨 (Please Stay)', GOT7 'if you' ⇐ 'If You Do(니가 하면)', 빅뱅 'Fall In Love' ⇐ "LET'S NOT FALL IN LOVE").
+  //    함께 잡힌 곡의 다른 표기(별칭·괄호 표기, 제목에서 그 곡 바로 뒤 괄호) 안에 이 곡이 통째로 들어 있으면 이 곡은 뺀다.
+  if(out.length>1){
+    const sOf=new Map(songs.map(s=>[s.b,s]));
+    const formsOf=b=>{const s=sOf.get(b);return [b,...((s&&s.alias)||[]).map(a=>a.n)].filter(x=>x&&x.length>=2);};
+    const inBody=b=>formsOf(b).filter(f=>body.includes(f));
+    const wide=new Map(out.map(o=>[o,inBody(o)]));
+    for(const m of noTags.matchAll(/([^()（）\[\]'"‘’“”|｜]{1,40}?)\s*[\(（]([^)）]{2,60})[\)）]/g)){
+      if(/[+,&＋]|\s[-–—]\s/.test(m[2]))continue; // 괄호 안이 곡 나열('aespa - Intro + Supernova + Whiplash')이면 별칭이 아니다
+      const L=_songNorm(m[1]),P=_songNorm(m[2]);if(!L||!P)continue;
+      const own=out.find(o=>formsOf(o).some(f=>L.endsWith(f)||f===P));
+      if(own&&own!==P)wide.get(own).push(P); // 그 곡 바로 뒤 괄호 = 그 곡의 다른 표기(앞 구간 전체는 메들리일 수 있어 안 씀)
+    }
+    const keep=out.filter(b=>{const mine=wide.get(b).filter(f=>formsOf(b).includes(f));if(!mine.length)return true;
+      return !mine.every(f=>out.some(o=>o!==b&&wide.get(o).some(g=>g!==f&&g.length>f.length&&g.includes(f))));});
+    if(keep.length)out.splice(0,out.length,...keep);
+  }
+  // ⑤ 투어·콘서트·팬미팅 이름 속 곡(2026-11-13 Codex — 'ITZY 2ND WORLD TOUR [ BORN TO BE ]' 직캠이 'BORN TO BE'로, DAY6 콘서트
+  //    'You are My Day'의 다른 곡 무대가 'My Day'로). 다른 곡도 잡힌 영상에서만 뺀다(투어 이름 곡 자체 무대는 남는다).
+  if(out.length>1){
+    const tn=[...t.matchAll(/(tour|투어|concert|콘서트|fan\s*-?\s*meeting|팬미팅|fan-?con|팬콘)\s*[\[<'"‘“《〈「(]\s*([^\]>'"’”》〉」)]{2,60})/ig)].map(m=>_songNorm(m[2])).filter(Boolean);
+    if(tn.length){const keep=out.filter(b=>!tn.some(n=>n.includes(b)));if(keep.length)out.splice(0,out.length,...keep);}
+  }
   return out;
 }
 // 곡 창의 "제목으로 찾은 커버"(2026-10-22) — 주인 제한 없는 제목 검색 결과 중 **그 곡을 부른 영상**만 true.
@@ -623,12 +647,13 @@ function _albumTitleHit(videoTitle,albumTitle,albumNorm){
 // 디스코(앨범 배열) → 곡 목록(기본형 중복 제거). 반주(Inst./MR)는 뺀다.
 // persons(선택): 사람 이름 정규형 Set — 괄호 속 부른 멤버('(창빈)'·'(Seungmin)')를 별칭으로 받지 않게
 function _songListFromDisco(albums,persons){
-  const seen=new Map();
+  const seen=new Map(),kr=new Set();
   (albums||[]).forEach(a=>(a&&a.tracks||[]).forEach(tr=>{
     if(!tr||!tr.title||/\((?:inst\.?|instrumental|mr)\)\s*$/i.test(tr.title))return;
     // 한 글자 곡('특 (S-Class)'·'락 (樂) (LALALALA)')도 남긴다 — 본문 포함으론 절대 안 잡히고(길이 문턱) 따옴표·별칭으로만 연결된다
     const b=_songBase(tr.title);if(!b)return;
     let s=seen.get(b);if(!s){s={b,title:tr.title};seen.set(b,s);}
+    if(a.region!=='jp')kr.add(b);
     // 별칭 후보: 괄호 안('쌍둥이자리 (Gemini)' → gemini) + 첫 괄호 뒤에 붙은 다른 표기('… (승민) As we are (Seungmin)' → asweare).
     // ⚠️ 괄호엔 별칭 말고도 부른 멤버('CHESS (DAHYUN)'·'(창빈)')·판 표기('(CD ONLY)')·OST 설명이 들어 있다 — 그걸 별칭으로 받으면 제목에
     //    '다현'만 있어도 CHESS가 붙었다(2026-10-16 표본). 진짜 별칭 두 경우만: ①표기 체계가 다름(한글↔영어: '선인장 (CACTUS)')
@@ -647,7 +672,10 @@ function _songListFromDisco(albums,persons){
       if(hb!==hn||acronym){s.alias=s.alias||[];if(!s.alias.some(x=>x.n===n))s.alias.push({n,raw});}
     }
   }));
-  return [...seen.values()];
+  // 일본반에만 있는 영문 제목 곡이 한국 곡의 괄호 표기와 같으면 같은 곡(2026-11-13 Codex — 아스트로 일본반 'All Night' ⇄ '전화해 (All Night)',
+  // 엔시티 127 'Come Back' ⇄ '악몽 (Come Back)'이 곡 페이지 두 개로 갈렸다). 별칭으로 남고 따로 곡이 되지 않는다.
+  const owner=new Map();seen.forEach(x=>(x.alias||[]).forEach(al=>{if(!owner.has(al.n))owner.set(al.n,x);}));
+  return [...seen.values()].filter(x=>kr.has(x.b)||!owner.has(x.b)||owner.get(x.b)===x);
 }
 // 영어 곡명의 한글 소리 표기(팬·방송 제목 관례 — '레드레드'·'붐팔라')(2026-10-28 사용자 "한글 애칭 연결").
 // 디스코엔 영어로만 있어 별칭이 안 생긴다. 자동 음역은 그룹명(크래비티=Gravity)·흔한 말(포커스=FOCUS·드라마=Drama)까지 걸려서

@@ -11,7 +11,7 @@ const readJson = p => { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } c
 
 function packCredits(list,base) {
   const by=new Map();
-  for(const song of list||[]){const b=base(song.title||'');if(!b)continue;const current=by.get(b);const id=Math.max(+song.songId||0,current?current.id:0);if(!current||String(song.title).length<String(current.title).length)by.set(b,{b,title:song.title,id});else current.id=id;} // id=멜론 songId(최신일수록 큼) — 최근 곡부터 보여주려고
+  for(const song of list||[]){const b=base(song.title||'');if(!b)continue;const current=by.get(b);const id=Math.max(+song.songId||0,current?current.id:0);const ids=new Set(current?current.ids:[]);if(song.songId)ids.add(String(song.songId));if(!current||String(song.title).length<String(current.title).length)by.set(b,{b,title:song.title,id,ids:[...ids]});else{current.id=id;current.ids=[...ids];}} // id=멜론 songId(최신일수록 큼) — 최근 곡부터 보여주려고
   return [...by.values()];
 }
 function loadStatic(ROOT) {
@@ -245,7 +245,7 @@ async function prefetchGroupVideos({ SB_URL, SB_KEY, groupKos }) {
       const g = queue.shift(); const rows = []; let last = '';
       try {
         for (let i = 0; i < 40; i++) {
-          const page = await sbGet(SB_URL, SB_KEY, `yt_channel_videos?select=id,title,view_count,members,category,published_at&group_ko=eq.${encodeURIComponent(g)}&content_flag=is.null&is_short=eq.false&unavailable_at=is.null&order=id&limit=1000${last ? `&id=gt.${encodeURIComponent(last)}` : ''}`);
+          const page = await sbGet(SB_URL, SB_KEY, `yt_channel_videos?select=id,title,view_count,members,category,published_at,content_formats&group_ko=eq.${encodeURIComponent(g)}&content_flag=is.null&is_short=eq.false&unavailable_at=is.null&order=id&limit=1000${last ? `&id=gt.${encodeURIComponent(last)}` : ''}`);
           if (!Array.isArray(page) || !page.length) break;
           rows.push(...page); last = page[page.length - 1].id;
           if (page.length < 1000) break;
@@ -264,6 +264,8 @@ function bilingualSongTitle(raw, fallback) {
   const ko=s=>/[가-힣]/.test(s),en=s=>/[a-z]/i.test(s);
   return (ko(m[1])&&!en(m[1])&&en(m[2])&&!ko(m[2]))||(en(m[1])&&!ko(m[1])&&ko(m[2])&&!en(m[2])) ? value : fallback;
 }
+// 투어·콘서트·팬미팅 이름(따옴표·괄호 안) — 곡 연결에서 그 이름 속 곡을 빼는 데만 쓴다
+const TOUR_NAME_RE = /(tour|투어|concert|콘서트|fan\s*-?\s*meeting|팬미팅|fan-?con|팬콘)\s*[\[<'"‘“《〈「(]\s*([^\]>'"’”》〉」)]{2,60})/ig;
 function buildSongs({ ROOT, groups, artists, EX, vids, minVids = 4 }) {
   const S = songLib(ROOT);
   const persons = new Set();
@@ -296,7 +298,16 @@ function buildSongs({ ROOT, groups, artists, EX, vids, minVids = 4 }) {
     }));
     const bucket = new Map(songs.map(s => [s.b, { b: s.b, title: s.title.replace(/\s*[\(\[].*$/, '') || s.title, vids: [] }]));
     const names = [g, groups[g].en || ''];
-    for (const v of vids[g]) for (const b of S.f(v.title || '', songs, names)) { const s = bucket.get(b); if (s) s.vids.push(v); }
+    for (const v of vids[g]) {
+      let bs = S.f(v.title || '', songs, names);
+      // 행사·투어 이름이 곡으로 잡히는 것(2026-11-13 Codex): ① 시상식 행사 표시(content_formats 'EV:mama')와 같은 이름의 곡('MAMA')은 빼고
+      // ② 다른 곡도 잡힌 영상이면 투어·콘서트 이름 안의 곡('2ND WORLD TOUR [ BORN TO BE ]', 콘서트 'You are My Day')은 뺀다
+      const ev = new Set((v.content_formats || []).filter(x => /^EV:[^:]+$/.test(x)).map(x => x.slice(3)));
+      if (ev.size) bs = bs.filter(x => !ev.has(x));
+      if (bs.length > 1) { const tn = [...String(v.title || '').matchAll(TOUR_NAME_RE)].map(m => S.N(m[2])).filter(Boolean);
+        if (tn.length) { const keep = bs.filter(x => !tn.some(n => n.includes(x))); if (keep.length) bs = keep; } }
+      for (const b of bs) { const s = bucket.get(b); if (s) s.vids.push(v); }
+    }
     // 1위 기록은 곡 제목이 영어로 저장된 경우가 있다('HEYA'·'God of Music') — 별칭으로도 기본형을 찾는다
     const toBase = new Map(); songs.forEach(s => { toBase.set(s.b, s.b); (s.alias || []).forEach(al => { if (!toBase.has(al.n)) toBase.set(al.n, s.b); }); });
     const winBy = {};
