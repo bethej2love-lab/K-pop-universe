@@ -78822,6 +78822,44 @@
   },
   "discography": [
    {
+    "title": "GOLDEN HOUR : Part.6",
+    "type": "미니",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/35/469/15135469_20261106183141_500.jpg",
+    "releaseDate": "2026.11.13",
+    "trackCount": 5,
+    "titleTrack": "UP",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "ANEMIA",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "Drip",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "UP",
+      "isTitle": true
+     },
+     {
+      "no": 4,
+      "title": "FAITH",
+      "isTitle": false
+     },
+     {
+      "no": 5,
+      "title": "Hollow Victory",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15135469"
+   },
+   {
     "title": "Drip",
     "type": "싱글",
     "isMain": true,
@@ -89629,6 +89667,24 @@
    "namu": "https://namu.wiki/w/tripleS"
   },
   "discography": [
+   {
+    "title": "<I Want You To Know>",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/55/775/15155775_20261112150336_500.jpg",
+    "releaseDate": "2026.11.13",
+    "trackCount": 1,
+    "titleTrack": "I Want You To Know",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "I Want You To Know",
+      "isTitle": true
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15155775"
+   },
    {
     "title": "See You",
     "type": "싱글",

@@ -261688,6 +261688,24 @@
     },
     "discography": [
       {
+        "title": "NEW MARK",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/55/591/15155591_20261112121346_500.jpg",
+        "releaseDate": "2026.11.13",
+        "trackCount": 1,
+        "titleTrack": "NEW MARK",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "NEW MARK",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15155591"
+      },
+      {
         "title": "20세기 소년소녀 Special Track. 3",
         "type": "OST",
         "isMain": false,
