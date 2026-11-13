@@ -2,6 +2,10 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-13 (Claude Code — Codex 11-13 잔여 검수: LNGSHOT S.W.I.S.H. EP 멜론 병합)
+- [groups.json] LNGSHOT 'Masterpiece' 싱글 레코드가 멜론 앨범 15007233을 쥐고 있었으나, 15007233은 발매일 2026.11.10·트랙 5개(Masterpiece+Bananas 등)인 S.W.I.S.H. EP의 ID. 싱글 레코드 삭제 → S.W.I.S.H. EP에 melonAlbumId·멜론 커버·5트랙 songId(603577089 Masterpiece, 603744728 Bananas, ~603744731 Beep Beep) 추가, src=melon.
+- 79번줄 ⏳ 나머지 항목들: 퍼플키스 Swan·결경 → 50번줄 세션에서 처리, EXO Diamond → 49번줄 세션에서 처리, 슈퍼주니어 솔로 동명곡 → 49번줄 세션(규현·예성 OST 오탐 포함) 처리, H.O.T. 멘트 ID → variant:true+melonVia 의도적 구조(이슈 아님).
+
 ## 2026-11-13 (Claude Code — 인스타 여러 장 표시: 위쪽 막대 → 아래 점)
 - [kpop_universe.css .ig-bars] 사용자 "X 막대 말고 인스타처럼 사진 하단에 원 다다다". 카드 인스타 줄·발견/For You·매거진·보관함 격자 공통 — 아래 가운데 5px 점, 지금 장만 흰색. 표시 함수 _igBars는 그대로(CSS만).
 
