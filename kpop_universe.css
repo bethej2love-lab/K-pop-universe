@@ -5691,3 +5691,12 @@
 .combo-rec-n{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
 .combo-rec-c{margin-left:auto;font-size:11px;color:rgba(150,175,222,0.6);font-variant-numeric:tabular-nums;}
 .combo-rec-wait{font-size:12px;color:rgba(150,175,222,0.55);padding:8px 2px;}
+/* 멤버 카드 정보 줄(생일·소속·국적) — 가로 스크롤 대신 줄바꿈(2026-11-13: 폰에서 마지막 칸(국적)이 몇 px 잘린 채 스크롤되는 줄인지 알 수 없었다) */
+.tco{white-space:normal;overflow-x:visible;line-height:1.55;}
+.tco .tag-chip{white-space:nowrap;}
+/* 검색 첫 화면 Chemistry 입구 — 실제 조합 예시 줄(2026-11-13). 아래 '둘 이상 고르기'(.chem-door)와 같은 좌우 여백 */
+.chem-ex:empty{display:none;}
+.chem-ex-row{display:flex;align-items:center;gap:14px;width:calc(100% - 32px);margin:0 16px;padding:9px 14px;background:none;border:none;border-radius:12px;text-align:left;color:inherit;font-family:inherit;cursor:var(--kpu-cursor-pointer,pointer);-webkit-tap-highlight-color:transparent;}
+.chem-ex-row:hover,.chem-ex-row:active{background:rgba(255,255,255,0.05);}
+.chem-ex-pair{display:flex;align-items:center;gap:5px;flex-shrink:0;}
+.chem-ex+.chem-door{margin-top:8px;}

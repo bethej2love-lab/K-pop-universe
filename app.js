@@ -14545,6 +14545,51 @@ function _comboFromHash(param){
 }
 // 검색 첫 화면의 Chemistry 입구(2026-11-10 — 예전 "멤버 조합 찾기" 배너를 Chemistry로 통합하며 새로 그림, 사용자 "배너 디자인이 구렸다").
 // 빈 자리 둘 사이에 앱 별 — "두 사람을 고르면 둘 사이가 보인다"를 그림으로. 섹션 라벨은 '여기서 시작해 보세요'와 같은 줄 모양.
+// 검색 첫 화면 Chemistry 입구의 실제 조합 예시(2026-11-13) — 빈 자리 그림(+ ✦ +)만으론 뭐가 나오는지 알 수 없었다.
+// 조합 정적 페이지 목록(chem/index.json = 함께 나온 영상이 충분한 같은 그룹 두 사람)에서 즐겨찾기 그룹 먼저, 없으면 유명 그룹에서 그룹당 한 쌍씩 3개.
+// 열 때마다 섞는다(고정 배너처럼 보이면 안 누른다 — _trendingSearchHits와 같은 이유). DB를 안 친다.
+function _chemExamples(box,res){
+  const ko=currentLang==='ko';
+  _chemIdxLoad().then(idx=>{
+    if(!box.isConnected||!idx)return;
+    const byG=new Map();
+    Object.keys(idx).forEach(k=>{const p=k.split('|');if(p.length!==3||!GROUPS[p[0]])return;(byG.get(p[0])||byG.set(p[0],[]).get(p[0])).push(p);});
+    let favG=[];try{favG=[...new Set([...favGroups,...[...favMembers].map(k=>String(k).split(':')[0])])].filter(g=>byG.has(g));}catch(e){}
+    const famous=[...byG.keys()].filter(g=>(GROUPS[g].pri||0)>=1.5&&!GROUPS[g].disbanded).sort((a,b)=>(GROUPS[b].pri||0)-(GROUPS[a].pri||0)).slice(0,14);
+    const groups=[..._shuffle(favG),..._shuffle(famous.filter(g=>!favG.includes(g)))].slice(0,3);
+    groups.forEach(g=>{
+      const p=_shuffle(byG.get(g).slice())[0];
+      const people=[{name:p[1],group:g},{name:p[2],group:g}];
+      const arts=people.map(_chemArtist);if(arts.some(a=>!a))return;
+      const b=document.createElement('button');b.type='button';b.className='chem-ex-row';
+      const pair=document.createElement('span');pair.className='chem-ex-pair';
+      arts.forEach((a,n)=>{
+        if(n){const st=document.createElement('span');st.className='chem-door-star';st.innerHTML=_CHEM_STAR;pair.appendChild(st);}
+        const av=document.createElement('span');av.className='chem-br-av';
+        const col=a.color||GROUPS[g].color;if(Array.isArray(col))av.style.background=`rgba(${col[0]},${col[1]},${col[2]},0.35)`;
+        _srAvUrl(a).then(u=>{if(!u)return;_avImg(u,img=>{av.replaceChildren(img);});}).catch(()=>{});
+        pair.appendChild(av);
+      });
+      const txt=document.createElement('span');txt.className='chem-door-txt';
+      const t=document.createElement('span');t.className='chem-door-t';t.textContent=arts.map(a=>_dispName(a,g)).join(' · ');
+      const sub=document.createElement('span');sub.className='chem-door-s';sub.textContent=ko?_gLabelKo(g):(GROUPS[g].en||g);
+      txt.append(t,sub);
+      const arr=document.createElement('span');arr.className='chem-door-arr';arr.textContent='›';
+      b.append(pair,txt,arr);
+      b.addEventListener('click',e=>{
+        e.stopPropagation();
+        try{
+          if(res===document.getElementById('msheet-body'))closeMobSearchSheet();
+          else if(document.getElementById('tabbar')?.classList.contains('search-mode')&&typeof exitMobSearch==='function')exitMobSearch();
+          else{const si=document.getElementById('search-input');if(si)si.value='';if(res)res.style.display='none';}
+        }catch(e2){}
+        _gaEvent('chem_example',{target:people.map(x=>x.name).join(' · ')});
+        _openChem(people);
+      });
+      box.appendChild(b);
+    });
+  }).catch(()=>{});
+}
 function _appendComboEntry(res){
   const ko=currentLang==='ko';
   const lbl=document.createElement('div');lbl.className='chem-entry-lbl';lbl.textContent='Chemistry';
@@ -14560,6 +14605,8 @@ function _appendComboEntry(res){
   const arr=document.createElement('span');arr.className='chem-door-arr';arr.textContent='›';
   b.appendChild(pair);b.appendChild(txt);b.appendChild(arr);
   res.appendChild(lbl);
+  const exBox=document.createElement('div');exBox.className='chem-ex';res.appendChild(exBox);
+  if(typeof _chemExamples==='function')_chemExamples(exBox,res); // 예시는 덤 — 이 함수만 떼어 돌리는 테스트(combo-search-navigation)에서도 입구는 그대로
   b.addEventListener('click',e=>{
     e.stopPropagation();
     try{
