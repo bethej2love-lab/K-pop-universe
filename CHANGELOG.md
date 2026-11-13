@@ -2,6 +2,16 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-13 (Claude Code — 인스타 지난 글 태깅·영상 재생, Up Next 빈 줄, 곡으로 보기 앨범, 둘러보실래요 사진, 스모크 딥링크)
+- 사용자 "전체 보기에서 사진 누르면 인스타 화면이 떠서 태깅을 못 해 / 웹앱에서 인스타 영상 재생 안 돼 / Up Next 영상 없는 목록은 숨기기 / 곡으로 보기에 앨범·연도 / 둘러보실래요에 사진".
+- [app.js _igOpenRow·_openIgViewer] 장별 주소가 만료된 지난 여러 장 글 → 인스타 임베드 대신 **사이트 사진 창에 첫 장**(중계 함수) + '13장 모두 보기 ›'(임베드). 첫 장은 태그 가능 — 장별 id(mi)로 신원(_igPhotoIdentity가 주소 없는 메타도 그 자리 id로, 한 장 글은 글 id). 인스타는 공개 주소로 **첫 장만** 준다(media/?img_index·임베드 HTML 모두 실측 — 나머지 장 주소 없음).
+- [tools/ig_business_discovery.mjs·SQL 실행 sql/2026-11-13_ig_media_video_url.sql·app.js _openIgEmbed] 영상 파일 주소 v(media_url, 며칠 뒤 만료)를 최신 수집에서 저장 → 살아 있으면 **사이트 안 &lt;video&gt;**(playsinline), 만료·실패면 임베드. 최근 영상만 해당(지난 영상은 파일 주소가 없어 임베드뿐). 다음 인스타 수집(짝수 시)부터.
+- [app.js _surfRender] Up Next에서 고른 필터에 영상이 없는 줄('직캠 없음')은 아예 안 보임, 전부 비면 한 줄 안내.
+- [app.js _songAlbumMap·_openPickSheet] 카드 '곡으로 보기' 곡 이름 옆에 작고 흐리게 처음 실린 앨범·연도(본판 우선, 싱글 이름=곡 이름이면 연도만).
+- [app.js _discoverPic] '○○ 카드도 둘러보실래요?' 토스트에 둥근 프로필 사진(등록 사진 → 인스타 프로필, 미리 받은 캐시만) → 없으면 대표 영상 썸네일. 대상 고를 때 사진 있는 사람 먼저.
+- [app.js 딥링크 &song=] 옛 영문 제목 주소(#song=OVERDRIVE)도 지금 정본('질주(OVERDRIVE)')으로 — 11-12 한글 정본 전환 뒤 곡 키가 안 맞아 브라우저 스모크(deeplink-song 위아이 준서)가 11-12부터 계속 실패하던 것.
+- 확인: 헤드리스 폰 390(코르티스 13장 지난 글 → 첫 장+태그 칩 주훈+'13장 모두 보기' → 임베드, 곡으로 보기 앨범·연도, 토스트 성현 사진), deeplink-song 5/5·smoke·lb-every-entry·cancel-top-surface·ig-* 6종·surf 2종·select-pagination·feed-list-navigation-race 통과.
+
 ## 2026-11-13 (Claude Code · Fable — Chemistry 보강: 입구 통일·빈 화면 없애기·함께 태깅된 사진·고르기 추천)
 - 사용자 "두 사람 검색 chemistry 좀 잘 갖춰보고, 사진 태깅 정보도 들어가면 좋을 듯". 지금 앱을 폰 390·웹 1440으로 캡처해 보고 정한 것.
 - [app.js _chemParse·doSearch] **입구 통일**: "카리나 장원영"은 Chemistry, "카리나, 장원영"은 연결 카드(그것도 상대가 안 골라진 채 카리나 연결 목록만)로 가던 것 → 띄어쓰기·쉼표·×·&·/·vs·x 어느 쪽이든 Chemistry 한 화면. 검색 결과 라벨 '둘 사이' → Chemistry. `_openBetweenConn`은 멤버 카드 "같이 작업해요"에서만 계속 쓴다.

@@ -6647,8 +6647,10 @@ function _surfRender(){
     box.appendChild(list);return;
   }
   const lensName=(_SURF_LENSES.find(l=>l[0]===_surfLens)||[])[ko?1:2];
-  _surfSortRows(_surfRows).forEach(row=>{
-    const items=_surfItemsFor(row);
+  // 고른 필터(직캠·무대…)에 영상이 없는 줄은 아예 안 보인다(2026-11-13 사용자 "영상 없으면 그 목록 아예 보여주지 말아야") — 전부 비면 한 줄 안내
+  const _surfVis=_surfSortRows(_surfRows).map(row=>[row,_surfItemsFor(row)]).filter(([,it])=>it.length);
+  if(!_surfVis.length){list.innerHTML=`<div class="surf-empty">${ko?`${lensName} 영상이 아직 없어요`:`No ${lensName} yet`}</div>`;box.appendChild(list);return;}
+  _surfVis.forEach(([row,items])=>{
     const isOpen=_surfOpen===row.key;
     const grp=document.createElement('div');grp.className='surf-grp'+(isOpen?' open':'');
     const btn=document.createElement('button');btn.type='button';btn.className='surf-row';
@@ -10474,7 +10476,13 @@ function _openFromHash(){
   // 카드를 연 뒤 그 곡 영상 패널을 열고, 멤버(m=)가 있으면 '멤버 ▾'를 그 멤버로 미리 골라 둔다(멤버×곡 페이지 성현 ACAI).
   const songParam=params.get('song');
   // 곡 주인 정보(songMeta)를 같이 넘긴다 — null이면 크레딧이 제목만으로 전체를 합쳐 동명이곡 작사·작곡가가 섞였다(Codex 11-12: 고스트나인 Moonlight·블랙핑크 STAY 등 16곡)
-  const openSongAfter=()=>{if(songParam&&GROUPS[gko])setTimeout(()=>_openSongVideos(songParam,{gko},{ownerType:'group',gko,artist:null,album:'',ownerName:gko},mko?{member:mko}:undefined),700);};
+  // 옛 영문 제목 주소(#song=OVERDRIVE)도 지금 정본('질주(OVERDRIVE)')으로 — 11-12 한글 정본 전환 뒤 곡 키가 안 맞아 영상 1개만 떴다
+  const songCanon=t=>{const b=_songBase(t);let hit=null;
+    const look=disco=>(disco||[]).some(al=>(al.tracks||[]).some(o=>{o=typeof o==='string'?{title:o}:o;if(!o||!o.title)return false;
+      if(_songBase(o.title)===b){hit=o.title;return true;}
+      if([o.en,...(_songAliasesFor(gko,String(o.title))||[])].some(x=>x&&_songBase(x)===b)){if(!hit||(_songStripTail(hit)!==hit&&_songStripTail(o.title)===o.title))hit=o.title;}return false;})); // 'English Ver.' 같은 꼬리 붙은 판보다 본곡
+    look(GROUPS[gko]?.discography);return hit||t;};
+  const openSongAfter=()=>{if(songParam&&GROUPS[gko])setTimeout(()=>_openSongVideos(songCanon(songParam),{gko},{ownerType:'group',gko,artist:null,album:'',ownerName:gko},mko?{member:mko}:undefined),700);};
   _setPendingVidPreset(params,mko?'tv':'gc'); // 영상 목록 공유 링크(&vf=…) — 카드가 목록을 그릴 때 꺼내 씀
   // 솔로 전용 해시(#m=이름, g= 없음) — 새 포맷. 구 포맷(#g=솔로&m=이름)도 아래에서 계속 지원.
   if(!gko&&mko){
@@ -10573,6 +10581,11 @@ function _pickDiscoverTarget(closedArtist,closedGko){
 async function _fetchDiscoverThumb(artist){
   return _fetchTopVideoThumb(_ytGroupKoFor(artist),artist.name.ko);
 }
+// 바로 쓸 수 있는 얼굴 사진(2026-11-13 사용자 "글자만 있으니 별로 — 최소 프로필 사진이나 영상 썸네일") — 미리 받아 둔 캐시만 본다(DB 안 침)
+function _discoverPic(a){
+  const p=_instaPicCache.get(_picKey(a.name.ko,a.group?.ko||''));if(p)return p;
+  const h=_igHandle(a.links?.instagram),ig=h&&_igMap.get(h);return ig&&ig.pic&&_igPicAlive(ig.pic)?ig.pic:null;
+}
 async function _showDiscoverToast(artist){
   const el=document.getElementById('discover-toast');
   if(!el)return;
@@ -10581,7 +10594,9 @@ async function _showDiscoverToast(artist){
   const isKo=currentLang==='ko';
   const name=_dispName(artist);
   textEl.innerHTML=isKo?`<b>${name}</b> 카드도 둘러보실래요?♥`:`Check out <b>${name}</b> too?♥`;
-  imgEl.classList.remove('has-img');imgEl.src='';
+  imgEl.classList.remove('has-img','is-face');imgEl.src='';
+  const face=_discoverPic(artist);
+  if(face){imgEl.src=face;imgEl.classList.add('has-img','is-face');}
   el.classList.add('show');
   clearTimeout(_showDiscoverToast._t);
   _showDiscoverToast._t=setTimeout(()=>el.classList.remove('show'),5000);
@@ -10590,6 +10605,7 @@ async function _showDiscoverToast(artist){
     if(isMob()){showT(artist,window.innerWidth/2,window.innerHeight*0.4,false,false,false);}
     else showT(artist,window.innerWidth/2,window.innerHeight/2);
   };
+  if(face)return;
   const thumb=await _fetchDiscoverThumb(artist);
   if(thumb&&el.classList.contains('show')){imgEl.src=thumb;imgEl.classList.add('has-img');}
 }
@@ -10599,7 +10615,7 @@ function _maybeSuggestNext(){
   setTimeout(()=>{
     // 그 사이 다른 카드가 열렸으면(순수 종료가 아니라 다음 카드로 넘어간 것) 넛지 스킵
     if(_openTArtist||_openGCko)return;
-    const target=_pickDiscoverTarget(artist,gko);
+    let target=null;for(let i=0;i<6;i++){const t=_pickDiscoverTarget(artist,gko);if(!t)break;if(!target)target=t;if(_discoverPic(t)){target=t;break;}}
     if(target)_showDiscoverToast(target);
   },500);
 }
@@ -12120,7 +12136,7 @@ function _igCell(item,cap){const c=document.createElement('div');c.className='ig
 function _igSecSync(sec){if(sec)sec.hidden=!sec.querySelector('.ig-item');}
 function _igMagTile(m){
   const a=document.createElement('a');a.className='ig-item ig-mag-item';a.href=m.p;a.target='_blank';a.rel='noopener noreferrer';
-  a.addEventListener('click',e=>{e.stopPropagation();e.preventDefault();if(m.ty==='VIDEO'){const k=_igPostKey(m.p);if(k)_openIgEmbed({post_key:k});else window.open(m.p,'_blank','noopener');return;}_openIgViewer(m,m.h,0);});
+  a.addEventListener('click',e=>{e.stopPropagation();e.preventDefault();if(m.ty==='VIDEO'){const k=_igPostKey(m.p);if(k)_openIgEmbed({post_key:k,v:m.v,u:m.u});else window.open(m.p,'_blank','noopener');return;}_openIgViewer(m,m.h,0);});
   const img=document.createElement('img');img.loading='lazy';img.alt='';img.src=m.u;
   img.addEventListener('error',()=>{const sec=a.closest('.ig-section'),cell=a.closest('.ig-cell')||a,st=cell.parentElement;cell.remove();if(st&&!st.children.length)st.hidden=true;_igSecSync(sec);});
   a.appendChild(img);
@@ -12156,7 +12172,7 @@ async function _renderIgStrip(prefix,url){
   const mk=(src,m,i)=>{
     const href=m.p,ty=i?'IMAGE':m.ty;
     const a=document.createElement('a');a.className='ig-item';a.href=href;a.target='_blank';a.rel='noopener noreferrer';
-    a.addEventListener('click',e=>{e.stopPropagation();e.preventDefault();if(ty==='VIDEO'){const k=_igPostKey(m.p);if(k)_openIgEmbed({post_key:k});else window.open(href,'_blank','noopener');return;}_openIgViewer(m,h,i||0);}); // 영상은 인스타 공식 임베드로 사이트 안에서 재생(2026-11-13)
+    a.addEventListener('click',e=>{e.stopPropagation();e.preventDefault();if(ty==='VIDEO'){const k=_igPostKey(m.p);if(k)_openIgEmbed({post_key:k,v:m.v,u:m.u});else window.open(href,'_blank','noopener');return;}_openIgViewer(m,h,i||0);}); // 영상은 인스타 공식 임베드로 사이트 안에서 재생(2026-11-13)
     const img=document.createElement('img');img.loading='lazy';img.alt='';img.src=src;
     img.addEventListener('error',()=>{(a.closest('.ig-cell')||a).remove();if(!strip.children.length)_igSecSync(sec);});
     a.appendChild(img);
@@ -12200,12 +12216,17 @@ function _igRowToM(r){
   const m={u:_igRowImg(r,'l'),p:r.p,t:r.t,ty:r.ty,cap:r.cap||'',lk:r.lk,cm:r.cm,id:r.media_id||undefined};
   if(_igRowFreshSet(r)){m.c=r.c;if(Array.isArray(r.mi))m.mi=r.mi;}
   else if(Array.isArray(r.mi)&&r.mi.length===1)m.mi=r.mi;
+  else if(r.media_id&&(r.n||1)===1&&r.ty!=='CAROUSEL_ALBUM')m.mi=[{id:String(r.media_id),ty:r.ty||'IMAGE'}]; // 한 장 글은 글 id = 사진 id(수집기와 같은 기준) — 태그 키가 중계 주소 이름으로 안 가게
   return m;
 }
 function _igOpenRow(r,h){
-  // 여러 장인데 장별 주소가 없거나 만료 · 영상 → 인스타 공식 임베드. 나머지는 사이트 안 사진 창(멤버 태그 칩 포함)
-  if(r.ty==='VIDEO'||((r.n||1)>1&&!_igRowFreshSet(r)))return _openIgEmbed(r);
-  _openIgViewer(_igRowToM(r),h,0);
+  // 영상 → 영상 파일이 살아 있으면 사이트 안 플레이어, 아니면 인스타 공식 임베드.
+  // 여러 장인데 장별 주소가 만료된 지난 글 → 사이트 안 사진 창에 첫 장(중계 함수, 태그 가능) + 'n장 모두 보기'(임베드)
+  // (2026-11-13 사용자 "전체 보기에서 사진 누르면 인스타 화면이 떠서 태깅을 못 해" — 인스타는 첫 장만 공개 주소로 준다)
+  if(r.ty==='VIDEO')return _openIgEmbed(r);
+  const m=_igRowToM(r);
+  if((r.n||1)>1&&!_igRowFreshSet(r)){m.mi=Array.isArray(r.mi)&&r.mi[0]?[r.mi[0]]:null;m._more={post_key:r.post_key,n:r.n};}
+  _openIgViewer(m,h,0);
 }
 function _igRowTile(r,h,cls){
   const b=document.createElement('button');b.type='button';b.className=cls||'iga-tile';
@@ -12227,10 +12248,22 @@ function _openIgEmbed(r){
     ov.addEventListener('click',e=>{if(e.target===ov)_closeIgEmbed();});
     ov.querySelector('#ige-close').addEventListener('click',_closeIgEmbed);
   }
-  ov.querySelector('#ige-frame').src='https://www.instagram.com/p/'+encodeURIComponent(r.post_key)+'/embed/captioned/';
+  const fr=ov.querySelector('#ige-frame');ov.querySelector('#ige-video')?.remove();ov.classList.remove('ige-vid');
+  if(r.v&&_igFresh(r.v)){
+    // 영상 파일을 사이트 안에서 바로(2026-11-13 사용자 "웹앱에서 인스타 영상 재생 안 돼") — 임베드는 iOS 웹앱에서 인스타로 넘기려 해 막힌다
+    fr.src='about:blank';ov.classList.add('ige-vid');
+    const vd=document.createElement('video');vd.id='ige-video';vd.controls=true;vd.playsInline=true;vd.setAttribute('playsinline','');vd.preload='metadata';
+    if(r.u)vd.poster=r.u;vd.src=r.v;
+    vd.addEventListener('error',()=>{if(!ov.classList.contains('open')||!ov.classList.contains('ige-vid'))return;vd.remove();ov.classList.remove('ige-vid');fr.src='https://www.instagram.com/p/'+encodeURIComponent(r.post_key)+'/embed/captioned/';},{once:true});
+    fr.before(vd);
+    ov.classList.add('open');_bringToFront(ov);
+    vd.play().catch(()=>{});
+    return;
+  }
+  fr.src='https://www.instagram.com/p/'+encodeURIComponent(r.post_key)+'/embed/captioned/';
   ov.classList.add('open');_bringToFront(ov);
 }
-function _closeIgEmbed(){const ov=document.getElementById('ige-overlay');if(!ov||!ov.classList.contains('open'))return false;ov.classList.remove('open');ov.querySelector('#ige-frame').src='about:blank';return true;}
+function _closeIgEmbed(){const ov=document.getElementById('ige-overlay');if(!ov||!ov.classList.contains('open'))return false;ov.classList.remove('open','ige-vid');ov.querySelector('#ige-frame').src='about:blank';const vd=ov.querySelector('#ige-video');if(vd){try{vd.pause();}catch(e){}vd.remove();}return true;}
 // 보관함 격자 창
 let _iga=null;
 function _closeIgArchive(){const ov=document.getElementById('iga-overlay');if(!ov||!ov.classList.contains('open'))return false;ov.classList.remove('open');if(_iga&&_iga.io)_iga.io.disconnect();_iga=null;return true;}
@@ -12260,7 +12293,7 @@ async function _openIgArchive(h,who){
   const page=async()=>{
     if(st.loading||st.done||_iga!==st)return;st.loading=true;
     try{
-      const{data,error}=await sb.from('ig_media').select('post_key,media_id,t,ty,p,u,c,mi,n,cap,lk,cm').eq('handle',h).order('t',{ascending:false}).range(st.from,st.from+59);
+      const{data,error}=await sb.from('ig_media').select('post_key,media_id,t,ty,p,u,c,mi,n,cap,lk,cm,v').eq('handle',h).order('t',{ascending:false}).range(st.from,st.from+59);
       if(error)throw error;if(_iga!==st)return;
       (data||[]).forEach(r=>grid.appendChild(_igRowTile(r,h)));
       st.from+=(data||[]).length;
@@ -12291,7 +12324,7 @@ async function _renderIgTagged(prefix,a){
     const{data:tags,error}=await sb.from('ig_photo_tags').select('post_key,handle').contains('artist_ids',[a.id]).limit(400);
     if(error||box.dataset.a!==a.id||!tags||!tags.length)return;
     const keys=[...new Set(tags.map(t=>t.post_key))];
-    const{data:rows}=await sb.from('ig_media').select('post_key,handle,media_id,t,ty,p,u,c,mi,n,cap,lk,cm').in('post_key',keys.slice(0,200)).limit(200);
+    const{data:rows}=await sb.from('ig_media').select('post_key,handle,media_id,t,ty,p,u,c,mi,n,cap,lk,cm,v').in('post_key',keys.slice(0,200)).limit(200);
     if(box.dataset.a!==a.id||!rows||!rows.length)return;
     rows.sort((x,y)=>String(y.t).localeCompare(String(x.t))).forEach(r=>strip.appendChild(_igRowTile(r,r.handle,'ig-item igtag-tile')));
     box.querySelector('.igtag-hd').textContent=(currentLang==='ko'?'태그된 사진':'Tagged photos')+' '+rows.length;
@@ -14759,7 +14792,7 @@ async function _chemExtras(people,head,rows){
     const{data:tags,error}=await sb.from('ig_photo_tags').select('post_key,handle').contains('artist_ids',ids).limit(400);
     if(error||!tags||!tags.length||!live())return;
     const keys=[...new Set(tags.map(t=>t.post_key))];
-    const{data:rws}=await sb.from('ig_media').select('post_key,handle,media_id,t,ty,p,u,c,mi,n,cap,lk,cm').in('post_key',keys.slice(0,200)).limit(200);
+    const{data:rws}=await sb.from('ig_media').select('post_key,handle,media_id,t,ty,p,u,c,mi,n,cap,lk,cm,v').in('post_key',keys.slice(0,200)).limit(200);
     if(!rws||!rws.length||!live())return;
     const box=document.createElement('div');box.className='chem-photos';
     const t=document.createElement('div');t.className='chem-sec-t';t.textContent='PHOTOS';const n=document.createElement('i');n.textContent=rws.length;t.appendChild(n);
@@ -23886,7 +23919,7 @@ function _igPhotoIdentity(m,index){
   let imageKey;try{imageKey=new URL(src).pathname.split('/').pop();}catch(e){return null;}
   if(!imageKey||imageKey.length>240)return null;
   const metadata=Array.isArray(m.mi)?m.mi:[];
-  const meta=metadata[index]?.u===src?metadata[index]:metadata.find(x=>x.u===src),mediaId=meta?.id&&/^\d{1,64}$/.test(String(meta.id))?String(meta.id):null;
+  const meta=metadata[index]?.u===src?metadata[index]:(metadata.find(x=>x.u===src)||(metadata[index]&&!metadata[index].u?metadata[index]:null)),mediaId=meta?.id&&/^\d{1,64}$/.test(String(meta.id))?String(meta.id):null;
   if(!mediaId&&pics.filter(u=>{try{return new URL(u).pathname.split('/').pop()===imageKey;}catch(e){return false;}}).length>1)return null;
   return{postKey:_igPostKey(m.p),photoKey:mediaId?'id:'+mediaId:'img:'+imageKey,mediaId,imageKey,type:meta?.ty||'IMAGE'};
 }
@@ -24047,6 +24080,8 @@ function _openIgViewer(m,handle,idx){
   const av=ov.querySelector('#igv-av');if(ig&&ig.pic){av.src=ig.pic;av.hidden=false;}else av.hidden=true;
   ov.querySelector('#igv-cap').hidden=!m.cap;
   const op=ov.querySelector('#igv-open');op.href=m.p;op.textContent=ko?'Instagram에서 보기 ↗':'View on Instagram ↗';
+  {let mb=ov.querySelector('#igv-more');if(!mb){mb=document.createElement('button');mb.id='igv-more';mb.type='button';mb.addEventListener('click',e=>{e.stopPropagation();const x=_igv&&_igv.m&&_igv.m._more;if(x)_openIgEmbed({post_key:x.post_key});});op.before(mb);}
+   mb.hidden=!m._more;if(m._more)mb.textContent=ko?`${m._more.n}장 모두 보기 ›`:`See all ${m._more.n} ›`;}
   ov.querySelector('.sw-to-lb span').textContent=ko?'재생 화면으로':'Back to player';
   _igvShow();
   {const view=_igv;_igPhotoTagRows(_igPostKey(m.p)).then(rows=>{if(_igv!==view)return;view.tagRows=rows;view.tagLoad='ready';_igvRenderTags();}).catch(()=>{if(_igv===view){view.tagLoad='error';_igvRenderTags();}});}
@@ -27745,15 +27780,28 @@ async function _vidSongList(ko,memberKo,histKos){
     const owners=new Set([ko,memberKo,...(histKos||[])].filter(Boolean));
     const cnt=new Map();
     (data||[]).forEach(r=>(r.song_keys||[]).forEach(k=>{const o=k.slice(0,k.indexOf(':'));if(owners.has(o))cnt.set(k,(cnt.get(k)||0)+1);}));
-    const names=_songNameMap(ko,memberKo,histKos);
+    const names=_songNameMap(ko,memberKo,histKos),albums=_songAlbumMap(ko,memberKo,histKos);
     return [...cnt.entries()].filter(([,n])=>n>=2).sort((a,b)=>b[1]-a[1]).slice(0,40)
-      .map(([key,n])=>({key,n,label:names.get(key)||key.slice(key.indexOf(':')+1)}));
+      .map(([key,n])=>{const al=albums.get(key);return{key,n,label:names.get(key)||key.slice(key.indexOf(':')+1),sub:al?[_songBase(al.al)===key.slice(key.indexOf(':')+1)?'':al.al,al.yr].filter(Boolean).join(' · '):''};}); // 싱글 이름=곡 이름이면 연도만
   })();
   _vidSongListCache.set(ck,p);
   p.then(v=>{if(!v.length)_vidSongListCache.delete(ck);},()=>_vidSongListCache.delete(ck));
   return p;
 }
 // 곡 키(주인:기본형) → 화면 이름. 그룹·멤버 디스코그래피에서 기본형이 같은 첫 표기(꼬리·피처링 괄호 뗌), 언어별 표기는 _songTitleFor.
+// 곡 키 → 처음 실린 앨범 이름·연도(2026-11-13 사용자 "곡으로 보기 곡 제목 옆에 작게 흐리게 앨범명이랑 연도"). 본판 우선 —
+// 일본반·라이브·리믹스·베스트는 뒤(정적 곡 페이지 tools/seo_extra.js alRank와 같은 기준), 같은 순위면 먼저 나온 것.
+function _songAlbumMap(ko,memberKo,histKos){
+  const owners=new Set([ko,memberKo,...(histKos||[])].filter(Boolean)),best=new Map();
+  const rank=al=>(al.region==='jp'||/라이브|컴필레이션|리믹스|베스트/.test(al.type||'')||/\b(live|concert|remix(es)?|best|tour)\b|라이브|콘서트/i.test(al.title||''))?1:0;
+  const take=(owner,disco)=>(disco||[]).forEach(al=>{if(!al||!al.title)return;const r=rank(al),d=String(al.releaseDate||'');
+    (al.tracks||[]).forEach(o=>{const t=o&&(typeof o==='string'?o:o.title);if(!t||/\binst(\.|rumental)?\b/i.test(t))return;
+      [t,typeof o==='object'&&o.en].filter(Boolean).forEach(x=>{const k=owner+':'+_songBase(x),cur=best.get(k);
+        if(!cur||r<cur.r||(r===cur.r&&d&&(!cur.d||d<cur.d)))best.set(k,{r,d,al:al.title,yr:(d.match(/^\d{4}/)||[''])[0]});});});});
+  owners.forEach(o=>{if(GROUPS[o])take(o,GROUPS[o].discography);const a=ARTISTS.find(x=>x.name&&x.name.ko===o&&(!GROUPS[x.group&&x.group.ko]||x.group.ko===ko));if(a)take(o,a.discography);});
+  if(memberKo){const a=ARTISTS.find(x=>x.name&&x.name.ko===memberKo&&x.group&&x.group.ko===ko);if(a)take(memberKo,a.discography);}
+  return best;
+}
 function _songNameMap(ko,memberKo,histKos){
     const owners=new Set([ko,memberKo,...(histKos||[])].filter(Boolean));
     const names=new Map();
@@ -27807,7 +27855,7 @@ function _openPickSheet(title,emptyText,itemsP,onPick){
     items.forEach(it=>{
       const b=document.createElement('button');b.type='button';b.className='vss-item';
       b.innerHTML='<span class="t"></span><span class="n"></span>';
-      b.querySelector('.t').textContent=it.label;b.querySelector('.n').textContent=typeof it.n==='number'?it.n.toLocaleString():(it.n||'');b.dataset.alt=(it.alt||it.label||'');
+      b.querySelector('.t').textContent=it.label;if(it.sub){const sb_=document.createElement('small');sb_.className='vss-sub';sb_.textContent=it.sub;b.querySelector('.t').appendChild(sb_);}b.querySelector('.n').textContent=typeof it.n==='number'?it.n.toLocaleString():(it.n||'');b.dataset.alt=(it.alt||it.label||'');
       if(it.key==null){b.disabled=true;b.classList.add('off');} // 우리 우주에 없는 가수의 곡 — 보여만 준다
       else b.addEventListener('click',()=>{close();onPick(it.key,it.label);});
       list.appendChild(b);

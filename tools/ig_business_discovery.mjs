@@ -159,6 +159,7 @@ for (const h of queue) {
     const media = ((b.media && b.media.data) || []).map(m => {
       const o = { u: img(m), p: m.permalink, t: m.timestamp, ty: m.media_type };
       if(m.id)o.id=String(m.id);
+      if (m.media_type === 'VIDEO' && m.media_url) o.v = m.media_url; // 영상 파일(2026-11-13 — 사이트 안 재생, 며칠 뒤 만료라 최신 수집분만)
       if (isMag) { o.m = mentionsOf(m.caption); } // 태그 판정은 자르기 전 전체 본문으로
       // 본문·반응(2026-10-19 — 사이트 안 사진 뷰어용). 본문은 인스타 최대치 2,200자까지(2026-10-30 — 600자에서 자르면 사진별 글(문단)이 잘려 장 수와 안 맞았다)
       if (m.caption) o.cap = String(m.caption).slice(0, 2200);
@@ -192,7 +193,7 @@ const keyOf = p => (String(p || '').match(/instagram\.com\/(?:p|reel|tv)\/([A-Za
 const archive = [];
 for (const row of acc) for (const m of (row.status === 'ok' ? row.media : []) || []) {
   const post_key = keyOf(m.p); if (!post_key) continue;
-  archive.push({ post_key, handle: row.handle, media_id: m.id || null, t: m.t || null, ty: m.ty || null, p: m.p, u: m.u || null, c: m.c || null, mi: m.mi || null,
+  archive.push({ post_key, handle: row.handle, media_id: m.id || null, t: m.t || null, ty: m.ty || null, p: m.p, u: m.u || null, c: m.c || null, mi: m.mi || null, v: m.v || null,
     n: Array.isArray(m.c) && m.c.length ? m.c.length : 1, cap: m.cap || null, lk: m.lk ?? null, cm: m.cm ?? null, m: Array.isArray(m.m) ? m.m : null, src: 'recent', seen_at: new Date().toISOString() });
 }
 for (let i = 0; i < archive.length; i += 500) await sbUpsert('ig_media', archive.slice(i, i + 500), 'post_key');
