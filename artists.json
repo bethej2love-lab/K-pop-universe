@@ -72751,6 +72751,24 @@
     },
     "discography": [
       {
+        "title": "AFTER",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/59/197/15159197_20261113115213_500.jpg",
+        "releaseDate": "2026.11.14",
+        "trackCount": 1,
+        "titleTrack": "AFTER",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "AFTER",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15159197"
+      },
+      {
         "title": "잊지못해",
         "type": "싱글",
         "isMain": true,
