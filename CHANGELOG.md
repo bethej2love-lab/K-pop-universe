@@ -2,6 +2,10 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-14 (Claude Code — 영상 오태깅 보류 처리: 여자친구·있지 추가 13건)
+- [DB] 여자친구 girlfriend 오매칭 추가 11건 → 보류 (source_handle NULL 비K팝 — JTBC 아는형님·연애전쟁·마녀사냥 + MBC 다큐플렉스·심야괴담회 + 환승연애4·이말꼭·세이렌 등, 모두 girlfriend/전여자친구/여자친구아빠 연애 맥락).
+- [DB] 있지 오매칭 추가 2건 → 보류 (자우림 "있지" 곡 [유희열의 스케치북] — 그룹 ITZY 아닌 자우림 곡 제목; 스걸파 FFF TALK "앉아 있지 못하는" — 조동사).
+
 ## 2026-11-14 (Claude Code — 영상 오태깅 보류 처리: 여자친구girlfriend 대규모 + 있지조동사 추가)
 - [DB] 여자친구 girlfriend 오매칭 추가 24건 → 보류 (연애전쟁·아는형님·전참시·마녀사냥·심야괴담회·다큐플렉스·환승연애4 등 JTBC/MBC 예능에서 girlfriend/전여자친구/여자친구아빠 등 연애 맥락 오매칭).
 - [DB] 있지 조동사 추가 1건 → 보류 (officialstonemusic "목소리에 있지~"=조동사·KBSEnt 누난내게여자야2 "뭘 할 수 있지?").
