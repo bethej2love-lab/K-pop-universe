@@ -2,6 +2,9 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-14 (Claude Code — 영상 오태깅 보류 처리: 트레저 야노 시호 14건)
+- [DB] 트레저 오태깅 14건 → 보류. 패턴: 멤버 하루토의 성 "야노(Yano)"가 일본 연예인 야노 시호(추성훈 아내)와 오매칭. JTBC "대놓고두집살림", MBC "전참시" 등 예능 채널 콘텐츠.
+
 ## 2026-11-14 (Claude Code — 영상 오태깅 보류 처리: 에스파윈터·인피니트영탁 4건)
 - [DB] 에스파 오태깅 3건 → 보류 (ELLE KOREA 채널 FALL/WINTER 패션화보 — 계절 용어 "WINTER"가 멤버명으로 오매칭).
 - [DB] 인피니트 오태깅 1건 → 보류 (New_Emotions_Challenge with 영탁 @zerotak2 — 트로트 가수 영탁 콘텐츠를 인피니트로 오매칭).
