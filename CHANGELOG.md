@@ -2,6 +2,12 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-15 (Claude Code — 오태깅 보류: 빌리 수현 ↔ 비긴어게인·독립만세·배우 수현 오탐 11건)
+- [DB] 빌리 데뷔(2022-03-02) 이전 비빌리 "수현" 오태깅 11건 보류:
+  - 비긴어게인 수현(JTBC, singer) 2건
+  - 독립만세 수현(JTBC 2021, actress 신수현) 6건
+  - 배우 수현 Claudia Kim — VOGUE TV·W Korea·알렉산더 협업 3건
+
 ## 2026-11-15 (Claude Code — 오태깅 보류: 더보이즈 "뉴" ↔ 영문 "new" 오매칭 255건 정리)
 - [DB] 영문 "new"가 더보이즈 멤버 "뉴"로 역추론 오태깅된 255건 보류:
   - "K-pop's New Face", "BEST NEW ARTIST", "NEW MC 신고식", "A Whole New World", "NEW DANCE" 등
