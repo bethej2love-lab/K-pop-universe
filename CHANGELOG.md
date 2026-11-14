@@ -2,6 +2,12 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-15 (Claude Code — 오태깅 보류+로직: 뉴진스 하니 어미/EXID혼동 오탐 12건 + _atmStripCommonNounCtx 하니? 패턴)
+- [DB] 뉴진스 하니 오탐 12건 보류:
+  - 의문형 어미 "~하니?" 9건 (방송국 클립에서 "안 하니?", "에서 하니?" 등)
+  - EXID 하니(크라임씬 2014~2017) 3건
+- [admin.js] _atmStripCommonNounCtx: "~하니?/안 하니?/에서 하니?" 어미 패턴 제거
+
 ## 2026-11-15 (Claude Code — 오태깅 보류+로직: 1음절 영문 성씨 토큰 오탐 — 윤·제이·진 337건 + HASHTAG_ONLY 추가)
 - [DB] 스테이씨 "윤(YOON)" ↔ 윤산하·강승윤·이승윤 등 184건 보류
 - [DB] 엔하이픈 "제이(JAY)" ↔ JAY B(갓세븐)·솔로 JAY 등 137건 보류
