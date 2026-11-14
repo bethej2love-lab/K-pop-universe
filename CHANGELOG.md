@@ -2,6 +2,13 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-14 (Claude Code — 영상 오태깅 보류 처리: 더보이즈뉴에릭·god갓걸·빅뱅닮은꼴 48건)
+- [DB] 더보이즈 오태깅 44건 → 보류. 패턴별:
+  - 멤버 "뉴(New)" 이름 오매칭 — NEW YORK 패션화보(Marie Claire Korea 등)·NEW 신제품광고·New Year 새해 콘텐츠·Brand New(엑소시우민)·Something New·A Whole New World 등 "NEW" 단어 포함 비K팝 콘텐츠
+  - 멤버 "에릭(Eric)" 이름 오매칭 — 에릭남(Eric Nam) 가수 콘텐츠 다수, 연애남매 출연자 "재형" 오인
+- [DB] god 오태깅 1건 → 보류 (갓걸(GOD GIRL) 뮤직뱅크 클립을 그룹 god로 오매칭).
+- [DB] 빅뱅 오태깅 3건 → 보류 ([화성인이지만괜찮아] 지디 도플갱어 닮은꼴 예능 — GD 직접 출연 아님).
+
 ## 2026-11-14 (Claude Code — 영상 오태깅 보류 처리: 하이라이트 대규모 145건)
 - [DB] 하이라이트 그룹 오매칭 145건 → 보류. 패턴별 분류:
   - 드라마 "X회 하이라이트" = 요약본 (닥터로이어·지금거신전화는·카이로스 등 MBC/JTBC)
