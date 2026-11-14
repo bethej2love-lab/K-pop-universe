@@ -16753,7 +16753,32 @@
       "instagram": "https://www.instagram.com/i.2.n.8",
       "namu": "https://namu.wiki/w/아이엔"
     },
-    "id": "a0045"
+    "id": "a0045",
+    "discography": [
+      {
+        "title": "나의 유죄인간 OST Part 4",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/05/693/15105693_20261030113203_500.jpg",
+        "releaseDate": "2026.11.02",
+        "trackCount": 2,
+        "titleTrack": "GUILTY PLEASURE",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "GUILTY PLEASURE",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "GUILTY PLEASURE (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15105693"
+      }
+    ]
   },
   {
     "name": {
@@ -134342,6 +134367,30 @@
     ],
     "discography": [
       {
+        "title": "君がいる／KIMIGAIRU",
+        "type": "싱글",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/74/718/15074718_20261023150039_500.jpg",
+        "releaseDate": "2026.10.26",
+        "trackCount": 2,
+        "titleTrack": "君がいる／KIMIGAIRU",
+        "region": "jp",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "君がいる／KIMIGAIRU",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Biscuit",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15074718"
+      },
+      {
         "title": "Time's Tickin'",
         "type": "싱글",
         "releaseDate": "2026.07.20",
@@ -161050,6 +161099,24 @@
       }
     ],
     "discography": [
+      {
+        "title": "BANANA",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/149/55/972/14955972_20261019120119_500.jpg",
+        "releaseDate": "2026.10.20",
+        "trackCount": 1,
+        "titleTrack": "BANANA",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "BANANA",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14955972"
+      },
       {
         "title": "ELA",
         "type": "싱글",
