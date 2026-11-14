@@ -2,6 +2,11 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-14 (Claude Code — 영상 오태깅 보류 처리: 소년판타지 오디션 7건)
+- [DB] 소년판타지 오디션 프로그램에서 오매칭 7건 → 보류:
+  - 러블리즈 4건 — 출연자 진명제(JIN MYUNGJAE)의 "JIN"이 러블리즈 멤버 "진"으로 오매칭
+  - 방탄소년단 3건 — BTS 곡(Not Today·I Need U·상남자) 커버 무대, BTS 직접 출연 아님
+
 ## 2026-11-14 (Claude Code — 영상 오태깅 보류 처리: 방탄소년단 슈가 9건)
 - [DB] 방탄소년단 오태깅 9건 → 보류:
   - 소년판타지 "Sugar Rush Ride" 무대 4건 — BTS 슈가 직접출연 아닌 오디션 콘텐츠
