@@ -2,6 +2,12 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-15 (Claude Code — 오태깅 보류+로직: 1음절 영문 성씨 토큰 오탐 — 윤·제이·진 337건 + HASHTAG_ONLY 추가)
+- [DB] 스테이씨 "윤(YOON)" ↔ 윤산하·강승윤·이승윤 등 184건 보류
+- [DB] 엔하이픈 "제이(JAY)" ↔ JAY B(갓세븐)·솔로 JAY 등 137건 보류
+- [DB] 방탄소년단 "진(JIN)" ↔ 이무진·강진·신의진 등 16건 보류
+- [admin.js] _ATM_HASHTAG_ONLY_NAMES에 '윤', '제이', '진' 추가
+
 ## 2026-11-15 (Claude Code — 오태깅 보류+로직 수정: 1음절 영문 토큰 오탐 — 한(HAN)·산(SAN) 보류 261건 + HASHTAG_ONLY 추가)
 - [DB] 스트레이키즈 "한(HAN)" ↔ 한상진·한승윤·한소희·김동한·JANG HAN BYUL 등 239건 보류
 - [DB] 에이티즈 "산(SAN)" ↔ 윤산하(ASTRO)·San E(래퍼)·안산(양궁) 22건 보류
