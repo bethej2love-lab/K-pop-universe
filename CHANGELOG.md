@@ -7,6 +7,12 @@
   - 출연자 이름에 "진(JIN)" 포함 → 러블리즈 멤버 "진" 오매칭 패턴
   - 차이진신(CAI JIN XIN) 5건, 최우진(CHOI WOO JIN) 4건, 정호진(JUNG HO JIN) 3건, 윤종우(YOON JONG WOO) 1건
 
+## 2026-11-14 (Claude Code — 영상 오태깅 보류 처리: 아이랜드 BTS 9건)
+- [DB] 아이랜드 채널 → 방탄소년단 오매칭 9건 보류:
+  - 아이랜드 출연자들의 BTS 커버 테스트 무대(I NEED U·DNA·FAKE LOVE) — BTS 직접 출연 아님
+  - "지민 선배", "코코 지민" 등 BTS 지민 언급 콘텐츠 — 아이랜드 2 콘텐츠
+  - 방지민(BANG JEE MIN)은 아이랜드 2 출연자 → 올바른 태깅 확인, 처리 불필요
+
 ## 2026-11-14 (Claude Code — 영상 오태깅 보류 처리: 보이즈플래닛 온리원오프 12건)
 - [DB] 보이즈플래닛 채널 → 온리원오프 오매칭 12건 보류:
   - 보이즈플래닛 커버 무대(Love Me Right·Love Killa·Man In Love·Kill This Love) 곡 제목이 온리원오프 커버 이력과 오매칭
