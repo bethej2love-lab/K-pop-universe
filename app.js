@@ -17502,6 +17502,7 @@ document.getElementById('dh-lang-btn').addEventListener('click',e=>{
 });
 function flyHome(){
   closeCards();closePanels();
+  if(document.getElementById('yt-lightbox')?.classList.contains('open'))closeLightbox();
   const dir=new THREE.Vector3(0,8,155).normalize();
   _startFly(new THREE.Vector3(0,0,0),dir.multiplyScalar(controls.maxDistance),1000);
   flyState.onComplete=()=>{controls.autoRotate=!_reduceMotion;};
