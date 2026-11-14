@@ -19,6 +19,13 @@
 - [DB] fernhoon_12psh59 다이아 오태깅 1건 → 보류 ("Dia Frampton" = 외국 가수, 그룹 다이아 아님).
 - [DB] ggondaehee 다이아 오태깅 1건 → 보류 ("다이아💎" = 다이아몬드/게임 티어, 그룹 다이아 아님).
 - [DB] iamdongbaek 다이아 오태깅 1건 → 보류 ("다이아 박힌 우정 반지" = 보석 의미, 그룹 다이아 아님).
+- [DB] idolrush 빅뱅 오태깅 1건 → 보류 ("빅뱅 선배님의 악수를 받은 무릎 퍼포먼스" — 빅뱅은 언급만, 직접 출연 아님).
+- [DB] moonbyul2da 있지 오태깅 1건 → 보류 ("잘 있지?? 보고싶다" — 안부 표현 "잘 있지"를 그룹 ITZY로 오매칭).
+- [DB] fairyjaehyung 있지 오태깅 2건 → 보류 ("포함하고 있지 않습니당" 패턴, 조동사 "있지" 오매칭).
+- [DB] minumsaTV 있지 오태깅 1건 → 보류 ("사랑하고 있지 않을 때" — 조동사).
+- [DB] muniverse.io_official 있지 오태깅 1건 → 보류 ("1등 할 수 있지?" — 조동사).
+- [DB] NetflixKorea 있지 오태깅 1건 → 보류 ("나나야 듣고 있지?" — 조동사).
+- [DB] PlayMnet 여자친구 오태깅 1건 → 보류 ("세기의 난제 운동 VS 여자친구" — girlfriend 의미).
 
 ## 2026-11-14 (Claude Code — 영상 오태깅 보류 처리: maxaieni·SBSenter·AmazingSaturday·MBCkpop)
 - [DB] maxaieni 채널(FT ISLAND 이홍기 직캠) 엑소 오태깅 189건 → 보류 (채널 제목·해시태그 전부 #FTISLAND #leehongki·FT ISLAND 곡명; 블랙핑크 1건·소녀시대 티파니 1건은 올바른 태깅으로 보존).
