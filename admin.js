@@ -7845,7 +7845,7 @@ function _atmStripOtherPersonFullNames(t){
 }
 // 멤버 영문명과 철자가 같은 브랜드·방송사 고유명(2026-09-29 — 트레저 아사히 ↔ 아사히 맥주·TV아사히).
 // 브랜드는 두 단어 이상 고유 표기로만 적는다 — 'asahi' 단독을 넣으면 진짜 아사히 해시태그(#ASAHI)까지 죽는다.
-const _ATM_BRAND_PHRASES=/\basahi\s*super\s*dry\b|\basahi\s*beer\b|\basahibeer\b|\btv\s*asahi\b/i;
+const _ATM_BRAND_PHRASES=/\basahi\s*super\s*dry\b|\basahi\s*beer\b|\basahibeer\b|\btv\s*asahi\b|\bH1[-_]?KEY\b/i;
 // 이니셜형 이름(I.N·B.I …)을 붙여 쓰면 영어 낱말이 되는 것들 — 이 경우 구분자 있는 표기("I.N"·"I N")만 인정
 const _ATM_INITIAL_WORDS=new Set(['in','is','it','on','up','at','an','as','be','by','do','go','he','me','my','no','of','or','so','to','us','we','if','am']);
 function _atmStripCommonNounCtx(title){

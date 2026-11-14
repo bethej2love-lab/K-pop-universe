@@ -2,6 +2,13 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-15 (Claude Code — 오태깅 보류+로직: 샤이니 키(KEY) ↔ H1-KEY(하이키) 오탐 35건 + _ATM_BRAND_PHRASES)
+- [DB] 샤이니 키로 오탐된 H1-KEY(여자 그룹 하이키) 콘텐츠 31건 보류:
+  - 엠카운트다운·뮤직뱅크·주간아이돌·인기가요 H1-KEY 무대·인터뷰 클립
+  - "[H1-KEY - Athletic Girl/RUN/Rose Blossom/낭만한도초과]" 형태 직캠·보이스캠 등
+- [DB] 기타 KEY 토큰 오탐 4건 보류: ARGON 'Master Key'(2건), Jonathan Wong 'Low Key', PROJECT 7 'WE-KEY팀'
+- [admin.js] _ATM_BRAND_PHRASES에 H1[-_]?KEY 패턴 추가 — H1-KEY 그룹명에서 "키" 토큰 추출 차단
+
 ## 2026-11-15 (Claude Code — 버그: 홈 버튼 눌러도 라이트박스 안 닫히던 문제)
 - [app.js] flyHome()에 closeLightbox() 추가 — 홈 탭/상단 홈 버튼 등 모든 홈 경로에서 라이트박스 자동 닫힘
 
