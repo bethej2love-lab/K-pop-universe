@@ -27739,6 +27739,29 @@
     ],
     "discography": [
       {
+        "title": "뜨거운 안녕 OST Part 2",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/59/129/15159129_20261113112910_500.jpg",
+        "releaseDate": "2026.11.14",
+        "trackCount": 2,
+        "titleTrack": "Black & Blue",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Black & Blue",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Black & Blue (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15159129"
+      },
+      {
         "title": "DEATH OF ME",
         "type": "미니 1집",
         "isMain": true,
