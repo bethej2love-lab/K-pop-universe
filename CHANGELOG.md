@@ -2,6 +2,11 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-15 (Claude Code — 오태깅 보류: S.E.S. 바다 ↔ BEBE 바다·바다(sea) 오탐 24건)
+- [DB] S.E.S. 바다 ↔ 오탐 24건 보류:
+  - BEBE 멤버 바다(BEBA·미등록 그룹) 콘텐츠 6건: 'Sexy In The Air', 'Adult Swim', 'Picture' 등
+  - 바다(sea) 보통명사 18건: "바다 뷰", "바다 사나이", "눈물 바다", "지중해 바다", "텐션의 바다" 등
+
 ## 2026-11-15 (Claude Code — 오태깅 보류+로직 수정: 에버글로우 이유 보통명사 오탐 30건 + _atmStripCommonNounCtx 개선)
 - [DB] 에버글로우 멤버 "이유" ↔ 보통명사 "이유(reason)" 오탐 30건 보류:
   - "퍼펙트글로우" 채널 패턴, "유퀴즈온더블럭/이혼숙려캠프" 등 비케이팝 예능에서 "~란/놀란 이유" 형태
