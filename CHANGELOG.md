@@ -2,6 +2,9 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-14 (Claude Code — 영상 오태깅 보류 처리: 더보이즈 추가 11건)
+- [DB] 더보이즈 오태깅 추가 11건 → 보류 (MW:MEW "new" 오매칭·정우석 경청 초대석·아무튼떠들러왔는데·스텔라장경청라이브·유퀴즈 "(NEW)" 허경환·야구 등 비K팝 콘텐츠 + 싱어게인4 태연심사위원 "NEW" 오매칭·박지현 유퀴즈 드라마등장인물 상연).
+
 ## 2026-11-14 (Claude Code — 영상 오태깅 보류 처리: 더보이즈뉴에릭·god갓걸·빅뱅닮은꼴 48건)
 - [DB] 더보이즈 오태깅 44건 → 보류. 패턴별:
   - 멤버 "뉴(New)" 이름 오매칭 — NEW YORK 패션화보(Marie Claire Korea 등)·NEW 신제품광고·New Year 새해 콘텐츠·Brand New(엑소시우민)·Something New·A Whole New World 등 "NEW" 단어 포함 비K팝 콘텐츠
