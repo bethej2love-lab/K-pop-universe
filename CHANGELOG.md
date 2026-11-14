@@ -2,6 +2,11 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-14 (Claude Code — 영상 오태깅 보류 처리: 러블리즈 보이즈플래닛 13건)
+- [DB] 보이즈플래닛 채널 콘텐츠 → 러블리즈 오매칭 13건 보류:
+  - 출연자 이름에 "진(JIN)" 포함 → 러블리즈 멤버 "진" 오매칭 패턴
+  - 차이진신(CAI JIN XIN) 5건, 최우진(CHOI WOO JIN) 4건, 정호진(JUNG HO JIN) 3건, 윤종우(YOON JONG WOO) 1건
+
 ## 2026-11-14 (Claude Code — 영상 오태깅 보류 처리: 보이즈플래닛 오디션 14건)
 - [DB] 보이즈플래닛 오디션 오매칭 14건 → 보류:
   - 스트레이키즈 "Back Door" 5건 — 보이즈플래닛 출연자들의 커버 무대, SKZ 직접 출연 아님
