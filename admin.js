@@ -7919,6 +7919,19 @@ function _atmStripCommonNounCtx(title){
   if(t.indexOf('하니')>=0)t=t.replace(/(?<=[가-힣a-z0-9])\s*하니[?!]/gi,' ') // "~하니?" 어미 (의문형) — 멤버명 아님
     .replace(/(?:안|못|도)\s*하니[?!]?/g,' ') // "안 하니?", "못 하니?" — 부정 의문형
     .replace(/(?:에서|에게|한테)\s*하니[?!]?/g,' '); // "어디서 하니?" 등 조사+하니
+  // "윈터"(에스파) — winter/겨울 보통명사 맥락 제거(2026-11-15: 겨울노래·Winter Ver.·WINTER 25 컬렉션 등 오탐 35건)
+  if(t.indexOf('윈터')>=0||/\bwinter\b/i.test(t)){
+    t=t.replace(/\(?\s*Winter\s+Ver\.?\s*\)?/gi,' ') // (Winter Ver.) 버전 표기
+      .replace(/Winter\s+(?:Wonderland|Camp|Breath|Rain|Playlist|Songs?|Special|Collection|Spirit|Loop|Garden)/gi,' ')
+      .replace(/\bWINTER\s+\d\d\b/g,' ') // WINTER 25/26 패션 컬렉션 시즌
+      .replace(/겨울\s*(?:노래|비|밤|여행|분위기|향기|바람|코트|계절|풍경|준비|캐럴|무대|왕국|이야기)/g,' ');
+  }
+  // "가을"(아이브) — 계절 보통명사 맥락 제거(2026-11-15: 잔나비 가을밤·폴킴 가을 2건)
+  if(t.indexOf('가을')>=0){
+    t=t.replace(/가을\s*밤에?\s*든?\s*생각/g,' ') // "가을밤에 든 생각" (잔나비)
+      .replace(/찬란한\s*가을/g,' ') // "찬란한 가을" 형용사형
+      .replace(/가을\s*(?:향기|바람|하늘|분위기|계절|풍경|여행|남자|여자)(?![가-힣])/g,' ');
+  }
   if(t.indexOf('하루')<0)return t;
   return t
     .replace(/(?<=[가-힣]의\s)하루(?![가-힣])/g,' ') // "○○의 하루" — 소유된 일반명사만 제거(소유자 토큰은 남김)

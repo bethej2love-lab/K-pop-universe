@@ -2,6 +2,16 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-15 (Claude Code — 오태깅 보류+로직: 에스파 윈터·아이브 가을 계절 단어 오탐 41건 + _atmStripCommonNounCtx 패턴)
+- [DB] 에스파 "윈터" 오탐 보류 35건:
+  - 데뷔 전(2020-11-17 이전) 15건: 멜로망스 겨울노래, W Korea 윈터 액세서리, 정승환 그 겨울 등
+  - 데뷔 후 겨울/Winter 보통명사 20건: Winter Wonderland, 겨울비, (Winter Ver.), WINTER 25 컬렉션 등
+- [DB] 아이브 "가을" 오탐 보류 2건: 잔나비 "가을밤에 든 생각", 폴킴 "찬란한 계절" (데뷔 전)
+- [DB] 모모랜드 "제인" RODEO 챌린지·Jane Doe 오탐 4건 보류
+- [admin.js] _atmStripCommonNounCtx: 윈터·가을 계절 보통명사 패턴 추가
+  - 윈터: (Winter Ver.), Winter Wonderland/Camp/Rain 등, WINTER 25/26 컬렉션, 겨울노래/겨울비/겨울밤 등
+  - 가을: 가을밤에 든 생각, 찬란한 가을, 가을 향기/바람/하늘 등
+
 ## 2026-11-15 (Claude Code — 오태깅 보류: 빅스 레오(LEO) ↔ 소디엑/알파드라이브원 "리오(LEO)" 오탐 15건)
 - [DB] 소디엑 group_ko에 빅스 레오 솔로 콘텐츠 오태깅 6건 보류:
   - 레오(LEO) _ MR은 거들뿐(2021-11), 레오 수트댄스(2022-08), Losing Game 직캠 3건(2022-08)
