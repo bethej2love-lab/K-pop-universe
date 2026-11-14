@@ -2,6 +2,9 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-15 (Claude Code — 오태깅 보류: 아일릿 민주(오민주) ↔ 아이즈원 민주(김민주) 동명이인 오탐 2건)
+- [DB] 아이즈원 김민주&권은비 비하인드 CAM(싱터뷰), 조유리 feat.민주 크리스마스 선물 클립 → 아일릿 오민주로 오태깅 2건 보류
+
 ## 2026-11-15 (Claude Code — 오태깅 보류+로직: 우주소녀 여름 summer 보통명사 오탐 7건 + 패턴)
 - [DB] 우주소녀 "여름(summer)" 보통명사 오탐 7건 보류: 여름 뷰티·네일·노래·아이스크림·여행 등
 - [admin.js] _atmStripCommonNounCtx: 여름 패턴 추가 (여름+뷰티/네일/노래/여행/패션 등)
