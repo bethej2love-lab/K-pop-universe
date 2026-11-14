@@ -2,6 +2,13 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-14 (Claude Code — 영상 오태깅 보류 처리: STSEVEN·PlayMnet·hi_sseulgi_ 등)
+- [DB] STSEVEN_official(재친구 예능) 레인보우 오태깅 1건 → 보류 (Ep.11 김재중·홍석천 출연 클립, 레인보우 멤버 없음).
+- [DB] nSSign 멤버(HANJUN·DOHA) 콘텐츠인데 있지 오태깅 1건 → 보류 플래그 설정 (source_handle=NULL).
+- [DB] hi_sseulgi_(레드벨벳 슬기 채널) 있지 오태깅 1건 → 보류 ("개강러들... 이런 경험 한 번씩 있지?" — 조동사 "있지?" 오매칭).
+- [DB] PlayMnet 있지 오태깅 4건 → 보류 (조동사 패턴: "잘할 수 있지?", "기억하고 있지", "같은 공간에 있지?", "대답할 수도 있지ㅋ").
+- [DB] PlayMnet 다이아 오태깅 2건 → 보류 ("아이키와 5부 다이아" = 게임 티어, "[SMTM12] 다이아 테스터기" = 보석 감별 도구).
+
 ## 2026-11-14 (Claude Code — 영상 오태깅 보류 처리: The_FirstTake·JTBCvoyage·maxaieni 등)
 - [DB] The_FirstTake(일본 음악 채널) 에프엑스 오태깅 2건 → 보류 (채널: "福島拓人 from Amber's" = 일본 밴드, 에프엑스 앰버로 오인식).
 - [DB] The_FirstTake 메이브 오태깅 3건 → 보류 (채널: "ASTERISM & Marty Friedman" = 일본 밴드+미국 기타리스트, 메이브 멤버 "마티"로 오인식).
