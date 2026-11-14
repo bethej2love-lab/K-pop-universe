@@ -2,6 +2,12 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-15 (Claude Code — 오태깅 보류: 더보이즈 "뉴" ↔ 영문 "new" 오매칭 255건 정리)
+- [DB] 영문 "new"가 더보이즈 멤버 "뉴"로 역추론 오태깅된 255건 보류:
+  - "K-pop's New Face", "BEST NEW ARTIST", "NEW MC 신고식", "A Whole New World", "NEW DANCE" 등
+  - 조건: source_handle IS NULL + group_ko='더보이즈' + members=ARRAY['뉴'] + title ILIKE '%new%' + 더보이즈/the boyz/뉴 미언급
+  - admin.js: _ATM_HASHTAG_ONLY_NAMES에 '뉴' 추가 예정 (영문 New→뉴 역추론 차단)
+
 ## 2026-11-14 (Claude Code — 오태깅 보류+group_ko 수정: 하늘→키스오브라이프 3건·경호→티오원 3건·보류 2건)
 - [DB] group_ko '하늘' → '키스오브라이프' 3건 (리무진서비스 출연·단독 클립)
 - [DB] group_ko '경호' → '티오원' 3건 (Road to Kingdom 직캠 TOO 경호)
