@@ -63590,6 +63590,30 @@
     },
     "discography": [
       {
+        "title": "My Voice",
+        "type": "정규",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/146/73/290/14673290_20261013170340_500.jpg",
+        "releaseDate": "2026.10.08",
+        "trackCount": 2,
+        "titleTrack": "My Voice",
+        "region": "jp",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "My Voice",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "No Tears On The Dancefloor (JP ver.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14673290"
+      },
+      {
         "title": "Till I Die",
         "type": "미니 4집",
         "releaseDate": "2026.04.28",
@@ -303389,6 +303413,29 @@
       }
     ],
     "discography": [
+      {
+        "title": "Afterglow - p1.김소희 어쩌다",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/42/072/15142072_20261109151929_500.jpg",
+        "releaseDate": "2026.11.10",
+        "trackCount": 2,
+        "titleTrack": "어쩌다",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "어쩌다",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "어쩌다 (inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15142072"
+      },
       {
         "title": "BEGIN AGAIN",
         "type": "미니 2집",
