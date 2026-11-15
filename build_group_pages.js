@@ -663,12 +663,17 @@ artists.forEach(a => {
     const agencyLabel = isEn ? 'Agency' : '소속사';
     const statusLbl = isEn ? 'Status' : '상태';
     // 제목·설명(2026-10-16) — '장원영(아이브) 프로필·나이·직캠'. 설명엔 생년·데뷔 나이·작사작곡·솔로 1위 같은 이 사람만의 숫자
-    const fancams = isSolo ? [] : memberFancams(a, primaryGko);
+    const fancams = isSolo ? memberFancamsAll(a) : memberFancams(a, primaryGko); // 솔로도 전 그룹+본인 키 직캠(2026-11-15)
     const hasFancams = fancams.length >= MEMBER_FANCAM_MIN;
     // 직캠 전체 페이지(fancams/)가 있으면 '직캠 모음'은 그 페이지 제목이 맡는다 — 프로필과 같은 검색어로 경쟁하지 않게(2026-11-11)
     const hubUrl = FANCAM_HUB.has(a) ? `${SITE}/${memberFancamPagePath(a, lang)}` : '';
     const _crHref = creditsFor(a) && creditPagePath(a, lang) ? `${SITE}/${creditPagePath(a, lang)}` : '';
-    const xm = SEO.memberExtra(a, isSolo ? ko : primaryGko, lang, EX, ST, creditsFor(a), { hideTop: hasFancams, creditHref: _crHref });
+    // 인기 영상도 솔로 키 + (솔로 아티스트면) 전 그룹 개인 영상까지 — 앱 멤버 카드(own=[그룹키,솔로키])와 같은 범위(2026-11-15)
+    const _sk = soloKoOf(a);
+    const _extraTop = [];
+    if (_sk && _sk !== primaryGko) _extraTop.push(...(EX.top[_sk] || []));
+    if (isSolo) for (const g of (a.groups || []).map(x => x && x.ko).filter(k => k && groups[k])) for (const v of EX.top[g] || []) { if (Array.isArray(v.members) && v.members.includes(a.name.ko)) _extraTop.push(v); }
+    const xm = SEO.memberExtra(a, isSolo ? ko : primaryGko, lang, EX, ST, creditsFor(a), { hideTop: hasFancams, creditHref: _crHref, extraTop: _extraTop });
     const ag = SEO.ages(a, (a.groups && a.groups.length ? a.groups : [a.group]).map(g => groups[g.ko] ? ({...groups[g.ko],joined:affiliationFor(a,g.ko)?.joined}) : null));
     const identityKo=[isSolo?'':primaryGko,ko].filter(Boolean).join(' '),identityEn=[isSolo?'':(groupInfo.en||primaryGko),en].filter(Boolean).join(' ');
     const who = isEn ? bilingualLabel(identityEn,identityKo) : bilingualLabel(identityKo,identityEn);
@@ -774,7 +779,7 @@ ${SEO_GA_TAG}
   ${hasFancams ? `
   <h2>${isEn ? `${escHtml(en)} fancams` : `${escHtml(ko)} 직캠`}</h2>
   <div class="mf-grid">
-    ${fancams.slice(0, 24).map(v => `<a class="mf-card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">${escHtml(v.title)}</span><span class="mf-y">${[v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? (isEn ? `${SEO.fmtViews(v.view_count, isEn)} views` : `조회수 ${SEO.fmtViews(v.view_count, isEn)}`) : ''].filter(Boolean).join(' · ')}</span></a>`).join('\n    ')}
+    ${fancams.slice(0, 24).map(v => `<a class="mf-card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">${escHtml(v.title)}</span><span class="mf-y">${[v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? SEO.fmtViews(v.view_count) : ''].filter(Boolean).join(' · ')}</span></a>`).join('\n    ')}
   </div>${hubUrl ? `<p class="hub-more"><a href="${hubUrl}">${isEn ? `All ${fancams.length} fancams by song →` : `직캠 전체 ${fancams.length}개 곡별로 보기 →`}</a></p>` : fancams.length > 24 ? `<p class="note">${isEn ? `Top 24 of ${fancams.length} fancams` : `직캠 ${fancams.length}개 중 상위 24개`}</p>` : ''}` : ''}
   ${memberIntroHtml(a, affiliations, lang)}
   ${xm.hasCredits ? '' : creditLinkHtml(a, lang)}
@@ -1155,11 +1160,12 @@ function relPageHtml(o) {
   const isEn = lang === 'en';
   const selfUrl = `${SITE}/${selfPath}`;
   const altUrl = `${SITE}/${altPath}`;
+  // 제목만 있는 텍스트 리스트 → 썸네일 카드 그리드(2026-11-15 사용자 "커버 페이지는 왜 영상 썸네일 없이 제목만") — 다른 정적 페이지와 같은 표기
   const secHtml = sections.filter(s => s.items.length).map(s => `
     <h2>${escHtml(s.h)} <span class="yr">${s.items.length}</span></h2>
-    <ul class="vid-list">
-      ${s.items.map(v => `<li><a href="https://www.youtube.com/watch?v=${escHtml(v.id)}" target="_blank" rel="noopener">${escHtml(v.title)}</a>${v.note ? ` <span class="yr">${escHtml(v.note)}</span>` : ''}</li>`).join('\n      ')}
-    </ul>`).join('\n');
+    <div class="grid">
+      ${s.items.map(v => `<a class="card" href="https://www.youtube.com/watch?v=${escHtml(v.id)}" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/${escHtml(v.id)}/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">${escHtml(v.title)}</span><span class="card-y">${[v.note || '', v.pa ? String(v.pa).slice(0, 10).replace(/-/g, '.') : ''].filter(Boolean).map(escHtml).join(' · ')}</span></a>`).join('\n      ')}
+    </div>`).join('\n');
   return `<!doctype html>
 <html lang="${isEn ? 'en' : 'ko'}">
 <head>
@@ -1183,9 +1189,13 @@ function relPageHtml(o) {
   .sub{font-size:14px;color:rgba(180,200,255,0.6);margin-bottom:8px;}
   .sub a{color:rgba(190,210,255,0.9);}
   h2{font-size:15px;margin:26px 0 8px;color:rgba(200,220,255,0.9);}
-  .vid-list{list-style:none;padding:0;margin:0;}
-  .vid-list li{padding:5px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);font-size:13.5px;}
-  .vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;}
+  @media(min-width:620px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+  .card{display:block;min-width:0;text-decoration:none;}
+  .card-th{display:block;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#17171a;}
+  .card-th img{width:100%;height:100%;object-fit:cover;display:block;}
+  .card-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.38;margin-top:7px;color:rgba(228,236,255,0.94);}
+  .card-y{display:block;font-size:11.5px;color:rgba(160,180,230,0.6);margin-top:2px;}
   .yr{color:rgba(150,175,255,0.55);font-size:12px;}
   .cta-dock{position:sticky;bottom:0;z-index:5;margin-top:28px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#0a0a0d 62%,rgba(10,10,13,0));}
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
@@ -1263,7 +1273,7 @@ async function buildRelationPages() {
 
   const relPages = [];
   const hubLinks = { ko: [], en: [] }; // 허브에 실어야 관계 페이지도 고아가 안 된다
-  const vid = (r, note) => ({ id: r.id, title: r.title || '', note });
+  const vid = (r, note) => ({ id: r.id, title: r.title || '', note, pa: r.published_at }); // pa: 카드 날짜 표기용(2026-11-15 썸네일 카드 전환)
 
   // ⚠️ 콜라보 페이지는 **기본 비활성**(2026-08-31). 생성기는 완성됐지만 `with_groups` 태깅이 아직
   //    색인시킬 품질이 아니다 — 실측으로 확인한 잔여 오탐:
@@ -1578,11 +1588,34 @@ function camTargetOk(v, a, gko) {
   const wordHit = n => { const N = String(n).toUpperCase(); let i = tu.indexOf(N); while (i >= 0) { if (!/[A-Z0-9]/.test(tu[i - 1] || '') && !/[A-Z0-9]/.test(tu[i + N.length] || '')) return true; i = tu.indexOf(N, i + 1); } return false; };
   return ns.some(n => /[A-Za-z]/.test(n) ? wordHit(n) : t.includes(n));
 }
+// 솔로 키(2026-11-15) — 그룹 소속이어도 솔로 활동 영상은 group_ko=이름으로 들어온다(태민·츄 등).
+// shared.js _ytGroupKoFor와 같은 규칙: 이름이 유일하거나 nameKeyOwner일 때만 이름 키 — 동명이인 남의 영상이 섞이지 않게.
+// '이름#id' 폴백 키는 DB에 영상이 없으므로 조회하지 않는다(null 반환).
+const _nameKoCnt = new Map();
+artists.forEach(x => { if (x && x.name) _nameKoCnt.set(x.name.ko, (_nameKoCnt.get(x.name.ko) || 0) + 1); });
+function soloKoOf(a) {
+  if (!a || !a.name || !a.name.ko) return null;
+  if ((_nameKoCnt.get(a.name.ko) || 0) > 1 && !a.nameKeyOwner) return null;
+  return groups[a.name.ko] ? null : a.name.ko; // 이름이 그룹명과 겹치면 그룹 키를 침범하므로 제외
+}
 function memberFancams(a, gko) {
   const ge = (a.groups || []).find(g => g && g.ko === gko);
   const names = new Set([a.name.ko, ge && ge.name].filter(Boolean));
-  return (VIDS[gko] || []).filter(v => Array.isArray(v.members) && v.members.length === 1 && names.has(v.members[0]) && isPerfFancam(v) && camTargetOk(v, a, gko))
-    .sort((x, y) => (y.view_count || 0) - (x.view_count || 0));
+  const out = (VIDS[gko] || []).filter(v => Array.isArray(v.members) && v.members.length === 1 && names.has(v.members[0]) && isPerfFancam(v) && camTargetOk(v, a, gko));
+  // 솔로 활동 직캠도 합친다(2026-11-15 "그룹 개인 직캠·솔로 활동 영상 다 한 페이지에") — 이름 키 영상은 전부 본인 것이라 members 필터 불필요
+  const sk = soloKoOf(a);
+  if (sk && sk !== gko) for (const v of VIDS[sk] || []) { if (isPerfFancam(v) && camTargetOk(v, a, sk)) out.push(v); }
+  const seen = new Set();
+  return out.filter(v => v && !seen.has(v.id) && seen.add(v.id)).sort((x, y) => (y.view_count || 0) - (x.view_count || 0));
+}
+// 솔로 아티스트(그룹 미등록)용 — 전 그룹 개인 직캠 + 본인 이름 키 영상 전부(선미=원더걸스+솔로, 아이유=솔로만)
+function memberFancamsAll(a) {
+  const out = [];
+  for (const k of (a.groups || []).map(g => g && g.ko).filter(k => k && groups[k])) out.push(...memberFancams(a, k));
+  const sk = soloKoOf(a);
+  if (sk) for (const v of VIDS[sk] || []) { if (isPerfFancam(v) && camTargetOk(v, a, sk)) out.push(v); }
+  const seen = new Set();
+  return out.filter(v => v && !seen.has(v.id) && seen.add(v.id)).sort((x, y) => (y.view_count || 0) - (x.view_count || 0));
 }
 // 그룹 직캠·무대(2026-10-30 — '코르티스 직캠' 검색 착지) — 퍼포먼스 분류(live) 또는 제목에 직캠 표시, 뮤비 제외, 조회수 순
 const GROUP_STAGE_MIN = 6;
@@ -1592,7 +1625,7 @@ function groupStageVids(gko) {
 }
 // 썸네일 카드 그리드(멤버·그룹 페이지 공용, 스타일은 seo_extra EXTRA_CSS .mf-*)
 function vidCardsHtml(list, isEn) {
-  return list.map(v => `<a class="mf-card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">${escHtml(v.title)}</span><span class="mf-y">${[v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? (isEn ? `${SEO.fmtViews(v.view_count, isEn)} views` : `조회수 ${SEO.fmtViews(v.view_count, isEn)}`) : ''].filter(Boolean).join(' · ')}</span></a>`).join('');
+  return list.map(v => `<a class="mf-card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">${escHtml(v.title)}</span><span class="mf-y">${[v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? SEO.fmtViews(v.view_count) : ''].filter(Boolean).join(' · ')}</span></a>`).join('');
 }
 function memberSongPagePath(a, b, lang) { return `${memberPagePath(a, lang)}s/${b}/`; }
 // 멤버×곡 페이지에 들어갈 개인 영상(2026-11-13 Codex — 윤호 'Guerrilla'에 일본 여행 브이로그, 지민 'Black Swan'에 비하인드, 로제
@@ -1702,13 +1735,14 @@ let fancamPageCount = 0;
 function memberFancamPagePath(a, lang) { return `${memberPagePath(a, lang)}fancams/`; }
 function computeFancamHubs() {
   for (const a of artists) {
-    if (!a || !a.name || !a.group || !groups[a.group.ko]) continue;
-    const f = memberFancams(a, a.group.ko);
+    if (!a || !a.name || !a.group) continue;
+    // 솔로 아티스트도 직캠이 충분하면 허브 생성(2026-11-15 "그룹 곡이든 솔로 곡이든 직캠 어느 정도 있으면 정적 페이지")
+    const f = groups[a.group.ko] ? memberFancams(a, a.group.ko) : memberFancamsAll(a);
     if (f.length >= FANCAM_HUB_MIN) FANCAM_HUB.set(a, f);
   }
 }
 function fancamCardHtml(v, isEn) {
-  return `<a class="card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="${ytThumb(v.id, 'mqdefault')}" alt="" loading="lazy"></span><span class="card-t">${escHtml(v.title)}</span><span class="card-y">${[v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? (isEn ? `${SEO.fmtViews(v.view_count, isEn)} views` : `조회수 ${SEO.fmtViews(v.view_count, isEn)}`) : ''].filter(Boolean).join(' · ')}</span></a>`;
+  return `<a class="card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="${ytThumb(v.id, 'mqdefault')}" alt="" loading="lazy"></span><span class="card-t">${escHtml(v.title)}</span><span class="card-y">${[v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? SEO.fmtViews(v.view_count) : ''].filter(Boolean).join(' · ')}</span></a>`;
 }
 // 곡별 묶음 — 곡 페이지와 같은 곡 데이터(SONGS)에서 그 영상이 속한 곡을 찾는다. 곡이 안 잡힌 직캠은 맨 아래 '그 밖의 직캠'
 function fancamsBySong(a, gko, fancams) {
@@ -1725,14 +1759,14 @@ const FANCAM_TOP = 12;
 const FANCAM_REST_MAX = 48;
 function fancamPageHtml(a, lang) {
   const isEn = lang === 'en';
-  const gko = a.group.ko, info = groups[gko];
+  const gko = a.group.ko, info = groups[gko] || null; // 솔로 아티스트(그룹 미등록)도 허브 생성(2026-11-15) — 그룹 표기는 '솔로'로
   const fancams = FANCAM_HUB.get(a);
   const ge = (a.groups || []).find(g => g && g.ko === gko);
   const nm = (ge && ge.name) || a.name.ko, nmEn = (ge && ge.nameEn) || a.name.en || a.name.ko;
   const mName = isEn ? nmEn : nm;
   const mFull = isEn ? bilingualLabel(nmEn, nm) : bilingualLabel(nm, nmEn);
-  const gName = isEn ? (info.en || gko) : gko;
-  const gFull = isEn ? bilingualLabel(gName, gko) : bilingualLabel(gko, info.en);
+  const gName = info ? (isEn ? (info.en || gko) : gko) : (isEn ? 'Solo' : '솔로');
+  const gFull = info ? (isEn ? bilingualLabel(gName, gko) : bilingualLabel(gko, info.en)) : (isEn ? 'Solo Artist' : '솔로 아티스트');
   const selfPath = memberFancamPagePath(a, lang), altPath = memberFancamPagePath(a, isEn ? 'ko' : 'en'), koPath = memberFancamPagePath(a, 'ko');
   const selfUrl = `${SITE}/${selfPath}`, altUrl = `${SITE}/${altPath}`, koUrl = `${SITE}/${koPath}`;
   const profileUrl = `${SITE}/${memberPagePath(a, lang)}`;
@@ -1752,13 +1786,15 @@ function fancamPageHtml(a, lang) {
   const second = first && isRecent(first.s) ? ranked[1] : (fresh || ranked[1]);
   let picks = [first, second].filter(Boolean).map(o => shortName(o.s));
   if (picks.join('').length > 26) picks = first && !isRecent(first.s) && fresh ? [shortName(fresh.s)] : picks.slice(0, 1);
-  const idTitle = isEn ? bilingualLabel(`${gName} ${nmEn}`, `${gko} ${nm}`) : bilingualLabel(`${gko} ${nm}`, `${info.en || gko} ${nmEn}`); // 그룹+이름 영·한 같이 맨 앞(docs/NAMING.md)
+  const idTitle = !info ? (isEn ? bilingualLabel(nmEn, nm) : bilingualLabel(nm, nmEn)) // 솔로는 이름만 — '솔로 선미' 같은 표기 방지
+    : isEn ? bilingualLabel(`${gName} ${nmEn}`, `${gko} ${nm}`) : bilingualLabel(`${gko} ${nm}`, `${info.en || gko} ${nmEn}`); // 그룹+이름 영·한 같이 맨 앞(docs/NAMING.md)
   const title = isEn
     ? `${idTitle} Fancams${picks.length ? ` — ${picks.map(t => `"${t}"`).join(', ')} & more` : ''} | K-POP UNIVERSE`
     : `${idTitle} 직캠 모음${picks.length ? ` — ${picks.map(t => `'${t}'`).join('·')} 등` : ''} | K-POP UNIVERSE`;
+  const _gPreEn = info ? `${gName} ` : '', _gPreKo = info ? `${gko} ` : ''; // 솔로는 그룹 접두 생략
   const desc = isEn
-    ? `All ${fancams.length} ${gName} ${mName} fancams and face cams, grouped by song${topSongs.length ? ` (${topSongs.join(', ')}…)` : ''}, most viewed first.`
-    : `${gko} ${mName} 직캠·페이스캠 ${fancams.length}개를 곡별로 모았어요${topSongs.length ? `(${topSongs.join(', ')} 등)` : ''}. 조회수 많은 직캠부터.`;
+    ? `All ${fancams.length} ${_gPreEn}${mName} fancams and face cams, grouped by song${topSongs.length ? ` (${topSongs.join(', ')}…)` : ''}, most viewed first.`
+    : `${_gPreKo}${mName} 직캠·페이스캠 ${fancams.length}개를 곡별로 모았어요${topSongs.length ? `(${topSongs.join(', ')} 등)` : ''}. 조회수 많은 직캠부터.`;
   const h1 = isEn ? `${mFull} Fancams` : `${mFull} 직캠`;
   const sub = isEn ? `${gFull} · ${fancams.length} fancams · ${songs.length} songs` : `${gFull} · 직캠 ${fancams.length}개 · ${songs.length}곡`;
   const hero = fancams[0];
@@ -1767,7 +1803,7 @@ function fancamPageHtml(a, lang) {
   // 동영상 구조화 데이터(VideoObject) — 구글 동영상 결과용 시도. 영상 본체는 유튜브라 채택은 장담 못 함
   const jsonLd = {
     '@context': 'https://schema.org', '@type': 'CollectionPage', name: h1, url: selfUrl, description: desc, inLanguage: isEn ? 'en' : 'ko',
-    about: { '@type': 'Person', name: mName, url: profileUrl, memberOf: { '@type': 'MusicGroup', name: gName, url: `${SITE}/${groupPagePath(gko, lang)}` } },
+    about: { '@type': 'Person', name: mName, url: profileUrl, ...(info ? { memberOf: { '@type': 'MusicGroup', name: gName, url: `${SITE}/${groupPagePath(gko, lang)}` } } : {}) },
     mainEntity: { '@type': 'ItemList', numberOfItems: fancams.length, itemListElement: fancams.filter(v => iso(v.published_at)).slice(0, 10).map((v, i) => ({
       '@type': 'ListItem', position: i + 1, item: { '@type': 'VideoObject', name: v.title, description: v.title, url: `https://www.youtube.com/watch?v=${v.id}`, embedUrl: `https://www.youtube.com/embed/${v.id}`,
         thumbnailUrl: [ytThumb(v.id, 'mqdefault'), ytThumb(v.id)], uploadDate: iso(v.published_at),
@@ -1792,7 +1828,7 @@ function fancamPageHtml(a, lang) {
     ${rest.slice(0, FANCAM_REST_MAX).map(v => fancamCardHtml(v, isEn)).join('\n    ')}
   </div>${rest.length > FANCAM_REST_MAX ? `<p class="note">${isEn ? `Top ${FANCAM_REST_MAX} of ${rest.length}` : `${rest.length}개 중 상위 ${FANCAM_REST_MAX}개`}</p>` : ''}` : '';
   // 같은 그룹 다른 멤버의 직캠 전체 페이지(얼굴 줄)
-  const mates = membersOf(gko).filter(m => m !== a && FANCAM_HUB.has(m)).sort((p, q) => FANCAM_HUB.get(q).length - FANCAM_HUB.get(p).length);
+  const mates = info ? membersOf(gko).filter(m => m !== a && FANCAM_HUB.has(m)).sort((p, q) => FANCAM_HUB.get(q).length - FANCAM_HUB.get(p).length) : []; // 솔로는 '같은 그룹 멤버' 줄 없음
   const matesHtml = mates.length ? `
   <h2>${isEn ? `Other ${gName} members' fancams` : `${gko} 다른 멤버 직캠`}</h2>
   <div class="faces">
@@ -1992,7 +2028,7 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
   const crItems = people.slice(0, CR_MAX).map(p => '<li><span class="cp-n">' + escHtml(p.n) + '</span><span class="cp-r">' + escHtml(roleTxt(p)) + '</span></li>').join('')
     + (people.length > CR_MAX ? '<li class="cp-more">' + (isEn ? '+' + (people.length - CR_MAX) + ' more' : '외 ' + (people.length - CR_MAX) + '명') + '</li>' : '');
   const creditsHtml = people.length ? '<div class="credits"><b class="credits-h">' + (isEn ? 'Credits' : '크레딧') + '</b><ul class="credit-ppl">' + crItems + '</ul></div>' : '';
-  const grid = top.slice(1).map(v => `<a class="card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="${ytThumb(v.id, 'mqdefault')}" alt="" loading="lazy"></span><span class="card-t">${escHtml(v.title)}</span><span class="card-y">${[v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? (isEn ? `${SEO.fmtViews(v.view_count, isEn)} views` : `조회수 ${SEO.fmtViews(v.view_count, isEn)}`) : ''].filter(Boolean).join(' · ')}</span></a>`).join('\n    ');
+  const grid = top.slice(1).map(v => `<a class="card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="${ytThumb(v.id, 'mqdefault')}" alt="" loading="lazy"></span><span class="card-t">${escHtml(v.title)}</span><span class="card-y">${[v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? SEO.fmtViews(v.view_count) : ''].filter(Boolean).join(' · ')}</span></a>`).join('\n    ');
   // 멤버×곡 페이지엔 '그룹의 다른 곡'을 싣지 않는다 — 곡 페이지에 있고, 1만 쪽에 같은 타일을 반복하면 용량만 커진다
   // 다른 곡 — 앨범별로 묶어 커버 한 번 + 그 아래 수록곡 목록(2026-11-12 사용자 "같은 커버가 10장씩 반복돼 정신 사납다, 앨범 썸네일 아래에 곡 정보 쭉").
   // 앨범 순서는 그 앨범 곡들의 영상 수 합, 앨범 안은 영상 많은 순(예전 타일 순서와 같은 기준).
@@ -2153,7 +2189,7 @@ function buildRankPages() {
         : `아이돌 개인 직캠 조회수 순위${d.slug ? `(${d.koShort})` : ''} TOP ${list.length}. 1위 ${gn(top)} ${nm(top)} ${SEO.fmtViews(top.v.view_count, false)}. 매주 갱신.`;
       const jsonLd = { '@context': 'https://schema.org', '@type': 'ItemList', name: h1, url: selfUrl,
         itemListElement: list.slice(0, 20).map((x, i) => ({ '@type': 'ListItem', position: i + 1, url: `https://www.youtube.com/watch?v=${x.v.id}`, name: x.v.title })) };
-      const cards = list.map((x, i) => `<a class="card" href="https://www.youtube.com/watch?v=${x.v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/${x.v.id}/mqdefault.jpg" alt="" loading="lazy"><span class="rank-n">${i + 1}</span></span><span class="card-t">${escHtml(x.v.title)}</span><span class="card-y">${escHtml(`${nm(x)} · ${gn(x)}`)} · ${isEn ? `${SEO.fmtViews(x.v.view_count, true)} views` : `조회수 ${SEO.fmtViews(x.v.view_count, false)}`}</span></a>`).join('\n    ');
+      const cards = list.map((x, i) => `<a class="card" href="https://www.youtube.com/watch?v=${x.v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/${x.v.id}/mqdefault.jpg" alt="" loading="lazy"><span class="rank-n">${i + 1}</span></span><span class="card-t">${escHtml(x.v.title)}</span><span class="card-y">${escHtml(`${nm(x)} · ${gn(x)}`)} · ${SEO.fmtViews(x.v.view_count)}</span></a>`).join('\n    ');
       // 같은 순위 표에서 1~20위 멤버의 직캠 모음 페이지로(내부 링크)
       const seen = new Set(), who = [];
       list.slice(0, 40).forEach(x => { const k = x.gko + '|' + x.a.name.ko; if (seen.has(k) || who.length >= 20) return; seen.add(k); who.push(x); });
@@ -2266,7 +2302,7 @@ function buildProgramPages() {
         ? (isEn ? `${list.length} ${pName} videos of ${gName}, most viewed first.` : `${gko}${josa(gko, '이/가')} 나온 ${p.label} 영상 ${list.length}개를 조회수 순으로 모았어요.`)
         : (isEn ? `${rows.length} ${pName} videos of ${teams.length} K-pop groups, most viewed first.` : `아이돌 ${teams.length}팀의 ${p.label} 영상 ${rows.length}개를 조회수 순으로. 팀별로도 볼 수 있어요.`);
       const top = list.slice(0, gko ? 36 : 48);
-      const cards = top.map(r => `<a class="card" href="https://www.youtube.com/watch?v=${r.v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/${r.v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">${escHtml(r.v.title)}</span><span class="card-y">${gko ? '' : escHtml(isEn ? (groups[r.gko].en || r.gko) : r.gko) + ' · '}${[r.v.published_at ? String(r.v.published_at).slice(0, 10).replace(/-/g, '.') : '', r.v.view_count ? (isEn ? `${SEO.fmtViews(r.v.view_count, true)} views` : `조회수 ${SEO.fmtViews(r.v.view_count, false)}`) : ''].filter(Boolean).join(' · ')}</span></a>`).join('\n    ');
+      const cards = top.map(r => `<a class="card" href="https://www.youtube.com/watch?v=${r.v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/${r.v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">${escHtml(r.v.title)}</span><span class="card-y">${gko ? '' : escHtml(isEn ? (groups[r.gko].en || r.gko) : r.gko) + ' · '}${[r.v.published_at ? String(r.v.published_at).slice(0, 10).replace(/-/g, '.') : '', r.v.view_count ? SEO.fmtViews(r.v.view_count) : ''].filter(Boolean).join(' · ')}</span></a>`).join('\n    ');
       const teamChips = gko ? '' : `
   <h2>${isEn ? 'By group' : '팀별로 보기'}</h2>
   <ul class="chips">
@@ -2540,7 +2576,7 @@ async function buildChemPages() {
       const desc = isEn ? `${p.n} videos with ${G}'s ${A} and ${B} together (group videos excluded), ${p.only} with just the two — fancams, stages, shorts and variety.`
         : `${G} ${A}·${B} 함께 나온 영상 ${p.n}개(단체 영상 제외), 둘만 나온 영상 ${p.only}개 — 직캠·무대·쇼츠·예능을 조회수 순으로.`;
       const face = a => { const img = memberFaceUrl(a, p.g); return `<a class="face" href="${SITE}/${memberPagePath(a, lang)}"><span class="face-img">${img ? `<img src="${img}" alt="${escHtml(nm(a, isEn))}" loading="lazy">` : ''}</span><span class="face-nm">${escHtml(nm(a, isEn))}</span></a>`; };
-      const cards = p.v.map(v => `<a class="card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">${escHtml(v.t || '')}</span><span class="card-y">${[v.pa ? String(v.pa).replace(/-/g, '.') : '', v.vc ? (isEn ? `${SEO.fmtViews(v.vc, true)} views` : `조회수 ${SEO.fmtViews(v.vc, false)}`) : ''].filter(Boolean).join(' · ')}</span></a>`).join('');
+      const cards = p.v.map(v => `<a class="card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">${escHtml(v.t || '')}</span><span class="card-y">${[v.pa ? String(v.pa).replace(/-/g, '.') : '', v.vc ? SEO.fmtViews(v.vc) : ''].filter(Boolean).join(' · ')}</span></a>`).join('');
       const others = [...new Set([...(byMember.get(p.a) || []), ...(byMember.get(p.b) || [])])].filter(o => o !== p).sort((x, y) => y.n - x.n).slice(0, 8);
       const chemHash = `#chem=${encodeURIComponent(`${p.a.name.ko}~${p.g},${p.b.name.ko}~${p.g}`)}`;
       const body = `  <div class="faces" style="justify-content:center;align-items:center">${face(p.a)}<span aria-hidden="true" style="color:#FFB0D0;font-size:18px;margin:0 4px 22px">✦</span>${face(p.b)}</div>
@@ -2797,7 +2833,7 @@ async function buildShowPages() {
     const winTxt = wins.map(w => `${w.group_ko ? gName(w.group_ko, isEn) : (w.member_ko || '')} '${w.song_title}'`).join(', ');
     const desc = isEn ? `${sName} on ${e.date}: ${tl.length} acts (${names.slice(0, 8).join(', ')}), ${cnt('stage')} stages and ${cams} fancams from the official channel.${winTxt ? ` No.1: ${winTxt}.` : ''}`
       : `${fmtD(e.date)} ${s.key} 출연 ${tl.length}팀(${names.slice(0, 8).join(', ')}) — 공식 채널 무대 ${cnt('stage')}개·직캠 ${cams}개를 팀별로.${winTxt ? ` 1위: ${winTxt}.` : ''}`;
-    const card = r => `<a class="card" href="https://www.youtube.com/watch?v=${r.v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/${r.v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">${escHtml(r.v.title)}</span><span class="card-y">${[MS_KIND[r.kind][isEn ? 1 : 0], r.kind !== 'stage' && r.kind !== 'encore' && (r.v.members || []).length === 1 ? r.v.members[0] : '', r.v.view_count ? (isEn ? `${SEO.fmtViews(r.v.view_count, true)} views` : `조회수 ${SEO.fmtViews(r.v.view_count, false)}`) : ''].filter(Boolean).map(escHtml).join(' · ')}</span></a>`;
+    const card = r => `<a class="card" href="https://www.youtube.com/watch?v=${r.v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/${r.v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">${escHtml(r.v.title)}</span><span class="card-y">${[MS_KIND[r.kind][isEn ? 1 : 0], r.kind !== 'stage' && r.kind !== 'encore' && (r.v.members || []).length === 1 ? r.v.members[0] : '', r.v.view_count ? SEO.fmtViews(r.v.view_count) : ''].filter(Boolean).map(escHtml).join(' · ')}</span></a>`;
     const sections = tl.map(([g, l], idx) => {
       const p = performer(g, l, isEn);
       l.sort((a, b) => ORDER.indexOf(a.kind) - ORDER.indexOf(b.kind) || (b.v.view_count || 0) - (a.v.view_count || 0));
@@ -2896,13 +2932,17 @@ ${urls.map(u => `  <url>\n    <loc>${u.loc}</loc>\n    <lastmod>${TODAY_ISO}</la
 })().catch(e => { console.error(e); process.exit(1); });
 else (async () => {
   // 1) DB 보강(음방 1위·인기 직캠) → 2) 그룹·멤버 페이지. DB가 안 되면(회사망 등) 정적 정보만으로 만든다.
+  // 솔로 키(group_ko=이름) 영상도 같이 긁는다(2026-11-15) — 멤버 페이지가 그룹 개인 직캠+솔로 활동을 다 싣도록(앱 멤버 카드와 같은 범위).
+  // soloKoOf가 거르는 이름(동명이인·그룹명 충돌)은 제외, 대부분 빈 키라 요청당 인덱스 조회 1번씩.
+  const soloKos = [...new Set(artists.map(soloKoOf).filter(Boolean))];
+  const videoKos = groupKos.concat(soloKos);
   try {
-    EX = await SEO.prefetch({ SB_URL, SB_KEY, groupKos });
-    console.log(`보강 데이터: 1위 기록 ${Object.keys(EX.wins).length}그룹 · 인기 영상 ${Object.keys(EX.top).length}그룹`);
+    EX = await SEO.prefetch({ SB_URL, SB_KEY, groupKos: videoKos });
+    console.log(`보강 데이터: 1위 기록 ${Object.keys(EX.wins).length}그룹 · 인기 영상 ${Object.keys(EX.top).length}키(솔로 키 ${soloKos.length}개 포함 조회)`);
   } catch (e) { console.warn('⚠️ DB 보강 건너뜀:', e.message); }
   // 곡 페이지용 영상 — 그룹 페이지에 곡 링크를 실어야 하므로 그룹 페이지보다 먼저
   try {
-    const vids = await SEO.prefetchGroupVideos({ SB_URL, SB_KEY, groupKos });
+    const vids = await SEO.prefetchGroupVideos({ SB_URL, SB_KEY, groupKos: videoKos });
     const emptyVidGroups = groupKos.filter(g => !vids[g] || !vids[g].length);
     if (emptyVidGroups.length) console.warn(`⚠️ 영상 0개 그룹 ${emptyVidGroups.length}개: ${emptyVidGroups.slice(0, 10).join(', ')}${emptyVidGroups.length > 10 ? ' ...' : ''}`);
     VIDS = vids;

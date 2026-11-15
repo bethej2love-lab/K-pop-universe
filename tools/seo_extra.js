@@ -69,11 +69,15 @@ async function prefetch({ SB_URL, SB_KEY, groupKos }) {
 }
 
 // ── 숫자 표기 ──
-const fmtViews = (n, en) => {
+// 조회수 축약(2026-11-15 사용자 "웹앱 카드처럼 nK·nM·nB로, 한·영 동일") — 앱 _fmtFollowers와 같은 규칙: 전부 내림(반올림 금지, 2026-10-20 "9,960이 1만으로 커 보인다")
+const _floorDigit = x => { const v = Math.floor(x * 10 + 1e-9) / 10; return v % 1 === 0 ? String(v) : v.toFixed(1); };
+const fmtViews = (n) => {
+  n = +n || 0;
   if (!n) return '';
-  n = roundViews(n);
-  if (en) return n >= 1e9 ? (n / 1e9).toFixed(1) + 'B' : n >= 1e6 ? (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + 'M' : n >= 1e3 ? Math.round(n / 1e3) + 'K' : String(n);
-  return n >= 1e8 ? (n / 1e8).toFixed(1).replace(/\.0$/, '') + '억회' : n >= 1e4 ? Math.round(n / 1e4).toLocaleString() + '만회' : n.toLocaleString() + '회';
+  if (n >= 1e9) return (n >= 1e10 ? String(Math.floor(n / 1e9)) : _floorDigit(n / 1e9)) + 'B';
+  if (n >= 1e6) return (n >= 1e7 ? String(Math.floor(n / 1e6)) : _floorDigit(n / 1e6)) + 'M';
+  if (n >= 1e3) return Math.floor(n / 1e3) + 'K';
+  return String(n);
 };
 const fmtPeople = (n, en) => !n ? '' : en ? (n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : Math.round(n / 1e3) + 'K') : (n >= 1e4 ? (n >= 1e5 ? Math.round(n / 1e4) : (n / 1e4).toFixed(1).replace(/\.0$/, '')) + '만 명' : n.toLocaleString() + '명');
 const fmtUsd = n => !n ? '' : n >= 1e9 ? '$' + (n / 1e9).toFixed(1) + 'B' : n >= 1e6 ? '$' + (n / 1e6).toFixed(n >= 1e8 ? 0 : 1) + 'M' : '$' + Math.round(n / 1e3) + 'K';
@@ -154,7 +158,7 @@ function groupExtra(ko, lang, EX, ST, opts) {
 // v: {id,title,published_at?,view_count?,sub?} — sub가 있으면 날짜·조회수 대신 그 줄(예: feat.)
 function vidCards(list, en) {
   return list.filter(v => v && v.id).map(v => {
-    const y = v.sub != null && v.sub !== '' ? v.sub : [v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? (en ? `${fmtViews(v.view_count, en)} views` : `조회수 ${fmtViews(v.view_count, en)}`) : ''].filter(Boolean).join(' · ');
+    const y = v.sub != null && v.sub !== '' ? v.sub : [v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? fmtViews(v.view_count) : ''].filter(Boolean).join(' · ');
     return `<a class="mf-card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">${esc(v.title)}</span>${y ? `<span class="mf-y">${esc(y)}</span>` : ''}</a>`;
   }).join('');
 }
@@ -164,7 +168,11 @@ function memberExtra(a, primaryGko, lang, EX, ST, catalog, opts) {
   const en = lang === 'en';
   const out = { html: '', facts: [], titleBits: [] };
   const nm = a.name.ko;
-  const top = (EX.top[primaryGko] || []).filter(v => Array.isArray(v.members) && v.members.includes(nm)).slice(0, 5);
+  // opts.extraTop(2026-11-15) — 솔로 키(group_ko=이름) 영상·전 그룹 개인 영상까지 합쳐 앱 멤버 카드와 같은 범위로
+  const _seenTop = new Set();
+  const top = [...(EX.top[primaryGko] || []).filter(v => Array.isArray(v.members) && v.members.includes(nm)), ...((opts && opts.extraTop) || [])]
+    .filter(v => v && !_seenTop.has(v.id) && _seenTop.add(v.id))
+    .sort((x, y) => (y.view_count || 0) - (x.view_count || 0)).slice(0, 5);
   if (top.length) {
     out.titleBits.push(en ? 'Fancams' : '직캠');
     if (!(opts && opts.hideTop)) out.html += `
