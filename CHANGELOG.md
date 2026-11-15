@@ -2,6 +2,26 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-15 (Claude Code — 보류 대량 복원: 잘못 보류된 auto 케이스 처리)
+- [DB] 공식 채널(source_handle=group_ko) 멤버1 보류 복원:
+  - category=live(341건): 솔로 MV·퍼포먼스 직캠·생방 콘텐츠 → 복원
+  - category=variety(39건): 솔로 컴백 인터뷰·개인 예능 → 복원
+  - category=challenge(468건): 개인 챌린지 쇼츠 → 복원
+  - category=mv(67건): 그룹 채널 솔로 MV (LISA, JISOO, 양요섭 등) → 복원
+  - category=other(7,073건): 개인 브이로그·생방·단독 콘텐츠 → 복원
+  - 공식 채널 mc=null(2,087건): arirangworld 등 외부 미디어 채널 포함 → 복원
+- [DB] 외부 채널 멤버1 보류 복원:
+  - mc=1(~19,684건): 멤버 단독 외부 채널 콘텐츠 → 복원
+  - source_handle=NULL mc=1(21,054건): source_handle 미기록 → 복원
+  - mc=null(3,889건): 멤버 태깅 없는 외부 채널 → 복원
+- [DB] 외부 채널 멤버2+ 보류 복원(1,462건): 그룹 활동 콘텐츠 → 복원
+- auto 보류 총계: 54,085건 → 0건 (전부 복원)
+- 남은 보류: flag_source=null 2,241건(이유 불명, 별도 판단 필요) + manual 1,066건
+- ⏳ **보류: nameKeyOwner 미설정 동명이인 케이스** — 소연/수빈/현진/민호/지민/준/민규/기현 등
+  - 솔로 활동 콘텐츠가 group_ko=그룹명으로 처리되고 있어 멤버 카드에서 보이긴 함
+  - nameKeyOwner 추가 시 다른 동명이인 솔로 콘텐츠와 섞일 위험 → 사용자 판단 대기
+  - 현재 솔로 소연(1994년생)·솔로 수빈(달샤벳, 1994년생)·솔로 현진(2000.11생) 별도 등록됨
+
 ## 2026-11-15 (Claude Code — 오태깅 보류 추가: 음방 채널 그룹명 없는 멤버 1명 ~14,000건+)
 - [DB] 음방 채널(KBSKpop·MBCkpop·SBSKPOP 등) 포함 멤버 1명 보류 처리:
   - 직캠 키워드 제외(직캠/fancam 등) + 타이틀에 그룹명·영문명 없음 조건
