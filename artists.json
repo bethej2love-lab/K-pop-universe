@@ -115169,6 +115169,24 @@
     "id": "a1875",
     "discography": [
       {
+        "title": "Love S.O.S",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/59/292/15159292_20261113121436_500.jpg",
+        "releaseDate": "2026.11.15",
+        "trackCount": 1,
+        "titleTrack": "Love S.O.S",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Love S.O.S",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15159292"
+      },
+      {
         "title": "ON DND",
         "type": "싱글",
         "isMain": true,
