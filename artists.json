@@ -107624,6 +107624,29 @@
     ],
     "discography": [
       {
+        "title": "뜨거운 안녕 OST Part 3",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/59/132/15159132_20261113113111_500.jpg",
+        "releaseDate": "2026.11.15",
+        "trackCount": 2,
+        "titleTrack": "Starlight",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Starlight",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Starlight (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15159132"
+      },
+      {
         "title": "Lost&Found",
         "type": "미니 1집",
         "isMain": true,
@@ -212179,6 +212202,29 @@
       "namu": "https://namu.wiki/w/이창민"
     },
     "discography": [
+      {
+        "title": "어데가노",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/59/136/15159136_20261113113213_500.jpg",
+        "releaseDate": "2026.11.15",
+        "trackCount": 2,
+        "titleTrack": "어데가노",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "어데가노",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "어데가노 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15159136"
+      },
       {
         "title": "꿈같은 널",
         "type": "싱글",
