@@ -7136,14 +7136,15 @@ window.addEventListener('message',e=>{
   }catch(_){}
 });
 // 자막 기본 끔(2026-10-23 사용자 "자동으로 자막 켜지는데 디폴트 off였으면"). 유튜브는 영상 언어가 보는 사람 언어와 다르거나 채널이
-// 자막 기본 표시로 올리면 알아서 켠다 — cc_load_policy=0은 공식 보장이 없어서, 영상마다 **처음 재생될 때 한 번만** 자막 모듈을 내린다.
-// 자막은 재생 직후 늦게 붙기도 해서 1.5초 뒤 한 번 더. 그 뒤 사용자가 CC로 켜면 다시 끄지 않는다(영상당 한 번).
+// 자막 기본 표시로 올리면 알아서 켠다 — cc_load_policy=0은 공식 보장이 없어서, 영상마다 처음 재생될 때 자막 모듈을 내린다.
+// 2026-11-15 사용자 "영상 중간에 자막이 자꾸 켜진다" — 유튜브가 자막 모듈을 1.5초보다 늦게(수십 초 뒤) 붙이면 다시 켜지던 것.
+// 끄기 신호를 첫 40초 동안 몇 번 더 보낸다(0·1.5·5·15·40초). 그 뒤엔 안 보내므로 사용자가 CC로 켠 건 유지(영상당 한 세트).
 let _lbCcOffVid=null;
 function _lbCaptionsOffOnce(){
   if(!_lbActiveVid||_lbCcOffVid===_lbActiveVid)return;
   const vid=_lbActiveVid;_lbCcOffVid=vid;
   const send=()=>{const f=document.getElementById('yt-lb-iframe');if(f&&f.contentWindow&&_lbActiveVid===vid)try{f.contentWindow.postMessage(JSON.stringify({event:'command',func:'unloadModule',args:['captions']}),'*');}catch(_){}};
-  send();setTimeout(send,1500);
+  send();[1500,5000,15000,40000].forEach(ms=>setTimeout(send,ms));
 }
 // 회전 버튼(세로/가로 전환)은 지금 보는 영상에만 적용한다 — 예전엔 영상 ID를 폰에 영구 저장해서, 가로 영상에서
 // 한 번 잘못 눌리면 그 뒤로 열 때마다 세로 틀(9:16)에 갇혀 크게 잘려 보였고 되돌릴 단서도 없었다(2026-10-20 사용자 제보,
@@ -26868,7 +26869,7 @@ function _buildFeedRandomVideo(list){
 // 기준도 조회수가 아니라 **업로드일**이고, 노출 순서는 랜덤이다(순위표처럼 보이지 않게 — Discovery
 // Trend 카드에서 이미 확립된 규칙).
 // Trend는 "거의 무한 스크롤" 목적(2026-08-30 사용자 요청) — 7일치를 많이 깐다. 그룹당 캡은 한 채널 도배 방지용.
-const _FEED_TREND_DAYS=7,_FEED_TREND_MAX=200,_FEED_TREND_PER_GROUP=4,_FEED_FAVNEW_MAX=200,_FEED_FAVNEW_FIRST=36; // 접기 전 최소 36개, 전체의 1/4이 더 많으면 그만큼(2026-11-10 사용자 "14개도 적다, 최소 반의 반, 30~40개" — 예전 6→14)
+const _FEED_TREND_DAYS=7,_FEED_TREND_MAX=200,_FEED_TREND_PER_GROUP=4,_FEED_FAVNEW_MAX=200,_FEED_FAVNEW_FIRST=24; // 접기 전 최소 24개, 전체의 1/4이 더 많으면 그만큼(11-10 "14개도 적다, 30~40개"로 36 → 11-15 "살짝 줄여야"로 24)
 // 2열 메이슨리(열 독립 스택) — 카드를 "현재 더 짧은 열"에 순서대로 붙여, 16:9(가로)·9:16(쇼츠)가 섞여도
 // 가로영상 아래 여백이 원천적으로 안 생기게 한다(2026-08-30 사용자 제보 — grid+dense의 "한 행=같은 비율"
 // 전제 때문에 여백이 지속 발생). container를 2열 flex로 바꾸고, 반환된 함수 add(isShort)가 붙일 열을 주고
@@ -27359,7 +27360,8 @@ async function _buildFeedFavNew(opts){
   }catch(e){console.warn('[feed] 즐겨찾기 신작 선반 실패 — 이 선반만 빠집니다',e);}
 }
 // For You 선반 기본 순서(index.html과 같게) + '오늘 일어난 일' 끌어올림(2026-11-04).
-const _FY_ORDER=['feed-recent-section','feed-favnew-section','feed-favnews-section','feed-favalbum-section','feed-favig-section','feed-favchart-section',
+// 2026-11-15 사용자 "사진이 보기 편하니 인스타를 비디오보다 위에" — favig를 favnew 앞으로(index.html DOM 순서도 함께 변경).
+const _FY_ORDER=['feed-recent-section','feed-favig-section','feed-favnew-section','feed-favnews-section','feed-favalbum-section','feed-favchart-section',
   'feed-favconcert-section','feed-foryou-anniv-section'];
 function _fyUrgent(id,on){const el=document.getElementById(id);if(!el)return;const v=on?'1':'';if((el.dataset.urgent||'')===v)return;el.dataset.urgent=v;_fyReorder();}
 function _fyReorder(){

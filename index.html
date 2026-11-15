@@ -1614,6 +1614,13 @@ if(typeof window.supabase==='undefined'){
         <div class="feed-section-ttl">🕐 Recently Viewed</div>
         <div id="feed-recent" class="feed-strip hscroll-drag"></div>
       </div>
+      <!-- 즐겨찾기 인스타 사진(2026-10-19) — 영상은 유튜브에서 이미 모으니 **사진 게시물만**(사용자 결정). 신보 레일과 같은 정사각 카드.
+           2026-11-15 사용자 "사진이 보기 편하니 비디오보다 위에" — New Videos 위로 올림(_FY_ORDER와 함께). -->
+      <div class="feed-section" id="feed-favig-section" style="display:none">
+        <div class="feed-section-ttl" id="feed-favig-ttl">📷 On Instagram</div>
+        <div id="feed-favig" class="feed-album-grid feed-album-rail hscroll-drag"></div>
+        <div id="feed-favigmag" class="feed-album-grid feed-album-rail feed-album-rail-1 hscroll-drag ig-mag-rail" hidden></div>
+      </div>
       <div class="feed-section" id="feed-favnew-section" style="display:none">
         <div class="feed-section-ttl">💖 New Videos</div>
         <div id="feed-favnew" class="feed-grid"></div>
@@ -1628,12 +1635,6 @@ if(typeof window.supabase==='undefined'){
       <div class="feed-section" id="feed-favalbum-section" style="display:none">
         <div class="feed-section-ttl" id="feed-favalbum-ttl">💿 New Music</div>
         <div id="feed-favalbum" class="feed-album-grid feed-album-rail feed-album-rail-1 hscroll-drag"></div>
-      </div>
-      <!-- 즐겨찾기 인스타 사진(2026-10-19) — 영상은 유튜브에서 이미 모으니 **사진 게시물만**(사용자 결정). 신보 레일과 같은 정사각 카드 -->
-      <div class="feed-section" id="feed-favig-section" style="display:none">
-        <div class="feed-section-ttl" id="feed-favig-ttl">📷 On Instagram</div>
-        <div id="feed-favig" class="feed-album-grid feed-album-rail hscroll-drag"></div>
-        <div id="feed-favigmag" class="feed-album-grid feed-album-rail feed-album-rail-1 hscroll-drag ig-mag-rail" hidden></div>
       </div>
       <!-- 내 최애 차트(2026-10-15) — 이번 주 차트(주간 직캠 TOP 20·월간 퍼포먼스 TOP 30)에 든 최애 무대. 누르면 그 차트 목록 -->
       <div class="feed-section" id="feed-favchart-section" style="display:none">

@@ -327,4 +327,20 @@
     ga('seo_play',{entity_name:entity,video_id:v,idx:i});
     open(i);
   },true);
+  // 이전 화면 버튼(2026-11-15 사용자 "정적 페이지에서도 이전 화면 갈 수 있는 버튼 있으면 좋을 듯").
+  // 우리 사이트 안에서 넘어온 경우에만 보인다 — 검색에서 바로 착지한 첫 화면엔 돌아갈 곳이 없어 무의미.
+  // 이 파일은 모든 정적 페이지가 불러오므로 4만 장 재빌드 없이 한 번에 적용된다.
+  try{
+    var _ref=document.referrer?new URL(document.referrer):null;
+    if(_ref&&_ref.origin===location.origin&&_ref.pathname!==location.pathname&&history.length>1){
+      var _w=document.querySelector('.wrap');
+      if(_w){
+        var _bk=document.createElement('a');
+        _bk.href=document.referrer;_bk.textContent=EN?'‹ Back':'‹ 이전';
+        _bk.setAttribute('style','display:inline-block;margin:0 12px 10px 0;font-size:12px;letter-spacing:.04em;color:rgba(150,175,255,0.75);text-decoration:none;');
+        _bk.addEventListener('click',function(ev){ev.preventDefault();history.back();});
+        _w.insertBefore(_bk,_w.firstChild);
+      }
+    }
+  }catch(e){}
 })();
