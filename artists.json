@@ -134357,7 +134357,32 @@
       "instagram": "https://www.instagram.com/youngseo",
       "namu": "https://namu.wiki/w/영서(ALLDAY PROJECT)"
     },
-    "id": "a0592"
+    "id": "a0592",
+    "discography": [
+      {
+        "title": "나의 유죄인간 OST Part 1",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/149/54/511/14954511_20261019105104_500.jpg",
+        "releaseDate": "2026.10.20",
+        "trackCount": 2,
+        "titleTrack": "DARKROOM",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "DARKROOM",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "DARKROOM (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14954511"
+      }
+    ]
   },
   {
     "name": {
@@ -140355,6 +140380,24 @@
       "namu": "https://namu.wiki/w/잭슨(GOT7)"
     },
     "discography": [
+      {
+        "title": "Thank You",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/145/87/286/14587286_20260925030421_500.jpg",
+        "releaseDate": "2026.09.20",
+        "trackCount": 1,
+        "titleTrack": "Thank You",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Thank You",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14587286"
+      },
       {
         "title": "Let Loose",
         "type": "싱글",
@@ -205696,7 +205739,32 @@
       "namu": "https://namu.wiki/w/고결",
       "instagram": "https://www.instagram.com/loeygok"
     },
-    "id": "a0943"
+    "id": "a0943",
+    "discography": [
+      {
+        "title": "각설탕 소리 OST Part.1",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/74/862/15074862_20261023155133_500.jpg",
+        "releaseDate": "2026.10.24",
+        "trackCount": 2,
+        "titleTrack": "새벽 소리",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "새벽 소리",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "새벽 소리 (inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15074862"
+      }
+    ]
   },
   {
     "name": {
@@ -205912,6 +205980,24 @@
       "namu": "https://namu.wiki/w/%EC%9D%B4%EB%8F%99%EC%97%B4(%EC%97%85%ED%85%90%EC%85%98)"
     },
     "discography": [
+      {
+        "title": "초코",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/147/60/295/14760295_20261015155635_500.jpg",
+        "releaseDate": "2026.10.18",
+        "trackCount": 1,
+        "titleTrack": "초코",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "초코",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14760295"
+      },
       {
         "title": "DRAMA",
         "type": "싱글",
@@ -284976,6 +285062,29 @@
         ],
         "src": "melon",
         "melonAlbumId": "14564976"
+      },
+      {
+        "title": "문득 생각나는 사람이 있어",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/145/65/224/14565224_20260918125244_500.jpg",
+        "releaseDate": "2026.09.20",
+        "trackCount": 2,
+        "titleTrack": "문득 생각나는 사람이 있어",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "문득 생각나는 사람이 있어",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "문득 생각나는 사람이 있어(inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14565224"
       },
       {
         "title": "너라서 버틸 수 있었어",
