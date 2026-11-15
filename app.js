@@ -28943,10 +28943,14 @@ function _makeChVidController(contId){
       // 사용자 요청) — state.allVids는 탭 전환·검색 시마다 비워지고(_makeChVidController 필터 변경
       // 로직) 그 필터로 다시 불러온 것만 누적되므로, 이 시점에 "지금 카드에 노출된 영상"과 항상 일치함.
       // 아직 무한스크롤로 더 불러올 게 남아있어도(hasMore) 그건 아직 "노출"된 게 아니므로 대상에서 제외.
-      const selAllBtn=document.createElement('button');
-      selAllBtn.className='gc-ch-sel-btn gc-ch-selall-btn';selAllBtn.type='button';
-      selAllBtn.textContent='전체선택';selAllBtn.title='지금 보이는 영상 전체 선택';
-      selAllBtn.addEventListener('click',()=>{
+      // 2026-11-16 사용자 "어드민도 평소엔 일반 유저와 같은 화면" — 헤더 붙박이 버튼에서 ⋮ 메뉴 항목으로 이동,
+      // 어드민 전용 항목은 .adm-only(보라)로 구분해 티 나게.
+      const selAllItem=document.createElement('button');
+      selAllItem.className='gc-ch-sort-item adm-only';selAllItem.type='button';
+      selAllItem.innerHTML='<span class="chk" style="visibility:hidden">✓</span><span>전체 선택</span>';
+      selAllItem.title='지금 보이는 영상 전체 선택 (어드민)';
+      selAllItem.addEventListener('click',e=>{
+        e.stopPropagation();closeSortMenu();
         if(!state.allVids.length)return;
         if(!_selMode){_selMode=true;selBtn.classList.add('active');selBtn.textContent=T[currentLang].cancel;}
         const gridEl=cont.querySelector('.gc-ch-grid');
@@ -28958,10 +28962,10 @@ function _makeChVidController(contId){
         });
         _updateBulkBar();
       });
-      cont.querySelector('.gc-ch-hd').appendChild(selAllBtn);
+      cont.querySelector('.gc-ch-refresh')?.before(selAllItem); // '여러 개 선택' 옆 도구 묶음
       // 미태깅 우선 정렬(admin 전용) — 수동 편집할 영상을 찾기 편하게, 정렬 메뉴 맨 아래(구분선 앞)에 추가
       const untaggedItem=document.createElement('button');
-      untaggedItem.className='gc-ch-sort-item';untaggedItem.type='button';untaggedItem.dataset.sort='untagged';
+      untaggedItem.className='gc-ch-sort-item adm-only';untaggedItem.type='button';untaggedItem.dataset.sort='untagged';
       untaggedItem.innerHTML='<span class="chk">✓</span>미태깅 우선';
       cont.querySelector('.gc-ch-sort-divider')?.before(untaggedItem);
     }

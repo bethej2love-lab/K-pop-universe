@@ -1838,6 +1838,10 @@
   .gc-ch-sort-item.active,.gc-ch-view-toggle.active{color:#c8ddff;}
   .gc-ch-sort-item .chk,.gc-ch-view-toggle .chk{width:11px;flex:0 0 auto;font-size:10px;opacity:0;}
   .gc-ch-sort-item.active .chk,.gc-ch-view-toggle.active .chk{opacity:1;}
+  /* 어드민 전용 메뉴 항목(2026-11-16 사용자 "어드민 기능은 색으로 티 나게") — 보라로 구분, 일반 유저 화면엔 안 그려짐 */
+  .gc-ch-sort-item.adm-only{color:rgba(200,160,235,0.85);}
+  .gc-ch-sort-item.adm-only:hover{background:rgba(170,120,220,0.12);color:#d9b8f5;}
+  .gc-ch-sort-item.adm-only.active{color:#d9b8f5;}
   .gc-ch-sort-divider{height:0.5px;background:rgba(255,255,255,0.10);margin:4px 5px;}
   .gc-ch-filters{display:flex;gap:4px;flex-wrap:nowrap;flex:1;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;
     /* 넘치는 알약이 오른쪽 끝에서 글자 중간에 하드 컷 되던 것("Live" 절단, 디자인리뷰 #5) → 가장자리를
@@ -1916,7 +1920,7 @@
   .gc-ch-only:hover{color:rgba(220,235,255,0.8);}
   .gc-ch-only.active{color:#c8ddff;text-decoration:underline;text-underline-offset:2px;}
   /* 영상 줄 정리(2026-10-27) — 단독만·선택은 ⋮ 메뉴에서 켜고, 켜져 있을 때만 줄에 보인다(끄는 버튼 역할). 관리자 '전체선택'은 그대로. */
-  .gc-ch-hd>.gc-ch-only:not(.active),.gc-ch-hd>.gc-ch-sel-btn:not(.active):not(.gc-ch-selall-btn){display:none;}
+  .gc-ch-hd>.gc-ch-only:not(.active),.gc-ch-hd>.gc-ch-sel-btn:not(.active){display:none;}
   .gc-ch-hd>.gc-ch-only.active{text-decoration:none;background:rgba(140,170,255,0.14);border-radius:12px;padding:4px 9px;}
   /* 카드 영상 줄 = 밑줄 글자 탭(2026-10-27 사용자 시안 A — "유리 알약이 별로 안 예쁘다"). 탐험 패널 For You/발견 탭과 같은 계열.
      카드 영상 헤더(.gc-vid-hd)에만 — 곡 화면·차트 칩 등 다른 .gc-ch-filter 알약은 그대로. */
@@ -2043,8 +2047,6 @@
   .gc-ch-item.admin-selected::after,.tv-conn-selectable.admin-selected::after{content:'✓';position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(60,140,255,0.92);color:#fff;font-size:12px;font-weight:700;line-height:20px;text-align:center;z-index:5;pointer-events:none;}
   .gc-ch-sel-btn{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:14px;color:rgba(180,200,230,0.75);font-size:11px;padding:3px 9px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;white-space:nowrap;font-family:inherit;}
   /* 어드민 전용 "전체선택" — 같은 필박스 톤이되, admin-bulk-bar와 같은 파란 계열로 구분(2026-08-18) */
-  .gc-ch-selall-btn{background:rgba(100,160,255,0.10);border-color:rgba(100,160,255,0.32);color:#9ab8e0;}
-  .gc-ch-selall-btn:hover{background:rgba(100,160,255,0.18);}
   .gc-ch-sel-btn.active{background:rgba(100,160,255,0.18);border-color:rgba(100,160,255,0.4);color:#a8d0ff;}
   #admin-bulk-bar,#user-bulk-bar{position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:rgba(20,20,23,0.96);border:1px solid rgba(100,160,255,0.28);border-radius:22px;padding:9px 16px;display:flex;align-items:center;gap:10px;z-index:9990;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 4px 28px rgba(0,0,0,0.55);font-size:13px;color:#9ab8e0;white-space:nowrap;transition:opacity .18s;}
   #admin-bulk-bar.hidden,#user-bulk-bar.hidden{display:none;}
