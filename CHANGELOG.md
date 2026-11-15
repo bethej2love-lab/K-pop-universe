@@ -2,6 +2,14 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 2026-11-15 (Claude Code — 오태깅 보류 추가: 음방 채널 그룹명 없는 멤버 1명 ~14,000건+)
+- [DB] 음방 채널(KBSKpop·MBCkpop·SBSKPOP 등) 포함 멤버 1명 보류 처리:
+  - 직캠 키워드 제외(직캠/fancam 등) + 타이틀에 그룹명·영문명 없음 조건
+  - 289개 그룹 50개씩 6배치 (batch 1~5): 229+156+96+48+59=588건 직접 확인
+  - 공식 채널(source_handle=group_ko) 케이스도 포함 처리
+  - ATBO/블락비 등 음방 채널 솔로 출연 케이스 적발 사례: 정승환 KBSKpop 출연이 ATBO로 오탐
+- 처리 후 보류 총계: 81,338건 (2026-11-15 실측)
+
 ## 2026-11-15 (Claude Code — 오태깅 보류 추가: 멤버 2명+ + 외부 채널 전체 배치 ~33,150건)
 - [DB] source_handle IS NULL 멤버 2명+ 케이스 보류 (tags_manual=false, 그룹명+영문명 모두 타이틀 없음):
   - 289개 그룹 50개씩 6배치 처리: ~5,483건
