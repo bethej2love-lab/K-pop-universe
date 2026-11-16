@@ -10191,6 +10191,13 @@ async function _ytUpsertVideos(rows,opts){
   }
   return{error};
 }
+// 팬채널(주인 멤버 1명 지정)이 다른 멤버를 찍은 영상(2026-11-16 Codex — 우지 채널의 호시 Focus 6·종호 채널의 최산 직캠 등 29건):
+// 제목에서 같은 그룹 멤버가 잡혔고 주인은 그중에 없으면 그 멤버가 촬영 대상이다. 주인이 같이 잡히거나(주인 포함) 제목에 멤버가 없으면 주인 유지.
+// idol(본인 채널)·공동운영(주인 여럿)·그룹 미지정은 건드리지 않는다 — 본인 채널 제목의 다른 멤버는 '함께 나온 사람'이지 촬영 대상이 아니다.
+function _extPickMembers(ownerMs,titleMs,tier){
+  if(tier!=='fans'||!ownerMs||ownerMs.length!==1||!titleMs||!titleMs.length||titleMs.includes(ownerMs[0]))return ownerMs;
+  return titleMs;
+}
 function _extBuildRows(vids,strict,tier,owner,defaultCat,handle){
   const rows=[];let skipped=0;
   const ownerGko=_extOwnerGko(owner);
@@ -10203,7 +10210,7 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat,handle){
     // match가 null일 수 있음(strict 채널에서 제목에 그룹명/해시태그가 하나도 없어 파싱 결과 없음). owner가
     // 있는 채널(팬/아이돌개인)은 위 skip에 안 걸리고 여기로 오므로 반드시 match를 널가드해야 함 — 안 그러면
     // 그룹명 없는 팬캠 제목("성현 직캠" 등) 하나만 걸려도 그 채널 동기화가 통째로 크래시했음(2026-08-23 수정).
-    const members=owner?.mko?owner.mko.split(',').map(s=>s.trim()).filter(Boolean):(match?(match.membersByGroup[ownerGko||match.primaryGroup]||[]):[]); // 공동운영이면 소유자 여러 명 다 붙임(2026-08-22)
+    const members=owner?.mko?_extPickMembers(owner.mko.split(',').map(s=>s.trim()).filter(Boolean),(match&&match.membersByGroup&&ownerGko&&match.membersByGroup[ownerGko])||[],tier):(match?(match.membersByGroup[ownerGko||match.primaryGroup]||[]):[]); // 공동운영이면 소유자 여러 명 다 붙임(2026-08-22) · 팬채널이 다른 멤버를 찍은 영상은 제목 멤버 우선(2026-11-16)
     let withGroups=[],withMembers=[]; // v2 원곡 해석기가 아래에서 재배열할 수 있어 let(2026-08-30)
     // owner가 있으면 match.primaryGroup도 게스트 후보에 포함시켜야 함 — owner(솔로 아티스트 등)는
     // GROUPS에 없어 제목의 그룹명 리터럴 매칭 대상이 아니므로, 게스트 그룹이 유일하게 매칭되면 그게
