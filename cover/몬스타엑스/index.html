@@ -21,9 +21,13 @@
   .sub{font-size:14px;color:rgba(180,200,255,0.6);margin-bottom:8px;}
   .sub a{color:rgba(190,210,255,0.9);}
   h2{font-size:15px;margin:26px 0 8px;color:rgba(200,220,255,0.9);}
-  .vid-list{list-style:none;padding:0;margin:0;}
-  .vid-list li{padding:5px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);font-size:13.5px;}
-  .vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;}
+  @media(min-width:620px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+  .card{display:block;min-width:0;text-decoration:none;}
+  .card-th{display:block;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#17171a;}
+  .card-th img{width:100%;height:100%;object-fit:cover;display:block;}
+  .card-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.38;margin-top:7px;color:rgba(228,236,255,0.94);}
+  .card-y{display:block;font-size:11.5px;color:rgba(160,180,230,0.6);margin-top:2px;}
   .yr{color:rgba(150,175,255,0.55);font-size:12px;}
   .cta-dock{position:sticky;bottom:0;z-index:5;margin-top:28px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#0a0a0d 62%,rgba(10,10,13,0));}
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
@@ -37,10 +41,10 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
 <script src="/seo_play.js" defer></script>
 <meta name="twitter:card" content="summary">
-<meta property="og:image" content="https://i.ytimg.com/vi/deK2SCJmF9s/mqdefault.jpg">
+<meta property="og:image" content="https://i.ytimg.com/vi/3X7pKIFB9Yc/mqdefault.jpg">
 <meta property="og:image:width" content="320">
 <meta property="og:image:height" content="180">
-<meta name="twitter:image" content="https://i.ytimg.com/vi/deK2SCJmF9s/mqdefault.jpg">
+<meta name="twitter:image" content="https://i.ytimg.com/vi/3X7pKIFB9Yc/mqdefault.jpg">
 </head>
 <body>
 <div class="wrap">
@@ -51,27 +55,27 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <div class="sub"><a href="https://kpop-universe.kr/g/몬스타엑스/">몬스타엑스</a></div>
 
     <h2>몬스타엑스가 커버한 곡 <span class="yr">2</span></h2>
-    <ul class="vid-list">
-      <li><a href="https://www.youtube.com/watch?v=3X7pKIFB9Yc" target="_blank" rel="noopener">DAY6 - INSIDE OUT Challenged by.KIHYUN</a> <span class="yr">→ 데이식스</span></li>
-      <li><a href="https://www.youtube.com/watch?v=ttuXT43Lw4M" target="_blank" rel="noopener">MONSTA X - Mirotic (TVXQ!) Special Stage M COUNTDOWN 160526 EP.475</a> <span class="yr">→ 동방신기</span></li>
-    </ul>
+    <div class="grid">
+      <a class="card" href="https://www.youtube.com/watch?v=3X7pKIFB9Yc" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/3X7pKIFB9Yc/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">DAY6 - INSIDE OUT Challenged by.KIHYUN</span><span class="card-y">→ 데이식스 · 2025.09.16</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=ttuXT43Lw4M" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/ttuXT43Lw4M/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">MONSTA X - Mirotic (TVXQ!) Special Stage M COUNTDOWN 160526 EP.475</span><span class="card-y">→ 동방신기 · 2016.05.26</span></a>
+    </div>
 
     <h2>다른 아티스트가 커버한 몬스타엑스 곡 <span class="yr">13</span></h2>
-    <ul class="vid-list">
-      <li><a href="https://www.youtube.com/watch?v=1EcsgxpuLhE" target="_blank" rel="noopener">[4K] 크래비티(CRAVITY) “You Problem (by MONSTA X)” Band LIVE 러비티를 위한 커버무대❤️ [it’s KPOP LIVE 잇츠라이브]</a> <span class="yr">by 크래비티</span></li>
-      <li><a href="https://www.youtube.com/watch?v=93YDGRlBsHw" target="_blank" rel="noopener">천재아이돌 아이브 막내 이서의 파워풀한 댄스 커버  | IVE LEESEO | BTS FAKE LOVE, MONSTA X Love Killa | Role Model Cover VS</a> <span class="yr">by 방탄소년단</span></li>
-      <li><a href="https://www.youtube.com/watch?v=9D3KN_q8bn8" target="_blank" rel="noopener">[KPOP QUIZ] 케이팝 매운맛 명곡 킬링파트 댄스 추는 BAE173에 마피아가?ㅣBTS EXO MONSTA X NCT COVER DANCEㅣ킬링파트 마피아 퀴즈 Ep.2</a> <span class="yr">by BAE173</span></li>
-      <li><a href="https://www.youtube.com/watch?v=AaLYTAw7gxI" target="_blank" rel="noopener">[COVER] 몬스타엑스 - Alligator │ DANCE COVER │ DSP N</a> <span class="yr">by 미래소년</span></li>
-      <li><a href="https://www.youtube.com/watch?v=AhdAFHjDs_M" target="_blank" rel="noopener">[4K] ICHILLIN&#39;(아이칠린) GAMBLER_MONSTA X (Dance Cover ver.)</a> <span class="yr">by 아이칠린</span></li>
-      <li><a href="https://www.youtube.com/watch?v=cPzrYq41jgw" target="_blank" rel="noopener">크래비티가 커버하는 K-pop 남자 아이돌 레전드 퍼포먼스ㅣCRAVITYㅣMONSTA X, BTS, NCT Uㅣ크래비티 형준 세림 태영ㅣRole Model Cover VS</a> <span class="yr">by 크래비티</span></li>
-      <li><a href="https://www.youtube.com/watch?v=df2m7BbLfFU" target="_blank" rel="noopener">#MONSTAX #몬스타엑스 #ShootOut COVER DANCE by #JUSTB #저스트비 #Shorts</a> <span class="yr">by 저스트비</span></li>
-      <li><a href="https://www.youtube.com/watch?v=EIQaFnD_zhw" target="_blank" rel="noopener">[GHOST9] MONSTA X - GAMBLER | Cover by 손준형</a> <span class="yr">by 고스트나인</span></li>
-      <li><a href="https://www.youtube.com/watch?v=JNiCO5JzqlM" target="_blank" rel="noopener">[COVER by B] 2018 COVER DANCE MEDLEY by JUST BㅣEXO BTS MONSTA X</a> <span class="yr">by 저스트비</span></li>
-      <li><a href="https://www.youtube.com/watch?v=klw5AHmRo04" target="_blank" rel="noopener">[4K]2022 K-POP 중간결산 | bugAboo | MONSTA X SKZ IVE (G)I-DLE TREASURE | Cover Dance Medley | COUNTDANCE</a> <span class="yr">by 버가부</span></li>
-      <li><a href="https://www.youtube.com/watch?v=MPhspT9p0Rg" target="_blank" rel="noopener">[4K] 큐티청량몽환섹시 CRAVITY | MONSTA X BTS SKZ NCT TXT SVT aespa | K-POP Cover Dance Medley | COUNT DANCE</a> <span class="yr">by 크래비티</span></li>
-      <li><a href="https://www.youtube.com/watch?v=NiVRVDVhZbY" target="_blank" rel="noopener">[1theK Preview] 07년생 천재아이돌 아이브 막내 이서의 롤모델 커버 ｜BTS, MONSTA X｜IVE LEESEO #shorts</a> <span class="yr">by 아이브</span></li>
-      <li><a href="https://www.youtube.com/watch?v=rVI8z_wy2rk" target="_blank" rel="noopener">&#39;MONSTA X - Rush Hour&#39; Cover by DKB</a> <span class="yr">by 다크비</span></li>
-    </ul>
+    <div class="grid">
+      <a class="card" href="https://www.youtube.com/watch?v=1EcsgxpuLhE" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/1EcsgxpuLhE/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[4K] 크래비티(CRAVITY) “You Problem (by MONSTA X)” Band LIVE 러비티를 위한 커버무대❤️ [it’s KPOP LIVE 잇츠라이브]</span><span class="card-y">by 크래비티 · 2023.08.05</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=93YDGRlBsHw" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/93YDGRlBsHw/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">천재아이돌 아이브 막내 이서의 파워풀한 댄스 커버  | IVE LEESEO | BTS FAKE LOVE, MONSTA X Love Killa | Role Model Cover VS</span><span class="card-y">by 방탄소년단 · 2022.04.29</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=9D3KN_q8bn8" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/9D3KN_q8bn8/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[KPOP QUIZ] 케이팝 매운맛 명곡 킬링파트 댄스 추는 BAE173에 마피아가?ㅣBTS EXO MONSTA X NCT COVER DANCEㅣ킬링파트 마피아 퀴즈 Ep.2</span><span class="card-y">by BAE173 · 2021.04.22</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=AaLYTAw7gxI" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/AaLYTAw7gxI/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[COVER] 몬스타엑스 - Alligator │ DANCE COVER │ DSP N</span><span class="card-y">by 미래소년 · 2020.03.20</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=AhdAFHjDs_M" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/AhdAFHjDs_M/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[4K] ICHILLIN&#39;(아이칠린) GAMBLER_MONSTA X (Dance Cover ver.)</span><span class="card-y">by 아이칠린 · 2021.10.29</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=cPzrYq41jgw" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/cPzrYq41jgw/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">크래비티가 커버하는 K-pop 남자 아이돌 레전드 퍼포먼스ㅣCRAVITYㅣMONSTA X, BTS, NCT Uㅣ크래비티 형준 세림 태영ㅣRole Model Cover VS</span><span class="card-y">by 크래비티 · 2021.09.28</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=df2m7BbLfFU" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/df2m7BbLfFU/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">#MONSTAX #몬스타엑스 #ShootOut COVER DANCE by #JUSTB #저스트비 #Shorts</span><span class="card-y">by 저스트비 · 2022.02.10</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=EIQaFnD_zhw" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/EIQaFnD_zhw/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[GHOST9] MONSTA X - GAMBLER | Cover by 손준형</span><span class="card-y">by 고스트나인 · 2021.06.29</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=JNiCO5JzqlM" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/JNiCO5JzqlM/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[COVER by B] 2018 COVER DANCE MEDLEY by JUST BㅣEXO BTS MONSTA X</span><span class="card-y">by 저스트비 · 2022.02.10</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=klw5AHmRo04" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/klw5AHmRo04/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[4K]2022 K-POP 중간결산 | bugAboo | MONSTA X SKZ IVE (G)I-DLE TREASURE | Cover Dance Medley | COUNTDANCE</span><span class="card-y">by 버가부 · 2022.06.10</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=MPhspT9p0Rg" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/MPhspT9p0Rg/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[4K] 큐티청량몽환섹시 CRAVITY | MONSTA X BTS SKZ NCT TXT SVT aespa | K-POP Cover Dance Medley | COUNT DANCE</span><span class="card-y">by 크래비티 · 2021.09.09</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=NiVRVDVhZbY" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/NiVRVDVhZbY/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[1theK Preview] 07년생 천재아이돌 아이브 막내 이서의 롤모델 커버 ｜BTS, MONSTA X｜IVE LEESEO #shorts</span><span class="card-y">by 아이브 · 2022.04.27</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=rVI8z_wy2rk" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/rVI8z_wy2rk/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">&#39;MONSTA X - Rush Hour&#39; Cover by DKB</span><span class="card-y">by 다크비 · 2022.07.23</span></a>
+    </div>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/cover/monsta-x/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/">더 알아보기 →</a></div>
 </div>

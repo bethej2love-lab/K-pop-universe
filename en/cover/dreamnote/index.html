@@ -21,9 +21,13 @@
   .sub{font-size:14px;color:rgba(180,200,255,0.6);margin-bottom:8px;}
   .sub a{color:rgba(190,210,255,0.9);}
   h2{font-size:15px;margin:26px 0 8px;color:rgba(200,220,255,0.9);}
-  .vid-list{list-style:none;padding:0;margin:0;}
-  .vid-list li{padding:5px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);font-size:13.5px;}
-  .vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;}
+  @media(min-width:620px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+  .card{display:block;min-width:0;text-decoration:none;}
+  .card-th{display:block;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#17171a;}
+  .card-th img{width:100%;height:100%;object-fit:cover;display:block;}
+  .card-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.38;margin-top:7px;color:rgba(228,236,255,0.94);}
+  .card-y{display:block;font-size:11.5px;color:rgba(160,180,230,0.6);margin-top:2px;}
   .yr{color:rgba(150,175,255,0.55);font-size:12px;}
   .cta-dock{position:sticky;bottom:0;z-index:5;margin-top:28px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#0a0a0d 62%,rgba(10,10,13,0));}
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
@@ -36,11 +40,11 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
 <script src="/seo_play.js" defer></script>
-<meta name="twitter:card" content="summary_large_image">
-<meta property="og:image" content="https://kpop-universe.kr/og-image.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta name="twitter:image" content="https://kpop-universe.kr/og-image.png">
+<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://i.ytimg.com/vi/-9bVz1h_cMU/mqdefault.jpg">
+<meta property="og:image:width" content="320">
+<meta property="og:image:height" content="180">
+<meta name="twitter:image" content="https://i.ytimg.com/vi/-9bVz1h_cMU/mqdefault.jpg">
 </head>
 <body>
 <div class="wrap">
@@ -51,38 +55,38 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <div class="sub"><a href="https://kpop-universe.kr/en/g/dreamnote/">Dreamnote</a></div>
 
     <h2>Covered by Dreamnote <span class="yr">22</span></h2>
-    <ul class="vid-list">
-      <li><a href="https://www.youtube.com/watch?v=-9bVz1h_cMU" target="_blank" rel="noopener">드림노트 수민 &#39;시간을 달려서&#39; 직캠 | DreamNote Sumin | 여자친구(GFRIEND)_Rough | 춤추는 신인(Dancing Rookie) | Dance Cover</a> <span class="yr">→ GFRIEND</span></li>
-      <li><a href="https://www.youtube.com/watch?v=0EBUQjcFxIk" target="_blank" rel="noopener">[Cover Note] 방탄소년단 - 상남자 (BTS - Boy In Luv)</a> <span class="yr">→ BTS</span></li>
-      <li><a href="https://www.youtube.com/watch?v=0TwOk9EeJSY" target="_blank" rel="noopener">드림노트 보니 &#39;상남자&#39; 직캠 | DreamNote BoNi | BTS(방탄소년단) _ Boy In Luv | 춤추는 신인(Dancing Rookie) | Dance Cover</a> <span class="yr">→ BTS</span></li>
-      <li><a href="https://www.youtube.com/watch?v=4cog1z0R8p8" target="_blank" rel="noopener">레전드 교복 컨셉! 에프엑스 첫 사랑니 커버 by 드림노트 | DreamNote | f(x) | 춤추는 신인(Dancing Rookie) | Dance Cover</a> <span class="yr">→ f(x)</span></li>
-      <li><a href="https://www.youtube.com/watch?v=bHc_HEzt5eU" target="_blank" rel="noopener">[드림노트] 워너원(Wanna One) &#39;에너제틱 (Energetic)&#39; Dance cover</a> <span class="yr">→ Wanna One</span></li>
-      <li><a href="https://www.youtube.com/watch?v=CuwrkDe7JT8" target="_blank" rel="noopener">드림노트 유아이 &#39;첫 사랑니&#39; 직캠 | DreamNote YOUI |  f(x)_Rum Pum Pum Pum | 춤추는 신인(Dancing Rookie) | Dance Cover</a> <span class="yr">→ f(x)</span></li>
-      <li><a href="https://www.youtube.com/watch?v=DAWEDQ5rO3c" target="_blank" rel="noopener">[#Shorts] Pink Venom💕 #BLACKPINK #PinkVenomChallenge#드림노트#DreamNote #ドリームノート#유아이 #수민#YOUI #Sumin</a> <span class="yr">→ BLACKPINK</span></li>
-      <li><a href="https://www.youtube.com/watch?v=ea3K-NTLu-Q" target="_blank" rel="noopener">걸그룹이 직접 추는 랜덤 플레이 댄스 BTS EXO Red Velvet | 드림노트 (DreamNote) | Special Clip Behind</a> <span class="yr">→ EXO</span></li>
-      <li><a href="https://www.youtube.com/watch?v=EOB4PyWb2JI" target="_blank" rel="noopener">[Cover Note] 카라 - 숙녀가 못 돼 (KARA - Damaged Lady) [Cover by YOUI, BoNi, MISO]</a> <span class="yr">→ KARA</span></li>
-      <li><a href="https://www.youtube.com/watch?v=FQ8GyYv5XpI" target="_blank" rel="noopener">교복 레전드! 시간을 달려서 커버 by 드림노트 | DreamNote | 여자친구(GFRIEND)_Rough | 춤추는 신인(Dancing Rookie) | Dance Cover</a> <span class="yr">→ GFRIEND</span></li>
-      <li><a href="https://www.youtube.com/watch?v=I1kb6TUD2Bo" target="_blank" rel="noopener">[Cover Note] QWER - 별의 하모니 (Cover by Lara)</a> <span class="yr">→ QWER</span></li>
-      <li><a href="https://www.youtube.com/watch?v=JH8KBeuBwkk" target="_blank" rel="noopener">드림노트 은조 &#39;첫 사랑니&#39; 직캠 | DreamNote Eunjo |  f(x)_Rum Pum Pum Pum | 춤추는 신인(Dancing Rookie) | Dance Cover</a> <span class="yr">→ f(x)</span></li>
-      <li><a href="https://www.youtube.com/watch?v=LBVBOZN3mZs" target="_blank" rel="noopener">드림노트 수민 &#39;첫 사랑니&#39; 직캠 | DreamNote Sumin |  f(x)_Rum Pum Pum Pum | 춤추는 신인(Dancing Rookie) | Dance Cover</a> <span class="yr">→ f(x)</span></li>
-      <li><a href="https://www.youtube.com/watch?v=LJP0R6JLxK8" target="_blank" rel="noopener">[Cover Note] 애프터스쿨 (After School) - Love Love Love (Cover by MISO)</a> <span class="yr">→ After School</span></li>
-      <li><a href="https://www.youtube.com/watch?v=MN6lMVYHnJ0" target="_blank" rel="noopener">드림노트 라라 &#39;시간을 달려서&#39; 직캠 | DreamNote LARA | 여자친구(GFRIEND)_Rough | 춤추는 신인(Dancing Rookie) | Dance Cover</a> <span class="yr">→ GFRIEND</span></li>
-      <li><a href="https://www.youtube.com/watch?v=Pju_VRMV2uk" target="_blank" rel="noopener">[Cover Note] f(x) - 첫 사랑니 (Rum Pum Pum Pum)</a> <span class="yr">→ f(x)</span></li>
-      <li><a href="https://www.youtube.com/watch?v=q_2wQ3N4Kb4" target="_blank" rel="noopener">BTS EXO부터 2PM H.O.T.까지 Boy Group History | K-pop Mashup | Cover | MUSIC CIRCLE | 뮤직써클 | DreamNote</a> <span class="yr">→ 2PM</span></li>
-      <li><a href="https://www.youtube.com/watch?v=q_2wQ3N4Kb4" target="_blank" rel="noopener">BTS EXO부터 2PM H.O.T.까지 Boy Group History | K-pop Mashup | Cover | MUSIC CIRCLE | 뮤직써클 | DreamNote</a> <span class="yr">→ H.O.T.</span></li>
-      <li><a href="https://www.youtube.com/watch?v=QjrdoxFhV5w" target="_blank" rel="noopener">[Cover Note] 2PM - 우리집(My House) [Cover by YOUI, Sumin]</a> <span class="yr">→ 2PM</span></li>
-      <li><a href="https://www.youtube.com/watch?v=T-ZE7u4364k" target="_blank" rel="noopener">[Cover Note] 나의 소녀시대 OST - 소행운 [Cover by Lara]</a> <span class="yr">→ Girls&#39; Generation</span></li>
-      <li><a href="https://www.youtube.com/watch?v=TZ0w_q1L2Pk" target="_blank" rel="noopener">[Cover Note] 카라 - 프리티걸 (KARA - Pretty Girl) [Cover by Lara, Sumin, Eunjo]</a> <span class="yr">→ KARA</span></li>
-      <li><a href="https://www.youtube.com/watch?v=y9hviLQ7RGE" target="_blank" rel="noopener">[Cover Note] 핑클 (Fin.K.L) - White 🎄 (Cover by BoNi, Lara)</a> <span class="yr">→ Fin.K.L</span></li>
-    </ul>
+    <div class="grid">
+      <a class="card" href="https://www.youtube.com/watch?v=-9bVz1h_cMU" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/-9bVz1h_cMU/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">드림노트 수민 &#39;시간을 달려서&#39; 직캠 | DreamNote Sumin | 여자친구(GFRIEND)_Rough | 춤추는 신인(Dancing Rookie) | Dance Cover</span><span class="card-y">→ GFRIEND · 2020.02.23</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=0EBUQjcFxIk" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/0EBUQjcFxIk/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[Cover Note] 방탄소년단 - 상남자 (BTS - Boy In Luv)</span><span class="card-y">→ BTS · 2020.03.05</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=0TwOk9EeJSY" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/0TwOk9EeJSY/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">드림노트 보니 &#39;상남자&#39; 직캠 | DreamNote BoNi | BTS(방탄소년단) _ Boy In Luv | 춤추는 신인(Dancing Rookie) | Dance Cover</span><span class="card-y">→ BTS · 2020.02.29</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=4cog1z0R8p8" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/4cog1z0R8p8/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">레전드 교복 컨셉! 에프엑스 첫 사랑니 커버 by 드림노트 | DreamNote | f(x) | 춤추는 신인(Dancing Rookie) | Dance Cover</span><span class="card-y">→ f(x) · 2020.02.27</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=bHc_HEzt5eU" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/bHc_HEzt5eU/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[드림노트] 워너원(Wanna One) &#39;에너제틱 (Energetic)&#39; Dance cover</span><span class="card-y">→ Wanna One · 2018.07.20</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=CuwrkDe7JT8" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/CuwrkDe7JT8/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">드림노트 유아이 &#39;첫 사랑니&#39; 직캠 | DreamNote YOUI |  f(x)_Rum Pum Pum Pum | 춤추는 신인(Dancing Rookie) | Dance Cover</span><span class="card-y">→ f(x) · 2020.03.01</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=DAWEDQ5rO3c" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/DAWEDQ5rO3c/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[#Shorts] Pink Venom💕 #BLACKPINK #PinkVenomChallenge#드림노트#DreamNote #ドリームノート#유아이 #수민#YOUI #Sumin</span><span class="card-y">→ BLACKPINK · 2022.08.29</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=ea3K-NTLu-Q" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/ea3K-NTLu-Q/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">걸그룹이 직접 추는 랜덤 플레이 댄스 BTS EXO Red Velvet | 드림노트 (DreamNote) | Special Clip Behind</span><span class="card-y">→ EXO · 2020.01.16</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=EOB4PyWb2JI" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/EOB4PyWb2JI/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[Cover Note] 카라 - 숙녀가 못 돼 (KARA - Damaged Lady) [Cover by YOUI, BoNi, MISO]</span><span class="card-y">→ KARA · 2020.04.14</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=FQ8GyYv5XpI" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/FQ8GyYv5XpI/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">교복 레전드! 시간을 달려서 커버 by 드림노트 | DreamNote | 여자친구(GFRIEND)_Rough | 춤추는 신인(Dancing Rookie) | Dance Cover</span><span class="card-y">→ GFRIEND · 2020.02.20</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=I1kb6TUD2Bo" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/I1kb6TUD2Bo/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[Cover Note] QWER - 별의 하모니 (Cover by Lara)</span><span class="card-y">→ QWER · 2024.08.09</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=JH8KBeuBwkk" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/JH8KBeuBwkk/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">드림노트 은조 &#39;첫 사랑니&#39; 직캠 | DreamNote Eunjo |  f(x)_Rum Pum Pum Pum | 춤추는 신인(Dancing Rookie) | Dance Cover</span><span class="card-y">→ f(x) · 2020.03.01</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=LBVBOZN3mZs" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/LBVBOZN3mZs/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">드림노트 수민 &#39;첫 사랑니&#39; 직캠 | DreamNote Sumin |  f(x)_Rum Pum Pum Pum | 춤추는 신인(Dancing Rookie) | Dance Cover</span><span class="card-y">→ f(x) · 2020.03.01</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=LJP0R6JLxK8" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/LJP0R6JLxK8/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[Cover Note] 애프터스쿨 (After School) - Love Love Love (Cover by MISO)</span><span class="card-y">→ After School · 2023.12.23</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=MN6lMVYHnJ0" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/MN6lMVYHnJ0/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">드림노트 라라 &#39;시간을 달려서&#39; 직캠 | DreamNote LARA | 여자친구(GFRIEND)_Rough | 춤추는 신인(Dancing Rookie) | Dance Cover</span><span class="card-y">→ GFRIEND · 2020.02.23</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=Pju_VRMV2uk" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/Pju_VRMV2uk/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[Cover Note] f(x) - 첫 사랑니 (Rum Pum Pum Pum)</span><span class="card-y">→ f(x) · 2020.03.03</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=q_2wQ3N4Kb4" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/q_2wQ3N4Kb4/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">BTS EXO부터 2PM H.O.T.까지 Boy Group History | K-pop Mashup | Cover | MUSIC CIRCLE | 뮤직써클 | DreamNote</span><span class="card-y">→ 2PM · 2020.02.05</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=q_2wQ3N4Kb4" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/q_2wQ3N4Kb4/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">BTS EXO부터 2PM H.O.T.까지 Boy Group History | K-pop Mashup | Cover | MUSIC CIRCLE | 뮤직써클 | DreamNote</span><span class="card-y">→ H.O.T. · 2020.02.05</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=QjrdoxFhV5w" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/QjrdoxFhV5w/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[Cover Note] 2PM - 우리집(My House) [Cover by YOUI, Sumin]</span><span class="card-y">→ 2PM · 2020.01.31</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=T-ZE7u4364k" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/T-ZE7u4364k/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[Cover Note] 나의 소녀시대 OST - 소행운 [Cover by Lara]</span><span class="card-y">→ Girls&#39; Generation · 2020.06.29</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=TZ0w_q1L2Pk" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/TZ0w_q1L2Pk/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[Cover Note] 카라 - 프리티걸 (KARA - Pretty Girl) [Cover by Lara, Sumin, Eunjo]</span><span class="card-y">→ KARA · 2020.04.08</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=y9hviLQ7RGE" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/y9hviLQ7RGE/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[Cover Note] 핑클 (Fin.K.L) - White 🎄 (Cover by BoNi, Lara)</span><span class="card-y">→ Fin.K.L · 2021.12.25</span></a>
+    </div>
 
     <h2>Dreamnote songs covered by others <span class="yr">4</span></h2>
-    <ul class="vid-list">
-      <li><a href="https://www.youtube.com/watch?v=cXbQYKyQZAk" target="_blank" rel="noopener">드림노트 유아이 &#39;상남자&#39; 직캠 | DreamNote YOUI | BTS(방탄소년단) _ Boy In Luv | 춤추는 신인(Dancing Rookie) | Dance Cover</a> <span class="yr">by BTS</span></li>
-      <li><a href="https://www.youtube.com/watch?v=omkNLJfNEF0" target="_blank" rel="noopener">ITZY (여자)아이들부터 소녀시대 핑클까지 Girl Group History | K-pop Mashup | Cover | MUSIC CIRCLE | 뮤직써클 | DreamNote</a> <span class="yr">by Girls&#39; Generation</span></li>
-      <li><a href="https://www.youtube.com/watch?v=qsH7bENZtuw" target="_blank" rel="noopener">방탄소년단 엔씨티 유 선미 춤 3초보고 노래맞추기 | DreamNote(드림노트) 커버댄스 | BTS NCT U SUNMIㅣIDOL DANCE COVER QUIZㅣ돌춤잘알 Ep.3</a> <span class="yr">by BTS</span></li>
-      <li><a href="https://www.youtube.com/watch?v=RzXK8VhheoA" target="_blank" rel="noopener">BTS 상남자 커버한 여돌 by 드림노트 | DreamNote | 방탄소년단 | Boy In Luv | 춤추는 신인(Dancing Rookie) | Dance Cover | 안무</a> <span class="yr">by BTS</span></li>
-    </ul>
+    <div class="grid">
+      <a class="card" href="https://www.youtube.com/watch?v=cXbQYKyQZAk" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/cXbQYKyQZAk/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">드림노트 유아이 &#39;상남자&#39; 직캠 | DreamNote YOUI | BTS(방탄소년단) _ Boy In Luv | 춤추는 신인(Dancing Rookie) | Dance Cover</span><span class="card-y">by BTS · 2020.02.29</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=omkNLJfNEF0" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/omkNLJfNEF0/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">ITZY (여자)아이들부터 소녀시대 핑클까지 Girl Group History | K-pop Mashup | Cover | MUSIC CIRCLE | 뮤직써클 | DreamNote</span><span class="card-y">by Girls&#39; Generation · 2020.01.22</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=qsH7bENZtuw" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/qsH7bENZtuw/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">방탄소년단 엔씨티 유 선미 춤 3초보고 노래맞추기 | DreamNote(드림노트) 커버댄스 | BTS NCT U SUNMIㅣIDOL DANCE COVER QUIZㅣ돌춤잘알 Ep.3</span><span class="card-y">by BTS · 2020.03.31</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=RzXK8VhheoA" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/RzXK8VhheoA/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">BTS 상남자 커버한 여돌 by 드림노트 | DreamNote | 방탄소년단 | Boy In Luv | 춤추는 신인(Dancing Rookie) | Dance Cover | 안무</span><span class="card-y">by BTS · 2020.02.25</span></a>
+    </div>
   <div class="lang-switch"><a href="https://kpop-universe.kr/cover/드림노트/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/">Explore in the Universe →</a></div>
 </div>

@@ -21,9 +21,13 @@
   .sub{font-size:14px;color:rgba(180,200,255,0.6);margin-bottom:8px;}
   .sub a{color:rgba(190,210,255,0.9);}
   h2{font-size:15px;margin:26px 0 8px;color:rgba(200,220,255,0.9);}
-  .vid-list{list-style:none;padding:0;margin:0;}
-  .vid-list li{padding:5px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);font-size:13.5px;}
-  .vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;}
+  @media(min-width:620px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+  .card{display:block;min-width:0;text-decoration:none;}
+  .card-th{display:block;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#17171a;}
+  .card-th img{width:100%;height:100%;object-fit:cover;display:block;}
+  .card-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.38;margin-top:7px;color:rgba(228,236,255,0.94);}
+  .card-y{display:block;font-size:11.5px;color:rgba(160,180,230,0.6);margin-top:2px;}
   .yr{color:rgba(150,175,255,0.55);font-size:12px;}
   .cta-dock{position:sticky;bottom:0;z-index:5;margin-top:28px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#0a0a0d 62%,rgba(10,10,13,0));}
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
@@ -37,10 +41,10 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
 <script src="/seo_play.js" defer></script>
 <meta name="twitter:card" content="summary">
-<meta property="og:image" content="https://i.ytimg.com/vi/ysg6GVlzz9Y/mqdefault.jpg">
+<meta property="og:image" content="https://i.ytimg.com/vi/7a0OU0ui2BI/mqdefault.jpg">
 <meta property="og:image:width" content="320">
 <meta property="og:image:height" content="180">
-<meta name="twitter:image" content="https://i.ytimg.com/vi/ysg6GVlzz9Y/mqdefault.jpg">
+<meta name="twitter:image" content="https://i.ytimg.com/vi/7a0OU0ui2BI/mqdefault.jpg">
 </head>
 <body>
 <div class="wrap">
@@ -51,34 +55,34 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <div class="sub"><a href="https://kpop-universe.kr/g/코르티스/">코르티스</a></div>
 
     <h2>코르티스가 커버한 곡 <span class="yr">4</span></h2>
-    <ul class="vid-list">
-      <li><a href="https://www.youtube.com/watch?v=7a0OU0ui2BI" target="_blank" rel="noopener">we move like animals #KATSEYE_Animal#CORTIS #코르티스</a> <span class="yr">→ 캣츠아이</span></li>
-      <li><a href="https://www.youtube.com/watch?v=g9maATcr2gg" target="_blank" rel="noopener">We pop out, we actin&#39; a fool again #BTS #방탄소년단#CORTIS #코르티스</a> <span class="yr">→ 방탄소년단</span></li>
-      <li><a href="https://www.youtube.com/watch?v=u283QVcIveg" target="_blank" rel="noopener">안무 교환해도 찰떡이라는 아일릿 &#39;GO!&#39; &amp; 코르티스 &#39;jellyous&#39;</a> <span class="yr">→ 아일릿</span></li>
-      <li><a href="https://www.youtube.com/watch?v=uGtZAkJhKlE" target="_blank" rel="noopener">this how we vibe to #BTS_SWIM 🏊🫶 #BTS #방탄소년단 #CORTIS #코르티스</a> <span class="yr">→ 방탄소년단</span></li>
-    </ul>
+    <div class="grid">
+      <a class="card" href="https://www.youtube.com/watch?v=7a0OU0ui2BI" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/7a0OU0ui2BI/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">we move like animals #KATSEYE_Animal#CORTIS #코르티스</span><span class="card-y">→ 캣츠아이 · 2026.08.12</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=g9maATcr2gg" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/g9maATcr2gg/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">We pop out, we actin&#39; a fool again #BTS #방탄소년단#CORTIS #코르티스</span><span class="card-y">→ 방탄소년단 · 2026.04.03</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=u283QVcIveg" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/u283QVcIveg/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">안무 교환해도 찰떡이라는 아일릿 &#39;GO!&#39; &amp; 코르티스 &#39;jellyous&#39;</span><span class="card-y">→ 아일릿 · 2025.12.10</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=uGtZAkJhKlE" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/uGtZAkJhKlE/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">this how we vibe to #BTS_SWIM 🏊🫶 #BTS #방탄소년단 #CORTIS #코르티스</span><span class="card-y">→ 방탄소년단 · 2026.03.20</span></a>
+    </div>
 
     <h2>다른 아티스트가 커버한 코르티스 곡 <span class="yr">18</span></h2>
-    <ul class="vid-list">
-      <li><a href="https://www.youtube.com/watch?v=0YFuSeEwKpk" target="_blank" rel="noopener">[Q-reate] #Won_N_onLy FaSHioN - CORTIS (코르티스) | Cover by WONCHAE</a> <span class="yr">by 퀸즈아이</span></li>
-      <li><a href="https://www.youtube.com/watch?v=31xS1b7Ck7c" target="_blank" rel="noopener">𝙂𝙊 ➡️ #ifeye #이프아이 #TAERIN #태린 #CORTIS_GO</a> <span class="yr">by 이프아이</span></li>
-      <li><a href="https://www.youtube.com/watch?v=3WY8EXTI5aE" target="_blank" rel="noopener">[Q-reate] #Won_N_onLy 정면 직캠 버전 (ft.아윤) FaSHioN - CORTIS (코르티스) | Cover by WONCHAE</a> <span class="yr">by 퀸즈아이</span></li>
-      <li><a href="https://www.youtube.com/watch?v=4_HgrACWB8g" target="_blank" rel="noopener">FaSHioN👕FaSHioN👖🕺🕺 #다크비 #DKB #희찬 #HEECHAN #준서 #JUNSEO #CORTIS #코르티스 #CORTIS_FaSHioN #Shorts</a> <span class="yr">by 다크비</span></li>
-      <li><a href="https://www.youtube.com/watch?v=A7uS-EYXmTg" target="_blank" rel="noopener">that&#39;s red-red#AMPERSANDONE #KAMDEN #MACKIAH #GOD #CORTIS_REDRED</a> <span class="yr">by 앰퍼샌드원</span></li>
-      <li><a href="https://www.youtube.com/watch?v=GGEKtcXDSe0" target="_blank" rel="noopener">I just gotta get it watch me GO#앰퍼샌드원 #AMPERSANDONE #최지호 #JIHO #그게그거지 #Thats_That #CORTIS_GO</a> <span class="yr">by 앰퍼샌드원</span></li>
-      <li><a href="https://www.youtube.com/watch?v=LpYRDQHMlfE" target="_blank" rel="noopener">REDRED🚨 #nSSign #엔싸인 #エンサイン #CORTIS #CORTIS_REDRED</a> <span class="yr">by 엔싸인</span></li>
-      <li><a href="https://www.youtube.com/watch?v=mJ2BZIxwH_4" target="_blank" rel="noopener">I just gotta get it Watch me go🔥 #다크비 #DKB #이찬 #E_CHAN #CORTIS #코르티스 #CORTIS_GO #Shorts</a> <span class="yr">by 다크비</span></li>
-      <li><a href="https://www.youtube.com/watch?v=NKWfT-_1ofQ" target="_blank" rel="noopener">Ebin 🚨 MinC🚨 REDRED‼️ #SECRET_NUMBER #시크릿넘버 #Ebin #MinC #CORTIS_REDRED</a> <span class="yr">by 시크릿넘버</span></li>
-      <li><a href="https://www.youtube.com/watch?v=oZbKCucFhuM" target="_blank" rel="noopener">acai #nSSign #엔싸인 #HUIWON #acai #cortis</a> <span class="yr">by 엔싸인</span></li>
-      <li><a href="https://www.youtube.com/watch?v=PBveRmg54HE" target="_blank" rel="noopener">[Q-reate] #Won_N_onLy 측면 직캠 버전 (ft.아윤) FaSHioN - CORTIS (코르티스) | Cover by WONCHAE</a> <span class="yr">by 퀸즈아이</span></li>
-      <li><a href="https://www.youtube.com/watch?v=Q_kCNJVXoTI" target="_blank" rel="noopener">CORTIS &#39;What You Want&#39;Cover by GK🎸 #다크비 #DKB #GK #지케이 #CORTIS #코르티스 #CORTIS_WhatYouWant</a> <span class="yr">by 다크비</span></li>
-      <li><a href="https://www.youtube.com/watch?v=qO2ARJ7DRAE" target="_blank" rel="noopener">우린 필요 없어 다른 sign 이든&amp;태훈 &#39;GO!&#39; #나인아이 #NINEi #cover #GO #CORTIS #코르티스 #Edited_by_JW</a> <span class="yr">by 나인아이</span></li>
-      <li><a href="https://www.youtube.com/watch?v=SWFI2HPz_3M" target="_blank" rel="noopener">Who is choking I don’t care #nSSign #엔싸인 #エンサイン #CORTIS #CORTIS_ACAI</a> <span class="yr">by 엔싸인</span></li>
-      <li><a href="https://www.youtube.com/watch?v=VtQSXx9yDa4" target="_blank" rel="noopener">🚴 #다크비 #DKB #준서 #JUNSEO#CORTIS #코르티스 #CORTIS_GO #shorts</a> <span class="yr">by 다크비</span></li>
-      <li><a href="https://www.youtube.com/watch?v=XiW96FL6JwE" target="_blank" rel="noopener">🤷‍♂️💥 #다크비 #DKB #희찬 #HEECHAN#CORTIS #코르티스 #CORTIS_WhatYouWant #Shorts</a> <span class="yr">by 다크비</span></li>
-      <li><a href="https://www.youtube.com/watch?v=xpQl3KgpXok" target="_blank" rel="noopener">나도 go🚀 #나인아이 #NINEi #태훈 #TAEHUN #CORTIS #코르티스 #CORTIS_GO</a> <span class="yr">by 나인아이</span></li>
-      <li><a href="https://www.youtube.com/watch?v=yOeIOrRYx5E" target="_blank" rel="noopener">What&#39;s your FaSHioN today?? #다크비 #DKB #D1 #디원 #유쿠 #YUKU #CORTIS #코르티스 #CORTIS_FaSHioN #Shorts</a> <span class="yr">by 다크비</span></li>
-    </ul>
+    <div class="grid">
+      <a class="card" href="https://www.youtube.com/watch?v=0YFuSeEwKpk" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/0YFuSeEwKpk/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[Q-reate] #Won_N_onLy FaSHioN - CORTIS (코르티스) | Cover by WONCHAE</span><span class="card-y">by 퀸즈아이 · 2026.03.12</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=31xS1b7Ck7c" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/31xS1b7Ck7c/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">𝙂𝙊 ➡️ #ifeye #이프아이 #TAERIN #태린 #CORTIS_GO</span><span class="card-y">by 이프아이 · 2025.09.09</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=3WY8EXTI5aE" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/3WY8EXTI5aE/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[Q-reate] #Won_N_onLy 정면 직캠 버전 (ft.아윤) FaSHioN - CORTIS (코르티스) | Cover by WONCHAE</span><span class="card-y">by 퀸즈아이 · 2026.03.12</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=4_HgrACWB8g" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/4_HgrACWB8g/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">FaSHioN👕FaSHioN👖🕺🕺 #다크비 #DKB #희찬 #HEECHAN #준서 #JUNSEO #CORTIS #코르티스 #CORTIS_FaSHioN #Shorts</span><span class="card-y">by 다크비 · 2025.09.17</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=A7uS-EYXmTg" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/A7uS-EYXmTg/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">that&#39;s red-red#AMPERSANDONE #KAMDEN #MACKIAH #GOD #CORTIS_REDRED</span><span class="card-y">by 앰퍼샌드원 · 2026.05.06</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=GGEKtcXDSe0" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/GGEKtcXDSe0/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">I just gotta get it watch me GO#앰퍼샌드원 #AMPERSANDONE #최지호 #JIHO #그게그거지 #Thats_That #CORTIS_GO</span><span class="card-y">by 앰퍼샌드원 · 2025.08.23</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=LpYRDQHMlfE" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/LpYRDQHMlfE/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">REDRED🚨 #nSSign #엔싸인 #エンサイン #CORTIS #CORTIS_REDRED</span><span class="card-y">by 엔싸인 · 2026.06.10</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=mJ2BZIxwH_4" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/mJ2BZIxwH_4/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">I just gotta get it Watch me go🔥 #다크비 #DKB #이찬 #E_CHAN #CORTIS #코르티스 #CORTIS_GO #Shorts</span><span class="card-y">by 다크비 · 2025.09.03</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=NKWfT-_1ofQ" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/NKWfT-_1ofQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">Ebin 🚨 MinC🚨 REDRED‼️ #SECRET_NUMBER #시크릿넘버 #Ebin #MinC #CORTIS_REDRED</span><span class="card-y">by 시크릿넘버 · 2026.05.12</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=oZbKCucFhuM" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/oZbKCucFhuM/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">acai #nSSign #엔싸인 #HUIWON #acai #cortis</span><span class="card-y">by 엔싸인 · 2026.08.23</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=PBveRmg54HE" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/PBveRmg54HE/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[Q-reate] #Won_N_onLy 측면 직캠 버전 (ft.아윤) FaSHioN - CORTIS (코르티스) | Cover by WONCHAE</span><span class="card-y">by 퀸즈아이 · 2026.03.12</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=Q_kCNJVXoTI" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/Q_kCNJVXoTI/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">CORTIS &#39;What You Want&#39;Cover by GK🎸 #다크비 #DKB #GK #지케이 #CORTIS #코르티스 #CORTIS_WhatYouWant</span><span class="card-y">by 다크비 · 2025.09.22</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=qO2ARJ7DRAE" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/qO2ARJ7DRAE/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">우린 필요 없어 다른 sign 이든&amp;태훈 &#39;GO!&#39; #나인아이 #NINEi #cover #GO #CORTIS #코르티스 #Edited_by_JW</span><span class="card-y">by 나인아이 · 2026.01.21</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=SWFI2HPz_3M" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/SWFI2HPz_3M/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">Who is choking I don’t care #nSSign #엔싸인 #エンサイン #CORTIS #CORTIS_ACAI</span><span class="card-y">by 엔싸인 · 2026.06.08</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=VtQSXx9yDa4" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/VtQSXx9yDa4/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">🚴 #다크비 #DKB #준서 #JUNSEO#CORTIS #코르티스 #CORTIS_GO #shorts</span><span class="card-y">by 다크비 · 2025.08.26</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=XiW96FL6JwE" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/XiW96FL6JwE/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">🤷‍♂️💥 #다크비 #DKB #희찬 #HEECHAN#CORTIS #코르티스 #CORTIS_WhatYouWant #Shorts</span><span class="card-y">by 다크비 · 2025.09.08</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=xpQl3KgpXok" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/xpQl3KgpXok/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">나도 go🚀 #나인아이 #NINEi #태훈 #TAEHUN #CORTIS #코르티스 #CORTIS_GO</span><span class="card-y">by 나인아이 · 2025.09.16</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=yOeIOrRYx5E" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/yOeIOrRYx5E/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">What&#39;s your FaSHioN today?? #다크비 #DKB #D1 #디원 #유쿠 #YUKU #CORTIS #코르티스 #CORTIS_FaSHioN #Shorts</span><span class="card-y">by 다크비 · 2025.09.23</span></a>
+    </div>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/cover/cortis/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/">더 알아보기 →</a></div>
 </div>

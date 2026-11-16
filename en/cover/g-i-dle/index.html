@@ -21,9 +21,13 @@
   .sub{font-size:14px;color:rgba(180,200,255,0.6);margin-bottom:8px;}
   .sub a{color:rgba(190,210,255,0.9);}
   h2{font-size:15px;margin:26px 0 8px;color:rgba(200,220,255,0.9);}
-  .vid-list{list-style:none;padding:0;margin:0;}
-  .vid-list li{padding:5px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);font-size:13.5px;}
-  .vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;}
+  @media(min-width:620px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+  .card{display:block;min-width:0;text-decoration:none;}
+  .card-th{display:block;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#17171a;}
+  .card-th img{width:100%;height:100%;object-fit:cover;display:block;}
+  .card-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.38;margin-top:7px;color:rgba(228,236,255,0.94);}
+  .card-y{display:block;font-size:11.5px;color:rgba(160,180,230,0.6);margin-top:2px;}
   .yr{color:rgba(150,175,255,0.55);font-size:12px;}
   .cta-dock{position:sticky;bottom:0;z-index:5;margin-top:28px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#0a0a0d 62%,rgba(10,10,13,0));}
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
@@ -36,11 +40,11 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
 <script src="/seo_play.js" defer></script>
-<meta name="twitter:card" content="summary_large_image">
-<meta property="og:image" content="https://kpop-universe.kr/og-image.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta name="twitter:image" content="https://kpop-universe.kr/og-image.png">
+<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://i.ytimg.com/vi/6ZWSAPC7dkY/mqdefault.jpg">
+<meta property="og:image:width" content="320">
+<meta property="og:image:height" content="180">
+<meta name="twitter:image" content="https://i.ytimg.com/vi/6ZWSAPC7dkY/mqdefault.jpg">
 </head>
 <body>
 <div class="wrap">
@@ -51,20 +55,20 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <div class="sub"><a href="https://kpop-universe.kr/en/g/g-i-dle/">(G)I-DLE</a></div>
 
     <h2>(G)I-DLE songs covered by others <span class="yr">12</span></h2>
-    <ul class="vid-list">
-      <li><a href="https://www.youtube.com/watch?v=6ZWSAPC7dkY" target="_blank" rel="noopener">(여자)아이들 후배그룹 큐브 나우어데이즈가 추는 (G)I-DLE Random Play Dance💙 | Performance37 | NOWADAYS 편</a> <span class="yr">by NOWZ</span></li>
-      <li><a href="https://www.youtube.com/watch?v=B7-0lGNy3gw" target="_blank" rel="noopener">2022 걸그룹 대전 연말결산한 트리플에스 |aespa IVE LE SSERAFIM ITZY (G)I-DLE | K-POP Cover Dance Medley | COUNTDANCE</a> <span class="yr">by tripleS</span></li>
-      <li><a href="https://www.youtube.com/watch?v=eBn11VZHTfE" target="_blank" rel="noopener">(여자)아이들 - 퀸카 AI 댄스  커버 ((G)I-DLE - Queencard)ㅣ아이칠린 (ICHILLIN&#39;)</a> <span class="yr">by ICHILLIN&#39;</span></li>
-      <li><a href="https://www.youtube.com/watch?v=joVt8qfmBLk" target="_blank" rel="noopener">[DKZ] (여자)아이들((G)I-DLE) - TOMBOY (DKZ ver.) | DANCE COVER</a> <span class="yr">by DKZ</span></li>
-      <li><a href="https://www.youtube.com/watch?v=JZ_L_j1iW8Q" target="_blank" rel="noopener">P1Harmony (피원하모니) KEEHO (기호) - ‘TOMBOY’ (여자)아이들((G)I-DLE) Cover.</a> <span class="yr">by P1Harmony</span></li>
-      <li><a href="https://www.youtube.com/watch?v=klw5AHmRo04" target="_blank" rel="noopener">[4K]2022 K-POP 중간결산 | bugAboo | MONSTA X SKZ IVE (G)I-DLE TREASURE | Cover Dance Medley | COUNTDANCE</a> <span class="yr">by bugAboo</span></li>
-      <li><a href="https://www.youtube.com/watch?v=M3bcUHVLz00" target="_blank" rel="noopener">(여자)아이들 - Allergy (Cover by HANEUL) #KISSOFLIFE #키스오브라이프 #KIOF #HANEUL #하늘 #Shorts</a> <span class="yr">by KISS OF LIFE</span></li>
-      <li><a href="https://www.youtube.com/watch?v=NuXx15U6GoE" target="_blank" rel="noopener">TWICE NCT U 레드벨벳 (G)I-DLE 4곡을 영어로 부르면?ㅣKPOP ENG Ver. Mashupㅣ퍼플키스 수안ㅣ확신의 메보</a> <span class="yr">by PURPLE KISS</span></li>
-      <li><a href="https://www.youtube.com/watch?v=QojpQR9ql4U" target="_blank" rel="noopener">르세라핌이 추는 &#39;(여자)아이들 - 퀸카&#39; #르세라핌 | MPD직캠 Behind #shorts</a> <span class="yr">by LE SSERAFIM</span></li>
-      <li><a href="https://www.youtube.com/watch?v=XMf3szV7iAw" target="_blank" rel="noopener">사이렌부터 디토까지! 제대로 말아주는 NOWADAYS| NewJeans RIIZE (G)I-DLE SVT |K-POP Cover Dance Medley |COUNT DANCE</a> <span class="yr">by NOWZ</span></li>
-      <li><a href="https://www.youtube.com/watch?v=y0mVGgk-V70" target="_blank" rel="noopener">250105 H1-KEY 1ST FAN CONCERT [Find my KEY] - TOMBOY(여자)아이들 하이키(H1-KEY) 휘서(HWISEO)직캠 FANCAM FOCUS 4K</a> <span class="yr">by H1-KEY</span></li>
-      <li><a href="https://www.youtube.com/watch?v=ZcMHv5YZDJ0" target="_blank" rel="noopener">음색장인 피원하모니 기호의 2022 음원 1위 걸그룹 3곡 커버 | IVE,(G)I-DLE,NewJeans | Girl group Hit song Playlist | 확신의 메보</a> <span class="yr">by P1Harmony</span></li>
-    </ul>
+    <div class="grid">
+      <a class="card" href="https://www.youtube.com/watch?v=6ZWSAPC7dkY" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/6ZWSAPC7dkY/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">(여자)아이들 후배그룹 큐브 나우어데이즈가 추는 (G)I-DLE Random Play Dance💙 | Performance37 | NOWADAYS 편</span><span class="card-y">by NOWZ · 2024.04.14</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=B7-0lGNy3gw" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/B7-0lGNy3gw/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">2022 걸그룹 대전 연말결산한 트리플에스 |aespa IVE LE SSERAFIM ITZY (G)I-DLE | K-POP Cover Dance Medley | COUNTDANCE</span><span class="card-y">by tripleS · 2022.12.05</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=eBn11VZHTfE" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/eBn11VZHTfE/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">(여자)아이들 - 퀸카 AI 댄스  커버 ((G)I-DLE - Queencard)ㅣ아이칠린 (ICHILLIN&#39;)</span><span class="card-y">by ICHILLIN&#39; · 2023.06.30</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=joVt8qfmBLk" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/joVt8qfmBLk/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[DKZ] (여자)아이들((G)I-DLE) - TOMBOY (DKZ ver.) | DANCE COVER</span><span class="card-y">by DKZ · 2023.01.22</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=JZ_L_j1iW8Q" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/JZ_L_j1iW8Q/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">P1Harmony (피원하모니) KEEHO (기호) - ‘TOMBOY’ (여자)아이들((G)I-DLE) Cover.</span><span class="card-y">by P1Harmony · 2023.01.20</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=klw5AHmRo04" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/klw5AHmRo04/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[4K]2022 K-POP 중간결산 | bugAboo | MONSTA X SKZ IVE (G)I-DLE TREASURE | Cover Dance Medley | COUNTDANCE</span><span class="card-y">by bugAboo · 2022.06.10</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=M3bcUHVLz00" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/M3bcUHVLz00/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">(여자)아이들 - Allergy (Cover by HANEUL) #KISSOFLIFE #키스오브라이프 #KIOF #HANEUL #하늘 #Shorts</span><span class="card-y">by KISS OF LIFE · 2023.09.13</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=NuXx15U6GoE" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/NuXx15U6GoE/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">TWICE NCT U 레드벨벳 (G)I-DLE 4곡을 영어로 부르면?ㅣKPOP ENG Ver. Mashupㅣ퍼플키스 수안ㅣ확신의 메보</span><span class="card-y">by PURPLE KISS · 2021.03.30</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=QojpQR9ql4U" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/QojpQR9ql4U/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">르세라핌이 추는 &#39;(여자)아이들 - 퀸카&#39; #르세라핌 | MPD직캠 Behind #shorts</span><span class="card-y">by LE SSERAFIM · 2023.06.02</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=XMf3szV7iAw" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/XMf3szV7iAw/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">사이렌부터 디토까지! 제대로 말아주는 NOWADAYS| NewJeans RIIZE (G)I-DLE SVT |K-POP Cover Dance Medley |COUNT DANCE</span><span class="card-y">by NOWZ · 2024.04.30</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=y0mVGgk-V70" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/y0mVGgk-V70/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">250105 H1-KEY 1ST FAN CONCERT [Find my KEY] - TOMBOY(여자)아이들 하이키(H1-KEY) 휘서(HWISEO)직캠 FANCAM FOCUS 4K</span><span class="card-y">by H1-KEY · 2025.01.05</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=ZcMHv5YZDJ0" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/ZcMHv5YZDJ0/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">음색장인 피원하모니 기호의 2022 음원 1위 걸그룹 3곡 커버 | IVE,(G)I-DLE,NewJeans | Girl group Hit song Playlist | 확신의 메보</span><span class="card-y">by P1Harmony · 2022.12.14</span></a>
+    </div>
   <div class="lang-switch"><a href="https://kpop-universe.kr/cover/아이들/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/">Explore in the Universe →</a></div>
 </div>

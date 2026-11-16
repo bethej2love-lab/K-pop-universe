@@ -21,9 +21,13 @@
   .sub{font-size:14px;color:rgba(180,200,255,0.6);margin-bottom:8px;}
   .sub a{color:rgba(190,210,255,0.9);}
   h2{font-size:15px;margin:26px 0 8px;color:rgba(200,220,255,0.9);}
-  .vid-list{list-style:none;padding:0;margin:0;}
-  .vid-list li{padding:5px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);font-size:13.5px;}
-  .vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;}
+  @media(min-width:620px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+  .card{display:block;min-width:0;text-decoration:none;}
+  .card-th{display:block;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#17171a;}
+  .card-th img{width:100%;height:100%;object-fit:cover;display:block;}
+  .card-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.38;margin-top:7px;color:rgba(228,236,255,0.94);}
+  .card-y{display:block;font-size:11.5px;color:rgba(160,180,230,0.6);margin-top:2px;}
   .yr{color:rgba(150,175,255,0.55);font-size:12px;}
   .cta-dock{position:sticky;bottom:0;z-index:5;margin-top:28px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#0a0a0d 62%,rgba(10,10,13,0));}
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
@@ -36,11 +40,11 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
 <script src="/seo_play.js" defer></script>
-<meta name="twitter:card" content="summary_large_image">
-<meta property="og:image" content="https://kpop-universe.kr/og-image.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta name="twitter:image" content="https://kpop-universe.kr/og-image.png">
+<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://i.ytimg.com/vi/-TXnyyIvP_U/mqdefault.jpg">
+<meta property="og:image:width" content="320">
+<meta property="og:image:height" content="180">
+<meta name="twitter:image" content="https://i.ytimg.com/vi/-TXnyyIvP_U/mqdefault.jpg">
 </head>
 <body>
 <div class="wrap">
@@ -51,16 +55,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <div class="sub"><a href="https://kpop-universe.kr/en/g/fin-k-l/">Fin.K.L</a></div>
 
     <h2>Fin.K.L songs covered by others <span class="yr">8</span></h2>
-    <ul class="vid-list">
-      <li><a href="https://www.youtube.com/watch?v=-TXnyyIvP_U" target="_blank" rel="noopener">(Weeklyidol EP.246) LABOUM 1st k-pop girl group star Fin.K.L&amp;SES cover dance</a> <span class="yr">by LABOUM</span></li>
-      <li><a href="https://www.youtube.com/watch?v=2FOoKDsAwW0" target="_blank" rel="noopener">[COVER] Fin.K.L - Now │ 미래소년 (MIRAE)</a> <span class="yr">by MIRAE</span></li>
-      <li><a href="https://www.youtube.com/watch?v=aDbK-7Z2EuA" target="_blank" rel="noopener">핑클 - NOW 리메이크 한 원어스 #엠카운트다운 #엠카 #MCOUNTDOWN #원어스 #ONEUS</a> <span class="yr">by ONEUS</span></li>
-      <li><a href="https://www.youtube.com/watch?v=dKzF1uUeyt4" target="_blank" rel="noopener">핑클 노래 리메이크한 원어스 Now 릴댄 하이라이트 | 릴레이댄스</a> <span class="yr">by ONEUS</span></li>
-      <li><a href="https://www.youtube.com/watch?v=JVIUbEoAywQ" target="_blank" rel="noopener">[SPECIAL VIDEO] 프로미스나인 (fromis_9) &quot;핑클(Fin.K.L) - Now&quot; Choreography</a> <span class="yr">by fromis_9</span></li>
-      <li><a href="https://www.youtube.com/watch?v=klg2yBUjBOI" target="_blank" rel="noopener">핑클 White 완벽하게 커버하는 본업천재 VIVIZ😍..입덕위기..🚨 #플리예고LIVE #VIVIZ #핑클_White #Shorts</a> <span class="yr">by VIVIZ</span></li>
-      <li><a href="https://www.youtube.com/watch?v=y9hviLQ7RGE" target="_blank" rel="noopener">[Cover Note] 핑클 (Fin.K.L) - White 🎄 (Cover by BoNi, Lara)</a> <span class="yr">by Dreamnote</span></li>
-      <li><a href="https://www.youtube.com/watch?v=ZfTsCtuLQgk" target="_blank" rel="noopener">[DIA YEBIN] 핑클 - 화이트(white) (cover)</a> <span class="yr">by DIA</span></li>
-    </ul>
+    <div class="grid">
+      <a class="card" href="https://www.youtube.com/watch?v=-TXnyyIvP_U" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/-TXnyyIvP_U/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">(Weeklyidol EP.246) LABOUM 1st k-pop girl group star Fin.K.L&amp;SES cover dance</span><span class="card-y">by LABOUM · 2016.04.14</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=2FOoKDsAwW0" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/2FOoKDsAwW0/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[COVER] Fin.K.L - Now │ 미래소년 (MIRAE)</span><span class="card-y">by MIRAE · 2022.03.28</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=aDbK-7Z2EuA" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/aDbK-7Z2EuA/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">핑클 - NOW 리메이크 한 원어스 #엠카운트다운 #엠카 #MCOUNTDOWN #원어스 #ONEUS</span><span class="card-y">by ONEUS · 2024.05.27</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=dKzF1uUeyt4" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/dKzF1uUeyt4/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">핑클 노래 리메이크한 원어스 Now 릴댄 하이라이트 | 릴레이댄스</span><span class="card-y">by ONEUS · 2024.06.02</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=JVIUbEoAywQ" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/JVIUbEoAywQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[SPECIAL VIDEO] 프로미스나인 (fromis_9) &quot;핑클(Fin.K.L) - Now&quot; Choreography</span><span class="card-y">by fromis_9 · 2019.10.22</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=klg2yBUjBOI" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/klg2yBUjBOI/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">핑클 White 완벽하게 커버하는 본업천재 VIVIZ😍..입덕위기..🚨 #플리예고LIVE #VIVIZ #핑클_White #Shorts</span><span class="card-y">by VIVIZ · 2022.12.22</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=y9hviLQ7RGE" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/y9hviLQ7RGE/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[Cover Note] 핑클 (Fin.K.L) - White 🎄 (Cover by BoNi, Lara)</span><span class="card-y">by Dreamnote · 2021.12.25</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=ZfTsCtuLQgk" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/ZfTsCtuLQgk/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[DIA YEBIN] 핑클 - 화이트(white) (cover)</span><span class="card-y">by DIA · 2018.12.24</span></a>
+    </div>
   <div class="lang-switch"><a href="https://kpop-universe.kr/cover/핑클/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/">Explore in the Universe →</a></div>
 </div>

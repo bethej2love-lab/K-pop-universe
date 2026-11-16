@@ -21,9 +21,13 @@
   .sub{font-size:14px;color:rgba(180,200,255,0.6);margin-bottom:8px;}
   .sub a{color:rgba(190,210,255,0.9);}
   h2{font-size:15px;margin:26px 0 8px;color:rgba(200,220,255,0.9);}
-  .vid-list{list-style:none;padding:0;margin:0;}
-  .vid-list li{padding:5px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);font-size:13.5px;}
-  .vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;}
+  @media(min-width:620px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+  .card{display:block;min-width:0;text-decoration:none;}
+  .card-th{display:block;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#17171a;}
+  .card-th img{width:100%;height:100%;object-fit:cover;display:block;}
+  .card-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.38;margin-top:7px;color:rgba(228,236,255,0.94);}
+  .card-y{display:block;font-size:11.5px;color:rgba(160,180,230,0.6);margin-top:2px;}
   .yr{color:rgba(150,175,255,0.55);font-size:12px;}
   .cta-dock{position:sticky;bottom:0;z-index:5;margin-top:28px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#0a0a0d 62%,rgba(10,10,13,0));}
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
@@ -36,11 +40,11 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
 <script src="/seo_play.js" defer></script>
-<meta name="twitter:card" content="summary_large_image">
-<meta property="og:image" content="https://kpop-universe.kr/og-image.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta name="twitter:image" content="https://kpop-universe.kr/og-image.png">
+<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://i.ytimg.com/vi/3AqJGr9Zqw0/mqdefault.jpg">
+<meta property="og:image:width" content="320">
+<meta property="og:image:height" content="180">
+<meta name="twitter:image" content="https://i.ytimg.com/vi/3AqJGr9Zqw0/mqdefault.jpg">
 </head>
 <body>
 <div class="wrap">
@@ -51,15 +55,15 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <div class="sub"><a href="https://kpop-universe.kr/en/g/h-o-t/">H.O.T.</a></div>
 
     <h2>H.O.T. songs covered by others <span class="yr">7</span></h2>
-    <ul class="vid-list">
-      <li><a href="https://www.youtube.com/watch?v=3AqJGr9Zqw0" target="_blank" rel="noopener">[#놀라운목요일] 단지 투어스 사랑해 이렇게 말했지🎵 청량감 美친 투어스가 말아주는 H.O.T. 〈캔디〉🍭</a> <span class="yr">by TWS</span></li>
-      <li><a href="https://www.youtube.com/watch?v=bIQFwMedwlE" target="_blank" rel="noopener">[숏츠] 올드힙합 감성 그 자체☆ WayV의 H.O.T 커버 댄스 [더 시즌즈-이영지의 레인보우] | KBS 방송</a> <span class="yr">by WayV</span></li>
-      <li><a href="https://www.youtube.com/watch?v=hhc-sjtx6TY" target="_blank" rel="noopener">OMEGA X (오메가엑스) | ‘H.O.T - Candy’ Dance Cover Practice</a> <span class="yr">by OMEGA X</span></li>
-      <li><a href="https://www.youtube.com/watch?v=IsulHOPbMTo" target="_blank" rel="noopener">신화(SHINHWA) ‘T.O.P’ + H.O.T ‘빛(Hope)’ Cover by NEWBEAT(뉴비트) | 데뷔 전 월말평가</a> <span class="yr">by NEWBEAT</span></li>
-      <li><a href="https://www.youtube.com/watch?v=l82pbIH_Zwo" target="_blank" rel="noopener">신화(SHINHWA) ‘T.O.P’ + H.O.T ‘빛(Hope)’ Cover by NEWBEAT(뉴비트) | 데뷔 전 월말평가</a> <span class="yr">by NEWBEAT</span></li>
-      <li><a href="https://www.youtube.com/watch?v=q_2wQ3N4Kb4" target="_blank" rel="noopener">BTS EXO부터 2PM H.O.T.까지 Boy Group History | K-pop Mashup | Cover | MUSIC CIRCLE | 뮤직써클 | DreamNote</a> <span class="yr">by Dreamnote</span></li>
-      <li><a href="https://www.youtube.com/watch?v=qQueFdSG0jM" target="_blank" rel="noopener">신화(SHINHWA) ‘T.O.P’ + H.O.T ‘빛(Hope)’ Cover by NEWBEAT(뉴비트) | 데뷔 전 월말평가</a> <span class="yr">by NEWBEAT</span></li>
-    </ul>
+    <div class="grid">
+      <a class="card" href="https://www.youtube.com/watch?v=3AqJGr9Zqw0" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/3AqJGr9Zqw0/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[#놀라운목요일] 단지 투어스 사랑해 이렇게 말했지🎵 청량감 美친 투어스가 말아주는 H.O.T. 〈캔디〉🍭</span><span class="card-y">by TWS · 2026.04.09</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=bIQFwMedwlE" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/bIQFwMedwlE/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[숏츠] 올드힙합 감성 그 자체☆ WayV의 H.O.T 커버 댄스 [더 시즌즈-이영지의 레인보우] | KBS 방송</span><span class="card-y">by WayV · 2024.12.26</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=hhc-sjtx6TY" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/hhc-sjtx6TY/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">OMEGA X (오메가엑스) | ‘H.O.T - Candy’ Dance Cover Practice</span><span class="card-y">by OMEGA X · 2024.03.14</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=IsulHOPbMTo" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/IsulHOPbMTo/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">신화(SHINHWA) ‘T.O.P’ + H.O.T ‘빛(Hope)’ Cover by NEWBEAT(뉴비트) | 데뷔 전 월말평가</span><span class="card-y">by NEWBEAT · 2026.08.23</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=l82pbIH_Zwo" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/l82pbIH_Zwo/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">신화(SHINHWA) ‘T.O.P’ + H.O.T ‘빛(Hope)’ Cover by NEWBEAT(뉴비트) | 데뷔 전 월말평가</span><span class="card-y">by NEWBEAT · 2026.08.23</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=q_2wQ3N4Kb4" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/q_2wQ3N4Kb4/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">BTS EXO부터 2PM H.O.T.까지 Boy Group History | K-pop Mashup | Cover | MUSIC CIRCLE | 뮤직써클 | DreamNote</span><span class="card-y">by Dreamnote · 2020.02.05</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=qQueFdSG0jM" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/qQueFdSG0jM/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">신화(SHINHWA) ‘T.O.P’ + H.O.T ‘빛(Hope)’ Cover by NEWBEAT(뉴비트) | 데뷔 전 월말평가</span><span class="card-y">by NEWBEAT · 2026.08.23</span></a>
+    </div>
   <div class="lang-switch"><a href="https://kpop-universe.kr/cover/H.O.T/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/">Explore in the Universe →</a></div>
 </div>

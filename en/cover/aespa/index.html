@@ -21,9 +21,13 @@
   .sub{font-size:14px;color:rgba(180,200,255,0.6);margin-bottom:8px;}
   .sub a{color:rgba(190,210,255,0.9);}
   h2{font-size:15px;margin:26px 0 8px;color:rgba(200,220,255,0.9);}
-  .vid-list{list-style:none;padding:0;margin:0;}
-  .vid-list li{padding:5px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);font-size:13.5px;}
-  .vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;}
+  @media(min-width:620px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+  .card{display:block;min-width:0;text-decoration:none;}
+  .card-th{display:block;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#17171a;}
+  .card-th img{width:100%;height:100%;object-fit:cover;display:block;}
+  .card-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.38;margin-top:7px;color:rgba(228,236,255,0.94);}
+  .card-y{display:block;font-size:11.5px;color:rgba(160,180,230,0.6);margin-top:2px;}
   .yr{color:rgba(150,175,255,0.55);font-size:12px;}
   .cta-dock{position:sticky;bottom:0;z-index:5;margin-top:28px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#0a0a0d 62%,rgba(10,10,13,0));}
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
@@ -36,11 +40,11 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
 <script src="/seo_play.js" defer></script>
-<meta name="twitter:card" content="summary_large_image">
-<meta property="og:image" content="https://kpop-universe.kr/og-image.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta name="twitter:image" content="https://kpop-universe.kr/og-image.png">
+<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://i.ytimg.com/vi/0M1uIK7bDmQ/mqdefault.jpg">
+<meta property="og:image:width" content="320">
+<meta property="og:image:height" content="180">
+<meta name="twitter:image" content="https://i.ytimg.com/vi/0M1uIK7bDmQ/mqdefault.jpg">
 </head>
 <body>
 <div class="wrap">
@@ -51,33 +55,33 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <div class="sub"><a href="https://kpop-universe.kr/en/g/aespa/">aespa</a></div>
 
     <h2>Covered by aespa <span class="yr">4</span></h2>
-    <ul class="vid-list">
-      <li><a href="https://www.youtube.com/watch?v=0M1uIK7bDmQ" target="_blank" rel="noopener">[4K] K-POP 역대급 띵곡 커버한 퍼포맛집 BAE173 | NCT BTS aespa ITZY TXT | Cover dance medley COUNTDANCE | 카운트댄스</a> <span class="yr">→ ITZY</span></li>
-      <li><a href="https://www.youtube.com/watch?v=0M1uIK7bDmQ" target="_blank" rel="noopener">[4K] K-POP 역대급 띵곡 커버한 퍼포맛집 BAE173 | NCT BTS aespa ITZY TXT | Cover dance medley COUNTDANCE | 카운트댄스</a> <span class="yr">→ BAE173</span></li>
-      <li><a href="https://www.youtube.com/watch?v=fCnQgb4DChA" target="_blank" rel="noopener">[방송선공개] 멋쁨폭발! 에스파의 소녀시대 ‘소원을 말해봐’ 커버 무대♬</a> <span class="yr">→ Girls&#39; Generation</span></li>
-      <li><a href="https://www.youtube.com/watch?v=ns6ddaeBt_E" target="_blank" rel="noopener">(ENG) [Weekly Idol] T1419, 미래소년, OMEGA X의 ＜aespa - Next level＞ 커버 댄스♬ l EP.518</a> <span class="yr">→ MIRAE</span></li>
-    </ul>
+    <div class="grid">
+      <a class="card" href="https://www.youtube.com/watch?v=0M1uIK7bDmQ" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/0M1uIK7bDmQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[4K] K-POP 역대급 띵곡 커버한 퍼포맛집 BAE173 | NCT BTS aespa ITZY TXT | Cover dance medley COUNTDANCE | 카운트댄스</span><span class="card-y">→ ITZY · 2021.04.09</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=0M1uIK7bDmQ" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/0M1uIK7bDmQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[4K] K-POP 역대급 띵곡 커버한 퍼포맛집 BAE173 | NCT BTS aespa ITZY TXT | Cover dance medley COUNTDANCE | 카운트댄스</span><span class="card-y">→ BAE173 · 2021.04.09</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=fCnQgb4DChA" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/fCnQgb4DChA/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[방송선공개] 멋쁨폭발! 에스파의 소녀시대 ‘소원을 말해봐’ 커버 무대♬</span><span class="card-y">→ Girls&#39; Generation · 2021.05.25</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=ns6ddaeBt_E" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/ns6ddaeBt_E/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">(ENG) [Weekly Idol] T1419, 미래소년, OMEGA X의 ＜aespa - Next level＞ 커버 댄스♬ l EP.518</span><span class="card-y">→ MIRAE · 2021.06.30</span></a>
+    </div>
 
     <h2>aespa songs covered by others <span class="yr">17</span></h2>
-    <ul class="vid-list">
-      <li><a href="https://www.youtube.com/watch?v=4IhSpB6Inso" target="_blank" rel="noopener">💖💘💕💝💞💗💓 #CLASSy #클라씨 #보은 #BOEUN #aespa #에스파 #BetterThings #BetterThingsChallenge #Shorts</a> <span class="yr">by CLASSy</span></li>
-      <li><a href="https://www.youtube.com/watch?v=6fJuWHCXR-0" target="_blank" rel="noopener">250914 XLOV Whiplash - Aespa cover.</a> <span class="yr">by XLOV</span></li>
-      <li><a href="https://www.youtube.com/watch?v=AP2Rg6UWBfM" target="_blank" rel="noopener">aespa - spicy AI 댄스 커버 (에스파 - 스파이시) ㅣ아이칠린 (ICHILLIN&#39;)</a> <span class="yr">by ICHILLIN&#39;</span></li>
-      <li><a href="https://www.youtube.com/watch?v=B7-0lGNy3gw" target="_blank" rel="noopener">2022 걸그룹 대전 연말결산한 트리플에스 |aespa IVE LE SSERAFIM ITZY (G)I-DLE | K-POP Cover Dance Medley | COUNTDANCE</a> <span class="yr">by tripleS</span></li>
-      <li><a href="https://www.youtube.com/watch?v=HxUwghNVyhw" target="_blank" rel="noopener">I&#39;m too Spicy🥵ㅣ#aespa #에스파 #Spicy #SpicyChallenge #스파이시챌린지</a> <span class="yr">by WHIB</span></li>
-      <li><a href="https://www.youtube.com/watch?v=ID8EIPghaCg" target="_blank" rel="noopener">2024년 첫 신인! ALL(H)OURS 올아워즈의 🔥K-POP 역대급 커버🔥ㅣStray Kids Jung Kook TAEMIN aespa ATEEZㅣCOUNT DANCE</a> <span class="yr">by Stray Kids</span></li>
-      <li><a href="https://www.youtube.com/watch?v=MPhspT9p0Rg" target="_blank" rel="noopener">[4K] 큐티청량몽환섹시 CRAVITY | MONSTA X BTS SKZ NCT TXT SVT aespa | K-POP Cover Dance Medley | COUNT DANCE</a> <span class="yr">by CRAVITY</span></li>
-      <li><a href="https://www.youtube.com/watch?v=Q3cyb-oyqYg" target="_blank" rel="noopener">카리나 선배님 존경합니다♥ aespa - Drama 커버 직캠 #RESCENE #리센느 #동방으로따라와</a> <span class="yr">by RESCENE</span></li>
-      <li><a href="https://www.youtube.com/watch?v=rtavLjCWfGI" target="_blank" rel="noopener">&amp;TEAM (앤팀) - Supernova (aespa) @인기가요 inkigayo LIVE IN TOKYO</a> <span class="yr">by &amp;TEAM</span></li>
-      <li><a href="https://www.youtube.com/watch?v=sZRoRN3L8lk" target="_blank" rel="noopener">&#39;aespa - Savage&#39; Rap Remix Cover by E-CHAN</a> <span class="yr">by DKB</span></li>
-      <li><a href="https://www.youtube.com/watch?v=tRXnMIZvQZE" target="_blank" rel="noopener">스키즈가 Back Door로 하이브에서 데뷔한다면?  BTS | BLACKPINK | SKZ | aespa | SWITCH ON | YOUNITE</a> <span class="yr">by YOUNITE</span></li>
-      <li><a href="https://www.youtube.com/watch?v=UGrpwyQH8UI" target="_blank" rel="noopener">SUPER JUNIOR LEETEUK Reaction | aespa ‘Next Level’ MV</a> <span class="yr">by SUPER JUNIOR</span></li>
-      <li><a href="https://www.youtube.com/watch?v=uk9rO3KQgco" target="_blank" rel="noopener">각잡고 SM 커버한 원어스 메인댄서 ‘aespa 환웅 VS NCT 127 환웅’ㅣONEUSㅣHWANWOONG VS HWANWOONG Ep.1</a> <span class="yr">by ONEUS</span></li>
-      <li><a href="https://www.youtube.com/watch?v=vuPt7_jVR8U" target="_blank" rel="noopener">BAE173 (비에이이173) - aespa (에스파) &#39;Savage&#39; Dance Cover</a> <span class="yr">by BAE173</span></li>
-      <li><a href="https://www.youtube.com/watch?v=WWm84enVsi0" target="_blank" rel="noopener">#aespa (#에스파)의 Next Level #cover by #우주소녀 #수빈 (#WJSN #SOOBIN) #shorts #guitar</a> <span class="yr">by WJSN</span></li>
-      <li><a href="https://www.youtube.com/watch?v=yafLOrMWbAs" target="_blank" rel="noopener">SUPER JUNIOR HEECHUL &amp; SHINDONG Reaction | aespa &#39;Next Level&#39; MV</a> <span class="yr">by SUPER JUNIOR</span></li>
-      <li><a href="https://www.youtube.com/watch?v=zp7qBrN_AIE" target="_blank" rel="noopener">[#NiziU_Danceclip] Pink Hoodie - aespa  Cover by MAYA #MAYA #NiziU #ニジュー #니쥬 #WithU</a> <span class="yr">by NiziU</span></li>
-    </ul>
+    <div class="grid">
+      <a class="card" href="https://www.youtube.com/watch?v=4IhSpB6Inso" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/4IhSpB6Inso/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">💖💘💕💝💞💗💓 #CLASSy #클라씨 #보은 #BOEUN #aespa #에스파 #BetterThings #BetterThingsChallenge #Shorts</span><span class="card-y">by CLASSy · 2023.11.04</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=6fJuWHCXR-0" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/6fJuWHCXR-0/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">250914 XLOV Whiplash - Aespa cover.</span><span class="card-y">by XLOV · 2025.09.14</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=AP2Rg6UWBfM" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/AP2Rg6UWBfM/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">aespa - spicy AI 댄스 커버 (에스파 - 스파이시) ㅣ아이칠린 (ICHILLIN&#39;)</span><span class="card-y">by ICHILLIN&#39; · 2023.06.23</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=B7-0lGNy3gw" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/B7-0lGNy3gw/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">2022 걸그룹 대전 연말결산한 트리플에스 |aespa IVE LE SSERAFIM ITZY (G)I-DLE | K-POP Cover Dance Medley | COUNTDANCE</span><span class="card-y">by tripleS · 2022.12.05</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=HxUwghNVyhw" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/HxUwghNVyhw/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">I&#39;m too Spicy🥵ㅣ#aespa #에스파 #Spicy #SpicyChallenge #스파이시챌린지</span><span class="card-y">by WHIB · 2023.05.28</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=ID8EIPghaCg" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/ID8EIPghaCg/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">2024년 첫 신인! ALL(H)OURS 올아워즈의 🔥K-POP 역대급 커버🔥ㅣStray Kids Jung Kook TAEMIN aespa ATEEZㅣCOUNT DANCE</span><span class="card-y">by Stray Kids · 2024.01.04</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=MPhspT9p0Rg" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/MPhspT9p0Rg/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[4K] 큐티청량몽환섹시 CRAVITY | MONSTA X BTS SKZ NCT TXT SVT aespa | K-POP Cover Dance Medley | COUNT DANCE</span><span class="card-y">by CRAVITY · 2021.09.09</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=Q3cyb-oyqYg" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/Q3cyb-oyqYg/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">카리나 선배님 존경합니다♥ aespa - Drama 커버 직캠 #RESCENE #리센느 #동방으로따라와</span><span class="card-y">by RESCENE · 2024.05.08</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=rtavLjCWfGI" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/rtavLjCWfGI/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">&amp;TEAM (앤팀) - Supernova (aespa) @인기가요 inkigayo LIVE IN TOKYO</span><span class="card-y">by &amp;TEAM · 2024.10.20</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=sZRoRN3L8lk" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/sZRoRN3L8lk/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">&#39;aespa - Savage&#39; Rap Remix Cover by E-CHAN</span><span class="card-y">by DKB · 2021.12.30</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=tRXnMIZvQZE" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/tRXnMIZvQZE/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">스키즈가 Back Door로 하이브에서 데뷔한다면?  BTS | BLACKPINK | SKZ | aespa | SWITCH ON | YOUNITE</span><span class="card-y">by YOUNITE · 2022.03.21</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=UGrpwyQH8UI" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/UGrpwyQH8UI/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">SUPER JUNIOR LEETEUK Reaction | aespa ‘Next Level’ MV</span><span class="card-y">by SUPER JUNIOR · 2021.05.23</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=uk9rO3KQgco" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/uk9rO3KQgco/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">각잡고 SM 커버한 원어스 메인댄서 ‘aespa 환웅 VS NCT 127 환웅’ㅣONEUSㅣHWANWOONG VS HWANWOONG Ep.1</span><span class="card-y">by ONEUS · 2021.02.23</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=vuPt7_jVR8U" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/vuPt7_jVR8U/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">BAE173 (비에이이173) - aespa (에스파) &#39;Savage&#39; Dance Cover</span><span class="card-y">by BAE173 · 2021.10.24</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=WWm84enVsi0" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/WWm84enVsi0/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">#aespa (#에스파)의 Next Level #cover by #우주소녀 #수빈 (#WJSN #SOOBIN) #shorts #guitar</span><span class="card-y">by WJSN · 2021.11.09</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=yafLOrMWbAs" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/yafLOrMWbAs/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">SUPER JUNIOR HEECHUL &amp; SHINDONG Reaction | aespa &#39;Next Level&#39; MV</span><span class="card-y">by SUPER JUNIOR · 2021.05.26</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=zp7qBrN_AIE" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/zp7qBrN_AIE/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[#NiziU_Danceclip] Pink Hoodie - aespa  Cover by MAYA #MAYA #NiziU #ニジュー #니쥬 #WithU</span><span class="card-y">by NiziU · 2025.03.24</span></a>
+    </div>
   <div class="lang-switch"><a href="https://kpop-universe.kr/cover/에스파/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/">Explore in the Universe →</a></div>
 </div>

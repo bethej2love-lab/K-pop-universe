@@ -21,9 +21,13 @@
   .sub{font-size:14px;color:rgba(180,200,255,0.6);margin-bottom:8px;}
   .sub a{color:rgba(190,210,255,0.9);}
   h2{font-size:15px;margin:26px 0 8px;color:rgba(200,220,255,0.9);}
-  .vid-list{list-style:none;padding:0;margin:0;}
-  .vid-list li{padding:5px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);font-size:13.5px;}
-  .vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;}
+  @media(min-width:620px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+  .card{display:block;min-width:0;text-decoration:none;}
+  .card-th{display:block;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#17171a;}
+  .card-th img{width:100%;height:100%;object-fit:cover;display:block;}
+  .card-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.38;margin-top:7px;color:rgba(228,236,255,0.94);}
+  .card-y{display:block;font-size:11.5px;color:rgba(160,180,230,0.6);margin-top:2px;}
   .yr{color:rgba(150,175,255,0.55);font-size:12px;}
   .cta-dock{position:sticky;bottom:0;z-index:5;margin-top:28px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#0a0a0d 62%,rgba(10,10,13,0));}
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
@@ -36,11 +40,11 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
 <script src="/seo_play.js" defer></script>
-<meta name="twitter:card" content="summary_large_image">
-<meta property="og:image" content="https://kpop-universe.kr/og-image.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta name="twitter:image" content="https://kpop-universe.kr/og-image.png">
+<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://i.ytimg.com/vi/AlMucPrQY-E/mqdefault.jpg">
+<meta property="og:image:width" content="320">
+<meta property="og:image:height" content="180">
+<meta name="twitter:image" content="https://i.ytimg.com/vi/AlMucPrQY-E/mqdefault.jpg">
 </head>
 <body>
 <div class="wrap">
@@ -51,20 +55,20 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <div class="sub"><a href="https://kpop-universe.kr/en/g/pentagon/">PENTAGON</a></div>
 
     <h2>Covered by PENTAGON <span class="yr">2</span></h2>
-    <ul class="vid-list">
-      <li><a href="https://www.youtube.com/watch?v=AlMucPrQY-E" target="_blank" rel="noopener">펜타곤(PENTAGON) 키노(KINO)의 “Life Goes On(BTS)” Cover │방탄소년단의 명곡을 밴드 버전으로! [it’s KPOP LIVE 잇츠라이브]</a> <span class="yr">→ BTS</span></li>
-      <li><a href="https://www.youtube.com/watch?v=Tt1LbfxXsuM" target="_blank" rel="noopener">[벌칙영상] 키노 (feat.신원) (of PENTAGON)  “트와이스 Alcohol-Free 커버하기”  /[Day6의 키스 더 라디오] l kbs 210731방송</a> <span class="yr">→ TWICE</span></li>
-    </ul>
+    <div class="grid">
+      <a class="card" href="https://www.youtube.com/watch?v=AlMucPrQY-E" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/AlMucPrQY-E/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">펜타곤(PENTAGON) 키노(KINO)의 “Life Goes On(BTS)” Cover │방탄소년단의 명곡을 밴드 버전으로! [it’s KPOP LIVE 잇츠라이브]</span><span class="card-y">→ BTS · 2021.03.25</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=Tt1LbfxXsuM" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/Tt1LbfxXsuM/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[벌칙영상] 키노 (feat.신원) (of PENTAGON)  “트와이스 Alcohol-Free 커버하기”  /[Day6의 키스 더 라디오] l kbs 210731방송</span><span class="card-y">→ TWICE · 2021.07.31</span></a>
+    </div>
 
     <h2>PENTAGON songs covered by others <span class="yr">6</span></h2>
-    <ul class="vid-list">
-      <li><a href="https://www.youtube.com/watch?v=2QFMK3_75_E" target="_blank" rel="noopener">Hi-Fi Un!corn『&quot;Shine(PENTAGON)” COVER』🎥 #shorts</a> <span class="yr">by Hi-Fi Un!corn</span></li>
-      <li><a href="https://www.youtube.com/watch?v=jaG2aLzPIj0" target="_blank" rel="noopener">K-POP Medley (BTS, SEVENTEEN, NCT127, SF9, PENTAGON, ATEEZ) Dance Cover by DKB</a> <span class="yr">by DKB</span></li>
-      <li><a href="https://www.youtube.com/watch?v=LiZFIbr-ld8" target="_blank" rel="noopener">P1Harmony (피원하모니) - ‘빛나리 (Shine)’ (PENTAGON) Dance Cover Practice Ver.</a> <span class="yr">by P1Harmony</span></li>
-      <li><a href="https://www.youtube.com/watch?v=m2NvzTpw07s" target="_blank" rel="noopener">Up! Challenge🍋💙With PENTAGON 키노 #UpUpUpchallenge #최유진 #YUJIN #Kep1er #케플러 #Up</a> <span class="yr">by Kep1er</span></li>
-      <li><a href="https://www.youtube.com/watch?v=PM1TAdyO1E4" target="_blank" rel="noopener">LIGHTSUM(라잇썸) - 펜타곤 선배님들의 멋짐 뿜뿜하는 #Feelin_Like_Challenge 참여합니다!</a> <span class="yr">by LIGHTSUM</span></li>
-      <li><a href="https://www.youtube.com/watch?v=uSNlVYq4u4A" target="_blank" rel="noopener">Up! Challenge🍋💙With PENTAGON 여원,신원#UpUpUpchallenge #최유진 #YUJIN #Kep1er #케플러 #Up</a> <span class="yr">by Kep1er</span></li>
-    </ul>
+    <div class="grid">
+      <a class="card" href="https://www.youtube.com/watch?v=2QFMK3_75_E" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/2QFMK3_75_E/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">Hi-Fi Un!corn『&quot;Shine(PENTAGON)” COVER』🎥 #shorts</span><span class="card-y">by Hi-Fi Un!corn · 2024.06.07</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=jaG2aLzPIj0" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/jaG2aLzPIj0/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">K-POP Medley (BTS, SEVENTEEN, NCT127, SF9, PENTAGON, ATEEZ) Dance Cover by DKB</span><span class="card-y">by DKB · 2020.04.30</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=LiZFIbr-ld8" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/LiZFIbr-ld8/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">P1Harmony (피원하모니) - ‘빛나리 (Shine)’ (PENTAGON) Dance Cover Practice Ver.</span><span class="card-y">by P1Harmony · 2021.07.23</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=m2NvzTpw07s" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/m2NvzTpw07s/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">Up! Challenge🍋💙With PENTAGON 키노 #UpUpUpchallenge #최유진 #YUJIN #Kep1er #케플러 #Up</span><span class="card-y">by Kep1er · 2022.07.13</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=PM1TAdyO1E4" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/PM1TAdyO1E4/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">LIGHTSUM(라잇썸) - 펜타곤 선배님들의 멋짐 뿜뿜하는 #Feelin_Like_Challenge 참여합니다!</span><span class="card-y">by LIGHTSUM · 2022.01.28</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=uSNlVYq4u4A" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/uSNlVYq4u4A/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">Up! Challenge🍋💙With PENTAGON 여원,신원#UpUpUpchallenge #최유진 #YUJIN #Kep1er #케플러 #Up</span><span class="card-y">by Kep1er · 2022.07.13</span></a>
+    </div>
   <div class="lang-switch"><a href="https://kpop-universe.kr/cover/펜타곤/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/">Explore in the Universe →</a></div>
 </div>

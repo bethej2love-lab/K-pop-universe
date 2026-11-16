@@ -21,9 +21,13 @@
   .sub{font-size:14px;color:rgba(180,200,255,0.6);margin-bottom:8px;}
   .sub a{color:rgba(190,210,255,0.9);}
   h2{font-size:15px;margin:26px 0 8px;color:rgba(200,220,255,0.9);}
-  .vid-list{list-style:none;padding:0;margin:0;}
-  .vid-list li{padding:5px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);font-size:13.5px;}
-  .vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;}
+  @media(min-width:620px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+  .card{display:block;min-width:0;text-decoration:none;}
+  .card-th{display:block;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#17171a;}
+  .card-th img{width:100%;height:100%;object-fit:cover;display:block;}
+  .card-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.38;margin-top:7px;color:rgba(228,236,255,0.94);}
+  .card-y{display:block;font-size:11.5px;color:rgba(160,180,230,0.6);margin-top:2px;}
   .yr{color:rgba(150,175,255,0.55);font-size:12px;}
   .cta-dock{position:sticky;bottom:0;z-index:5;margin-top:28px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#0a0a0d 62%,rgba(10,10,13,0));}
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
@@ -36,11 +40,11 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
 <script src="/seo_play.js" defer></script>
-<meta name="twitter:card" content="summary_large_image">
-<meta property="og:image" content="https://kpop-universe.kr/og-image.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta name="twitter:image" content="https://kpop-universe.kr/og-image.png">
+<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://i.ytimg.com/vi/1Jn_csiVhUk/mqdefault.jpg">
+<meta property="og:image:width" content="320">
+<meta property="og:image:height" content="180">
+<meta name="twitter:image" content="https://i.ytimg.com/vi/1Jn_csiVhUk/mqdefault.jpg">
 </head>
 <body>
 <div class="wrap">
@@ -51,34 +55,34 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <div class="sub"><a href="https://kpop-universe.kr/en/g/vanner/">VANNER</a></div>
 
     <h2>Covered by VANNER <span class="yr">26</span></h2>
-    <ul class="vid-list">
-      <li><a href="https://www.youtube.com/watch?v=1Jn_csiVhUk" target="_blank" rel="noopener">[VVS] VANNER 배너 ‘NCT DREAM - Smoothie’ (YEONGGWANG Cover) | @2024 VANNER 1ST ENCORE CONCERT</a> <span class="yr">→ NCT Dream</span></li>
-      <li><a href="https://www.youtube.com/watch?v=5APipPrwQCg" target="_blank" rel="noopener">잡아 폼🙌 #VANNER #배너 #GON #곤 #성국 #SUNGKOOK #CrazyFormChallenge #미친폼 #Crazy_Form #ATEEZ #에이티즈</a> <span class="yr">→ ATEEZ</span></li>
-      <li><a href="https://www.youtube.com/watch?v=873YOV9o3wk" target="_blank" rel="noopener">&#39;BLACKPINK(블랙핑크) - Lovesick Girls&#39; COVER by VANNER(배너)-TAEHWAN(태환)</a> <span class="yr">→ BLACKPINK</span></li>
-      <li><a href="https://www.youtube.com/watch?v=ao02ScLNiIQ" target="_blank" rel="noopener">&#39;DAY6(데이식스) - 우리 앞으로 더 사랑하자&#39; COVER by VANNER(배너)-Hyesung(혜성)</a> <span class="yr">→ DAY6</span></li>
-      <li><a href="https://www.youtube.com/watch?v=b66CfNMhlHs" target="_blank" rel="noopener">ᴜᴍᴍ💗 #VANNER #배너 #성국 #SUNGKOOK #TWS_OVERDRIVE</a> <span class="yr">→ TWS</span></li>
-      <li><a href="https://www.youtube.com/watch?v=BAg1pchlMVA" target="_blank" rel="noopener">[LIVE CLIP] VANNER 배너 &#39;비투비 - 그리워하다&#39; | @북서울꿈의숲 창포원 [VGM : Be My Forest] BUSKING</a> <span class="yr">→ BTOB</span></li>
-      <li><a href="https://www.youtube.com/watch?v=cbLXdoixk3c" target="_blank" rel="noopener">[VVS] VANNER 배너 ‘NCT DREAM - Smoothie’ (HYESUNG Cover) | @2024 VANNER 1ST ENCORE CONCERT</a> <span class="yr">→ NCT Dream</span></li>
-      <li><a href="https://www.youtube.com/watch?v=Eyl3LdGbG2Q" target="_blank" rel="noopener">맏막즈의 축제🎇 #VANNER #배너 #태환 #TAEHWAN #영광 #YEONGGWANG #TWS #마지막축제</a> <span class="yr">→ TWS</span></li>
-      <li><a href="https://www.youtube.com/watch?v=G_sPfKd8v5g" target="_blank" rel="noopener">[VVS] VANNER 배너 ‘NCT DREAM - Smoothie’ (TAEHWAN Cover) | @2024 VANNER 1ST ENCORE CONCERT</a> <span class="yr">→ NCT Dream</span></li>
-      <li><a href="https://www.youtube.com/watch?v=GUj1o0ruLcY" target="_blank" rel="noopener">[VVS] VANNER 배너 ‘NCT DREAM - Smoothie’ (FULL CAM) | @2024 VANNER 1ST ENCORE CONCERT</a> <span class="yr">→ NCT Dream</span></li>
-      <li><a href="https://www.youtube.com/watch?v=mFFYezKqXww" target="_blank" rel="noopener">[LIVE CLIP] VANNER 배너 &#39;DAY6 - 예뻤어&#39; | @북서울꿈의숲 창포원 [VGM : Be My Forest] BUSKING</a> <span class="yr">→ DAY6</span></li>
-      <li><a href="https://www.youtube.com/watch?v=MKhx7O9h4i4" target="_blank" rel="noopener">[COVER] VANNER(배너) 태환 - FLOWER FANTASY (N.Flying) | taerapy</a> <span class="yr">→ N.Flying</span></li>
-      <li><a href="https://www.youtube.com/watch?v=NNHnaQuWEhs" target="_blank" rel="noopener">[VVS] VANNER 배너 ‘ATEEZ - BOUNCY’ (FULL CAM) | @2024 VANNER 1ST CONCERT [THE FLAG : A TO V]</a> <span class="yr">→ ATEEZ</span></li>
-      <li><a href="https://www.youtube.com/watch?v=O1rCbS4YxPM" target="_blank" rel="noopener">[VVS] VANNER 배너 ‘RIIZE - Get A Guitar’ (FULL CAM) | @2024 VANNER 1ST CONCERT [THE FLAG : A TO V]</a> <span class="yr">→ RIIZE</span></li>
-      <li><a href="https://www.youtube.com/watch?v=OQZOY8nYiK4" target="_blank" rel="noopener">[VVS] VANNER 배너 ‘TXT - LO$ER=LO♡ER’(YEONGGWANG Cover) | @2024 VANNER 1ST CONCERT [THE FLAG : A TO V]</a> <span class="yr">→ TOMORROW X TOGETHER</span></li>
-      <li><a href="https://www.youtube.com/watch?v=oRFSAEYf4R4" target="_blank" rel="noopener">how sweet🌃 #VANNER #배너 #혜성 #HYESUNG #NewJeans #NewJeans_HowSweet</a> <span class="yr">→ NewJeans</span></li>
-      <li><a href="https://www.youtube.com/watch?v=ouW8I1uAbdI" target="_blank" rel="noopener">아껴둔 맏막즈의 사랑을 보여줄게💕 #VANNER #배너 #태환 #TAEHWAN #영광 #YEONGGWANG #레드벨벳 #RedVelvet #코스믹 #Cosmic</a> <span class="yr">→ Red Velvet</span></li>
-      <li><a href="https://www.youtube.com/watch?v=pK4YfPzr8d0" target="_blank" rel="noopener">[VVS] VANNER 배너 ‘NCT DREAM - Smoothie’ (GON Cover) | @2024 VANNER 1ST ENCORE CONCERT</a> <span class="yr">→ NCT Dream</span></li>
-      <li><a href="https://www.youtube.com/watch?v=q0lECnC32YU" target="_blank" rel="noopener">[VVS] VANNER 배너 ‘SHINee - Sherlock • 셜록’ (FULL CAM) | @2024 VANNER 1ST CONCERT [THE FLAG : A TO V]</a> <span class="yr">→ SHINee</span></li>
-      <li><a href="https://www.youtube.com/watch?v=rncNv5PYA_Q" target="_blank" rel="noopener">&#39;BTS(방탄소년단) - Dynamite&#39; COVER by VANNER(배너)-TAEHWAN(태환)</a> <span class="yr">→ BTS</span></li>
-      <li><a href="https://www.youtube.com/watch?v=sHiP1owGtLc" target="_blank" rel="noopener">맏막즈 𝑺𝒉𝒉𝒉🤫 #VANNER #배너 #태환 #TAEHWAN #영광 #YEONGGWANG #VIVIZ #Shhh #Shhhchallenge</a> <span class="yr">→ VIVIZ</span></li>
-      <li><a href="https://www.youtube.com/watch?v=TESUVUCBUx0" target="_blank" rel="noopener">[VVS] VANNER 배너 ‘TXT - LO$ER=LO♡ER’ (TAEHWAN Cover) | @2024 VANNER 1ST CONCERT [THE FLAG : A TO V]</a> <span class="yr">→ TOMORROW X TOGETHER</span></li>
-      <li><a href="https://www.youtube.com/watch?v=uh3qnmEGpXw" target="_blank" rel="noopener">💗ʏᴏᴜ ᴍᴀᴋᴇ ᴍᴇ ᴏᴠᴇʀᴅʀɪᴠᴇ💗 #VANNER #배너 #혜성 #HYESUNG #성국 #SUNGKOOK #TWS_OVERDRIVE</a> <span class="yr">→ TWS</span></li>
-      <li><a href="https://www.youtube.com/watch?v=UmqJTdArIXM" target="_blank" rel="noopener">홀린 듯이 MEOW 🐱🦊🐾 #VANNER #배너 #GON #곤 #영광 #YEONGGWANG #MEOVV #MEOVVchallenge</a> <span class="yr">→ MEOVV</span></li>
-      <li><a href="https://www.youtube.com/watch?v=VcT9Kz0tkpI" target="_blank" rel="noopener">[COVER] VANNER 배너 - LO$ER=LO♡ER (투모로우바이투게더) | LIVE CLIP</a> <span class="yr">→ TOMORROW X TOGETHER</span></li>
-      <li><a href="https://www.youtube.com/watch?v=zQsCLyM3LcM" target="_blank" rel="noopener">[VVS] VANNER 배너 ‘TXT - LO$ER=LO♡ER’ (SUNGKOOK Cover) | @2024 VANNER 1ST CONCERT [THE FLAG : A TO V]</a> <span class="yr">→ TOMORROW X TOGETHER</span></li>
-    </ul>
+    <div class="grid">
+      <a class="card" href="https://www.youtube.com/watch?v=1Jn_csiVhUk" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/1Jn_csiVhUk/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[VVS] VANNER 배너 ‘NCT DREAM - Smoothie’ (YEONGGWANG Cover) | @2024 VANNER 1ST ENCORE CONCERT</span><span class="card-y">→ NCT Dream · 2024.07.29</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=5APipPrwQCg" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/5APipPrwQCg/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">잡아 폼🙌 #VANNER #배너 #GON #곤 #성국 #SUNGKOOK #CrazyFormChallenge #미친폼 #Crazy_Form #ATEEZ #에이티즈</span><span class="card-y">→ ATEEZ · 2023.12.13</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=873YOV9o3wk" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/873YOV9o3wk/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">&#39;BLACKPINK(블랙핑크) - Lovesick Girls&#39; COVER by VANNER(배너)-TAEHWAN(태환)</span><span class="card-y">→ BLACKPINK · 2020.10.27</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=ao02ScLNiIQ" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/ao02ScLNiIQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">&#39;DAY6(데이식스) - 우리 앞으로 더 사랑하자&#39; COVER by VANNER(배너)-Hyesung(혜성)</span><span class="card-y">→ DAY6 · 2021.06.23</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=b66CfNMhlHs" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/b66CfNMhlHs/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">ᴜᴍᴍ💗 #VANNER #배너 #성국 #SUNGKOOK #TWS_OVERDRIVE</span><span class="card-y">→ TWS · 2025.11.06</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=BAg1pchlMVA" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/BAg1pchlMVA/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[LIVE CLIP] VANNER 배너 &#39;비투비 - 그리워하다&#39; | @북서울꿈의숲 창포원 [VGM : Be My Forest] BUSKING</span><span class="card-y">→ BTOB · 2024.09.15</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=cbLXdoixk3c" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/cbLXdoixk3c/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[VVS] VANNER 배너 ‘NCT DREAM - Smoothie’ (HYESUNG Cover) | @2024 VANNER 1ST ENCORE CONCERT</span><span class="card-y">→ NCT Dream · 2024.07.29</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=Eyl3LdGbG2Q" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/Eyl3LdGbG2Q/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">맏막즈의 축제🎇 #VANNER #배너 #태환 #TAEHWAN #영광 #YEONGGWANG #TWS #마지막축제</span><span class="card-y">→ TWS · 2024.12.02</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=G_sPfKd8v5g" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/G_sPfKd8v5g/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[VVS] VANNER 배너 ‘NCT DREAM - Smoothie’ (TAEHWAN Cover) | @2024 VANNER 1ST ENCORE CONCERT</span><span class="card-y">→ NCT Dream · 2024.07.29</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=GUj1o0ruLcY" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/GUj1o0ruLcY/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[VVS] VANNER 배너 ‘NCT DREAM - Smoothie’ (FULL CAM) | @2024 VANNER 1ST ENCORE CONCERT</span><span class="card-y">→ NCT Dream · 2024.07.29</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=mFFYezKqXww" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/mFFYezKqXww/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[LIVE CLIP] VANNER 배너 &#39;DAY6 - 예뻤어&#39; | @북서울꿈의숲 창포원 [VGM : Be My Forest] BUSKING</span><span class="card-y">→ DAY6 · 2024.09.15</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=MKhx7O9h4i4" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/MKhx7O9h4i4/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[COVER] VANNER(배너) 태환 - FLOWER FANTASY (N.Flying) | taerapy</span><span class="card-y">→ N.Flying · 2025.03.02</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=NNHnaQuWEhs" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/NNHnaQuWEhs/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[VVS] VANNER 배너 ‘ATEEZ - BOUNCY’ (FULL CAM) | @2024 VANNER 1ST CONCERT [THE FLAG : A TO V]</span><span class="card-y">→ ATEEZ · 2024.05.08</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=O1rCbS4YxPM" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/O1rCbS4YxPM/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[VVS] VANNER 배너 ‘RIIZE - Get A Guitar’ (FULL CAM) | @2024 VANNER 1ST CONCERT [THE FLAG : A TO V]</span><span class="card-y">→ RIIZE · 2024.05.08</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=OQZOY8nYiK4" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/OQZOY8nYiK4/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[VVS] VANNER 배너 ‘TXT - LO$ER=LO♡ER’(YEONGGWANG Cover) | @2024 VANNER 1ST CONCERT [THE FLAG : A TO V]</span><span class="card-y">→ TOMORROW X TOGETHER · 2024.05.14</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=oRFSAEYf4R4" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/oRFSAEYf4R4/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">how sweet🌃 #VANNER #배너 #혜성 #HYESUNG #NewJeans #NewJeans_HowSweet</span><span class="card-y">→ NewJeans · 2024.06.05</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=ouW8I1uAbdI" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/ouW8I1uAbdI/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">아껴둔 맏막즈의 사랑을 보여줄게💕 #VANNER #배너 #태환 #TAEHWAN #영광 #YEONGGWANG #레드벨벳 #RedVelvet #코스믹 #Cosmic</span><span class="card-y">→ Red Velvet · 2024.08.07</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=pK4YfPzr8d0" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/pK4YfPzr8d0/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[VVS] VANNER 배너 ‘NCT DREAM - Smoothie’ (GON Cover) | @2024 VANNER 1ST ENCORE CONCERT</span><span class="card-y">→ NCT Dream · 2024.07.29</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=q0lECnC32YU" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/q0lECnC32YU/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[VVS] VANNER 배너 ‘SHINee - Sherlock • 셜록’ (FULL CAM) | @2024 VANNER 1ST CONCERT [THE FLAG : A TO V]</span><span class="card-y">→ SHINee · 2024.05.08</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=rncNv5PYA_Q" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/rncNv5PYA_Q/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">&#39;BTS(방탄소년단) - Dynamite&#39; COVER by VANNER(배너)-TAEHWAN(태환)</span><span class="card-y">→ BTS · 2020.10.12</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=sHiP1owGtLc" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/sHiP1owGtLc/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">맏막즈 𝑺𝒉𝒉𝒉🤫 #VANNER #배너 #태환 #TAEHWAN #영광 #YEONGGWANG #VIVIZ #Shhh #Shhhchallenge</span><span class="card-y">→ VIVIZ · 2024.11.15</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=TESUVUCBUx0" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/TESUVUCBUx0/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[VVS] VANNER 배너 ‘TXT - LO$ER=LO♡ER’ (TAEHWAN Cover) | @2024 VANNER 1ST CONCERT [THE FLAG : A TO V]</span><span class="card-y">→ TOMORROW X TOGETHER · 2024.05.14</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=uh3qnmEGpXw" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/uh3qnmEGpXw/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">💗ʏᴏᴜ ᴍᴀᴋᴇ ᴍᴇ ᴏᴠᴇʀᴅʀɪᴠᴇ💗 #VANNER #배너 #혜성 #HYESUNG #성국 #SUNGKOOK #TWS_OVERDRIVE</span><span class="card-y">→ TWS · 2025.11.04</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=UmqJTdArIXM" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/UmqJTdArIXM/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">홀린 듯이 MEOW 🐱🦊🐾 #VANNER #배너 #GON #곤 #영광 #YEONGGWANG #MEOVV #MEOVVchallenge</span><span class="card-y">→ MEOVV · 2024.09.11</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=VcT9Kz0tkpI" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/VcT9Kz0tkpI/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[COVER] VANNER 배너 - LO$ER=LO♡ER (투모로우바이투게더) | LIVE CLIP</span><span class="card-y">→ TOMORROW X TOGETHER · 2024.07.18</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=zQsCLyM3LcM" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/zQsCLyM3LcM/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[VVS] VANNER 배너 ‘TXT - LO$ER=LO♡ER’ (SUNGKOOK Cover) | @2024 VANNER 1ST CONCERT [THE FLAG : A TO V]</span><span class="card-y">→ TOMORROW X TOGETHER · 2024.05.14</span></a>
+    </div>
   <div class="lang-switch"><a href="https://kpop-universe.kr/cover/배너/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/">Explore in the Universe →</a></div>
 </div>

@@ -21,9 +21,13 @@
   .sub{font-size:14px;color:rgba(180,200,255,0.6);margin-bottom:8px;}
   .sub a{color:rgba(190,210,255,0.9);}
   h2{font-size:15px;margin:26px 0 8px;color:rgba(200,220,255,0.9);}
-  .vid-list{list-style:none;padding:0;margin:0;}
-  .vid-list li{padding:5px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);font-size:13.5px;}
-  .vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;}
+  @media(min-width:620px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+  .card{display:block;min-width:0;text-decoration:none;}
+  .card-th{display:block;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#17171a;}
+  .card-th img{width:100%;height:100%;object-fit:cover;display:block;}
+  .card-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.38;margin-top:7px;color:rgba(228,236,255,0.94);}
+  .card-y{display:block;font-size:11.5px;color:rgba(160,180,230,0.6);margin-top:2px;}
   .yr{color:rgba(150,175,255,0.55);font-size:12px;}
   .cta-dock{position:sticky;bottom:0;z-index:5;margin-top:28px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#0a0a0d 62%,rgba(10,10,13,0));}
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
@@ -37,10 +41,10 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
 <script src="/seo_play.js" defer></script>
 <meta name="twitter:card" content="summary">
-<meta property="og:image" content="https://i.ytimg.com/vi/l54zu9rjpYc/mqdefault.jpg">
+<meta property="og:image" content="https://i.ytimg.com/vi/5iFGBQ0QpKQ/mqdefault.jpg">
 <meta property="og:image:width" content="320">
 <meta property="og:image:height" content="180">
-<meta name="twitter:image" content="https://i.ytimg.com/vi/l54zu9rjpYc/mqdefault.jpg">
+<meta name="twitter:image" content="https://i.ytimg.com/vi/5iFGBQ0QpKQ/mqdefault.jpg">
 </head>
 <body>
 <div class="wrap">
@@ -51,20 +55,20 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <div class="sub"><a href="https://kpop-universe.kr/g/베이비몬스터/">베이비몬스터</a></div>
 
     <h2>베이비몬스터가 커버한 곡 <span class="yr">2</span></h2>
-    <ul class="vid-list">
-      <li><a href="https://www.youtube.com/watch?v=5iFGBQ0QpKQ" target="_blank" rel="noopener">2NE1 콘서트 다녀와서 2NE1 노래 부르는 베몬;; #동네스타K4</a> <span class="yr">→ 투애니원</span></li>
-      <li><a href="https://www.youtube.com/watch?v=hfgzVli6zKE" target="_blank" rel="noopener">핫한 석천이형과 하나 둘 셋 𝙁𝙐𝙀𝙂𝙊 🔥 #THENEWSIX #TNX #더뉴식스 #우경준 #KYUNGJUN #FUEGO #푸에고 #FUEGO_Challenge #홍석천</a> <span class="yr">→ 티엔엑스</span></li>
-    </ul>
+    <div class="grid">
+      <a class="card" href="https://www.youtube.com/watch?v=5iFGBQ0QpKQ" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/5iFGBQ0QpKQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">2NE1 콘서트 다녀와서 2NE1 노래 부르는 베몬;; #동네스타K4</span><span class="card-y">→ 투애니원 · 2024.10.22</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=hfgzVli6zKE" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/hfgzVli6zKE/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">핫한 석천이형과 하나 둘 셋 𝙁𝙐𝙀𝙂𝙊 🔥 #THENEWSIX #TNX #더뉴식스 #우경준 #KYUNGJUN #FUEGO #푸에고 #FUEGO_Challenge #홍석천</span><span class="card-y">→ 티엔엑스 · 2024.03.26</span></a>
+    </div>
 
     <h2>다른 아티스트가 커버한 베이비몬스터 곡 <span class="yr">6</span></h2>
-    <ul class="vid-list">
-      <li><a href="https://www.youtube.com/watch?v=1IzWV_jkIF4" target="_blank" rel="noopener">Sheeeeeeeesh#트라이비 #TRI_BE #켈리 #kelly #미레 #MiRe #베이비몬스터 #BABYMONSTER#SHEESH #SHEESHchallenge</a> <span class="yr">by 트라이비</span></li>
-      <li><a href="https://www.youtube.com/watch?v=jtCbpOolY0w" target="_blank" rel="noopener">냥냥즈 가보자고~🍒 #CandyShop #캔디샵 #소람 #SORAM #사랑 #SARANG #BABYMONSTER #베이비몬스터 #SHEESH #SHEESHchallenge</a> <span class="yr">by 캔디샵</span></li>
-      <li><a href="https://www.youtube.com/watch?v=kxtYb6F_Zbo" target="_blank" rel="noopener">Got them all going😎#트라이비 #TRI_BE #켈리 #Kelly #미레 #MiRe #베이비몬스터 #BABYMONSTER #SHEESHchallenge #SHEESH</a> <span class="yr">by 트라이비</span></li>
-      <li><a href="https://www.youtube.com/watch?v=oYOgGMpElx0" target="_blank" rel="noopener">춤이랑 노래가 너무 중독적 sheesh🎵sheesh🎵 #다크비 #DKB #희찬 #HEECHAN #BABYMONSTER #베이비몬스터 #SHEESH #SHEESHchallenge</a> <span class="yr">by 다크비</span></li>
-      <li><a href="https://www.youtube.com/watch?v=QwyfKu883To" target="_blank" rel="noopener">Look at that KANNY✨#SAYMYNAME #세이마이네임 #SMN #세마넴#카니 #KANNY #DRIP #DRIP_Challenge#BABYMONSTER #베이비몬스터</a> <span class="yr">by 세이마이네임</span></li>
-      <li><a href="https://www.youtube.com/watch?v=z7guENhi8PY" target="_blank" rel="noopener">USPEER (유스피어) Performance Video | BABYMONSTER (베이비몬스터) ‘DRIP’</a> <span class="yr">by 유스피어</span></li>
-    </ul>
+    <div class="grid">
+      <a class="card" href="https://www.youtube.com/watch?v=1IzWV_jkIF4" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/1IzWV_jkIF4/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">Sheeeeeeeesh#트라이비 #TRI_BE #켈리 #kelly #미레 #MiRe #베이비몬스터 #BABYMONSTER#SHEESH #SHEESHchallenge</span><span class="card-y">by 트라이비 · 2024.07.11</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=jtCbpOolY0w" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/jtCbpOolY0w/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">냥냥즈 가보자고~🍒 #CandyShop #캔디샵 #소람 #SORAM #사랑 #SARANG #BABYMONSTER #베이비몬스터 #SHEESH #SHEESHchallenge</span><span class="card-y">by 캔디샵 · 2024.07.01</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=kxtYb6F_Zbo" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/kxtYb6F_Zbo/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">Got them all going😎#트라이비 #TRI_BE #켈리 #Kelly #미레 #MiRe #베이비몬스터 #BABYMONSTER #SHEESHchallenge #SHEESH</span><span class="card-y">by 트라이비 · 2024.04.26</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=oYOgGMpElx0" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/oYOgGMpElx0/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">춤이랑 노래가 너무 중독적 sheesh🎵sheesh🎵 #다크비 #DKB #희찬 #HEECHAN #BABYMONSTER #베이비몬스터 #SHEESH #SHEESHchallenge</span><span class="card-y">by 다크비 · 2024.04.15</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=QwyfKu883To" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/QwyfKu883To/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">Look at that KANNY✨#SAYMYNAME #세이마이네임 #SMN #세마넴#카니 #KANNY #DRIP #DRIP_Challenge#BABYMONSTER #베이비몬스터</span><span class="card-y">by 세이마이네임 · 2024.12.16</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=z7guENhi8PY" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/z7guENhi8PY/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">USPEER (유스피어) Performance Video | BABYMONSTER (베이비몬스터) ‘DRIP’</span><span class="card-y">by 유스피어 · 2025.05.17</span></a>
+    </div>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/cover/babymonster/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/">더 알아보기 →</a></div>
 </div>

@@ -21,9 +21,13 @@
   .sub{font-size:14px;color:rgba(180,200,255,0.6);margin-bottom:8px;}
   .sub a{color:rgba(190,210,255,0.9);}
   h2{font-size:15px;margin:26px 0 8px;color:rgba(200,220,255,0.9);}
-  .vid-list{list-style:none;padding:0;margin:0;}
-  .vid-list li{padding:5px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);font-size:13.5px;}
-  .vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;}
+  @media(min-width:620px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+  .card{display:block;min-width:0;text-decoration:none;}
+  .card-th{display:block;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#17171a;}
+  .card-th img{width:100%;height:100%;object-fit:cover;display:block;}
+  .card-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.38;margin-top:7px;color:rgba(228,236,255,0.94);}
+  .card-y{display:block;font-size:11.5px;color:rgba(160,180,230,0.6);margin-top:2px;}
   .yr{color:rgba(150,175,255,0.55);font-size:12px;}
   .cta-dock{position:sticky;bottom:0;z-index:5;margin-top:28px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#0a0a0d 62%,rgba(10,10,13,0));}
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
@@ -36,11 +40,11 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5NTV6X3YF"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
 <script src="/seo_play.js" defer></script>
-<meta name="twitter:card" content="summary_large_image">
-<meta property="og:image" content="https://kpop-universe.kr/og-image.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta name="twitter:image" content="https://kpop-universe.kr/og-image.png">
+<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://i.ytimg.com/vi/8dvBz6hqM4g/mqdefault.jpg">
+<meta property="og:image:width" content="320">
+<meta property="og:image:height" content="180">
+<meta name="twitter:image" content="https://i.ytimg.com/vi/8dvBz6hqM4g/mqdefault.jpg">
 </head>
 <body>
 <div class="wrap">
@@ -51,43 +55,43 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <div class="sub"><a href="https://kpop-universe.kr/en/g/girls-generation/">Girls&#39; Generation</a></div>
 
     <h2>Covered by Girls&#39; Generation <span class="yr">9</span></h2>
-    <ul class="vid-list">
-      <li><a href="https://www.youtube.com/watch?v=8dvBz6hqM4g" target="_blank" rel="noopener">우주소녀 보나 &#39;소원을 말해봐&#39; 직캠 | WJSN &#39;BONA&#39; fancam | 소녀시대(SNSD) | 올라운돌(All Rounder IDOL) | Dance Cover</a> <span class="yr">→ WJSN</span></li>
-      <li><a href="https://www.youtube.com/watch?v=lKV9NeUN8vw" target="_blank" rel="noopener">우주소녀 엑시 &#39;소원을 말해봐&#39; 직캠 | WJSN &#39;EXY&#39; fancam | 소녀시대(SNSD) | 올라운돌(All Rounder IDOL) | Dance Cover</a> <span class="yr">→ WJSN</span></li>
-      <li><a href="https://www.youtube.com/watch?v=lncZp6rsnqQ" target="_blank" rel="noopener">BTS &amp; GFRIEND &amp; 소녀시대 고아라폰&amp;노페패딩과 함께 들었던 그 노래들 | BAE173 | Dance Cover | 우리가 사랑한 노래 | Our Beloved</a> <span class="yr">→ GFRIEND</span></li>
-      <li><a href="https://www.youtube.com/watch?v=lncZp6rsnqQ" target="_blank" rel="noopener">BTS &amp; GFRIEND &amp; 소녀시대 고아라폰&amp;노페패딩과 함께 들었던 그 노래들 | BAE173 | Dance Cover | 우리가 사랑한 노래 | Our Beloved</a> <span class="yr">→ BAE173</span></li>
-      <li><a href="https://www.youtube.com/watch?v=omkNLJfNEF0" target="_blank" rel="noopener">ITZY (여자)아이들부터 소녀시대 핑클까지 Girl Group History | K-pop Mashup | Cover | MUSIC CIRCLE | 뮤직써클 | DreamNote</a> <span class="yr">→ ITZY</span></li>
-      <li><a href="https://www.youtube.com/watch?v=omkNLJfNEF0" target="_blank" rel="noopener">ITZY (여자)아이들부터 소녀시대 핑클까지 Girl Group History | K-pop Mashup | Cover | MUSIC CIRCLE | 뮤직써클 | DreamNote</a> <span class="yr">→ Dreamnote</span></li>
-      <li><a href="https://www.youtube.com/watch?v=oW7HLcvb_MM" target="_blank" rel="noopener">우주소녀 연정 &#39;소원을 말해봐&#39; 직캠 | WJSN &#39;YEONJUNG&#39; fancam | 소녀시대(SNSD) | 올라운돌(All Rounder IDOL) | Dance Cover</a> <span class="yr">→ WJSN</span></li>
-      <li><a href="https://www.youtube.com/watch?v=VD60hUgYxBE" target="_blank" rel="noopener">우주소녀 다원 &#39;소원을 말해봐&#39; 직캠 | WJSN &#39;DAWON&#39; fancam | 소녀시대(SNSD) | 올라운돌(All Rounder IDOL) | Dance Cover</a> <span class="yr">→ WJSN</span></li>
-      <li><a href="https://www.youtube.com/watch?v=Vnh3-OxqhHE" target="_blank" rel="noopener">(ENG) [Weekly Idol] 엔믹스 &#39;지지진&#39;의 소녀시대-GEE 커버 댄스  l EP.550</a> <span class="yr">→ NMIXX</span></li>
-    </ul>
+    <div class="grid">
+      <a class="card" href="https://www.youtube.com/watch?v=8dvBz6hqM4g" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/8dvBz6hqM4g/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">우주소녀 보나 &#39;소원을 말해봐&#39; 직캠 | WJSN &#39;BONA&#39; fancam | 소녀시대(SNSD) | 올라운돌(All Rounder IDOL) | Dance Cover</span><span class="card-y">→ WJSN · 2019.10.19</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=lKV9NeUN8vw" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/lKV9NeUN8vw/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">우주소녀 엑시 &#39;소원을 말해봐&#39; 직캠 | WJSN &#39;EXY&#39; fancam | 소녀시대(SNSD) | 올라운돌(All Rounder IDOL) | Dance Cover</span><span class="card-y">→ WJSN · 2019.10.25</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=lncZp6rsnqQ" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/lncZp6rsnqQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">BTS &amp; GFRIEND &amp; 소녀시대 고아라폰&amp;노페패딩과 함께 들었던 그 노래들 | BAE173 | Dance Cover | 우리가 사랑한 노래 | Our Beloved</span><span class="card-y">→ GFRIEND · 2021.03.24</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=lncZp6rsnqQ" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/lncZp6rsnqQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">BTS &amp; GFRIEND &amp; 소녀시대 고아라폰&amp;노페패딩과 함께 들었던 그 노래들 | BAE173 | Dance Cover | 우리가 사랑한 노래 | Our Beloved</span><span class="card-y">→ BAE173 · 2021.03.24</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=omkNLJfNEF0" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/omkNLJfNEF0/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">ITZY (여자)아이들부터 소녀시대 핑클까지 Girl Group History | K-pop Mashup | Cover | MUSIC CIRCLE | 뮤직써클 | DreamNote</span><span class="card-y">→ ITZY · 2020.01.22</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=omkNLJfNEF0" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/omkNLJfNEF0/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">ITZY (여자)아이들부터 소녀시대 핑클까지 Girl Group History | K-pop Mashup | Cover | MUSIC CIRCLE | 뮤직써클 | DreamNote</span><span class="card-y">→ Dreamnote · 2020.01.22</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=oW7HLcvb_MM" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/oW7HLcvb_MM/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">우주소녀 연정 &#39;소원을 말해봐&#39; 직캠 | WJSN &#39;YEONJUNG&#39; fancam | 소녀시대(SNSD) | 올라운돌(All Rounder IDOL) | Dance Cover</span><span class="card-y">→ WJSN · 2019.10.26</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=VD60hUgYxBE" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/VD60hUgYxBE/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">우주소녀 다원 &#39;소원을 말해봐&#39; 직캠 | WJSN &#39;DAWON&#39; fancam | 소녀시대(SNSD) | 올라운돌(All Rounder IDOL) | Dance Cover</span><span class="card-y">→ WJSN · 2019.10.26</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=Vnh3-OxqhHE" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/Vnh3-OxqhHE/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">(ENG) [Weekly Idol] 엔믹스 &#39;지지진&#39;의 소녀시대-GEE 커버 댄스  l EP.550</span><span class="card-y">→ NMIXX · 2022.02.23</span></a>
+    </div>
 
     <h2>Girls&#39; Generation songs covered by others <span class="yr">22</span></h2>
-    <ul class="vid-list">
-      <li><a href="https://www.youtube.com/watch?v=_TAy4ManFqA" target="_blank" rel="noopener">공포즈가 부릅니다 소녀시대 Gee #IVE #아이브 #REI #레이 #JANGWONYOUNG #장원영 #LIZ #리즈 #Shorts</a> <span class="yr">by IVE</span></li>
-      <li><a href="https://www.youtube.com/watch?v=9LkxIj7Oc3s" target="_blank" rel="noopener">[TRI.BE COVER] 소녀시대 ‘다시 만난 세계’ Dance Cover</a> <span class="yr">by TRI.BE</span></li>
-      <li><a href="https://www.youtube.com/watch?v=AKsuK-Vzm0I" target="_blank" rel="noopener">최리(Choerry) &#39;그 여름 (0805)&#39; (소녀시대) Cover | ARTMS</a> <span class="yr">by ARTMS</span></li>
-      <li><a href="https://www.youtube.com/watch?v=bAg0k_TPrUU" target="_blank" rel="noopener">[방과후 설렘] 2학년 미나미&amp;타케이 카리나 &amp; 후쿠모토 하나 - 소원을 말해봐(소녀시대) MBC211205방송</a> <span class="yr">by RESCENE</span></li>
-      <li><a href="https://www.youtube.com/watch?v=F4em33iwgc8" target="_blank" rel="noopener">CLASS:y(클라씨) 소녀시대 &#39;Kissing You&#39; Dance Cover (Moving Ver.)</a> <span class="yr">by CLASSy</span></li>
-      <li><a href="https://www.youtube.com/watch?v=fCnQgb4DChA" target="_blank" rel="noopener">[방송선공개] 멋쁨폭발! 에스파의 소녀시대 ‘소원을 말해봐’ 커버 무대♬</a> <span class="yr">by aespa</span></li>
-      <li><a href="https://www.youtube.com/watch?v=H1sC_g5LvYo" target="_blank" rel="noopener">CLASS:y(클라씨) 소녀시대 &#39;Kissing You&#39; Dance Cover (Fix Ver.)</a> <span class="yr">by CLASSy</span></li>
-      <li><a href="https://www.youtube.com/watch?v=HqkYlFjkFLw" target="_blank" rel="noopener">Cherry Bullet - [COVER] 소녀시대 ‘다시 만난 세계’ PRACTICE VIDEO (Live Ver.)</a> <span class="yr">by Cherry Bullet</span></li>
-      <li><a href="https://www.youtube.com/watch?v=JMXioKDtGAY" target="_blank" rel="noopener">[Lovelyz - Kissing You (Girls&#39; Generation)] Special Stage l M COUNTDOWN 160519 EP.474</a> <span class="yr">by Lovelyz</span></li>
-      <li><a href="https://www.youtube.com/watch?v=k5wWCuzJSZY" target="_blank" rel="noopener">07년생이 커버한 07년 곡 다시 만난 세계 🎶 | 아이브 IVE | 우리가 사랑한 노래 | 소녀시대 | 동방신기 | 보아 | VOCAL COVER | Our Beloved</a> <span class="yr">by IVE</span></li>
-      <li><a href="https://www.youtube.com/watch?v=nwOfTBp2dNI" target="_blank" rel="noopener">추석특집 SBS인기가요 IU &amp; TEENTOP [Kissing You (소녀시대)](638회)</a> <span class="yr">by TEEN TOP</span></li>
-      <li><a href="https://www.youtube.com/watch?v=OAxWR8rpRCQ" target="_blank" rel="noopener">LIGHTSUM(라잇썸) - &#39;소녀시대 - 다시 만난 세계 (Into The New World)&#39; (Choreography Practice Video) | HMA 2024</a> <span class="yr">by LIGHTSUM</span></li>
-      <li><a href="https://www.youtube.com/watch?v=pEeJzYK4uwg" target="_blank" rel="noopener">체리블렛(Cherry Bullet) Lion Heart (소녀시대) Stage Cut │소시의 라이언하트를 체블이들의 목소리로! [it&#39;s KPOP LIVE 잇츠라이브]</a> <span class="yr">by Cherry Bullet</span></li>
-      <li><a href="https://www.youtube.com/watch?v=QKPE4M1szmU" target="_blank" rel="noopener">Cherry Bullet - [COVER] 소녀시대 ‘다시 만난 세계’ PRACTICE VIDEO (Live Ver.)</a> <span class="yr">by Cherry Bullet</span></li>
-      <li><a href="https://www.youtube.com/watch?v=snPpjHkORWU" target="_blank" rel="noopener">[Weekly Playlist] 주간아 밀리언즈 본상 수상의 위엄을 보여주기 위해 돌아온 케플러! 소녀시대＜Gee＞ + 원더걸스＜Nobody＞ + 카라＜미스터＞ l EP.608</a> <span class="yr">by Kep1er</span></li>
-      <li><a href="https://www.youtube.com/watch?v=T-ZE7u4364k" target="_blank" rel="noopener">[Cover Note] 나의 소녀시대 OST - 소행운 [Cover by Lara]</a> <span class="yr">by Dreamnote</span></li>
-      <li><a href="https://www.youtube.com/watch?v=UDN_IJY_PKU" target="_blank" rel="noopener">구구단(gugudan) COVER PROJECT #06 NAYOUNG - ‘Adrenaline’ by 소녀시대-태티서</a> <span class="yr">by gugudan</span></li>
-      <li><a href="https://www.youtube.com/watch?v=UdtjMUaoero" target="_blank" rel="noopener">힛지스가 부르는 ‘소녀시대 - Gee’ ✨  #HITGS #힛지스</a> <span class="yr">by HITGS</span></li>
-      <li><a href="https://www.youtube.com/watch?v=UObna9mdbOc" target="_blank" rel="noopener">[COVER] T1419 SIAN, KEVIN, KAIRI &quot;소행운(小幸运)&quot; / 영화 &#39;나의 소녀시대&#39; OST</a> <span class="yr">by TFN</span></li>
-      <li><a href="https://www.youtube.com/watch?v=vnLB7VW7AKs" target="_blank" rel="noopener">NMIXX X Billlie in 코노돌🎉 - (트와이스-Fancy, Billlie-긴가민가요, 소녀시대-다시 만난 세계) | Show! MusicCore | MBC221029</a> <span class="yr">by Billlie</span></li>
-      <li><a href="https://www.youtube.com/watch?v=xc5fiPK0KAk" target="_blank" rel="noopener">시그니처(cignature) - &quot;소녀시대 (GIRLS&#39; GENERATION)-I GOT A BOY&quot; Dance Cover</a> <span class="yr">by cignature</span></li>
-      <li><a href="https://www.youtube.com/watch?v=Z6Ha7Lbxjn0" target="_blank" rel="noopener">우주소녀(WJSN)의 “Baby Baby(SNSD)” Band Live Cover │소녀시대의 ‘베이비 베이비’를 밴드 버전으로! [it&#39;s KPOP LIVE 잇츠라이브]</a> <span class="yr">by WJSN</span></li>
-    </ul>
+    <div class="grid">
+      <a class="card" href="https://www.youtube.com/watch?v=_TAy4ManFqA" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/_TAy4ManFqA/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">공포즈가 부릅니다 소녀시대 Gee #IVE #아이브 #REI #레이 #JANGWONYOUNG #장원영 #LIZ #리즈 #Shorts</span><span class="card-y">by IVE · 2025.11.18</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=9LkxIj7Oc3s" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/9LkxIj7Oc3s/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[TRI.BE COVER] 소녀시대 ‘다시 만난 세계’ Dance Cover</span><span class="card-y">by TRI.BE · 2022.06.22</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=AKsuK-Vzm0I" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/AKsuK-Vzm0I/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">최리(Choerry) &#39;그 여름 (0805)&#39; (소녀시대) Cover | ARTMS</span><span class="card-y">by ARTMS · 2026.08.02</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=bAg0k_TPrUU" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/bAg0k_TPrUU/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[방과후 설렘] 2학년 미나미&amp;타케이 카리나 &amp; 후쿠모토 하나 - 소원을 말해봐(소녀시대) MBC211205방송</span><span class="card-y">by RESCENE · 2021.12.05</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=F4em33iwgc8" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/F4em33iwgc8/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">CLASS:y(클라씨) 소녀시대 &#39;Kissing You&#39; Dance Cover (Moving Ver.)</span><span class="card-y">by CLASSy · 2023.03.14</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=fCnQgb4DChA" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/fCnQgb4DChA/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[방송선공개] 멋쁨폭발! 에스파의 소녀시대 ‘소원을 말해봐’ 커버 무대♬</span><span class="card-y">by aespa · 2021.05.25</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=H1sC_g5LvYo" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/H1sC_g5LvYo/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">CLASS:y(클라씨) 소녀시대 &#39;Kissing You&#39; Dance Cover (Fix Ver.)</span><span class="card-y">by CLASSy · 2023.03.14</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=HqkYlFjkFLw" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/HqkYlFjkFLw/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">Cherry Bullet - [COVER] 소녀시대 ‘다시 만난 세계’ PRACTICE VIDEO (Live Ver.)</span><span class="card-y">by Cherry Bullet · 2019.05.18</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=JMXioKDtGAY" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/JMXioKDtGAY/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[Lovelyz - Kissing You (Girls&#39; Generation)] Special Stage l M COUNTDOWN 160519 EP.474</span><span class="card-y">by Lovelyz · 2016.05.19</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=k5wWCuzJSZY" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/k5wWCuzJSZY/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">07년생이 커버한 07년 곡 다시 만난 세계 🎶 | 아이브 IVE | 우리가 사랑한 노래 | 소녀시대 | 동방신기 | 보아 | VOCAL COVER | Our Beloved</span><span class="card-y">by IVE · 2021.12.09</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=nwOfTBp2dNI" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/nwOfTBp2dNI/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">추석특집 SBS인기가요 IU &amp; TEENTOP [Kissing You (소녀시대)](638회)</span><span class="card-y">by TEEN TOP · 2011.09.15</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=OAxWR8rpRCQ" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/OAxWR8rpRCQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">LIGHTSUM(라잇썸) - &#39;소녀시대 - 다시 만난 세계 (Into The New World)&#39; (Choreography Practice Video) | HMA 2024</span><span class="card-y">by LIGHTSUM · 2025.02.18</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=pEeJzYK4uwg" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/pEeJzYK4uwg/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">체리블렛(Cherry Bullet) Lion Heart (소녀시대) Stage Cut │소시의 라이언하트를 체블이들의 목소리로! [it&#39;s KPOP LIVE 잇츠라이브]</span><span class="card-y">by Cherry Bullet · 2021.02.10</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=QKPE4M1szmU" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/QKPE4M1szmU/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">Cherry Bullet - [COVER] 소녀시대 ‘다시 만난 세계’ PRACTICE VIDEO (Live Ver.)</span><span class="card-y">by Cherry Bullet · 2018.12.10</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=snPpjHkORWU" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/snPpjHkORWU/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[Weekly Playlist] 주간아 밀리언즈 본상 수상의 위엄을 보여주기 위해 돌아온 케플러! 소녀시대＜Gee＞ + 원더걸스＜Nobody＞ + 카라＜미스터＞ l EP.608</span><span class="card-y">by Kep1er · 2023.04.12</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=T-ZE7u4364k" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/T-ZE7u4364k/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[Cover Note] 나의 소녀시대 OST - 소행운 [Cover by Lara]</span><span class="card-y">by Dreamnote · 2020.06.29</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=UDN_IJY_PKU" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/UDN_IJY_PKU/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">구구단(gugudan) COVER PROJECT #06 NAYOUNG - ‘Adrenaline’ by 소녀시대-태티서</span><span class="card-y">by gugudan · 2016.11.23</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=UdtjMUaoero" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/UdtjMUaoero/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">힛지스가 부르는 ‘소녀시대 - Gee’ ✨  #HITGS #힛지스</span><span class="card-y">by HITGS · 2025.11.24</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=UObna9mdbOc" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/UObna9mdbOc/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">[COVER] T1419 SIAN, KEVIN, KAIRI &quot;소행운(小幸运)&quot; / 영화 &#39;나의 소녀시대&#39; OST</span><span class="card-y">by TFN · 2021.09.19</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=vnLB7VW7AKs" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/vnLB7VW7AKs/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">NMIXX X Billlie in 코노돌🎉 - (트와이스-Fancy, Billlie-긴가민가요, 소녀시대-다시 만난 세계) | Show! MusicCore | MBC221029</span><span class="card-y">by Billlie · 2022.10.29</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=xc5fiPK0KAk" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/xc5fiPK0KAk/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">시그니처(cignature) - &quot;소녀시대 (GIRLS&#39; GENERATION)-I GOT A BOY&quot; Dance Cover</span><span class="card-y">by cignature · 2020.04.27</span></a>
+      <a class="card" href="https://www.youtube.com/watch?v=Z6Ha7Lbxjn0" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/Z6Ha7Lbxjn0/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">우주소녀(WJSN)의 “Baby Baby(SNSD)” Band Live Cover │소녀시대의 ‘베이비 베이비’를 밴드 버전으로! [it&#39;s KPOP LIVE 잇츠라이브]</span><span class="card-y">by WJSN · 2021.04.02</span></a>
+    </div>
   <div class="lang-switch"><a href="https://kpop-universe.kr/cover/소녀시대/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/">Explore in the Universe →</a></div>
 </div>
