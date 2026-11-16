@@ -2908,17 +2908,29 @@ animate();
 // 행성(구체)이 일시적으로 세로로 찌부/늘어나 보이는 원인으로 추정(2026-08-18, 사용자 제보). 이벤트마다
 // 바로 반영하지 않고 짧게 디바운스해서 마지막(안정된) 크기만 반영 — 검색창 리사이즈에 이미 쓰던 것과
 // 같은 패턴(_swResizeT).
+// ⚠️ 2026-11-17 보완(사용자 "회전 전환 때 우주가 순간 찌부"): 디바운스만 있으면 150ms+ 동안 캔버스가
+// 옛 크기로 남아 그 자체가 찌부로 보였다. 크기·비율 맞추기(싼 것)는 이벤트마다 즉시 하고, 중간에 잠깐
+// 어긋난 값을 봤더라도 150ms 뒤 한 번 더 맞추며, 배경 다시 그리기(비싼 것)만 디바운스에 남긴다.
 let _uniResizeT=null;
+const _uniApplySize=()=>{
+  const w=window.innerWidth,h=window.innerHeight;
+  camera.aspect=w/h;camera.updateProjectionMatrix();
+  renderer.setSize(w,h);
+  labelRenderer.setSize(w,h);
+};
 window.addEventListener('resize',()=>{
   _updateFavHintCallout();
+  _uniApplySize();
   clearTimeout(_uniResizeT);
   _uniResizeT=setTimeout(()=>{
-    const w=window.innerWidth,h=window.innerHeight;
-    camera.aspect=w/h;camera.updateProjectionMatrix();
-    renderer.setSize(w,h);
-    labelRenderer.setSize(w,h);
+    _uniApplySize(); // 마지막(안정된) 크기로 한 번 더
     scene.background=_buildUniverseBg(); // 그라데이션 모양이 화면비에 묶여 있어 다시 그린다
   },150);
+});
+// iOS는 회전 직후 innerWidth/Height가 늦게 자리 잡는 일이 있어 회전 이벤트에서 두 번 더 보정
+window.addEventListener('orientationchange',()=>{
+  setTimeout(_uniApplySize,80);
+  setTimeout(()=>{_uniApplySize();scene.background=_buildUniverseBg();},350);
 });
 // iOS에서 탐험 peek·가로 영상 등 오버레이가 viewport를 일시 변경하면 resize가 잘못된 높이로
 // 호출돼 캔버스가 줄어든 채로 고정되는 경우가 있다. 닫힘 경로(_closeFeedOverlay 등)에서 호출.
