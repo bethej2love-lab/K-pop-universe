@@ -7107,6 +7107,8 @@ window.addEventListener('message',e=>{
   try{
     const d=JSON.parse(e.data);
     if(d.event==='onError'&&e.source===document.getElementById('yt-lb-iframe')?.contentWindow){_lbEmbedBlocked(+d.info);return;}
+    // 유튜브가 자막 등 모듈을 붙였다고 알릴 때(onApiChange) — 첫 60초 안이면 그 즉시 자막을 다시 끈다(위 _lbCaptionsOffOnce 주석)
+    if(d.event==='onApiChange'&&Date.now()<_lbCcWatchUntil&&e.source===document.getElementById('yt-lb-iframe')?.contentWindow){_lbCcSendNow(_lbActiveVid);return;}
     if((d.event!=='infoDelivery'&&d.event!=='initialDelivery')||!d.info)return;
     _lbYtHeard=true; // 핸드셰이크 성공 — 더 안 보내도 된다
     if(d.info.duration>0)_lbYtDur=d.info.duration;
@@ -7139,11 +7141,20 @@ window.addEventListener('message',e=>{
 // 자막 기본 표시로 올리면 알아서 켠다 — cc_load_policy=0은 공식 보장이 없어서, 영상마다 처음 재생될 때 자막 모듈을 내린다.
 // 2026-11-15 사용자 "영상 중간에 자막이 자꾸 켜진다" — 유튜브가 자막 모듈을 1.5초보다 늦게(수십 초 뒤) 붙이면 다시 켜지던 것.
 // 끄기 신호를 첫 40초 동안 몇 번 더 보낸다(0·1.5·5·15·40초). 그 뒤엔 안 보내므로 사용자가 CC로 켠 건 유지(영상당 한 세트).
-let _lbCcOffVid=null;
+// 2026-11-16 다시 점검(사용자 "웹앱에서 CC가 또 켜진다"): ① 틀(iframe)은 열 때마다 새로 갈아끼우는데(_lbSetIframeSrc) 끄기 기록은 영상 ID만 봐서
+// 같은 영상을 다시 열거나 모드 전환으로 틀이 새로 생기면 끄기 신호가 아예 안 갔다 → 틀이 바뀌면 기록을 비운다 ② 시각 타이머만으로는 유튜브가 모듈을
+// 늦게 붙이는 순간을 못 맞춘다 → 유튜브가 모듈이 붙을 때 보내는 onApiChange를 받아 그 즉시 끈다(첫 60초 동안만 — 그 뒤 사용자가 켠 CC는 유지)
+// ③ 모듈 이름이 captions/cc 두 가지로 쓰인다 → 둘 다 내린다.
+let _lbCcOffVid=null,_lbCcWatchUntil=0;
+function _lbCcSendNow(vid){
+  const f=document.getElementById('yt-lb-iframe');
+  if(!f||!f.contentWindow||(vid&&_lbActiveVid!==vid))return;
+  ['captions','cc'].forEach(m=>{try{f.contentWindow.postMessage(JSON.stringify({event:'command',func:'unloadModule',args:[m]}),'*');}catch(_){}});
+}
 function _lbCaptionsOffOnce(){
   if(!_lbActiveVid||_lbCcOffVid===_lbActiveVid)return;
-  const vid=_lbActiveVid;_lbCcOffVid=vid;
-  const send=()=>{const f=document.getElementById('yt-lb-iframe');if(f&&f.contentWindow&&_lbActiveVid===vid)try{f.contentWindow.postMessage(JSON.stringify({event:'command',func:'unloadModule',args:['captions']}),'*');}catch(_){}};
+  const vid=_lbActiveVid;_lbCcOffVid=vid;_lbCcWatchUntil=Date.now()+60000;
+  const send=()=>_lbCcSendNow(vid);
   send();[1500,5000,15000,40000].forEach(ms=>setTimeout(send,ms));
 }
 // 회전 버튼(세로/가로 전환)은 지금 보는 영상에만 적용한다 — 예전엔 영상 ID를 폰에 영구 저장해서, 가로 영상에서
@@ -7276,6 +7287,7 @@ function _lbSetIframeSrc(url){
   const fr=old.cloneNode(false);
   if(url)fr.src=url;else fr.removeAttribute('src');
   old.replaceWith(fr);
+  _lbCcOffVid=null; // 새 틀 = 새 재생 — 같은 영상을 다시 열어도 자막 끄기 신호를 다시 보낸다(_lbCaptionsOffOnce 주석)
   return fr;
 }
 function _lbPushHist(){
@@ -24196,10 +24208,21 @@ function _igFeedDeck(card,m){
   m.c.slice(1,3).reverse().forEach((src,i,arr)=>{const b=document.createElement('img');b.className='ig-fd-back d'+(arr.length-i);b.src=src;b.alt='';b.loading='lazy';b.addEventListener('error',()=>b.remove());tw.insertBefore(b,tw.firstChild);});
   tw.appendChild(_igBars(m.c.length));
 }
+// For You 인스타 선반의 최애 표시(2026-11-16 사용자 "인스타도 최애 앞에 이모티콘, 젤 앞에 배치") — New Videos·차트 목록과 같은 규칙:
+// 프로필에서 정한 최애(myProfile.bias)면 그 이모티콘, 그냥 즐겨찾기면 🤍. 최애 계정 사진을 선반 맨 앞으로 모은다(각자 최신순 유지).
+// 반환 {emoji, isBias} — 최애 멤버/그룹 계정이 아니면 isBias=false. 멤버 최애는 이름+그룹으로 맞춘다(동명이인 — memberKos와 같은 이유).
+function _igBiasOf(owner){
+  const bias=(myProfile&&myProfile.bias)||[];
+  const art=owner&&owner.art,gko=owner&&owner.gko;
+  const hit=bias.find(b=>b&&b.ko&&(
+    (gko&&(b.type||'member')==='group'&&b.ko===gko)||
+    (art&&(b.type||'member')!=='group'&&b.ko===art.name.ko&&(!b.groupKo||b.groupKo===(art.group&&art.group.ko)||b.groupKo===_ytGroupKoFor(art)))));
+  return{emoji:String((hit&&hit.emoji)||'🤍').replace(/[<>&"']/g,''),isBias:!!hit}; // 이모지는 사용자가 친 글자 — 태그 문자 제거
+}
 function _igRenderRail(list,photos){
   photos.forEach(m=>{
     const cap1=String(m.cap||'').split('\n').map(x=>x.trim()).find(Boolean)||''; // 본문 첫 줄
-    const card=_appendFeedCard(list,'📷',m.owner.name,'',()=>_openIgViewer(m,m.h,0),m.u,null,{meta:_igAgo(m.t)});
+    const card=_appendFeedCard(list,'📷',(m._emoji?m._emoji+' ':'')+m.owner.name,'',()=>_openIgViewer(m,m.h,0),m.u,null,{meta:_igAgo(m.t)});
     // 이름 옆 흐린 @계정 — 카드 인스타 줄(_igCaption)과 같은 표기(2026-11-05 사용자 "카드엔 있는데 발견 탭엔 없다, 발견 탭이 더 필요")
     const tt=card&&card.querySelector('.feed-card-title');
     if(tt&&m.h){const hs=document.createElement('span');hs.className='ig-cap-h';hs.textContent='@'+m.h;tt.appendChild(hs);}
@@ -24245,6 +24268,9 @@ async function _buildFeedFavIg(){
     const magRecent=magItems.filter(m=>m.ts>Date.now()-30*86400000).slice(0,15); // 매거진은 올리는 간격이 길어 30일
     if(!photos.length&&!magRecent.length)return;
     const ttl=document.getElementById('feed-favig-ttl');if(ttl)ttl.textContent='📷 On Instagram';
+    // 최애 표시(_igBiasOf) — 최애 계정 사진을 앞으로(안정 정렬이라 각자 최신순 유지) + 이름 앞 이모티콘
+    photos.forEach(m=>{const b=_igBiasOf(m.owner);m._emoji=b.emoji;m._isBias=b.isBias;});
+    photos.sort((a,b)=>(b._isBias?1:0)-(a._isBias?1:0));
     if(photos.length)_igRenderRail(list,photos);
     if(mag&&magRecent.length)_igRenderMagRail(mag,magRecent);
     section.style.display='';
