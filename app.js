@@ -28157,7 +28157,8 @@ function _makeChVidController(contId){
     // pausedFrom(그룹 활동 중단일, 2026-10-22 — 펜타곤 옌안·유토: 2023.10 계약 종료, 탈퇴 발표는 없음, 2026 10주년 싱글은 7인).
     // 멤버 표기는 현역 그대로 두고, 미태깅 그룹 전체 영상만 그날까지로 자른다(사용자: "옌안 카드에 옌안이 안 한 펜타곤 영상이 나오면 안 된다").
     const _pz=_memberPausedCutoff(a,ko);
-    if(_pz&&(r.active||_artistMembershipStatus(a,ko,GROUPS[ko])==='paused'))return Object.assign(r,{active:false,left:_pz});
+    // 중단일과 탈퇴일이 둘 다 있으면 더 이른 날로 자른다(슈퍼주니어 기범: 2009.03 중단, 탈퇴는 2015.08 — 그 사이 그룹 영상에 없음).
+    if(_pz&&(r.active||_artistMembershipStatus(a,ko,GROUPS[ko])==='paused'||(r.left&&_pz<r.left)))return Object.assign(r,{active:false,left:_pz});
     return r;
   }
   function _memberVideoCutoffCore(a,gEntry,activeHere,ko){
