@@ -56,3 +56,8 @@ update yt_channel_videos set group_ko='오마이걸', members='{}', with_groups=
 select 'backup' k, count(*) n from bak_20261116_codex_firstgen
 union all select 'held_now', count(*) from yt_channel_videos where id in (select id from bak_20261116_codex_firstgen) and content_flag='보류' and flag_source='manual'
 union all select 'moved', count(*) from yt_channel_videos where id in ('OiblIYkbBUQ','bMQeDbDlWfw','X40kcKvIAkY','b6z74h1gAxY') and group_ko in ('아이유','아이브','오마이걸');
+
+-- ④ (추가) 사용자 제보 — 슈퍼주니어 성민 Show 페이지: 티아라 효민 'Nice Body'(feat. SPEED 성민) 2건이 슈퍼주니어 성민으로 붙어 있었음 → 티아라 효민
+--    되돌리기: update yt_channel_videos set group_ko='슈퍼주니어', members=array['성민'] where id in ('pk0uJaZ0DCM','tjaHF4uBDCA');
+update yt_channel_videos set group_ko='티아라', members=array['효민']
+ where id in ('pk0uJaZ0DCM','tjaHF4uBDCA') and group_ko='슈퍼주니어' and tags_manual is not true;
