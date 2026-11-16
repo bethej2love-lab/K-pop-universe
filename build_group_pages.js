@@ -1147,7 +1147,9 @@ async function fetchRelationRows() {
       out.push(...rows);
       if (rows.length < 1000) break;
       pageCursor = rows[rows.length - 1].id;
+      await new Promise(r => setTimeout(r, 100)); // 전체 훑기 — 재생성 중 앱 조회가 숨 쉬게 사이사이 쉼(2026-11-17)
     }
+    await new Promise(r => setTimeout(r, 100));
     if (++windows % 20 === 0) console.log(`  관계 후보 조회: ${windows}구간 · ${out.length}행`);
     if (end === null) break;
     cursor = end;
@@ -2799,6 +2801,7 @@ async function fetchShowVideos() {
       if (!r.ok) throw new Error(`${h} ${r.status}`);
       const j = await r.json(); j.forEach(v => all.set(v.id, v));
       if (j.length < 1000) break;
+      await new Promise(r2 => setTimeout(r2, 100)); // 채널별 연속 조회도 쉬어가며(2026-11-17)
     }
   }
   return [...all.values()].filter(v => !['무관', '보류', 'hidden'].includes(v.content_flag) && v.group_ko);

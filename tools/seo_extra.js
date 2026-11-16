@@ -37,6 +37,9 @@ async function sbGet(SB_URL, SB_KEY, q) {
 }
 
 // DB에서: 음방 1위 전체, 그룹별 인기 무대·MV(조회수 상위). 그룹당 1요청(동시 8개).
+// 재생성이 도는 동안 앱 조회가 35~37초씩 걸렸다(2026-11-16 실측, smoke 실패 로그) — 쿼리 사이 짧은 쉼과
+// 낮은 동시성으로 DB 피크를 눌러 앱이 숨 쉴 틈을 준다. 빌드는 1~2분 느려질 뿐이다(Disk IO 예산 메모리 참고).
+const nap = ms => new Promise(r => setTimeout(r, ms));
 async function prefetch({ SB_URL, SB_KEY, groupKos }) {
   const ex = { wins: {}, memberWins: {}, top: {}, allWins: [] }; // allWins: 솔로 포함 전체(연도별 음방 1위 페이지, 2026-10-30)
   try {
@@ -63,9 +66,10 @@ async function prefetch({ SB_URL, SB_KEY, groupKos }) {
         const rows = await sbGet(SB_URL, SB_KEY, `yt_channel_videos?select=id,title,view_count,members,category,published_at&group_ko=eq.${encodeURIComponent(g)}&content_flag=is.null&is_short=eq.false&category=in.(live,mv)&order=view_count.desc.nullslast&limit=60`);
         if (Array.isArray(rows)) ex.top[g] = rows.filter(r => r.view_count);
       } catch (e) { /* 이 그룹만 빠짐 */ }
+      await nap(100); // 그룹별 조회수 정렬은 비싼 축 — 몰아치지 않는다
     }
   };
-  await Promise.all(Array.from({ length: 8 }, worker));
+  await Promise.all(Array.from({ length: 3 }, worker));
   return ex;
 }
 
@@ -274,12 +278,13 @@ async function prefetchGroupVideos({ SB_URL, SB_KEY, groupKos }) {
           if (!Array.isArray(page) || !page.length) break;
           rows.push(...page); last = page[page.length - 1].id;
           if (page.length < 1000) break;
+          await nap(100);
         }
       } catch (e) { console.warn(`[prefetchGroupVideos] ${g}: ${e.message}`); }
       out[g] = rows;
     }
   };
-  await Promise.all(Array.from({ length: 3 }, worker));
+  await Promise.all(Array.from({ length: 2 }, worker));
   return out;
 }
 // 곡 목록 + 영상 묶기. 반환: { [gko]: [{b, title, album, date, isTitle, cr, vids:[…], wins}] } — 영상 minVids개 이상인 곡만
