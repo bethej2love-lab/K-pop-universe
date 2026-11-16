@@ -13383,7 +13383,39 @@ function _admDigestLogPut(day,m){
   const a=_admDigestLogRead().filter(r=>r&&r.day!==day);a.unshift(rec);
   try{localStorage.setItem(_ADM_DIGEST_LOG,JSON.stringify(a.slice(0,14)));}catch(e){}
 }
-function _admDigestRender(m,day,t){
+// ── Daily 핵심 세 줄(2026-11-16, Codex 개편안 + 사용자 "공감, 지금 작업해줘") — get_app_core(sql/2026-11-16_app_core_metrics.sql)
+// ① 앱 방문자(신규 포함) ② 첫날 저장한 신규 x/y(+첫날 재생) ③ 신규의 7일 내 재방문 x/y. 모두 "최근 7일 vs 바로 앞 7일"이고, 저장·재방문은 분자와 분모를 같이 보인다.
+// 재방문은 7일 관찰이 끝난 집단(7~14일 전 가입 vs 14~21일 전 가입)만 — 최근 7일 가입자는 아직 판정 못 함. 순수 함수라 따로 테스트(tests/adm-daily-core.test.js).
+function _admCoreLines(core){
+  if(!core||!core.v||!core.v.w)return null;
+  const w=core.v.w,wp=core.v.wp||{},r1=(core.ret&&core.ret.c1)||{},r0=(core.ret&&core.ret.c0)||{};
+  const pct=(a,b)=>b>0?Math.round(a/b*100):null;
+  const ratio=(a,b)=>({a:a??0,b:b??0,pct:pct(a??0,b??0)});
+  const lines=[
+    {key:'visitors',lbl:'앱 방문자',cur:w.visitors??0,prev:wp.visitors??0,sub:`신규 ${w.new??0}명`,tip:'최근 7일 앱을 연 사람(봇·테스트 제외)'},
+    {key:'saved',lbl:'첫날 저장한 신규',cur:ratio(w.saved,w.new),prev:ratio(wp.saved,wp.new),sub:`첫날 재생 ${w.played??0}/${w.new??0}`,tip:'가입 24시간 안에 즐겨찾기·컬렉션 저장을 한 신규 / 그 기간 신규. 재생은 같은 기간 신규 중 첫날 영상을 본 사람'},
+    {key:'ret',lbl:'신규 7일 내 재방문',cur:ratio(r1.returned,r1.cohort),prev:ratio(r0.returned,r0.cohort),sub:'7~14일 전 가입자',tip:'가입 다음 날 이후(7일 안) 다시 온 사람 / 가입자. 7일 관찰이 끝난 집단만(7~14일 전 가입 vs 14~21일 전 가입)'},
+  ];
+  const stale=core.stale_h!=null&&core.stale_h>12?`앱 기록이 ${Math.round(core.stale_h)}시간째 없어요 — 수집을 확인하세요`:null;
+  return {lines,stale,settled30:core.settled30??0};
+}
+function _admCoreHtml(core,t){
+  const L=_admCoreLines(core);if(!L)return null;
+  const dim=s=>`<span style="font-weight:400;color:rgba(200,212,240,0.6)">${s}</span>`;
+  const fmt=v=>typeof v==='object'?`${v.a}/${v.b}${v.pct==null?'':` (${v.pct}%)`}`:`${v}명`;
+  const delta=(cur,prev)=>{ // 숫자 단위 비교(방문자) — 앞 구간이 5 미만이면 %는 생략
+    const c=typeof cur==='object'?cur.pct:cur,p=typeof prev==='object'?prev.pct:prev;
+    if(c==null||p==null)return '<span style="color:rgba(200,212,240,0.4)">직전 —</span>';
+    const d=typeof cur==='object'?c-p:c-p;if(d===0)return '<span style="color:rgba(200,212,240,0.55)">직전과 같음</span>';
+    const col=d>0?'#7fe0a8':'#ff9a9a';return `<span style="color:${col}">직전 ${fmt(prev)} · ${d>0?'+':''}${d}${typeof cur==='object'?'%p':''}</span>`;
+  };
+  const main=L.lines.map(x=>`<div style="padding:6px 0;border-top:1px solid rgba(150,175,225,0.12)" title="${x.tip}"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px"><span style="color:rgba(200,212,240,0.8)">${x.lbl}</span><b style="font-size:15px">${fmt(x.cur)}</b></div><div style="display:flex;justify-content:space-between;gap:10px;font-size:10.5px;margin-top:1px"><span style="color:rgba(200,212,240,0.5)">${x.sub}</span>${delta(x.cur,x.prev)}</div></div>`).join('');
+  const status=L.stale?`<div style="margin-top:6px;padding:5px 8px;border-radius:8px;background:rgba(255,120,120,0.14);color:#ffb4b4;font-size:11.5px">⚠️ ${L.stale}</div>`:'';
+  let extra=`<div style="padding:3px 0;color:rgba(200,212,240,0.75);display:flex;justify-content:space-between"><span>30일 정착(가입 30일↑, 최근 7일 방문)</span><b>${L.settled30}명</b></div>`;
+  if(t&&t.w){const a=t.w||{},b=t.wp||{};extra+=`<div style="padding:3px 0;color:rgba(200,212,240,0.75);display:flex;justify-content:space-between"><span title="정적 페이지는 기기 단위, 앱은 계정 단위라 단위가 달라 건수를 나란히 둔다">정적 방문 → 앱</span><b>${a.seo_land??'—'} → ${a.seo_to_app??'—'}${b.seo_land!=null?dim(` · 직전 ${b.seo_land} → ${b.seo_to_app??0}`):''}</b></div>`;}
+  return {main,status,extra};
+}
+function _admDigestRender(m,day,t,core){
   document.getElementById('adm-digest-x')?.click();document.getElementById('adm-digest')?.remove();
   const box=document.createElement('div');
   box.id='adm-digest';box.setAttribute('role','status');
@@ -13391,8 +13423,10 @@ function _admDigestRender(m,day,t){
   const dim=t=>` <span style="font-weight:400;color:rgba(200,212,240,0.6)">${t}</span>`;
   const row=(lbl,val,tip)=>`<div style="display:flex;justify-content:space-between;gap:12px;padding:3px 0"${tip?` title="${tip}"`:''}><span style="color:rgba(200,212,240,0.75)">${lbl}</span><b>${val}</b></div>`;
   const nv=m.new_visitors??0,v=m.visitors??0,back=Math.max(0,v-nv);
-  let html=`<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px"><b style="font-size:15px">Daily</b><span style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;color:rgba(150,175,225,0.75)">최근 24시간 · 봇·테스트 제외</span><button type="button" id="adm-digest-x" aria-label="닫기" style="background:none;border:0;color:rgba(200,212,240,0.6);font-size:17px;line-height:1;padding:2px 2px 2px 6px;cursor:pointer">×</button></span></div>`
-    +row('새 방문',`${nv}명`)
+  const coreH=_admCoreHtml(core,t); // 핵심 세 줄(없으면 — RPC 미배포·실패 — 예전 화면 그대로)
+  const head=`<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px"><b style="font-size:15px">Daily</b><span style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;color:rgba(150,175,225,0.75)">${coreH?'최근 7일 · 직전 7일과 비교':'최근 24시간'} · 봇·테스트 제외</span><button type="button" id="adm-digest-x" aria-label="닫기" style="background:none;border:0;color:rgba(200,212,240,0.6);font-size:17px;line-height:1;padding:2px 2px 2px 6px;cursor:pointer">×</button></span></div>`;
+  let html=''
+    +row('새 방문(24시간)',`${nv}명`)
     +row('다시 온 사람',`${back}명`,'24시간 안에 온 사람 중 처음이 아닌 사람')
     +(m.seo_land!=null?row('정적 페이지 방문',`${m.seo_land}명`+dim(`→ 앱 ${m.seo_to_app??0}명`),'검색·챗지피티 등 출처가 있거나 스크롤·재생한 기기만(출처 없이 페이지 1장만 여는 크롤러 제외, seo_human_land), 그중 앱으로 넘어온 기기'):'')
     +row('즐겨찾기 새로 한 사람',`${m.fav_users??0}명`+(m.fav_adds?dim(`(${m.fav_adds}건)`):''));
@@ -13425,6 +13459,8 @@ function _admDigestRender(m,day,t){
       +hist.map(r=>`<tr><td style="padding:2px 0">${r.day.slice(5).replace('-','.')}</td><td style="${td}">${r.nv}</td><td style="${td}">${Math.max(0,r.v-r.nv)}</td><td style="${td}">${r.fu}</td><td style="${td}">${r.sl==null?'—':r.sl+'→'+(r.sa??0)}</td></tr>`).join('')
       +`</table></div>`;
   }
+  // 핵심 세 줄이 있으면 첫 화면은 그 세 줄만, 나머지(24시간 숫자·정적 페이지·추세·기록)는 '자세히'로 접는다
+  html=coreH?head+coreH.main+coreH.status+`<details id="adm-digest-more" style="margin-top:8px"><summary style="cursor:pointer;font-size:11.5px;color:rgba(150,175,225,0.75)">자세히 — 원인·기록</summary><div style="margin-top:6px">${coreH.extra}${html}</div></details>`:head+html;
   html+=`<div style="display:flex;justify-content:flex-end;margin-top:8px"><button type="button" id="adm-digest-home" style="background:rgba(120,150,230,0.22);border:0;color:#dfe7ff;border-radius:999px;padding:6px 12px;font-size:12px;cursor:pointer">관리자 홈</button></div>`;
   box.innerHTML=html;
   document.body.appendChild(box);
@@ -13435,6 +13471,7 @@ function _admDigestRender(m,day,t){
   const esc=ev=>{if(ev.key==='Escape')close();};
   setTimeout(()=>{if(box.isConnected){document.addEventListener('pointerdown',outside,true);document.addEventListener('keydown',esc,true);}},0);
   box.addEventListener('click',ev=>{
+    if(ev.target.closest&&ev.target.closest('#adm-digest-more'))return; // '자세히'를 펼치고 읽는 동안 팝업이 닫히면 안 된다
     close();
     if(ev.target.id==='adm-digest-home'&&typeof _admHomeOpen==='function')_admHomeOpen();
   });
@@ -13445,12 +13482,13 @@ async function _admDailyDigest(force){
   if(!force){try{if(localStorage.getItem('kpu_adm_digest_day')===day)return;}catch(e){}}
   let m;
   const trendP=sb.rpc('get_app_trend').then(r=>r.error?null:(typeof r.data==='string'?JSON.parse(r.data):r.data),()=>null); // 추세 — 실패해도 팝업은 뜬다
+  const coreP=sb.rpc('get_app_core').then(r=>r.error?null:(typeof r.data==='string'?JSON.parse(r.data):r.data),()=>null); // 핵심 세 줄 — 실패하면 예전 화면(2026-11-16)
   try{const{data,error}=await sb.rpc('get_app_metrics',{p_days:1});if(error)throw error;m=typeof data==='string'?JSON.parse(data):data;}catch(e){if(force&&typeof _showToast==='function')_showToast('Daily 조회 실패');return;}
   if(!m||(!force&&document.getElementById('adm-digest')))return;
   // 지난 기록은 그날 처음 본 숫자로 남긴다(나중에 다시 열어 본 숫자로 덮지 않음)
   if(!_admDigestLogRead().some(r=>r&&r.day===day))_admDigestLogPut(day,m);
   try{localStorage.setItem('kpu_adm_digest_day',day);}catch(e){}
-  _admDigestRender(m,day,await trendP);
+  _admDigestRender(m,day,await trendP,await coreP);
 }
 document.getElementById('sp-digest-btn')?.addEventListener('click',()=>{_admDailyDigest(true);});
 setTimeout(()=>{_admDailyDigest();},4000);
