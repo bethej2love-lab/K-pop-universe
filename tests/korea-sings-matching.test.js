@@ -196,7 +196,8 @@ const build=vm.runInNewContext(src.slice(start,end)+';_extBuildRows',{
  _m2ParseTitle,_extOwnerGko:o=>o&&o.gko,
  _classifyGuestGroup:(sec)=>({asGroup:!sec.length,extraMembers:sec}),
  _normalizeMemberTags:x=>({withGroups:x.withGroups,withMembers:x.withMembers}),
- _soloReattribGko:()=>null,_titleNorm:t=>t,_shouldJunkFlag:()=>false,
+ _soloReattribGko:()=>null,_titleNorm:t=>t,_extPickMembers:o=>o, // 팬채널 주인↔제목 멤버 선택(2026-11-16)은 tests/ext-fan-owner-members.test.js가 따로 검증 — 여기선 주인 유지
+_shouldJunkFlag:()=>false,
  _flagPatch:(content_flag,flag_source,extra)=>({content_flag,flag_source,...extra}),_coverResolve:()=>null
 });
 check('신규 동기화: 유민 동명이인은 소속 확정 없이 보류, NOT NULL 핸들',()=>{const v=negatives.find(v=>v.id==='Ls0kXbUD-mA');const out=build([{...v,published_at:v.date}],false,'music',null,'none','LegendKpop');
