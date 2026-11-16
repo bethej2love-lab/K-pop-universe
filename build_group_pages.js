@@ -687,7 +687,7 @@ artists.forEach(a => {
     const ageBits = isEn
       ? [bdayIso ? `born ${a.bday}` : '', ag.debutAge ? `debuted at ${ag.debutAge}` : '', ...xm.facts].filter(Boolean).join(', ')
       : [bdayIso ? `${a.bday} 생` : '', ag.debutAge ? `${ag.debutAge}세 데뷔` : '', ...xm.facts].filter(Boolean).join(', ');
-    const desc = (hasFancams ? (isEn ? `${fancams.length} ${en} (${groupInfo.en || primaryGko}) fancams, most viewed first. ` : `${primaryGko} ${ko} 직캠 ${fancams.length}개를 조회수 순으로. `) : '') + (isEn
+    const desc = (hasFancams ? (isEn ? `${fancams.length} ${en}${isSolo ? '' : ` (${groupInfo.en || primaryGko})`} fancams, most viewed first. ` : `${isSolo ? '' : primaryGko + ' '}${ko} 직캠 ${fancams.length}개를 조회수 순으로. `) : '') + (isEn
       ? `${en}${groupDisplay ? ` of ${groupDisplay}` : ''}: ${ageBits || 'profile'}. Fancams, stages and connections on K-POP UNIVERSE.`
       : `${ko}${groupDisplay ? `(${groupDisplay})` : ''}: ${ageBits || '프로필'}. 직캠·무대 영상과 함께한 아이돌을 K-POP UNIVERSE에서.`);
     const selfUrl = isEn ? enUrl : koUrl;
