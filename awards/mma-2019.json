@@ -1,0 +1,285 @@
+{
+ "id": "mma",
+ "edition": "2019",
+ "name": "멜론뮤직어워드",
+ "nameEn": "Melon Music Awards",
+ "dates": [
+  "2019-11-30"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2019_Melon_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "TOP 10 아티스트",
+   "en": "Top 10 Artists",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Bolbbalgan4",
+     "ext": true
+    },
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    },
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    },
+    {
+     "name": "Jang Beom-june",
+     "ext": true
+    },
+    {
+     "name": "Jannabi",
+     "ext": true
+    },
+    {
+     "name": "Mamamoo",
+     "gko": "마마무"
+    },
+    {
+     "name": "MC the Max",
+     "ext": true
+    },
+    {
+     "name": "Taeyeon",
+     "id": "a0166"
+    },
+    {
+     "name": "Heize",
+     "ext": true
+    },
+    {
+     "name": "Chungha",
+     "id": "a0313"
+    }
+   ]
+  },
+  {
+   "ko": "올해의 노래",
+   "en": "Song of the Year",
+   "koAuto": true,
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "\"Boy With Luv\""
+  },
+  {
+   "ko": "올해의 아티스트",
+   "en": "Artist of the Year",
+   "koAuto": true,
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  },
+  {
+   "ko": "올해의 앨범",
+   "en": "Album of the Year",
+   "koAuto": true,
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "Map of the Soul: Persona"
+  },
+  {
+   "ko": "올해의 레코드",
+   "en": "Record of the Year",
+   "koAuto": true,
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 신인",
+   "en": "Best New Artist",
+   "koAuto": true,
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "TXT",
+     "gko": "투모로우바이투게더"
+    },
+    {
+     "name": "Itzy",
+     "gko": "있지"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 댄스 (남자)",
+   "en": "Best Dance Award (Male)",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "\"Boy With Luv\""
+  },
+  {
+   "ko": "베스트 댄스 (여자)",
+   "en": "Best Dance Award (Female)",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Chungha",
+     "id": "a0313"
+    }
+   ],
+   "work": "\"Gotta Go\""
+  },
+  {
+   "ko": "베스트 랩/힙합",
+   "en": "Best Rap/Hip Hop Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Epik High",
+     "ext": true
+    }
+   ],
+   "work": "\"Lovedrunk\" (feat. Crush)"
+  },
+  {
+   "ko": "베스트 R&B/소울",
+   "en": "Best R&B/Soul Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Heize",
+     "ext": true
+    }
+   ],
+   "work": "\"We Don't Talk Together\" (feat. Giriboy) (Prod. Suga)"
+  },
+  {
+   "ko": "베스트 인디",
+   "en": "Best Indie Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "MeloMance",
+     "ext": true
+    }
+   ],
+   "work": "\"You&I\""
+  },
+  {
+   "ko": "베스트 록",
+   "en": "Best Rock Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "N.Flying",
+     "gko": "엔플라잉"
+    }
+   ],
+   "work": "\"Rooftop\""
+  },
+  {
+   "ko": "베스트 트로트",
+   "en": "Best Trot Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Hong Jin Young",
+     "ext": true
+    }
+   ],
+   "work": "\"Love Tonight\""
+  },
+  {
+   "ko": "베스트 OST",
+   "en": "Best OST Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Gummy",
+     "ext": true
+    }
+   ],
+   "work": "\"Remember Me(Hotel del Luna)\""
+  },
+  {
+   "ko": "베스트 팝",
+   "en": "Best Pop Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Billie Eilish",
+     "ext": true
+    }
+   ],
+   "work": "\"Bad Guy\""
+  },
+  {
+   "ko": "베스트 발라드",
+   "en": "Best Ballad Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Taeyeon",
+     "id": "a0166"
+    }
+   ],
+   "work": "\"Four Seasons\""
+  },
+  {
+   "ko": "Netizen Popularity Awards",
+   "en": "Netizen Popularity Awards",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  },
+  {
+   "ko": "핫 트렌드",
+   "en": "Hot Trend Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "AB6IX",
+     "gko": "에이비식스"
+    }
+   ]
+  }
+ ]
+}

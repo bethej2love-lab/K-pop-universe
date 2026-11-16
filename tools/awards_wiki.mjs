@@ -45,7 +45,7 @@ async function wikitext(title) {
   if (!j) throw new Error('위키 응답 없음(요청 제한)');
   return j.parse ? { title: j.parse.title, text: j.parse.wikitext } : null;
 }
-const clean = s => s.replace(/<ref[^>]*\/>/g, '').replace(/<ref[\s\S]*?<\/ref>/g, '');
+const clean = s => s.replace(/<ref[^>]*\/>/g, '').replace(/<ref[\s\S]*?<\/ref>/g, '').replace(/\{\{\s*(?:double-dagger|dagger|ddagger)\s*\}\}/gi, ''); // 수상 표시 ‡ 템플릿 제거
 const tierOf = (t, daesang) => daesang ? '대상' : /top ?10/i.test(t) ? '본상' : /rookie|new artist|newcomer|best new|rising/i.test(t) ? '신인' : /popular|favorite|favourite|fans|star award|choice|hallyu|k-?wave|vote|fan/i.test(t) ? '인기' : /^(top ?10|best|artist of|song of|album of|record of|main|bonsang|digital|album|performance)/i.test(t) ? '본상' : '특별';
 const plain = s => s.replace(/\[\[(?:[^\]|]*\|)?([^\]]*)\]\]/g, '$1').replace(/\{\{[^}]*\}\}/g, '').replace(/''+/g, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 
@@ -115,7 +115,9 @@ function parseTablePage(text) {
     if (/^\|-/.test(line)) { if (rowHasData) { headers = []; rowHasData = false; } cell = -1; continue; }
     if (/^!/.test(line)) {
       if (rowHasData) { headers = []; rowHasData = false; }
-      const m = /^!\s*(?:[^|[]*\|)?\s*(.*)$/.exec(line);
+      // 머리글이 {{Award category|색|부문명}} 템플릿으로 감싸인 문서(MMA 2019 등) → 템플릿을 벗겨서 부문명만
+      const L = line.replace(/\{\{Award category\|[^|]*\|/i, '').replace(/\}\}\s*$/, '');
+      const m = /^!\s*(?:[^|[{]*\|)?\s*(.*)$/.exec(L);
       headers.push(plain(m ? m[1] : '')); cell = -1; continue;
     }
     if (/^\|/.test(line)) { cell++; rowHasData = true; continue; }
