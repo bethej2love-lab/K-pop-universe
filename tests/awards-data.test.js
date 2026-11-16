@@ -81,13 +81,21 @@ const path = require('path');
     const T = { 'Artist of the Year': '올해의 아티스트', 'Best Female Group': '베스트 여자 그룹', 'Best New Artist': '베스트 신인', 'Top 10': 'TOP 10', 'Best Dance Performance – Male Group': '베스트 댄스 퍼포먼스 남자 그룹', 'Digital Daesang (Song of the Year)': '음원 대상(올해의 노래)', 'February 2020': '2020년 2월' };
     for (const [en, ko] of Object.entries(T)) assert.equal(koCategory(en), ko, en);
   });
-  check('번역 못 하는 부문명은 null(영어로 남긴다)', () => assert.equal(koCategory('Qoo10 Artist of the Year'), null));
+  check('번역 못 하는 부문명은 null(영어로 남긴다)', () => { assert.equal(koCategory('Naver AI Choice'), null); assert.equal(koCategory('Visa Song of the Year'), '올해의 노래'); });
   check('자동 수집 파일은 한글 부문명이 80% 이상 채워져 있다', () => {
     let n = 0, ok = 0;
     for (const a of awards) if (a.autoSource) for (const c of a.categories) { n++; if (c.koAuto) ok++; }
     assert.ok(n > 0 && ok / n >= 0.8, `${ok}/${n}`);
   });
   check('영영 부문명 en이 모든 부문에 있다(영어 화면용)', () => { for (const a of awards) for (const c of a.categories) assert.ok(c.en, a.file + ' ' + c.ko); });
+  check('정적 그룹 페이지: 대상 수상이 언어에 맞는 시상식·부문명으로 나온다(한·영)', () => {
+    const SE = require('../tools/seo_extra.js'); const ST = SE.loadStatic(path.join(__dirname, '..'));
+    const EX = new Proxy({}, { get: () => ({}) });
+    const ko = SE.groupExtra('에스파', 'ko', EX, ST, {}), en = SE.groupExtra('에스파', 'en', EX, ST, {});
+    assert.ok(/<h2>대상 수상<\/h2>/.test(ko.html) && ko.html.includes('멜론뮤직어워드') && ko.html.includes('올해의 앨범'), '한국어');
+    assert.ok(/<h2>Grand prizes \(Daesang\)<\/h2>/.test(en.html) && en.html.includes('Melon Music Awards') && en.html.includes('Album of the Year'), '영어');
+    assert.ok(!ko.html.includes('Album of the Year') || !/대상 수상[\s\S]*Album of the Year/.test(ko.html.split('</ul>')[0]), '한국어 목록에 영어 부문명이 섞이지 않음');
+  });
   check('영케이는 데이식스 멤버(Young K)로 연결된다', () => {
     const k = get('kgma', '2026'); const r = resolveWinner(cat(k, '그랜드 아티스트').winners[0]);
     assert.equal(r.kind, 'member'); assert.equal(r.gko, '데이식스');

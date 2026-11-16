@@ -23,6 +23,7 @@ function loadStatic(ROOT) {
   }
   return {
     awards: readJson(path.join(ROOT, 'group_awards.json')) || {},
+    awardsIdx: readJson(path.join(ROOT, 'awards', 'index.json')) || {}, // 시상식 수집분(awards/*.json → 그룹별 이력, 한·영 부문명) — tools/awards_check.mjs --write
     certs: readJson(path.join(ROOT, 'group_certifications.json')) || {},
     tours: readJson(path.join(ROOT, 'tours_boxscore.json')) || {},
     credits,
@@ -132,7 +133,23 @@ function groupExtra(ko, lang, EX, ST, opts) {
     </ul>
     <p class="note">${en ? 'Source: Wikipedia tour articles (reported figures such as Billboard Boxscore).' : '출처: 위키백과 투어 문서(빌보드 Boxscore 등 보고된 수치).'}</p>`;
   }
-  const aw = ST.awards[ko];
+  // 수상 이력(2026-11-16 사용자 "한글·영어 수집해서 언어에 맞게 노출") — awards/index.json이 있으면 그걸로(대상 전부 + 그 밖의 수상 개수), 없으면 아래 옛 group_awards.json
+  const aRecs = ((ST.awardsIdx && ST.awardsIdx.byGroup) || {})[ko] || [];
+  const aDae = aRecs.filter(x => x.tier === '대상' && x.edition);
+  if (aDae.length) {
+    const seen = new Set();
+    const dae = aDae.filter(x => { const k = [x.id, x.edition, x.en, x.member || ''].join('|'); if (seen.has(k)) return false; seen.add(k); return true; })
+      .sort((a, b) => String(b.edition).localeCompare(String(a.edition)) || String(a.id).localeCompare(String(b.id)));
+    const rest = aRecs.length - aDae.length;
+    out.facts.push(en ? `${dae.length} grand prizes (daesang)` : `대상 ${dae.length}개`);
+    out.html += `
+    <h2>${en ? 'Grand prizes (Daesang)' : '대상 수상'}</h2>
+    <ul class="discog-list">
+      ${dae.map(x => `<li>${esc(x.edition)} ${esc(en ? (x.awardEn || x.award) : x.award)} <span class="tag">${esc(en ? x.en : x.category)}</span>${x.work ? ` <span class="yr">${esc(x.work)}</span>` : ''}${x.member && !en ? ` <span class="yr">${esc(x.member)}</span>` : ''}</li>`).join('\n      ')}
+    </ul>${rest > 0 ? `
+    <p class="note">${en ? `Plus ${rest} other awards (main, rookie, popularity and special categories) at Melon, MAMA, Golden Disc, Seoul Music, AAA and more.` : `그 밖에 본상·신인상·인기상·특별상 등 ${rest}개(멜론·MAMA·골든디스크·서울가요대상·AAA 등).`}</p>` : ''}`;
+  }
+  const aw = aDae.length ? null : ST.awards[ko];
   if (aw && aw.total) {
     out.facts.push(en ? `${aw.total} grand prizes (daesang)` : `대상 ${aw.total}개`);
     out.html += `

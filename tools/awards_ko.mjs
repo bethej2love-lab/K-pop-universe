@@ -22,6 +22,8 @@ const PHRASE = [
   ['1st quarter', '1분기'], ['2nd quarter', '2분기'], ['3rd quarter', '3분기'], ['4th quarter', '4분기'], ['next generation', '넥스트 제너레이션'], ['inspiring achievement', '인스파이어링 어치브먼트'],
   ['world best artist', '월드 베스트 아티스트'], ['asia celebrity', '아시아 셀러브리티'], ['favorite asian artist', '페이보릿 아시안 아티스트'], ['best international artist', '베스트 해외 아티스트'],
   ['most popular artist', '인기 아티스트'], ['best adult contemporary', '베스트 어덜트 컨템포러리'], ['scene stealer', '씬 스틸러'], ['best acting performance', '베스트 연기'],
+  ['grand song', '그랜드 송'], ['grand artist', '그랜드 아티스트'], ['grand record', '그랜드 레코드'], ['grand performer', '그랜드 퍼포머'], ['grand prize', '대상'], ['grand award', '그랜드 어워드'],
+  ["fans' choice of the year", '올해의 팬스 초이스'], ['worldwide icon of the year', '올해의 월드와이드 아이콘'],
   ['music video acting', '뮤직비디오 연기'], ['best new artists', '베스트 신인'], ['best new artist', '베스트 신인'], ['hip hop', '힙합'], ['trend of the year', '올해의 트렌드'], ['best selling album', '베스트 셀링 앨범'], ['special jury prize', '심사위원 특별상'],
   ['k-wave popularity award', 'K웨이브 인기상'], ["kakao bank everyone's star", '카카오뱅크 모두의 스타상'], ["mwave global fans' choice", '엠웨이브 글로벌 팬스 초이스'],
   ['(digital category)', '(음원 부문)'], ['(album category)', '(음반 부문)'], ['k-pop', 'K팝'], ['j-pop', 'J팝'], ['netizen popularity', '네티즌 인기상'], ['popularity award', '인기상'], ['best choice', '베스트 초이스'],
@@ -43,6 +45,7 @@ const MONTH = { january: 1, february: 2, march: 3, april: 4, may: 5, june: 6, ju
 
 export function koCategory(en) {
   const mo = /^([A-Za-z]+) (\d{4})$/.exec(String(en || '').trim()); if (mo && MONTH[mo[1].toLowerCase()]) return `${mo[2]}년 ${MONTH[mo[1].toLowerCase()]}월`;
+  en = String(en || '').replace(/^(Visa|Samsung Galaxy|Samsung|Qoo10|Naver|Toss|Lotte|Nissan Juke|KB|Kakao Bank)\s+(?=(Artist|Song|Album|Record|Worldwide|Fans|Best|Rookie|New|Music|Stage)\b)/i, ''); // 대상·본상 앞에 붙은 후원사 이름은 뗀다
   let s = ' ' + String(en || '').replace(/\s+/g, ' ').trim() + ' ';
   const low = s.toLowerCase();
   // 문구 사전: 소문자로 찾아 자리표시자로 치환(길이 긴 것부터)
