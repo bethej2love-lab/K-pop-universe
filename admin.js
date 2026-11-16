@@ -13205,6 +13205,11 @@ function _igTagEditorOpen(){
   }
   input.addEventListener('input',render);
   buttons.save.addEventListener('click',()=>_igTagEditorSave(view,draft));
+  // 직전 태그 그대로(2026-11-16) — 한 번 누르면 방금 저장한 멤버·범위를 불러와 바로 저장한다(멤버 고르기를 다시 안 해도 됨)
+  {const last=_igLastTagRead();
+   if(last){const lb=document.createElement('button');lb.type='button';lb.className='igv-edit-last';lb.textContent=_igLastTagLabel(last)+(ko?' → 저장':' → save');
+     lb.addEventListener('click',()=>{if(draft.saving)return;draft.ids=new Set(last.ids);if(last.scope==='post'&&draft.targets.length>=2)draft.scope='post';render();_igTagEditorSave(view,draft);});
+     box.querySelector('.igv-edit-selected').before(lb);}}
   const fit=()=>{if(_igv!==view||view.tagEditor!==draft||!isMob())return;const h=Math.round(Math.min(innerHeight,window.visualViewport?.height||innerHeight));ov.style.setProperty('--igv-edit-vh',h+'px');ov.style.setProperty('--igv-edit-photo-height',Math.max(60,Math.min(h*.34,h-520))+'px');};
   draft.cleanup=()=>{window.removeEventListener('resize',fit);window.visualViewport?.removeEventListener('resize',fit);ov.style.removeProperty('--igv-edit-vh');ov.style.removeProperty('--igv-edit-photo-height');};
   window.addEventListener('resize',fit);window.visualViewport?.addEventListener('resize',fit);
@@ -13221,6 +13226,7 @@ async function _igTagEditorSave(view,draft){
     if(draft.scope==='post'){
       const{data,error}=await sb.rpc('ig_photo_tags_apply_post',{p_post_key:identity.postKey,p_handle:String(view.h||'').toLowerCase(),p_artist_ids:ids,p_photos:draft.targets.map(t=>({photo_key:t.row?.photo_key||t.identity.photoKey,media_id:t.identity.mediaId||t.row?.media_id||null,image_key:t.identity.imageKey,expected_revision:t.row?.revision??null}))});
       if(error)throw error;
+      if(ids.length)_igLastTagWrite(ids,'post');
       const rows=data||[];_igPhotoTagsCache.set(identity.postKey,{rows,at:Date.now()});view.tagRows=rows;
       if(_igv===view&&view.tagEditor===draft)_igTagEditorClose();
       else if(_igv&&!_igv.tagEditor&&_igPostKey(_igv.m.p)===identity.postKey){_igv.tagRows=rows;_igvRenderTags();}
@@ -13236,6 +13242,7 @@ async function _igTagEditorSave(view,draft){
     }
     const{data,error}=await query;if(error)throw error;
     if(!data)throw new Error('tag revision conflict');
+    if(ids.length)_igLastTagWrite(ids,'photo');
     const key=row?.photo_key||identity.photoKey;
     const rows=(view.tagRows||[]).filter(r=>r.photo_key!==key);if(ids.length)rows.push(data);
     _igPhotoTagsCache.set(identity.postKey,{rows,at:Date.now()});view.tagRows=rows;
@@ -13247,6 +13254,114 @@ async function _igTagEditorSave(view,draft){
   }finally{
     draft.saving=false;box.removeAttribute('aria-busy');box.querySelectorAll('button,input').forEach(el=>el.disabled=false);
   }
+}
+
+// ── 인스타 태그: "직전 태그 그대로" + 보관함 일괄 태깅(2026-11-16 사용자 "방금 한 그대로 저장되는 기능이나 선택해서 한 번에 태깅") ──
+// 직전 태그는 이 기기에만 기억한다(localStorage) — 저장에 성공할 때마다 갱신. 멤버가 지워졌으면(artists.json 변경) 그 사람만 뺀다.
+const _IG_LAST_TAG_KEY='kpu_ig_last_tag';
+function _igLastTagRead(){
+  try{
+    const o=JSON.parse(localStorage.getItem(_IG_LAST_TAG_KEY)||'null');
+    const ids=Array.isArray(o&&o.ids)?o.ids.filter(id=>ARTISTS.some(a=>a.id===id)):[];
+    return ids.length?{ids,scope:o.scope==='post'?'post':'photo'}:null;
+  }catch(e){return null;}
+}
+function _igLastTagWrite(ids,scope){
+  try{if(ids&&ids.length)localStorage.setItem(_IG_LAST_TAG_KEY,JSON.stringify({ids:[...ids],scope:scope==='post'?'post':'photo',at:Date.now()}));}catch(e){}
+}
+function _igLastTagLabel(last){
+  const ko=currentLang==='ko';
+  const names=last.ids.map(id=>{const a=ARTISTS.find(x=>x.id===id);return a?_dispName(a):id;});
+  const head=names.slice(0,3).join(', ');
+  return (ko?'↺ 직전 태그 · ':'↺ Last tags · ')+head+(names.length>3?(ko?' 외 '+(names.length-3):' +'+(names.length-3)):'');
+}
+// 보관함에서 고른 게시물(최대 40개)에 같은 멤버를 한 번에 — 게시물 안 모든 사진에 적용(단일 편집기의 '전체 사진'과 같은 RPC).
+// rows: ig_media 행(post_key,p,u,c,mi,n,ty…), handle: 계정, onDone: 끝난 뒤 보관함 선택 모드 정리
+async function _igBulkTagOpen(rows,handle,onDone){
+  if(!_isAdmin()||!sb)return;
+  const ko=currentLang==='ko';
+  const posts=(rows||[]).filter(r=>r&&r.ty!=='VIDEO'&&r.p).slice(0,40);
+  if(!posts.length){_showShareToast(ko?'태그할 사진 게시물이 없어.':'No photo posts selected.');return;}
+  document.getElementById('igbt-overlay')?.remove();
+  const photoCount=posts.reduce((n,r)=>n+Math.max(1,r.n||1),0);
+  const ov=document.createElement('div');ov.id='igbt-overlay';ov.setAttribute('data-modal','');
+  const box=document.createElement('div');box.id='igbt-panel';
+  box.innerHTML='<div class="igv-edit-heading"><span></span></div><button type="button" class="igv-edit-last" hidden></button><div class="igv-edit-selected"></div><input class="igv-edit-search" type="search" autocomplete="off"><div class="igv-edit-options"></div><div class="igv-edit-scope-note igbt-note"></div><div class="igv-edit-error" role="alert" hidden></div><div class="igv-edit-actions"><button type="button" data-action="clear"></button><span></span><button type="button" data-action="cancel"></button><button type="button" data-action="save"></button></div>';
+  ov.appendChild(box);document.body.appendChild(ov);
+  if(typeof _bringToFront==='function')_bringToFront(ov);
+  const ids=new Set(),st={saving:false};
+  const head=box.querySelector('.igv-edit-heading span'),lastBtn=box.querySelector('.igv-edit-last'),input=box.querySelector('input');
+  const note=box.querySelector('.igbt-note'),err=box.querySelector('.igv-edit-error');
+  const btn=Object.fromEntries([...box.querySelectorAll('[data-action]')].map(b=>[b.dataset.action,b]));
+  head.textContent=ko?'게시물 '+posts.length+'개(사진 '+photoCount+'장)에 나온 멤버':'Members in '+posts.length+' posts ('+photoCount+' photos)';
+  input.placeholder=ko?'멤버·그룹 검색':'Search members or groups';input.setAttribute('aria-label',input.placeholder);
+  btn.clear.textContent=ko?'선택 해제':'Clear';btn.cancel.textContent=ko?'취소':'Cancel';
+  note.textContent=ko?'이미 태그가 있는 사진도 여기서 고른 멤버로 바뀌어.':'Photos that already have tags will be replaced.';
+  const last=_igLastTagRead();
+  if(last){lastBtn.hidden=false;lastBtn.textContent=_igLastTagLabel(last);lastBtn.addEventListener('click',()=>{if(st.saving)return;last.ids.forEach(id=>ids.add(id));render();});}
+  const owner=(typeof _igOwners==='function'?_igOwners().get(String(handle||'').toLowerCase()):null)||{};
+  const ownerGroup=owner.gko||(owner.art&&owner.art.group&&owner.art.group.ko);
+  const initial=owner.art&&!GROUPS[ownerGroup]?[owner.art]:_vidTagGroupMembers(ownerGroup);
+  if(initial.length>1){
+    const all=document.createElement('button');all.type='button';all.className='igv-edit-all';
+    all.textContent=ko?ownerGroup+' 전체':'All '+((GROUPS[ownerGroup]&&GROUPS[ownerGroup].en)||ownerGroup);
+    all.addEventListener('click',()=>{if(st.saving)return;initial.forEach(a=>ids.add(a.id));render();});
+    box.querySelector('.igv-edit-heading').appendChild(all);
+  }
+  function toggle(id){if(st.saving)return;ids.has(id)?ids.delete(id):ids.add(id);render();}
+  function render(){
+    const chosen=box.querySelector('.igv-edit-selected');chosen.replaceChildren();
+    for(const id of ids){
+      const a=ARTISTS.find(x=>x.id===id),b=document.createElement('button');b.type='button';b.className='igv-member-chip';
+      b.textContent=(a?_dispName(a):id)+' ×';b.title=a?_dispGroupName(a):id;b.addEventListener('click',()=>toggle(id));chosen.appendChild(b);
+    }
+    const q=input.value.trim().toLowerCase();
+    const list=q?_vidTagFindMembers(input.value.trim(),{limit:30,includeGroupNames:true}):initial;
+    const options=box.querySelector('.igv-edit-options');options.replaceChildren();
+    for(const a of list){const c=_vidTagMemberChoice(a,{value:a.id,checked:ids.has(a.id),showGroup:true,onChange:()=>toggle(a.id)});c.classList.add('igv-edit-member');options.appendChild(c);}
+    btn.save.textContent=ko?'게시물 '+posts.length+'개에 저장':'Save to '+posts.length+' posts';
+    btn.save.disabled=!ids.size||st.saving;btn.clear.disabled=!ids.size||st.saving;
+  }
+  input.addEventListener('input',render);
+  const close=()=>{ov.remove();};
+  btn.cancel.addEventListener('click',()=>{if(!st.saving)close();});
+  ov.addEventListener('click',e=>{if(e.target===ov&&!st.saving)close();});
+  btn.clear.addEventListener('click',()=>{ids.clear();render();});
+  btn.save.addEventListener('click',async()=>{
+    if(st.saving||!ids.size)return;
+    const picked=[...ids];
+    if(picked.length>50||picked.some(id=>!ARTISTS.some(a=>a.id===id))){err.textContent=ko?'선택한 멤버를 확인해줘.':'Check the selected members.';err.hidden=false;return;}
+    st.saving=true;err.hidden=true;box.setAttribute('aria-busy','true');box.querySelectorAll('button,input').forEach(el=>el.disabled=true);
+    let ok=0,skipped=0;const failed=[];
+    for(let i=0;i<posts.length;i++){
+      btn.save.textContent=(ko?'저장 중 ':'Saving ')+(i+1)+'/'+posts.length;
+      const r=posts[i];
+      try{
+        const postKey=_igPostKey(r.p);
+        const cur=await _igPhotoTagRows(postKey,true);
+        const targets=_igTagPostTargets(r,cur);
+        if(!targets.length){skipped++;continue;} // 사진을 식별할 수 없는 게시물(같은 사진 반복 등)은 건너뜀 — 단일 편집기와 같은 기준
+        const{data,error}=await sb.rpc('ig_photo_tags_apply_post',{p_post_key:postKey,p_handle:String(handle||'').toLowerCase(),p_artist_ids:picked,p_photos:targets.map(t=>({photo_key:t.row?.photo_key||t.identity.photoKey,media_id:t.identity.mediaId||t.row?.media_id||null,image_key:t.identity.imageKey,expected_revision:t.row?.revision??null}))});
+        if(error)throw error;
+        _igPhotoTagsCache.set(postKey,{rows:data||[],at:Date.now()});ok++;
+      }catch(e){failed.push(r.p);}
+    }
+    st.saving=false;box.removeAttribute('aria-busy');
+    if(ok)_igLastTagWrite(picked,'post');
+    if(failed.length){
+      box.querySelectorAll('button,input').forEach(el=>el.disabled=false);render();
+      err.textContent=ko?(failed.length+'개 게시물은 저장하지 못했어(다른 창에서 바뀌었을 수 있어). 성공 '+ok+'개 · 건너뜀 '+skipped+'개. 다시 눌러 실패분을 재시도할 수 있어.'):(failed.length+' posts failed. '+ok+' saved, '+skipped+' skipped. You can retry.');
+      err.hidden=false;
+      // 실패한 것만 남기고 재시도
+      for(let k=posts.length-1;k>=0;k--)if(!failed.includes(posts[k].p))posts.splice(k,1);
+      head.textContent=ko?'게시물 '+posts.length+'개(실패분)에 나온 멤버':'Members in '+posts.length+' failed posts';
+      return;
+    }
+    close();
+    _showShareToast(ko?'게시물 '+ok+'개 태그 저장'+(skipped?' · '+skipped+'개는 사진 식별이 안 돼 건너뜀':''):ok+' posts tagged'+(skipped?' · '+skipped+' skipped':''));
+    if(typeof onDone==='function')onDone();
+  });
+  render();if(!isMob())input.focus({preventScroll:true});
 }
 
 // ── 관리자 하루 요약 팝업(2026-11-09) — 그날 첫 접속 때 한 번, 최근 24시간 지표.

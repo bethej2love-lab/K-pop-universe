@@ -12323,7 +12323,7 @@ function _igRowTile(r,h,cls){
   b.appendChild(img);
   if(r.ty==='VIDEO'){const p=document.createElement('span');p.className='ig-play';p.textContent='▶';b.appendChild(p);}
   else if((r.n||1)>1)b.appendChild(_igBars(r.n));
-  b.addEventListener('click',e=>{e.stopPropagation();if(b.classList.contains('iga-busy'))return;_igOpenRow(r,h,b);});
+  b.addEventListener('click',e=>{e.stopPropagation();if(b.classList.contains('iga-busy'))return;if(_iga&&_iga.sel&&b.closest&&b.closest('#iga-grid')&&_igaToggleRow(r,b))return;_igOpenRow(r,h,b);});
   return b;
 }
 // 인스타 공식 임베드 창
@@ -12355,6 +12355,45 @@ function _closeIgEmbed(){const ov=document.getElementById('ige-overlay');if(!ov|
 // 보관함 격자 창
 let _iga=null;
 function _closeIgArchive(){const ov=document.getElementById('iga-overlay');if(!ov||!ov.classList.contains('open'))return false;ov.classList.remove('open');if(_iga&&_iga.io)_iga.io.disconnect();_iga=null;return true;}
+// 보관함 일괄 태깅(관리자, 2026-11-16 사용자 "선택해서 한 번에 태깅") — 헤더 '선택' → 게시물 탭으로 고르기(최대 40) → '멤버 태그'(admin.js _igBulkTagOpen).
+// 선택 모드에선 타일을 눌러도 뷰어가 열리지 않고 선택만 토글된다. 영상 게시물은 태그 대상이 아니라 선택되지 않는다.
+const _IGA_SEL_MAX=40;
+function _igaSetSel(on){
+  const ov=document.getElementById('iga-overlay');if(!ov||!_iga)return;
+  _iga.sel=on?new Map():null;
+  ov.classList.toggle('iga-selecting',!!on);
+  ov.querySelectorAll('#iga-grid .iga-tile.iga-sel').forEach(b=>b.classList.remove('iga-sel'));
+  const sel=ov.querySelector('#iga-sel');if(sel)sel.textContent=on?(currentLang==='ko'?'선택 끝':'Done'):(currentLang==='ko'?'선택':'Select');
+  _igaSelBar();
+}
+function _igaSelBar(){
+  const ov=document.getElementById('iga-overlay');const bar=ov&&ov.querySelector('#iga-selbar');if(!bar||!_iga)return;
+  const n=_iga.sel?_iga.sel.size:0,ko=currentLang==='ko';
+  bar.hidden=!_iga.sel;
+  bar.querySelector('span').textContent=ko?(n?n+'개 선택':'게시물을 눌러 고르세요'):(n?n+' selected':'Tap posts to select');
+  bar.querySelector('[data-act="tag"]').disabled=!n;
+}
+function _igaToggleRow(r,b){
+  if(!_iga||!_iga.sel)return false;
+  if(r.ty==='VIDEO'){_showShareToast(currentLang==='ko'?'영상은 태그 대상이 아니야.':'Videos cannot be tagged.');return true;}
+  const key=r.post_key||r.p;
+  if(_iga.sel.has(key)){_iga.sel.delete(key);b.classList.remove('iga-sel');}
+  else{
+    if(_iga.sel.size>=_IGA_SEL_MAX){_showShareToast(currentLang==='ko'?'한 번에 '+_IGA_SEL_MAX+'개까지야.':'Up to '+_IGA_SEL_MAX+' at a time.');return true;}
+    _iga.sel.set(key,r);b.classList.add('iga-sel');
+  }
+  _igaSelBar();return true;
+}
+async function _igaBulkTag(){
+  if(!_isAdmin()||!_iga||!_iga.sel||!_iga.sel.size)return;
+  try{
+    if(typeof _igBulkTagOpen!=='function'){
+      _loadAdminScript();
+      if(typeof _igBulkTagOpen!=='function')await new Promise((resolve,reject)=>{const t=setTimeout(()=>reject(new Error('editor load timeout')),8000);const sc=document.getElementById('admin-js-script');if(!sc){clearTimeout(t);reject(new Error('no admin script'));return;}sc.addEventListener('load',()=>{clearTimeout(t);resolve();},{once:true});});
+    }
+    if(typeof _igBulkTagOpen==='function')_igBulkTagOpen([..._iga.sel.values()],_iga.h,()=>_igaSetSel(false));
+  }catch(e){_showShareToast(currentLang==='ko'?'편집을 열지 못했어. 다시 시도해줘.':'Could not open the editor. Please retry.');}
+}
 async function _openIgArchive(h,who){
   if(!h||!sb)return;
   const ko=currentLang==='ko';
@@ -12367,7 +12406,14 @@ async function _openIgArchive(h,who){
     ov.querySelector('#iga-close').addEventListener('click',_closeIgArchive);
   }
   if(_iga&&_iga.io)_iga.io.disconnect();
-  const st=_iga={h,from:0,done:false,loading:false,io:null};
+  const st=_iga={h,from:0,done:false,loading:false,io:null,sel:null};
+  ov.classList.remove('iga-selecting');
+  {const hd=ov.querySelector('#iga-hd');let sb2=ov.querySelector('#iga-sel');
+   if(_isAdmin()){
+     if(!sb2){sb2=document.createElement('button');sb2.id='iga-sel';sb2.type='button';sb2.addEventListener('click',e=>{e.stopPropagation();_igaSetSel(!(_iga&&_iga.sel));});hd.insertBefore(sb2,hd.querySelector('#iga-close'));}
+     sb2.hidden=false;sb2.textContent=ko?'선택':'Select';
+     if(!ov.querySelector('#iga-selbar')){const bar=document.createElement('div');bar.id='iga-selbar';bar.hidden=true;bar.innerHTML='<span></span><button type="button" data-act="tag"></button><button type="button" data-act="cancel"></button>';bar.querySelector('[data-act="tag"]').textContent=ko?'멤버 태그':'Tag members';bar.querySelector('[data-act="cancel"]').textContent=ko?'취소':'Cancel';bar.querySelector('[data-act="tag"]').addEventListener('click',_igaBulkTag);bar.querySelector('[data-act="cancel"]').addEventListener('click',()=>_igaSetSel(false));ov.appendChild(bar);}
+   }else{if(sb2)sb2.hidden=true;ov.querySelector('#iga-selbar')?.setAttribute('hidden','');}}
   ov.querySelector('#iga-title b').textContent=who||h;
   ov.querySelector('#iga-title span').textContent='@'+h;
   const grid=ov.querySelector('#iga-grid'),note=ov.querySelector('#iga-note'),more=ov.querySelector('#iga-more');
