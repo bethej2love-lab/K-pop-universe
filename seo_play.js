@@ -7,7 +7,7 @@
   'use strict';
   if(window.__kpuPlay)return;window.__kpuPlay=1;
   var EN=/^\/en\//.test(location.pathname)||document.documentElement.lang==='en';
-  var T=EN?{close:'Close',next:'Up next',app:'See more in the app',nxK:'Explore',nxS:'Profile · fancams · stages',yt:'Watch on YouTube'}:{close:'닫기',next:'다음 영상',app:'앱에서 더 보기',nxK:'더 둘러보기',nxS:'프로필 · 직캠 · 무대',yt:'유튜브에서 보기'};
+  var T=EN?{close:'Close',next:'Up next',app:'See more in the app',nxK:'Explore',nxS:'Profile · fancams · stages'}:{close:'닫기',next:'이어서 보기',app:'앱에서 더 보기',nxK:'더 둘러보기',nxS:'프로필 · 직캠 · 무대'};
   var RE=/(?:youtube\.com\/(?:watch\?(?:[^#]*&)?v=|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/;
   function vidOf(a){var m=RE.exec(a&&a.getAttribute('href')||'');return m?m[1]:null;}
   function isShort(a){return /\/shorts\//.test(a.getAttribute('href')||'');}
@@ -34,16 +34,19 @@
   document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href]');if(!a||(a.closest&&a.closest('.kpu-pl')))return;
     try{var u=new URL(a.href,location.href);if(/kpop-universe\.kr$/.test(u.hostname)&&(u.pathname==='/'||u.pathname==='/index.html'))log(a.classList.contains('cta')?'cta':'to_app');}catch(_){}},true);
   var entity=((document.querySelector('h1')||{}).textContent||'').trim();
-  var css='.kpu-pl{position:fixed;inset:0;z-index:2147483000;background:#07070a;display:flex;justify-content:center;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}'
+  var css='.kpu-pl{position:fixed;inset:0;z-index:2147483000;background:#07070a;display:flex;justify-content:center;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}'
     +'.kpu-pl-in{width:100%;max-width:760px;padding:56px 16px 32px;box-sizing:border-box}'
     +'.kpu-pl-x{position:fixed;top:12px;right:12px;width:40px;height:40px;border-radius:20px;border:1px solid rgba(255,255,255,.18);background:rgba(25,25,28,.85);color:#fff;font-size:20px;line-height:38px;text-align:center;cursor:pointer;z-index:2}'
     +'.kpu-pl-v{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden}'
     +'.kpu-pl-v.sh{aspect-ratio:9/16;max-width:min(100%,calc((100vh - 120px)*9/16));margin:0 auto}'
     +'.kpu-pl-v iframe{position:absolute;inset:0;width:100%;height:100%;border:0}'
-    +'.kpu-pl-t{color:#eef2ff;font-size:15px;font-weight:600;line-height:1.4;margin:12px 2px 4px;word-break:keep-all}'
-    +'.kpu-pl-yt{display:inline-block;color:rgba(170,190,235,.8);font-size:12.5px;text-decoration:none;margin:0 2px 14px}'
+    // 제목·날짜는 분리해 두 줄로(2026-11-16 사용자 "날짜·조회수는 제목 밑에 작게") — 긴 통짜 토큰이 가로를 밀지 않게 anywhere
+    +'.kpu-pl-t{color:#eef2ff;font-size:15px;font-weight:600;line-height:1.4;margin:12px 2px 2px;word-break:keep-all;overflow-wrap:anywhere}'
+    +'.kpu-pl-m{color:rgba(170,190,235,.62);font-size:12px;margin:0 2px 14px}'
     // '이어서' 카드 — 폰은 가로로 넘기고, 넓은 화면은 칸을 나눠 한 줄에 여럿(빌더가 실은 #kpu-next: 케미·곡 → 앱의 그 화면)
     +'.kpu-pl-nx{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;margin:2px -16px 22px;padding:0 16px}.kpu-pl-nx::-webkit-scrollbar{display:none}'
+    // 카드가 하나면 플레이어 너비에 딱 맞춤(2026-11-16 사용자 "배너 너비 맞추든지")
+    +'.kpu-pl-nx.one{margin:2px 0 22px;padding:0}.kpu-pl-nx.one .kpu-pl-n{flex:1 1 auto}'
     +'@media(min-width:640px){.kpu-pl-nx{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible;margin:2px 0 22px;padding:0}.kpu-pl-n:nth-child(n+4){display:none}}'
     +'.kpu-pl-n{flex:0 0 252px;box-sizing:border-box;display:flex;align-items:center;gap:11px;min-width:0;padding:8px 12px 8px 8px;border-radius:16px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.1);text-decoration:none;transition:background .15s,border-color .15s}'
     +'.kpu-pl-n:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18)}'
@@ -55,9 +58,10 @@
     +'.kpu-pl-n b{font-weight:400;color:rgba(200,212,245,.45);font-size:17px;flex:none}'
     +'.kpu-pl-h{color:rgba(190,205,240,.75);font-size:13px;font-weight:600;margin:6px 2px 10px}'
     +'.kpu-pl-g{display:grid;grid-template-columns:1fr 1fr;gap:12px}'
-    +'.kpu-pl-c{display:block;text-decoration:none;color:#dfe6ff;font-size:12.5px;line-height:1.35;cursor:pointer}'
+    +'.kpu-pl-c{display:block;text-decoration:none;color:#dfe6ff;font-size:12.5px;line-height:1.35;cursor:pointer;min-width:0}'
     +'.kpu-pl-c img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;display:block;background:#1b1b1e}'
-    +'.kpu-pl-c span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:6px}'
+    +'.kpu-pl-c .t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:6px;overflow-wrap:anywhere}'
+    +'.kpu-pl-c .y{display:block;font-size:11px;color:rgba(170,190,235,.55);margin-top:3px}'
     +'html.kpu-pl-open,html.kpu-pl-open body{overflow:hidden}'
     // 폰 첫 화면 보정(2026-11-04 이탈 개선 2단계): 대표 이미지가 첫 화면의 절반(약 400px)을 차지해 직캠 목록이 거의 안 보였다 →
     // 가로로 긴 배너(최대 190px)로 줄여 첫 화면에 직캠이 두 줄 들어오게. 데스크톱은 그대로. 빌더 템플릿과 무관하게 모든 정적 페이지에 바로 적용된다.
@@ -71,6 +75,31 @@
     var tx=document.createElement('div');tx.appendChild(h1);if(sub)tx.appendChild(sub);hd.appendChild(cv);hd.appendChild(tx);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',compactHead);else compactHead();
+  // ── 칩 정리(2026-11-16 사용자) ──
+  // ① 발매·앨범처럼 링크 아닌 칩이 버튼처럼 보였다 → 민무늬 글줄로. ② 직캠 전체 페이지의 곡 칩이
+  //    수십 개 전부 펼쳐져 자리를 너무 차지 → 위쪽 몇 개만 보이고 "전체 N곡" 토글(정적 HTML은 그대로라 검색엔진은 전부 읽는다).
+  function chipsTidy(){
+    var CUT=10;
+    [].forEach.call(document.querySelectorAll('.chips'),function(ul){
+      var lis=[].slice.call(ul.children).filter(function(li){return li.tagName==='LI';});
+      lis.forEach(function(li){if(!li.querySelector('a'))li.classList.add('kpu-plain');});
+      var links=lis.filter(function(li){return li.querySelector('a');});
+      if(links.length>CUT+2){
+        links.slice(CUT).forEach(function(li){li.classList.add('kpu-chip-more');});
+        var tg=document.createElement('li');tg.className='kpu-chip-tg';
+        var b=document.createElement('button');b.type='button';
+        var open=false,word=EN?['All '+links.length+' songs','Show less']:['전체 '+links.length+'곡','접기'];
+        b.textContent=word[0]+' ▾';
+        b.addEventListener('click',function(){open=!open;ul.classList.toggle('kpu-chips-open',open);b.textContent=open?word[1]+' ▴':word[0]+' ▾';});
+        tg.appendChild(b);ul.appendChild(tg);
+      }
+    });
+  }
+  css+='.chips li.kpu-plain{background:none;border:0;padding:5px 2px;color:rgba(190,205,240,.72)}'
+    +'.chips li.kpu-chip-more{display:none}.chips.kpu-chips-open li.kpu-chip-more{display:block}'
+    +'.kpu-chip-tg{background:none!important;border:0!important;padding:0!important}'
+    +'.kpu-chip-tg button{font:inherit;font-size:12.5px;padding:5px 12px;border-radius:999px;background:rgba(150,175,255,0.14);border:0.5px solid rgba(150,175,255,0.3);color:#dce6ff;cursor:pointer}';
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',chipsTidy);else chipsTidy();
   // ── 정적 페이지 겉모습(2026-11-12) — 정적 페이지 유입이 앱보다 훨씬 많다. 사용자 "정적 페이지와 본 사이트의 경계가 흐려지고,
   // 케이팝 유니버스 자체가 브랜딩이 되면". 모든 템플릿에 한 번에 적용되도록 여기서:
   // ① 왼쪽 위 'K-POP UNIVERSE' 글자 → 앱 아이콘 + 이름(로고). ② 하단 보라 버튼 → 우주 위에 뜬 반투명 카드 한 장
@@ -255,8 +284,11 @@
 
 
   var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
-  function titleOf(a){var t=(a.getAttribute('title')||'').trim();if(t)return t;var x=a.querySelector('.mf-t,.title,b,strong');t=((x&&x.textContent)||a.textContent||'').replace(/\s+/g,' ').trim();if(!t){var im=a.querySelector('img');t=im&&im.alt||'';}return t.slice(0,140);}
-  function allLinks(){var seen={},out=[];[].forEach.call(document.querySelectorAll('a[href]'),function(a){if(a.closest&&a.closest('.kpu-pl'))return;var v=vidOf(a);if(!v||seen[v])return;seen[v]=1;out.push({v:v,a:a,t:titleOf(a),sh:isShort(a)});});return out;}
+  // 제목은 제목 칸(.card-t 등)만 — a.textContent를 통째로 쓰면 날짜·조회수(.card-y)까지 한 덩어리로 붙어
+  // "…MBC2504262025.04.28 · 조회수 4만회"처럼 보이고, 긴 통짜 토큰이 그리드 칸까지 밀었다(2026-11-16).
+  function titleOf(a){var t=(a.getAttribute('title')||'').trim();if(t)return t;var x=a.querySelector('.card-t,.mf-t,.t,.title,b,strong');t=((x&&x.textContent)||'').replace(/\s+/g,' ').trim();if(!t)t=(a.textContent||'').replace(/\s+/g,' ').trim();if(!t){var im=a.querySelector('img');t=im&&im.alt||'';}return t.slice(0,140);}
+  function metaOf(a){var y=a.querySelector('.card-y,.v');return y?y.textContent.replace(/\s+/g,' ').trim():'';}
+  function allLinks(){var seen={},out=[];[].forEach.call(document.querySelectorAll('a[href]'),function(a){if(a.closest&&a.closest('.kpu-pl'))return;var v=vidOf(a);if(!v||seen[v])return;seen[v]=1;out.push({v:v,a:a,t:titleOf(a),m:metaOf(a),sh:isShort(a)});});return out;}
   var ov=null,cur=-1,list=[];
   function close(fromPop){if(!ov)return;ov.remove();ov=null;document.documentElement.classList.remove('kpu-pl-open');if(!fromPop&&history.state&&history.state.kpuPlay)history.back();}
   function render(i){
@@ -265,13 +297,15 @@
     box.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+it.v+'?autoplay=1&playsinline=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title=""></iframe>';
     box.querySelector('iframe').title=it.t;
     ov.querySelector('.kpu-pl-t').textContent=it.t;
-    var yt=ov.querySelector('.kpu-pl-yt');yt.href=it.a.getAttribute('href');
+    ov.querySelector('.kpu-pl-m').textContent=it.m||'';
     renderNext(it);
     var g=ov.querySelector('.kpu-pl-g');g.innerHTML='';
     for(var k=1,n=0;k<list.length&&n<6;k++){var j=(i+k)%list.length,x=list[j];if(j===i)continue;n++;
       var c=document.createElement('a');c.className='kpu-pl-c';c.href=x.a.getAttribute('href');c.setAttribute('data-i',j);
       var im=document.createElement('img');im.loading='lazy';im.alt='';im.src='https://i.ytimg.com/vi/'+x.v+'/mqdefault.jpg';
-      var sp=document.createElement('span');sp.textContent=x.t;c.appendChild(im);c.appendChild(sp);g.appendChild(c);}
+      var sp=document.createElement('span');sp.className='t';sp.textContent=x.t;c.appendChild(im);c.appendChild(sp);
+      if(x.m){var ym=document.createElement('span');ym.className='y';ym.textContent=x.m;c.appendChild(ym);}
+      g.appendChild(c);}
     ov.scrollTop=0;
   }
   // '이어서' 항목: 빌더가 실은 #kpu-next(멤버 페이지) — 없으면 페이지의 하단 버튼 주소로 카드 하나
@@ -280,13 +314,16 @@
     if(NX)return NX;
     try{var j=document.getElementById('kpu-next');NX=j?JSON.parse(j.textContent):[];}catch(e){NX=[];}
     if(!NX.length){var cta=document.querySelector('.cta');var og=document.querySelector('meta[property="og:image"]');
-      NX=[{k:T.nxK,t:entity,s:T.nxS,h:cta?cta.getAttribute('href'):'https://kpop-universe.kr/',im:og?og.getAttribute('content'):''}];}
+      // 카드 제목에선 '직캠' 꼬리를 뗀다(2026-11-16 사용자) — 눌러서 나오는 건 멤버 카드(프로필·디스코그래피)라 문구와 실제가 어긋났다
+      var nm=entity.replace(/['’‘]?\s*(직캠|Fancams?)\s*(모음|전체)?\s*$/i,'').trim()||entity;
+      NX=[{k:T.nxK,t:nm,s:T.nxS,h:cta?cta.getAttribute('href'):'https://kpop-universe.kr/',im:og?og.getAttribute('content'):''}];}
     return NX;
   }
   function norm(x){return String(x||'').toLowerCase().split(' ').join('');}
   function renderNext(it){
     var box=ov.querySelector('.kpu-pl-nx');box.innerHTML='';
     var items=nextItems().slice(),tt=norm(it&&it.t);
+    box.classList.toggle('one',items.length===1);
     items.sort(function(a,b){return (b.m&&tt.indexOf(norm(b.m))>=0?1:0)-(a.m&&tt.indexOf(norm(a.m))>=0?1:0);});
     items.forEach(function(x){
       var a=document.createElement('a');a.className='kpu-pl-n';a.href=x.h;a.setAttribute('data-k',x.m?'song':(x.k||''));
@@ -300,12 +337,11 @@
     list=allLinks();if(!list[i])return;
     if(!ov){
       ov=document.createElement('div');ov.className='kpu-pl';ov.setAttribute('role','dialog');
-      ov.innerHTML='<button class="kpu-pl-x" type="button"></button><div class="kpu-pl-in"><div class="kpu-pl-v"></div><div class="kpu-pl-t"></div><a class="kpu-pl-yt" target="_blank" rel="noopener"></a><div class="kpu-pl-nx"></div><div class="kpu-pl-h"></div><div class="kpu-pl-g"></div></div>';
+      // '유튜브에서 보기' 링크는 뺐다(2026-11-16 사용자) — 새 탭은 ctrl/⌘/가운데 클릭으로 여전히 가능.
+      ov.innerHTML='<button class="kpu-pl-x" type="button"></button><div class="kpu-pl-in"><div class="kpu-pl-v"></div><div class="kpu-pl-t"></div><div class="kpu-pl-m"></div><div class="kpu-pl-nx"></div><div class="kpu-pl-h"></div><div class="kpu-pl-g"></div></div>';
       var x=ov.querySelector('.kpu-pl-x');x.textContent='✕';x.setAttribute('aria-label',T.close);x.onclick=function(){close();};
-      ov.querySelector('.kpu-pl-yt').textContent=T.yt+' ↗';
       ov.querySelector('.kpu-pl-h').textContent=T.next;
       ov.querySelector('.kpu-pl-nx').onclick=function(e){var n=e.target.closest&&e.target.closest('.kpu-pl-n');if(n)ga('seo_play_cta',{entity_name:entity,video_id:list[cur]&&list[cur].v,kind:n.getAttribute('data-k')||''});};
-      ov.querySelector('.kpu-pl-yt').onclick=function(){ga('seo_play_youtube',{entity_name:entity,video_id:list[cur]&&list[cur].v});};
       ov.addEventListener('click',function(e){
         if(e.target===ov||e.target.classList.contains('kpu-pl-in')){close();return;}
         var c=e.target.closest&&e.target.closest('.kpu-pl-c');
@@ -336,8 +372,8 @@
       var _w=document.querySelector('.wrap');
       if(_w){
         var _bk=document.createElement('a');
-        _bk.href=document.referrer;_bk.textContent=EN?'‹ Back':'‹ 이전';
-        _bk.setAttribute('style','display:inline-block;margin:0 12px 10px 0;font-size:12px;letter-spacing:.04em;color:rgba(150,175,255,0.75);text-decoration:none;');
+        _bk.href=document.referrer;_bk.textContent='‹';_bk.setAttribute('aria-label',EN?'Back':'이전 화면');
+        _bk.setAttribute('style','display:inline-block;margin:0 12px 8px -4px;padding:0 10px;font-size:19px;line-height:1.2;color:rgba(150,175,255,0.75);text-decoration:none;');
         _bk.addEventListener('click',function(ev){ev.preventDefault();history.back();});
         _w.insertBefore(_bk,_w.firstChild);
       }
