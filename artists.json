@@ -213803,6 +213803,29 @@
     },
     "discography": [
       {
+        "title": "광야를 지나며 (신의악단 OST)",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/59/833/15159833_20261113163037_500.jpg",
+        "releaseDate": "2026.11.16",
+        "trackCount": 2,
+        "titleTrack": "광야를 지나며",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "광야를 지나며",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "광야를 지나며 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15159833"
+      },
+      {
         "title": "Own You",
         "type": "싱글",
         "releaseDate": "2025.12.30",

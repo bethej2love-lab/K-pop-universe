@@ -78822,6 +78822,35 @@
   },
   "discography": [
    {
+    "title": "UP (Remix 1)",
+    "type": "싱글",
+    "isMain": false,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/42/666/15142666_20261109160734_500.jpg",
+    "releaseDate": "2026.11.16",
+    "trackCount": 3,
+    "titleTrack": "UP (Orchestra Ver.)",
+    "variant": true,
+    "tracks": [
+     {
+      "no": 1,
+      "title": "UP (Orchestra Ver.)",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "UP (Speed Up Ver.)",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "UP (Speed Down Ver.)",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15142666"
+   },
+   {
     "title": "GOLDEN HOUR : Part.6",
     "type": "미니 15집",
     "isMain": true,
@@ -166611,6 +166640,24 @@
   },
   "discography": [
    {
+    "title": "HAH!",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/59/841/15159841_20261113163258_500.jpg",
+    "releaseDate": "2026.11.16",
+    "trackCount": 1,
+    "titleTrack": "HAH!",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "HAH!",
+      "isTitle": true
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15159841"
+   },
+   {
     "title": "Mixtape : A1 GO",
     "type": "믹스테이프",
     "isMain": true,
@@ -243117,6 +243164,44 @@
    "x": "https://x.com/GIRLSETofficial"
   },
   "discography": [
+   {
+    "title": "younger & dumber (Clean)",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/60/080/15160080_20261113181439_500.jpg",
+    "releaseDate": "2026.11.16",
+    "trackCount": 5,
+    "titleTrack": "young & dumb",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "young & dumb",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "young & dumb (sped up)",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "young & dumb (slowed-down)",
+      "isTitle": false
+     },
+     {
+      "no": 4,
+      "title": "young & dumb (instrumental)",
+      "isTitle": false
+     },
+     {
+      "no": 5,
+      "title": "young & dumb (acapella)",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15160080"
+   },
    {
     "title": "young & dumb",
     "type": "싱글",
