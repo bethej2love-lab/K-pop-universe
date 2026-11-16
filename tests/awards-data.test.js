@@ -14,8 +14,8 @@ const path = require('path');
   for (const a of awards) {
     check(a.file + ' — 기본 정보와 출처(https)·수집일', () => {
       assert.ok(a.id && a.edition && a.name && a.nameEn);
-      assert.ok(Array.isArray(a.dates) && a.dates.length >= 1 && a.dates.every(d => /^\d{4}-\d{2}-\d{2}$/.test(d)));
-      assert.ok(Array.isArray(a.src) && a.src.length >= 2 && a.src.every(u => /^https:\/\//.test(u)), '출처 URL 2개 이상 필요(교차 확인)');
+      assert.ok(Array.isArray(a.dates) && a.dates.length >= 1 && a.dates.every(d => /^\d{4}(-\d{2}-\d{2})?$/.test(d)), '날짜는 YYYY-MM-DD(자동 수집은 YYYY만 허용)');
+      assert.ok(Array.isArray(a.src) && a.src.length >= (a.autoSource ? 1 : 2) && a.src.every(u => /^https:\/\//.test(u)), '출처 URL: 사람 확인분 2개 이상(교차), 자동 수집(autoSource)은 1개 이상');
       assert.ok(/^\d{4}-\d{2}-\d{2}$/.test(a.collectedAt));
     });
     check(a.file + ' — 부문: 이름·등급·수상자', () => {
