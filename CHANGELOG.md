@@ -2,6 +2,42 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+## 🏠 집 노트북에서 하기 좋은 작업 (2026-11-16 회사 세션 마무리 — 집 세션은 여기부터 읽을 것)
+
+> 집 노트북 Claude Code는 품질이 들쭉날쭉하니(메모리 project_kpop_home_laptop_quality), **범위가 좁고·정답을 테스트로 확인할 수 있고·되돌리기 쉬운 일**만 여기 모았다. 판단·설계가 필요한 건 맨 아래 "집에서 하지 말 것".
+
+**0. 시작하자마자(5분)**
+- `git fetch` → `git pull --rebase` (fetch가 멈추면 `-c credential.helper=` 붙일 것) → `gh run list --limit 10`으로 CI 초록불인지. **빨간불이면 새 작업 전에 그것부터.**
+- ⚠️ **정적 페이지가 11-13 이후 갱신이 안 됐었다** — `rebuild-seo-pages.yml`이 연속 푸시마다 진행 중 빌드를 취소했고(한 번 빌드 35~60분), 중간에 솔로 멤버 페이지 버그(groupInfo null)로 한 번 실패도 했다. 11-16에 `cancel-in-progress: false`로 고쳤다. 집에서 시작할 때 **`gh run list -w "Rebuild static SEO pages" --limit 3`이 completed success인지**, 그리고 실제 페이지에 반영됐는지 확인: ①조회수가 "74만회"가 아니라 **"740K"/"1.2M"(nK·nM)** ②`/g/에이티즈/성화/s/intro/`가 **성화 프로필로 넘어가는 stub**(곡 페이지 아님) ③직캠 전체 페이지 맨 위가 "직캠 순위 TOP 10"+번호 배지. 안 맞으면 아래 "미반영 대기" 참고.
+- `node tools/static_pages_status.mjs` — 정적 페이지 종류별·언어별 개수(11-16 실측 53,677개 = 검색용 49,492 + 넘김 4,185, 사이트맵 49,109). 갑자기 크게 줄거나 늘면 이상.
+- ⚠️ **정적 페이지에 영향 주는 파일(build_group_pages.js·tools/seo_extra.js·artists.json·groups.json 등)은 푸시를 몰아서 한 번에.** 이제 취소는 안 되지만 빌드가 한 번 40~60분이라 대기열이 길어진다. 로컬에서 `node build_group_pages.js`는 돌리지 말 것(sitemap 7만 줄 소실).
+
+**미반영 대기(회사에서 로컬만 해두고 푸시 못 한 것)** — 11-16 18시경 시점: ①`tools/seo_extra.js`의 구조 트랙(Intro·Outro·Interlude·Skit·Prologue·Epilogue 등) 곡 페이지 제외 규칙(`STRUCTURAL_TRACKS`) + 이미 만들어진 intro 페이지 24개(6그룹 12주소×한·영)를 부모 페이지로 넘기는 stub — 푸시됐는지 `git log -3 -- tools/seo_extra.js`로 확인, 없으면 회사 컴퓨터에서 이어서. (사용자 제보 "성화/s/intro는 노래 제목이 아닌데")
+
+**A. 바로 해도 안전한 것 (집 1순위)**
+1. **수상 정보 확장** — 기계적이고 테스트(`node tests/awards-data.test.js`)가 지켜줌. ①MAMA 2026(11-20~21 오사카)·AAA 2026(12-05~06)·SBS 가요대전(12-24~25)은 열린 뒤 `awards/mma-2026.json`·`awards/kgma-2026.json`과 **같은 모양**으로 파일 추가(출처 URL 2개 이상, 수상자 힌트 `#아티스트id`·`@소속그룹`·`=그룹키`·`!우주밖`, `node tools/awards_check.mjs`로 연결 확인 → `--write`로 awards/index.json 재생성). 사람이 확인한 파일은 위키 수집기가 덮어쓰지 않는다. ②**빠진 옛 회차**: 가온·AAA 2016~2021·골든디스크 ~2005·서울가요대상 ~2019(위키 문서가 연도별 표 한 장에 모인 형식 → `tools/awards_wiki.mjs`에 파서 추가)·SBS/MBC/KBS(영문 위키에 없음 → ko.wikipedia/나무위키). ③한글 부문명은 `tools/awards_ko.mjs` 사전에 없는 것만 영어로 남아 있음(92%) — 사전에 단어 추가하고 `node tools/awards_ko.mjs`. 위키 API는 연속 호출하면 "too many requests"로 막힘(15초씩 쉬며 재시도하게 돼 있음, 회사망에선 `NODE_TLS_REJECT_UNAUTHORIZED=0`).
+2. **합류·탈퇴일 마무리(Codex ④)** — 11-16에 쥬얼리·나인뮤지스 현아·에이프릴 레이첼/윤채경 반영. 남은 건 **슈퍼주니어 기범(pausedFrom)·스텔라 이슬(탈퇴일)** = 근거를 못 찾은 것. 웹 검색으로 연·월 근거가 나오면 `artists.json`에 넣고(들여쓰기 2칸 유지) `node tools/build_slim_data.mjs` → `node tests/member-cutoff.test.js` `node tests/audit-membership.test.js`.
+3. **코덱스 남은 검수 중 근거가 이미 적힌 것**(.audit-worktrees/audit-fixes-20261105/CHANGELOG.md 맨 위 날짜 묶음): 개별 영상 ID를 DB에서 확인해 `sql/` 파일(백업 표+되돌리기)로 정정하는 패턴 — 11-16 소디엑 리오↔빅스 레오 6건(`2026-11-16_xodiac_rio_vixx_leo.sql`)·팬채널 멤버 오태깅 29건(`2026-11-16_fan30_member_fix.sql`)이 본보기. 실행은 `node C:/Users/user/.kpu_sbq.cjs <파일.sql> <out.json>`(SQL은 반드시 파일로 — argv에 한글 넣으면 깨짐), 곡 키는 `node tools/song_keys_for_ids.mjs --sql "id in (...)" --apply`.
+4. **인스타 과거 채우기 확인** — `ig_media` 행 수가 늘고 있는지(11-16 시점 23,892행). 안 늘면 `ig-backfill.yml` 실행 기록.
+5. **주간 업데이트 소식(updates.json, ~11-20)** — 초안만 써서 사용자 확인 후 배포(메모리 project_kpop_weekly_updates). 이번 주 사용자에게 보이는 변경: 자막(CC) 재활성 수정·For You 인스타 최애 선반·최근 검색에 곡/공연·행사 "다녀왔어요"·직캠 페이지 TOP 10·조회수 nK 표기.
+
+**B. 실기기·눈으로 확인해야 하는 것(사용자 몫, 집 세션이 알려주기만)**
+- 아이폰 웹앱: 재생 중 **CC 자막이 다시 켜지지 않는지**, For You 인스타 선반의 최애 이모지·순서, 행사 페이지(KGMA/MMA) "다녀왔어요" 버튼 위치, 보관함 "선택"(어드민 인스타 일괄 태깅).
+- 어드민 **Daily 팝업**(설정 › 📊 Daily)이 새 세 줄(방문자 / 첫날 저장한 신규 / 신규 7일 재방문)로 뜨는지, "자세히"를 눌러도 안 닫히는지.
+- **Search Console 11/24 전후**: 접수중 48,545·실패 0(11/16 기준)과 비교, 크롤링 후 미색인이던 직캠 모음 4개(성현·건호·장원영·카리나)와 "알려지지 않음" 2개(원희·해원) URL 검사 — Codex 기록(맨 위 "Google 색인 후속 점검 메모")에 표가 있다.
+
+**C. 집에서 하지 말 것(회사 컴퓨터 + Fable/Opus)**
+- **매처 규칙 변경**(이름만으로 엉뚱한 사람 잡는 것: 유진&이서→S.E.S. 유진, 브라이언, 이수지, 김나영, #Rain_on_me, 소디엑 LEO↔빅스 레오처럼 영문 표기가 같은 이름 충돌) — CLAUDE.md의 매처 절차(테스트·이전/새 차분·하네스 등록) 필수.
+- **웹 "창 없이 이어지는 패널"**·행사 페이지 "수상" 탭·그룹/멤버 카드 트로피 이력 — 설계·시안 먼저.
+- **동명이인 솔로 키(지수·나연·주연)**, 대표 영상 선택 로직(코덱스: 곡별 대표가 공연 아닌 6페이지, 트라이비 러버덤/rubadum 24주소 중복), 곡 분류의 앱 쪽 반영(`song_keys` DB는 옛 규칙).
+- **대량 DB 조회·수정**: 보류 큐 1,550건은 글자만 겹친 영상이라 피해 없음(우선순위 낮음) — 건건이 읽어야 하고 DB 부담. 500건 넘는 일괄 태깅 금지(CLAUDE.md).
+
+**D. 집 세션 안전수칙 요약**
+- 편집 후 커밋 전 `node tests/syntax.test.js`(사이트가 안 뜨는 사고 방지), 관련 테스트 실행, **CI 초록불 확인이 끝일 때까지 "완료" 말하지 말 것.**
+- 셸·도구 함정: `node -e`/heredoc에선 백슬래시(정규식)가 사라진다 → 파일로 쓰고 Edit 도구를 쓸 것. DB 응답은 마지막 문장 결과만 온다. SQL BEGIN 금지. `tags_manual` 행은 false→수정→true 3단계.
+- 새로 만든 함수·상수를 테스트가 `admin.js`에서 이름으로 꺼내 쓰면(korea-sings-matching 등) **그 테스트의 추출 목록에도 등록**(11-16에 `_extPickMembers`로 CI가 빨개졌음).
+- 커밋 메시지 끝에 `Co-Authored-By: Claude …` 줄, 메모리·규칙은 repo CLAUDE.md가 우선.
+
 ## 2026-11-16 (Claude Code/Sonnet — 사용자 요청 5가지: 자막·인스타 최애·최근 검색·공연/행사 다녀왔어요·어드민 일괄 태깅 + 수상 수집 계획)
 - [app.js] **재생 화면 자막(CC) 다시 켜짐**(웹앱) — 원인 ①영상 틀(iframe)은 열 때마다 새로 갈아끼우는데(_lbSetIframeSrc) 끄기 기록(_lbCcOffVid)은 영상 ID만 봐서 **같은 영상을 다시 열면 끄기 신호가 아예 안 갔다** → 틀이 바뀌면 기록을 비움 ②시각 타이머(0·1.5·5·15·40초)만으론 유튜브가 모듈을 늦게 붙이는 순간을 못 맞춤 → 유튜브가 모듈을 붙일 때 보내는 onApiChange를 받아 즉시 끔(첫 60초 한정 — 그 뒤 사용자가 켠 CC는 유지) ③captions·cc 두 모듈 이름 모두 unload. tests/lb-captions-off.test.js. ⏳ 아이폰 웹앱 실기기 확인(헤드리스로 유튜브 재현 불가)
 - [app.js] **For You 인스타 선반**: 최애(프로필 bias) 계정 사진을 선반 맨 앞으로(각자 최신순) + 카드 이름 앞에 그 최애에 정한 이모티콘(그냥 즐겨찾기는 🤍) — New Videos·차트 목록과 같은 규칙(_igBiasOf). 선반 위치는 그대로(이어보기 → 인스타 → New Videos, 11-10·11-15 결정 유지). "젤 앞"을 선반 맨 위(이어보기 위)로 해석할지는 사용자 확인 필요
