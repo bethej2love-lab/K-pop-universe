@@ -3086,20 +3086,59 @@ const RECENT_SEARCH_MAX=8;
 function _loadRecentSearches(){
   try{return JSON.parse(localStorage.getItem(RECENT_SEARCH_KEY)||'[]');}catch(e){return[];}
 }
+// 2026-11-16 사용자 "최근 검색에 그룹·멤버뿐 아니라 곡이나 공연도" — 곡·공연·공연장·행사(시상식·페스티벌)도 그 자체로 남긴다.
+// 예전엔 곡/공연을 골라도 **주인(그룹/멤버)** 만 저장해서 최근 검색엔 늘 그룹·멤버만 떴다.
+// 항목은 작게(이름·표시용 글자·찾을 키)만 저장하고, 공연은 누를 때 id로 다시 불러온다(포스터·예매 링크 등은 저장하지 않는다).
+function _recentKey(e){
+  if(!e)return '';
+  if(e.type==='group')return 'group|'+e.ko;
+  if(e.type==='member')return 'member|'+(e.artistId||(e.ko+'|'+(e.groupKo||'')));
+  if(e.type==='song')return 'song|'+e.title+'|'+e.ownerType+'|'+(e.artistId||e.ko||'');
+  if(e.type==='event')return 'event|'+e.id;
+  if(e.type==='venue')return 'venue|'+e.data;
+  if(e.type==='program')return 'program|'+e.fest;
+  return '';
+}
+function _recentEntryOf(h){
+  if(h.type==='group')return{type:'group',ko:h.data};
+  if(h.type==='member')return{type:'member',ko:h.data.name.ko,groupKo:h.data.group.ko,artistId:h.data.id};
+  if(h.type==='song'){
+    const m=h.ownerType==='member'&&h.data&&h.data.name;
+    return m?{type:'song',title:h.name,ownerType:'member',ko:h.data.name.ko,groupKo:h.data.group&&h.data.group.ko,artistId:h.data.id,album:h.alias||'',ownerName:h.sub||''}
+            :{type:'song',title:h.name,ownerType:'group',ko:h.data,album:h.alias||'',ownerName:h.sub||''};
+  }
+  if(h.type==='event'&&h.id!=null)return{type:'event',id:h.id,title:h.name,date:h.alias||'',venue:h.sub||'',gko:h.data||''};
+  if(h.type==='venue'&&h.data)return{type:'venue',data:h.data,name:h.name,sub:h.sub||''};
+  if(h.type==='program'&&h.data&&h.data.__festival)return{type:'program',fest:h.data.__festival,name:h.name,sub:h.sub||''}; // 프로그램 컬렉션은 객체가 커서 저장 안 함 — 행사만
+  return null;
+}
 function _recordRecentSearch(h){
-  const entry=h.type==='group'?{type:'group',ko:h.data}:{type:'member',ko:h.data.name.ko,groupKo:h.data.group.ko,artistId:h.data.id};
-  const list=_loadRecentSearches().filter(e=>{
-    if(e.type!==entry.type)return true;
-    if(e.type==='member'&&e.artistId&&entry.artistId)return e.artistId!==entry.artistId;
-    return !(e.ko===entry.ko&&e.groupKo===entry.groupKo);
-  });
+  const entry=_recentEntryOf(h);
+  if(!entry)return;
+  const key=_recentKey(entry);
+  const list=_loadRecentSearches().filter(e=>_recentKey(e)!==key);
   list.unshift(entry);
-  localStorage.setItem(RECENT_SEARCH_KEY,JSON.stringify(list.slice(0,RECENT_SEARCH_MAX)));
+  try{localStorage.setItem(RECENT_SEARCH_KEY,JSON.stringify(list.slice(0,RECENT_SEARCH_MAX)));}catch(e){}
 }
 // 최근 검색은 멤버 ID로 복원하고 구형의 명확한 이름/그룹 키도 지원한다.
 // 그룹이 삭제됐거나 멤버를 못 찾으면(데이터 갱신 등) 조용히 건너뜀.
 function _resolveRecentSearches(){
   return _loadRecentSearches().map(e=>{
+    // 곡·공연·공연장·행사 — 검색 결과와 같은 모양의 항목으로 복원한다(_makeSearchItem이 그대로 그린다)
+    if(e.type==='song'){
+      const a=e.ownerType==='member'?(e.artistId?ARTISTS.find(x=>x.id===e.artistId):_artistByNameGroup(e.ko,e.groupKo)):null;
+      const bm=e.ownerType==='group'?bubbleMeshes.find(b=>b.ko===e.ko):null;
+      const pos=a?a._worldPos:(bm&&bm.mesh.position.clone());
+      if(!pos)return null;
+      return{type:'song',name:e.title,alias:e.album||'',sub:e.ownerName||'',pos,data:a||e.ko,ownerType:e.ownerType,score:0};
+    }
+    if(e.type==='event'){
+      const own=GROUPS[e.gko]?e.gko:null;
+      const bm=own&&bubbleMeshes.find(b=>b.ko===own);
+      return{type:'event',id:e.id,name:e.title,alias:e.date||'',sub:e.venue||e.gko||'',ownerType:'group',data:own,pos:bm?bm.mesh.position.clone():null,score:0};
+    }
+    if(e.type==='venue')return{type:'venue',name:e.name,data:e.data,sub:e.sub||'',score:0};
+    if(e.type==='program')return{type:'program',name:e.name,sub:e.sub||'',data:{__festival:e.fest},score:0};
     if(e.type==='group'){
       const info=GROUPS[e.ko];const bm=bubbleMeshes.find(b=>b.ko===e.ko);
       if(!info||!bm)return null;
@@ -3209,7 +3248,7 @@ function _searchRemote(q,res,mobSearch,obSearch,hint){
       // 그때만 제목 검색으로 떨어진다. 태깅 품질 개선이 그대로 검색 품질이 되는 구조.
       // ⚠️ 정렬은 조회수 내림차순 — 태그 조회는 결과가 수백 건이라 무순으로 6개를 자르면 아무거나 나온다.
       const [evR,vidR0]=await Promise.all([
-        sb.from('kpop_events').select('id,title,groups,date_start,venue').ilike('title',like).order('date_start',{ascending:false}).limit(5),
+        sb.from('kpop_events').select('*').ilike('title',like).order('date_start',{ascending:false}).limit(5),
         _srVidPage(q,like,hint,false,0,_SR_VID_FIRST),
       ]);
       let vidR=vidR0,vidFallbackGroup=false;
@@ -3229,7 +3268,7 @@ function _searchRemote(q,res,mobSearch,obSearch,hint){
       (evR.data||[]).forEach(e=>{
         const gko=(e.groups||[])[0];
         const owner=GROUPS[gko]?gko:null;
-        out.event.push({type:'event',name:e.title,alias:(e.date_start||'').slice(0,10),
+        out.event.push({type:'event',id:e.id,ev:e,name:e.title,alias:(e.date_start||'').slice(0,10),
           sub:e.venue||gko||'',ownerType:'group',data:owner,
           pos:owner?bubbleMeshes.find(b=>b.ko===owner)?.mesh.position.clone():null});
       });
@@ -3698,6 +3737,7 @@ function _makeSearchItem(h,res,mobSearch,obSearch){
       if(obSearch)exitObSearch();else if(mobSearch)exitMobSearch();
       else if(typeof _msIsOpen==='function'&&_msIsOpen())closeMobSearchSheet();
       else{document.getElementById('search-input').value='';res.style.display='none';}
+      _recordRecentSearch(h);
       _openVenueEvents(h.data);
       return;
     }
@@ -3706,6 +3746,7 @@ function _makeSearchItem(h,res,mobSearch,obSearch){
       if(obSearch)exitObSearch();else if(mobSearch)exitMobSearch();
       else if(typeof _msIsOpen==='function'&&_msIsOpen())closeMobSearchSheet();
       else{document.getElementById('search-input').value='';res.style.display='none';}
+      _recordRecentSearch(h);
       if(h.data&&h.data.__festival)_openEventPage(h.data.__festival);else _openProgramCollection(h.data);
       return;
     }
@@ -3718,7 +3759,18 @@ function _makeSearchItem(h,res,mobSearch,obSearch){
       _openChem([h.data,h._betweenB].map(a=>({name:a.name.ko,group:_ytGroupKoFor(a)})));
       return;
     }
-    _recordRecentSearch((h.type==='song'||h.type==='event')?{type:h.ownerType,data:h.data}:(h.type==='between'?{type:'member',data:h.data}:h));
+    // 공연 — 주인 카드가 아니라 **그 공연 창**을 바로 연다(공연장·예매·다녀왔어요가 거기 있다, 2026-11-16 사용자 "공연 검색해서 다녀왔어요")
+    if(h.type==='event'){
+      if(obSearch)exitObSearch();else if(mobSearch)exitMobSearch();
+      else if(typeof _msIsOpen==='function'&&_msIsOpen())closeMobSearchSheet();
+      else{document.getElementById('search-input').value='';res.style.display='none';}
+      _recordRecentSearch(h);
+      const _openEv=ev=>{if(ev)_openConcertSheet(ev);};
+      if(h.ev)_openEv(h.ev);
+      else if(sb&&h.id!=null)sb.from('kpop_events').select('*').eq('id',h.id).maybeSingle().then(({data})=>_openEv(data)).catch(()=>{}); // 최근 검색에서 누른 경우 — id로 다시 불러온다
+      return;
+    }
+    _recordRecentSearch(h.type==='between'?{type:'member',data:h.data}:h); // 곡은 그 곡 자체를(2026-11-16) — 예전엔 주인만 남겼다
     _closeFeedOverlay();
     closeCards();
     flyTo(h.pos);
@@ -22961,6 +23013,33 @@ function _setupFeedListSaveRow(ctx){
 }
 // 콜렉션 한줄평(선택 입력) — 상세를 열었을 때만 노출. 내 컬렉션이면 연필로 수정 가능하고, 남의 공개
 // 컬렉션이면 있을 때만 읽기 전용으로 보여준다(2026-08-12, 사용자 요청).
+// 행사 회차 "다녀왔어요"(2026-11-16) — 콘서트와 같은 기록(concertLog)에 id "EV:시리즈:회차"로 남긴다. 목록은 마이페이지 CONCERTS에 같이 뜬다.
+// 아직 열리지 않은 회차(_EVENT_UPCOMING의 시작일 전)엔 버튼을 숨긴다 — 콘서트와 같은 규칙(공연 당일부터). 이미 기록한 건 날짜와 무관하게 남겨 취소할 수 있다.
+function _evLogId(id,ed){return 'EV:'+id+':'+ed;}
+function _isEvLogId(x){return typeof x==='string'&&x.startsWith('EV:');}
+function _evLogParse(x){const m=/^EV:([^:]+):(.+)$/.exec(String(x));return m?{id:m[1],ed:m[2]}:null;}
+function _evLogAsEvent(x){
+  const p=_evLogParse(x);const s=p&&_EVENT_SERIES.find(v=>v.id===p.id);if(!s)return null;
+  const up=_EVENT_UPCOMING.find(u=>u.id===p.id&&u.ed===p.ed.slice(0,4));
+  return{title:s.ko.replace(/\s*\(.*\)$/,'')+' '+_evEdLabel(p.ed),date_start:up?up.start:p.ed.slice(0,4),venue:up?up.place:''};
+}
+function _setupFeedListAttendRow(ctx){
+  const row=document.getElementById('feed-list-attend-row'),btn=document.getElementById('feed-list-attend');
+  if(!row||!btn)return;
+  if(!ctx||!ctx.attend){row.style.display='none';return;}
+  const key=_evLogId(ctx.attend.id,ctx.attend.ed);
+  const up=_EVENT_UPCOMING.find(u=>u.id===ctx.attend.id&&u.ed===String(ctx.attend.ed).slice(0,4));
+  const todayKst=new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
+  const paint=()=>{const on=!!_concertLogEntry(key);btn.classList.toggle('on',on);btn.textContent=_attendText(on);};
+  paint();
+  row.style.display=(_concertLogEntry(key)||!up||up.start<=todayKst)?'':'none';
+  btn.onclick=e=>{
+    e.stopPropagation();
+    const i=concertLog.findIndex(x=>x.id===key);
+    if(i>=0)concertLog.splice(i,1);else concertLog.unshift({id:key,reaction:null,note:'',at:new Date().toISOString()});
+    _saveConcertLog();paint();renderConcertLogList();
+  };
+}
 function _setupFeedListDescRow(ctx){
   const row=document.getElementById('feed-list-desc-row');
   const textEl=document.getElementById('feed-list-desc');
@@ -23115,6 +23194,7 @@ function _openFeedListOverlay(title,sub,songs,ctx){
   }
   _setupFeedListSaveRow(ctx);
   _setupFeedListDescRow(ctx);
+  _setupFeedListAttendRow(ctx);
   // 여러 개 골라 컬렉션에 한 번에 담기 — 그룹/멤버 카드 그리드의 "선택" 모드(_selMode/_selIds)와 같은
   // 패턴을 여기(모아보기/장르·포맷 목록)에도 적용(2026-08-14, 사용자 요청 — "컬렉션에 여러개 담는 방법이
   // 절실히 필요"). user-bulk-bar/#user-bulk-col-btn은 이미 window._userBulkSelectedVids만 보고 동작하는
@@ -25938,7 +26018,7 @@ async function _openEventPage(id,ed,view,who,_view){
     facets.push({key:'who',ui:'pick',sel:who,options:whoOpts,onPick:v=>_openEventPage(id,undefined,undefined,v,st)});
   }
   _feedListRankedNext=false;
-  _openFeedListOverlay(s.ko,sub,songs,{facets});
+  _openFeedListOverlay(s.ko,sub,songs,{facets,attend:ed?{id:id,ed:ed,label:s.ko.replace(/\s*\(.*\)$/,'')+' '+_evEdLabel(ed)}:null});
 }
 // ── Events 선반(2026-10-16, 행사 3단계) ─────────────────────────────────────────────────────────────
 // ① 다가오는 행사: **공식 발표로 확인된 일정만** 손으로 적는다(추측 날짜 금지 — 2026-10-16 웹 확인, 출처는 src).
@@ -29531,20 +29611,25 @@ async function renderConcertLogList(){
   if(!el)return;
   if(!concertLog.length){el.innerHTML=`<div class="fav-empty">${T[currentLang].concertEmpty}</div>`;return;}
   if(!sb){el.innerHTML=`<div class="fav-empty">${T[currentLang].concertEmpty}</div>`;return;}
-  const ids=concertLog.map(x=>x.id);
-  const{data,error}=await sb.from('kpop_events').select('*').in('id',ids);
-  if(error||!data)return;
+  // 행사 회차("EV:kgma:2026")는 kpop_events에 없다 — DB엔 콘서트 id만 묻고, 행사는 _EVENT_SERIES로 제목을 만든다(2026-11-16)
+  const ids=concertLog.map(x=>x.id).filter(x=>!_isEvLogId(x));
+  let data=[];
+  if(ids.length){
+    const r=await sb.from('kpop_events').select('*').in('id',ids);
+    if(r.error||!r.data)return;
+    data=r.data;
+  }
   const byId=new Map(data.map(e=>[e.id,e]));
   el.innerHTML='';
   [...concertLog].sort((a,b)=>b.at.localeCompare(a.at)).forEach(entry=>{
-    const ev=byId.get(entry.id);
+    const ev=byId.get(entry.id)||(_isEvLogId(entry.id)?_evLogAsEvent(entry.id):null);
     if(!ev)return;
     const row=document.createElement('div');row.className='fav-item concert-log-item';
     const info=document.createElement('div');info.className='concert-log-info';
     const title=document.createElement('div');title.className='fav-iname';
     title.textContent=(entry.reaction?entry.reaction+' ':'')+ev.title;
     const sub=document.createElement('div');sub.className='fav-isub';
-    sub.textContent=`${ev.date_start} · ${_venueName(ev.venue)}`;
+    sub.textContent=[ev.date_start,ev.venue?_venueName(ev.venue):''].filter(Boolean).join(' · ');
     info.appendChild(title);info.appendChild(sub);
     if(entry.note){const note=document.createElement('div');note.className='concert-log-note';note.textContent=entry.note;info.appendChild(note);}
     const del=document.createElement('button');del.className='scrap-del';del.textContent='×';del.title='삭제';

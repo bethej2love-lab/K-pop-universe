@@ -2489,6 +2489,8 @@
      (2026-08-12, 사용자 요청). 내 컬렉션일 때만 연필 아이콘으로 수정 가능, 남의 공개 컬렉션은 있을
      때만(비어있으면 행 자체를 숨김) 읽기 전용으로 노출. */
   #feed-list-desc-row{display:flex;align-items:center;gap:6px;margin-top:5px;}
+  #feed-list-attend-row{margin-top:7px;}
+  #feed-list-attend{font-size:12.5px;padding:7px 12px;border-radius:10px;}
   #feed-list-desc{font-size:var(--fz-body);color:rgba(200,215,250,0.72);line-height:1.4;}
   #feed-list-desc.placeholder{color:rgba(140,165,220,0.41);font-style:italic;}
   #feed-list-desc-edit{background:none;border:none;color:rgba(140,165,220,0.38);font-size:11px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;padding:1px 4px;flex-shrink:0;}
