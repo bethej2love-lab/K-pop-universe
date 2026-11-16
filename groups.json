@@ -57576,6 +57576,49 @@
   },
   "discography": [
    {
+    "title": "PERFECT STORM",
+    "type": "미니",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/15/131/15115131_20261102175232_500.jpg",
+    "releaseDate": "2026.11.16",
+    "trackCount": 6,
+    "titleTrack": "Angel Bite",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "지금까지와는 다른 무언가가 필요해 (Storm is...)",
+      "isTitle": false
+     },
+     {
+      "no": 2,
+      "title": "Angel Bite",
+      "isTitle": true
+     },
+     {
+      "no": 3,
+      "title": "Higher Love",
+      "isTitle": false
+     },
+     {
+      "no": 4,
+      "title": "Sweetest Escape",
+      "isTitle": false
+     },
+     {
+      "no": 5,
+      "title": "Touch the Sky",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "Hate It or Love It",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15115131"
+   },
+   {
     "title": "Setsuna Hanabi",
     "type": "싱글",
     "isMain": true,
