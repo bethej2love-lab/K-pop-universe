@@ -65,6 +65,12 @@ const _YT_VARIETY_SHOW_RE=/주간아이돌|WEEKLY\s*IDOL|아이돌등판|문명�
 // 몰라서 이런 영상이 대량으로 other에 방치돼있었음(2026-08-06, 실측 확인 — 'other'인데 제목에 이 방송명이
 // 있는 영상이 최소 1만7천여 건).
 const _YT_LIVE_SHOW_RE=/엠카운트다운|뮤직뱅크|인기가요|음악중심|쇼챔피언|M\s*COUNTDOWN|MUSIC\s*BANK|INKIGAYO|MUSIC\s*CORE|SHOW\s*CHAMPION|\bTHE\s+SHOW\b/;
+// 시상식·연말 무대(2026-11-16 사용자 "KGMA 무대가 퍼포먼스로 분류 안 됨") — 공식 무대 제목이
+// "[#KGMA2025] 아이브 - XOXZ + …"꼴로 LIVE·직캠 단어가 없어 전부 other로 샜다(실측: KGMA 공식 채널 무대 115/123이 other).
+// 행사명만으론 축전·인사·수상 소감·레드카펫도 걸리므로 ① 행사명 ② '아티스트 - 곡' 대시 ③ 무대 아님 신호 없음 셋 다 요구.
+// MMA·MAMA·AAA는 일반 단어(마마무·EXO 곡 MAMA 등)와 겹쳐 연도가 붙은 꼴만 인정(shared.js _EVENT_SERIES re와 같은 원칙).
+const _YT_AWARD_STAGE_RE=/KGMA|KOREA\s*GRAND\s*MUSIC|MELON\s*MUSIC\s*AWARDS?|#?MMA\s*(?:19|20)\d\d|(?:19|20)\d\d\s*MMA\b|\bMAMA\s*AWARDS|\bMAMA\s*(?:19|20)\d\d|(?:19|20)\d\d\s*MAMA\b|MNET\s*ASIAN\s*MUSIC|ASIA\s*ARTIST\s*AWARDS?|#?AAA\s*(?:19|20)\d\d|(?:19|20)\d\d\s*AAA\b|GOLDEN\s*DISC|골든\s*디스크|서울\s*가요\s*대상|SEOUL\s*MUSIC\s*AWARDS?|한터\s*뮤직|HANTEO\s*MUSIC|THE\s*FACT\s*MUSIC|더팩트\s*뮤직|\bTMA\s*(?:19|20)\d\d|가요\s*대전|가요\s*대제전|가요\s*대축제|써클\s*차트|CIRCLE\s*CHART\s*(?:MUSIC\s*)?AWARDS?/;
+const _YT_AWARD_NOT_STAGE_RE=/소감|SPEECH|축전|인사|GREETING|레드\s*카펫|RED\s*CARPET|비하인드|BEHIND|메이킹|MAKING|리허설|REHEARSAL|라인업|LINE\s*-?\s*UP|포토|PHOTO|백스테이지|BACKSTAGE|스케치|SKETCH|리액션|REACTION|도착|출근|퇴근|예고|PREVIEW|모먼트|MOMENT|브이로그|VLOG|\bCUT\b|컷|기자\s*회견|PRESS|화이팅|응원|틱톡|TIKTOK|인터뷰|INTERVIEW|후보|NOMINEE|부문|본상|신인상|인기상|공로상|베스트|올해의/;
 // 브이라이브/유튜브 라이브/위버스 라이브 등 "실시간 방송"(잡담·인스타 라이브·아프리카TV·트위치 다시보기 등)은
 // 제목에 "라이브"가 들어있어서 무대 직캠과 똑같이 라이브 탭으로 잡히는데, 실제로는 전혀 다른 콘텐츠라
 // 무대 직캠/공연만 나와야 할 라이브 탭을 오염시킴(2026-08-10, 사용자 제보). 바로 이 단어(생방송) 하나만으론
@@ -144,6 +150,8 @@ function _ytClassify(title,{isShort=false}={}){
   if(isShort&&(/챌린지|CHALLENGE/.test(t)||/(?:^|[^A-Z0-9])W[/] *[#@]/.test(t)))return'challenge';
   if(/\bLIVE\b|\bCONCERT\b|\bPERFORMANCE\b|\bFANCAM\b|라이브|직캠|팬캠/.test(t))return'live';
   if(_YT_LIVE_SHOW_RE.test(t))return'live';
+  // 시상식·연말 무대: 행사명 + '아티스트 - 곡' 대시 + 무대 아님 신호 없음(위 상수 주석 참고)
+  if(_YT_AWARD_STAGE_RE.test(t)&&!_YT_AWARD_NOT_STAGE_RE.test(t)&&/ - | – | — /.test(title||''))return'live';
   return'other';
 }
 
