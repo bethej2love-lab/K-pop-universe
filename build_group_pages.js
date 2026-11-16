@@ -1741,8 +1741,8 @@ function computeFancamHubs() {
     if (f.length >= FANCAM_HUB_MIN) FANCAM_HUB.set(a, f);
   }
 }
-function fancamCardHtml(v, isEn) {
-  return `<a class="card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="${ytThumb(v.id, 'mqdefault')}" alt="" loading="lazy"></span><span class="card-t">${escHtml(v.title)}</span><span class="card-y">${[v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? SEO.fmtViews(v.view_count) : ''].filter(Boolean).join(' · ')}</span></a>`;
+function fancamCardHtml(v, isEn, rank) {
+  return `<a class="card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="${ytThumb(v.id, 'mqdefault')}" alt="" loading="lazy">${rank ? `<span class="rk">${rank}</span>` : ''}</span><span class="card-t">${escHtml(v.title)}</span><span class="card-y">${[v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? SEO.fmtViews(v.view_count) : ''].filter(Boolean).join(' · ')}</span></a>`;
 }
 // 곡별 묶음 — 곡 페이지와 같은 곡 데이터(SONGS)에서 그 영상이 속한 곡을 찾는다. 곡이 안 잡힌 직캠은 맨 아래 '그 밖의 직캠'
 function fancamsBySong(a, gko, fancams) {
@@ -1756,6 +1756,7 @@ function fancamsBySong(a, gko, fancams) {
 }
 const FANCAM_PER_SONG = 12;  // 멤버×곡 페이지가 있는 곡은 상위 12개 + '전체 보기', 없으면 그 곡 직캠 전부(MEMBER_SONG_MIN 미만이라 적다)
 const FANCAM_TOP = 12;
+const FANCAM_RANK_N = 10; // 직캠 전체 페이지 맨 위 TOP 순위 개수
 const FANCAM_REST_MAX = 48;
 function fancamPageHtml(a, lang) {
   const isEn = lang === 'en';
@@ -1788,13 +1789,14 @@ function fancamPageHtml(a, lang) {
   if (picks.join('').length > 26) picks = first && !isRecent(first.s) && fresh ? [shortName(fresh.s)] : picks.slice(0, 1);
   const idTitle = !info ? (isEn ? bilingualLabel(nmEn, nm) : bilingualLabel(nm, nmEn)) // 솔로는 이름만 — '솔로 선미' 같은 표기 방지
     : isEn ? bilingualLabel(`${gName} ${nmEn}`, `${gko} ${nm}`) : bilingualLabel(`${gko} ${nm}`, `${info.en || gko} ${nmEn}`); // 그룹+이름 영·한 같이 맨 앞(docs/NAMING.md)
+  // 제목에 'TOP 10'(2026-11-16 사용자 "차트 노출 — 아티스트별 전체 직캠 페이지에 TOP 모음"): '직캠 모음'은 그대로 두고 뒤에만 붙인다
   const title = isEn
-    ? `${idTitle} Fancams${picks.length ? ` — ${picks.map(t => `"${t}"`).join(', ')} & more` : ''} | K-POP UNIVERSE`
-    : `${idTitle} 직캠 모음${picks.length ? ` — ${picks.map(t => `'${t}'`).join('·')} 등` : ''} | K-POP UNIVERSE`;
+    ? `${idTitle} Fancams · Top 10${picks.length ? ` — ${picks.map(t => `"${t}"`).join(', ')} & more` : ''} | K-POP UNIVERSE`
+    : `${idTitle} 직캠 모음·TOP 10${picks.length ? ` — ${picks.map(t => `'${t}'`).join('·')} 등` : ''} | K-POP UNIVERSE`;
   const _gPreEn = info ? `${gName} ` : '', _gPreKo = info ? `${gko} ` : ''; // 솔로는 그룹 접두 생략
   const desc = isEn
-    ? `All ${fancams.length} ${_gPreEn}${mName} fancams and face cams, grouped by song${topSongs.length ? ` (${topSongs.join(', ')}…)` : ''}, most viewed first.`
-    : `${_gPreKo}${mName} 직캠·페이스캠 ${fancams.length}개를 곡별로 모았어요${topSongs.length ? `(${topSongs.join(', ')} 등)` : ''}. 조회수 많은 직캠부터.`;
+    ? `All ${fancams.length} ${_gPreEn}${mName} fancams and face cams, grouped by song${topSongs.length ? ` (${topSongs.join(', ')}…)` : ''}, with the most-viewed Top 10 ranking and this year's popular picks.`
+    : `${_gPreKo}${mName} 직캠·페이스캠 ${fancams.length}개를 곡별로 모았어요${topSongs.length ? `(${topSongs.join(', ')} 등)` : ''}. 조회수 TOP 10 순위와 최근 1년 인기 직캠까지.`;
   const h1 = isEn ? `${mFull} Fancams` : `${mFull} 직캠`;
   const sub = isEn ? `${gFull} · ${fancams.length} fancams · ${songs.length} songs` : `${gFull} · 직캠 ${fancams.length}개 · ${songs.length}곡`;
   const hero = fancams[0];
@@ -1809,7 +1811,12 @@ function fancamPageHtml(a, lang) {
         thumbnailUrl: [ytThumb(v.id, 'mqdefault'), ytThumb(v.id)], uploadDate: iso(v.published_at),
         interactionStatistic: v.view_count ? { '@type': 'InteractionCounter', interactionType: { '@type': 'WatchAction' }, userInteractionCount: v.view_count } : undefined } })) },
   };
-  const topGrid = fancams.slice(1, 1 + FANCAM_TOP).map(v => fancamCardHtml(v, isEn)).join('\n    ');
+  // TOP 10 순위(조회수 순, 번호 배지) + 최근 1년 안에 올라온 것 중 인기 상위(조회수는 누적이라 '최근 1년 업로드' 기준 — 기간 조회수 증가량 아님)
+  const topGrid = fancams.slice(0, FANCAM_RANK_N).map((v, i) => fancamCardHtml(v, isEn, i + 1)).join('\n    ');
+  const _yr = new Date(Date.parse(TODAY_ISO) - 365 * 864e5).toISOString().slice(0, 10);
+  const topIds = new Set(fancams.slice(0, FANCAM_RANK_N).map(v => v.id));
+  const recentTop = fancams.filter(v => String(v.published_at || '').slice(0, 10) >= _yr && !topIds.has(v.id)).slice(0, 6);
+  const recentGrid = recentTop.length >= 3 ? recentTop.map(v => fancamCardHtml(v, isEn)).join('\n    ') : '';
   const songNav = songs.length > 1 ? `<ul class="chips">${songs.map((x, i) => `<li><a href="#s${i}">${escHtml(songLabel(x.s))} <span>${x.vids.length}</span></a></li>`).join('')}</ul>` : '';
   const songSections = songs.map((x, i) => {
     const pageUrl = x.page ? `${SITE}/${memberSongPagePath(a, x.s.b, lang)}` : '';
@@ -1860,7 +1867,7 @@ function fancamPageHtml(a, lang) {
 <link rel="preconnect" href="https://i.ytimg.com">
 <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>
 <link rel="stylesheet" href="${SITE}/song-page.css?v=${SONG_CSS_V}">
-<style>.h-n{font-size:12px;font-weight:400;color:rgba(160,180,230,0.6);margin-left:4px;}h2 a{color:inherit;text-decoration:none;}.chips a{color:inherit;text-decoration:none;}.chips a span{color:rgba(160,180,230,0.6);font-size:11px;}h2[id]{scroll-margin-top:12px;}</style>
+<style>.h-n{font-size:12px;font-weight:400;color:rgba(160,180,230,0.6);margin-left:4px;}h2 a{color:inherit;text-decoration:none;}.chips a{color:inherit;text-decoration:none;}.chips a span{color:rgba(160,180,230,0.6);font-size:11px;}h2[id]{scroll-margin-top:12px;}.card-th{position:relative;}.rk{position:absolute;left:6px;top:6px;min-width:22px;height:22px;padding:0 6px;border-radius:11px;background:rgba(10,14,32,0.82);color:#fff;font-size:12px;font-weight:700;line-height:22px;text-align:center;box-shadow:0 0 0 1px rgba(255,255,255,0.18);}</style>
 ${SEO_GA_TAG}
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var e=((document.querySelector('h1')||{}).textContent||'').trim();gtag('event','seo_land',{entity_name:e,page_type:'member_fancams'});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:e,page_type:'member_fancams'});});});</script>
 <script src="/seo_play.js" defer></script>
@@ -1875,9 +1882,13 @@ ${LIST_FWD}
   <p class="lead">${escHtml(isEn ? `Every individual fancam and face cam of ${gName} ${mName}, grouped by song. Most viewed first.` : `${gko} ${mName}의 개인 직캠·페이스캠을 곡별로 모두 모았어요. 조회수 많은 순.`)}</p>
   ${songNav}
   ${topGrid ? `
-  <h2>${isEn ? 'Most viewed fancams' : '조회수 많은 직캠'}</h2>
+  <h2>${isEn ? `${mName} fancam ranking · Top ${Math.min(FANCAM_RANK_N, fancams.length)}` : `${mName} 직캠 순위 TOP ${Math.min(FANCAM_RANK_N, fancams.length)}`}</h2>
   <div class="grid">
     ${topGrid}
+  </div>` : ''}${recentGrid ? `
+  <h2>${isEn ? `${mName} fancams popular this year` : `${mName} 최근 1년 인기 직캠`}</h2>
+  <div class="grid">
+    ${recentGrid}
   </div>` : ''}
 ${songSections}
 ${restHtml}
