@@ -45,10 +45,10 @@ async function wikitext(title) {
   if (!j) throw new Error('위키 응답 없음(요청 제한)');
   return j.parse ? { title: j.parse.title, text: j.parse.wikitext } : null;
 }
-const clean = s => s.replace(/<ref[^>]*\/>/g, '').replace(/<ref[\s\S]*?<\/ref>/g, '').replace(/\{\{\s*(?:double-dagger|dagger|ddagger)\s*\}\}/gi, ''); // 수상 표시 ‡ 템플릿 제거
+export const clean = s => s.replace(/<ref[^>]*\/>/g, '').replace(/<ref[\s\S]*?<\/ref>/g, '').replace(/\{\{\s*(?:double-dagger|dagger|ddagger)\s*\}\}/gi, ''); // 수상 표시 ‡ 템플릿 제거
 // 대상(Daesang)급 = 문서가 Daesang/Grand Prize로 표시했거나 "올해의 아티스트·노래·앨범·레코드"(MAMA·골든디스크·서울가요대상 등은 표기 없이 이 이름이 대상)
 export const tierOf = (t, daesang) => daesang || /^(artist|song|album|record|digital song|disc)s? of the year\b/i.test(t) || /^grand (prize|award|artist|song|record|performer)/i.test(t) ? '대상' : /top ?10/i.test(t) ? '본상' : /rookie|new artist|newcomer|best new|rising/i.test(t) ? '신인' : /popular|favorite|favourite|fans|star award|choice|hallyu|k-?wave|vote|fan/i.test(t) ? '인기' : /^(top ?10|best|artist of|song of|album of|record of|main|bonsang|digital|album|performance)/i.test(t) ? '본상' : '특별';
-const plain = s => s.replace(/\[\[(?:[^\]|]*\|)?([^\]]*)\]\]/g, '$1').replace(/\{\{[^}]*\}\}/g, '').replace(/''+/g, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+export const plain = s => s.replace(/\[\[(?:[^\]|]*\|)?([^\]]*)\]\]/g, '$1').replace(/\{\{[^}]*\}\}/g, '').replace(/''+/g, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 
 // 수상자 줄 → [{name, target}...] (대시 앞의 링크들 = 수상자, 뒤 = 작품)
 function parseWinnerLine(line) {
@@ -64,7 +64,7 @@ function parseWinnerLine(line) {
   if (!names.length) { const t = plain(who); if (t) names.push({ target: t, name: t }); }
   return { names, work };
 }
-function resolveEn(n) {
+export function resolveEn(n) {
   const cands = [n.name, n.target, n.target.replace(/\s*\([^)]*\)\s*$/, '')];
   for (const c of cands) { const k = norm(c); if (gEn.has(k)) return { gko: gEn.get(k) }; }
   for (const c of cands) { const a = aEn.get(norm(c)); if (a && a.length === 1) return { id: a[0].id }; }

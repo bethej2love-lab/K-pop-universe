@@ -1,0 +1,164 @@
+{
+ "id": "sma",
+ "edition": "2019",
+ "name": "서울가요대상",
+ "nameEn": "Seoul Music Awards",
+ "dates": [
+  "2019"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/Seoul_Music_Awards"
+ ],
+ "autoSource": "wikipedia-main",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 메인 문서 연도표 자동 수집(수상자만·회차 문서 없음). 사람이 확인한 정본이 생기면 교체.",
+ "categories": [
+  {
+   "ko": "대상",
+   "en": "Grand Prize",
+   "koAuto": true,
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    },
+    {
+     "name": "Taeyeon",
+     "id": "a0166"
+    }
+   ]
+  },
+  {
+   "ko": "올해의 신인",
+   "en": "Rookie of the Year",
+   "koAuto": true,
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "TXT",
+     "gko": "투모로우바이투게더"
+    },
+    {
+     "name": "AB6IX",
+     "gko": "에이비식스"
+    },
+    {
+     "name": "Itzy",
+     "gko": "있지"
+    }
+   ]
+  },
+  {
+   "ko": "R&B 힙합",
+   "en": "R&B Hip-Hop Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Kassy",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "발라드",
+   "en": "Ballad Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Kim Jae-hwan",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "트로트",
+   "en": "Trot Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Song Ga-in",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "퍼포먼스",
+   "en": "Performance Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Ha Sung-woon",
+     "id": "a0874"
+    }
+   ]
+  },
+  {
+   "ko": "Original Soundtrack Award",
+   "en": "Original Soundtrack Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Taeyeon",
+     "id": "a0166"
+    }
+   ]
+  },
+  {
+   "ko": "밴드",
+   "en": "Band Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Daybreak",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "인기상",
+   "en": "Popularity Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    }
+   ]
+  },
+  {
+   "ko": "K웨이브 스페셜",
+   "en": "K-wave Special Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    }
+   ]
+  },
+  {
+   "ko": "Special awards",
+   "en": "Special awards",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Song Ga-in",
+     "ext": true
+    },
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    }
+   ]
+  }
+ ]
+}

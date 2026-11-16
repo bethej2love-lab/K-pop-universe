@@ -1,0 +1,137 @@
+{
+ "id": "sma",
+ "edition": "2001",
+ "name": "서울가요대상",
+ "nameEn": "Seoul Music Awards",
+ "dates": [
+  "2001"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/Seoul_Music_Awards"
+ ],
+ "autoSource": "wikipedia-main",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 메인 문서 연도표 자동 수집(수상자만·회차 문서 없음). 사람이 확인한 정본이 생기면 교체.",
+ "categories": [
+  {
+   "ko": "대상",
+   "en": "Grand Prize",
+   "koAuto": true,
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Kim Gun-mo",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "올해의 신인",
+   "en": "Rookie of the Year",
+   "koAuto": true,
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Brown Eyes",
+     "ext": true
+    },
+    {
+     "name": "Sung Si-kyung",
+     "ext": true
+    },
+    {
+     "name": "Jadu",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "R&B 힙합",
+   "en": "R&B Hip-Hop Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Drunken Tiger",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "트로트",
+   "en": "Trot Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Tae Jin-ah",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "인기상",
+   "en": "Popularity Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Click-B",
+     "gko": "클릭비"
+    },
+    {
+     "name": "Baby V.O.X.",
+     "gko": "베이비복스"
+    }
+   ]
+  },
+  {
+   "ko": "K웨이브 스페셜",
+   "en": "K-wave Special Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Kim Hyun-jung",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "록",
+   "en": "Rock Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Kim Jong-seo",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "프로듀서",
+   "en": "Producer Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Choi Jin-young",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Composition Award",
+   "en": "Composition Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Park Jin-young",
+     "ext": true
+    }
+   ]
+  }
+ ]
+}

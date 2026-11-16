@@ -1,0 +1,130 @@
+{
+ "id": "gda",
+ "edition": "2004",
+ "name": "골든디스크어워즈",
+ "nameEn": "Golden Disc Awards",
+ "dates": [
+  "2004"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/Golden_Disc_Awards"
+ ],
+ "autoSource": "wikipedia-main",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 메인 문서 연도표 자동 수집(수상자만·회차 문서 없음). 사람이 확인한 정본이 생기면 교체.",
+ "categories": [
+  {
+   "ko": "올해의 앨범 (앨범 대상)",
+   "en": "Album of the Year (Album Daesang)",
+   "koAuto": true,
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Lee Soo-young",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "음반 본상",
+   "en": "Album Bonsang",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lee Soo-young",
+     "ext": true
+    },
+    {
+     "name": "Koyote",
+     "ext": true
+    },
+    {
+     "name": "Shin Seung-hun",
+     "ext": true
+    },
+    {
+     "name": "Wheesung",
+     "ext": true
+    },
+    {
+     "name": "MC the Max",
+     "ext": true
+    },
+    {
+     "name": "Gummy",
+     "ext": true
+    },
+    {
+     "name": "Lee Seung-chul",
+     "ext": true
+    },
+    {
+     "name": "Seven",
+     "ext": true
+    },
+    {
+     "name": "Rain",
+     "id": "a1039"
+    },
+    {
+     "name": "Shinhwa",
+     "gko": "신화"
+    }
+   ]
+  },
+  {
+   "ko": "올해의 신인",
+   "en": "Rookie of the Year Award",
+   "koAuto": true,
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "SG Wannabe",
+     "ext": true
+    },
+    {
+     "name": "Tei",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "인기상",
+   "en": "Popularity Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Park Sang-min",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 트로트",
+   "en": "Best Trot Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Tae Jin-ah",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 록",
+   "en": "Best Rock Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jaurim",
+     "ext": true
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,140 @@
+{
+ "id": "sma",
+ "edition": "2004",
+ "name": "서울가요대상",
+ "nameEn": "Seoul Music Awards",
+ "dates": [
+  "2004"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/Seoul_Music_Awards"
+ ],
+ "autoSource": "wikipedia-main",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 메인 문서 연도표 자동 수집(수상자만·회차 문서 없음). 사람이 확인한 정본이 생기면 교체.",
+ "categories": [
+  {
+   "ko": "대상",
+   "en": "Grand Prize",
+   "koAuto": true,
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Shinhwa",
+     "gko": "신화"
+    }
+   ]
+  },
+  {
+   "ko": "올해의 신인",
+   "en": "Rookie of the Year",
+   "koAuto": true,
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "TVXQ",
+     "gko": "동방신기"
+    },
+    {
+     "name": "Lee Seung-gi",
+     "ext": true
+    },
+    {
+     "name": "SG Wannabe",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "R&B 힙합",
+   "en": "R&B Hip-Hop Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Bobby Kim",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "트로트",
+   "en": "Trot Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Jang Yoon-jeong",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Original Soundtrack Award",
+   "en": "Original Soundtrack Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Jo Sung-mo",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "인기상",
+   "en": "Popularity Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Shinhwa",
+     "gko": "신화"
+    },
+    {
+     "name": "TVXQ",
+     "gko": "동방신기"
+    }
+   ]
+  },
+  {
+   "ko": "K웨이브 스페셜",
+   "en": "K-wave Special Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Baby V.O.X.",
+     "gko": "베이비복스"
+    },
+    {
+     "name": "Park Yong-ha",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "록",
+   "en": "Rock Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Jaurim",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Lyricist Award",
+   "en": "Lyricist Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Psy",
+     "id": "a1041"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,89 @@
+{
+ "id": "sma",
+ "edition": "2003",
+ "name": "서울가요대상",
+ "nameEn": "Seoul Music Awards",
+ "dates": [
+  "2003"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/Seoul_Music_Awards"
+ ],
+ "autoSource": "wikipedia-main",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 메인 문서 연도표 자동 수집(수상자만·회차 문서 없음). 사람이 확인한 정본이 생기면 교체.",
+ "categories": [
+  {
+   "ko": "대상",
+   "en": "Grand Prize",
+   "koAuto": true,
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Lee Hyori",
+     "id": "a0844"
+    }
+   ]
+  },
+  {
+   "ko": "올해의 신인",
+   "en": "Rookie of the Year",
+   "koAuto": true,
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Maya",
+     "id": "a0577"
+    },
+    {
+     "name": "Se7en",
+     "id": "a1040"
+    },
+    {
+     "name": "Big Mama",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "K웨이브 스페셜",
+   "en": "K-wave Special Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "S",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Special awards",
+   "en": "Special awards",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Baek Ji-young",
+     "ext": true
+    },
+    {
+     "name": "Cho Yong-pil",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "프로듀서",
+   "en": "Producer Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Yang Hyun-suk",
+     "ext": true
+    }
+   ]
+  }
+ ]
+}

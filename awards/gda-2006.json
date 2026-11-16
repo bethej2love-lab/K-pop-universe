@@ -1,0 +1,142 @@
+{
+ "id": "gda",
+ "edition": "2006",
+ "name": "골든디스크어워즈",
+ "nameEn": "Golden Disc Awards",
+ "dates": [
+  "2006"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/Golden_Disc_Awards"
+ ],
+ "autoSource": "wikipedia-main",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 메인 문서 연도표 자동 수집(수상자만·회차 문서 없음). 사람이 확인한 정본이 생기면 교체.",
+ "categories": [
+  {
+   "ko": "올해의 노래 (음원 대상)",
+   "en": "Song of the Year (Digital Daesang)",
+   "koAuto": true,
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "SG Wannabe",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "올해의 앨범 (앨범 대상)",
+   "en": "Album of the Year (Album Daesang)",
+   "koAuto": true,
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "TVXQ",
+     "gko": "동방신기"
+    }
+   ]
+  },
+  {
+   "ko": "음반 본상",
+   "en": "Album Bonsang",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Shinhwa",
+     "gko": "신화"
+    },
+    {
+     "name": "SG Wannabe",
+     "ext": true
+    },
+    {
+     "name": "TVXQ",
+     "gko": "동방신기"
+    },
+    {
+     "name": "MC the Max",
+     "ext": true
+    },
+    {
+     "name": "Shin Seung-hun",
+     "ext": true
+    },
+    {
+     "name": "Vibe",
+     "ext": true
+    },
+    {
+     "name": "Fly to the Sky",
+     "ext": true
+    },
+    {
+     "name": "Son Ho-young",
+     "id": "a0839"
+    },
+    {
+     "name": "Buzz",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "올해의 신인",
+   "en": "Rookie of the Year Award",
+   "koAuto": true,
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Gavy NJ",
+     "ext": true
+    },
+    {
+     "name": "Super Junior",
+     "gko": "슈퍼주니어"
+    }
+   ]
+  },
+  {
+   "ko": "인기상",
+   "en": "Popularity Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Baek Ji-young",
+     "ext": true
+    },
+    {
+     "name": "Park Sang-min",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 트로트",
+   "en": "Best Trot Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jang Yoon-jeong",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 힙합",
+   "en": "Best Hip-Hop Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "MC Mong",
+     "ext": true
+    }
+   ]
+  }
+ ]
+}

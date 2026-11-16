@@ -1,0 +1,172 @@
+{
+ "id": "sma",
+ "edition": "2015",
+ "name": "서울가요대상",
+ "nameEn": "Seoul Music Awards",
+ "dates": [
+  "2015"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/Seoul_Music_Awards"
+ ],
+ "autoSource": "wikipedia-main",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 메인 문서 연도표 자동 수집(수상자만·회차 문서 없음). 사람이 확인한 정본이 생기면 교체.",
+ "categories": [
+  {
+   "ko": "대상",
+   "en": "Grand Prize",
+   "koAuto": true,
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    }
+   ]
+  },
+  {
+   "ko": "올해의 신인",
+   "en": "Rookie of the Year",
+   "koAuto": true,
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    },
+    {
+     "name": "GFriend",
+     "gko": "여자친구"
+    },
+    {
+     "name": "iKon",
+     "gko": "아이콘"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 앨범",
+   "en": "Best Album",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "BoA",
+     "id": "a1037"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 노래",
+   "en": "Best Song",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Big Bang",
+     "gko": "빅뱅"
+    }
+   ]
+  },
+  {
+   "ko": "R&B 힙합",
+   "en": "R&B Hip-Hop Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "San E",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "발라드",
+   "en": "Ballad Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "BtoB",
+     "gko": "비투비"
+    }
+   ]
+  },
+  {
+   "ko": "트로트",
+   "en": "Trot Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Hong Jin-young",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "퍼포먼스",
+   "en": "Performance Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Monsta X",
+     "gko": "몬스타엑스"
+    },
+    {
+     "name": "Ailee",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Original Soundtrack Award",
+   "en": "Original Soundtrack Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Jang Jae-in",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "인기상",
+   "en": "Popularity Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "XIA",
+     "id": "a0597"
+    }
+   ]
+  },
+  {
+   "ko": "K웨이브 스페셜",
+   "en": "K-wave Special Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    }
+   ]
+  },
+  {
+   "ko": "Show & Culture Award",
+   "en": "Show & Culture Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Hyukoh",
+     "ext": true
+    }
+   ]
+  }
+ ]
+}

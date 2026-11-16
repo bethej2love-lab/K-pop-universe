@@ -1,0 +1,286 @@
+{
+ "id": "sma",
+ "edition": "2026",
+ "name": "서울가요대상",
+ "nameEn": "Seoul Music Awards",
+ "dates": [
+  "2026"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/Seoul_Music_Awards"
+ ],
+ "autoSource": "wikipedia-main",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 메인 문서 연도표 자동 수집(수상자만·회차 문서 없음). 사람이 확인한 정본이 생기면 교체.",
+ "categories": [
+  {
+   "ko": "대상",
+   "en": "Grand Prize",
+   "koAuto": true,
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Ateez",
+     "gko": "에이티즈"
+    }
+   ]
+  },
+  {
+   "ko": "본상 상",
+   "en": "Main Prize",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Alpha Drive One",
+     "gko": "알파드라이브원"
+    }
+   ]
+  },
+  {
+   "ko": "올해의 신인",
+   "en": "Rookie of the Year",
+   "koAuto": true,
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "AHOF",
+     "gko": "아홉"
+    },
+    {
+     "name": "Alpha Drive One",
+     "gko": "알파드라이브원"
+    },
+    {
+     "name": "Close Your Eyes",
+     "gko": "클로즈유어아이즈"
+    },
+    {
+     "name": "IDID",
+     "gko": "아이딧"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 앨범",
+   "en": "Best Album",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "BoyNextDoor",
+     "gko": "보이넥스트도어"
+    },
+    {
+     "name": "Zerobaseone",
+     "gko": "제로베이스원"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 노래",
+   "en": "Best Song",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Le Sserafim",
+     "gko": "르세라핌"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 솔로",
+   "en": "Best Solo",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Dayoung",
+     "id": "a0661"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 그룹",
+   "en": "Best Group",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Zerobasone",
+     "gko": "제로베이스원"
+    }
+   ]
+  },
+  {
+   "ko": "K-Pop World Choice",
+   "en": "K-Pop World Choice",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Super Junior",
+     "gko": "슈퍼주니어"
+    },
+    {
+     "name": "Yeonjun",
+     "id": "a0127"
+    }
+   ]
+  },
+  {
+   "ko": "월드 베스트 아티스트",
+   "en": "World Best Artist Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "BoyNextDoor",
+     "gko": "보이넥스트도어"
+    },
+    {
+     "name": "Le Sserafim",
+     "gko": "르세라핌"
+    }
+   ]
+  },
+  {
+   "ko": "R&B 힙합",
+   "en": "R&B Hip-Hop Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "BoyNextDoor",
+     "gko": "보이넥스트도어"
+    }
+   ]
+  },
+  {
+   "ko": "발라드",
+   "en": "Ballad Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Hanroro",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "트로트",
+   "en": "Trot Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Lee Chan-won",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "퍼포먼스",
+   "en": "Performance Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Izna",
+     "gko": "이즈나"
+    },
+    {
+     "name": "Xikers",
+     "gko": "싸이커스"
+    }
+   ]
+  },
+  {
+   "ko": "Original Soundtrack Award",
+   "en": "Original Soundtrack Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Sung Han-bin",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "밴드",
+   "en": "Band Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Dragon Pony",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "인기상",
+   "en": "Popularity Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Lee Chan-won",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "K웨이브 스페셜",
+   "en": "K-wave Special Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  },
+  {
+   "ko": "SMA Global Rookie Award",
+   "en": "SMA Global Rookie Award",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Idntt",
+     "gko": "아이덴티티"
+    },
+    {
+     "name": "Modyssey",
+     "gko": "모디세이"
+    },
+    {
+     "name": "Say My Name",
+     "gko": "세이마이네임"
+    }
+   ]
+  },
+  {
+   "ko": "Special awards",
+   "en": "Special awards",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Doh Kyung-soo",
+     "ext": true
+    },
+    {
+     "name": "EXO",
+     "gko": "엑소"
+    },
+    {
+     "name": "Roo'ra",
+     "ext": true
+    }
+   ]
+  }
+ ]
+}

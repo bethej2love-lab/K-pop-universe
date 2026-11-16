@@ -1,0 +1,70 @@
+{
+ "id": "sma",
+ "edition": "1999",
+ "name": "서울가요대상",
+ "nameEn": "Seoul Music Awards",
+ "dates": [
+  "1999"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/Seoul_Music_Awards"
+ ],
+ "autoSource": "wikipedia-main",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 메인 문서 연도표 자동 수집(수상자만·회차 문서 없음). 사람이 확인한 정본이 생기면 교체.",
+ "categories": [
+  {
+   "ko": "대상",
+   "en": "Grand Prize",
+   "koAuto": true,
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Jo Sung-mo",
+     "ext": true
+    },
+    {
+     "name": "Fin.K.L",
+     "gko": "핑클"
+    }
+   ]
+  },
+  {
+   "ko": "올해의 신인",
+   "en": "Rookie of the Year",
+   "koAuto": true,
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Lee Jung-hyun",
+     "id": "a1272"
+    },
+    {
+     "name": "Koyote",
+     "ext": true
+    },
+    {
+     "name": "Sharp",
+     "ext": true
+    },
+    {
+     "name": "Chae Jung-an",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "트로트",
+   "en": "Trot Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Tae Jin-ah",
+     "ext": true
+    }
+   ]
+  }
+ ]
+}

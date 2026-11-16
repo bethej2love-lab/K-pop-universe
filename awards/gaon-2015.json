@@ -1,0 +1,252 @@
+{
+ "id": "gaon",
+ "edition": "2015",
+ "name": "써클차트 뮤직어워즈",
+ "nameEn": "Circle Chart Music Awards",
+ "dates": [
+  "2015"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/Circle_Chart_Music_Awards"
+ ],
+ "autoSource": "wikipedia-main",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 메인 문서 연도표 자동 수집(수상자만·회차 문서 없음). 사람이 확인한 정본이 생기면 교체.",
+ "categories": [
+  {
+   "ko": "Artist of the Year – Physical",
+   "en": "Artist of the Year – Physical",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    },
+    {
+     "name": "Super Junior",
+     "gko": "슈퍼주니어"
+    }
+   ]
+  },
+  {
+   "ko": "올해의 아티스트 음원",
+   "en": "Artist of the Year – Digital Music",
+   "koAuto": true,
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Mad Clown",
+     "ext": true
+    },
+    {
+     "name": "Naul",
+     "ext": true
+    },
+    {
+     "name": "MC Mong",
+     "ext": true
+    },
+    {
+     "name": "Miss A",
+     "gko": "미쓰에이"
+    },
+    {
+     "name": "BigBang",
+     "gko": "빅뱅"
+    },
+    {
+     "name": "iKon",
+     "gko": "아이콘"
+    },
+    {
+     "name": "Taeyeon",
+     "id": "a0166"
+    },
+    {
+     "name": "Zico",
+     "id": "a0972"
+    },
+    {
+     "name": "Psy",
+     "id": "a1041"
+    }
+   ]
+  },
+  {
+   "ko": "올해의 신인",
+   "en": "New Artist of the Year",
+   "koAuto": true,
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "iKon",
+     "gko": "아이콘"
+    },
+    {
+     "name": "GFriend",
+     "gko": "여자친구"
+    }
+   ]
+  },
+  {
+   "ko": "올해의 발견",
+   "en": "Discovery of the Year",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Song Min-ho",
+     "ext": true
+    },
+    {
+     "name": "Hyukoh",
+     "ext": true
+    },
+    {
+     "name": "Zion.T",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Music Steady Seller of the Year",
+   "en": "Music Steady Seller of the Year",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Naul",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Popular Singer of the Year",
+   "en": "Popular Singer of the Year",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "So Chan Whee",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Overseas Music Awards",
+   "en": "Overseas Music Awards",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Adele",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Composer/Lyricist of the Year",
+   "en": "Composer/Lyricist of the Year",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Black Eyed Pilseung",
+     "ext": true
+    },
+    {
+     "name": "Kim Eana",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Hot Performance of the Year",
+   "en": "Hot Performance of the Year",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Red Velvet",
+     "gko": "레드벨벳"
+    }
+   ]
+  },
+  {
+   "ko": "World K-pop Star",
+   "en": "World K-pop Star",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  },
+  {
+   "ko": "World K-Pop Rookie",
+   "en": "World K-Pop Rookie",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    },
+    {
+     "name": "AOA",
+     "gko": "에이오에이"
+    }
+   ]
+  },
+  {
+   "ko": "Mobile Vote Popularity Award",
+   "en": "Mobile Vote Popularity Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    }
+   ]
+  },
+  {
+   "ko": "Special awards",
+   "en": "Special awards",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Sehun",
+     "id": "a0377"
+    }
+   ]
+  },
+  {
+   "ko": "핫 트렌드",
+   "en": "Hot Trend Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "B.A.P",
+     "gko": "비에이피"
+    },
+    {
+     "name": "Baek A Yeon",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "프로듀서 올해",
+   "en": "Producer of the Year",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Yang Hyun-suk",
+     "ext": true
+    },
+    {
+     "name": "YG Entertainment",
+     "ext": true
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,381 @@
+{
+ "id": "aaa",
+ "edition": "2024",
+ "name": "아시아 아티스트 어워즈",
+ "nameEn": "Asia Artist Awards",
+ "dates": [
+  "2024"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/Asia_Artist_Awards"
+ ],
+ "autoSource": "wikipedia-main",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 메인 문서 연도표 자동 수집(수상자만·회차 문서 없음). 사람이 확인한 정본이 생기면 교체.",
+ "categories": [
+  {
+   "ko": "올해의 신인",
+   "en": "Rookie of the Year",
+   "koAuto": true,
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Jang Da-ah",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "인기상",
+   "en": "Popularity Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Byeon Woo-seok",
+     "ext": true
+    },
+    {
+     "name": "Kim Hye-yoon",
+     "ext": true
+    },
+    {
+     "name": "Lim Young-woong",
+     "ext": true
+    },
+    {
+     "name": "NiziU",
+     "gko": "니쥬"
+    }
+   ]
+  },
+  {
+   "ko": "아시아 셀러브리티",
+   "en": "Asia Celebrity",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Byeon Woo-seok",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 아티스트",
+   "en": "Best Artist Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Park Min-young",
+     "ext": true
+    },
+    {
+     "name": "Kim Hye-yoon",
+     "ext": true
+    },
+    {
+     "name": "Ahn Bo-hyun",
+     "ext": true
+    },
+    {
+     "name": "Byeon Woo-seok",
+     "ext": true
+    },
+    {
+     "name": "Joo Won",
+     "ext": true
+    },
+    {
+     "name": "Ryu Jun-yeol",
+     "ext": true
+    },
+    {
+     "name": "Kentaro Sakaguchi",
+     "ext": true
+    },
+    {
+     "name": "Kim Soo-hyun",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 아이콘",
+   "en": "Best Icon Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "&Team",
+     "gko": "앤팀"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 OST",
+   "en": "Best OST Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Byeon Woo-seok",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "파뷸러스",
+   "en": "Fabulous Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Kim Soo-hyun",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "포커스",
+   "en": "Focus Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "WHIB",
+     "gko": "휘브"
+    }
+   ]
+  },
+  {
+   "ko": "신인 웨이브",
+   "en": "New Wave Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Bibi",
+     "id": "a1308"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 배우",
+   "en": "Best Actor Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Suho",
+     "id": "a0370"
+    },
+    {
+     "name": "Kim Hye-yoon",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 크리에이터",
+   "en": "Best Creator Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Starship Entertainment",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 이모티브",
+   "en": "Best Emotive Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jo Yu-ri",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 뮤지션",
+   "en": "Best Musician Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Zerobaseone",
+     "gko": "제로베이스원"
+    },
+    {
+     "name": "Kiss of Life",
+     "gko": "키스오브라이프"
+    },
+    {
+     "name": "Bibi",
+     "id": "a1308"
+    },
+    {
+     "name": "Jimin",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 프로듀서",
+   "en": "Best Producer Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Bumzu",
+     "ext": true
+    },
+    {
+     "name": "Pledis Entertainment",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 초이스",
+   "en": "Best Choice Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Jo Yu-ri",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "핫 트렌드",
+   "en": "Hot Trend Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Kim Soo-hyun",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "포텐셜",
+   "en": "Potential Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Choi Bo-min",
+     "id": "a0885"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 뮤직비디오",
+   "en": "Best Music Video Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Le Sserafim",
+     "gko": "르세라핌"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 커플",
+   "en": "Best Couple Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Byeon Woo-seok",
+     "ext": true
+    },
+    {
+     "name": "Kim Hye-yoon",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 아시안 스타",
+   "en": "Best Asian Star Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Kentaro Sakaguchi",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 K팝 레코드",
+   "en": "Best K-pop Record Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jungkook",
+     "id": "a0189"
+    },
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    },
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 밴드",
+   "en": "Best Band Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "DAY6",
+     "gko": "데이식스"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 퍼포먼스",
+   "en": "Best Performance Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "NewJeans",
+     "gko": "뉴진스"
+    },
+    {
+     "name": "How Sweet",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Queen of AAA",
+   "en": "Queen of AAA",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Jang Won-young",
+     "ext": true
+    }
+   ]
+  }
+ ]
+}

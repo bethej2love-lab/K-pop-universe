@@ -1,0 +1,319 @@
+{
+ "id": "aaa",
+ "edition": "2020",
+ "name": "아시아 아티스트 어워즈",
+ "nameEn": "Asia Artist Awards",
+ "dates": [
+  "2020"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/Asia_Artist_Awards"
+ ],
+ "autoSource": "wikipedia-main",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 메인 문서 연도표 자동 수집(수상자만·회차 문서 없음). 사람이 확인한 정본이 생기면 교체.",
+ "categories": [
+  {
+   "ko": "대상",
+   "en": "Grand Prize",
+   "koAuto": true,
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Kim Soo-hyun",
+     "ext": true
+    },
+    {
+     "name": "Lee Jung-jae",
+     "ext": true
+    },
+    {
+     "name": "NCT",
+     "ext": true
+    },
+    {
+     "name": "Twice",
+     "gko": "트와이스"
+    },
+    {
+     "name": "Got7",
+     "gko": "갓세븐"
+    },
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    },
+    {
+     "name": "Monsta X",
+     "gko": "몬스타엑스"
+    }
+   ]
+  },
+  {
+   "ko": "올해의 신인",
+   "en": "Rookie of the Year",
+   "koAuto": true,
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Han So-hee",
+     "ext": true
+    },
+    {
+     "name": "Lee Jae-wook",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "인기상",
+   "en": "Popularity Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Park Jin-young",
+     "ext": true
+    },
+    {
+     "name": "Song Ji-hyo",
+     "ext": true
+    },
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    },
+    {
+     "name": "Twice",
+     "gko": "트와이스"
+    },
+    {
+     "name": "Lim Young-woong",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "아시아 셀러브리티",
+   "en": "Asia Celebrity",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Lee Joon-gi",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 아티스트",
+   "en": "Best Artist Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lee Joon-gi",
+     "ext": true
+    },
+    {
+     "name": "Seo Yea-ji",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 아이콘",
+   "en": "Best Icon Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lee Joo-young",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "포커스",
+   "en": "Focus Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Ahn Eun-jin",
+     "id": "a1879"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 배우",
+   "en": "Best Actor Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Ahn Hyo-seop",
+     "ext": true
+    },
+    {
+     "name": "Lee Sung-kyung",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 이모티브",
+   "en": "Best Emotive Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Kim Seon-ho",
+     "ext": true
+    },
+    {
+     "name": "Ahn Bo-hyun",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best History of Songs Award",
+   "en": "Best History of Songs Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Super Junior",
+     "gko": "슈퍼주니어"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 뮤지션",
+   "en": "Best Musician Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Song Ga-in",
+     "ext": true
+    },
+    {
+     "name": "Kang Daniel",
+     "id": "a0325"
+    },
+    {
+     "name": "Iz*One",
+     "gko": "아이즈원"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 초이스",
+   "en": "Best Choice Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Ahn Bo-hyun",
+     "ext": true
+    },
+    {
+     "name": "Park Ju-hyun",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "포텐셜",
+   "en": "Potential Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Park Jin-young",
+     "ext": true
+    },
+    {
+     "name": "Kim Hye-yoon",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "AAA 씬 스틸러",
+   "en": "AAA Scene Stealer",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Kim Min-jae",
+     "id": "a0668"
+    }
+   ]
+  },
+  {
+   "ko": "AAA Best of Best Starnews Choeaedol Popularity Award",
+   "en": "AAA Best of Best Starnews Choeaedol Popularity Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  },
+  {
+   "ko": "AAA Hot Issue Award",
+   "en": "AAA Hot Issue Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Kim Soo-hyun",
+     "ext": true
+    },
+    {
+     "name": "Seo Yea-ji",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 연기",
+   "en": "Best Acting Performance Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lee Joon-hyuk",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 뮤직비디오",
+   "en": "Best Music Video Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 팝 아티스트",
+   "en": "Best Pop Artist Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "MAX",
+     "ext": true
+    }
+   ]
+  }
+ ]
+}

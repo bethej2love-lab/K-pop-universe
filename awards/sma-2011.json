@@ -1,0 +1,148 @@
+{
+ "id": "sma",
+ "edition": "2011",
+ "name": "서울가요대상",
+ "nameEn": "Seoul Music Awards",
+ "dates": [
+  "2011"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/Seoul_Music_Awards"
+ ],
+ "autoSource": "wikipedia-main",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 메인 문서 연도표 자동 수집(수상자만·회차 문서 없음). 사람이 확인한 정본이 생기면 교체.",
+ "categories": [
+  {
+   "ko": "대상",
+   "en": "Grand Prize",
+   "koAuto": true,
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Super Junior",
+     "gko": "슈퍼주니어"
+    }
+   ]
+  },
+  {
+   "ko": "올해의 신인",
+   "en": "Rookie of the Year",
+   "koAuto": true,
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "B1A4",
+     "gko": "비원에이포"
+    },
+    {
+     "name": "Apink",
+     "gko": "에이핑크"
+    },
+    {
+     "name": "Boyfriend",
+     "gko": "보이프렌드"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 앨범",
+   "en": "Best Album",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "IU",
+     "id": "a0207"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 노래",
+   "en": "Best Song",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "T-ara",
+     "gko": "티아라"
+    }
+   ]
+  },
+  {
+   "ko": "R&B 힙합",
+   "en": "R&B Hip-Hop Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Clover",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "발라드",
+   "en": "Ballad Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "4Men",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Original Soundtrack Award",
+   "en": "Original Soundtrack Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Baek Ji-young",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "인기상",
+   "en": "Popularity Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Girls' Generation",
+     "gko": "소녀시대"
+    },
+    {
+     "name": "Lee Seung-gi",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "K웨이브 스페셜",
+   "en": "K-wave Special Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Kara",
+     "gko": "카라"
+    }
+   ]
+  },
+  {
+   "ko": "Show & Culture Award",
+   "en": "Show & Culture Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "YB",
+     "ext": true
+    }
+   ]
+  }
+ ]
+}

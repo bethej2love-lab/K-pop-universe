@@ -1,0 +1,244 @@
+{
+ "id": "gaon",
+ "edition": "2018",
+ "name": "써클차트 뮤직어워즈",
+ "nameEn": "Circle Chart Music Awards",
+ "dates": [
+  "2018"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/Circle_Chart_Music_Awards"
+ ],
+ "autoSource": "wikipedia-main",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 메인 문서 연도표 자동 수집(수상자만·회차 문서 없음). 사람이 확인한 정본이 생기면 교체.",
+ "categories": [
+  {
+   "ko": "Artist of the Year – Physical",
+   "en": "Artist of the Year – Physical",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Wanna One",
+     "gko": "워너원"
+    },
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    },
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    }
+   ]
+  },
+  {
+   "ko": "올해의 아티스트 음원",
+   "en": "Artist of the Year – Digital Music",
+   "koAuto": true,
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "iKon",
+     "gko": "아이콘"
+    },
+    {
+     "name": "Roy Kim",
+     "ext": true
+    },
+    {
+     "name": "BigBang",
+     "gko": "빅뱅"
+    },
+    {
+     "name": "Twice",
+     "gko": "트와이스"
+    },
+    {
+     "name": "Bolbbalgan4",
+     "ext": true
+    },
+    {
+     "name": "Blackpink",
+     "gko": "블랙핑크"
+    },
+    {
+     "name": "Red Velvet",
+     "gko": "레드벨벳"
+    },
+    {
+     "name": "Im Chang-jung",
+     "ext": true
+    },
+    {
+     "name": "IU",
+     "id": "a0207"
+    },
+    {
+     "name": "Jennie",
+     "id": "a0204"
+    },
+    {
+     "name": "Lovelyz",
+     "gko": "러블리즈"
+    }
+   ]
+  },
+  {
+   "ko": "올해의 신인",
+   "en": "New Artist of the Year",
+   "koAuto": true,
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    },
+    {
+     "name": "(G)I-dle",
+     "gko": "아이들"
+    },
+    {
+     "name": "Iz*One",
+     "gko": "아이즈원"
+    },
+    {
+     "name": "Haon",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "올해의 발견",
+   "en": "Discovery of the Year",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Punch",
+     "ext": true
+    },
+    {
+     "name": "Ben",
+     "ext": true
+    },
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    }
+   ]
+  },
+  {
+   "ko": "Music Steady Seller of the Year",
+   "en": "Music Steady Seller of the Year",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "iKon",
+     "gko": "아이콘"
+    }
+   ]
+  },
+  {
+   "ko": "Popular Singer of the Year",
+   "en": "Popular Singer of the Year",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Jang Deok Cheol",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Overseas Music Awards",
+   "en": "Overseas Music Awards",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Camila Cabello",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Composer/Lyricist of the Year",
+   "en": "Composer/Lyricist of the Year",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Teddy",
+     "ext": true
+    },
+    {
+     "name": "Seo Ji-eum",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Record Production of the Year",
+   "en": "Record Production of the Year",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "iKon",
+     "gko": "아이콘"
+    },
+    {
+     "name": "iKon –",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Hot Performance of the Year",
+   "en": "Hot Performance of the Year",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    }
+   ]
+  },
+  {
+   "ko": "World K-pop Star",
+   "en": "World K-pop Star",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    }
+   ]
+  },
+  {
+   "ko": "World K-Pop Rookie",
+   "en": "World K-Pop Rookie",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "The Boyz",
+     "gko": "더보이즈"
+    },
+    {
+     "name": "Momoland",
+     "gko": "모모랜드"
+    }
+   ]
+  },
+  {
+   "ko": "K-pop Contribution Award / Lifetime Achievement Award",
+   "en": "K-pop Contribution Award / Lifetime Achievement Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  }
+ ]
+}

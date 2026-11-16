@@ -1,0 +1,193 @@
+{
+ "id": "aaa",
+ "edition": "2017",
+ "name": "아시아 아티스트 어워즈",
+ "nameEn": "Asia Artist Awards",
+ "dates": [
+  "2017"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/Asia_Artist_Awards"
+ ],
+ "autoSource": "wikipedia-main",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 메인 문서 연도표 자동 수집(수상자만·회차 문서 없음). 사람이 확인한 정본이 생기면 교체.",
+ "categories": [
+  {
+   "ko": "대상",
+   "en": "Grand Prize",
+   "koAuto": true,
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Kim Hee-sun",
+     "ext": true
+    },
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    }
+   ]
+  },
+  {
+   "ko": "올해의 신인",
+   "en": "Rookie of the Year",
+   "koAuto": true,
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Ahn Hyo-seop",
+     "ext": true
+    },
+    {
+     "name": "Jung Chae-yeon",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "인기상",
+   "en": "Popularity Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "D.O.",
+     "id": "a0375"
+    },
+    {
+     "name": "Yoona",
+     "id": "a0171"
+    },
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 아티스트",
+   "en": "Best Artist Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Namkoong Min",
+     "ext": true
+    },
+    {
+     "name": "Park Hae-jin",
+     "ext": true
+    },
+    {
+     "name": "Yoona",
+     "id": "a0171"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 아이콘",
+   "en": "Best Icon Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Seo Kang-joon",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 OST",
+   "en": "Best OST Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Ailee",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "파뷸러스",
+   "en": "Fabulous Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Park Seo-joon",
+     "ext": true
+    },
+    {
+     "name": "Lee Joon-gi",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "신인 웨이브",
+   "en": "New Wave Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Choi Tae-joon",
+     "ext": true
+    },
+    {
+     "name": "Gong Seung-yeon",
+     "ext": true
+    },
+    {
+     "name": "Shin Hyun-soo",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 크리에이터",
+   "en": "Best Creator Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Shin Won-ho",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 초이스",
+   "en": "Best Choice Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Min Hyo-rin",
+     "ext": true
+    },
+    {
+     "name": "Lee Tae-im",
+     "ext": true
+    },
+    {
+     "name": "Kent Tsai",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Asia Star Award",
+   "en": "Asia Star Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Suzy",
+     "id": "a1017"
+    }
+   ]
+  }
+ ]
+}

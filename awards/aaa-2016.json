@@ -1,0 +1,173 @@
+{
+ "id": "aaa",
+ "edition": "2016",
+ "name": "아시아 아티스트 어워즈",
+ "nameEn": "Asia Artist Awards",
+ "dates": [
+  "2016"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/Asia_Artist_Awards"
+ ],
+ "autoSource": "wikipedia-main",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 메인 문서 연도표 자동 수집(수상자만·회차 문서 없음). 사람이 확인한 정본이 생기면 교체.",
+ "categories": [
+  {
+   "ko": "대상",
+   "en": "Grand Prize",
+   "koAuto": true,
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Cho Jin-woong",
+     "ext": true
+    },
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    }
+   ]
+  },
+  {
+   "ko": "올해의 신인",
+   "en": "Rookie of the Year",
+   "koAuto": true,
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Ryu Jun-yeol",
+     "ext": true
+    },
+    {
+     "name": "Kwak Si-yang",
+     "ext": true
+    },
+    {
+     "name": "Sung Hoon",
+     "id": "a0135"
+    },
+    {
+     "name": "Lee Jung-shin",
+     "id": "a1177"
+    },
+    {
+     "name": "Nana",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "인기상",
+   "en": "Popularity Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Baekhyun",
+     "id": "a0372"
+    },
+    {
+     "name": "Yoona",
+     "id": "a0171"
+    },
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 아티스트",
+   "en": "Best Artist Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Park Hae-jin",
+     "ext": true
+    },
+    {
+     "name": "Park Shin-hye",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 아이콘",
+   "en": "Best Icon Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Kim You-jung",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 OST",
+   "en": "Best OST Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Gummy",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 프로듀서",
+   "en": "Best Producer Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Bang Si-hyuk",
+     "ext": true
+    },
+    {
+     "name": "Big Hit Entertainment",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 초이스",
+   "en": "Best Choice Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Sung Hoon",
+     "id": "a0135"
+    },
+    {
+     "name": "Lee Si-young",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Asia Star Award",
+   "en": "Asia Star Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Yoona",
+     "id": "a0171"
+    },
+    {
+     "name": "Park Bo-gum",
+     "ext": true
+    },
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,204 @@
+{
+ "id": "gaon",
+ "edition": "2011",
+ "name": "써클차트 뮤직어워즈",
+ "nameEn": "Circle Chart Music Awards",
+ "dates": [
+  "2011"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/Circle_Chart_Music_Awards"
+ ],
+ "autoSource": "wikipedia-main",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 메인 문서 연도표 자동 수집(수상자만·회차 문서 없음). 사람이 확인한 정본이 생기면 교체.",
+ "categories": [
+  {
+   "ko": "Artist of the Year – Physical",
+   "en": "Artist of the Year – Physical",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "TVXQ",
+     "gko": "동방신기"
+    },
+    {
+     "name": "Beast",
+     "gko": "하이라이트"
+    },
+    {
+     "name": "Super Junior",
+     "gko": "슈퍼주니어"
+    },
+    {
+     "name": "Girls' Generation",
+     "gko": "소녀시대"
+    }
+   ]
+  },
+  {
+   "ko": "올해의 아티스트 음원",
+   "en": "Artist of the Year – Digital Music",
+   "koAuto": true,
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Secret",
+     "gko": "시크릿"
+    },
+    {
+     "name": "IU",
+     "id": "a0207"
+    },
+    {
+     "name": "K.will",
+     "ext": true
+    },
+    {
+     "name": "BigBang",
+     "gko": "빅뱅"
+    },
+    {
+     "name": "2NE1",
+     "gko": "투애니원"
+    },
+    {
+     "name": "T-ara",
+     "gko": "티아라"
+    },
+    {
+     "name": "Leessang",
+     "ext": true
+    },
+    {
+     "name": "Davichi",
+     "ext": true
+    },
+    {
+     "name": "Lee Seung-gi",
+     "ext": true
+    },
+    {
+     "name": "Wonder Girls",
+     "gko": "원더걸스"
+    }
+   ]
+  },
+  {
+   "ko": "올해의 신인",
+   "en": "New Artist of the Year",
+   "koAuto": true,
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "B1A4",
+     "gko": "비원에이포"
+    },
+    {
+     "name": "Apink",
+     "gko": "에이핑크"
+    },
+    {
+     "name": "Huh Gak",
+     "ext": true
+    },
+    {
+     "name": "Kim Bo kyung",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "올해의 발견",
+   "en": "Discovery of the Year",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "The Koxx",
+     "ext": true
+    },
+    {
+     "name": "Girl's Day",
+     "gko": "걸스데이"
+    }
+   ]
+  },
+  {
+   "ko": "Overseas Music Awards",
+   "en": "Overseas Music Awards",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Maroon 5",
+     "ext": true
+    },
+    {
+     "name": "Christina Aguilera",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Composer/Lyricist of the Year",
+   "en": "Composer/Lyricist of the Year",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Yoon Sang",
+     "ext": true
+    },
+    {
+     "name": "Kim Eana",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "K-pop Contribution Award / Lifetime Achievement Award",
+   "en": "K-pop Contribution Award / Lifetime Achievement Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Lee Soo-man",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Special awards",
+   "en": "Special awards",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Girls' Generation",
+     "gko": "소녀시대"
+    }
+   ]
+  },
+  {
+   "ko": "프로듀서 올해",
+   "en": "Producer of the Year",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Core Contents Media",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "New Media Platform",
+   "en": "New Media Platform",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Daum",
+     "ext": true
+    }
+   ]
+  }
+ ]
+}

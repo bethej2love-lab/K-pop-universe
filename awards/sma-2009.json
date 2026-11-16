@@ -1,0 +1,153 @@
+{
+ "id": "sma",
+ "edition": "2009",
+ "name": "서울가요대상",
+ "nameEn": "Seoul Music Awards",
+ "dates": [
+  "2009"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/Seoul_Music_Awards"
+ ],
+ "autoSource": "wikipedia-main",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 메인 문서 연도표 자동 수집(수상자만·회차 문서 없음). 사람이 확인한 정본이 생기면 교체.",
+ "categories": [
+  {
+   "ko": "대상",
+   "en": "Grand Prize",
+   "koAuto": true,
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Girls' Generation",
+     "gko": "소녀시대"
+    }
+   ]
+  },
+  {
+   "ko": "올해의 신인",
+   "en": "Rookie of the Year",
+   "koAuto": true,
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Beast",
+     "gko": "하이라이트"
+    },
+    {
+     "name": "T-ara",
+     "gko": "티아라"
+    },
+    {
+     "name": "After School",
+     "gko": "애프터스쿨"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 앨범",
+   "en": "Best Album",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Drunken Tiger",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 노래",
+   "en": "Best Song",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Girls' Generation",
+     "gko": "소녀시대"
+    }
+   ]
+  },
+  {
+   "ko": "R&B 힙합",
+   "en": "R&B Hip-Hop Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Drunken Tiger",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "발라드",
+   "en": "Ballad Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Bobby Kim",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "트로트",
+   "en": "Trot Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Park Hyun-bin",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "인기상",
+   "en": "Popularity Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "2PM",
+     "gko": "2PM"
+    },
+    {
+     "name": "Super Junior",
+     "gko": "슈퍼주니어"
+    }
+   ]
+  },
+  {
+   "ko": "K웨이브 스페셜",
+   "en": "K-wave Special Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Super Junior",
+     "gko": "슈퍼주니어"
+    },
+    {
+     "name": "Paran",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Show & Culture Award",
+   "en": "Show & Culture Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Psy",
+     "id": "a1041"
+    }
+   ]
+  }
+ ]
+}

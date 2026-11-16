@@ -1,0 +1,187 @@
+{
+ "id": "sma",
+ "edition": "2017",
+ "name": "서울가요대상",
+ "nameEn": "Seoul Music Awards",
+ "dates": [
+  "2017"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/Seoul_Music_Awards"
+ ],
+ "autoSource": "wikipedia-main",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 메인 문서 연도표 자동 수집(수상자만·회차 문서 없음). 사람이 확인한 정본이 생기면 교체.",
+ "categories": [
+  {
+   "ko": "대상",
+   "en": "Grand Prize",
+   "koAuto": true,
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  },
+  {
+   "ko": "올해의 신인",
+   "en": "Rookie of the Year",
+   "koAuto": true,
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Pristin",
+     "gko": "프리스틴"
+    },
+    {
+     "name": "Chungha",
+     "id": "a0313"
+    },
+    {
+     "name": "Wanna One",
+     "gko": "워너원"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 앨범",
+   "en": "Best Album",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "IU",
+     "id": "a0207"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 노래",
+   "en": "Best Song",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Yoon Jong-shin",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "R&B 힙합",
+   "en": "R&B Hip-Hop Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Suran",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "퍼포먼스",
+   "en": "Performance Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "NCT 127",
+     "gko": "엔시티 127"
+    },
+    {
+     "name": "Mamamoo",
+     "gko": "마마무"
+    }
+   ]
+  },
+  {
+   "ko": "Original Soundtrack Award",
+   "en": "Original Soundtrack Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Ailee",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "밴드",
+   "en": "Band Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "iamnot",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "인기상",
+   "en": "Popularity Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Taemin",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "K웨이브 스페셜",
+   "en": "K-wave Special Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    }
+   ]
+  },
+  {
+   "ko": "올해의 발견",
+   "en": "Discovery of the Year Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Monsta X",
+     "gko": "몬스타엑스"
+    }
+   ]
+  },
+  {
+   "ko": "Special awards",
+   "en": "Special awards",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Bom Yeoreum Gaeul Kyeoul",
+     "ext": true
+    },
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    }
+   ]
+  },
+  {
+   "ko": "Directing Award",
+   "en": "Directing Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Bang Si-hyuk",
+     "ext": true
+    }
+   ]
+  }
+ ]
+}

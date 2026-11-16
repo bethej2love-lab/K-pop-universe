@@ -1,0 +1,82 @@
+{
+ "id": "gda",
+ "edition": "1992",
+ "name": "골든디스크어워즈",
+ "nameEn": "Golden Disc Awards",
+ "dates": [
+  "1992"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/Golden_Disc_Awards"
+ ],
+ "autoSource": "wikipedia-main",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 메인 문서 연도표 자동 수집(수상자만·회차 문서 없음). 사람이 확인한 정본이 생기면 교체.",
+ "categories": [
+  {
+   "ko": "올해의 앨범 (앨범 대상)",
+   "en": "Album of the Year (Album Daesang)",
+   "koAuto": true,
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Shin Seung-hun",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "음반 본상",
+   "en": "Album Bonsang",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Kim Wan-sun",
+     "ext": true
+    },
+    {
+     "name": "Shin Seung-hun",
+     "ext": true
+    },
+    {
+     "name": "015B",
+     "ext": true
+    },
+    {
+     "name": "Bom Yeoreum Gaeul Kyeoul",
+     "ext": true
+    },
+    {
+     "name": "Seo Taiji and Boys",
+     "ext": true
+    },
+    {
+     "name": "Noh Sa-yeon",
+     "ext": true
+    },
+    {
+     "name": "Yoon Sang",
+     "ext": true
+    },
+    {
+     "name": "Lee Seun-hwan",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "인기상",
+   "en": "Popularity Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Hyun Jin-young",
+     "ext": true
+    }
+   ]
+  }
+ ]
+}

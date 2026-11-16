@@ -1,0 +1,241 @@
+{
+ "id": "aaa",
+ "edition": "2019",
+ "name": "아시아 아티스트 어워즈",
+ "nameEn": "Asia Artist Awards",
+ "dates": [
+  "2019"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/Asia_Artist_Awards"
+ ],
+ "autoSource": "wikipedia-main",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 메인 문서 연도표 자동 수집(수상자만·회차 문서 없음). 사람이 확인한 정본이 생기면 교체.",
+ "categories": [
+  {
+   "ko": "대상",
+   "en": "Grand Prize",
+   "koAuto": true,
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Jang Dong-gun",
+     "ext": true
+    },
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    },
+    {
+     "name": "Twice",
+     "gko": "트와이스"
+    },
+    {
+     "name": "Got7",
+     "gko": "갓세븐"
+    }
+   ]
+  },
+  {
+   "ko": "올해의 신인",
+   "en": "Rookie of the Year",
+   "koAuto": true,
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Ong Seong-wu",
+     "id": "a0323"
+    }
+   ]
+  },
+  {
+   "ko": "인기상",
+   "en": "Popularity Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    },
+    {
+     "name": "Loona",
+     "gko": "이달의소녀"
+    },
+    {
+     "name": "Kang Daniel",
+     "id": "a0325"
+    }
+   ]
+  },
+  {
+   "ko": "아시아 셀러브리티",
+   "en": "Asia Celebrity",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Ji Chang-wook",
+     "ext": true
+    },
+    {
+     "name": "Park Min-young",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 아티스트",
+   "en": "Best Artist Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Park Min-young",
+     "ext": true
+    },
+    {
+     "name": "Yoona",
+     "id": "a0171"
+    },
+    {
+     "name": "Zico",
+     "id": "a0972"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 아이콘",
+   "en": "Best Icon Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jung Hae-in",
+     "ext": true
+    },
+    {
+     "name": "Choi Si-won",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "포커스",
+   "en": "Focus Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Lee Jung-eun",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 배우",
+   "en": "Best Actor Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Ji Chang-wook",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 이모티브",
+   "en": "Best Emotive Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lim Ji-yeon",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 뮤지션",
+   "en": "Best Musician Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "NU'EST",
+     "gko": "뉴이스트"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 프로듀서",
+   "en": "Best Producer Award",
+   "koAuto": true,
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Zico",
+     "id": "a0972"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 초이스",
+   "en": "Best Choice Award",
+   "koAuto": true,
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Lee Jung-eun",
+     "ext": true
+    },
+    {
+     "name": "Ahn Hyo-seop",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "포텐셜",
+   "en": "Potential Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Jung Hae-in",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "AAA 씬 스틸러",
+   "en": "AAA Scene Stealer",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Lee Jung-eun",
+     "ext": true
+    },
+    {
+     "name": "Lee Kwang-soo",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "AAA Top of Kpop Record",
+   "en": "AAA Top of Kpop Record",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Super Junior",
+     "gko": "슈퍼주니어"
+    }
+   ]
+  }
+ ]
+}

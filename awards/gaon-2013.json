@@ -1,0 +1,260 @@
+{
+ "id": "gaon",
+ "edition": "2013",
+ "name": "써클차트 뮤직어워즈",
+ "nameEn": "Circle Chart Music Awards",
+ "dates": [
+  "2013"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/Circle_Chart_Music_Awards"
+ ],
+ "autoSource": "wikipedia-main",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 메인 문서 연도표 자동 수집(수상자만·회차 문서 없음). 사람이 확인한 정본이 생기면 교체.",
+ "categories": [
+  {
+   "ko": "Artist of the Year – Physical",
+   "en": "Artist of the Year – Physical",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Girls' Generation",
+     "gko": "소녀시대"
+    },
+    {
+     "name": "Cho Yong-pil",
+     "ext": true
+    },
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    }
+   ]
+  },
+  {
+   "ko": "올해의 아티스트 음원",
+   "en": "Artist of the Year – Digital Music",
+   "koAuto": true,
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Girls' Generation",
+     "gko": "소녀시대"
+    },
+    {
+     "name": "Sistar19",
+     "ext": true
+    },
+    {
+     "name": "Davichi",
+     "ext": true
+    },
+    {
+     "name": "Psy",
+     "id": "a1041"
+    },
+    {
+     "name": "4Minute",
+     "gko": "포미닛"
+    },
+    {
+     "name": "Sistar",
+     "gko": "씨스타"
+    },
+    {
+     "name": "Dynamic Duo",
+     "ext": true
+    },
+    {
+     "name": "San E",
+     "ext": true
+    },
+    {
+     "name": "Soyou",
+     "id": "a1035"
+    },
+    {
+     "name": "Mad Clown",
+     "ext": true
+    },
+    {
+     "name": "IU",
+     "id": "a0207"
+    },
+    {
+     "name": "Miss A",
+     "gko": "미쓰에이"
+    },
+    {
+     "name": "Seo In-guk",
+     "ext": true
+    },
+    {
+     "name": "Zia",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "올해의 신인",
+   "en": "New Artist of the Year",
+   "koAuto": true,
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    },
+    {
+     "name": "Ladies' Code",
+     "gko": "레이디스 코드"
+    },
+    {
+     "name": "Jung Joon-young",
+     "ext": true
+    },
+    {
+     "name": "Lim Kim",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Music Steady Seller of the Year",
+   "en": "Music Steady Seller of the Year",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Girl's Day",
+     "gko": "걸스데이"
+    }
+   ]
+  },
+  {
+   "ko": "Popular Singer of the Year",
+   "en": "Popular Singer of the Year",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Roy Kim",
+     "ext": true
+    },
+    {
+     "name": "Jung Joon-young",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Composer/Lyricist of the Year",
+   "en": "Composer/Lyricist of the Year",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Duble Sidekick",
+     "ext": true
+    },
+    {
+     "name": "Kim Eana",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Hot Performance of the Year",
+   "en": "Hot Performance of the Year",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Apink",
+     "gko": "에이핑크"
+    }
+   ]
+  },
+  {
+   "ko": "World K-pop Star",
+   "en": "World K-pop Star",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "2NE1",
+     "gko": "투애니원"
+    }
+   ]
+  },
+  {
+   "ko": "World K-Pop Rookie",
+   "en": "World K-Pop Rookie",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "B.A.P",
+     "gko": "비에이피"
+    }
+   ]
+  },
+  {
+   "ko": "Mobile Vote Popularity Award",
+   "en": "Mobile Vote Popularity Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    }
+   ]
+  },
+  {
+   "ko": "K-pop Contribution Award / Lifetime Achievement Award",
+   "en": "K-pop Contribution Award / Lifetime Achievement Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Cho Yong-pil",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "핫 트렌드",
+   "en": "Hot Trend Award",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Crayon Pop",
+     "gko": "크레용팝"
+    }
+   ]
+  },
+  {
+   "ko": "프로듀서 올해",
+   "en": "Producer of the Year",
+   "koAuto": true,
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Yang Hyun-suk",
+     "ext": true
+    },
+    {
+     "name": "YG Entertainment",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Music Distribution",
+   "en": "Music Distribution",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "CJ E&M Music",
+     "ext": true
+    }
+   ]
+  }
+ ]
+}
