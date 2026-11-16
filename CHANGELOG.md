@@ -38,6 +38,12 @@
 - 새로 만든 함수·상수를 테스트가 `admin.js`에서 이름으로 꺼내 쓰면(korea-sings-matching 등) **그 테스트의 추출 목록에도 등록**(11-16에 `_extPickMembers`로 CI가 빨개졌음).
 - 커밋 메시지 끝에 `Co-Authored-By: Claude …` 줄, 메모리·규칙은 repo CLAUDE.md가 우선.
 
+## 2026-11-17 (Claude Code/Sonnet — 프로필 사진 로딩 1단계: 축소 주소)
+- 사용자: "인스타·유튜브·프로필 사진이 늦게 로딩된다, 처음 오는 유저가 나갈 것 같다". 원인 실측(회사망 curl, 11-17): ①artist_pics 사진 1,000개 중 999개가 스토리지 원본 — 30장 평균 72KB·최대 332KB, 응답 `Cache-Control: private, no-cache`·`CF-Cache-Status: DYNAMIC`(매번 재검증, CDN 안 탐) ②사진 목록(artist_pics 1,000+행·ig_accounts 1,000+행)을 DB에서 순서대로 다 받은 뒤에야 `_loadProfilePic`이 그림(`await _instaPicPreloadP`) ③인스타 사진은 fbcdn 직링크(159KB·1.46초, 4~5일 만료, 만료 땐 ig-img 중계 함수) ④유튜브 썸네일은 이미 mqdefault라 원인 아님 ⑤app.js 764KB·artists.json 1.09MB(압축 후 크기는 미측정) ⑥DB 응답 35초 지연은 정적 재생성 점유(11-17 페이스 조절 1차, 효과 미측정).
+- **[app.js] 1단계(이 커밋)**: `_PicMap`(Map 상속) — `_instaPicCache.get()`이 스토리지 변환 주소(`render/image/public/…?width=240&quality=75`)를 돌려준다. 카드 큰 사진·공유/Chemistry 이미지는 `.getBig()`(560px), **DB 저장·관리자 입력창은 반드시 `.getRaw()`**(축소 주소가 DB에 저장되면 안 됨). 변환 응답은 `CF-Cache-Status: HIT`·max-age=3600. 30장 합계 원본 2,073KB → 240px 514KB(25%)·560px 1,051KB(51%). 업로드 3곳(uuid 경로)에 `cacheControl:'31536000'`(col-share-cards는 같은 경로 덮어쓰기라 제외).
+- 검증: syntax·pic-warm 36·smoke(데스크톱+390px) 통과, `_picSized` 단위 확인(jpg/png/webp만 변환, 유튜브·gif·null은 그대로).
+- ⏳ 남은 것: 2단계 사진 목록을 CI가 만든 정적 JSON으로(DB 대기 제거) · 3단계 인스타 프로필 사진을 수집 때 축소해 우리 스토리지에 보관(만료·외부 서버 지연, 사용자 판단 필요) · 폰 첫 방문 워터폴 실측 · ⚠️ 아이폰 실기기에서 사진 흐림 여부 확인(240px, DPR3 큰 동그라미면 getBig로 올릴 곳 있을 수 있음).
+
 ## 2026-11-16 (Claude Code/Fable 집 — 시작 체크 + 합류·탈퇴일 마무리(Codex ④))
 - [완료] **시작 체크(🏠 0번)**: ①정적 재생성 — 07:06 빌드 성공·배포됨, intro 3주소(더보이즈·제로베이스원·en) 전부 부모로 넘어가는 stub ✅, 직캠 전체 페이지 TOP 10+최근 1년 ✅, 조회수 nK/nM("3.1M") ✅ ②`static_pages_status` 54,269개(검색용 48,088·넘김 6,181) — 넘김 +2,000은 구조 트랙 곡 페이지 넘김 전환분, 정상 ③ig_media 27,284행(퇴근 시점 23,892 → +3,392, 채우기 작동) ④CI: Data validation 빨간불(07:06·07:13)은 다음 커밋(href=null 수정)으로 해소돼 최신 초록. **Browser smoke 빨간불 3개(stage-venue-album·program-facets ko·vid-list-share)는 DB 요청이 35~37초 걸린 타임아웃** — 07:20 정적 재생성과 겹친 시간대, 코드 원인 아님으로 보고 재생성 끝난 뒤 실패 잡만 재실행 예약(이 노트북엔 gh 없음 — 키체인 토큰으로 GitHub API 직접 호출)
 - [artists.json] **합류·탈퇴일 마무리(Codex ④ 잔여)**: ①슈퍼주니어 기범 `pausedFrom: 2009.03.12` — 3집(쏘리 쏘리, 2009.03.12 발매)부터 방송·공연 전면 불참, 자켓·MV만 참여(나무위키·언론 교차). 탈퇴일 2015.08.20은 그대로 ②스텔라 이슬·조아 탈퇴일 2018.02.25(해체일) → **2012.02.08**(한국어 위키백과 "2012년 2월 8일 이슬과 조아가 탈퇴" + 엑스포츠뉴스 7년史) ③같은 근거로 민희·효은 스텔라 `joined: 2012.02` 추가(UFO 싱글로 합류)

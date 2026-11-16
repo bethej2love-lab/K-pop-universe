@@ -11842,7 +11842,21 @@ async function _sbSelectAll(build){
   }
   return{data:out,error:null};
 }
-const _instaPicCache=new Map(); // "ko_name␟group_ko" → pic_url (세션 캐시)
+// 프로필 사진 축소(2026-11-17, "사진이 늦게 뜬다") — 스토리지 원본은 평균 72KB·최대 330KB인데 화면엔 작은 동그라미라
+// 통째로 받던 것. 스토리지 이미지 변환(render/image)을 쓰면 같은 사진이 약 7~30KB고 CDN 캐시(HIT)도 탄다.
+// ⚠️ 캐시에 든 값은 원본 주소 그대로이고 **.get()만** 축소 주소를 돌려준다. 사진을 DB에 다시 저장하거나(_saveInstaPic)
+// 관리자 입력창에 보여줄 땐 반드시 .getRaw() — 축소 주소가 DB에 저장되면 안 된다. 카드 큰 사진은 .getBig().
+function _picSized(u,w){
+  if(!u||typeof u!=='string')return u;
+  const m=/^(https:\/\/[^/]+\.supabase\.co)\/storage\/v1\/object\/public\/(artist-pics\/[^?#]+\.(?:jpe?g|png|webp))$/i.exec(u);
+  return m?m[1]+'/storage/v1/render/image/public/'+m[2]+'?width='+w+'&quality=75':u;
+}
+class _PicMap extends Map{
+  get(k){return _picSized(super.get(k),240);}
+  getBig(k){return _picSized(super.get(k),560);}
+  getRaw(k){return super.get(k);}
+}
+const _instaPicCache=new _PicMap(); // "ko_name␟group_ko" → pic_url (세션 캐시)
 // source_url: 개인 인스타가 없는 멤버(주로 신인)의 사진 클릭 타겟(위버스 프로필 등) — pic_url과 별도
 // 컬럼/캐시로 관리한다(2026-08-14, 사용자 요청 — "신인들도 사진은 있는 게 낫다"). 인스타 있는 멤버는
 // 기존처럼 인스타로 연결되고 이 값은 안 쓰임 — 인스타 소셜 링크 필드("개인 계정만" 원칙)와는 별개 개념.
@@ -11898,7 +11912,7 @@ async function _loadProfilePic(cfg){
   const groupKo=cfg.groupKo||'';
   const cacheKey=_picKey(koName,groupKo);
   if(_instaPicPreloadP)await _instaPicPreloadP;
-  let picUrl=_instaPicCache.get(cacheKey);
+  let picUrl=_instaPicCache.getBig(cacheKey);
   let sourceUrl=_instaPicSourceCache.get(cacheKey);
   if(!picUrl){
     let{data,error}=await sb.from('artist_pics').select('pic_url,source_url').eq('ko_name',koName).eq('group_ko',groupKo).maybeSingle();
@@ -12005,7 +12019,7 @@ function _mountPicCamBtn(cfg){
       hint:'사진을 눌렀을 때 열릴 페이지 (위버스 프로필 등)\n연결할 곳이 없으면 취소를 누르세요 — 사진은 그대로 뜨고 클릭만 안 돼요.',
       value:existing,placeholder:'https://weverse.io/…'});
     if(url==null)return;
-    const picUrl=_instaPicCache.get(cacheKey);
+    const picUrl=_instaPicCache.getRaw(cacheKey);
     if(!picUrl)return;
     await _saveInstaPic(koName,groupKo,picUrl,url.trim());
   };
@@ -12035,7 +12049,7 @@ function _mountPicCamBtn(cfg){
     try{
       const ext=file.name.split('.').pop().toLowerCase()||'jpg';
       const path=`${crypto.randomUUID()}.${ext}`;
-      const{error:upErr}=await sb.storage.from('artist-pics').upload(path,file,{upsert:true,contentType:file.type});
+      const{error:upErr}=await sb.storage.from('artist-pics').upload(path,file,{upsert:true,cacheControl:'31536000',contentType:file.type});
       if(upErr){alert('업로드 실패: '+upErr.message);return;}
       const{data:{publicUrl}}=sb.storage.from('artist-pics').getPublicUrl(path);
       const ok=await _saveInstaPic(koName,groupKo,publicUrl);
@@ -12048,7 +12062,7 @@ function _mountPicCamBtn(cfg){
   camBtn.addEventListener('pointerdown',e=>{
     _camPressTimer=setTimeout(()=>{
       _camPressTimer=null;
-      const existingUrl=_instaPicCache.get(cacheKey)||'';
+      const existingUrl=_instaPicCache.getRaw(cacheKey)||'';
       _promptDialog({title:`${cfg.label} 프로필 사진 URL`,value:existingUrl,placeholder:'https://...'}).then(async url=>{
         if(url==null)return;const trimmed=url.trim();if(!trimmed)return;
         const ok=await _saveInstaPic(koName,groupKo,trimmed);
@@ -18595,7 +18609,7 @@ async function _uploadPhotosToCol(colId,files){
       const ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'')||'jpg';
       const pid=_colNewId();
       const path=`collection-photos/${colId}/${pid}.${ext}`;
-      const{error:upErr}=await sb.storage.from('artist-pics').upload(path,file,{upsert:true,contentType:file.type});
+      const{error:upErr}=await sb.storage.from('artist-pics').upload(path,file,{upsert:true,cacheControl:'31536000',contentType:file.type});
       if(upErr){if(!firstErr)firstErr=upErr.message;console.error('사진 업로드 실패',upErr.message);continue;}
       const{data:{publicUrl}}=sb.storage.from('artist-pics').getPublicUrl(path);
       added.push({u:publicUrl,id:pid});
@@ -19095,7 +19109,7 @@ function renderCollectionSection(){
       try{
         const ext=file.name.split('.').pop().toLowerCase()||'jpg';
         const path=`col-covers/${col.id}.${ext}`;
-        const{error:upErr}=await sb.storage.from('artist-pics').upload(path,file,{upsert:true,contentType:file.type});
+        const{error:upErr}=await sb.storage.from('artist-pics').upload(path,file,{upsert:true,cacheControl:'31536000',contentType:file.type});
         if(upErr){alert(currentLang==='ko'?'업로드 실패: '+upErr.message:'Upload failed: '+upErr.message);return;}
         const{data:{publicUrl}}=sb.storage.from('artist-pics').getPublicUrl(path);
         col.coverImg=publicUrl;
@@ -19824,7 +19838,7 @@ function _appendFavRow(el,{tag,name,sub,imgUrl,colorArr,people,bdayDays,annivDay
   if(!imgUrl&&!people&&_picRetryKey&&_instaPicPreloadP){
     const _k=_picRetryKey;
     _instaPicPreloadP.then(()=>{
-      const late=_instaPicCache.get(_k);
+      const late=_instaPicCache.getBig(_k);
       if(late&&row.isConnected&&avatar.classList.contains('fav-avatar-color')){const nv=_favAvatarEl(late,colorArr);avatar.replaceWith(nv);avatar=nv;}
     });
   }
@@ -19863,7 +19877,7 @@ async function renderFavList(){
       tag:currentLang==='ko'?'그룹':'Group',name,
       // 그룹도 프로필 사진을 붙일 수 있게 되면서(2026-08-28) 멤버와 같은 캐시를 본다 — 사진이
       // 없으면 예전처럼 그룹 고유 색상 원으로 폴백된다(_favAvatarEl).
-      imgUrl:_instaPicCache.get(_groupPicKey(ko))||info.img||null,colorArr:info.color,
+      imgUrl:_instaPicCache.getBig(_groupPicKey(ko))||info.img||null,colorArr:info.color,
       _picRetryKey:_groupPicKey(ko),_picP:()=>_groupAvUrl(ko),
       bdayDays:null,annivDays:_daysSince(favDates['g:'+ko]),dk:'g:'+ko,
       onClick:()=>{
@@ -19882,7 +19896,7 @@ async function renderFavList(){
     const sub=currentLang==='ko'?gko:(GROUPS[gko]?.en||gko);
     _appendFavRow(el,{
       tag:currentLang==='ko'?'멤버':'Member',name,sub,
-      imgUrl:_instaPicCache.get(_picKey(mko,gko))||null,colorArr:artist.color,_picRetryKey:_picKey(mko,gko),_picP:()=>_srAvUrl(artist),
+      imgUrl:_instaPicCache.getBig(_picKey(mko,gko))||null,colorArr:artist.color,_picRetryKey:_picKey(mko,gko),_picP:()=>_srAvUrl(artist),
       bdayDays:_daysUntilBday(artist.bday),annivDays:_daysSince(favDates['m:'+key]),dk:'m:'+key,
       onClick:()=>{
         const bm=bubbleMeshes.find(b=>b.ko===gko);
@@ -19902,10 +19916,10 @@ async function renderFavList(){
     const sel=selPart?selPart.split(','):[];
     const anchorName=currentLang==='ko'?mko:(anchor.name.en||mko);
     // 연결은 "누구와 누구"가 핵심이라 앵커 사진 하나로는 부족 — 상대 멤버 사진까지 겹쳐서 보여준다.
-    const _connPeople=[{img:_instaPicCache.get(_picKey(mko,gko))||null,color:anchor.color}];
+    const _connPeople=[{img:_instaPicCache.getBig(_picKey(mko,gko))||null,color:anchor.color}];
     sel.forEach(n=>{
       const t=_findArtistByConnName(n,gko);
-      if(t)_connPeople.push({img:_instaPicCache.get(_picKey(t.name.ko,t.group.ko))||null,color:t.color});
+      if(t)_connPeople.push({img:_instaPicCache.getBig(_picKey(t.name.ko,t.group.ko))||null,color:t.color});
       else _connPeople.push({img:null,color:anchor.color});
     });
     _appendFavRow(el,{
