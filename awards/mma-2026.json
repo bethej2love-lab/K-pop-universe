@@ -1,0 +1,413 @@
+{
+ "id": "mma",
+ "edition": "2026",
+ "no": 18,
+ "name": "멜론뮤직어워드",
+ "nameEn": "Melon Music Awards",
+ "dates": [
+  "2026-11-14",
+  "2026-11-15"
+ ],
+ "venue": "고척스카이돔",
+ "src": [
+  "https://www.etoday.co.kr/news/view/2648348",
+  "https://view.asiae.co.kr/article/2026111601025184307",
+  "https://www.stardailynews.co.kr/news/articleView.html?idxno=602259",
+  "https://www.segyenewsagency.com/news/articleView.html?idxno=643833"
+ ],
+ "collectedAt": "2026-11-16",
+ "note": "올해 처음 이틀 개최. 올해의 앨범·글로벌-K 아티스트는 14일, 나머지 대상은 15일. 방탄소년단은 월드투어로 영상 수상.",
+ "categories": [
+  {
+   "ko": "올해의 아티스트",
+   "en": "Artist of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "방탄소년단"
+    }
+   ],
+   "day": "2026-11-15"
+  },
+  {
+   "ko": "올해의 앨범",
+   "en": "Album of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "방탄소년단"
+    }
+   ],
+   "work": "아리랑(ARIRANG)",
+   "day": "2026-11-14"
+  },
+  {
+   "ko": "올해의 글로벌-K 아티스트",
+   "en": "Global-K Artist of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "에스파"
+    }
+   ],
+   "day": "2026-11-14"
+  },
+  {
+   "ko": "올해의 레코드",
+   "en": "Record of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "코르티스"
+    }
+   ],
+   "day": "2026-11-15"
+  },
+  {
+   "ko": "올해의 베스트송",
+   "en": "Best Song of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "아이브"
+    }
+   ],
+   "work": "뱅뱅(BANG BANG)",
+   "day": "2026-11-15"
+  },
+  {
+   "ko": "올해의 신인",
+   "en": "New Artist of the Year",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "롱샷"
+    },
+    {
+     "name": "알파드라이브원"
+    }
+   ]
+  },
+  {
+   "ko": "톱10",
+   "en": "Top 10",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "방탄소년단"
+    },
+    {
+     "name": "아일릿"
+    },
+    {
+     "name": "악뮤"
+    },
+    {
+     "name": "코르티스"
+    },
+    {
+     "name": "아이브"
+    },
+    {
+     "name": "키키"
+    },
+    {
+     "name": "NCT 위시",
+     "gko": "엔시티 위시"
+    },
+    {
+     "name": "플레이브"
+    },
+    {
+     "name": "아이오아이"
+    },
+    {
+     "name": "하츠투하츠"
+    }
+   ]
+  },
+  {
+   "ko": "글로벌 톱10",
+   "en": "Global Top 10",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "라이즈"
+    },
+    {
+     "name": "리센느"
+    },
+    {
+     "name": "지드래곤",
+     "id": "a0199"
+    },
+    {
+     "name": "에스파"
+    },
+    {
+     "name": "방탄소년단"
+    },
+    {
+     "name": "하츠투하츠"
+    },
+    {
+     "name": "아이브"
+    },
+    {
+     "name": "코르티스"
+    },
+    {
+     "name": "아일릿"
+    },
+    {
+     "name": "NCT 위시",
+     "gko": "엔시티 위시"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 솔로 여자",
+   "en": "Best Solo Female",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "최예나"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 솔로 남자",
+   "en": "Best Solo Male",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "임영웅",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 그룹 여자",
+   "en": "Best Group Female",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "아이브"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 그룹 남자",
+   "en": "Best Group Male",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "방탄소년단"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 OST",
+   "en": "Best OST",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "김민석",
+     "ext": true
+    }
+   ],
+   "work": "사랑의 언어"
+  },
+  {
+   "ko": "베스트 팝 아티스트",
+   "en": "Best Pop Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "브루노 마스",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "베스트 뮤직비디오",
+   "en": "Best Music Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "아이브"
+    }
+   ],
+   "work": "뱅뱅(BANG BANG)"
+  },
+  {
+   "ko": "베스트 송라이터",
+   "en": "Best Songwriter",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "이찬혁"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 퍼포먼스 여자",
+   "en": "Best Performance Female",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "아일릿"
+    },
+    {
+     "name": "키키"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 퍼포먼스 남자",
+   "en": "Best Performance Male",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "에이티즈"
+    },
+    {
+     "name": "라이즈"
+    }
+   ]
+  },
+  {
+   "ko": "스테이지 오브 더 이어",
+   "en": "Stage of the Year",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "방탄소년단"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 뮤직 스타일",
+   "en": "Best Music Style",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "아이오아이"
+    },
+    {
+     "name": "키키"
+    }
+   ]
+  },
+  {
+   "ko": "글로벌 임팩트 아티스트",
+   "en": "Global Impact Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "하츠투하츠"
+    },
+    {
+     "name": "투어스"
+    },
+    {
+     "name": "아일릿"
+    },
+    {
+     "name": "NCT 위시",
+     "gko": "엔시티 위시"
+    }
+   ]
+  },
+  {
+   "ko": "글로벌 라이징 아티스트",
+   "en": "Global Rising Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "튜이드"
+    },
+    {
+     "name": "앤더블"
+    }
+   ]
+  },
+  {
+   "ko": "1theK 아이콘",
+   "en": "1theK Icon",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "하츠웨이브"
+    }
+   ]
+  },
+  {
+   "ko": "핫 트렌드",
+   "en": "Hot Trend",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "에이티즈"
+    },
+    {
+     "name": "리센느"
+    }
+   ]
+  },
+  {
+   "ko": "베스트 프로듀서",
+   "en": "Best Producer",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "김현정(빅히트뮤직)",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "J팝 페이보릿 아티스트",
+   "en": "J-Pop Favorite Artist",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "HANA",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "카카오뱅크 모두의 스타상",
+   "en": "KakaoBank Star of Everyone",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "리센느"
+    }
+   ]
+  },
+  {
+   "ko": "재팬 페이보릿 아티스트 by 유넥스트",
+   "en": "Japan Favorite Artist by U-NEXT",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "NCT 위시",
+     "gko": "엔시티 위시"
+    }
+   ]
+  },
+  {
+   "ko": "트랙제로 초이스",
+   "en": "TrackZero Choice",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "수민",
+     "ext": true
+    }
+   ]
+  }
+ ]
+}
