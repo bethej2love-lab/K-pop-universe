@@ -1878,7 +1878,7 @@ ${LIST_FWD}
   ${languageNav(isEn, altUrl)}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
   <a class="hero" href="https://www.youtube.com/watch?v=${hero.id}" target="_blank" rel="noopener"><img src="${ytThumb(hero.id)}" alt="${escHtml(hero.title)}"><span class="play"></span><span class="hero-txt"><h1>${escHtml(h1)}</h1><span class="sub">${escHtml(sub)}</span></span></a>
-  <div class="crumbs"><a href="${SITE}/${groupPagePath(gko, lang)}">${escHtml(gName)}</a> › <a href="${profileUrl}">${escHtml(mName)}</a> › ${isEn ? 'Fancams' : '직캠'}</div>
+  <div class="crumbs">${info ? `<a href="${SITE}/${groupPagePath(gko, lang)}">${escHtml(gName)}</a> › ` : ''}<a href="${profileUrl}">${escHtml(mName)}</a> › ${isEn ? 'Fancams' : '직캠'}</div>
   <p class="lead">${escHtml(isEn ? `Every individual fancam and face cam of ${gName} ${mName}, grouped by song. Most viewed first.` : `${gko} ${mName}의 개인 직캠·페이스캠을 곡별로 모두 모았어요. 조회수 많은 순.`)}</p>
   ${songNav}
   ${topGrid ? `
