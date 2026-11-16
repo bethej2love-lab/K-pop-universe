@@ -60,6 +60,13 @@ async function sbGetAll(qs) {
     if (d.length < 1000) return out;
   }
 }
+// 캡션 자르기 — 이모지가 반으로 잘린 깨진 글자·널 문자가 있으면 DB가 묶음 전체를 400으로 거절한다(ig_backfill.mjs와 같은 규칙, 2026-11-16)
+const capCut = (s, n) => {
+  let t = String(s).split(String.fromCharCode(0)).join('').slice(0, n);
+  const c = t.charCodeAt(t.length - 1);
+  if (c >= 0xD800 && c <= 0xDBFF) t = t.slice(0, -1);
+  return t.toWellFormed ? t.toWellFormed() : t;
+};
 async function sbUpsert(table, rows, conflict) {
   if (!rows.length) return;
   const r = await fetch(`${SB}/${table}?on_conflict=${conflict}`, { method: 'POST', headers: { ...SBH, Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify(rows) });
@@ -162,7 +169,7 @@ for (const h of queue) {
       if (m.media_type === 'VIDEO' && m.media_url) o.v = m.media_url; // 영상 파일(2026-11-13 — 사이트 안 재생, 며칠 뒤 만료라 최신 수집분만)
       if (isMag) { o.m = mentionsOf(m.caption); } // 태그 판정은 자르기 전 전체 본문으로
       // 본문·반응(2026-10-19 — 사이트 안 사진 뷰어용). 본문은 인스타 최대치 2,200자까지(2026-10-30 — 600자에서 자르면 사진별 글(문단)이 잘려 장 수와 안 맞았다)
-      if (m.caption) o.cap = String(m.caption).slice(0, 2200);
+      if (m.caption) o.cap = capCut(m.caption, 2200);
       if (m.like_count != null) o.lk = m.like_count;
       if (m.comments_count != null) o.cm = m.comments_count;
       const cs = ((m.children && m.children.data) || []).map(img).filter(Boolean);

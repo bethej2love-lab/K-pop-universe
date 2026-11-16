@@ -7527,8 +7527,16 @@ const _ATM_NO_CONTEXT_RELAX_NAMES=new Set(['종현','문빈','구하라','설리
 // 거의 확실히 그 멤버 개인 직캠이라 오염 위험이 낮음 — 평문 매칭을 다시 허용한다(2026-08-05, 아이브
 // 가을 사례 — "아이브 가을 직캠"처럼 그룹명+직캠이 다 있는데도 해시태그가 없어서 계속 미태깅으로 남던
 // 문제). groupKo는 호출부에서 이 멤버가 속한 채널의 그룹으로 넘겨준다.
+// 2026-11-15에 해시태그 전용으로 묶은 이름 중 "다른 사람 이름과 겹쳐서"(San E·윤산하·JUN.K·임윤아 등) 묶은 것들 —
+// 막으려던 건 **그룹 근거 없는 외부 영상의 이름만 역추론**(memberHit·게스트 단계)이다. 이 함수는 그룹이 이미
+// 확정된 경로(_atmResolveMembers — 자체 채널이거나 제목에 그룹명)에서만 불리므로 여기서는 평문·영문 토큰을 다시 인정한다.
+// 안 풀면 자체 채널 "Jin's NORMAL LOG"·"Hyunjin X HAN X Seungmin"·"文俊辉 JUN", 외부 "더보이즈 현재가…"·"아일릿 윤아가…"가
+// 빠진다(2026-11-16 이전/새 매처 차분: 태깅된 1만 행 중 자체 채널 220·그룹명 동반 외부 75건 손실 → 복구).
+// ⚠️ '뉴'(영문 New)·'사랑'·'윤하'는 넣지 않는다 — 그룹이 확정돼도 흔한 낱말이라 오답이 많다.
+const _ATM_GROUP_CTX_PLAIN_OK_NAMES=new Set(['준','한','산','윤','제이','진','윤아','주연','현재']);
 function _atmContextRelaxesHashtagOnly(name,title,groupKo){
   if(_ATM_NO_CONTEXT_RELAX_NAMES.has(name))return false;
+  if(groupKo&&_ATM_GROUP_CTX_PLAIN_OK_NAMES.has(name))return true;
   if(!groupKo||!/직캠/.test(title))return false;
   const g=GROUPS[groupKo];
   if(!g)return false;
@@ -7849,7 +7857,7 @@ function _atmStripOtherPersonFullNames(t){
 }
 // 멤버 영문명과 철자가 같은 브랜드·방송사 고유명(2026-09-29 — 트레저 아사히 ↔ 아사히 맥주·TV아사히).
 // 브랜드는 두 단어 이상 고유 표기로만 적는다 — 'asahi' 단독을 넣으면 진짜 아사히 해시태그(#ASAHI)까지 죽는다.
-const _ATM_BRAND_PHRASES=/\basahi\s*super\s*dry\b|\basahi\s*beer\b|\basahibeer\b|\btv\s*asahi\b|\bH1[-_]?KEY\b/i;
+const _ATM_BRAND_PHRASES=/\basahi\s*super\s*dry\b|\basahi\s*beer\b|\basahibeer\b|\btv\s*asahi\b/i;
 // 이니셜형 이름(I.N·B.I …)을 붙여 쓰면 영어 낱말이 되는 것들 — 이 경우 구분자 있는 표기("I.N"·"I N")만 인정
 const _ATM_INITIAL_WORDS=new Set(['in','is','it','on','up','at','an','as','be','by','do','go','he','me','my','no','of','or','so','to','us','we','if','am']);
 function _atmStripCommonNounCtx(title){
@@ -7898,6 +7906,9 @@ function _atmStripCommonNounCtx(title){
   // 크레딧 문구 없이 브랜드명만 나오는 경우(설명란 "THE FIRST TAKE × ASAHI SUPER DRY" 특설 페이지 등) — 멤버 이름과
   // 겹치는 **브랜드·방송사 고유명**만 목록으로 지운다. 새 충돌 브랜드는 _ATM_BRAND_PHRASES에 추가.
   if(_ATM_BRAND_PHRASES.test(t))t=t.replace(new RegExp(_ATM_BRAND_PHRASES.source,'gi'),' ');
+  // "H1-KEY"(하이키)의 KEY가 샤이니 키로 잡히던 것(2026-11-15, 35건) — 통째로 지우면 하이키 그룹 근거까지 사라져
+  // 하이키 영상 61건이 그룹을 잃는다(2026-11-16 차분). 지우지 말고 한글 그룹명으로 바꿔 KEY 토큰만 없앤다.
+  if(/H1[-_ ]?KEY/i.test(t))t=t.replace(/(?<![A-Za-z0-9])H1[-_ ]?KEY(?![A-Za-z0-9])/gi,' 하이키 ');
   t=_atmNormalizeRegisteredRomanNames(t);
   t=_atmStripOtherPersonFullNames(t);
   // "이유"(reason) — 2026-09-29 순찰(tools/tag_patrol.mjs)에서 발견: "폰 비번을 알려주면 안 되는 이유"·"술 마신 다음날
@@ -9100,9 +9111,15 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     const gate=`${(+m[1])-1}-${(m[2]||'01').padStart(2,'0')}-${(m[3]||'01').padStart(2,'0')}`;
     return String(publishedAt).slice(0,10)<gate;
   }
+  // 다른 사람 이름과 겹쳐 해시태그 전용으로 묶은 이름(_ATM_GROUP_CTX_PLAIN_OK_NAMES)이라도 제목에 **그 사람 그룹명**이 같이 있으면
+  // 평문을 인정한다 — "더보이즈 현재가…"·"아일릿 윤아의…"·"엔하이픈 제이가…"(2026-11-16 차분: 외부 채널 55건 손실 → 복구).
+  // 그룹명 없는 "현재 건강 상태"·"임윤아"·"JAY (김진환)"은 계속 막힌다. memberHit·memberHitTokens 양쪽에 똑같이 건다.
+  function _grpCtxPlainOk(a){
+    return [...a.name.ko].length>1&&_ATM_GROUP_CTX_PLAIN_OK_NAMES.has(a.name.ko)&&_artistGroups(a).some(g=>g&&g.ko&&(hit(g.ko)||(GROUPS[g.ko]&&GROUPS[g.ko].en&&hit(GROUPS[g.ko].en))));
+  }
   function memberHit(a,names){
     if(_atmInferExcluded(a))return false; // 역추론 금지 — 그룹명 동반 시에만(멤버 추출 경로)
-    if([...a.name.ko].length===1||_isHashtagOnlyName(a.name.ko)||_ATM_COMMON_KO_WORDS.has(a.name.ko)||_atmNameIsGroup(a))return names.some(t=>hitHashtag(t));
+    if(!_grpCtxPlainOk(a)&&([...a.name.ko].length===1||_isHashtagOnlyName(a.name.ko)||_ATM_COMMON_KO_WORDS.has(a.name.ko)||_atmNameIsGroup(a)))return names.some(t=>hitHashtag(t));
     // 흔한단어 게이트는 변형(_m2NameVariants)마다 개별 적용해야 함 — 풀네임만 검사하면 성을 뗀 given-name
     // 변형(유사랑→"사랑")이 게이트를 통과해 평문 "사랑"(=love)에 대량 오매칭됨(이즈나 group_ko 385건 오염,
     // 2026-08-25 실측). 변형 t 자체가 흔한 한글단어면 그 변형은 해시태그(#유사랑)로 명시됐을 때만 인정한다.
@@ -9118,7 +9135,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // some→filter만 다르고 판정 로직은 memberHit과 글자 그대로 동일(둘이 갈라지면 감지가 틀어짐).
   function memberHitTokens(a,names){
     if(_atmInferExcluded(a))return []; // memberHit과 동일 게이트(역추론 제외) — 갈라지면 감지가 틀어짐
-    if([...a.name.ko].length===1||_isHashtagOnlyName(a.name.ko)||_ATM_COMMON_KO_WORDS.has(a.name.ko)||_atmNameIsGroup(a))return names.filter(t=>hitHashtag(t));
+    if(!_grpCtxPlainOk(a)&&([...a.name.ko].length===1||_isHashtagOnlyName(a.name.ko)||_ATM_COMMON_KO_WORDS.has(a.name.ko)||_atmNameIsGroup(a)))return names.filter(t=>hitHashtag(t));
     return names.filter(t=>(_atmNameNeedsCtx(t)||_ATM_COMMON_KO_WORDS.has(t)||[...t].length===1)?hitHashtag(t):hit(t));
   }
   // 해시태그가 "성+이름"을 띄어쓰기 없이 그대로 붙여 쓰는 경우(예: "#HUHYUNJIN" = 허Huh+윤진Yunjin)가
@@ -9775,8 +9792,12 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 조사 붙은 한글 이름(2026-11-09) — "아워벌스데이 신혜원의 아일릿 …"·"카리나랑"·"해원이와": 그룹이 확정된 이 범위에서만,
     // 두 글자↑ 한글 등록명 + 흔한 조사 하나. 흔한 단어형 이름(하나·여름…)은 "하나도"처럼 일상어가 돼 제외.
     const _KO_PARTICLE='(의|와|과|랑|이랑|이|가|은|는|도|를|을|님|씨|에게|한테|하고|까지|처럼|만|이가|이는|이도|이를|이의)';
-    const _koParticleHit=t=>/^[가-힣]{2,}$/.test(t)&&!_ATM_COMMON_KO_WORDS.has(t)&&!_isHashtagOnlyName(t)
-      &&new RegExp('(^|[^가-힣])'+_atmEscRe(t)+_KO_PARTICLE+'(?![가-힣])').test(title||'');
+    // 해시태그 전용이라도 "다른 사람과 이름이 겹쳐서" 묶은 이름(_ATM_GROUP_CTX_PLAIN_OK_NAMES)은 그룹이 확정된 여기선 인정 —
+    // "아일릿 윤아가"·"더보이즈 주연의"·"엔하이픈 제이가"(2026-11-16 차분 55건). '현재'는 "현재는·현재도·현재까지·현재의"가
+    // 일상어라 그 넷은 빼고 받는다(의·가·와·랑·를·님·에게…).
+    const _KO_PARTICLE_PERSON='(의|와|과|랑|이랑|가|를|을|님|씨|에게|한테|하고)';
+    const _koParticleHit=t=>/^[가-힣]{2,}$/.test(t)&&!_ATM_COMMON_KO_WORDS.has(t)&&(!_isHashtagOnlyName(t)||_ATM_GROUP_CTX_PLAIN_OK_NAMES.has(t))
+      &&new RegExp('(^|[^가-힣])'+_atmEscRe(t)+(t==='현재'?_KO_PARTICLE_PERSON:_KO_PARTICLE)+'(?![가-힣])').test(title||'');
     const _rosterHit=t=>(/^[A-Za-z]/.test(t)&&_ROSTER_PLAIN_WORDS.has(String(t).toLowerCase().replace(/[^a-z]/g,'')))
       // 소문자로만 쓰인 경우만 막는다 — "P1Harmony Soul"·"(Mill,Love,Nine ver.)"처럼 대문자로 시작하면 이름이다
       ?(hitHashtag(t)||new RegExp('(^|[^A-Za-z])'+_atmEscRe(String(t)[0].toUpperCase())+'('+_atmEscRe(String(t).slice(1).toLowerCase())+'|'+_atmEscRe(String(t).slice(1).toUpperCase())+')(?![A-Za-z])').test(rawTitle||''))

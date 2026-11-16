@@ -94,7 +94,9 @@ async function main() {
     //    실행 타이밍에 따라 들쭉날쭉 빨개진다(실제로 선반 하나를 앞에 추가하자 관측창 안으로 들어왔다).
     //    ⚠️ i.ytimg.com의 **썸네일 프로브 경로만** 제외한다 — 우리 오리진(127.0.0.1)의 404는
     //       파일 누락이라는 진짜 신호이므로 계속 잡아야 한다.
-    const BENIGN = /i\.ytimg\.com\/vi\/[\w-]+\/(oardefault|mqdefault_live|maxresdefault)\.jpg/;
+    //    일반 썸네일(hqdefault 등) 404도 뺀다(2026-11-16) — 유튜브에서 영상이 지워지면 나는 것이라 우리 코드 문제가 아닌데,
+    //    최신 영상 하나(스톤뮤직 하이키 MV ANj9fLEIPLI)가 삭제되자 스모크가 이틀 내내 빨갰다. 지워진 영상은 unavailable_at으로 거른다.
+    const BENIGN = /i\.ytimg\.com\/vi\/[\w-]+\/(oardefault|mqdefault_live|maxresdefault|hqdefault|mqdefault|sddefault|default)\.jpg/;
     const note = s => { const t = String(s || ''); if (!BENIGN.test(t)) errors.push(t); };
     cdp.on('Runtime.exceptionThrown', p => note(p.exceptionDetails?.exception?.description || p.exceptionDetails?.text || 'unknown exception'));
     cdp.on('Console.messageAdded', p => { if (p.message.level === 'error') note(p.message.text + ' ' + (p.message.url || '')); });

@@ -63,6 +63,14 @@ console.log(`과거 채우기 남은 계정 ${queue.length} · 남은 호출 약
 const usagePct = h => { let m = 0; for (const k of ['x-app-usage', 'x-business-use-case-usage']) { const v = h.get(k); if (!v) continue; try { JSON.stringify(JSON.parse(v)).replace(/"(call_count|total_time|total_cputime)":(\d+)/g, (_, __, n) => { m = Math.max(m, +n); }); } catch { } } return m; };
 const keyOf = p => (String(p || '').match(/instagram\.com\/(?:p|reel|tv)\/([A-Za-z0-9_-]+)/) || [])[1] || null;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+// 캡션을 글자 수로 자르면 이모지(2칸짜리 글자)가 반으로 잘려 깨진 글자가 남고, DB가 묶음 전체를 "Empty or invalid json"(400)으로
+// 거절한다 — 같은 자리에서 매번 죽어 2026-11-14~16 과거 채우기가 35회 연속 실패했다. 잘린 반쪽·널 문자를 떼고 저장한다.
+const capCut = (s, n) => {
+  let t = String(s).split(String.fromCharCode(0)).join('').slice(0, n);
+  const c = t.charCodeAt(t.length - 1);
+  if (c >= 0xD800 && c <= 0xDBFF) t = t.slice(0, -1);
+  return t.toWellFormed ? t.toWellFormed() : t;
+};
 let calls = 0, saved = 0, finished = 0, stoppedBy = '';
 outer:
 for (const a of queue) {
@@ -90,7 +98,7 @@ for (const a of queue) {
       const kids = ((x.children && x.children.data) || []).slice(0, 20);
       const o = { post_key, handle: a.handle, media_id: x.id ? String(x.id) : null, t: x.timestamp || null, ty: x.media_type || null, p: x.permalink,
         u: null, c: null, mi: kids.length > 1 ? kids.map(k => ({ id: k.id ? String(k.id) : null, ty: k.media_type })) : null, n: kids.length > 1 ? kids.length : 1,
-        cap: x.caption ? String(x.caption).slice(0, 300) : null, lk: x.like_count ?? null, cm: x.comments_count ?? null, m: null, src: 'backfill', pc: (cursor || '') + '|' + lim };
+        cap: x.caption ? capCut(x.caption, 300) : null, lk: x.like_count ?? null, cm: x.comments_count ?? null, m: null, src: 'backfill', pc: (cursor || '') + '|' + lim };
       if (isMag) { o.m = mentionsOf(x.caption); if (!o.m.length) return null; }
       return o;
     }).filter(Boolean);

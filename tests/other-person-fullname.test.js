@@ -82,6 +82,21 @@ expect('[-note] 200802 NI-KI - ENHYPEN (엔하이픈)', '엔하이픈', '니키'
 expect('JEON SOYEON - BEAM BEAM Fighting 2022 Special', '아이들', '소연', true);
 expect('pov: ready to marry Choi San', '에이티즈', '산', true);
 expect('🦁 YOON JAE HYUK #HELLOchallenge', '트레저', '재혁', true);
+// 2026-11-16: 11-15에 해시태그 전용으로 묶은 이름(한·산·준·윤·진·제이·윤아·주연·현재) — 그룹 근거가 있으면 평문도 본인
+expect('[Two Kids Room+1(투키즈룸+1)] Ep.06 Hyunjin X HAN X Seungmin', '스트레이키즈', '한', true); // 자체 채널
+expect("Jin's NORMAL LOG #2026BTSFESTA", '방탄소년단', '진', true);
+expect('아일릿 윤아가 렌즈 광고를 한다면? | 박소현의 러브게임', '아일릿', '윤아', true); // 외부 + 그룹명
+expect('[ENG] 더보이즈 현재가 ASMR을 너무 잘해요~ by W Korea', '더보이즈', '현재', true);
+expect('복근 생긴 더보이즈 주연의 모래찜질ㅣ[Ep.7] 떴다! 더보이즈(Come On! THE BOYZ)', '더보이즈', '주연', true);
+expect('엔하이픈 제이가 추는 쌔끈해 #shorts', '엔하이픈', '제이', true);
+// 그룹 근거 없는 다른 사람은 계속 막힌다(11-15 보류분) — 제목 파서(외부 채널 경로)만 본다
+expectGuest('[SPECIAL STAGE] San E - Me You (feat. MOON SUA) (산이 - 미 유 (feat. 문수아)) l Show Champion l EP.465', '에이티즈', '산', false);
+expectGuest('JAY(김진환) - OBEY #엠카운트다운 EP.900 | Mnet 250807 방송', '엔하이픈', '제이', false);
+expectGuest("[#유퀴즈온더블럭] 임윤아 어떡하지 진짜~ '폭군의 셰프'로 시청률 보증수표까지 섭렵한 로코 장인 윤아", '아일릿', '윤아', false);
+expectGuest('충격적인 이영지 현재 건강 상태', '더보이즈', '현재', false);
+// H1-KEY(하이키) — KEY가 샤이니 키로 가면 안 되고, 하이키 그룹 근거는 살아 있어야 한다
+expect('[🔊8D Bank] H1-KEY - Not Like a Movie | KBS WORLD TV 260109', '하이키', null, true);
+expectGuest('[🔊8D Bank] H1-KEY - Not Like a Movie | KBS WORLD TV 260109', '샤이니', '키', false);
 expect("Dreamcatcher(드림캐쳐) '2 Rings' (JI U CAM)", '드림캐쳐', '지유', true);
 expect('[EPISODE] HONG EUNCHAE Doosan Bears First Pitch Behind', '르세라핌', '홍은채', true);
 expect("ZEROBASEONE (제로베이스원) 'GOOD SO BAD' Shorterview 'KIM GYU VIN'", '제로베이스원', '김규빈', true);

@@ -64,6 +64,7 @@ function load(){
   S(/^const _ATM_SURNAME_EXCLUDE\s*=/m,'_ATM_SURNAME_EXCLUDE');
   S(/^const _ATM_NO_GIVEN_ONLY\s*=/m,'_ATM_NO_GIVEN_ONLY'); // 성 뗀 이름으로 안 잡는 사람(2026-10-26)
   S(/^const _ATM_NO_CONTEXT_RELAX_NAMES\s*=/m,'_ATM_NO_CONTEXT_RELAX_NAMES');
+  S(/^const _ATM_GROUP_CTX_PLAIN_OK_NAMES\s*=/m,'_ATM_GROUP_CTX_PLAIN_OK_NAMES');
   F(/^function _atmContextRelaxesHashtagOnly\(/m,'_atmContextRelaxesHashtagOnly');
   // 다른 사람 풀네임("제임스 안") 제거(2026-09-29) — _atmStripCommonNounCtx가 부른다
   S(/^const _ATM_FULLNAME_SUR_NOT_WORD\s*=/m,'_ATM_FULLNAME_SUR_NOT_WORD');
