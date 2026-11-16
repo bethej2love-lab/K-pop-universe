@@ -94,6 +94,23 @@ expectGuest('[SPECIAL STAGE] San E - Me You (feat. MOON SUA) (산이 - 미 유 (
 expectGuest('JAY(김진환) - OBEY #엠카운트다운 EP.900 | Mnet 250807 방송', '엔하이픈', '제이', false);
 expectGuest("[#유퀴즈온더블럭] 임윤아 어떡하지 진짜~ '폭군의 셰프'로 시청률 보증수표까지 섭렵한 로코 장인 윤아", '아일릿', '윤아', false);
 expectGuest('충격적인 이영지 현재 건강 상태', '더보이즈', '현재', false);
+// 2026-11-16: 그룹명이 일반어·다른 고유명으로 쓰인 꼴(_stripCommonWordGroupNames) — 그 그룹으로 가면 안 된다
+expectGuest('＂10배 이상 차이 나＂ ＜드라우닝(Drowning)＞ 역주행 신화 우즈(WOODZ)의 저작권료 공개?!｜아는 형님', '신화', null, false);
+expectGuest('안유진(아이브), "포즈장인 매 순간 놓치고 싶지 않은 안댕댕" l YUJIN(IVE), "I don\'t want to miss a moment"', '미쓰에이', null, false);
+expectGuest('[Stone Music PLAYLIST] R&B Playlist - 4th week of April｜박재범, 재규어 중사', '에이프릴', null, false);
+expectGuest('[Moonlight paradise] April 2nd - Baby Baby, 에이프릴 세컨드 - Baby Baby [박정아의 달빛낙원]', '에이프릴', null, false);
+expectGuest('[C.C.] G-DRAGON is Back! He is Well-Known «Infinite Challenge» Kids', '인피니트', null, false);
+expectGuest('[5화 하이라이트] |눈물 가득 영화같은 빼꼼이와 인숙의 이야기 | 캐나다 체크인', '하이라이트', null, false);
+expectGuest("호시 (HOSHI) 'BOYFRIEND' Performance Film", '보이프렌드', null, false);
+expectGuest('MIRROR - Stellar Moments of Humankind / THE FIRST TAKE', '스텔라', null, false);
+expectGuest('[100초]100초로 듣는 윤미래 (Yoon mi rae)', '미래소년', null, false);
+// 진짜 그 그룹 영상은 그대로
+expect('신화_This Love (This Love by SHINHWA@M COUNTDOWN 2013.5.16)', '신화', null, true);
+expect('miss A - Bad Girl Good Girl, 미쓰에이 - 배드 걸 굿 걸, Music Core 20100724', '미쓰에이', null, true);
+expect('APRIL, PARADISE (에이프릴, 파라다이스) [THE SHOW, Fancam, 200804] 4K 60P', '에이프릴', null, true);
+expect('보이프렌드(BOYFRIEND) -  Boyfriend Music Video', '보이프렌드', null, true);
+expect('INFINITE(인피니트) - Tell Me @인기가요 Inkigayo 20180114', '인피니트', null, true);
+expect('WINNER - REALLY REALLY @인기가요 Inkigayo 20170416', '위너', null, true);
 // H1-KEY(하이키) — KEY가 샤이니 키로 가면 안 되고, 하이키 그룹 근거는 살아 있어야 한다
 expect('[🔊8D Bank] H1-KEY - Not Like a Movie | KBS WORLD TV 260109', '하이키', null, true);
 expectGuest('[🔊8D Bank] H1-KEY - Not Like a Movie | KBS WORLD TV 260109', '샤이니', '키', false);

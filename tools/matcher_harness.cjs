@@ -127,6 +127,7 @@ const indexSrc = require('./index_source.cjs').readIndexSource();
 pieces.push(extractByBraces(indexSrc, /^function _groupEndDate\(/m, '_groupEndDate'));
 pieces.push(extractByBraces(adminSrc, /^function _disbandCutoffDate\(/m, '_disbandCutoffDate'));
 // 프로그램명 제거(2026-09-30) — 있으면 싣는다(옛 admin.js로 전/후 차분을 돌릴 때도 하네스가 뜨게)
+if (/^function _stripCommonWordGroupNames\(/m.test(adminSrc)) pieces.push(extractByBraces(adminSrc, /^function _stripCommonWordGroupNames\(/m, '_stripCommonWordGroupNames'));
 if (/^function _stripProgramNames\(/m.test(adminSrc)) pieces.push(extractByBraces(adminSrc, /^function _stripProgramNames\(/m, '_stripProgramNames'));
 else pieces.push('function _stripProgramNames(t){return String(t||"");}');
 if (/^function _m2KoreaSingsPerformer\(/m.test(adminSrc)) pieces.push(extractByBraces(adminSrc, /^function _m2KoreaSingsPerformer\(/m, '_m2KoreaSingsPerformer'));

@@ -8874,8 +8874,29 @@ function _m2DebutBlocks(gko,publishedAt){
 // 블랙핑크 곡이 group_ko=블랙핑크가 됐다(블랙핑크 67건, 공유 미리보기까지 연습생 페이스캠). 크레딧은 다음 구분자(@ # | ｜)까지.
 // ⚠️ 킹덤·로드투킹덤·퀸덤 계열은 같은 ♬ 표기가 "♬곡 - **실제 공연자** (원곡: X)"라 지우면 안 된다(하드캐리 - TOO, Sovereign Shadows - 원어스).
 //    ♬ 제목 1,000건 이전/새 매처 차분으로 갈랐다 — 그 계열과 "원곡" 표기가 같이 있는 제목은 건드리지 않는다.
+// 그룹명이 **일반어·다른 고유명**으로 쓰인 꼴도 여기서 지운다(2026-11-16 Codex 1세대·동명 단어 검수) — 공개 카드에
+// "역주행 신화"(우즈)·"miss a single moment"(공항 영상)·"2nd week of April"(플레이리스트)·"[5화 하이라이트]"(예능 편집본)·
+// "Infinite Challenge"(무한도전)·"jewelry"(화보)·스텔라장·'BOYFRIEND'(호시·파우 곡)·"MZ 대표 아이콘"·RAINBOW18이 그 그룹 영상으로 떴다.
+// 그룹명 전체를 해시태그 전용으로 묶으면 정상 영상이 죽으므로 **확인된 꼴만** 지운다. 영문은 소문자 꼴만(그룹 표기는 WINNER·miss A처럼 대문자).
+// 새 꼴을 넣을 땐 그 그룹의 진짜 영상 제목에 같은 꼴이 없는지 먼저 볼 것(에이프릴 "APRIL 2nd Mini Album"은 밴드 '에이프릴 세컨드'와 구분).
+function _stripCommonWordGroupNames(s){
+  return s
+    .replace(/(역주행|흥행|메달|성공|우승|불패|역전|기적)[ ]*신화(?![가-힣])/g,'$1 ').replace(/신화[ ]*(창조|를 쓰|를 썼|적인)/g,' ')
+    .replace(/(?<![A-Za-z])miss a (?=[a-z])/g,' ')
+    .replace(/April[ ]*2nd(?![ ]*(mini|single|album))|에이프릴[ ]*세컨드|week of April|(?<![A-Za-z])April[ ]+(Shower|Fool|Issue|[0-9])|Dear April/gi,' ')
+    .replace(/Infinite[ ]+(Challenge|Handsome|X Tour)/gi,' ')
+    .replace(/(?<![A-Za-z])winners?(?![A-Za-z])/g,' ')
+    .replace(/(?<=[[_【]|[화회][ ]|릴댄[ ]|댄스[ ])하이라이트/g,' ').replace(/하이라이트[ ]*(영상|모음|클립|장면|편집)/g,' ')
+    .replace(/시크릿[ ]*(커버|요리|레시피)|The Secret of/gi,' ')
+    .replace(/(?<![A-Za-z])jewelry(?![A-Za-z])/g,' ').replace(/주얼리(?=보다|처럼|[ ]*(브랜드|컬렉션|디자이너))/g,' ')
+    .replace(/스텔라[ ]*장|Stella[ ]*Jang|Stellar[ ]+(Stellar|Moments)/gi,' ')
+    .replace(/['‘’"“”](boyfriend|fiesta)['‘’"“”]/gi,' ').replace(/(?<![A-Za-z])boyfriend(?![A-Za-z])/g,' ').replace(/슬픔의[ ]*피에스타/g,' ')
+    .replace(/(대표|패션|스타일|워너비|뷰티|문화|시대의|청춘)[ ]*아이콘|Star[ ]+Icon/gi,' ')
+    .replace(/RAINBOW[ ]*18|이영지의[ ]*레인보우/gi,' ')
+    .replace(/윤미래|Yoon[ ]*mi[ ]*rae/gi,' '); // 가수 윤미래의 로마자 "mi rae"가 미래소년(MIRAE)으로 잡혔다
+}
 function _stripProgramNames(t){
-  const s0=String(t||'');
+  const s0=_stripCommonWordGroupNames(String(t||''));
   return (/킹덤|KINGDOM|퀸덤|QUEENDOM|킹['’]|로투킹|원곡/i.test(s0)?s0:s0.replace(/♬[^@#|｜]*?[-–—][^@#|｜]*/g,' '))
     .replace(/\b(after|before)\s*school\s*club\b/gi,' ')
     .replace(/(애프터|비포)\s*스쿨\s*클럽/g,' ')

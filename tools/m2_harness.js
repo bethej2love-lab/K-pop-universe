@@ -120,6 +120,7 @@ function load(){
     S(/^const _M2_DEBUT_GRACE_YEARS\s*=/m,'_M2_DEBUT_GRACE_YEARS');
     F(/^function _m2DebutBlocks\(/m,'_m2DebutBlocks');
   }
+  F(/^function _stripCommonWordGroupNames\(/m,'_stripCommonWordGroupNames'); // 프로그램명 제거(2026-09-30)
   F(/^function _stripProgramNames\(/m,'_stripProgramNames'); // 프로그램명 제거(2026-09-30)
   if(/^function _m2KoreaSingsPerformer\(/m.test(adminSrc))F(/^function _m2KoreaSingsPerformer\(/m,'_m2KoreaSingsPerformer');
   F(/^function _m2ParseTitle\(/m,'_m2ParseTitle');
