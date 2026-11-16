@@ -1,0 +1,167 @@
+{
+ "id": "gda",
+ "edition": "2008",
+ "name": "골든디스크어워즈",
+ "nameEn": "Golden Disc Awards",
+ "dates": [
+  "2008-12-10"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/23rd_Golden_Disc_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Digital Daesang (Song of the Year)",
+   "en": "Digital Daesang (Song of the Year)",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Jewelry",
+     "gko": "쥬얼리"
+    }
+   ],
+   "work": "\"One More Time\""
+  },
+  {
+   "ko": "Disc Daesang (Album of the Year)",
+   "en": "Disc Daesang (Album of the Year)",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "TVXQ",
+     "gko": "동방신기"
+    }
+   ],
+   "work": "Mirotic"
+  },
+  {
+   "ko": "Digital Song Bonsang",
+   "en": "Digital Song Bonsang",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Brown Eyed Girls",
+     "gko": "브라운아이드걸스"
+    },
+    {
+     "name": "Jewelry",
+     "gko": "쥬얼리"
+    },
+    {
+     "name": "MC Mong",
+     "ext": true
+    },
+    {
+     "name": "Wonder Girls",
+     "gko": "원더걸스"
+    }
+   ]
+  },
+  {
+   "ko": "Album Bonsang",
+   "en": "Album Bonsang",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Brown Eyes",
+     "ext": true
+    },
+    {
+     "name": "Kim Dong-ryul",
+     "ext": true
+    },
+    {
+     "name": "Rain",
+     "id": "a1039"
+    },
+    {
+     "name": "SG Wannabe",
+     "ext": true
+    },
+    {
+     "name": "Shinhwa",
+     "gko": "신화"
+    },
+    {
+     "name": "TVXQ",
+     "gko": "동방신기"
+    }
+   ]
+  },
+  {
+   "ko": "Best Trot Award",
+   "en": "Best Trot Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jang Yoon-jeong",
+     "ext": true
+    }
+   ],
+   "work": "\"Jang Yoon-jeong Twist\""
+  },
+  {
+   "ko": "Best Rock Award",
+   "en": "Best Rock Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Nell",
+     "ext": true
+    }
+   ],
+   "work": "\"Time Walking On Memories\""
+  },
+  {
+   "ko": "Rookie of the Year (Digital Category)",
+   "en": "Rookie of the Year (Digital Category)",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Davichi",
+     "ext": true
+    }
+   ],
+   "work": "\"Love and War\""
+  },
+  {
+   "ko": "Rookie of the Year (Album Category)",
+   "en": "Rookie of the Year (Album Category)",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Shinee",
+     "gko": "샤이니"
+    }
+   ],
+   "work": "The Shinee World"
+  },
+  {
+   "ko": "Popularity Award",
+   "en": "Popularity Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "F.T. Island",
+     "gko": "에프티아일랜드"
+    },
+    {
+     "name": "Son Ho-young",
+     "id": "a0839"
+    },
+    {
+     "name": "Taeyeon",
+     "id": "a0166"
+    },
+    {
+     "name": "TVXQ",
+     "gko": "동방신기"
+    }
+   ]
+  }
+ ]
+}

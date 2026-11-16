@@ -1,0 +1,248 @@
+{
+ "id": "mama",
+ "edition": "2007",
+ "name": "마마 어워즈",
+ "nameEn": "Mnet Asian Music Awards",
+ "dates": [
+  "2007-11-17"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2007_Mnet_KM_Music_Festival"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Song of the Year",
+   "en": "Song of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Big Bang",
+     "gko": "빅뱅"
+    }
+   ],
+   "work": "\"Lies\""
+  },
+  {
+   "ko": "Artist of the Year",
+   "en": "Artist of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Super Junior",
+     "gko": "슈퍼주니어"
+    }
+   ]
+  },
+  {
+   "ko": "Album of the Year",
+   "en": "Album of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Epik High",
+     "ext": true
+    }
+   ],
+   "work": "Remapping the Human Soul"
+  },
+  {
+   "ko": "Best New Artist",
+   "en": "Best New Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Younha",
+     "ext": true
+    }
+   ],
+   "work": "\"Password 486\""
+  },
+  {
+   "ko": "Best New Male Group",
+   "en": "Best New Male Group",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "F.T. Island",
+     "gko": "에프티아일랜드"
+    }
+   ],
+   "work": "\"Love Sick\""
+  },
+  {
+   "ko": "Best New Female Group",
+   "en": "Best New Female Group",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Wonder Girls",
+     "gko": "원더걸스"
+    }
+   ],
+   "work": "\"Irony\""
+  },
+  {
+   "ko": "Best Male Group",
+   "en": "Best Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Big Bang",
+     "gko": "빅뱅"
+    }
+   ],
+   "work": "\"Lies\""
+  },
+  {
+   "ko": "Best Female Group",
+   "en": "Best Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "SeeYa",
+     "ext": true
+    }
+   ],
+   "work": "\"Love Greeting\""
+  },
+  {
+   "ko": "Best House & Electronic",
+   "en": "Best House & Electronic",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Clazziquai",
+     "ext": true
+    }
+   ],
+   "work": "\"Lover Boy\""
+  },
+  {
+   "ko": "Best Dance Performance",
+   "en": "Best Dance Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "The Grace",
+     "ext": true
+    }
+   ],
+   "work": "\"One More Time, OK?\""
+  },
+  {
+   "ko": "Best Male Artist",
+   "en": "Best Male Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lee Seung-gi",
+     "ext": true
+    }
+   ],
+   "work": "\"White Lie\""
+  },
+  {
+   "ko": "Best Female Artist",
+   "en": "Best Female Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Ivy",
+     "ext": true
+    }
+   ],
+   "work": "\"Sonata of Temptation\""
+  },
+  {
+   "ko": "Best R&B Performance",
+   "en": "Best R&B Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "SG Wannabe",
+     "ext": true
+    }
+   ],
+   "work": "\"Arirang\""
+  },
+  {
+   "ko": "Best Rock Performance",
+   "en": "Best Rock Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Cherry Filter",
+     "ext": true
+    }
+   ],
+   "work": "\"Feel It\""
+  },
+  {
+   "ko": "Best Hip Hop Performance",
+   "en": "Best Hip Hop Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Epik High",
+     "ext": true
+    }
+   ],
+   "work": "\"Fan\""
+  },
+  {
+   "ko": "Best Ballad Performance",
+   "en": "Best Ballad Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Yangpa",
+     "ext": true
+    }
+   ],
+   "work": "\"Love... What Is It\""
+  },
+  {
+   "ko": "Music Video Acting",
+   "en": "Music Video Acting",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Jung Il-woo",
+     "ext": true
+    },
+    {
+     "name": "Baek Sung-hyun",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Music Video",
+   "en": "Best Music Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Dynamic Duo",
+     "ext": true
+    }
+   ],
+   "work": "\"Attendance Check\" (출첵)"
+  },
+  {
+   "ko": "Best Mixed Group",
+   "en": "Best Mixed Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Clazziquai",
+     "ext": true
+    }
+   ],
+   "work": "\"Lover Boy\""
+  }
+ ]
+}

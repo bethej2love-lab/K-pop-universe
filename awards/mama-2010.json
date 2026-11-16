@@ -1,0 +1,255 @@
+{
+ "id": "mama",
+ "edition": "2010",
+ "name": "마마 어워즈",
+ "nameEn": "Mnet Asian Music Awards",
+ "dates": [
+  "2010-11-28"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2010_Mnet_Asian_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Song of the Year",
+   "en": "Song of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Miss A",
+     "gko": "미쓰에이"
+    }
+   ],
+   "work": "\"Bad Girl Good Girl\""
+  },
+  {
+   "ko": "Album of the Year",
+   "en": "Album of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "2NE1",
+     "gko": "투애니원"
+    }
+   ],
+   "work": "To Anyone"
+  },
+  {
+   "ko": "Artist of the Year",
+   "en": "Artist of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "2NE1",
+     "gko": "투애니원"
+    }
+   ]
+  },
+  {
+   "ko": "Best Music Video",
+   "en": "Best Music Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "2NE1",
+     "gko": "투애니원"
+    }
+   ],
+   "work": "\"Can't Nobody\""
+  },
+  {
+   "ko": "Best New Female Artist",
+   "en": "Best New Female Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Miss A",
+     "gko": "미쓰에이"
+    }
+   ]
+  },
+  {
+   "ko": "Best New Male Artist",
+   "en": "Best New Male Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "CNBLUE",
+     "gko": "씨엔블루"
+    }
+   ]
+  },
+  {
+   "ko": "Best Male Group",
+   "en": "Best Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "2PM",
+     "gko": "2PM"
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Group",
+   "en": "Best Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "2NE1",
+     "gko": "투애니원"
+    }
+   ]
+  },
+  {
+   "ko": "Best Male Solo Artist",
+   "en": "Best Male Solo Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Taeyang",
+     "id": "a0200"
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Solo Artist",
+   "en": "Best Female Solo Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "BoA",
+     "id": "a1037"
+    }
+   ]
+  },
+  {
+   "ko": "Best Dance Performance (Male Group)",
+   "en": "Best Dance Performance (Male Group)",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "2PM",
+     "gko": "2PM"
+    }
+   ],
+   "work": "\"I'll Be Back\""
+  },
+  {
+   "ko": "Best Dance Performance (Female Group)",
+   "en": "Best Dance Performance (Female Group)",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Miss A",
+     "gko": "미쓰에이"
+    }
+   ],
+   "work": "\"Bad Girl Good Girl\""
+  },
+  {
+   "ko": "Best Dance Performance (Solo)",
+   "en": "Best Dance Performance (Solo)",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Rain",
+     "id": "a1039"
+    }
+   ],
+   "work": "\"Love Song\""
+  },
+  {
+   "ko": "Best Collaboration",
+   "en": "Best Collaboration",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Gain",
+     "id": "a0981"
+    },
+    {
+     "name": "Jo Kwon",
+     "id": "a0965"
+    }
+   ],
+   "work": "\"I Happen to Love You\""
+  },
+  {
+   "ko": "Best Rap Performance",
+   "en": "Best Rap Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "DJ DOC",
+     "ext": true
+    }
+   ],
+   "work": "\"I'm Like This\""
+  },
+  {
+   "ko": "Best Band Performance",
+   "en": "Best Band Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Hot Potato",
+     "ext": true
+    }
+   ],
+   "work": "\"Propose\""
+  },
+  {
+   "ko": "Best Vocal Performance (Solo)",
+   "en": "Best Vocal Performance (Solo)",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Gummy",
+     "ext": true
+    }
+   ],
+   "work": "\"As a Man\""
+  },
+  {
+   "ko": "Best Vocal Performance (Group)",
+   "en": "Best Vocal Performance (Group)",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "2AM",
+     "gko": "2AM"
+    }
+   ],
+   "work": "\"Can't Let You Go Even If I Die\""
+  },
+  {
+   "ko": "The Shilla Duty Free Asian Wave Award",
+   "en": "The Shilla Duty Free Asian Wave Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "2PM",
+     "gko": "2PM"
+    }
+   ],
+   "work": "\"I'll Be Back\""
+  },
+  {
+   "ko": "Best Digital Single",
+   "en": "Best Digital Single",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Park Bom",
+     "id": "a0526"
+    }
+   ],
+   "work": "\"You and I\""
+  }
+ ]
+}

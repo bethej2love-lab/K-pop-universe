@@ -1,0 +1,213 @@
+{
+ "id": "mama",
+ "edition": "2008",
+ "name": "마마 어워즈",
+ "nameEn": "Mnet Asian Music Awards",
+ "dates": [
+  "2008-11-15"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2008_Mnet_KM_Music_Festival"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Album of the Year",
+   "en": "Album of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "TVXQ",
+     "gko": "동방신기"
+    }
+   ],
+   "work": "Mirotic"
+  },
+  {
+   "ko": "Artist of the Year",
+   "en": "Artist of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Big Bang",
+     "gko": "빅뱅"
+    }
+   ]
+  },
+  {
+   "ko": "Song of the Year",
+   "en": "Song of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Wonder Girls",
+     "gko": "원더걸스"
+    }
+   ],
+   "work": "\"Nobody\""
+  },
+  {
+   "ko": "Best Music Video",
+   "en": "Best Music Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Wonder Girls",
+     "gko": "원더걸스"
+    }
+   ],
+   "work": "\"Nobody\""
+  },
+  {
+   "ko": "Best New Male Artist",
+   "en": "Best New Male Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Shinee",
+     "gko": "샤이니"
+    }
+   ],
+   "work": "\"Replay\""
+  },
+  {
+   "ko": "Best New Female Artist",
+   "en": "Best New Female Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Davichi",
+     "ext": true
+    }
+   ],
+   "work": "\"I Love You Even Though I Hate You\""
+  },
+  {
+   "ko": "Best Male Group",
+   "en": "Best Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Big Bang",
+     "gko": "빅뱅"
+    }
+   ],
+   "work": "\"Haru Haru\""
+  },
+  {
+   "ko": "Best Female Group",
+   "en": "Best Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Wonder Girls",
+     "gko": "원더걸스"
+    }
+   ],
+   "work": "\"Nobody\""
+  },
+  {
+   "ko": "Best House & Electronic",
+   "en": "Best House & Electronic",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jewelry",
+     "gko": "쥬얼리"
+    }
+   ],
+   "work": "\"One More Time\""
+  },
+  {
+   "ko": "Best Dance Performance",
+   "en": "Best Dance Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lee Hyori",
+     "id": "a0844"
+    }
+   ],
+   "work": "\"U-Go-Girl\""
+  },
+  {
+   "ko": "Best Male Artist",
+   "en": "Best Male Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Seo Taiji",
+     "ext": true
+    }
+   ],
+   "work": "\"Moai\""
+  },
+  {
+   "ko": "Best Female Artist",
+   "en": "Best Female Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lee Hyori",
+     "id": "a0844"
+    }
+   ],
+   "work": "\"U-Go-Girl\""
+  },
+  {
+   "ko": "Best Ballad/R&B Performance",
+   "en": "Best Ballad/R&B Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Brown Eyes",
+     "ext": true
+    }
+   ],
+   "work": "\"Don't Go Don't Go\""
+  },
+  {
+   "ko": "Best Rock Performance",
+   "en": "Best Rock Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Nell",
+     "ext": true
+    }
+   ],
+   "work": "\"Time To Walk Memories\""
+  },
+  {
+   "ko": "Best Hip Hop Performance",
+   "en": "Best Hip Hop Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Epik High",
+     "ext": true
+    }
+   ],
+   "work": "\"One\" (ft. Ji Sun)"
+  },
+  {
+   "ko": "Best OST",
+   "en": "Best OST",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Kim Jong-wook",
+     "ext": true
+    },
+    {
+     "name": "SG Wannabe",
+     "ext": true
+    }
+   ],
+   "work": "\"Fate Reverse\" (East of Eden)"
+  }
+ ]
+}

@@ -1,0 +1,278 @@
+{
+ "id": "mama",
+ "edition": "2017",
+ "name": "마마 어워즈",
+ "nameEn": "Mnet Asian Music Awards",
+ "dates": [
+  "2017-11-25"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2017_Mnet_Asian_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Qoo10 Artist of the Year",
+   "en": "Qoo10 Artist of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  },
+  {
+   "ko": "Qoo10 Album of the Year",
+   "en": "Qoo10 Album of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    }
+   ],
+   "work": "The War"
+  },
+  {
+   "ko": "Qoo10 Song of the Year",
+   "en": "Qoo10 Song of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Twice",
+     "gko": "트와이스"
+    }
+   ],
+   "work": "\"Signal\""
+  },
+  {
+   "ko": "Best Music Video",
+   "en": "Best Music Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "\"Spring Day\""
+  },
+  {
+   "ko": "Best Male Artist",
+   "en": "Best Male Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Zico",
+     "id": "a0972"
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Artist",
+   "en": "Best Female Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "IU",
+     "id": "a0207"
+    }
+   ]
+  },
+  {
+   "ko": "Best Male Group",
+   "en": "Best Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Wanna One",
+     "gko": "워너원"
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Group",
+   "en": "Best Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Red Velvet",
+     "gko": "레드벨벳"
+    }
+   ]
+  },
+  {
+   "ko": "Best Dance Performance – Male Group",
+   "en": "Best Dance Performance – Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    }
+   ],
+   "work": "\"Don't Wanna Cry\""
+  },
+  {
+   "ko": "Best Dance Performance – Female Group",
+   "en": "Best Dance Performance – Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Twice",
+     "gko": "트와이스"
+    }
+   ],
+   "work": "\"Signal\""
+  },
+  {
+   "ko": "Best Dance Performance – Solo",
+   "en": "Best Dance Performance – Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Taemin",
+     "ext": true
+    }
+   ],
+   "work": "\"Move\""
+  },
+  {
+   "ko": "Best Collaboration",
+   "en": "Best Collaboration",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Dynamic Duo",
+     "ext": true
+    },
+    {
+     "name": "Chen",
+     "id": "a0373"
+    }
+   ],
+   "work": "\"Nosedive\""
+  },
+  {
+   "ko": "Best Vocal Performance – Female",
+   "en": "Best Vocal Performance – Female",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Heize",
+     "ext": true
+    }
+   ],
+   "work": "\"You, Clouds, Rain\""
+  },
+  {
+   "ko": "Best Vocal Performance – Male",
+   "en": "Best Vocal Performance – Male",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Yoon Jong-shin",
+     "ext": true
+    }
+   ],
+   "work": "\"Like It?\""
+  },
+  {
+   "ko": "Best Vocal Performance – Group",
+   "en": "Best Vocal Performance – Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Bolbbalgan4",
+     "ext": true
+    }
+   ],
+   "work": "\"Tell Me You Love Me\""
+  },
+  {
+   "ko": "Best OST",
+   "en": "Best OST",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Ailee",
+     "ext": true
+    }
+   ],
+   "work": "\"I Will Go to You Like the First Snow\" (Guardian: The Lonely and Great God)"
+  },
+  {
+   "ko": "Best Band Performance",
+   "en": "Best Band Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Hyukoh",
+     "ext": true
+    }
+   ],
+   "work": "\"TOMBOY\""
+  },
+  {
+   "ko": "Best HipHop & Urban Music",
+   "en": "Best HipHop & Urban Music",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Heize",
+     "ext": true
+    }
+   ],
+   "work": "\"Don't Know You\""
+  },
+  {
+   "ko": "Best New Artist – Male",
+   "en": "Best New Artist – Male",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Wanna One",
+     "gko": "워너원"
+    }
+   ]
+  },
+  {
+   "ko": "Best New Artist – Female",
+   "en": "Best New Artist – Female",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "PRISTIN",
+     "gko": "프리스틴"
+    }
+   ]
+  },
+  {
+   "ko": "Mwave Global Fans' Choice",
+   "en": "Mwave Global Fans' Choice",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    }
+   ],
+   "work": "\"Ko Ko Bop\""
+  },
+  {
+   "ko": "2017 Favorite KPOP Star",
+   "en": "2017 Favorite KPOP Star",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Got7",
+     "gko": "갓세븐"
+    }
+   ]
+  }
+ ]
+}

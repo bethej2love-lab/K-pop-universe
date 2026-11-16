@@ -1,0 +1,426 @@
+{
+ "id": "mama",
+ "edition": "2023",
+ "name": "마마 어워즈",
+ "nameEn": "Mnet Asian Music Awards",
+ "dates": [
+  "2023-11-28"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2023_MAMA_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Samsung Galaxy Artist of the Year",
+   "en": "Samsung Galaxy Artist of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "NewJeans",
+     "gko": "뉴진스"
+    }
+   ]
+  },
+  {
+   "ko": "Samsung Galaxy Song of the Year",
+   "en": "Samsung Galaxy Song of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "NewJeans",
+     "gko": "뉴진스"
+    }
+   ],
+   "work": "\"Ditto\""
+  },
+  {
+   "ko": "Samsung Galaxy Album of the Year",
+   "en": "Samsung Galaxy Album of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    }
+   ],
+   "work": "FML"
+  },
+  {
+   "ko": "Samsung Galaxy Worldwide Icon of the Year",
+   "en": "Samsung Galaxy Worldwide Icon of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  },
+  {
+   "ko": "Best Male Group",
+   "en": "Best Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Group",
+   "en": "Best Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "NewJeans",
+     "gko": "뉴진스"
+    }
+   ]
+  },
+  {
+   "ko": "Best Male Artist",
+   "en": "Best Male Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jimin",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Artist",
+   "en": "Best Female Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jisoo",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Dance Performance – Male Group",
+   "en": "Best Dance Performance – Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    }
+   ],
+   "work": "\"Super\""
+  },
+  {
+   "ko": "Best Dance Performance – Female Group",
+   "en": "Best Dance Performance – Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "NewJeans",
+     "gko": "뉴진스"
+    }
+   ],
+   "work": "\"Ditto\""
+  },
+  {
+   "ko": "Best Vocal Performance – Solo",
+   "en": "Best Vocal Performance – Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Parc Jae-jung",
+     "ext": true
+    }
+   ],
+   "work": "\"Let's Break Up\""
+  },
+  {
+   "ko": "Best Vocal Performance – Group",
+   "en": "Best Vocal Performance – Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "AKMU",
+     "gko": "악뮤"
+    }
+   ],
+   "work": "\"Love Lee\""
+  },
+  {
+   "ko": "Best Dance Performance – Male Solo",
+   "en": "Best Dance Performance – Male Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jungkook",
+     "id": "a0189"
+    }
+   ],
+   "work": "\"Seven\""
+  },
+  {
+   "ko": "Best Dance Performance – Female Solo",
+   "en": "Best Dance Performance – Female Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jisoo",
+     "ext": true
+    }
+   ],
+   "work": "\"Flower\""
+  },
+  {
+   "ko": "Best New Male Artist",
+   "en": "Best New Male Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Zerobaseone",
+     "gko": "제로베이스원"
+    }
+   ]
+  },
+  {
+   "ko": "Best New Female Artist",
+   "en": "Best New Female Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "TripleS",
+     "gko": "트리플에스"
+    }
+   ]
+  },
+  {
+   "ko": "Best OST",
+   "en": "Best OST",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "\"The Planet\""
+  },
+  {
+   "ko": "Best Rap & HipHop Performance",
+   "en": "Best Rap & HipHop Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Agust D",
+     "id": "a0185"
+    }
+   ],
+   "work": "\"People Pt. 2\""
+  },
+  {
+   "ko": "Best Collaboration",
+   "en": "Best Collaboration",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jungkook",
+     "id": "a0189"
+    }
+   ],
+   "work": "\"Seven\""
+  },
+  {
+   "ko": "Best Music Video",
+   "en": "Best Music Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jisoo",
+     "ext": true
+    }
+   ],
+   "work": "\"Flower\""
+  },
+  {
+   "ko": "Worldwide Fans' Choice Top 10",
+   "en": "Worldwide Fans' Choice Top 10",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Ateez",
+     "gko": "에이티즈"
+    },
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    },
+    {
+     "name": "Enhypen",
+     "gko": "엔하이픈"
+    },
+    {
+     "name": "Lim Young-woong",
+     "ext": true
+    },
+    {
+     "name": "NCT Dream",
+     "gko": "엔시티 드림"
+    },
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    },
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    },
+    {
+     "name": "Tomorrow X Together",
+     "gko": "투모로우바이투게더"
+    },
+    {
+     "name": "Twice",
+     "gko": "트와이스"
+    },
+    {
+     "name": "Zerobaseone",
+     "gko": "제로베이스원"
+    }
+   ]
+  },
+  {
+   "ko": "Favorite New Artist",
+   "en": "Favorite New Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Riize",
+     "gko": "라이즈"
+    },
+    {
+     "name": "Zerobaseone",
+     "gko": "제로베이스원"
+    }
+   ]
+  },
+  {
+   "ko": "Favorite Asian Male Group",
+   "en": "Favorite Asian Male Group",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "INI",
+     "id": "a0865"
+    }
+   ]
+  },
+  {
+   "ko": "Favorite International Artist",
+   "en": "Favorite International Artist",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Yoshiki",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Favourite Asian Female Group",
+   "en": "Favourite Asian Female Group",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Kep1er",
+     "gko": "케플러"
+    }
+   ]
+  },
+  {
+   "ko": "Favorite Dance Performance – Male Group",
+   "en": "Favorite Dance Performance – Male Group",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Treasure",
+     "gko": "트레저"
+    }
+   ]
+  },
+  {
+   "ko": "Favorite Dance Performance – Female Group",
+   "en": "Favorite Dance Performance – Female Group",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Le Sserafim",
+     "gko": "르세라핌"
+    }
+   ]
+  },
+  {
+   "ko": "Favorite Global Performer – Male Group",
+   "en": "Favorite Global Performer – Male Group",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Ateez",
+     "gko": "에이티즈"
+    }
+   ]
+  },
+  {
+   "ko": "Favourite Global Performer – Female Group",
+   "en": "Favourite Global Performer – Female Group",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "(G)I-dle",
+     "gko": "아이들"
+    }
+   ]
+  },
+  {
+   "ko": "Inspiring Achievement",
+   "en": "Inspiring Achievement",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "TVXQ",
+     "gko": "동방신기"
+    }
+   ]
+  },
+  {
+   "ko": "Neo Flip Artist Award",
+   "en": "Neo Flip Artist Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Treasure",
+     "gko": "트레저"
+    }
+   ]
+  },
+  {
+   "ko": "Culture and Style",
+   "en": "Culture and Style",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Street Woman Fighter 2",
+     "ext": true
+    },
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    }
+   ]
+  }
+ ]
+}

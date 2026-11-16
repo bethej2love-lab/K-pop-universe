@@ -1,0 +1,186 @@
+{
+ "id": "gda",
+ "edition": "2014",
+ "name": "골든디스크어워즈",
+ "nameEn": "Golden Disc Awards",
+ "dates": [
+  "2015-01-14"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/29th_Golden_Disc_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Digital Daesang (Song of the Year)",
+   "en": "Digital Daesang (Song of the Year)",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Taeyang",
+     "id": "a0200"
+    }
+   ],
+   "work": "\"Eyes, Nose, Lips\""
+  },
+  {
+   "ko": "Disc Daesang (Album of the Year)",
+   "en": "Disc Daesang (Album of the Year)",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    }
+   ],
+   "work": "Overdose"
+  },
+  {
+   "ko": "Digital Song Bonsang",
+   "en": "Digital Song Bonsang",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Ailee",
+     "ext": true
+    },
+    {
+     "name": "AOA",
+     "gko": "에이오에이"
+    },
+    {
+     "name": "Beast",
+     "gko": "하이라이트"
+    },
+    {
+     "name": "Epik High",
+     "ext": true
+    },
+    {
+     "name": "Girl's Day",
+     "gko": "걸스데이"
+    },
+    {
+     "name": "Hyuna",
+     "ext": true
+    },
+    {
+     "name": "K.Will",
+     "ext": true
+    },
+    {
+     "name": "Sistar",
+     "gko": "씨스타"
+    },
+    {
+     "name": "Soyou",
+     "id": "a1035"
+    },
+    {
+     "name": "Junggigo",
+     "ext": true
+    },
+    {
+     "name": "Taeyang",
+     "id": "a0200"
+    }
+   ]
+  },
+  {
+   "ko": "Album Bonsang",
+   "en": "Album Bonsang",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Apink",
+     "gko": "에이핑크"
+    },
+    {
+     "name": "B1A4",
+     "gko": "비원에이포"
+    },
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    },
+    {
+     "name": "CNBLUE",
+     "gko": "씨엔블루"
+    },
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    },
+    {
+     "name": "Girls' Generation",
+     "gko": "소녀시대"
+    },
+    {
+     "name": "Girls' Generation-TTS",
+     "ext": true
+    },
+    {
+     "name": "Infinite",
+     "gko": "인피니트"
+    },
+    {
+     "name": "Super Junior",
+     "gko": "슈퍼주니어"
+    },
+    {
+     "name": "Taemin",
+     "ext": true
+    },
+    {
+     "name": "VIXX",
+     "gko": "빅스"
+    }
+   ]
+  },
+  {
+   "ko": "Rookie Artist of the Year",
+   "en": "Rookie Artist of the Year",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Got7",
+     "gko": "갓세븐"
+    },
+    {
+     "name": "Red Velvet",
+     "gko": "레드벨벳"
+    },
+    {
+     "name": "Winner",
+     "gko": "위너"
+    }
+   ]
+  },
+  {
+   "ko": "Popularity Award",
+   "en": "Popularity Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Beast",
+     "gko": "하이라이트"
+    },
+    {
+     "name": "Girls' Generation",
+     "gko": "소녀시대"
+    },
+    {
+     "name": "Taemin",
+     "ext": true
+    },
+    {
+     "name": "Toheart",
+     "ext": true
+    }
+   ]
+  }
+ ]
+}

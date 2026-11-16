@@ -1,0 +1,222 @@
+{
+ "id": "mama",
+ "edition": "2003",
+ "name": "마마 어워즈",
+ "nameEn": "Mnet Asian Music Awards",
+ "dates": [
+  "2003-11-27"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2003_Mnet_Music_Video_Festival"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Most Popular Music Video",
+   "en": "Most Popular Music Video",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Lee Hyori",
+     "id": "a0844"
+    }
+   ],
+   "work": "\"10 Minutes\""
+  },
+  {
+   "ko": "Music Video of the Year",
+   "en": "Music Video of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Big Mama",
+     "ext": true
+    }
+   ],
+   "work": "\"Break Away\""
+  },
+  {
+   "ko": "Best New Male Artist",
+   "en": "Best New Male Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Seven",
+     "ext": true
+    }
+   ],
+   "work": "\"Come Back to Me\""
+  },
+  {
+   "ko": "Best New Female Artist",
+   "en": "Best New Female Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Maya",
+     "id": "a0577"
+    }
+   ],
+   "work": "\"Azalea\""
+  },
+  {
+   "ko": "Best New Group",
+   "en": "Best New Group",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Big Mama",
+     "ext": true
+    }
+   ],
+   "work": "\"Break Away\""
+  },
+  {
+   "ko": "Best Mixed Group",
+   "en": "Best Mixed Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Koyote",
+     "ext": true
+    }
+   ],
+   "work": "\"Emergency\""
+  },
+  {
+   "ko": "Best Male Group",
+   "en": "Best Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Shinhwa",
+     "gko": "신화"
+    }
+   ],
+   "work": "\"Your Wedding\""
+  },
+  {
+   "ko": "Best Female Group",
+   "en": "Best Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jewelry",
+     "gko": "쥬얼리"
+    }
+   ],
+   "work": "\"I Really Like You\""
+  },
+  {
+   "ko": "Best Male Artist",
+   "en": "Best Male Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Wheesung",
+     "ext": true
+    }
+   ],
+   "work": "\"With Me\""
+  },
+  {
+   "ko": "Best Female Artist",
+   "en": "Best Female Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lee Soo-young",
+     "ext": true
+    }
+   ],
+   "work": "\"Solitary\""
+  },
+  {
+   "ko": "Best R&B Performance",
+   "en": "Best R&B Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Fly To The Sky",
+     "ext": true
+    }
+   ],
+   "work": "\"Missing You\""
+  },
+  {
+   "ko": "Best Rock Performance",
+   "en": "Best Rock Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Cherry Filter",
+     "ext": true
+    }
+   ],
+   "work": "\"Flying Duck\""
+  },
+  {
+   "ko": "Best Hip Hop Performance",
+   "en": "Best Hip Hop Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Kim Jin-pyo",
+     "ext": true
+    }
+   ],
+   "work": "\"With a Dogged Spirit\""
+  },
+  {
+   "ko": "Best Music Video Director",
+   "en": "Best Music Video Director",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jang Jae-hyuk",
+     "ext": true
+    }
+   ],
+   "work": "\"My Silent Conflict\" (Moon Hee-joon) and \"Flower\" (Lee Seung-hwan)"
+  },
+  {
+   "ko": "Best Dance Performance",
+   "en": "Best Dance Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "BoA",
+     "id": "a1037"
+    }
+   ],
+   "work": "\"Atlantis Princess\""
+  },
+  {
+   "ko": "Best Ballad Performance",
+   "en": "Best Ballad Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jo Sung-mo",
+     "ext": true
+    }
+   ],
+   "work": "\"Piano\""
+  },
+  {
+   "ko": "Best International Artist",
+   "en": "Best International Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Linkin Park",
+     "ext": true
+    }
+   ],
+   "work": "\"Somewhere I Belong\""
+  }
+ ]
+}

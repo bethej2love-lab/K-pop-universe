@@ -1,0 +1,236 @@
+{
+ "id": "mama",
+ "edition": "2006",
+ "name": "마마 어워즈",
+ "nameEn": "Mnet Asian Music Awards",
+ "dates": [
+  "2006-11-25"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2006_Mnet_KM_Music_Festival"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Artist of the Year",
+   "en": "Artist of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "TVXQ",
+     "gko": "동방신기"
+    }
+   ]
+  },
+  {
+   "ko": "Song of the Year",
+   "en": "Song of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "SG Wannabe",
+     "ext": true
+    }
+   ],
+   "work": "\"Partner for Life\""
+  },
+  {
+   "ko": "Album of the Year",
+   "en": "Album of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "SG Wannabe",
+     "ext": true
+    }
+   ],
+   "work": "The 3rd Masterpiece"
+  },
+  {
+   "ko": "Best Music Video",
+   "en": "Best Music Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Psy",
+     "id": "a1041"
+    }
+   ],
+   "work": "\"Entertainer\" (Director: Cha Eun-taek)"
+  },
+  {
+   "ko": "New Singer of the Year",
+   "en": "New Singer of the Year",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Zhang Liyin",
+     "ext": true
+    }
+   ],
+   "work": "\"Timeless\" (ft. Xiah Junsu)"
+  },
+  {
+   "ko": "New Group of the Year",
+   "en": "New Group of the Year",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Super Junior",
+     "gko": "슈퍼주니어"
+    }
+   ],
+   "work": "\"U\""
+  },
+  {
+   "ko": "Best Group",
+   "en": "Best Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "TVXQ",
+     "gko": "동방신기"
+    }
+   ],
+   "work": "\"'O'-Jung.Ban.Hap.\""
+  },
+  {
+   "ko": "Best Dance Performance",
+   "en": "Best Dance Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "SS501",
+     "gko": "SS501"
+    }
+   ],
+   "work": "\"Snow Prince\""
+  },
+  {
+   "ko": "Best Male Artist",
+   "en": "Best Male Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Rain",
+     "id": "a1039"
+    }
+   ],
+   "work": "\"I'm Coming\""
+  },
+  {
+   "ko": "Best Female Artist",
+   "en": "Best Female Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Baek Ji-young",
+     "ext": true
+    }
+   ],
+   "work": "\"I Won't Love\""
+  },
+  {
+   "ko": "Best R&B Performance",
+   "en": "Best R&B Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Fly To The Sky",
+     "ext": true
+    }
+   ],
+   "work": "\"Like a Man\""
+  },
+  {
+   "ko": "Best Rock Performance",
+   "en": "Best Rock Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Buzz",
+     "ext": true
+    }
+   ],
+   "work": "\"You Don't Know Man\""
+  },
+  {
+   "ko": "Best Hip Hop Performance",
+   "en": "Best Hip Hop Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "MC Mong",
+     "ext": true
+    }
+   ],
+   "work": "\"Ice Cream\""
+  },
+  {
+   "ko": "Best Ballad Performance",
+   "en": "Best Ballad Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lee Seung-gi",
+     "ext": true
+    }
+   ],
+   "work": "\"Hard to Say\""
+  },
+  {
+   "ko": "Music Video Acting",
+   "en": "Music Video Acting",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Lee Joon-gi",
+     "ext": true
+    },
+    {
+     "name": "Kim Ji-soo",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Music Video Director",
+   "en": "Best Music Video Director",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Cha Eun-taek",
+     "ext": true
+    }
+   ],
+   "work": "\"Entertainer\" by Psy & \"Hard To Say\" by Lee Seung-gi"
+  },
+  {
+   "ko": "Best International Artist",
+   "en": "Best International Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "The Pussycat Dolls",
+     "ext": true
+    }
+   ],
+   "work": "\"Buttons\""
+  },
+  {
+   "ko": "Best OST",
+   "en": "Best OST",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "SeeYa",
+     "ext": true
+    }
+   ],
+   "work": "\"Crazy Love Song\""
+  }
+ ]
+}

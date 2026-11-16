@@ -1,0 +1,753 @@
+{
+ "id": "aaa",
+ "edition": "2025",
+ "name": "아시아 아티스트 어워즈",
+ "nameEn": "Asia Artist Awards",
+ "dates": [
+  "2025-12-06"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/10th_Asia_Artist_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Artist of the Year",
+   "en": "Artist of the Year",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "IU",
+     "id": "a0207"
+    },
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    }
+   ]
+  },
+  {
+   "ko": "Album of the Year",
+   "en": "Album of the Year",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    }
+   ],
+   "work": "Karma"
+  },
+  {
+   "ko": "Song of the Year",
+   "en": "Song of the Year",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    }
+   ],
+   "work": "\"Rebel Heart\""
+  },
+  {
+   "ko": "Stage of the Year",
+   "en": "Stage of the Year",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Ateez",
+     "gko": "에이티즈"
+    }
+   ]
+  },
+  {
+   "ko": "Performance of the Year",
+   "en": "Performance of the Year",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Riize",
+     "gko": "라이즈"
+    }
+   ]
+  },
+  {
+   "ko": "Music Icon of the Year",
+   "en": "Music Icon of the Year",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Le Sserafim",
+     "gko": "르세라핌"
+    }
+   ]
+  },
+  {
+   "ko": "Actor of the Year",
+   "en": "Actor of the Year",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Park Bo-gum",
+     "ext": true
+    },
+    {
+     "name": "Lee Jun-ho",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Actress of the Year",
+   "en": "Actress of the Year",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Moon So-ri",
+     "ext": true
+    },
+    {
+     "name": "Im Yoon-ah",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Artist",
+   "en": "Best Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Actor/Actress:",
+     "ext": true
+    },
+    {
+     "name": "Im Yoon-ah",
+     "ext": true
+    },
+    {
+     "name": "IU",
+     "id": "a0207"
+    },
+    {
+     "name": "Kim You-jung",
+     "ext": true
+    },
+    {
+     "name": "Lee Joon-hyuk",
+     "ext": true
+    },
+    {
+     "name": "Lee Jun-ho",
+     "ext": true
+    },
+    {
+     "name": "Moon So-ri",
+     "ext": true
+    },
+    {
+     "name": "Park Bo-gum",
+     "ext": true
+    },
+    {
+     "name": "Takeru Satoh",
+     "ext": true
+    },
+    {
+     "name": "Uhm Ji-won",
+     "ext": true
+    },
+    {
+     "name": "Singer:",
+     "ext": true
+    },
+    {
+     "name": "AllDay Project",
+     "gko": "올데이프로젝트"
+    },
+    {
+     "name": "Ateez",
+     "gko": "에이티즈"
+    },
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    },
+    {
+     "name": "JJ Lin",
+     "ext": true
+    },
+    {
+     "name": "Le Sserafim",
+     "gko": "르세라핌"
+    },
+    {
+     "name": "Monsta X",
+     "gko": "몬스타엑스"
+    },
+    {
+     "name": "Riize",
+     "gko": "라이즈"
+    },
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    },
+    {
+     "name": "Woodz",
+     "id": "a0609"
+    }
+   ]
+  },
+  {
+   "ko": "Best Actor",
+   "en": "Best Actor",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Male:",
+     "ext": true
+    },
+    {
+     "name": "Choo Young-woo",
+     "ext": true
+    },
+    {
+     "name": "Lee Jun-young",
+     "ext": true
+    },
+    {
+     "name": "Female:",
+     "ext": true
+    },
+    {
+     "name": "Cha Joo-young",
+     "ext": true
+    },
+    {
+     "name": "Hyeri",
+     "id": "a1652"
+    }
+   ]
+  },
+  {
+   "ko": "Best Musician",
+   "en": "Best Musician",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Group:",
+     "ext": true
+    },
+    {
+     "name": "Kiss of Life",
+     "gko": "키스오브라이프"
+    },
+    {
+     "name": "Meovv",
+     "gko": "미야오"
+    },
+    {
+     "name": "TWS",
+     "gko": "투어스"
+    },
+    {
+     "name": "Solo:",
+     "ext": true
+    },
+    {
+     "name": "Ash Island",
+     "ext": true
+    },
+    {
+     "name": "Chanmina",
+     "ext": true
+    },
+    {
+     "name": "Yena",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Symbol of AAA",
+   "en": "Symbol of AAA",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Jang Won-young",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best K-pop Record",
+   "en": "Best K-pop Record",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Ateez",
+     "gko": "에이티즈"
+    },
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    },
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    }
+   ]
+  },
+  {
+   "ko": "Best Music Video",
+   "en": "Best Music Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Meovv",
+     "gko": "미야오"
+    }
+   ],
+   "work": "\"Hands Up\""
+  },
+  {
+   "ko": "Best OST",
+   "en": "Best OST",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Huntrix",
+     "ext": true
+    }
+   ],
+   "work": "\"Golden\""
+  },
+  {
+   "ko": "Best Couple",
+   "en": "Best Couple",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "IU",
+     "id": "a0207"
+    },
+    {
+     "name": "Park Bo-gum",
+     "ext": true
+    }
+   ],
+   "work": "When Life Gives You Tangerines"
+  },
+  {
+   "ko": "Best Performance",
+   "en": "Best Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Cortis",
+     "gko": "코르티스"
+    },
+    {
+     "name": "KiiiKiii",
+     "gko": "키키"
+    }
+   ]
+  },
+  {
+   "ko": "Best Voice Performance",
+   "en": "Best Voice Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Arden Cho",
+     "ext": true
+    }
+   ],
+   "work": "KPop Demon Hunters"
+  },
+  {
+   "ko": "Best Band",
+   "en": "Best Band",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "QWER",
+     "gko": "큐더블유이알"
+    }
+   ]
+  },
+  {
+   "ko": "Best Producer",
+   "en": "Best Producer",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "3Racha",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Potential Award",
+   "en": "Potential Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Xikers",
+     "gko": "싸이커스"
+    }
+   ]
+  },
+  {
+   "ko": "Best Choice",
+   "en": "Best Choice",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Lee Yi-kyung",
+     "ext": true
+    },
+    {
+     "name": "Singer:",
+     "ext": true
+    },
+    {
+     "name": "Hongjoong",
+     "id": "a0106"
+    },
+    {
+     "name": "Hyunjin",
+     "ext": true
+    },
+    {
+     "name": "Kim Chaewon",
+     "ext": true
+    },
+    {
+     "name": "Shuhua",
+     "id": "a0119"
+    }
+   ]
+  },
+  {
+   "ko": "Best New Artist",
+   "en": "Best New Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "AHOF",
+     "gko": "아홉"
+    },
+    {
+     "name": "KickFlip",
+     "gko": "킥플립"
+    },
+    {
+     "name": "Nexz",
+     "gko": "넥스지"
+    }
+   ]
+  },
+  {
+   "ko": "Emotive Award",
+   "en": "Emotive Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Kang You-seok",
+     "ext": true
+    },
+    {
+     "name": "Riize",
+     "gko": "라이즈"
+    }
+   ]
+  },
+  {
+   "ko": "Popularity Award",
+   "en": "Popularity Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Actor:",
+     "ext": true
+    },
+    {
+     "name": "Kim Hye-yoon",
+     "ext": true
+    },
+    {
+     "name": "Lee Jun-ho",
+     "ext": true
+    },
+    {
+     "name": "Group:",
+     "ext": true
+    },
+    {
+     "name": "NiziU",
+     "gko": "니쥬"
+    },
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    },
+    {
+     "name": "Solo:",
+     "ext": true
+    },
+    {
+     "name": "Lim Young-woong",
+     "ext": true
+    },
+    {
+     "name": "Yuqi",
+     "id": "a0118"
+    }
+   ]
+  },
+  {
+   "ko": "Rookie of the Year",
+   "en": "Rookie of the Year",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Park Yoon-ho",
+     "ext": true
+    },
+    {
+     "name": "Singer:",
+     "ext": true
+    },
+    {
+     "name": "AllDay Project",
+     "gko": "올데이프로젝트"
+    },
+    {
+     "name": "Cortis",
+     "gko": "코르티스"
+    },
+    {
+     "name": "KiiiKiii",
+     "gko": "키키"
+    }
+   ]
+  },
+  {
+   "ko": "New Wave Award",
+   "en": "New Wave Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Jeong Yun-ho",
+     "ext": true
+    },
+    {
+     "name": "AllDay Project",
+     "gko": "올데이프로젝트"
+    }
+   ]
+  },
+  {
+   "ko": "Icon Award",
+   "en": "Icon Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Choo Young-woo",
+     "ext": true
+    },
+    {
+     "name": "Cravity",
+     "gko": "크래비티"
+    }
+   ]
+  },
+  {
+   "ko": "Asia Star Award",
+   "en": "Asia Star Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Im Yoon-ah",
+     "ext": true
+    },
+    {
+     "name": "JJ Lin",
+     "ext": true
+    },
+    {
+     "name": "Takeru Satoh",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Asia Celebrity Award",
+   "en": "Asia Celebrity Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Jang Won-young",
+     "ext": true
+    },
+    {
+     "name": "Park Bo-gum",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Fabulous Award",
+   "en": "Fabulous Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "IU",
+     "id": "a0207"
+    },
+    {
+     "name": "Lee Jun-ho",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Scene Stealer Award",
+   "en": "Scene Stealer Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Choi Dae-hoon",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Hot Trend Award",
+   "en": "Hot Trend Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "IU",
+     "id": "a0207"
+    }
+   ]
+  },
+  {
+   "ko": "History of K-pop",
+   "en": "History of K-pop",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Monsta X",
+     "gko": "몬스타엑스"
+    }
+   ]
+  },
+  {
+   "ko": "Grand Presence of K-pop",
+   "en": "Grand Presence of K-pop",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Felix",
+     "id": "a0043"
+    },
+    {
+     "name": "Jang Won-young",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Legendary Producer",
+   "en": "Legendary Producer",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Bumzu",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Legendary K-pop Master Professional",
+   "en": "Legendary K-pop Master Professional",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Seo Hyun-joo",
+     "ext": true
+    }
+   ],
+   "work": "Starship Entertainment"
+  },
+  {
+   "ko": "Legendary Couple",
+   "en": "Legendary Couple",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Kim You-jung",
+     "ext": true
+    },
+    {
+     "name": "Park Bo-gum",
+     "ext": true
+    }
+   ],
+   "work": "Love in the Moonlight"
+  },
+  {
+   "ko": "Legendary Actor",
+   "en": "Legendary Actor",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Lee Joon-hyuk",
+     "ext": true
+    },
+    {
+     "name": "Uhm Ji-won",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Legendary Solo",
+   "en": "Legendary Solo",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "IU",
+     "id": "a0207"
+    },
+    {
+     "name": "G-Dragon",
+     "id": "a0199"
+    }
+   ]
+  },
+  {
+   "ko": "Legendary Group",
+   "en": "Legendary Group",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Blackpink",
+     "gko": "블랙핑크"
+    },
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  }
+ ]
+}

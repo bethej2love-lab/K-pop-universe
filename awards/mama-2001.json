@@ -1,0 +1,245 @@
+{
+ "id": "mama",
+ "edition": "2001",
+ "name": "마마 어워즈",
+ "nameEn": "Mnet Asian Music Awards",
+ "dates": [
+  "2001-11-23"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2001_Mnet_Music_Video_Festival"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Most Popular Music Video",
+   "en": "Most Popular Music Video",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "g.o.d",
+     "gko": "god"
+    }
+   ],
+   "work": "\"Lies\""
+  },
+  {
+   "ko": "Music Video of the Year",
+   "en": "Music Video of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Wax",
+     "ext": true
+    }
+   ],
+   "work": "\"Fix My Makeup\""
+  },
+  {
+   "ko": "Best New Male Artist",
+   "en": "Best New Male Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Sung Si-kyung",
+     "ext": true
+    }
+   ],
+   "work": "\"Like The First Time\""
+  },
+  {
+   "ko": "Best New Female Artist",
+   "en": "Best New Female Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Wax",
+     "ext": true
+    }
+   ],
+   "work": "\"Oppa\""
+  },
+  {
+   "ko": "Best New Group",
+   "en": "Best New Group",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Brown Eyes",
+     "ext": true
+    }
+   ],
+   "work": "\"Already One Year\" (벌써 1년)\""
+  },
+  {
+   "ko": "Best Mixed Group",
+   "en": "Best Mixed Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Koyote",
+     "ext": true
+    }
+   ],
+   "work": "\"Paran\""
+  },
+  {
+   "ko": "Best Male Group",
+   "en": "Best Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Shinhwa",
+     "gko": "신화"
+    }
+   ],
+   "work": "\"Wild Eyes\""
+  },
+  {
+   "ko": "Best Female Group",
+   "en": "Best Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "S.E.S.",
+     "gko": "S.E.S."
+    }
+   ],
+   "work": "\"Just In Love\" (꿈을 모아서)"
+  },
+  {
+   "ko": "Best Male Artist",
+   "en": "Best Male Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Kangta",
+     "id": "a0822"
+    }
+   ],
+   "work": "\"Polaris\""
+  },
+  {
+   "ko": "Best Female Artist",
+   "en": "Best Female Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Kim Hyun-jung",
+     "ext": true
+    }
+   ],
+   "work": "\"You Who Left\" (떠난 너)"
+  },
+  {
+   "ko": "Best R&B Performance",
+   "en": "Best R&B Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Park Jin-young",
+     "ext": true
+    }
+   ],
+   "work": "\"I Have a Girlfriend\""
+  },
+  {
+   "ko": "Best Rock Performance",
+   "en": "Best Rock Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jaurim",
+     "ext": true
+    }
+   ],
+   "work": "\"Goodbye Grief\" (파애)"
+  },
+  {
+   "ko": "Best Hip Hop Performance",
+   "en": "Best Hip Hop Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Drunken Tiger",
+     "ext": true
+    }
+   ],
+   "work": "\"Good Life\""
+  },
+  {
+   "ko": "Best Indie Performance",
+   "en": "Best Indie Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Crying Nut",
+     "ext": true
+    }
+   ],
+   "work": "\"Deep in the Night\""
+  },
+  {
+   "ko": "Best Dance Performance",
+   "en": "Best Dance Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Yoo Seung-jun",
+     "ext": true
+    }
+   ],
+   "work": "\"Wow\""
+  },
+  {
+   "ko": "Best Ballad Performance",
+   "en": "Best Ballad Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Kim Gun-mo",
+     "ext": true
+    }
+   ],
+   "work": "\"Sorry\" (미안해요)"
+  },
+  {
+   "ko": "Special Jury Prize",
+   "en": "Special Jury Prize",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "No Brain",
+     "ext": true
+    }
+   ],
+   "work": "\"Go To The Beach\" (해변으로 가요)"
+  },
+  {
+   "ko": "Best International Artist",
+   "en": "Best International Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "N'Sync",
+     "ext": true
+    }
+   ],
+   "work": "\"Pop\""
+  },
+  {
+   "ko": "Best Music Video Director",
+   "en": "Best Music Video Director",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Cha Eun-taek",
+     "ext": true
+    }
+   ]
+  }
+ ]
+}

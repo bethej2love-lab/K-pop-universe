@@ -1,0 +1,220 @@
+{
+ "id": "mma",
+ "edition": "2022",
+ "name": "멜론뮤직어워드",
+ "nameEn": "Melon Music Awards",
+ "dates": [
+  "2022-11-26"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2022_Melon_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Top 10 Artists",
+   "en": "Top 10 Artists",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "(G)I-dle",
+     "gko": "아이들"
+    },
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    },
+    {
+     "name": "Lim Young-woong",
+     "ext": true
+    },
+    {
+     "name": "MeloMance",
+     "ext": true
+    },
+    {
+     "name": "NewJeans",
+     "gko": "뉴진스"
+    },
+    {
+     "name": "Be'O",
+     "ext": true
+    },
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    },
+    {
+     "name": "IU",
+     "id": "a0207"
+    },
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    },
+    {
+     "name": "NCT Dream",
+     "gko": "엔시티 드림"
+    }
+   ]
+  },
+  {
+   "ko": "Song of the Year",
+   "en": "Song of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    }
+   ],
+   "work": "\"Love Dive\""
+  },
+  {
+   "ko": "Artist of the Year",
+   "en": "Artist of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Lim Young-woong",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "KakaoBank Album of the Year",
+   "en": "KakaoBank Album of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Lim Young-woong",
+     "ext": true
+    }
+   ],
+   "work": "Im Hero"
+  },
+  {
+   "ko": "Record of the Year",
+   "en": "Record of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  },
+  {
+   "ko": "Best New Artist",
+   "en": "Best New Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    },
+    {
+     "name": "NewJeans",
+     "gko": "뉴진스"
+    }
+   ]
+  },
+  {
+   "ko": "Best Male Solo",
+   "en": "Best Male Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lim Young-woong",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Solo",
+   "en": "Best Female Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "IU",
+     "id": "a0207"
+    }
+   ]
+  },
+  {
+   "ko": "Best Male Group",
+   "en": "Best Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Group",
+   "en": "Best Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    }
+   ]
+  },
+  {
+   "ko": "Best OST",
+   "en": "Best OST",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "MeloMance",
+     "ext": true
+    }
+   ],
+   "work": "\"Love, Maybe\" (from Business Proposal)"
+  },
+  {
+   "ko": "Best Collaboration",
+   "en": "Best Collaboration",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "10cm",
+     "ext": true
+    },
+    {
+     "name": "Big Naughty",
+     "ext": true
+    }
+   ],
+   "work": "\"Beyond Love\""
+  },
+  {
+   "ko": "Netizen Popularity Award",
+   "en": "Netizen Popularity Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Lim Young-woong",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Hot Trend",
+   "en": "Hot Trend",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Le Sserafim",
+     "gko": "르세라핌"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,320 @@
+{
+ "id": "sma",
+ "edition": "2022",
+ "name": "서울가요대상",
+ "nameEn": "Seoul Music Awards",
+ "dates": [
+  "2023-01-19"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/32nd_Seoul_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Grand Award",
+   "en": "Grand Award",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "NCT Dream",
+     "gko": "엔시티 드림"
+    }
+   ]
+  },
+  {
+   "ko": "Main Award",
+   "en": "Main Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "(G)I-dle",
+     "gko": "아이들"
+    },
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    },
+    {
+     "name": "Blackpink",
+     "gko": "블랙핑크"
+    },
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    },
+    {
+     "name": "Got the Beat",
+     "ext": true
+    },
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    },
+    {
+     "name": "Kang Daniel",
+     "id": "a0325"
+    },
+    {
+     "name": "Kim Ho-joong",
+     "ext": true
+    },
+    {
+     "name": "Lim Young-woong",
+     "ext": true
+    },
+    {
+     "name": "NCT Dream",
+     "gko": "엔시티 드림"
+    },
+    {
+     "name": "Psy",
+     "id": "a1041"
+    },
+    {
+     "name": "Red Velvet",
+     "gko": "레드벨벳"
+    },
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    },
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    },
+    {
+     "name": "Taeyeon",
+     "id": "a0166"
+    },
+    {
+     "name": "Zico",
+     "id": "a0972"
+    }
+   ]
+  },
+  {
+   "ko": "Best Song Award",
+   "en": "Best Song Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    }
+   ],
+   "work": "\"Love Dive\""
+  },
+  {
+   "ko": "Best Album Award",
+   "en": "Best Album Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "Proof"
+  },
+  {
+   "ko": "Rookie Award",
+   "en": "Rookie Award",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Le Sserafim",
+     "gko": "르세라핌"
+    },
+    {
+     "name": "NewJeans",
+     "gko": "뉴진스"
+    },
+    {
+     "name": "TNX",
+     "gko": "티엔엑스"
+    }
+   ]
+  },
+  {
+   "ko": "Best Performance",
+   "en": "Best Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "(G)I-dle",
+     "gko": "아이들"
+    }
+   ]
+  },
+  {
+   "ko": "Popularity Award",
+   "en": "Popularity Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Lim Young-woong",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Hallyu Special Award",
+   "en": "Hallyu Special Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Suho",
+     "id": "a0370"
+    }
+   ]
+  },
+  {
+   "ko": "Trot Award",
+   "en": "Trot Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Young Tak",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Ballad Award",
+   "en": "Ballad Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Younha",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "OST Award",
+   "en": "OST Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "MeloMance",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "R&B Hiphop Award",
+   "en": "R&B Hiphop Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Be'O",
+     "ext": true
+    },
+    {
+     "name": "Big Naughty",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "New Wave Star",
+   "en": "New Wave Star",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Kep1er",
+     "gko": "케플러"
+    },
+    {
+     "name": "Lapillus",
+     "ext": true
+    },
+    {
+     "name": "TAN",
+     "gko": "티에이엔"
+    }
+   ]
+  },
+  {
+   "ko": "World Best Artist",
+   "en": "World Best Artist",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Psy",
+     "id": "a1041"
+    }
+   ]
+  },
+  {
+   "ko": "Discovery of the Year",
+   "en": "Discovery of the Year",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Lee Seung-yoon",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Band Award",
+   "en": "Band Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Jannabi",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "K-pop Special Award",
+   "en": "K-pop Special Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Kara",
+     "gko": "카라"
+    }
+   ]
+  },
+  {
+   "ko": "Legend Artist",
+   "en": "Legend Artist",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "BoA",
+     "id": "a1037"
+    }
+   ]
+  },
+  {
+   "ko": "idol+ New Star Award",
+   "en": "idol+ New Star Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Tempest",
+     "gko": "템페스트"
+    }
+   ]
+  },
+  {
+   "ko": "idol+ Best Star Award",
+   "en": "idol+ Best Star Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  }
+ ]
+}

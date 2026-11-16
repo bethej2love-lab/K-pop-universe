@@ -1,0 +1,569 @@
+{
+ "id": "aaa",
+ "edition": "2022",
+ "name": "아시아 아티스트 어워즈",
+ "nameEn": "Asia Artist Awards",
+ "dates": [
+  "2022-12-13"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/7th_Asia_Artist_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Grand Prize",
+   "en": "Grand Prize",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Lee Jun Ho",
+     "ext": true
+    },
+    {
+     "name": "NewJeans",
+     "gko": "뉴진스"
+    },
+    {
+     "name": "Lim Young-woong",
+     "ext": true
+    },
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    },
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    },
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    }
+   ]
+  },
+  {
+   "ko": "Fabulous Award",
+   "en": "Fabulous Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Lim Young-woong",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Television",
+   "en": "Television",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    }
+   ]
+  },
+  {
+   "ko": "Best Artist Award",
+   "en": "Best Artist Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Han So-hee",
+     "ext": true
+    },
+    {
+     "name": "Seo In-guk",
+     "ext": true
+    },
+    {
+     "name": "Park Min-young",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Television",
+   "en": "Television",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Itzy",
+     "gko": "있지"
+    },
+    {
+     "name": "The Boyz",
+     "gko": "더보이즈"
+    },
+    {
+     "name": "The Rampage",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Asia Celebrity",
+   "en": "Asia Celebrity",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Kim Seon-ho",
+     "ext": true
+    },
+    {
+     "name": "Kwon Yu-ri",
+     "ext": true
+    },
+    {
+     "name": "PP Krit",
+     "ext": true
+    },
+    {
+     "name": "Billkin",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Television",
+   "en": "Television",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Itzy",
+     "gko": "있지"
+    },
+    {
+     "name": "Be First",
+     "ext": true
+    },
+    {
+     "name": "Lyodra",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Idol Plus Popularity Award",
+   "en": "Idol Plus Popularity Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Kim Seon-ho",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Television / Film",
+   "en": "Television / Film",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  },
+  {
+   "ko": "DCM Popularity Award",
+   "en": "DCM Popularity Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Kim Seon-ho",
+     "ext": true
+    },
+    {
+     "name": "Kim Se-jeong",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Television / Film",
+   "en": "Television / Film",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Blackpink",
+     "gko": "블랙핑크"
+    },
+    {
+     "name": "Lim Young-woong",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Rookie of the Year",
+   "en": "Rookie of the Year",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Kang Daniel",
+     "id": "a0325"
+    },
+    {
+     "name": "Seo Bum-june",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Television / Film",
+   "en": "Television / Film",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    },
+    {
+     "name": "Le Sserafim",
+     "gko": "르세라핌"
+    },
+    {
+     "name": "NewJeans",
+     "gko": "뉴진스"
+    }
+   ]
+  },
+  {
+   "ko": "Best Icon Award",
+   "en": "Best Icon Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Im Jae-hyuk",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Television / Film",
+   "en": "Television / Film",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "AleXa",
+     "ext": true
+    },
+    {
+     "name": "Verivery",
+     "gko": "베리베리"
+    }
+   ]
+  },
+  {
+   "ko": "Focus Award",
+   "en": "Focus Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Haknyeon",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Television / Film",
+   "en": "Television / Film",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Lapillus",
+     "ext": true
+    },
+    {
+     "name": "ATBO",
+     "gko": "ATBO"
+    },
+    {
+     "name": "Trendz",
+     "gko": "트렌드지"
+    }
+   ]
+  },
+  {
+   "ko": "New Wave Award",
+   "en": "New Wave Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Hwang Min-hyun",
+     "ext": true
+    },
+    {
+     "name": "Choi Si-won",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Television / Film",
+   "en": "Television / Film",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Tempest",
+     "gko": "템페스트"
+    },
+    {
+     "name": "Nmixx",
+     "gko": "엔믹스"
+    },
+    {
+     "name": "Kep1er",
+     "gko": "케플러"
+    }
+   ]
+  },
+  {
+   "ko": "Best Emotive Award",
+   "en": "Best Emotive Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Na In-woo",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Television / Film",
+   "en": "Television / Film",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Cravity",
+     "gko": "크래비티"
+    },
+    {
+     "name": "Nmixx",
+     "gko": "엔믹스"
+    }
+   ]
+  },
+  {
+   "ko": "Best Choice Award",
+   "en": "Best Choice Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Kim Seon-ho",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Television / Film",
+   "en": "Television / Film",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "WJSN Chocome",
+     "gko": "우주소녀"
+    },
+    {
+     "name": "Kard",
+     "gko": "카드"
+    },
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    },
+    {
+     "name": "Kep1er",
+     "gko": "케플러"
+    },
+    {
+     "name": "Pentagon",
+     "gko": "펜타곤"
+    }
+   ]
+  },
+  {
+   "ko": "Hot Trend Award",
+   "en": "Hot Trend Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Lee Jun-ho",
+     "ext": true
+    },
+    {
+     "name": "Park Min-young",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Television / Film",
+   "en": "Television / Film",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    },
+    {
+     "name": "NiziU",
+     "gko": "니쥬"
+    },
+    {
+     "name": "Lim Young-woong",
+     "ext": true
+    },
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    }
+   ]
+  },
+  {
+   "ko": "Potential Award",
+   "en": "Potential Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Kang Daniel",
+     "id": "a0325"
+    }
+   ]
+  },
+  {
+   "ko": "Television / Film",
+   "en": "Television / Film",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Lightsum",
+     "gko": "라잇썸"
+    },
+    {
+     "name": "TFN",
+     "gko": "티에프엔"
+    },
+    {
+     "name": "Kingdom",
+     "ext": true
+    },
+    {
+     "name": "Billlie",
+     "gko": "빌리"
+    }
+   ]
+  },
+  {
+   "ko": "Best Acting Performance Award",
+   "en": "Best Acting Performance Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Bona",
+     "id": "a0656"
+    },
+    {
+     "name": "Kim Young-dae",
+     "ext": true
+    },
+    {
+     "name": "Hwang Min-hyun",
+     "ext": true
+    },
+    {
+     "name": "Choi Si-won",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Actor Award",
+   "en": "Best Actor Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lee Jae-wook",
+     "ext": true
+    },
+    {
+     "name": "Kim Se-jeong",
+     "ext": true
+    },
+    {
+     "name": "Lee Jun-young",
+     "ext": true
+    },
+    {
+     "name": "Kwon Yu-ri",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Musician Award",
+   "en": "Best Musician Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Le Sserafim",
+     "gko": "르세라핌"
+    },
+    {
+     "name": "Peck",
+     "ext": true
+    },
+    {
+     "name": "Choi Ye-na",
+     "ext": true
+    },
+    {
+     "name": "Treasure",
+     "gko": "트레저"
+    },
+    {
+     "name": "NiziU",
+     "gko": "니쥬"
+    }
+   ]
+  },
+  {
+   "ko": "Best Producer Award",
+   "en": "Best Producer Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Starship Entertainment",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "AAA Scene Stealer",
+   "en": "AAA Scene Stealer",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Ryu Kyung-soo",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "AAA Best Achievement Award",
+   "en": "AAA Best Achievement Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Kwon Yu-ri",
+     "ext": true
+    }
+   ]
+  }
+ ]
+}

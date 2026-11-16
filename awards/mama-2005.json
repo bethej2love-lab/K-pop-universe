@@ -1,0 +1,246 @@
+{
+ "id": "mama",
+ "edition": "2005",
+ "name": "마마 어워즈",
+ "nameEn": "Mnet Asian Music Awards",
+ "dates": [
+  "2005-11-27"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2005_Mnet_KM_Music_Video_Festival"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Most Popular Music Video",
+   "en": "Most Popular Music Video",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "TVXQ",
+     "gko": "동방신기"
+    }
+   ],
+   "work": "\"Rising Sun\""
+  },
+  {
+   "ko": "Music Video of the Year",
+   "en": "Music Video of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Drunken Tiger",
+     "ext": true
+    }
+   ],
+   "work": "\"Isolated Ones! Left Foot Forward!\""
+  },
+  {
+   "ko": "Best New Artist",
+   "en": "Best New Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Lim Jeong-hee",
+     "ext": true
+    }
+   ],
+   "work": "\"Music Is My Life\""
+  },
+  {
+   "ko": "Best New Group",
+   "en": "Best New Group",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "SS501",
+     "gko": "SS501"
+    }
+   ],
+   "work": "\"Warning\""
+  },
+  {
+   "ko": "Best Mixed Group",
+   "en": "Best Mixed Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Koyote",
+     "ext": true
+    }
+   ],
+   "work": "\"1, 2, 3, 4\""
+  },
+  {
+   "ko": "Best Ballad Performance",
+   "en": "Best Ballad Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Shin Hye-sung",
+     "id": "a0833"
+    }
+   ],
+   "work": "\"Same Thinking\""
+  },
+  {
+   "ko": "Best Male Group",
+   "en": "Best Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "SG Wannabe",
+     "ext": true
+    }
+   ],
+   "work": "\"Crime and Punishment\""
+  },
+  {
+   "ko": "Best Female Group",
+   "en": "Best Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jewelry",
+     "gko": "쥬얼리"
+    }
+   ],
+   "work": "\"Superstar\""
+  },
+  {
+   "ko": "Best Male Artist",
+   "en": "Best Male Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Kim Jong-kook",
+     "ext": true
+    }
+   ],
+   "work": "\"Standstill\""
+  },
+  {
+   "ko": "Best Female Artist",
+   "en": "Best Female Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "BoA",
+     "id": "a1037"
+    }
+   ],
+   "work": "\"Girls on Top\""
+  },
+  {
+   "ko": "Best R&B Performance",
+   "en": "Best R&B Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Wheesung",
+     "ext": true
+    }
+   ],
+   "work": "\"Goodbye Luv\""
+  },
+  {
+   "ko": "Best Rock Performance",
+   "en": "Best Rock Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Buzz",
+     "ext": true
+    }
+   ],
+   "work": "\"Coward\""
+  },
+  {
+   "ko": "Best Hip Hop Performance",
+   "en": "Best Hip Hop Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Epik High",
+     "ext": true
+    }
+   ],
+   "work": "\"Fly\" (feat. Amin. J)"
+  },
+  {
+   "ko": "Best Dance Performance",
+   "en": "Best Dance Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lee Min-woo",
+     "id": "a0831"
+    }
+   ],
+   "work": "\"Bump\""
+  },
+  {
+   "ko": "Best Video Performer Award",
+   "en": "Best Video Performer Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Psy",
+     "id": "a1041"
+    }
+   ],
+   "work": "\"Delight\""
+  },
+  {
+   "ko": "Best OST",
+   "en": "Best OST",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Clazziquai",
+     "ext": true
+    }
+   ],
+   "work": "\"She Is...\" (My Lovely Sam Soon)"
+  },
+  {
+   "ko": "Music Video Acting",
+   "en": "Music Video Acting",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Ryoo Seung-bum",
+     "ext": true
+    }
+   ],
+   "work": "(\"I'm Not Laughing\" by Leessang)"
+  },
+  {
+   "ko": "Best International Artist",
+   "en": "Best International Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "The Black Eyed Peas",
+     "ext": true
+    }
+   ],
+   "work": "\"Don't Lie\""
+  },
+  {
+   "ko": "Best Music Video Director",
+   "en": "Best Music Video Director",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Seo Hyun-seung",
+     "ext": true
+    }
+   ],
+   "work": "\"Goodbye Luv\" (Wheesung), \"Wipe My Tears and Put on Makeup\" (Lexy) & Phone Number (Jinusean)"
+  }
+ ]
+}

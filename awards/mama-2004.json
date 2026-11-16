@@ -1,0 +1,234 @@
+{
+ "id": "mama",
+ "edition": "2004",
+ "name": "마마 어워즈",
+ "nameEn": "Mnet Asian Music Awards",
+ "dates": [
+  "2004-12-04"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2004_Mnet_KM_Music_Video_Festival"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Most Popular Music Video",
+   "en": "Most Popular Music Video",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Rain",
+     "id": "a1039"
+    }
+   ],
+   "work": "\"It's Raining\""
+  },
+  {
+   "ko": "Music Video of the Year",
+   "en": "Music Video of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BoA",
+     "id": "a1037"
+    }
+   ],
+   "work": "\"My Name\""
+  },
+  {
+   "ko": "Best New Male Video",
+   "en": "Best New Male Video",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Lee Seung-gi",
+     "ext": true
+    }
+   ],
+   "work": "\"Because You're My Woman\""
+  },
+  {
+   "ko": "Best New Female Video",
+   "en": "Best New Female Video",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Chunja",
+     "ext": true
+    }
+   ],
+   "work": "\"Women with Beautiful Mind\""
+  },
+  {
+   "ko": "Best New Group Video",
+   "en": "Best New Group Video",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "TVXQ",
+     "gko": "동방신기"
+    }
+   ],
+   "work": "\"Hug\""
+  },
+  {
+   "ko": "Best Group Video",
+   "en": "Best Group Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Koyote",
+     "ext": true
+    }
+   ],
+   "work": "\"Disco King\""
+  },
+  {
+   "ko": "Best Male Group Video",
+   "en": "Best Male Group Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Shinhwa",
+     "gko": "신화"
+    }
+   ],
+   "work": "\"Angel\""
+  },
+  {
+   "ko": "Best Female Group Video",
+   "en": "Best Female Group Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Sugar",
+     "gko": "슈가"
+    }
+   ],
+   "work": "\"Secret\""
+  },
+  {
+   "ko": "Best Male Video",
+   "en": "Best Male Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Seven",
+     "ext": true
+    }
+   ],
+   "work": "\"Passion\""
+  },
+  {
+   "ko": "Best Female Video",
+   "en": "Best Female Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lee Soo-young",
+     "ext": true
+    }
+   ],
+   "work": "\"Whistle to Me\""
+  },
+  {
+   "ko": "Best R&B Video",
+   "en": "Best R&B Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Wheesung",
+     "ext": true
+    }
+   ],
+   "work": "\"Incurable Illness\""
+  },
+  {
+   "ko": "Best Rock Video",
+   "en": "Best Rock Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Seo Taiji",
+     "ext": true
+    }
+   ],
+   "work": "\"Live Wire\""
+  },
+  {
+   "ko": "Best Hip Hop Video",
+   "en": "Best Hip Hop Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jo PD",
+     "ext": true
+    }
+   ],
+   "work": "\"Friend\" (ft. In Sooni)"
+  },
+  {
+   "ko": "Best Director",
+   "en": "Best Director",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Cha Eun-taek",
+     "ext": true
+    }
+   ],
+   "work": "\"Timeless\", \"Because You're My Woman\", \"When That Day Comes\""
+  },
+  {
+   "ko": "Best Dance Video",
+   "en": "Best Dance Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Shinhwa",
+     "gko": "신화"
+    }
+   ],
+   "work": "\"Brand New\""
+  },
+  {
+   "ko": "Best Ballad Video",
+   "en": "Best Ballad Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Shin Seung-hun",
+     "ext": true
+    }
+   ],
+   "work": "\"When That Day Comes\""
+  },
+  {
+   "ko": "Best OST",
+   "en": "Best OST",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jo Sungmo",
+     "ext": true
+    }
+   ],
+   "work": "\"By Your Side\" (Lovers in Paris)"
+  },
+  {
+   "ko": "Best International Artist",
+   "en": "Best International Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Usher",
+     "ext": true
+    }
+   ],
+   "work": "\"Yeah!\""
+  }
+ ]
+}

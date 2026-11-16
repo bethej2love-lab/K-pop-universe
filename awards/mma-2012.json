@@ -1,0 +1,191 @@
+{
+ "id": "mma",
+ "edition": "2012",
+ "name": "멜론뮤직어워드",
+ "nameEn": "Melon Music Awards",
+ "dates": [
+  "2012-11-15"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2012_Melon_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Top 10 Artists",
+   "en": "Top 10 Artists",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Psy",
+     "id": "a1041"
+    },
+    {
+     "name": "Busker Busker",
+     "ext": true
+    },
+    {
+     "name": "Big Bang",
+     "gko": "빅뱅"
+    },
+    {
+     "name": "2NE1",
+     "gko": "투애니원"
+    },
+    {
+     "name": "Sistar",
+     "gko": "씨스타"
+    },
+    {
+     "name": "Huh Gak",
+     "ext": true
+    },
+    {
+     "name": "Beast",
+     "gko": "하이라이트"
+    },
+    {
+     "name": "IU",
+     "id": "a0207"
+    },
+    {
+     "name": "Infinite",
+     "gko": "인피니트"
+    },
+    {
+     "name": "T-ara",
+     "gko": "티아라"
+    }
+   ]
+  },
+  {
+   "ko": "Song of the Year",
+   "en": "Song of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Psy",
+     "id": "a1041"
+    }
+   ],
+   "work": "\"Gangnam Style\""
+  },
+  {
+   "ko": "Artist of the Year",
+   "en": "Artist of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Beast",
+     "gko": "하이라이트"
+    }
+   ]
+  },
+  {
+   "ko": "Album of the Year",
+   "en": "Album of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Busker Busker",
+     "ext": true
+    }
+   ],
+   "work": "Busker Busker 1st Album"
+  },
+  {
+   "ko": "Best New Artist",
+   "en": "Best New Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "B.A.P",
+     "gko": "비에이피"
+    },
+    {
+     "name": "Ailee",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Rap/Hip Hop Award",
+   "en": "Best Rap/Hip Hop Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Dynamic Duo",
+     "ext": true
+    }
+   ],
+   "work": "\"Without You\""
+  },
+  {
+   "ko": "Best Rock Award",
+   "en": "Best Rock Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Nell",
+     "ext": true
+    }
+   ],
+   "work": "\"The Day Before\""
+  },
+  {
+   "ko": "Best R&B/Ballad Award",
+   "en": "Best R&B/Ballad Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "K.Will",
+     "ext": true
+    }
+   ],
+   "work": "\"Please Don’t\""
+  },
+  {
+   "ko": "Best OST Award",
+   "en": "Best OST Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Eunji",
+     "id": "a0501"
+    },
+    {
+     "name": "Seo In-guk",
+     "ext": true
+    }
+   ],
+   "work": "\"All For You\" (from Reply 1997)"
+  },
+  {
+   "ko": "Best Pop Song",
+   "en": "Best Pop Song",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Maroon 5",
+     "ext": true
+    }
+   ],
+   "work": "\"Payphone\" (feat. Wiz Khalifa)"
+  },
+  {
+   "ko": "Popular Netizen Song",
+   "en": "Popular Netizen Song",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Beast",
+     "gko": "하이라이트"
+    }
+   ],
+   "work": "\"Midnight\""
+  }
+ ]
+}

@@ -1,0 +1,253 @@
+{
+ "id": "sma",
+ "edition": "2020",
+ "name": "서울가요대상",
+ "nameEn": "Seoul Music Awards",
+ "dates": [
+  "2021-01-31"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/30th_Seoul_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Grand Award",
+   "en": "Grand Award",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  },
+  {
+   "ko": "Main Award",
+   "en": "Main Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Ateez",
+     "gko": "에이티즈"
+    },
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    },
+    {
+     "name": "Iz*One",
+     "gko": "아이즈원"
+    },
+    {
+     "name": "Kang Daniel",
+     "id": "a0325"
+    },
+    {
+     "name": "Monsta X",
+     "gko": "몬스타엑스"
+    },
+    {
+     "name": "NCT 127",
+     "gko": "엔시티 127"
+    },
+    {
+     "name": "NU'EST",
+     "gko": "뉴이스트"
+    },
+    {
+     "name": "Oh My Girl",
+     "gko": "오마이걸"
+    },
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    },
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    },
+    {
+     "name": "Twice",
+     "gko": "트와이스"
+    },
+    {
+     "name": "TXT",
+     "gko": "투모로우바이투게더"
+    }
+   ]
+  },
+  {
+   "ko": "Best Song Award",
+   "en": "Best Song Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "\"Dynamite\""
+  },
+  {
+   "ko": "Best Album Award",
+   "en": "Best Album Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "Map of the Soul: 7"
+  },
+  {
+   "ko": "Rookie of the Year",
+   "en": "Rookie of the Year",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    },
+    {
+     "name": "Enhypen",
+     "gko": "엔하이픈"
+    },
+    {
+     "name": "Treasure",
+     "gko": "트레저"
+    }
+   ]
+  },
+  {
+   "ko": "Best Performance",
+   "en": "Best Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "(G)I-DLE",
+     "gko": "아이들"
+    },
+    {
+     "name": "The Boyz",
+     "gko": "더보이즈"
+    }
+   ]
+  },
+  {
+   "ko": "Popularity Award",
+   "en": "Popularity Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Lim Young-woong",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "K-wave Popularity Award",
+   "en": "K-wave Popularity Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  },
+  {
+   "ko": "Trot Award",
+   "en": "Trot Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Lim Young-woong",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Ballad Award",
+   "en": "Ballad Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Sandeul",
+     "id": "a0713"
+    }
+   ]
+  },
+  {
+   "ko": "OST Award",
+   "en": "OST Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Jo Jung-suk",
+     "ext": true
+    }
+   ],
+   "work": "\"Aloha\""
+  },
+  {
+   "ko": "R&B Hiphop Award",
+   "en": "R&B Hiphop Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Jessi",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Band Award",
+   "en": "Band Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Leenalchi",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Discovery of the Year",
+   "en": "Discovery of the Year",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Itzy",
+     "gko": "있지"
+    }
+   ]
+  },
+  {
+   "ko": "Fan PD Artist Award",
+   "en": "Fan PD Artist Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Kang Daniel",
+     "id": "a0325"
+    }
+   ]
+  },
+  {
+   "ko": "WhosFandom Award",
+   "en": "WhosFandom Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  }
+ ]
+}

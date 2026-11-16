@@ -1,0 +1,273 @@
+{
+ "id": "mma",
+ "edition": "2020",
+ "name": "멜론뮤직어워드",
+ "nameEn": "Melon Music Awards",
+ "dates": [
+  "2020-12-02"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2020_Melon_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Top 10 Artists",
+   "en": "Top 10 Artists",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Kim Ho-joong",
+     "ext": true
+    },
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    },
+    {
+     "name": "Baek Ye-rin",
+     "id": "a1201"
+    },
+    {
+     "name": "Baekhyun",
+     "id": "a0372"
+    },
+    {
+     "name": "IU",
+     "id": "a0207"
+    },
+    {
+     "name": "Oh My Girl",
+     "gko": "오마이걸"
+    },
+    {
+     "name": "Lim Young-woong",
+     "ext": true
+    },
+    {
+     "name": "Zico",
+     "id": "a0972"
+    },
+    {
+     "name": "Blackpink",
+     "gko": "블랙핑크"
+    },
+    {
+     "name": "Iz*One",
+     "gko": "아이즈원"
+    }
+   ]
+  },
+  {
+   "ko": "Song of the Year",
+   "en": "Song of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "\"Dynamite\""
+  },
+  {
+   "ko": "Artist of the Year",
+   "en": "Artist of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  },
+  {
+   "ko": "Album of the Year",
+   "en": "Album of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "Map of the Soul: 7"
+  },
+  {
+   "ko": "Best New Artist",
+   "en": "Best New Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Cravity",
+     "gko": "크래비티"
+    },
+    {
+     "name": "Weeekly",
+     "gko": "위클리"
+    }
+   ]
+  },
+  {
+   "ko": "Netizen Popularity Award",
+   "en": "Netizen Popularity Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  },
+  {
+   "ko": "Best Dance Award (Male)",
+   "en": "Best Dance Award (Male)",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "\"Dynamite\""
+  },
+  {
+   "ko": "Best Dance Award (Female)",
+   "en": "Best Dance Award (Female)",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Blackpink",
+     "gko": "블랙핑크"
+    }
+   ],
+   "work": "\"How You Like That\""
+  },
+  {
+   "ko": "Best R&B/Soul Award",
+   "en": "Best R&B/Soul Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Baek Ye-rin",
+     "id": "a1201"
+    }
+   ],
+   "work": "\"Square (2017)\""
+  },
+  {
+   "ko": "Best Rap/Hip Hop Award",
+   "en": "Best Rap/Hip Hop Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Yumdda",
+     "ext": true
+    },
+    {
+     "name": "The Quiett",
+     "ext": true
+    },
+    {
+     "name": "Deepflow",
+     "ext": true
+    },
+    {
+     "name": "Paloalto",
+     "ext": true
+    },
+    {
+     "name": "Simon Dominic",
+     "ext": true
+    }
+   ],
+   "work": "\"I'mma Do\""
+  },
+  {
+   "ko": "Best OST Award",
+   "en": "Best OST Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jo Jung-suk",
+     "ext": true
+    }
+   ],
+   "work": "\"Aloha\""
+  },
+  {
+   "ko": "Best Rock Award",
+   "en": "Best Rock Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "IU",
+     "id": "a0207"
+    }
+   ],
+   "work": "\"Eight\" featuring Suga"
+  },
+  {
+   "ko": "Best Pop Award",
+   "en": "Best Pop Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Sam Smith",
+     "ext": true
+    }
+   ],
+   "work": "\"To Die For\""
+  },
+  {
+   "ko": "Best Ballad Award",
+   "en": "Best Ballad Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Davichi",
+     "ext": true
+    }
+   ],
+   "work": "\"Dear.\""
+  },
+  {
+   "ko": "Best Indie Award",
+   "en": "Best Indie Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Bolbbalgan4",
+     "ext": true
+    }
+   ],
+   "work": "Leo (featuring Baekhyun)"
+  },
+  {
+   "ko": "Best Trot Award",
+   "en": "Best Trot Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lim Young-woong",
+     "ext": true
+    }
+   ],
+   "work": "\"Trust in Me\""
+  },
+  {
+   "ko": "Hot Trend Award",
+   "en": "Hot Trend Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Trot Men 6",
+     "ext": true
+    }
+   ]
+  }
+ ]
+}

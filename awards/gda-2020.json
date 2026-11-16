@@ -1,0 +1,155 @@
+{
+ "id": "gda",
+ "edition": "2020",
+ "name": "골든디스크어워즈",
+ "nameEn": "Golden Disc Awards",
+ "dates": [
+  "2021-01-09"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/35th_Golden_Disc_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Digital Daesang (Song of the Year)",
+   "en": "Digital Daesang (Song of the Year)",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "IU",
+     "id": "a0207"
+    }
+   ],
+   "work": "\"Blueming\""
+  },
+  {
+   "ko": "Disc Daesang (Album of the Year)",
+   "en": "Disc Daesang (Album of the Year)",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "Map of the Soul: 7"
+  },
+  {
+   "ko": "Digital Song Bonsang",
+   "en": "Digital Song Bonsang",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Blackpink",
+     "gko": "블랙핑크"
+    },
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    },
+    {
+     "name": "Hwasa",
+     "id": "a0977"
+    },
+    {
+     "name": "Itzy",
+     "gko": "있지"
+    },
+    {
+     "name": "IU",
+     "id": "a0207"
+    },
+    {
+     "name": "Mamamoo",
+     "gko": "마마무"
+    },
+    {
+     "name": "Noel",
+     "ext": true
+    },
+    {
+     "name": "Oh My Girl",
+     "gko": "오마이걸"
+    },
+    {
+     "name": "Red Velvet",
+     "gko": "레드벨벳"
+    },
+    {
+     "name": "Zico",
+     "id": "a0972"
+    }
+   ]
+  },
+  {
+   "ko": "Album Bonsang",
+   "en": "Album Bonsang",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Baekhyun",
+     "id": "a0372"
+    },
+    {
+     "name": "Blackpink",
+     "gko": "블랙핑크"
+    },
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    },
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    },
+    {
+     "name": "Got7",
+     "gko": "갓세븐"
+    },
+    {
+     "name": "NCT",
+     "ext": true
+    },
+    {
+     "name": "NCT 127",
+     "gko": "엔시티 127"
+    },
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    },
+    {
+     "name": "Tomorrow X Together",
+     "gko": "투모로우바이투게더"
+    },
+    {
+     "name": "Twice",
+     "gko": "트와이스"
+    }
+   ]
+  },
+  {
+   "ko": "Rookie Artist of the Year",
+   "en": "Rookie Artist of the Year",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Enhypen",
+     "gko": "엔하이픈"
+    },
+    {
+     "name": "Kim Ho-joong",
+     "ext": true
+    },
+    {
+     "name": "Treasure",
+     "gko": "트레저"
+    }
+   ]
+  }
+ ]
+}

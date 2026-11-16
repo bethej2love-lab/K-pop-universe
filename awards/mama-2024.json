@@ -1,0 +1,541 @@
+{
+ "id": "mama",
+ "edition": "2024",
+ "name": "마마 어워즈",
+ "nameEn": "Mnet Asian Music Awards",
+ "dates": [
+  "2024-11-21"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2024_MAMA_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Visa Artist of the Year",
+   "en": "Visa Artist of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    }
+   ]
+  },
+  {
+   "ko": "Visa Song of the Year",
+   "en": "Visa Song of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    }
+   ],
+   "work": "\"Supernova\""
+  },
+  {
+   "ko": "Visa Album of the Year",
+   "en": "Visa Album of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    }
+   ],
+   "work": "Seventeenth Heaven"
+  },
+  {
+   "ko": "Visa Fans' Choice of the Year",
+   "en": "Visa Fans' Choice of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Jimin",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Male Group",
+   "en": "Best Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Group",
+   "en": "Best Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    }
+   ]
+  },
+  {
+   "ko": "Best Male Artist",
+   "en": "Best Male Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jungkook",
+     "id": "a0189"
+    }
+   ]
+  },
+  {
+   "ko": "Best Dance Performance – Male Group",
+   "en": "Best Dance Performance – Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "TWS",
+     "gko": "투어스"
+    }
+   ],
+   "work": "\"Plot Twist\""
+  },
+  {
+   "ko": "Best Dance Performance – Female Group",
+   "en": "Best Dance Performance – Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    }
+   ],
+   "work": "\"Supernova\""
+  },
+  {
+   "ko": "Best Vocal Performance – Solo",
+   "en": "Best Vocal Performance – Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Bibi",
+     "id": "a1308"
+    }
+   ],
+   "work": "\"Bam Yang Gang\""
+  },
+  {
+   "ko": "Best Vocal Performance – Group",
+   "en": "Best Vocal Performance – Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "(G)I-dle",
+     "gko": "아이들"
+    }
+   ],
+   "work": "\"Fate\""
+  },
+  {
+   "ko": "Best Dance Performance – Male Solo",
+   "en": "Best Dance Performance – Male Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jungkook",
+     "id": "a0189"
+    }
+   ],
+   "work": "\"Standing Next to You\""
+  },
+  {
+   "ko": "Best Dance Performance – Female Solo",
+   "en": "Best Dance Performance – Female Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jennie",
+     "id": "a0204"
+    }
+   ],
+   "work": "\"You & Me\""
+  },
+  {
+   "ko": "Best New Male Artist",
+   "en": "Best New Male Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "TWS",
+     "gko": "투어스"
+    }
+   ]
+  },
+  {
+   "ko": "Best New Female Artist",
+   "en": "Best New Female Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Illit",
+     "gko": "아일릿"
+    }
+   ]
+  },
+  {
+   "ko": "Best OST",
+   "en": "Best OST",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Crush",
+     "ext": true
+    }
+   ],
+   "work": "\"Love You With All My Heart\""
+  },
+  {
+   "ko": "Best Band Performance",
+   "en": "Best Band Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "QWER",
+     "gko": "큐더블유이알"
+    }
+   ],
+   "work": "\"T.B.H\""
+  },
+  {
+   "ko": "Best Rap & Hip Hop Performance",
+   "en": "Best Rap & Hip Hop Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Zico",
+     "id": "a0972"
+    }
+   ],
+   "work": "\"Spot!\""
+  },
+  {
+   "ko": "Best Collaboration",
+   "en": "Best Collaboration",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Zico",
+     "id": "a0972"
+    }
+   ],
+   "work": "\"Spot!\""
+  },
+  {
+   "ko": "Best Music Video",
+   "en": "Best Music Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    }
+   ],
+   "work": "\"Armageddon\""
+  },
+  {
+   "ko": "Best Choreography",
+   "en": "Best Choreography",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    }
+   ],
+   "work": "\"Supernova\""
+  },
+  {
+   "ko": "Fans' Choice Top 10 – Male",
+   "en": "Fans' Choice Top 10 – Male",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Enhypen",
+     "gko": "엔하이픈"
+    },
+    {
+     "name": "Jimin",
+     "ext": true
+    },
+    {
+     "name": "Jungkook",
+     "id": "a0189"
+    },
+    {
+     "name": "NCT Dream",
+     "gko": "엔시티 드림"
+    },
+    {
+     "name": "RM",
+     "id": "a0183"
+    },
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    },
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    },
+    {
+     "name": "Tomorrow X Together",
+     "gko": "투모로우바이투게더"
+    },
+    {
+     "name": "V",
+     "id": "a0188"
+    },
+    {
+     "name": "Zerobaseone",
+     "gko": "제로베이스원"
+    }
+   ]
+  },
+  {
+   "ko": "Fans' Choice Top 10 – Female",
+   "en": "Fans' Choice Top 10 – Female",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "(G)I-dle",
+     "gko": "아이들"
+    },
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    },
+    {
+     "name": "Babymonster",
+     "gko": "베이비몬스터"
+    },
+    {
+     "name": "IU",
+     "id": "a0207"
+    },
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    },
+    {
+     "name": "Jennie",
+     "id": "a0204"
+    },
+    {
+     "name": "Lee Young-ji",
+     "id": "a1038"
+    },
+    {
+     "name": "NewJeans",
+     "gko": "뉴진스"
+    },
+    {
+     "name": "Twice",
+     "gko": "트와이스"
+    },
+    {
+     "name": "Unis",
+     "gko": "유니스"
+    }
+   ]
+  },
+  {
+   "ko": "Favorite Rising Artist",
+   "en": "Favorite Rising Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Meovv",
+     "gko": "미야오"
+    }
+   ]
+  },
+  {
+   "ko": "Favorite New Asian Artist",
+   "en": "Favorite New Asian Artist",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Me:I",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Favorite Male Group",
+   "en": "Favorite Male Group",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Treasure",
+     "gko": "트레저"
+    }
+   ]
+  },
+  {
+   "ko": "Favorite Dance Performance – Male Group",
+   "en": "Favorite Dance Performance – Male Group",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "BoyNextDoor",
+     "gko": "보이넥스트도어"
+    }
+   ]
+  },
+  {
+   "ko": "Favorite Global Performer – Male",
+   "en": "Favorite Global Performer – Male",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Riize",
+     "gko": "라이즈"
+    }
+   ]
+  },
+  {
+   "ko": "Favorite Global Performer – Female",
+   "en": "Favorite Global Performer – Female",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    }
+   ]
+  },
+  {
+   "ko": "Favorite Asian Artist",
+   "en": "Favorite Asian Artist",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "INI",
+     "id": "a0865"
+    }
+   ]
+  },
+  {
+   "ko": "Favorite Global Trending Music",
+   "en": "Favorite Global Trending Music",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Byeon Woo-seok",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Inspiring Achievement",
+   "en": "Inspiring Achievement",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "J. Y. Park",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Music Visionary of the Year",
+   "en": "Music Visionary of the Year",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "G-Dragon",
+     "id": "a0199"
+    }
+   ]
+  },
+  {
+   "ko": "CJ Global Performance",
+   "en": "CJ Global Performance",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    },
+    {
+     "name": "Zerobaseone",
+     "gko": "제로베이스원"
+    }
+   ]
+  },
+  {
+   "ko": "Global Sensation",
+   "en": "Global Sensation",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Bruno Mars",
+     "ext": true
+    },
+    {
+     "name": "Rosé",
+     "id": "a0205"
+    }
+   ]
+  },
+  {
+   "ko": "Olive Young K-Beauty Star in Music",
+   "en": "Olive Young K-Beauty Star in Music",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Lee Young-ji",
+     "id": "a1038"
+    }
+   ]
+  },
+  {
+   "ko": "PontaPass Global Favorite Artist",
+   "en": "PontaPass Global Favorite Artist",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Tomorrow X Together",
+     "gko": "투모로우바이투게더"
+    }
+   ]
+  },
+  {
+   "ko": "Worldwide KCONER's Choice",
+   "en": "Worldwide KCONER's Choice",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Zerobaseone",
+     "gko": "제로베이스원"
+    }
+   ]
+  },
+  {
+   "ko": "Visa Super Stage",
+   "en": "Visa Super Stage",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    }
+   ]
+  }
+ ]
+}

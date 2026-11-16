@@ -1,0 +1,238 @@
+{
+ "id": "gaon",
+ "edition": "2021",
+ "name": "써클차트 뮤직어워즈",
+ "nameEn": "Circle Chart Music Awards",
+ "dates": [
+  "2022-01-27"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/11th_Gaon_Chart_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Artist of the Year – Digital Music",
+   "en": "Artist of the Year – Digital Music",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Taeyeon",
+     "id": "a0166"
+    }
+   ],
+   "work": "\"What Do I Call You\""
+  },
+  {
+   "ko": "December 2020",
+   "en": "December 2020",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "IU",
+     "id": "a0207"
+    }
+   ],
+   "work": "\"Celebrity\""
+  },
+  {
+   "ko": "February 2021",
+   "en": "February 2021",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Shinee",
+     "gko": "샤이니"
+    }
+   ],
+   "work": "\"Don't Call Me\""
+  },
+  {
+   "ko": "March 2021",
+   "en": "March 2021",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "IU",
+     "id": "a0207"
+    }
+   ],
+   "work": "\"Lilac\""
+  },
+  {
+   "ko": "April 2021",
+   "en": "April 2021",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Kang Daniel",
+     "id": "a0325"
+    }
+   ],
+   "work": "\"Antidote\""
+  },
+  {
+   "ko": "May 2021",
+   "en": "May 2021",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "\"Butter\""
+  },
+  {
+   "ko": "June 2021",
+   "en": "June 2021",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Brave Girls",
+     "gko": "브브걸"
+    }
+   ],
+   "work": "\"Chi Mat Ba Ram\""
+  },
+  {
+   "ko": "July 2021",
+   "en": "July 2021",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "\"Permission to Dance\""
+  },
+  {
+   "ko": "August 2021",
+   "en": "August 2021",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Red Velvet",
+     "gko": "레드벨벳"
+    }
+   ],
+   "work": "\"Queendom\""
+  },
+  {
+   "ko": "September 2021",
+   "en": "September 2021",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Coldplay",
+     "ext": true
+    },
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "\"My Universe\""
+  },
+  {
+   "ko": "October 2021",
+   "en": "October 2021",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "IU",
+     "id": "a0207"
+    }
+   ],
+   "work": "\"Strawberry Moon\""
+  },
+  {
+   "ko": "November 2021",
+   "en": "November 2021",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Twice",
+     "gko": "트와이스"
+    }
+   ],
+   "work": "\"Scientist\""
+  },
+  {
+   "ko": "Artist of the Year – Physical Album",
+   "en": "Artist of the Year – Physical Album",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Iz*One",
+     "gko": "아이즈원"
+    }
+   ],
+   "work": "One-reeler / Act IV"
+  },
+  {
+   "ko": "1st Quarter",
+   "en": "1st Quarter",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "NCT Dream",
+     "gko": "엔시티 드림"
+    }
+   ],
+   "work": "Hot Sauce"
+  },
+  {
+   "ko": "3rd Quarter",
+   "en": "3rd Quarter",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "Butter"
+  },
+  {
+   "ko": "4th Quarter",
+   "en": "4th Quarter",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "NCT 127",
+     "gko": "엔시티 127"
+    }
+   ],
+   "work": "Sticker"
+  },
+  {
+   "ko": "New Artist of the Year",
+   "en": "New Artist of the Year",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Lee Mu-jin",
+     "ext": true
+    }
+   ],
+   "work": "\"Scent of the Day\""
+  },
+  {
+   "ko": "Digital Music",
+   "en": "Digital Music",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lee Chan-won",
+     "ext": true
+    }
+   ],
+   "work": "Gift"
+  }
+ ]
+}

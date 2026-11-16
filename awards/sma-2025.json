@@ -1,0 +1,343 @@
+{
+ "id": "sma",
+ "edition": "2025",
+ "name": "서울가요대상",
+ "nameEn": "Seoul Music Awards",
+ "dates": [
+  "2025-06-21"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/34th_Seoul_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Grand Prize",
+   "en": "Grand Prize",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "I-dle",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Main Prize",
+   "en": "Main Prize",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    },
+    {
+     "name": "Doyoung",
+     "ext": true
+    },
+    {
+     "name": "Enhypen",
+     "gko": "엔하이픈"
+    },
+    {
+     "name": "G-Dragon",
+     "id": "a0199"
+    },
+    {
+     "name": "I-dle",
+     "ext": true
+    },
+    {
+     "name": "Illit",
+     "gko": "아일릿"
+    },
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    },
+    {
+     "name": "NCT Dream",
+     "gko": "엔시티 드림"
+    },
+    {
+     "name": "NCT Wish",
+     "gko": "엔시티 위시"
+    },
+    {
+     "name": "P1Harmony",
+     "gko": "피원하모니"
+    },
+    {
+     "name": "Plave",
+     "gko": "플레이브"
+    },
+    {
+     "name": "QWER",
+     "gko": "큐더블유이알"
+    },
+    {
+     "name": "Rosé",
+     "id": "a0205"
+    },
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    },
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    },
+    {
+     "name": "Tomorrow X Together",
+     "gko": "투모로우바이투게더"
+    },
+    {
+     "name": "Young Tak",
+     "ext": true
+    },
+    {
+     "name": "Zerobaseone",
+     "gko": "제로베이스원"
+    }
+   ]
+  },
+  {
+   "ko": "Rookie of the Year",
+   "en": "Rookie of the Year",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Hearts2Hearts",
+     "gko": "하츠투하츠"
+    },
+    {
+     "name": "KickFlip",
+     "gko": "킥플립"
+    },
+    {
+     "name": "KiiiKiii",
+     "gko": "키키"
+    }
+   ]
+  },
+  {
+   "ko": "Best Song Award",
+   "en": "Best Song Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Tomorrow X Together",
+     "gko": "투모로우바이투게더"
+    }
+   ],
+   "work": "\"Deja Vu\""
+  },
+  {
+   "ko": "Best Album Award",
+   "en": "Best Album Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Tomorrow X Together",
+     "gko": "투모로우바이투게더"
+    },
+    {
+     "name": "Zerobaseone",
+     "gko": "제로베이스원"
+    }
+   ]
+  },
+  {
+   "ko": "Ballad Award",
+   "en": "Ballad Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Hwang Karam",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "R&B/ Hip-hop Award",
+   "en": "R&B/ Hip-hop Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "RM",
+     "id": "a0183"
+    }
+   ]
+  },
+  {
+   "ko": "OST Award",
+   "en": "OST Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Young Tak",
+     "ext": true
+    }
+   ],
+   "work": "\"Unpredictable Life\""
+  },
+  {
+   "ko": "Trot Award",
+   "en": "Trot Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Young Tak",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Rising Star Award",
+   "en": "Rising Star Award",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "VVUP",
+     "gko": "비비업"
+    }
+   ]
+  },
+  {
+   "ko": "Popularity Award",
+   "en": "Popularity Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Lee Chan-won",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "K-Wave Special Award",
+   "en": "K-Wave Special Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Jimin",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "K-pop World Choice – Group",
+   "en": "K-pop World Choice – Group",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Babymonster",
+     "gko": "베이비몬스터"
+    }
+   ]
+  },
+  {
+   "ko": "K-pop World Choice – Solo",
+   "en": "K-pop World Choice – Solo",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Young Tak",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Group Award",
+   "en": "Best Group Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Illit",
+     "gko": "아일릿"
+    },
+    {
+     "name": "NCT Wish",
+     "gko": "엔시티 위시"
+    }
+   ]
+  },
+  {
+   "ko": "Best Performance Award",
+   "en": "Best Performance Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Cravity",
+     "gko": "크래비티"
+    },
+    {
+     "name": "Fifty Fifty",
+     "gko": "피프티피프티"
+    }
+   ]
+  },
+  {
+   "ko": "Best Solo Award",
+   "en": "Best Solo Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Doyoung",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Band Award",
+   "en": "Band Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Wave to Earth",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "K-pop Special Award",
+   "en": "K-pop Special Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "BtoB",
+     "gko": "비투비"
+    }
+   ]
+  },
+  {
+   "ko": "Discovery of the Year",
+   "en": "Discovery of the Year",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Say My Name",
+     "gko": "세이마이네임"
+    }
+   ]
+  },
+  {
+   "ko": "World Best Artist",
+   "en": "World Best Artist",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    },
+    {
+     "name": "Rosé",
+     "id": "a0205"
+    }
+   ]
+  }
+ ]
+}

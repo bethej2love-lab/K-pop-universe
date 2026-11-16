@@ -1,0 +1,266 @@
+{
+ "id": "mama",
+ "edition": "2012",
+ "name": "마마 어워즈",
+ "nameEn": "Mnet Asian Music Awards",
+ "dates": [
+  "2012-11-30"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2012_Mnet_Asian_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Song of the Year",
+   "en": "Song of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Psy",
+     "id": "a1041"
+    }
+   ],
+   "work": "\"Gangnam Style\""
+  },
+  {
+   "ko": "Artist of the Year",
+   "en": "Artist of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BigBang",
+     "gko": "빅뱅"
+    }
+   ]
+  },
+  {
+   "ko": "Album of the Year",
+   "en": "Album of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Super Junior",
+     "gko": "슈퍼주니어"
+    }
+   ],
+   "work": "Sexy, Free & Single"
+  },
+  {
+   "ko": "Best Music Video",
+   "en": "Best Music Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Psy",
+     "id": "a1041"
+    }
+   ],
+   "work": "\"Gangnam Style\""
+  },
+  {
+   "ko": "Best Male Artist",
+   "en": "Best Male Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "G-Dragon",
+     "id": "a0199"
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Artist",
+   "en": "Best Female Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "IU",
+     "id": "a0207"
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Group",
+   "en": "Best Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Sistar",
+     "gko": "씨스타"
+    }
+   ]
+  },
+  {
+   "ko": "Best Dance Performance – Male Group",
+   "en": "Best Dance Performance – Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "SHINee",
+     "gko": "샤이니"
+    }
+   ],
+   "work": "\"Sherlock\""
+  },
+  {
+   "ko": "Best Dance Performance – Female Group",
+   "en": "Best Dance Performance – Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "f(x)",
+     "gko": "에프엑스"
+    }
+   ],
+   "work": "\"Electric Shock\""
+  },
+  {
+   "ko": "Best Dance Performance – Solo",
+   "en": "Best Dance Performance – Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Psy",
+     "id": "a1041"
+    }
+   ],
+   "work": "\"Gangnam Style\""
+  },
+  {
+   "ko": "Best Band Performance",
+   "en": "Best Band Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Busker Busker",
+     "ext": true
+    }
+   ],
+   "work": "\"Cherry Blossom Ending\""
+  },
+  {
+   "ko": "Best Vocal Performance – Group",
+   "en": "Best Vocal Performance – Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Davichi",
+     "ext": true
+    }
+   ],
+   "work": "\"Will Think Of You\""
+  },
+  {
+   "ko": "Best Vocal Performance – Solo",
+   "en": "Best Vocal Performance – Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "K.Will",
+     "ext": true
+    }
+   ],
+   "work": "\"I Need You\""
+  },
+  {
+   "ko": "Best OST",
+   "en": "Best OST",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Seo In-guk",
+     "ext": true
+    },
+    {
+     "name": "Jung Eun-ji",
+     "id": "a0996"
+    }
+   ],
+   "work": "\"All For You\" (Reply 1997)"
+  },
+  {
+   "ko": "Best Rap Performance",
+   "en": "Best Rap Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Epik High",
+     "ext": true
+    }
+   ],
+   "work": "\"Up\""
+  },
+  {
+   "ko": "Best New Male Artist",
+   "en": "Best New Male Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Busker Busker",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best New Female Artist",
+   "en": "Best New Female Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Ailee",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "International Favorite Artist",
+   "en": "International Favorite Artist",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Psy",
+     "id": "a1041"
+    }
+   ],
+   "work": "\"Gangnam Style\""
+  },
+  {
+   "ko": "Best Collaboration Performance",
+   "en": "Best Collaboration Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Trouble Maker",
+     "ext": true
+    }
+   ],
+   "work": "\"Trouble Maker\""
+  },
+  {
+   "ko": "Best Global Group – Female",
+   "en": "Best Global Group – Female",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Kara",
+     "gko": "카라"
+    }
+   ]
+  },
+  {
+   "ko": "Best Global Group – Male",
+   "en": "Best Global Group – Male",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Super Junior",
+     "gko": "슈퍼주니어"
+    }
+   ]
+  }
+ ]
+}

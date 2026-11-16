@@ -1,0 +1,207 @@
+{
+ "id": "mma",
+ "edition": "2010",
+ "name": "멜론뮤직어워드",
+ "nameEn": "Melon Music Awards",
+ "dates": [
+  "2010-12-16"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2010_Melon_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Top 10 Artist",
+   "en": "Top 10 Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "2NE1",
+     "gko": "투애니원"
+    },
+    {
+     "name": "CNBLUE",
+     "gko": "씨엔블루"
+    },
+    {
+     "name": "DJ DOC",
+     "ext": true
+    },
+    {
+     "name": "4Men",
+     "ext": true
+    },
+    {
+     "name": "Girls' Generation",
+     "gko": "소녀시대"
+    },
+    {
+     "name": "IU",
+     "id": "a0207"
+    },
+    {
+     "name": "2AM",
+     "gko": "2AM"
+    },
+    {
+     "name": "Lee Seung-gi",
+     "ext": true
+    },
+    {
+     "name": "T-ara",
+     "gko": "티아라"
+    },
+    {
+     "name": "2PM",
+     "gko": "2PM"
+    }
+   ]
+  },
+  {
+   "ko": "Album of the Year",
+   "en": "Album of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "2NE1",
+     "gko": "투애니원"
+    }
+   ],
+   "work": "To Anyone"
+  },
+  {
+   "ko": "Artist of the Year",
+   "en": "Artist of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Girls' Generation",
+     "gko": "소녀시대"
+    }
+   ]
+  },
+  {
+   "ko": "Song of the Year",
+   "en": "Song of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "2AM",
+     "gko": "2AM"
+    }
+   ],
+   "work": "\"Can't Let You Go Even If I Die\""
+  },
+  {
+   "ko": "Best New Artist",
+   "en": "Best New Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "CNBLUE",
+     "gko": "씨엔블루"
+    }
+   ]
+  },
+  {
+   "ko": "Best Music Video",
+   "en": "Best Music Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Gain",
+     "id": "a0981"
+    }
+   ],
+   "work": "\"Irreversible\" (Dir. Hwang Soo-ah)"
+  },
+  {
+   "ko": "Best Rap/Hip Hop Award",
+   "en": "Best Rap/Hip Hop Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Supreme Team",
+     "ext": true
+    }
+   ],
+   "work": "\"Dang Dang Dang\""
+  },
+  {
+   "ko": "Best Alternative Rock Award",
+   "en": "Best Alternative Rock Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Hot Potato",
+     "ext": true
+    }
+   ],
+   "work": "\"Confession (고백)\""
+  },
+  {
+   "ko": "Best Ballad Award",
+   "en": "Best Ballad Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Gummy",
+     "ext": true
+    }
+   ],
+   "work": "\"Like a Man\" (남자라서)"
+  },
+  {
+   "ko": "Best Trot Award",
+   "en": "Best Trot Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jang Yoon-jeong",
+     "ext": true
+    }
+   ],
+   "work": "\"Come On\""
+  },
+  {
+   "ko": "Best OST Award",
+   "en": "Best OST Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lee Seung-gi",
+     "ext": true
+    }
+   ],
+   "work": "\"Losing My Mind\" (My Girlfriend Is a Gumiho)"
+  },
+  {
+   "ko": "Netizen Popularity Award",
+   "en": "Netizen Popularity Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Super Junior",
+     "gko": "슈퍼주니어"
+    }
+   ],
+   "work": "\"Bonamana\""
+  },
+  {
+   "ko": "Hot Trend Award",
+   "en": "Hot Trend Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Girls' Generation",
+     "gko": "소녀시대"
+    }
+   ],
+   "work": "\"Hoot\""
+  }
+ ]
+}

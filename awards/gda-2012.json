@@ -1,0 +1,220 @@
+{
+ "id": "gda",
+ "edition": "2012",
+ "name": "골든디스크어워즈",
+ "nameEn": "Golden Disc Awards",
+ "dates": [
+  "2013-01-15"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/27th_Golden_Disc_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Digital Daesang (Song of the Year)",
+   "en": "Digital Daesang (Song of the Year)",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Psy",
+     "id": "a1041"
+    }
+   ],
+   "work": "\"Gangnam Style\""
+  },
+  {
+   "ko": "Disc Daesang (Album of the Year)",
+   "en": "Disc Daesang (Album of the Year)",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Super Junior",
+     "gko": "슈퍼주니어"
+    }
+   ],
+   "work": "Sexy, Free & Single"
+  },
+  {
+   "ko": "Digital Song Bonsang",
+   "en": "Digital Song Bonsang",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "2NE1",
+     "gko": "투애니원"
+    },
+    {
+     "name": "Big Bang",
+     "gko": "빅뱅"
+    },
+    {
+     "name": "f(x)",
+     "gko": "에프엑스"
+    },
+    {
+     "name": "G-Dragon",
+     "id": "a0199"
+    },
+    {
+     "name": "Huh Gak",
+     "ext": true
+    },
+    {
+     "name": "K.Will",
+     "ext": true
+    },
+    {
+     "name": "Miss A",
+     "gko": "미쓰에이"
+    },
+    {
+     "name": "Psy",
+     "id": "a1041"
+    },
+    {
+     "name": "Secret",
+     "gko": "시크릿"
+    },
+    {
+     "name": "Sistar",
+     "gko": "씨스타"
+    },
+    {
+     "name": "T-ara",
+     "gko": "티아라"
+    }
+   ]
+  },
+  {
+   "ko": "Album Bonsang",
+   "en": "Album Bonsang",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "4Minute",
+     "gko": "포미닛"
+    },
+    {
+     "name": "B1A4",
+     "gko": "비원에이포"
+    },
+    {
+     "name": "Beast",
+     "gko": "하이라이트"
+    },
+    {
+     "name": "CNBLUE",
+     "gko": "씨엔블루"
+    },
+    {
+     "name": "F.T. Island",
+     "gko": "에프티아일랜드"
+    },
+    {
+     "name": "Infinite",
+     "gko": "인피니트"
+    },
+    {
+     "name": "Kara",
+     "gko": "카라"
+    },
+    {
+     "name": "Shinee",
+     "gko": "샤이니"
+    },
+    {
+     "name": "Super Junior",
+     "gko": "슈퍼주니어"
+    }
+   ]
+  },
+  {
+   "ko": "Rookie Artist of the Year",
+   "en": "Rookie Artist of the Year",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Ailee",
+     "ext": true
+    },
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    },
+    {
+     "name": "Juniel",
+     "ext": true
+    },
+    {
+     "name": "Lee Hi",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Popularity Award",
+   "en": "Popularity Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Shinee",
+     "gko": "샤이니"
+    },
+    {
+     "name": "G-Dragon",
+     "id": "a0199"
+    }
+   ]
+  },
+  {
+   "ko": "Best Hip-Hop Award",
+   "en": "Best Hip-Hop Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Epik High",
+     "ext": true
+    }
+   ],
+   "work": "\"Up\" (feat. Park Bom)"
+  },
+  {
+   "ko": "Single Album Award",
+   "en": "Single Album Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Teen Top",
+     "gko": "틴탑"
+    }
+   ],
+   "work": "It's"
+  },
+  {
+   "ko": "Best Dance Performance",
+   "en": "Best Dance Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Trouble Maker",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Group Performance",
+   "en": "Best Group Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Infinite",
+     "gko": "인피니트"
+    }
+   ]
+  }
+ ]
+}

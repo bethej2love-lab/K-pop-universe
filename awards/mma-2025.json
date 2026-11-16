@@ -1,0 +1,427 @@
+{
+ "id": "mma",
+ "edition": "2025",
+ "name": "멜론뮤직어워드",
+ "nameEn": "Melon Music Awards",
+ "dates": [
+  "2025-12-20"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2025_Melon_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Album of the Year",
+   "en": "Album of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "G-Dragon",
+     "id": "a0199"
+    }
+   ],
+   "work": "Übermensch"
+  },
+  {
+   "ko": "Artist of the Year",
+   "en": "Artist of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "G-Dragon",
+     "id": "a0199"
+    }
+   ]
+  },
+  {
+   "ko": "Song of the Year",
+   "en": "Song of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "G-Dragon",
+     "id": "a0199"
+    }
+   ],
+   "work": "\"Home Sweet Home\""
+  },
+  {
+   "ko": "Record of the Year",
+   "en": "Record of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Jennie",
+     "id": "a0204"
+    }
+   ]
+  },
+  {
+   "ko": "Top 10 Artists",
+   "en": "Top 10 Artists",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    },
+    {
+     "name": "BoyNextDoor",
+     "gko": "보이넥스트도어"
+    },
+    {
+     "name": "G-Dragon",
+     "id": "a0199"
+    },
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    },
+    {
+     "name": "Jennie",
+     "id": "a0204"
+    },
+    {
+     "name": "Lim Young-woong",
+     "ext": true
+    },
+    {
+     "name": "NCT Wish",
+     "gko": "엔시티 위시"
+    },
+    {
+     "name": "Plave",
+     "gko": "플레이브"
+    },
+    {
+     "name": "Riize",
+     "gko": "라이즈"
+    },
+    {
+     "name": "Rosé",
+     "id": "a0205"
+    }
+   ]
+  },
+  {
+   "ko": "Millions Top 10",
+   "en": "Millions Top 10",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "BoyNextDoor",
+     "gko": "보이넥스트도어"
+    },
+    {
+     "name": "G-Dragon",
+     "id": "a0199"
+    },
+    {
+     "name": "IU",
+     "id": "a0207"
+    },
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    },
+    {
+     "name": "Jennie",
+     "id": "a0204"
+    },
+    {
+     "name": "Lim Young-woong",
+     "ext": true
+    },
+    {
+     "name": "Plave",
+     "gko": "플레이브"
+    },
+    {
+     "name": "Riize",
+     "gko": "라이즈"
+    },
+    {
+     "name": "Rosé",
+     "id": "a0205"
+    },
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    }
+   ]
+  },
+  {
+   "ko": "Best Male Solo",
+   "en": "Best Male Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "G-Dragon",
+     "id": "a0199"
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Solo",
+   "en": "Best Female Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Rosé",
+     "id": "a0205"
+    }
+   ]
+  },
+  {
+   "ko": "Best Male Group",
+   "en": "Best Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "BoyNextDoor",
+     "gko": "보이넥스트도어"
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Group",
+   "en": "Best Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    }
+   ]
+  },
+  {
+   "ko": "New Artist of the Year",
+   "en": "New Artist of the Year",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "AllDay Project",
+     "gko": "올데이프로젝트"
+    },
+    {
+     "name": "Hearts2Hearts",
+     "gko": "하츠투하츠"
+    }
+   ]
+  },
+  {
+   "ko": "Best Pop Artist",
+   "en": "Best Pop Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Ed Sheeran",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best OST",
+   "en": "Best OST",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Huntrix",
+     "ext": true
+    }
+   ],
+   "work": "\"Golden\""
+  },
+  {
+   "ko": "Track Zero Choice",
+   "en": "Track Zero Choice",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Hanroro",
+     "ext": true
+    }
+   ],
+   "work": "\"Goodbye, My Summer\""
+  },
+  {
+   "ko": "Berriz Global Fan's Choice",
+   "en": "Berriz Global Fan's Choice",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Hearts2Hearts",
+     "gko": "하츠투하츠"
+    }
+   ]
+  },
+  {
+   "ko": "Kakao Bank Everyone's Star",
+   "en": "Kakao Bank Everyone's Star",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "NCT Wish",
+     "gko": "엔시티 위시"
+    }
+   ]
+  },
+  {
+   "ko": "Japan Favorite Artist by U-Next",
+   "en": "Japan Favorite Artist by U-Next",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "BoyNextDoor",
+     "gko": "보이넥스트도어"
+    }
+   ]
+  },
+  {
+   "ko": "Best Music Style",
+   "en": "Best Music Style",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "10cm",
+     "ext": true
+    },
+    {
+     "name": "AllDay Project",
+     "gko": "올데이프로젝트"
+    }
+   ]
+  },
+  {
+   "ko": "Best Music Video",
+   "en": "Best Music Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "KiiiKiii",
+     "gko": "키키"
+    }
+   ],
+   "work": "\"I Do Me\""
+  },
+  {
+   "ko": "Best Performance – Female",
+   "en": "Best Performance – Female",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Illit",
+     "gko": "아일릿"
+    }
+   ]
+  },
+  {
+   "ko": "Best Performance – Male",
+   "en": "Best Performance – Male",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Riize",
+     "gko": "라이즈"
+    }
+   ]
+  },
+  {
+   "ko": "Best Producer",
+   "en": "Best Producer",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Zico",
+     "id": "a0972"
+    },
+    {
+     "name": "KOZ Entertainment",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Songwriter",
+   "en": "Best Songwriter",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "G-Dragon",
+     "id": "a0199"
+    }
+   ]
+  },
+  {
+   "ko": "1theK Global Icon",
+   "en": "1theK Global Icon",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "KiiiKiii",
+     "gko": "키키"
+    }
+   ]
+  },
+  {
+   "ko": "Hot Trend",
+   "en": "Hot Trend",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Woodz",
+     "id": "a0609"
+    }
+   ]
+  },
+  {
+   "ko": "Global Artist",
+   "en": "Global Artist",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    }
+   ]
+  },
+  {
+   "ko": "Global Rising Artist",
+   "en": "Global Rising Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Idid",
+     "gko": "아이딧"
+    }
+   ]
+  },
+  {
+   "ko": "J-Pop Favorite Artist",
+   "en": "J-Pop Favorite Artist",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Kenshi Yonezu",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Stage of the Year",
+   "en": "Stage of the Year",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    }
+   ],
+   "work": "Synk: Aexis Line"
+  }
+ ]
+}

@@ -1,0 +1,300 @@
+{
+ "id": "gda",
+ "edition": "2024",
+ "name": "골든디스크어워즈",
+ "nameEn": "Golden Disc Awards",
+ "dates": [
+  "2025-01-04"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/39th_Golden_Disc_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Digital Daesang (Song of the Year)",
+   "en": "Digital Daesang (Song of the Year)",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    }
+   ],
+   "work": "\"Supernova\""
+  },
+  {
+   "ko": "Album Daesang (Album of the Year)",
+   "en": "Album Daesang (Album of the Year)",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    }
+   ],
+   "work": "Spill the Feels"
+  },
+  {
+   "ko": "Digital Song Bonsang",
+   "en": "Digital Song Bonsang",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "(G)I-dle",
+     "gko": "아이들"
+    },
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    },
+    {
+     "name": "Bibi",
+     "id": "a1308"
+    },
+    {
+     "name": "Day6",
+     "gko": "데이식스"
+    },
+    {
+     "name": "Illit",
+     "gko": "아일릿"
+    },
+    {
+     "name": "IU",
+     "id": "a0207"
+    },
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    },
+    {
+     "name": "NewJeans",
+     "gko": "뉴진스"
+    },
+    {
+     "name": "Taeyeon",
+     "id": "a0166"
+    },
+    {
+     "name": "TWS",
+     "gko": "투어스"
+    }
+   ]
+  },
+  {
+   "ko": "Album Bonsang",
+   "en": "Album Bonsang",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "(G)I-dle",
+     "gko": "아이들"
+    },
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    },
+    {
+     "name": "Ateez",
+     "gko": "에이티즈"
+    },
+    {
+     "name": "Enhypen",
+     "gko": "엔하이픈"
+    },
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    },
+    {
+     "name": "NCT Dream",
+     "gko": "엔시티 드림"
+    },
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    },
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    },
+    {
+     "name": "Tomorrow X Together",
+     "gko": "투모로우바이투게더"
+    },
+    {
+     "name": "Zerobaseone",
+     "gko": "제로베이스원"
+    }
+   ]
+  },
+  {
+   "ko": "Rookie Artist of the Year",
+   "en": "Rookie Artist of the Year",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "BabyMonster",
+     "gko": "베이비몬스터"
+    },
+    {
+     "name": "Illit",
+     "gko": "아일릿"
+    },
+    {
+     "name": "NCT Wish",
+     "gko": "엔시티 위시"
+    },
+    {
+     "name": "TWS",
+     "gko": "투어스"
+    }
+   ]
+  },
+  {
+   "ko": "Most Popular Artist – Female",
+   "en": "Most Popular Artist – Female",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Le Sserafim",
+     "gko": "르세라핌"
+    }
+   ]
+  },
+  {
+   "ko": "Most Popular Artist – Male",
+   "en": "Most Popular Artist – Male",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Plave",
+     "gko": "플레이브"
+    }
+   ]
+  },
+  {
+   "ko": "Best Band",
+   "en": "Best Band",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Day6",
+     "gko": "데이식스"
+    }
+   ]
+  },
+  {
+   "ko": "Best Group",
+   "en": "Best Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Le Sserafim",
+     "gko": "르세라핌"
+    }
+   ]
+  },
+  {
+   "ko": "Best OST",
+   "en": "Best OST",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Crush",
+     "ext": true
+    }
+   ],
+   "work": "\"Love You with All My Heart\""
+  },
+  {
+   "ko": "Best Producer",
+   "en": "Best Producer",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Pledis Entertainment",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Solo",
+   "en": "Best Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Yuqi",
+     "id": "a0118"
+    }
+   ]
+  },
+  {
+   "ko": "Cosmopolitan Artist of the Year",
+   "en": "Cosmopolitan Artist of the Year",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "NewJeans",
+     "gko": "뉴진스"
+    }
+   ]
+  },
+  {
+   "ko": "Fans' Choice with Nongshim Shin Ramyun",
+   "en": "Fans' Choice with Nongshim Shin Ramyun",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Enhypen",
+     "gko": "엔하이픈"
+    }
+   ]
+  },
+  {
+   "ko": "Global K-pop Artist",
+   "en": "Global K-pop Artist",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Enhypen",
+     "gko": "엔하이픈"
+    },
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    }
+   ]
+  },
+  {
+   "ko": "Golden Honorable Choice",
+   "en": "Golden Honorable Choice",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Shin Hae-chul",
+     "ext": true
+    },
+    {
+     "name": "posthumous award",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Next Generation",
+   "en": "Next Generation",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Kiss of Life",
+     "gko": "키스오브라이프"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,231 @@
+{
+ "id": "mama",
+ "edition": "2015",
+ "name": "마마 어워즈",
+ "nameEn": "Mnet Asian Music Awards",
+ "dates": [
+  "2015-12-02"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2015_Mnet_Asian_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Artist of the Year",
+   "en": "Artist of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Big Bang",
+     "gko": "빅뱅"
+    }
+   ]
+  },
+  {
+   "ko": "Album of the Year",
+   "en": "Album of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    }
+   ],
+   "work": "Exodus"
+  },
+  {
+   "ko": "Song of the Year",
+   "en": "Song of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Big Bang",
+     "gko": "빅뱅"
+    }
+   ],
+   "work": "\"Bang Bang Bang\""
+  },
+  {
+   "ko": "Best Music Video",
+   "en": "Best Music Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Big Bang",
+     "gko": "빅뱅"
+    }
+   ],
+   "work": "\"Bae Bae\""
+  },
+  {
+   "ko": "Best Male Artist",
+   "en": "Best Male Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Park Jin-young",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Artist",
+   "en": "Best Female Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Taeyeon",
+     "id": "a0166"
+    }
+   ]
+  },
+  {
+   "ko": "Best Male Group",
+   "en": "Best Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Group",
+   "en": "Best Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Girls' Generation",
+     "gko": "소녀시대"
+    }
+   ]
+  },
+  {
+   "ko": "Best Dance Performance – Male Group",
+   "en": "Best Dance Performance – Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Shinee",
+     "gko": "샤이니"
+    }
+   ],
+   "work": "\"View\""
+  },
+  {
+   "ko": "Best Dance Performance – Female Group",
+   "en": "Best Dance Performance – Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Red Velvet",
+     "gko": "레드벨벳"
+    }
+   ],
+   "work": "\"Ice Cream Cake\""
+  },
+  {
+   "ko": "Best Dance Performance – Solo",
+   "en": "Best Dance Performance – Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Hyuna",
+     "ext": true
+    }
+   ],
+   "work": "\"Roll Deep\""
+  },
+  {
+   "ko": "Best Collaboration and Unit",
+   "en": "Best Collaboration and Unit",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Zion.T",
+     "ext": true
+    },
+    {
+     "name": "Crush",
+     "ext": true
+    }
+   ],
+   "work": "\"Just\""
+  },
+  {
+   "ko": "Best Vocal Performance – Male",
+   "en": "Best Vocal Performance – Male",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Zion.T",
+     "ext": true
+    }
+   ],
+   "work": "\"Eat\""
+  },
+  {
+   "ko": "Best Vocal Performance – Female",
+   "en": "Best Vocal Performance – Female",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Ailee",
+     "ext": true
+    }
+   ],
+   "work": "\"Mind Your Own Business\""
+  },
+  {
+   "ko": "Best Band Performance",
+   "en": "Best Band Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "CNBLUE",
+     "gko": "씨엔블루"
+    }
+   ],
+   "work": "\"Cinderella\""
+  },
+  {
+   "ko": "Best Rap Performance",
+   "en": "Best Rap Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "San E",
+     "ext": true
+    }
+   ],
+   "work": "\"Me You\" (ft. Baek Ye-rin)"
+  },
+  {
+   "ko": "Best New Artist – Male",
+   "en": "Best New Artist – Male",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "iKon",
+     "gko": "아이콘"
+    }
+   ]
+  },
+  {
+   "ko": "Best New Artist – Female",
+   "en": "Best New Artist – Female",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Twice",
+     "gko": "트와이스"
+    }
+   ]
+  }
+ ]
+}

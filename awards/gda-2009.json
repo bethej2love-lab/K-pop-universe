@@ -1,0 +1,150 @@
+{
+ "id": "gda",
+ "edition": "2009",
+ "name": "골든디스크어워즈",
+ "nameEn": "Golden Disc Awards",
+ "dates": [
+  "2009-12-10"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/24th_Golden_Disc_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Digital Daesang (Song of the Year)",
+   "en": "Digital Daesang (Song of the Year)",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Girls' Generation",
+     "gko": "소녀시대"
+    }
+   ],
+   "work": "\"Gee\""
+  },
+  {
+   "ko": "Disc Daesang (Album of the Year)",
+   "en": "Disc Daesang (Album of the Year)",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Super Junior",
+     "gko": "슈퍼주니어"
+    }
+   ],
+   "work": "Sorry, Sorry"
+  },
+  {
+   "ko": "Digital Song Bonsang",
+   "en": "Digital Song Bonsang",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Baek Ji-young",
+     "ext": true
+    },
+    {
+     "name": "Davichi",
+     "ext": true
+    },
+    {
+     "name": "Girls' Generation",
+     "gko": "소녀시대"
+    },
+    {
+     "name": "Lee Seung-gi",
+     "ext": true
+    },
+    {
+     "name": "Son Dam-bi",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Album Bonsang",
+   "en": "Album Bonsang",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "2PM",
+     "gko": "2PM"
+    },
+    {
+     "name": "Drunken Tiger",
+     "ext": true
+    },
+    {
+     "name": "Lee Seung-chul",
+     "ext": true
+    },
+    {
+     "name": "SG Wannabe",
+     "ext": true
+    },
+    {
+     "name": "Super Junior",
+     "gko": "슈퍼주니어"
+    }
+   ]
+  },
+  {
+   "ko": "Best Hip-Hop Award",
+   "en": "Best Hip-Hop Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Epik High",
+     "ext": true
+    }
+   ],
+   "work": "\"Trot\"/\"Wannabe\""
+  },
+  {
+   "ko": "Best Rock Award",
+   "en": "Best Rock Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Kiha & The Faces",
+     "ext": true
+    }
+   ],
+   "work": "\"Cheap Coffee\""
+  },
+  {
+   "ko": "Rookie of the Year",
+   "en": "Rookie of the Year",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "4Minute",
+     "gko": "포미닛"
+    },
+    {
+     "name": "T-ara",
+     "gko": "티아라"
+    }
+   ]
+  },
+  {
+   "ko": "Popularity Award",
+   "en": "Popularity Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Shinee",
+     "gko": "샤이니"
+    },
+    {
+     "name": "Super Junior",
+     "gko": "슈퍼주니어"
+    }
+   ]
+  }
+ ]
+}

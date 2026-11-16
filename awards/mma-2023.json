@@ -1,0 +1,390 @@
+{
+ "id": "mma",
+ "edition": "2023",
+ "name": "멜론뮤직어워드",
+ "nameEn": "Melon Music Awards",
+ "dates": [
+  "2023-12-02"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2023_Melon_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Album of the Year",
+   "en": "Album of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    }
+   ],
+   "work": "I've Ive"
+  },
+  {
+   "ko": "Artist of the Year",
+   "en": "Artist of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "NewJeans",
+     "gko": "뉴진스"
+    }
+   ]
+  },
+  {
+   "ko": "Song of the Year",
+   "en": "Song of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "NewJeans",
+     "gko": "뉴진스"
+    }
+   ],
+   "work": "\"Ditto\""
+  },
+  {
+   "ko": "Record of the Year",
+   "en": "Record of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "NCT Dream",
+     "gko": "엔시티 드림"
+    }
+   ]
+  },
+  {
+   "ko": "Top 10 Artist",
+   "en": "Top 10 Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "(G)I-dle",
+     "gko": "아이들"
+    },
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    },
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    },
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    },
+    {
+     "name": "Jung Kook",
+     "id": "a0189"
+    },
+    {
+     "name": "Le Sserafim",
+     "gko": "르세라핌"
+    },
+    {
+     "name": "Lim Young-woong",
+     "ext": true
+    },
+    {
+     "name": "NCT Dream",
+     "gko": "엔시티 드림"
+    },
+    {
+     "name": "NewJeans",
+     "gko": "뉴진스"
+    },
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    }
+   ]
+  },
+  {
+   "ko": "Millions Top 10",
+   "en": "Millions Top 10",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "(G)I-dle",
+     "gko": "아이들"
+    },
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    },
+    {
+     "name": "BSS",
+     "ext": true
+    },
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    },
+    {
+     "name": "Jung Kook",
+     "id": "a0189"
+    },
+    {
+     "name": "Le Sserafim",
+     "gko": "르세라핌"
+    },
+    {
+     "name": "Lim Young-woong",
+     "ext": true
+    },
+    {
+     "name": "NCT Dream",
+     "gko": "엔시티 드림"
+    },
+    {
+     "name": "NewJeans",
+     "gko": "뉴진스"
+    },
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    }
+   ]
+  },
+  {
+   "ko": "Best Male Solo",
+   "en": "Best Male Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jung Kook",
+     "id": "a0189"
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Solo",
+   "en": "Best Female Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lee Young-ji",
+     "id": "a1038"
+    }
+   ]
+  },
+  {
+   "ko": "Best Male Group",
+   "en": "Best Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "NCT Dream",
+     "gko": "엔시티 드림"
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Group",
+   "en": "Best Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "NewJeans",
+     "gko": "뉴진스"
+    }
+   ]
+  },
+  {
+   "ko": "New Artist of the Year",
+   "en": "New Artist of the Year",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Riize",
+     "gko": "라이즈"
+    },
+    {
+     "name": "Zerobaseone",
+     "gko": "제로베이스원"
+    }
+   ]
+  },
+  {
+   "ko": "Best Pop Artist",
+   "en": "Best Pop Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Charlie Puth",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best OST",
+   "en": "Best OST",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lim Jae-hyun",
+     "ext": true
+    }
+   ],
+   "work": "\"Heaven (2023)\""
+  },
+  {
+   "ko": "Best Music Style",
+   "en": "Best Music Style",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Silica Gel",
+     "ext": true
+    }
+   ],
+   "work": "\"Tik Tak Tok\""
+  },
+  {
+   "ko": "Hot Trend Award",
+   "en": "Hot Trend Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Jung Kook",
+     "id": "a0189"
+    }
+   ]
+  },
+  {
+   "ko": "Kakao Favorite Star Award",
+   "en": "Kakao Favorite Star Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  },
+  {
+   "ko": "Best Music Video",
+   "en": "Best Music Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "STAYC",
+     "gko": "스테이씨"
+    }
+   ],
+   "work": "\"Bubble\""
+  },
+  {
+   "ko": "Best Producer",
+   "en": "Best Producer",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Pledis Entertainment",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Song Writer",
+   "en": "Best Song Writer",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Ryan S. Jhun",
+     "ext": true
+    },
+    {
+     "name": "SM Entertainment",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Male Performance",
+   "en": "Best Male Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Performance",
+   "en": "Best Female Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    }
+   ]
+  },
+  {
+   "ko": "1theK Global Icon",
+   "en": "1theK Global Icon",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Kiss of Life",
+     "gko": "키스오브라이프"
+    }
+   ]
+  },
+  {
+   "ko": "Global Artist",
+   "en": "Global Artist",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    }
+   ]
+  },
+  {
+   "ko": "Global Rising Artist",
+   "en": "Global Rising Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "BoyNextDoor",
+     "gko": "보이넥스트도어"
+    }
+   ]
+  },
+  {
+   "ko": "J-pop Favorite Artist",
+   "en": "J-pop Favorite Artist",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "imase",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Stage of the Year",
+   "en": "Stage of the Year",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Shinee",
+     "gko": "샤이니"
+    }
+   ],
+   "work": "Shinee World VI: Perfect Illumination"
+  }
+ ]
+}

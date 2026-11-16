@@ -1,0 +1,232 @@
+{
+ "id": "mama",
+ "edition": "2020",
+ "name": "마마 어워즈",
+ "nameEn": "Mnet Asian Music Awards",
+ "dates": [
+  "2020-12-06"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2020_Mnet_Asian_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Artist of the Year",
+   "en": "Artist of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  },
+  {
+   "ko": "Song of the Year",
+   "en": "Song of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "\"Dynamite\""
+  },
+  {
+   "ko": "Album of the Year",
+   "en": "Album of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "Map of the Soul: 7"
+  },
+  {
+   "ko": "Worldwide Icon of the Year",
+   "en": "Worldwide Icon of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  },
+  {
+   "ko": "Best Male Group",
+   "en": "Best Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Group",
+   "en": "Best Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Blackpink",
+     "gko": "블랙핑크"
+    }
+   ]
+  },
+  {
+   "ko": "Best Male Artist",
+   "en": "Best Male Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Baekhyun",
+     "id": "a0372"
+    }
+   ]
+  },
+  {
+   "ko": "Best Dance Performance – Male Group",
+   "en": "Best Dance Performance – Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "\"Dynamite\""
+  },
+  {
+   "ko": "Best Dance Performance – Female Group",
+   "en": "Best Dance Performance – Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Blackpink",
+     "gko": "블랙핑크"
+    }
+   ],
+   "work": "\"How You Like That\""
+  },
+  {
+   "ko": "Best Dance Performance – Solo",
+   "en": "Best Dance Performance – Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Hwasa",
+     "id": "a0977"
+    }
+   ],
+   "work": "\"Maria\""
+  },
+  {
+   "ko": "Best Vocal Performance – Solo",
+   "en": "Best Vocal Performance – Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "IU",
+     "id": "a0207"
+    }
+   ],
+   "work": "\"Blueming\""
+  },
+  {
+   "ko": "Best Vocal Performance – Group",
+   "en": "Best Vocal Performance – Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Mamamoo",
+     "gko": "마마무"
+    }
+   ],
+   "work": "\"Hip\""
+  },
+  {
+   "ko": "Best Collaboration",
+   "en": "Best Collaboration",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "IU",
+     "id": "a0207"
+    },
+    {
+     "name": "Suga",
+     "id": "a0185"
+    }
+   ],
+   "work": "\"Eight\""
+  },
+  {
+   "ko": "Best New Female Artist",
+   "en": "Best New Female Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Weeekly",
+     "gko": "위클리"
+    }
+   ]
+  },
+  {
+   "ko": "Best Band Performance",
+   "en": "Best Band Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Day6",
+     "gko": "데이식스"
+    }
+   ],
+   "work": "\"Zombie\""
+  },
+  {
+   "ko": "Best OST",
+   "en": "Best OST",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Gaho",
+     "ext": true
+    }
+   ],
+   "work": "\"Start Over\" (Itaewon Class)"
+  },
+  {
+   "ko": "Best HipHop & Urban Music",
+   "en": "Best HipHop & Urban Music",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Zico",
+     "id": "a0972"
+    }
+   ],
+   "work": "\"Any Song\""
+  },
+  {
+   "ko": "Best Music Video",
+   "en": "Best Music Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "\"Dynamite\""
+  }
+ ]
+}

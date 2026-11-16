@@ -1,0 +1,238 @@
+{
+ "id": "gaon",
+ "edition": "2020",
+ "name": "써클차트 뮤직어워즈",
+ "nameEn": "Circle Chart Music Awards",
+ "dates": [
+  "2021-01-13"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/10th_Gaon_Chart_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Artist of the Year – Digital Music",
+   "en": "Artist of the Year – Digital Music",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Red Velvet",
+     "gko": "레드벨벳"
+    }
+   ],
+   "work": "\"Psycho\""
+  },
+  {
+   "ko": "December 2019",
+   "en": "December 2019",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Zico",
+     "id": "a0972"
+    }
+   ],
+   "work": "\"Any Song\""
+  },
+  {
+   "ko": "February 2020",
+   "en": "February 2020",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "\"On\""
+  },
+  {
+   "ko": "March 2020",
+   "en": "March 2020",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "MC the Max",
+     "ext": true
+    }
+   ],
+   "work": "\"Bloom\""
+  },
+  {
+   "ko": "April 2020",
+   "en": "April 2020",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Oh My Girl",
+     "gko": "오마이걸"
+    }
+   ],
+   "work": "\"Nonstop\""
+  },
+  {
+   "ko": "May 2020",
+   "en": "May 2020",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "IU",
+     "id": "a0207"
+    }
+   ],
+   "work": "\"Eight\" (featuring Suga)"
+  },
+  {
+   "ko": "June 2020",
+   "en": "June 2020",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Blackpink",
+     "gko": "블랙핑크"
+    }
+   ],
+   "work": "\"How You Like That\""
+  },
+  {
+   "ko": "July 2020",
+   "en": "July 2020",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Zico",
+     "id": "a0972"
+    }
+   ],
+   "work": "\"Summer Hate\" (featuring Rain)"
+  },
+  {
+   "ko": "August 2020",
+   "en": "August 2020",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "\"Dynamite\""
+  },
+  {
+   "ko": "September 2020",
+   "en": "September 2020",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Chungha",
+     "id": "a0313"
+    },
+    {
+     "name": "Christopher",
+     "ext": true
+    }
+   ],
+   "work": "\"Bad Boy\""
+  },
+  {
+   "ko": "October 2020",
+   "en": "October 2020",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Blackpink",
+     "gko": "블랙핑크"
+    }
+   ],
+   "work": "\"Lovesick Girls\""
+  },
+  {
+   "ko": "November 2020",
+   "en": "November 2020",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "\"Life Goes On\""
+  },
+  {
+   "ko": "Artist of the Year – Physical Album",
+   "en": "Artist of the Year – Physical Album",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "Map of the Soul: 7"
+  },
+  {
+   "ko": "1st Quarter",
+   "en": "1st Quarter",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Baekhyun",
+     "id": "a0372"
+    }
+   ],
+   "work": "Delight"
+  },
+  {
+   "ko": "3rd Quarter",
+   "en": "3rd Quarter",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    }
+   ],
+   "work": "Heng:garæ"
+  },
+  {
+   "ko": "4th Quarter",
+   "en": "4th Quarter",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "Be"
+  },
+  {
+   "ko": "New Artist of the Year",
+   "en": "New Artist of the Year",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    }
+   ],
+   "work": "\"Black Mamba\""
+  },
+  {
+   "ko": "Digital Music",
+   "en": "Digital Music",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Enhypen",
+     "gko": "엔하이픈"
+    }
+   ],
+   "work": "Border: Day One"
+  }
+ ]
+}

@@ -28,11 +28,13 @@ const path = require('path');
         for (const w of c.winners) assert.ok(w.name && w.name.trim() === w.name, c.ko + ' 수상자 이름');
       }
     });
-    check(a.file + ' — 같은 날 같은 부문에 같은 수상자가 두 번 들어가지 않는다', () => {
-      const seen = new Set();
-      for (const c of a.categories) for (const w of c.winners) {
-        const k = [c.ko, c.day || '', w.name, w.id || '', w.of || ''].join('|');
-        assert.ok(!seen.has(k), '중복: ' + k); seen.add(k);
+    check(a.file + ' — 한 부문 안에 같은 수상자가 두 번 들어가지 않는다', () => {
+      for (const c of a.categories) { // 이름이 같은 다른 부문(AAA 배우 부문 등)은 서로 별개라 부문 객체 하나 안에서만 본다
+        const seen = new Set();
+        for (const w of c.winners) {
+          const k = [w.name, w.id || '', w.of || '', w.gko || ''].join('|');
+          assert.ok(!seen.has(k), '중복: ' + c.ko + ' · ' + k); seen.add(k);
+        }
       }
     });
     check(a.file + ' — 우주 밖 표시(!)가 아닌 수상자는 모두 그룹·멤버에 연결된다', () => {

@@ -1,0 +1,151 @@
+{
+ "id": "gda",
+ "edition": "2019",
+ "name": "골든디스크어워즈",
+ "nameEn": "Golden Disc Awards",
+ "dates": [
+  "2020-01-04"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/34th_Golden_Disc_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Digital Song Daesang (Song of the Year)",
+   "en": "Digital Song Daesang (Song of the Year)",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "\"Boy with Luv\""
+  },
+  {
+   "ko": "Album Daesang (Album of the Year)",
+   "en": "Album Daesang (Album of the Year)",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "Map of the Soul: Persona"
+  },
+  {
+   "ko": "Digital Song Bonsang",
+   "en": "Digital Song Bonsang",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "AKMU",
+     "gko": "악뮤"
+    },
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    },
+    {
+     "name": "Chungha",
+     "id": "a0313"
+    },
+    {
+     "name": "Itzy",
+     "gko": "있지"
+    },
+    {
+     "name": "Jannabi",
+     "ext": true
+    },
+    {
+     "name": "Jennie",
+     "id": "a0204"
+    },
+    {
+     "name": "MC the Max",
+     "ext": true
+    },
+    {
+     "name": "Paul Kim",
+     "ext": true
+    },
+    {
+     "name": "Taeyeon",
+     "id": "a0166"
+    },
+    {
+     "name": "Twice",
+     "gko": "트와이스"
+    }
+   ]
+  },
+  {
+   "ko": "Album Bonsang",
+   "en": "Album Bonsang",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Baekhyun",
+     "id": "a0372"
+    },
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    },
+    {
+     "name": "Exo-SC",
+     "ext": true
+    },
+    {
+     "name": "Got7",
+     "gko": "갓세븐"
+    },
+    {
+     "name": "Monsta X",
+     "gko": "몬스타엑스"
+    },
+    {
+     "name": "NCT Dream",
+     "gko": "엔시티 드림"
+    },
+    {
+     "name": "NU'EST",
+     "gko": "뉴이스트"
+    },
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    },
+    {
+     "name": "Super Junior",
+     "gko": "슈퍼주니어"
+    },
+    {
+     "name": "Twice",
+     "gko": "트와이스"
+    }
+   ]
+  },
+  {
+   "ko": "Rookie Artist of the Year",
+   "en": "Rookie Artist of the Year",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Itzy",
+     "gko": "있지"
+    },
+    {
+     "name": "Tomorrow X Together",
+     "gko": "투모로우바이투게더"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,186 @@
+{
+ "id": "mama",
+ "edition": "1999",
+ "name": "마마 어워즈",
+ "nameEn": "Mnet Asian Music Awards",
+ "dates": [
+  "1999-11-27"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/1999_Mnet_Video_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Best Popular Music Video",
+   "en": "Best Popular Music Video",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "H.O.T.",
+     "gko": "H.O.T."
+    }
+   ],
+   "work": "\"I Yah!\""
+  },
+  {
+   "ko": "Music Video of the Year",
+   "en": "Music Video of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Lee Seung-hwan",
+     "ext": true
+    }
+   ],
+   "work": "\"A Request\""
+  },
+  {
+   "ko": "Best New Group",
+   "en": "Best New Group",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Team",
+     "ext": true
+    }
+   ],
+   "work": "\"Farewell\""
+  },
+  {
+   "ko": "Best New Solo Artist",
+   "en": "Best New Solo Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Lee Jung-hyun",
+     "id": "a1272"
+    }
+   ],
+   "work": "\"Come\""
+  },
+  {
+   "ko": "Best Female Artist",
+   "en": "Best Female Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Uhm Jung-hwa",
+     "ext": true
+    }
+   ],
+   "work": "\"I Don't Know\""
+  },
+  {
+   "ko": "Best Male Artist",
+   "en": "Best Male Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lee Seung-hwan",
+     "ext": true
+    }
+   ],
+   "work": "\"A Request\""
+  },
+  {
+   "ko": "Best Group",
+   "en": "Best Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "H.O.T.",
+     "gko": "H.O.T."
+    }
+   ],
+   "work": "\"I Yah!\""
+  },
+  {
+   "ko": "Best Rock Performance",
+   "en": "Best Rock Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jaurim",
+     "ext": true
+    }
+   ],
+   "work": "\"Fall\""
+  },
+  {
+   "ko": "Best Hip Hop Performance",
+   "en": "Best Hip Hop Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Honey Family",
+     "ext": true
+    }
+   ],
+   "work": "\"Man's Story – My Way\""
+  },
+  {
+   "ko": "Best Indie Performance",
+   "en": "Best Indie Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "No Brain",
+     "ext": true
+    }
+   ],
+   "work": "\"Youth 98\""
+  },
+  {
+   "ko": "Best Dance Performance",
+   "en": "Best Dance Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lee Jung-hyun",
+     "id": "a1272"
+    }
+   ],
+   "work": "\"Come\""
+  },
+  {
+   "ko": "Best Ballad Performance",
+   "en": "Best Ballad Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jo Sungmo",
+     "ext": true
+    }
+   ],
+   "work": "\"For Your Soul\""
+  },
+  {
+   "ko": "Best Music Video Director",
+   "en": "Best Music Video Director",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Hong Jong-ho",
+     "ext": true
+    }
+   ],
+   "work": "\"I Yah!\" by H.O.T."
+  },
+  {
+   "ko": "Best International Artist",
+   "en": "Best International Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Ricky Martin",
+     "ext": true
+    }
+   ],
+   "work": "\"Livin' La Vida Loca\""
+  }
+ ]
+}

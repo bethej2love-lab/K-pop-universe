@@ -1,0 +1,311 @@
+{
+ "id": "mama",
+ "edition": "2021",
+ "name": "마마 어워즈",
+ "nameEn": "Mnet Asian Music Awards",
+ "dates": [
+  "2021-12-11"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2021_Mnet_Asian_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Artist of the Year",
+   "en": "Artist of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  },
+  {
+   "ko": "Song of the Year",
+   "en": "Song of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "\"Butter\""
+  },
+  {
+   "ko": "Album of the Year",
+   "en": "Album of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "Be"
+  },
+  {
+   "ko": "Worldwide Icon of the Year",
+   "en": "Worldwide Icon of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  },
+  {
+   "ko": "Best Male Group",
+   "en": "Best Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Group",
+   "en": "Best Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Twice",
+     "gko": "트와이스"
+    }
+   ]
+  },
+  {
+   "ko": "Best Male Artist",
+   "en": "Best Male Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Baekhyun",
+     "id": "a0372"
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Artist",
+   "en": "Best Female Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "IU",
+     "id": "a0207"
+    }
+   ]
+  },
+  {
+   "ko": "Best Dance Performance – Male Group",
+   "en": "Best Dance Performance – Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "\"Butter\""
+  },
+  {
+   "ko": "Best Dance Performance – Female Group",
+   "en": "Best Dance Performance – Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    }
+   ],
+   "work": "\"Next Level\""
+  },
+  {
+   "ko": "Best Dance Performance – Solo",
+   "en": "Best Dance Performance – Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Rosé",
+     "id": "a0205"
+    }
+   ],
+   "work": "\"On The Ground\""
+  },
+  {
+   "ko": "Best Vocal Performance",
+   "en": "Best Vocal Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "IU",
+     "id": "a0207"
+    }
+   ],
+   "work": "\"Celebrity\""
+  },
+  {
+   "ko": "Best OST",
+   "en": "Best OST",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jo Jung-suk",
+     "ext": true
+    }
+   ],
+   "work": "\"I Like You\" (Hospital Playlist Season 2)"
+  },
+  {
+   "ko": "Best Collaboration",
+   "en": "Best Collaboration",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "AKMU",
+     "gko": "악뮤"
+    },
+    {
+     "name": "IU",
+     "id": "a0207"
+    }
+   ],
+   "work": "\"Nakka\""
+  },
+  {
+   "ko": "Best New Male Artist",
+   "en": "Best New Male Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Enhypen",
+     "gko": "엔하이픈"
+    }
+   ]
+  },
+  {
+   "ko": "Best New Female Artist",
+   "en": "Best New Female Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    }
+   ]
+  },
+  {
+   "ko": "Best HipHop & Urban Music",
+   "en": "Best HipHop & Urban Music",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Ash Island",
+     "ext": true
+    }
+   ],
+   "work": "\"Melody\""
+  },
+  {
+   "ko": "Best Band Performance",
+   "en": "Best Band Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jannabi",
+     "ext": true
+    }
+   ],
+   "work": "\"A Thought on an Autumn Night\""
+  },
+  {
+   "ko": "Best Music Video",
+   "en": "Best Music Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "\"Butter\""
+  },
+  {
+   "ko": "Worldwide Fans' Choice Top 10",
+   "en": "Worldwide Fans' Choice Top 10",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    },
+    {
+     "name": "Enhypen",
+     "gko": "엔하이픈"
+    },
+    {
+     "name": "Lisa",
+     "id": "a0206"
+    },
+    {
+     "name": "NCT 127",
+     "gko": "엔시티 127"
+    },
+    {
+     "name": "NCT Dream",
+     "gko": "엔시티 드림"
+    },
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    },
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    },
+    {
+     "name": "Tomorrow X Together",
+     "gko": "투모로우바이투게더"
+    },
+    {
+     "name": "Treasure",
+     "gko": "트레저"
+    },
+    {
+     "name": "Twice",
+     "gko": "트와이스"
+    }
+   ]
+  },
+  {
+   "ko": "Favorite Asian Artist",
+   "en": "Favorite Asian Artist",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "INI",
+     "id": "a0865"
+    }
+   ]
+  },
+  {
+   "ko": "Favorite International Artist",
+   "en": "Favorite International Artist",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Ed Sheeran",
+     "ext": true
+    }
+   ]
+  }
+ ]
+}

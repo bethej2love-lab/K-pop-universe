@@ -1,0 +1,420 @@
+{
+ "id": "mma",
+ "edition": "2024",
+ "name": "멜론뮤직어워드",
+ "nameEn": "Melon Music Awards",
+ "dates": [
+  "2024-11-30"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2024_Melon_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Album of the Year",
+   "en": "Album of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    }
+   ],
+   "work": "Armageddon"
+  },
+  {
+   "ko": "Artist of the Year",
+   "en": "Artist of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    }
+   ]
+  },
+  {
+   "ko": "Song of the Year",
+   "en": "Song of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    }
+   ],
+   "work": "\"Supernova\""
+  },
+  {
+   "ko": "Record of the Year",
+   "en": "Record of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "(G)I-dle",
+     "gko": "아이들"
+    }
+   ]
+  },
+  {
+   "ko": "Top 10",
+   "en": "Top 10",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "(G)I-dle",
+     "gko": "아이들"
+    },
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    },
+    {
+     "name": "Day6",
+     "gko": "데이식스"
+    },
+    {
+     "name": "IU",
+     "id": "a0207"
+    },
+    {
+     "name": "Jung Kook",
+     "id": "a0189"
+    },
+    {
+     "name": "NewJeans",
+     "gko": "뉴진스"
+    },
+    {
+     "name": "Plave",
+     "gko": "플레이브"
+    },
+    {
+     "name": "Riize",
+     "gko": "라이즈"
+    },
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    },
+    {
+     "name": "TWS",
+     "gko": "투어스"
+    }
+   ]
+  },
+  {
+   "ko": "Millions Top 10",
+   "en": "Millions Top 10",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    },
+    {
+     "name": "Day6",
+     "gko": "데이식스"
+    },
+    {
+     "name": "IU",
+     "id": "a0207"
+    },
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    },
+    {
+     "name": "Jung Kook",
+     "id": "a0189"
+    },
+    {
+     "name": "Lim Young-woong",
+     "ext": true
+    },
+    {
+     "name": "NewJeans",
+     "gko": "뉴진스"
+    },
+    {
+     "name": "Plave",
+     "gko": "플레이브"
+    },
+    {
+     "name": "Riize",
+     "gko": "라이즈"
+    },
+    {
+     "name": "Taeyeon",
+     "id": "a0166"
+    }
+   ]
+  },
+  {
+   "ko": "Best Male Solo",
+   "en": "Best Male Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jung Kook",
+     "id": "a0189"
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Solo",
+   "en": "Best Female Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "IU",
+     "id": "a0207"
+    }
+   ]
+  },
+  {
+   "ko": "Best Male Group",
+   "en": "Best Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Riize",
+     "gko": "라이즈"
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Group",
+   "en": "Best Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    }
+   ]
+  },
+  {
+   "ko": "New Artist of the Year",
+   "en": "New Artist of the Year",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Illit",
+     "gko": "아일릿"
+    },
+    {
+     "name": "TWS",
+     "gko": "투어스"
+    }
+   ]
+  },
+  {
+   "ko": "Best Pop Artist",
+   "en": "Best Pop Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Benson Boone",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best OST",
+   "en": "Best OST",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Eclipse",
+     "ext": true
+    }
+   ],
+   "work": "\"Sudden Shower\""
+  },
+  {
+   "ko": "Track Zero Choice",
+   "en": "Track Zero Choice",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Hyukoh",
+     "ext": true
+    },
+    {
+     "name": "Sunset Rollercoaster",
+     "ext": true
+    }
+   ],
+   "work": "\"Young Man\""
+  },
+  {
+   "ko": "Kakao Bank Everyone's Star",
+   "en": "Kakao Bank Everyone's Star",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Riize",
+     "gko": "라이즈"
+    }
+   ]
+  },
+  {
+   "ko": "Hot Trend Award",
+   "en": "Hot Trend Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "QWER",
+     "gko": "큐더블유이알"
+    }
+   ]
+  },
+  {
+   "ko": "1theK Global Icon",
+   "en": "1theK Global Icon",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "TripleS",
+     "gko": "트리플에스"
+    }
+   ]
+  },
+  {
+   "ko": "Best Music Style",
+   "en": "Best Music Style",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Bibi",
+     "id": "a1308"
+    },
+    {
+     "name": "Lee Young-ji",
+     "id": "a1038"
+    }
+   ]
+  },
+  {
+   "ko": "Best Performance – Female",
+   "en": "Best Performance – Female",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    }
+   ]
+  },
+  {
+   "ko": "Best Performance – Male",
+   "en": "Best Performance – Male",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "BoyNextDoor",
+     "gko": "보이넥스트도어"
+    }
+   ]
+  },
+  {
+   "ko": "Best Producer",
+   "en": "Best Producer",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Starship Entertainment",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Songwriter",
+   "en": "Best Songwriter",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jeon So-yeon",
+     "ext": true
+    },
+    {
+     "name": "Cube Entertainment",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Global Artist – Female",
+   "en": "Global Artist – Female",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    }
+   ]
+  },
+  {
+   "ko": "Global Artist – Male",
+   "en": "Global Artist – Male",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Ateez",
+     "gko": "에이티즈"
+    }
+   ]
+  },
+  {
+   "ko": "Global Rising Artist",
+   "en": "Global Rising Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Riize",
+     "gko": "라이즈"
+    }
+   ]
+  },
+  {
+   "ko": "J-Pop Favorite Artist",
+   "en": "J-Pop Favorite Artist",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Yoasobi",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Music Video of the Year",
+   "en": "Music Video of the Year",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    }
+   ],
+   "work": "\"Heya\""
+  },
+  {
+   "ko": "Stage of the Year",
+   "en": "Stage of the Year",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "IU",
+     "id": "a0207"
+    }
+   ],
+   "work": "HEREH World Tour"
+  }
+ ]
+}

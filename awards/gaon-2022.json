@@ -1,0 +1,234 @@
+{
+ "id": "gaon",
+ "edition": "2022",
+ "name": "써클차트 뮤직어워즈",
+ "nameEn": "Circle Chart Music Awards",
+ "dates": [
+  "2023-02-18"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/12th_Circle_Chart_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Artist of the Year – Global Digital Music",
+   "en": "Artist of the Year – Global Digital Music",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    }
+   ],
+   "work": "\"Eleven\""
+  },
+  {
+   "ko": "December 2021",
+   "en": "December 2021",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Kep1er",
+     "gko": "케플러"
+    }
+   ],
+   "work": "\"Wa Da Da\""
+  },
+  {
+   "ko": "February 2022",
+   "en": "February 2022",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Taeyeon",
+     "id": "a0166"
+    }
+   ],
+   "work": "\"INVU\""
+  },
+  {
+   "ko": "March 2022",
+   "en": "March 2022",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "(G)I-dle",
+     "gko": "아이들"
+    }
+   ],
+   "work": "\"Tomboy\""
+  },
+  {
+   "ko": "April 2022",
+   "en": "April 2022",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    }
+   ],
+   "work": "\"Love Dive\""
+  },
+  {
+   "ko": "May 2022",
+   "en": "May 2022",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Le Sserafim",
+     "gko": "르세라핌"
+    }
+   ],
+   "work": "\"Fearless\""
+  },
+  {
+   "ko": "June 2022",
+   "en": "June 2022",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "\"Yet to Come (The Most Beautiful Moment)\""
+  },
+  {
+   "ko": "July 2022",
+   "en": "July 2022",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    }
+   ],
+   "work": "\"Girls\""
+  },
+  {
+   "ko": "August 2022",
+   "en": "August 2022",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Blackpink",
+     "gko": "블랙핑크"
+    }
+   ],
+   "work": "\"Pink Venom\""
+  },
+  {
+   "ko": "September 2022",
+   "en": "September 2022",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Blackpink",
+     "gko": "블랙핑크"
+    }
+   ],
+   "work": "\"Shut Down\""
+  },
+  {
+   "ko": "October 2022",
+   "en": "October 2022",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Le Sserafim",
+     "gko": "르세라핌"
+    }
+   ],
+   "work": "\"Antifragile\""
+  },
+  {
+   "ko": "November 2022",
+   "en": "November 2022",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Itzy",
+     "gko": "있지"
+    }
+   ],
+   "work": "\"Cheshire\""
+  },
+  {
+   "ko": "Artist of the Year – Physical Album",
+   "en": "Artist of the Year – Physical Album",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "NCT",
+     "ext": true
+    }
+   ],
+   "work": "Universe"
+  },
+  {
+   "ko": "1st Quarter",
+   "en": "1st Quarter",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    }
+   ],
+   "work": "Face the Sun"
+  },
+  {
+   "ko": "3rd Quarter",
+   "en": "3rd Quarter",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "Proof"
+  },
+  {
+   "ko": "4th Quarter",
+   "en": "4th Quarter",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    }
+   ],
+   "work": "Maxident"
+  },
+  {
+   "ko": "New Artist of the Year",
+   "en": "New Artist of the Year",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "NewJeans",
+     "gko": "뉴진스"
+    }
+   ],
+   "work": "\"Attention\""
+  },
+  {
+   "ko": "Digital Music",
+   "en": "Digital Music",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    }
+   ],
+   "work": "After Like"
+  }
+ ]
+}

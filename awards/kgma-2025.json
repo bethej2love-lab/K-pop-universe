@@ -1,0 +1,604 @@
+{
+ "id": "kgma",
+ "edition": "2025",
+ "name": "코리아그랜드뮤직어워즈",
+ "nameEn": "Korea Grand Music Awards",
+ "dates": [
+  "2025-11-14"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2025_Korea_Grand_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Grand Artist",
+   "en": "Grand Artist",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Ateez",
+     "gko": "에이티즈"
+    }
+   ]
+  },
+  {
+   "ko": "Grand Performer",
+   "en": "Grand Performer",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BoyNextDoor",
+     "gko": "보이넥스트도어"
+    }
+   ]
+  },
+  {
+   "ko": "Grand Record",
+   "en": "Grand Record",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    }
+   ]
+  },
+  {
+   "ko": "Grand Song",
+   "en": "Grand Song",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    }
+   ]
+  },
+  {
+   "ko": "Grand Honor's Choice",
+   "en": "Grand Honor's Choice",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "AllDay Project",
+     "gko": "올데이프로젝트"
+    },
+    {
+     "name": "The Boyz",
+     "gko": "더보이즈"
+    },
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    }
+   ]
+  },
+  {
+   "ko": "Best Artist 10",
+   "en": "Best Artist 10",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Ateez",
+     "gko": "에이티즈"
+    },
+    {
+     "name": "BoyNextDoor",
+     "gko": "보이넥스트도어"
+    },
+    {
+     "name": "Cravity",
+     "gko": "크래비티"
+    },
+    {
+     "name": "Fifty Fifty",
+     "gko": "피프티피프티"
+    },
+    {
+     "name": "Jennie",
+     "id": "a0204"
+    },
+    {
+     "name": "Lee Chan-won",
+     "ext": true
+    },
+    {
+     "name": "Riize",
+     "gko": "라이즈"
+    },
+    {
+     "name": "The Boyz",
+     "gko": "더보이즈"
+    },
+    {
+     "name": "Xdinary Heroes",
+     "gko": "엑스디너리 히어로즈"
+    },
+    {
+     "name": "Xikers",
+     "gko": "싸이커스"
+    }
+   ]
+  },
+  {
+   "ko": "Best Music 10",
+   "en": "Best Music 10",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    },
+    {
+     "name": "Enhypen",
+     "gko": "엔하이픈"
+    },
+    {
+     "name": "Fromis 9",
+     "gko": "프로미스나인"
+    },
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    },
+    {
+     "name": "Kiss of Life",
+     "gko": "키스오브라이프"
+    },
+    {
+     "name": "Mark",
+     "ext": true
+    },
+    {
+     "name": "P1Harmony",
+     "gko": "피원하모니"
+    },
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    },
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    },
+    {
+     "name": "Suho",
+     "id": "a0370"
+    }
+   ]
+  },
+  {
+   "ko": "Best Adult Contemporary",
+   "en": "Best Adult Contemporary",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jang Min-ho",
+     "ext": true
+    },
+    {
+     "name": "Lee Chan-won",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Virtual Artist",
+   "en": "Best Virtual Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Plave",
+     "gko": "플레이브"
+    }
+   ],
+   "work": "\"Dash\""
+  },
+  {
+   "ko": "Best Hip-Hop",
+   "en": "Best Hip-Hop",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "J-Hope",
+     "id": "a0186"
+    }
+   ],
+   "work": "\"Killin' It Girl\""
+  },
+  {
+   "ko": "Best OST",
+   "en": "Best OST",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "D.O.",
+     "id": "a0375"
+    }
+   ],
+   "work": "\"Forever\""
+  },
+  {
+   "ko": "Best Music Video",
+   "en": "Best Music Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jin",
+     "ext": true
+    }
+   ],
+   "work": "\"Don't Say You Love Me\""
+  },
+  {
+   "ko": "Best Dance Performance",
+   "en": "Best Dance Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "AHOF",
+     "gko": "아홉"
+    }
+   ],
+   "work": "\"Rendezvous\""
+  },
+  {
+   "ko": "Trend of the Year – K-pop Group",
+   "en": "Trend of the Year – K-pop Group",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "NewJeans",
+     "gko": "뉴진스"
+    }
+   ]
+  },
+  {
+   "ko": "Trend of the Year – K-pop Solo",
+   "en": "Trend of the Year – K-pop Solo",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "V",
+     "id": "a0188"
+    }
+   ]
+  },
+  {
+   "ko": "Trend of the Year – Trot",
+   "en": "Trend of the Year – Trot",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Lee Chan-won",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Trend of the Year – Rookie",
+   "en": "Trend of the Year – Rookie",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Carmen",
+     "gko": "하츠투하츠"
+    }
+   ]
+  },
+  {
+   "ko": "BIGC Global Star Award",
+   "en": "BIGC Global Star Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Suho",
+     "id": "a0370"
+    }
+   ]
+  },
+  {
+   "ko": "Best Listener's Pick",
+   "en": "Best Listener's Pick",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Unis",
+     "gko": "유니스"
+    }
+   ],
+   "work": "\"Swicy\""
+  },
+  {
+   "ko": "Fan Vote Artist – Female",
+   "en": "Fan Vote Artist – Female",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Yuqi",
+     "id": "a0118"
+    }
+   ]
+  },
+  {
+   "ko": "Fan Vote Artist – Male",
+   "en": "Fan Vote Artist – Male",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Jimin",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Popularity – Artist Day",
+   "en": "Best Popularity – Artist Day",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Lee Chan-won",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Popularity – Music Day",
+   "en": "Best Popularity – Music Day",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    }
+   ]
+  },
+  {
+   "ko": "iMbank Smart Supporter Award",
+   "en": "iMbank Smart Supporter Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "The Boyz",
+     "gko": "더보이즈"
+    }
+   ]
+  },
+  {
+   "ko": "Best Band",
+   "en": "Best Band",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lucy",
+     "ext": true
+    },
+    {
+     "name": "Xdinary Heroes",
+     "gko": "엑스디너리 히어로즈"
+    }
+   ]
+  },
+  {
+   "ko": "Best Memory",
+   "en": "Best Memory",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Woodz",
+     "id": "a0609"
+    }
+   ]
+  },
+  {
+   "ko": "Best Selling Album",
+   "en": "Best Selling Album",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    }
+   ],
+   "work": "Karma"
+  },
+  {
+   "ko": "Best Streaming Song",
+   "en": "Best Streaming Song",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    }
+   ],
+   "work": "\"Whiplash\""
+  },
+  {
+   "ko": "Best Trot Performance",
+   "en": "Best Trot Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Park Seo-jin",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Trot Stage",
+   "en": "Best Trot Stage",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jang Min-ho",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Stage",
+   "en": "Best Stage",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Cravity",
+     "gko": "크래비티"
+    }
+   ]
+  },
+  {
+   "ko": "Best Producer",
+   "en": "Best Producer",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Teddy Park",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "IS Rookie",
+   "en": "IS Rookie",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "AHOF",
+     "gko": "아홉"
+    },
+    {
+     "name": "Close Your Eyes",
+     "gko": "클로즈유어아이즈"
+    },
+    {
+     "name": "Meovv",
+     "gko": "미야오"
+    }
+   ]
+  },
+  {
+   "ko": "IS Rising Star",
+   "en": "IS Rising Star",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "AllDay Project",
+     "gko": "올데이프로젝트"
+    },
+    {
+     "name": "Hearts2Hearts",
+     "gko": "하츠투하츠"
+    },
+    {
+     "name": "Idid",
+     "gko": "아이딧"
+    },
+    {
+     "name": "KickFlip",
+     "gko": "킥플립"
+    },
+    {
+     "name": "KiiiKiii",
+     "gko": "키키"
+    }
+   ]
+  },
+  {
+   "ko": "K-pop Global Artist",
+   "en": "K-pop Global Artist",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "INI",
+     "id": "a0865"
+    },
+    {
+     "name": "Nexz",
+     "gko": "넥스지"
+    }
+   ]
+  },
+  {
+   "ko": "Style Icon",
+   "en": "Style Icon",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Unis",
+     "gko": "유니스"
+    }
+   ]
+  },
+  {
+   "ko": "Best Global K-pop Star",
+   "en": "Best Global K-pop Star",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    }
+   ]
+  },
+  {
+   "ko": "Hulu Japanese Popularity",
+   "en": "Hulu Japanese Popularity",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Nexz",
+     "gko": "넥스지"
+    }
+   ]
+  },
+  {
+   "ko": "ENA K-pop Artist",
+   "en": "ENA K-pop Artist",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    }
+   ]
+  },
+  {
+   "ko": "Best Vocal Performance",
+   "en": "Best Vocal Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "BtoB",
+     "gko": "비투비"
+    }
+   ]
+  },
+  {
+   "ko": "Best Solo Artist – Female",
+   "en": "Best Solo Artist – Female",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Dayoung",
+     "id": "a0661"
+    }
+   ]
+  },
+  {
+   "ko": "Best Solo Artist – Male",
+   "en": "Best Solo Artist – Male",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Suho",
+     "id": "a0370"
+    }
+   ]
+  }
+ ]
+}

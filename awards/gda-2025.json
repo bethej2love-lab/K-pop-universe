@@ -1,0 +1,269 @@
+{
+ "id": "gda",
+ "edition": "2025",
+ "name": "골든디스크어워즈",
+ "nameEn": "Golden Disc Awards",
+ "dates": [
+  "2026-01-10"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/40th_Golden_Disc_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Digital Daesang (Song of the Year)",
+   "en": "Digital Daesang (Song of the Year)",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "G-Dragon",
+     "id": "a0199"
+    }
+   ],
+   "work": "\"Home Sweet Home\""
+  },
+  {
+   "ko": "Album Daesang (Album of the Year)",
+   "en": "Album Daesang (Album of the Year)",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    }
+   ],
+   "work": "Karma"
+  },
+  {
+   "ko": "Artist Daesang (Artist of the Year)",
+   "en": "Artist Daesang (Artist of the Year)",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Jennie",
+     "id": "a0204"
+    }
+   ]
+  },
+  {
+   "ko": "Rookie Artist of the Year",
+   "en": "Rookie Artist of the Year",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "AllDay Project",
+     "gko": "올데이프로젝트"
+    },
+    {
+     "name": "Cortis",
+     "gko": "코르티스"
+    }
+   ]
+  },
+  {
+   "ko": "Digital Song Bonsang",
+   "en": "Digital Song Bonsang",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    },
+    {
+     "name": "AllDay Project",
+     "gko": "올데이프로젝트"
+    },
+    {
+     "name": "Blackpink",
+     "gko": "블랙핑크"
+    },
+    {
+     "name": "BoyNextDoor",
+     "gko": "보이넥스트도어"
+    },
+    {
+     "name": "G-Dragon",
+     "id": "a0199"
+    },
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    },
+    {
+     "name": "Jennie",
+     "id": "a0204"
+    },
+    {
+     "name": "Le Sserafim",
+     "gko": "르세라핌"
+    },
+    {
+     "name": "Rosé",
+     "id": "a0205"
+    },
+    {
+     "name": "Zo Zazz",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Album Bonsang",
+   "en": "Album Bonsang",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Ateez",
+     "gko": "에이티즈"
+    },
+    {
+     "name": "Enhypen",
+     "gko": "엔하이픈"
+    },
+    {
+     "name": "G-Dragon",
+     "id": "a0199"
+    },
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    },
+    {
+     "name": "NCT Wish",
+     "gko": "엔시티 위시"
+    },
+    {
+     "name": "Riize",
+     "gko": "라이즈"
+    },
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    },
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    },
+    {
+     "name": "Tomorrow X Together",
+     "gko": "투모로우바이투게더"
+    },
+    {
+     "name": "Zerobaseone",
+     "gko": "제로베이스원"
+    }
+   ]
+  },
+  {
+   "ko": "Most Popular Artist – Female",
+   "en": "Most Popular Artist – Female",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Hearts2Hearts",
+     "gko": "하츠투하츠"
+    }
+   ]
+  },
+  {
+   "ko": "Most Popular Artist – Male",
+   "en": "Most Popular Artist – Male",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Jin",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Golden Choice",
+   "en": "Golden Choice",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "ARrC",
+     "gko": "아크"
+    },
+    {
+     "name": "Close Your Eyes",
+     "gko": "클로즈유어아이즈"
+    }
+   ]
+  },
+  {
+   "ko": "Next Generation",
+   "en": "Next Generation",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "KiiiKiii",
+     "gko": "키키"
+    }
+   ]
+  },
+  {
+   "ko": "Cosmopolitan Artist Award",
+   "en": "Cosmopolitan Artist Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    }
+   ]
+  },
+  {
+   "ko": "Global Impact Award",
+   "en": "Global Impact Award",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Jennie",
+     "id": "a0204"
+    }
+   ]
+  },
+  {
+   "ko": "Best Performance",
+   "en": "Best Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Izna",
+     "gko": "이즈나"
+    },
+    {
+     "name": "TWS",
+     "gko": "투어스"
+    }
+   ]
+  },
+  {
+   "ko": "Naver AI Choice",
+   "en": "Naver AI Choice",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "BoyNextDoor",
+     "gko": "보이넥스트도어"
+    }
+   ]
+  },
+  {
+   "ko": "Best Group",
+   "en": "Best Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Monsta X",
+     "gko": "몬스타엑스"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,261 @@
+{
+ "id": "gda",
+ "edition": "2022",
+ "name": "골든디스크어워즈",
+ "nameEn": "Golden Disc Awards",
+ "dates": [
+  "2023-01-07"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/37th_Golden_Disc_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Digital Daesang (Song of the Year)",
+   "en": "Digital Daesang (Song of the Year)",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    }
+   ],
+   "work": "\"Love Dive\""
+  },
+  {
+   "ko": "Disc Daesang (Album of the Year)",
+   "en": "Disc Daesang (Album of the Year)",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "Proof"
+  },
+  {
+   "ko": "Digital Song Bonsang",
+   "en": "Digital Song Bonsang",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "(G)I-dle",
+     "gko": "아이들"
+    },
+    {
+     "name": "Big Bang",
+     "gko": "빅뱅"
+    },
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    },
+    {
+     "name": "Jay Park",
+     "id": "a0962"
+    },
+    {
+     "name": "Kim Min-seok",
+     "ext": true
+    },
+    {
+     "name": "MeloMance",
+     "ext": true
+    },
+    {
+     "name": "Lim Young-woong",
+     "ext": true
+    },
+    {
+     "name": "NewJeans",
+     "gko": "뉴진스"
+    },
+    {
+     "name": "Psy",
+     "id": "a1041"
+    }
+   ]
+  },
+  {
+   "ko": "Album Bonsang",
+   "en": "Album Bonsang",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Blackpink",
+     "gko": "블랙핑크"
+    },
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    },
+    {
+     "name": "Enhypen",
+     "gko": "엔하이픈"
+    },
+    {
+     "name": "NCT",
+     "ext": true
+    },
+    {
+     "name": "NCT 127",
+     "gko": "엔시티 127"
+    },
+    {
+     "name": "NCT Dream",
+     "gko": "엔시티 드림"
+    },
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    },
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    }
+   ]
+  },
+  {
+   "ko": "Rookie Artist of the Year",
+   "en": "Rookie Artist of the Year",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Ive",
+     "gko": "아이브"
+    },
+    {
+     "name": "Le Sserafim",
+     "gko": "르세라핌"
+    },
+    {
+     "name": "NewJeans",
+     "gko": "뉴진스"
+    }
+   ]
+  },
+  {
+   "ko": "TikTok Most Popular Artist Award",
+   "en": "TikTok Most Popular Artist Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  },
+  {
+   "ko": "Artist of the Year",
+   "en": "Artist of the Year",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Psy",
+     "id": "a1041"
+    }
+   ]
+  },
+  {
+   "ko": "Best Group",
+   "en": "Best Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Treasure",
+     "gko": "트레저"
+    }
+   ]
+  },
+  {
+   "ko": "Best Solo Artist",
+   "en": "Best Solo Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Be'O",
+     "ext": true
+    },
+    {
+     "name": "Younha",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best R&B/Hip Hop Award",
+   "en": "Best R&B/Hip Hop Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Big Naughty",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Thai K-pop Artist",
+   "en": "Thai K-pop Artist",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    }
+   ]
+  },
+  {
+   "ko": "Best Performance",
+   "en": "Best Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    }
+   ]
+  },
+  {
+   "ko": "Best Producer",
+   "en": "Best Producer",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Starship Entertainment",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Most Popular Artist",
+   "en": "Most Popular Artist",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "(G)I-dle",
+     "gko": "아이들"
+    },
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    }
+   ]
+  },
+  {
+   "ko": "Thai Fans Support with Baoji",
+   "en": "Thai Fans Support with Baoji",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "J-Hope",
+     "id": "a0186"
+    }
+   ]
+  }
+ ]
+}

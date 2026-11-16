@@ -1,0 +1,226 @@
+{
+ "id": "mama",
+ "edition": "2009",
+ "name": "마마 어워즈",
+ "nameEn": "Mnet Asian Music Awards",
+ "dates": [
+  "2009-11-21"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2009_Mnet_Asian_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Song of the Year",
+   "en": "Song of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "2NE1",
+     "gko": "투애니원"
+    }
+   ],
+   "work": "\"I Don't Care\""
+  },
+  {
+   "ko": "Album of the Year",
+   "en": "Album of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "G-Dragon",
+     "id": "a0199"
+    }
+   ],
+   "work": "Heartbreaker"
+  },
+  {
+   "ko": "Artist of the Year",
+   "en": "Artist of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "2PM",
+     "gko": "2PM"
+    }
+   ]
+  },
+  {
+   "ko": "Best Music Video",
+   "en": "Best Music Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "2NE1",
+     "gko": "투애니원"
+    }
+   ],
+   "work": "\"Fire\""
+  },
+  {
+   "ko": "Best New Male Artists",
+   "en": "Best New Male Artists",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Supreme Team",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best New Female Artists",
+   "en": "Best New Female Artists",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "2NE1",
+     "gko": "투애니원"
+    }
+   ]
+  },
+  {
+   "ko": "Best Male Group",
+   "en": "Best Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "2PM",
+     "gko": "2PM"
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Group",
+   "en": "Best Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Brown Eyed Girls",
+     "gko": "브라운아이드걸스"
+    }
+   ]
+  },
+  {
+   "ko": "Best OST",
+   "en": "Best OST",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "SS501",
+     "gko": "SS501"
+    }
+   ],
+   "work": "\"Because I'm Stupid\" (Boys Over Flowers)"
+  },
+  {
+   "ko": "Best Dance",
+   "en": "Best Dance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Kara",
+     "gko": "카라"
+    }
+   ],
+   "work": "\"Honey\""
+  },
+  {
+   "ko": "Best Male Solo Artist",
+   "en": "Best Male Solo Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Tiger JK",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Solo Artist",
+   "en": "Best Female Solo Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Baek Ji-young",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Ballad R&B",
+   "en": "Best Ballad R&B",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Kim Tae-woo",
+     "id": "a0840"
+    }
+   ],
+   "work": "\"Love Rain\""
+  },
+  {
+   "ko": "Best Rock",
+   "en": "Best Rock",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Boohwal",
+     "ext": true
+    }
+   ],
+   "work": "\"Thought\""
+  },
+  {
+   "ko": "Best Hip Hop",
+   "en": "Best Hip Hop",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Leessang",
+     "ext": true
+    }
+   ],
+   "work": "\"Girl Who Can't Break Up, Guy Who Can't Leave\" (ft. Jung-in)"
+  },
+  {
+   "ko": "Best House & Electronic",
+   "en": "Best House & Electronic",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Brown Eyed Girls",
+     "gko": "브라운아이드걸스"
+    }
+   ],
+   "work": "\"Abracadabra\""
+  },
+  {
+   "ko": "Best Trot",
+   "en": "Best Trot",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Hong Jin-young",
+     "ext": true
+    }
+   ],
+   "work": "\"Love Battery\""
+  },
+  {
+   "ko": "Best Mixed Gender Group",
+   "en": "Best Mixed Gender Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "8Eight",
+     "ext": true
+    }
+   ]
+  }
+ ]
+}

@@ -141,6 +141,11 @@ async function collect(id, year, force) {
   if (!cats.length) cats = parseTablePage(page.text);
   if (!cats.length) return `${id}-${year}: 수상 표 파싱 0건`;
   const date = parseDate(page.text);
+  // 회차의 연도 = 개최일 기준, 1~2월에 열린 시상식(골든디스크·서울가요대상·써클차트)은 전년도 시상 — 어느 연도로 요청해도 같은 파일 하나로 모인다
+  const dm = date && /^(\d{4})-(\d{2})/.exec(date);
+  if (dm) { year = +dm[1] - (+dm[2] <= 2 ? 1 : 0); }
+  const outFinal = path.join(ROOT, 'awards', `${id}-${year}.json`);
+  if (outFinal !== out && fs.existsSync(outFinal)) { const cur = JSON.parse(fs.readFileSync(outFinal, 'utf8')); if (!cur.autoSource || !force) return `${id}-${year}: 이미 있음(요청 ${out.slice(-9, -5)} → 같은 회차, 건너뜀)`; }
   let ext = 0, linked = 0;
   const categories = cats.map(c => {
     const winners = []; const work = c.winners.length === 1 ? (c.winners[0].work || '') : ''; // 수상자 줄이 하나일 때만 작품명(여러 팀이면 줄마다 달라 생략)
@@ -152,7 +157,8 @@ async function collect(id, year, force) {
         else { winners.push({ name: n.name, ext: true }); ext++; }
       }
     }
-    return { ko: c.en, en: c.en, tier: tierOf(c.en, c.daesang), winners, ...(work ? { work } : {}) };
+    const seenW = new Set(); const uniq = winners.filter(w => { const k = w.name + '|' + (w.gko || w.id || ''); if (seenW.has(k)) return false; seenW.add(k); return true; }); // 같은 이름 부문이 여러 개(AAA 대상 등)면 합쳐지며 중복 → 제거
+    return { ko: c.en, en: c.en, tier: tierOf(c.en, c.daesang), winners: uniq, ...(work ? { work } : {}) };
   });
   const doc = {
     id, edition: String(year), name: def.name, nameEn: def.nameEn, dates: [date || String(year)], venue: '',
@@ -161,7 +167,7 @@ async function collect(id, year, force) {
     categories,
   };
   fs.mkdirSync(path.join(ROOT, 'awards'), { recursive: true });
-  fs.writeFileSync(out, JSON.stringify(doc, null, 1) + '\n');
+  fs.writeFileSync(outFinal, JSON.stringify(doc, null, 1) + '\n');
   return `${id}-${year}: ${categories.length}부문 · 연결 ${linked} · 미등록 ${ext} ← ${page.title}`;
 }
 

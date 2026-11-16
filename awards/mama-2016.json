@@ -1,0 +1,259 @@
+{
+ "id": "mama",
+ "edition": "2016",
+ "name": "마마 어워즈",
+ "nameEn": "Mnet Asian Music Awards",
+ "dates": [
+  "2016-12-02"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2016_Mnet_Asian_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Artist of the Year",
+   "en": "Artist of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ]
+  },
+  {
+   "ko": "Album of the Year",
+   "en": "Album of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    }
+   ],
+   "work": "Ex'Act"
+  },
+  {
+   "ko": "Song of the Year",
+   "en": "Song of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Twice",
+     "gko": "트와이스"
+    }
+   ],
+   "work": "\"Cheer Up\""
+  },
+  {
+   "ko": "Best Music Video",
+   "en": "Best Music Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Blackpink",
+     "gko": "블랙핑크"
+    }
+   ],
+   "work": "\"Whistle\""
+  },
+  {
+   "ko": "Best Male Artist",
+   "en": "Best Male Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Zico",
+     "id": "a0972"
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Artist",
+   "en": "Best Female Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Taeyeon",
+     "id": "a0166"
+    }
+   ]
+  },
+  {
+   "ko": "Best Male Group",
+   "en": "Best Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Group",
+   "en": "Best Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Twice",
+     "gko": "트와이스"
+    }
+   ]
+  },
+  {
+   "ko": "Best Dance Performance – Male Group",
+   "en": "Best Dance Performance – Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "BTS",
+     "gko": "방탄소년단"
+    }
+   ],
+   "work": "\"Blood Sweat & Tears\""
+  },
+  {
+   "ko": "Best Dance Performance – Female Group",
+   "en": "Best Dance Performance – Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "GFriend",
+     "gko": "여자친구"
+    }
+   ],
+   "work": "\"Rough\""
+  },
+  {
+   "ko": "Best Dance Performance – Solo",
+   "en": "Best Dance Performance – Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Taemin",
+     "ext": true
+    }
+   ],
+   "work": "\"Press Your Number\""
+  },
+  {
+   "ko": "Best Collaboration",
+   "en": "Best Collaboration",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Suzy",
+     "id": "a1017"
+    },
+    {
+     "name": "Baekhyun",
+     "id": "a0372"
+    }
+   ],
+   "work": "\"Dream\""
+  },
+  {
+   "ko": "Best Vocal Performance – Group",
+   "en": "Best Vocal Performance – Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Davichi",
+     "ext": true
+    }
+   ],
+   "work": "\"Beside Me\""
+  },
+  {
+   "ko": "Best OST",
+   "en": "Best OST",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lee Juck",
+     "ext": true
+    }
+   ],
+   "work": "\"Don't Worry\" (Reply 1988)"
+  },
+  {
+   "ko": "Best Vocal Performance – Male Solo",
+   "en": "Best Vocal Performance – Male Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Crush",
+     "ext": true
+    }
+   ],
+   "work": "\"Don't Forget\" featuring Taeyeon"
+  },
+  {
+   "ko": "Best Vocal Performance – Female Solo",
+   "en": "Best Vocal Performance – Female Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Ailee",
+     "ext": true
+    }
+   ],
+   "work": "\"If You\""
+  },
+  {
+   "ko": "Best Band Performance",
+   "en": "Best Band Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "CNBLUE",
+     "gko": "씨엔블루"
+    }
+   ],
+   "work": "\"You're So Fine\""
+  },
+  {
+   "ko": "Best Rap Performance",
+   "en": "Best Rap Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "C Jamm",
+     "ext": true
+    },
+    {
+     "name": "BewhY",
+     "ext": true
+    }
+   ],
+   "work": "\"Puzzle\""
+  },
+  {
+   "ko": "Best New Artist – Male",
+   "en": "Best New Artist – Male",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "NCT 127",
+     "gko": "엔시티 127"
+    }
+   ]
+  },
+  {
+   "ko": "Best New Artist – Female",
+   "en": "Best New Artist – Female",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "I.O.I",
+     "gko": "아이오아이"
+    }
+   ]
+  }
+ ]
+}

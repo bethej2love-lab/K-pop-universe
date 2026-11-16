@@ -1,0 +1,227 @@
+{
+ "id": "mama",
+ "edition": "2011",
+ "name": "마마 어워즈",
+ "nameEn": "Mnet Asian Music Awards",
+ "dates": [
+  "2011-11-29"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2011_Mnet_Asian_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Song of the Year",
+   "en": "Song of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "2NE1",
+     "gko": "투애니원"
+    }
+   ],
+   "work": "\"I Am the Best\""
+  },
+  {
+   "ko": "Album of the Year",
+   "en": "Album of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Super Junior",
+     "gko": "슈퍼주니어"
+    }
+   ],
+   "work": "Mr. Simple"
+  },
+  {
+   "ko": "Artist of the Year",
+   "en": "Artist of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Girls' Generation",
+     "gko": "소녀시대"
+    }
+   ]
+  },
+  {
+   "ko": "Best Music Video",
+   "en": "Best Music Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Big Bang",
+     "gko": "빅뱅"
+    }
+   ],
+   "work": "\"Love Song\""
+  },
+  {
+   "ko": "Best Male Solo Artist",
+   "en": "Best Male Solo Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Kim Hyun-joong",
+     "id": "a1059"
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Solo Artist",
+   "en": "Best Female Solo Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Baek Ji-young",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Male Group",
+   "en": "Best Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Super Junior",
+     "gko": "슈퍼주니어"
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Group",
+   "en": "Best Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Girls' Generation",
+     "gko": "소녀시대"
+    }
+   ]
+  },
+  {
+   "ko": "Best Vocal Performance – Group",
+   "en": "Best Vocal Performance – Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "2NE1",
+     "gko": "투애니원"
+    }
+   ],
+   "work": "\"Lonely\""
+  },
+  {
+   "ko": "Best Vocal Performance – Solo",
+   "en": "Best Vocal Performance – Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "IU",
+     "id": "a0207"
+    }
+   ],
+   "work": "\"Good Day\""
+  },
+  {
+   "ko": "Best Dance Performance – Male Group",
+   "en": "Best Dance Performance – Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Beast",
+     "gko": "하이라이트"
+    }
+   ],
+   "work": "\"Fiction\""
+  },
+  {
+   "ko": "Best Dance Performance – Female Group",
+   "en": "Best Dance Performance – Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Miss A",
+     "gko": "미쓰에이"
+    }
+   ],
+   "work": "\"Good Bye Baby\""
+  },
+  {
+   "ko": "Best Dance Performance – Solo",
+   "en": "Best Dance Performance – Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Hyuna",
+     "ext": true
+    }
+   ],
+   "work": "\"Bubble Pop!\""
+  },
+  {
+   "ko": "Best Band Performance",
+   "en": "Best Band Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "CNBLUE",
+     "gko": "씨엔블루"
+    }
+   ],
+   "work": "\"Intuition\""
+  },
+  {
+   "ko": "Best OST",
+   "en": "Best OST",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Baek Ji-young",
+     "ext": true
+    }
+   ],
+   "work": "\"That Woman\" (Secret Garden)"
+  },
+  {
+   "ko": "Best Rap Performance",
+   "en": "Best Rap Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Leessang",
+     "ext": true
+    }
+   ],
+   "work": "\"Turn Off The TV\""
+  },
+  {
+   "ko": "Best New Male Artists",
+   "en": "Best New Male Artists",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Huh Gak",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best New Female Artists",
+   "en": "Best New Female Artists",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Apink",
+     "gko": "에이핑크"
+    }
+   ]
+  }
+ ]
+}

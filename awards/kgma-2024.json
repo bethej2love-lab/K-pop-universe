@@ -1,0 +1,536 @@
+{
+ "id": "kgma",
+ "edition": "2024",
+ "name": "코리아그랜드뮤직어워즈",
+ "nameEn": "Korea Grand Music Awards",
+ "dates": [
+  "2024-11-16"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2024_Korea_Grand_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Grand Artist",
+   "en": "Grand Artist",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "NewJeans",
+     "gko": "뉴진스"
+    }
+   ]
+  },
+  {
+   "ko": "Grand Performer",
+   "en": "Grand Performer",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Day6",
+     "gko": "데이식스"
+    }
+   ]
+  },
+  {
+   "ko": "Grand Record",
+   "en": "Grand Record",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "(G)I-dle",
+     "gko": "아이들"
+    }
+   ]
+  },
+  {
+   "ko": "Grand Song",
+   "en": "Grand Song",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    }
+   ],
+   "work": "\"Supernova\""
+  },
+  {
+   "ko": "Grand Honor's Choice",
+   "en": "Grand Honor's Choice",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    },
+    {
+     "name": "Ateez",
+     "gko": "에이티즈"
+    },
+    {
+     "name": "Zerobaseone",
+     "gko": "제로베이스원"
+    }
+   ]
+  },
+  {
+   "ko": "Best Artist 10",
+   "en": "Best Artist 10",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "(G)I-dle",
+     "gko": "아이들"
+    },
+    {
+     "name": "D.O.",
+     "id": "a0375"
+    },
+    {
+     "name": "Jeong Dong-won",
+     "ext": true
+    },
+    {
+     "name": "Lee Young-ji",
+     "id": "a1038"
+    },
+    {
+     "name": "NewJeans",
+     "gko": "뉴진스"
+    },
+    {
+     "name": "P1Harmony",
+     "gko": "피원하모니"
+    },
+    {
+     "name": "STAYC",
+     "gko": "스테이씨"
+    },
+    {
+     "name": "Taemin",
+     "ext": true
+    },
+    {
+     "name": "Young Tak",
+     "ext": true
+    },
+    {
+     "name": "Zerobaseone",
+     "gko": "제로베이스원"
+    }
+   ]
+  },
+  {
+   "ko": "Best Song 10",
+   "en": "Best Song 10",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    },
+    {
+     "name": "Ateez",
+     "gko": "에이티즈"
+    },
+    {
+     "name": "Day6",
+     "gko": "데이식스"
+    },
+    {
+     "name": "Lee Chan-won",
+     "ext": true
+    },
+    {
+     "name": "Lim Young-woong",
+     "ext": true
+    },
+    {
+     "name": "NCT Dream",
+     "gko": "엔시티 드림"
+    },
+    {
+     "name": "Riize",
+     "gko": "라이즈"
+    },
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    },
+    {
+     "name": "Stray Kids",
+     "gko": "스트레이키즈"
+    },
+    {
+     "name": "Treasure",
+     "gko": "트레저"
+    }
+   ]
+  },
+  {
+   "ko": "Best Adult Contemporary",
+   "en": "Best Adult Contemporary",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lee Chan-won",
+     "ext": true
+    },
+    {
+     "name": "Song Ga-in",
+     "ext": true
+    },
+    {
+     "name": "Young Tak",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Band",
+   "en": "Best Band",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Day6",
+     "gko": "데이식스"
+    },
+    {
+     "name": "QWER",
+     "gko": "큐더블유이알"
+    }
+   ]
+  },
+  {
+   "ko": "Best Hip-Hop",
+   "en": "Best Hip-Hop",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lee Young-ji",
+     "id": "a1038"
+    }
+   ]
+  },
+  {
+   "ko": "Best R&B",
+   "en": "Best R&B",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Bibi",
+     "id": "a1308"
+    },
+    {
+     "name": "D.O.",
+     "id": "a0375"
+    }
+   ]
+  },
+  {
+   "ko": "Best OST",
+   "en": "Best OST",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Yoo Hwe-seung",
+     "id": "a1546"
+    }
+   ],
+   "work": "\"I Think I Did\""
+  },
+  {
+   "ko": "Best Memory",
+   "en": "Best Memory",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lee Mu-jin",
+     "ext": true
+    }
+   ],
+   "work": "\"She Is\""
+  },
+  {
+   "ko": "Trend of the Year – K-pop Group",
+   "en": "Trend of the Year – K-pop Group",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Unis",
+     "gko": "유니스"
+    }
+   ]
+  },
+  {
+   "ko": "Trend of the Year – K-pop Solo",
+   "en": "Trend of the Year – K-pop Solo",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "V",
+     "id": "a0188"
+    }
+   ]
+  },
+  {
+   "ko": "Trend of the Year – Trot Star",
+   "en": "Trend of the Year – Trot Star",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Lee Chan-won",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Trend of the Year – Trot Rookie",
+   "en": "Trend of the Year – Trot Rookie",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Park Ji-hyeon",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "CALIVERSE, Transcendent Artist of the Year",
+   "en": "CALIVERSE, Transcendent Artist of the Year",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Young Tak",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "DIGGUS Digging Artist",
+   "en": "DIGGUS Digging Artist",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Lee Chan-won",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Fan Vote Rookie – Female",
+   "en": "Fan Vote Rookie – Female",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "NiziU",
+     "gko": "니쥬"
+    }
+   ]
+  },
+  {
+   "ko": "Fan Vote Rookie – Male",
+   "en": "Fan Vote Rookie – Male",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Riize",
+     "gko": "라이즈"
+    }
+   ]
+  },
+  {
+   "ko": "Lullua × Fancast Best Popularity",
+   "en": "Lullua × Fancast Best Popularity",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Lee Chan-won",
+     "ext": true
+    },
+    {
+     "name": "Taemin",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Selling Album",
+   "en": "Best Selling Album",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Seventeen",
+     "gko": "세븐틴"
+    }
+   ],
+   "work": "Seventeenth Heaven"
+  },
+  {
+   "ko": "Best Producer",
+   "en": "Best Producer",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Tak Young-jun",
+     "ext": true
+    },
+    {
+     "name": "SM Entertainment",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "IS Rising Star",
+   "en": "IS Rising Star",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Fifty Fifty",
+     "gko": "피프티피프티"
+    },
+    {
+     "name": "Jeong Dong-won",
+     "ext": true
+    },
+    {
+     "name": "NCT Wish",
+     "gko": "엔시티 위시"
+    }
+   ]
+  },
+  {
+   "ko": "IS Rookies",
+   "en": "IS Rookies",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Nowadays",
+     "gko": "나우즈"
+    },
+    {
+     "name": "Unis",
+     "gko": "유니스"
+    }
+   ]
+  },
+  {
+   "ko": "K-pop Global Artist",
+   "en": "K-pop Global Artist",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "JO1",
+     "ext": true
+    },
+    {
+     "name": "NiziU",
+     "gko": "니쥬"
+    }
+   ]
+  },
+  {
+   "ko": "K-pop Global Rookies",
+   "en": "K-pop Global Rookies",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Me:I",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "K-pop Legendary Artist",
+   "en": "K-pop Legendary Artist",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "TVXQ!",
+     "gko": "동방신기"
+    }
+   ]
+  },
+  {
+   "ko": "Most Streamed Song",
+   "en": "Most Streamed Song",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Aespa",
+     "gko": "에스파"
+    }
+   ],
+   "work": "\"Supernova\""
+  },
+  {
+   "ko": "Best Group",
+   "en": "Best Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Riize",
+     "gko": "라이즈"
+    }
+   ]
+  },
+  {
+   "ko": "Best Rock Ballad",
+   "en": "Best Rock Ballad",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lee Mu-jin",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Solo Artist",
+   "en": "Best Solo Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Taemin",
+     "ext": true
+    },
+    {
+     "name": "Yuqi",
+     "id": "a0118"
+    }
+   ]
+  },
+  {
+   "ko": "Best Stage",
+   "en": "Best Stage",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Treasure",
+     "gko": "트레저"
+    }
+   ]
+  },
+  {
+   "ko": "Photogenic",
+   "en": "Photogenic",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Class:y",
+     "gko": "클라씨"
+    },
+    {
+     "name": "Seo Eve",
+     "ext": true
+    }
+   ]
+  }
+ ]
+}

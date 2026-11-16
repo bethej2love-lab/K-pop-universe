@@ -1,0 +1,195 @@
+{
+ "id": "mma",
+ "edition": "2011",
+ "name": "멜론뮤직어워드",
+ "nameEn": "Melon Music Awards",
+ "dates": [
+  "2011-11-24"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2011_Melon_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Top 10 Artists",
+   "en": "Top 10 Artists",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Beast",
+     "gko": "하이라이트"
+    },
+    {
+     "name": "BigBang",
+     "gko": "빅뱅"
+    },
+    {
+     "name": "f(x)",
+     "gko": "에프엑스"
+    },
+    {
+     "name": "IU",
+     "id": "a0207"
+    },
+    {
+     "name": "Lena Park",
+     "ext": true
+    },
+    {
+     "name": "2NE1",
+     "gko": "투애니원"
+    },
+    {
+     "name": "Super Junior",
+     "gko": "슈퍼주니어"
+    },
+    {
+     "name": "Leessang",
+     "ext": true
+    },
+    {
+     "name": "Secret",
+     "gko": "시크릿"
+    },
+    {
+     "name": "Sistar",
+     "gko": "씨스타"
+    }
+   ]
+  },
+  {
+   "ko": "Album of the Year",
+   "en": "Album of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "2NE1",
+     "gko": "투애니원"
+    }
+   ],
+   "work": "2NE1 2nd Mini Album"
+  },
+  {
+   "ko": "Artist of the Year",
+   "en": "Artist of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Beast",
+     "gko": "하이라이트"
+    }
+   ]
+  },
+  {
+   "ko": "Song of the Year",
+   "en": "Song of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "IU",
+     "id": "a0207"
+    }
+   ],
+   "work": "\"Good Day\""
+  },
+  {
+   "ko": "Best New Artist",
+   "en": "Best New Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Huh Gak",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "ko": "Best Music Video",
+   "en": "Best Music Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "T-ara",
+     "gko": "티아라"
+    }
+   ],
+   "work": "\"Roly-Poly\""
+  },
+  {
+   "ko": "Best Rap/Hip Hop Award",
+   "en": "Best Rap/Hip Hop Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "GD & TOP",
+     "ext": true
+    }
+   ],
+   "work": "\"Oh Yeah\" (featuring Park Bom)"
+  },
+  {
+   "ko": "Best Rock Award",
+   "en": "Best Rock Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "CNBLUE",
+     "gko": "씨엔블루"
+    }
+   ],
+   "work": "\"Intuition\""
+  },
+  {
+   "ko": "Best R&B/Ballad Award",
+   "en": "Best R&B/Ballad Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Kim Bum-soo",
+     "ext": true
+    }
+   ],
+   "work": "\"Please\""
+  },
+  {
+   "ko": "Best OST Award",
+   "en": "Best OST Award",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Sunny Hill",
+     "ext": true
+    }
+   ],
+   "work": "\"Pit-A-Pat\" (from The Greatest Love)"
+  },
+  {
+   "ko": "Hot Trend Award (Variety)",
+   "en": "Hot Trend Award (Variety)",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Infinite Challenge",
+     "ext": true
+    }
+   ],
+   "work": "West Coast Highway Song Festival"
+  },
+  {
+   "ko": "Netizen Popularity Award",
+   "en": "Netizen Popularity Award",
+   "tier": "인기",
+   "winners": [
+    {
+     "name": "Super Junior",
+     "gko": "슈퍼주니어"
+    }
+   ],
+   "work": "\"Mr. Simple\""
+  }
+ ]
+}

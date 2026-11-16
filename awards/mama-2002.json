@@ -1,0 +1,245 @@
+{
+ "id": "mama",
+ "edition": "2002",
+ "name": "마마 어워즈",
+ "nameEn": "Mnet Asian Music Awards",
+ "dates": [
+  "2002-11-29"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2002_Mnet_Music_Video_Festival"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Most Popular Music Video",
+   "en": "Most Popular Music Video",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "BoA",
+     "id": "a1037"
+    }
+   ],
+   "work": "\"No. 1\""
+  },
+  {
+   "ko": "Music Video of the Year",
+   "en": "Music Video of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Cho PD",
+     "ext": true
+    }
+   ],
+   "work": "\"My Style\""
+  },
+  {
+   "ko": "Best New Male Artist",
+   "en": "Best New Male Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Rain",
+     "id": "a1039"
+    }
+   ],
+   "work": "\"Bad Guy\""
+  },
+  {
+   "ko": "Best New Female Artist",
+   "en": "Best New Female Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Youme",
+     "ext": true
+    }
+   ],
+   "work": "\"Love Is Always Thirsty\""
+  },
+  {
+   "ko": "Best New Group",
+   "en": "Best New Group",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Black Beat",
+     "ext": true
+    }
+   ],
+   "work": "\"In The Sky\""
+  },
+  {
+   "ko": "Best Mixed Group",
+   "en": "Best Mixed Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "The Jadu",
+     "ext": true
+    }
+   ],
+   "work": "\"We Need To Talk\""
+  },
+  {
+   "ko": "Best Male Group",
+   "en": "Best Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Shinhwa",
+     "gko": "신화"
+    }
+   ],
+   "work": "\"Perfect Man\""
+  },
+  {
+   "ko": "Best Female Group",
+   "en": "Best Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "S.E.S.",
+     "gko": "S.E.S."
+    }
+   ],
+   "work": "\"U\""
+  },
+  {
+   "ko": "Best Male Artist",
+   "en": "Best Male Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Sung Si-kyung",
+     "ext": true
+    }
+   ],
+   "work": "\"We Make A Good Pair\""
+  },
+  {
+   "ko": "Best Female Artist",
+   "en": "Best Female Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Jang Na-ra",
+     "ext": true
+    }
+   ],
+   "work": "\"Sweet Dream\""
+  },
+  {
+   "ko": "Best R&B Performance",
+   "en": "Best R&B Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lena Park",
+     "ext": true
+    }
+   ],
+   "work": "\"In Dreams\""
+  },
+  {
+   "ko": "Best Rock Performance",
+   "en": "Best Rock Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "YB",
+     "ext": true
+    }
+   ],
+   "work": "\"Love Two\""
+  },
+  {
+   "ko": "Best Hip Hop Performance",
+   "en": "Best Hip Hop Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Leessang",
+     "ext": true
+    }
+   ],
+   "work": "\"Rush\" (ft. Jung-in)"
+  },
+  {
+   "ko": "Best Indie Performance",
+   "en": "Best Indie Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Trans Fixion",
+     "ext": true
+    }
+   ],
+   "work": "\"Come Back to Me\""
+  },
+  {
+   "ko": "Best Dance Performance",
+   "en": "Best Dance Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "BoA",
+     "id": "a1037"
+    }
+   ],
+   "work": "\"No. 1\""
+  },
+  {
+   "ko": "Best Ballad Performance",
+   "en": "Best Ballad Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lee Soo-young",
+     "ext": true
+    }
+   ],
+   "work": "\"Lalala\""
+  },
+  {
+   "ko": "Special Jury Prize",
+   "en": "Special Jury Prize",
+   "tier": "특별",
+   "winners": [
+    {
+     "name": "Shin Seung-hun",
+     "ext": true
+    }
+   ],
+   "work": "\"If We Can Part Even Though We Love\""
+  },
+  {
+   "ko": "Best International Artist",
+   "en": "Best International Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Eminem",
+     "ext": true
+    }
+   ],
+   "work": "\"Without Me\""
+  },
+  {
+   "ko": "Best Music Video Director",
+   "en": "Best Music Video Director",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Cha Eun-taek",
+     "ext": true
+    }
+   ]
+  }
+ ]
+}

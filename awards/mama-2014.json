@@ -1,0 +1,232 @@
+{
+ "id": "mama",
+ "edition": "2014",
+ "name": "마마 어워즈",
+ "nameEn": "Mnet Asian Music Awards",
+ "dates": [
+  "2014-12-03"
+ ],
+ "venue": "",
+ "src": [
+  "https://en.wikipedia.org/wiki/2014_Mnet_Asian_Music_Awards"
+ ],
+ "autoSource": "wikipedia",
+ "collectedAt": "2026-11-16",
+ "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
+ "categories": [
+  {
+   "ko": "Album of the Year",
+   "en": "Album of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    }
+   ],
+   "work": "Overdose"
+  },
+  {
+   "ko": "Song of the Year",
+   "en": "Song of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Taeyang",
+     "id": "a0200"
+    }
+   ],
+   "work": "\"Eyes, Nose, Lips\""
+  },
+  {
+   "ko": "Artist of the Year",
+   "en": "Artist of the Year",
+   "tier": "대상",
+   "winners": [
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    }
+   ]
+  },
+  {
+   "ko": "Best Music Video",
+   "en": "Best Music Video",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "2PM",
+     "gko": "2PM"
+    }
+   ],
+   "work": "\"Go Crazy!\""
+  },
+  {
+   "ko": "Best Male Artist",
+   "en": "Best Male Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Taeyang",
+     "id": "a0200"
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Artist",
+   "en": "Best Female Artist",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "IU",
+     "id": "a0207"
+    }
+   ]
+  },
+  {
+   "ko": "Best Male Group",
+   "en": "Best Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Exo",
+     "gko": "엑소"
+    }
+   ]
+  },
+  {
+   "ko": "Best Female Group",
+   "en": "Best Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Sistar",
+     "gko": "씨스타"
+    }
+   ]
+  },
+  {
+   "ko": "Best Dance Performance – Male Group",
+   "en": "Best Dance Performance – Male Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Infinite",
+     "gko": "인피니트"
+    }
+   ],
+   "work": "\"Last Romeo\""
+  },
+  {
+   "ko": "Best Dance Performance – Female Group",
+   "en": "Best Dance Performance – Female Group",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Girl's Day",
+     "gko": "걸스데이"
+    }
+   ],
+   "work": "\"Something\""
+  },
+  {
+   "ko": "Best Dance Performance – Solo",
+   "en": "Best Dance Performance – Solo",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Sunmi",
+     "id": "a0517"
+    }
+   ],
+   "work": "\"Full Moon\""
+  },
+  {
+   "ko": "Best Collaboration",
+   "en": "Best Collaboration",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Soyou",
+     "id": "a1035"
+    },
+    {
+     "name": "Junggigo",
+     "ext": true
+    }
+   ],
+   "work": "\"Some\""
+  },
+  {
+   "ko": "Best Rap Performance",
+   "en": "Best Rap Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Epik High",
+     "ext": true
+    }
+   ],
+   "work": "\"Happen Ending\""
+  },
+  {
+   "ko": "Best Band Performance",
+   "en": "Best Band Performance",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "CNBLUE",
+     "gko": "씨엔블루"
+    }
+   ],
+   "work": "\"Can't Stop\""
+  },
+  {
+   "ko": "Best Vocal Performance – Male",
+   "en": "Best Vocal Performance – Male",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Taeyang",
+     "id": "a0200"
+    }
+   ],
+   "work": "\"Eyes, Nose, Lips\""
+  },
+  {
+   "ko": "Best Vocal Performance – Female",
+   "en": "Best Vocal Performance – Female",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Ailee",
+     "ext": true
+    }
+   ],
+   "work": "\"Singing Got Better\""
+  },
+  {
+   "ko": "Best OST",
+   "en": "Best OST",
+   "tier": "본상",
+   "winners": [
+    {
+     "name": "Lyn",
+     "ext": true
+    }
+   ],
+   "work": "\"My Destiny\" (My Love from the Star)"
+  },
+  {
+   "ko": "Best New Artist",
+   "en": "Best New Artist",
+   "tier": "신인",
+   "winners": [
+    {
+     "name": "Winner",
+     "gko": "위너"
+    }
+   ]
+  }
+ ]
+}
