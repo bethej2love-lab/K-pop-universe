@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Song of the Year",
+   "ko": "올해의 노래",
    "en": "Song of the Year",
    "tier": "대상",
    "winners": [
@@ -24,10 +24,11 @@
      "gko": "미쓰에이"
     }
    ],
-   "work": "\"Bad Girl Good Girl\""
+   "work": "\"Bad Girl Good Girl\"",
+   "koAuto": true
   },
   {
-   "ko": "Album of the Year",
+   "ko": "올해의 앨범",
    "en": "Album of the Year",
    "tier": "대상",
    "winners": [
@@ -36,10 +37,11 @@
      "gko": "투애니원"
     }
    ],
-   "work": "To Anyone"
+   "work": "To Anyone",
+   "koAuto": true
   },
   {
-   "ko": "Artist of the Year",
+   "ko": "올해의 아티스트",
    "en": "Artist of the Year",
    "tier": "대상",
    "winners": [
@@ -47,10 +49,11 @@
      "name": "2NE1",
      "gko": "투애니원"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Music Video",
+   "ko": "베스트 뮤직비디오",
    "en": "Best Music Video",
    "tier": "본상",
    "winners": [
@@ -59,10 +62,11 @@
      "gko": "투애니원"
     }
    ],
-   "work": "\"Can't Nobody\""
+   "work": "\"Can't Nobody\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Female Artist",
+   "ko": "베스트 신인 여자 아티스트",
    "en": "Best New Female Artist",
    "tier": "신인",
    "winners": [
@@ -70,10 +74,11 @@
      "name": "Miss A",
      "gko": "미쓰에이"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best New Male Artist",
+   "ko": "베스트 신인 남자 아티스트",
    "en": "Best New Male Artist",
    "tier": "신인",
    "winners": [
@@ -81,10 +86,11 @@
      "name": "CNBLUE",
      "gko": "씨엔블루"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Male Group",
+   "ko": "베스트 남자 그룹",
    "en": "Best Male Group",
    "tier": "본상",
    "winners": [
@@ -92,10 +98,11 @@
      "name": "2PM",
      "gko": "2PM"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Female Group",
+   "ko": "베스트 여자 그룹",
    "en": "Best Female Group",
    "tier": "본상",
    "winners": [
@@ -103,10 +110,11 @@
      "name": "2NE1",
      "gko": "투애니원"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Male Solo Artist",
+   "ko": "베스트 남자 솔로 아티스트",
    "en": "Best Male Solo Artist",
    "tier": "본상",
    "winners": [
@@ -114,10 +122,11 @@
      "name": "Taeyang",
      "id": "a0200"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Female Solo Artist",
+   "ko": "베스트 여자 솔로 아티스트",
    "en": "Best Female Solo Artist",
    "tier": "본상",
    "winners": [
@@ -125,10 +134,11 @@
      "name": "BoA",
      "id": "a1037"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance (Male Group)",
+   "ko": "베스트 댄스 퍼포먼스 (남자 그룹)",
    "en": "Best Dance Performance (Male Group)",
    "tier": "본상",
    "winners": [
@@ -137,10 +147,11 @@
      "gko": "2PM"
     }
    ],
-   "work": "\"I'll Be Back\""
+   "work": "\"I'll Be Back\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance (Female Group)",
+   "ko": "베스트 댄스 퍼포먼스 (여자 그룹)",
    "en": "Best Dance Performance (Female Group)",
    "tier": "본상",
    "winners": [
@@ -149,10 +160,11 @@
      "gko": "미쓰에이"
     }
    ],
-   "work": "\"Bad Girl Good Girl\""
+   "work": "\"Bad Girl Good Girl\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance (Solo)",
+   "ko": "베스트 댄스 퍼포먼스 (솔로)",
    "en": "Best Dance Performance (Solo)",
    "tier": "본상",
    "winners": [
@@ -161,10 +173,11 @@
      "id": "a1039"
     }
    ],
-   "work": "\"Love Song\""
+   "work": "\"Love Song\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Collaboration",
+   "ko": "베스트 콜라보레이션",
    "en": "Best Collaboration",
    "tier": "본상",
    "winners": [
@@ -177,10 +190,11 @@
      "id": "a0965"
     }
    ],
-   "work": "\"I Happen to Love You\""
+   "work": "\"I Happen to Love You\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Rap Performance",
+   "ko": "베스트 랩 퍼포먼스",
    "en": "Best Rap Performance",
    "tier": "본상",
    "winners": [
@@ -189,10 +203,11 @@
      "ext": true
     }
    ],
-   "work": "\"I'm Like This\""
+   "work": "\"I'm Like This\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Band Performance",
+   "ko": "베스트 밴드 퍼포먼스",
    "en": "Best Band Performance",
    "tier": "본상",
    "winners": [
@@ -201,10 +216,11 @@
      "ext": true
     }
    ],
-   "work": "\"Propose\""
+   "work": "\"Propose\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Vocal Performance (Solo)",
+   "ko": "베스트 보컬 퍼포먼스 (솔로)",
    "en": "Best Vocal Performance (Solo)",
    "tier": "본상",
    "winners": [
@@ -213,10 +229,11 @@
      "ext": true
     }
    ],
-   "work": "\"As a Man\""
+   "work": "\"As a Man\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Vocal Performance (Group)",
+   "ko": "베스트 보컬 퍼포먼스 (그룹)",
    "en": "Best Vocal Performance (Group)",
    "tier": "본상",
    "winners": [
@@ -225,7 +242,8 @@
      "gko": "2AM"
     }
    ],
-   "work": "\"Can't Let You Go Even If I Die\""
+   "work": "\"Can't Let You Go Even If I Die\"",
+   "koAuto": true
   },
   {
    "ko": "The Shilla Duty Free Asian Wave Award",

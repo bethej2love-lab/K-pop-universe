@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Grand Prize",
+   "ko": "그랜드 상",
    "en": "Grand Prize",
    "tier": "대상",
    "winners": [
@@ -23,10 +23,11 @@
      "name": "I-dle",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Main Prize",
+   "ko": "본상 상",
    "en": "Main Prize",
    "tier": "본상",
    "winners": [
@@ -102,10 +103,11 @@
      "name": "Zerobaseone",
      "gko": "제로베이스원"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Rookie of the Year",
+   "ko": "올해의 신인",
    "en": "Rookie of the Year",
    "tier": "신인",
    "winners": [
@@ -121,10 +123,11 @@
      "name": "KiiiKiii",
      "gko": "키키"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Song Award",
+   "ko": "베스트 노래",
    "en": "Best Song Award",
    "tier": "본상",
    "winners": [
@@ -133,10 +136,11 @@
      "gko": "투모로우바이투게더"
     }
    ],
-   "work": "\"Deja Vu\""
+   "work": "\"Deja Vu\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Album Award",
+   "ko": "베스트 앨범",
    "en": "Best Album Award",
    "tier": "본상",
    "winners": [
@@ -148,10 +152,11 @@
      "name": "Zerobaseone",
      "gko": "제로베이스원"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Ballad Award",
+   "ko": "발라드",
    "en": "Ballad Award",
    "tier": "특별",
    "winners": [
@@ -159,7 +164,8 @@
      "name": "Hwang Karam",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "R&B/ Hip-hop Award",
@@ -173,7 +179,7 @@
    ]
   },
   {
-   "ko": "OST Award",
+   "ko": "OST",
    "en": "OST Award",
    "tier": "특별",
    "winners": [
@@ -182,10 +188,11 @@
      "ext": true
     }
    ],
-   "work": "\"Unpredictable Life\""
+   "work": "\"Unpredictable Life\"",
+   "koAuto": true
   },
   {
-   "ko": "Trot Award",
+   "ko": "트로트",
    "en": "Trot Award",
    "tier": "특별",
    "winners": [
@@ -193,10 +200,11 @@
      "name": "Young Tak",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Rising Star Award",
+   "ko": "라이징 스타",
    "en": "Rising Star Award",
    "tier": "신인",
    "winners": [
@@ -204,10 +212,11 @@
      "name": "VVUP",
      "gko": "비비업"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Popularity Award",
+   "ko": "인기상",
    "en": "Popularity Award",
    "tier": "인기",
    "winners": [
@@ -215,10 +224,11 @@
      "name": "Lee Chan-won",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "K-Wave Special Award",
+   "ko": "K웨이브 스페셜",
    "en": "K-Wave Special Award",
    "tier": "인기",
    "winners": [
@@ -226,7 +236,8 @@
      "name": "Jimin",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "K-pop World Choice – Group",
@@ -251,7 +262,7 @@
    ]
   },
   {
-   "ko": "Best Group Award",
+   "ko": "베스트 그룹",
    "en": "Best Group Award",
    "tier": "본상",
    "winners": [
@@ -263,10 +274,11 @@
      "name": "NCT Wish",
      "gko": "엔시티 위시"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Performance Award",
+   "ko": "베스트 퍼포먼스",
    "en": "Best Performance Award",
    "tier": "본상",
    "winners": [
@@ -278,10 +290,11 @@
      "name": "Fifty Fifty",
      "gko": "피프티피프티"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Solo Award",
+   "ko": "베스트 솔로",
    "en": "Best Solo Award",
    "tier": "본상",
    "winners": [
@@ -289,10 +302,11 @@
      "name": "Doyoung",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Band Award",
+   "ko": "밴드",
    "en": "Band Award",
    "tier": "특별",
    "winners": [
@@ -300,10 +314,11 @@
      "name": "Wave to Earth",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "K-pop Special Award",
+   "ko": "K팝 스페셜 어워드",
    "en": "K-pop Special Award",
    "tier": "특별",
    "winners": [
@@ -311,10 +326,11 @@
      "name": "BtoB",
      "gko": "비투비"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Discovery of the Year",
+   "ko": "올해의 발견",
    "en": "Discovery of the Year",
    "tier": "특별",
    "winners": [
@@ -322,10 +338,11 @@
      "name": "Say My Name",
      "gko": "세이마이네임"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "World Best Artist",
+   "ko": "월드 베스트 아티스트",
    "en": "World Best Artist",
    "tier": "특별",
    "winners": [
@@ -337,7 +354,8 @@
      "name": "Rosé",
      "id": "a0205"
     }
-   ]
+   ],
+   "koAuto": true
   }
  ]
 }

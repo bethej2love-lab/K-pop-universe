@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Top 10 Artist",
+   "ko": "TOP 10 아티스트",
    "en": "Top 10 Artist",
    "tier": "본상",
    "winners": [
@@ -59,10 +59,11 @@
      "name": "2PM",
      "gko": "2PM"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Album of the Year",
+   "ko": "올해의 앨범",
    "en": "Album of the Year",
    "tier": "대상",
    "winners": [
@@ -71,10 +72,11 @@
      "gko": "투애니원"
     }
    ],
-   "work": "To Anyone"
+   "work": "To Anyone",
+   "koAuto": true
   },
   {
-   "ko": "Artist of the Year",
+   "ko": "올해의 아티스트",
    "en": "Artist of the Year",
    "tier": "대상",
    "winners": [
@@ -82,10 +84,11 @@
      "name": "Girls' Generation",
      "gko": "소녀시대"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Song of the Year",
+   "ko": "올해의 노래",
    "en": "Song of the Year",
    "tier": "대상",
    "winners": [
@@ -94,10 +97,11 @@
      "gko": "2AM"
     }
    ],
-   "work": "\"Can't Let You Go Even If I Die\""
+   "work": "\"Can't Let You Go Even If I Die\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Artist",
+   "ko": "베스트 신인",
    "en": "Best New Artist",
    "tier": "신인",
    "winners": [
@@ -105,10 +109,11 @@
      "name": "CNBLUE",
      "gko": "씨엔블루"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Music Video",
+   "ko": "베스트 뮤직비디오",
    "en": "Best Music Video",
    "tier": "본상",
    "winners": [
@@ -117,10 +122,11 @@
      "id": "a0981"
     }
    ],
-   "work": "\"Irreversible\" (Dir. Hwang Soo-ah)"
+   "work": "\"Irreversible\" (Dir. Hwang Soo-ah)",
+   "koAuto": true
   },
   {
-   "ko": "Best Rap/Hip Hop Award",
+   "ko": "베스트 랩/힙합",
    "en": "Best Rap/Hip Hop Award",
    "tier": "본상",
    "winners": [
@@ -129,7 +135,8 @@
      "ext": true
     }
    ],
-   "work": "\"Dang Dang Dang\""
+   "work": "\"Dang Dang Dang\"",
+   "koAuto": true
   },
   {
    "ko": "Best Alternative Rock Award",
@@ -144,7 +151,7 @@
    "work": "\"Confession (고백)\""
   },
   {
-   "ko": "Best Ballad Award",
+   "ko": "베스트 발라드",
    "en": "Best Ballad Award",
    "tier": "본상",
    "winners": [
@@ -153,10 +160,11 @@
      "ext": true
     }
    ],
-   "work": "\"Like a Man\" (남자라서)"
+   "work": "\"Like a Man\" (남자라서)",
+   "koAuto": true
   },
   {
-   "ko": "Best Trot Award",
+   "ko": "베스트 트로트",
    "en": "Best Trot Award",
    "tier": "본상",
    "winners": [
@@ -165,10 +173,11 @@
      "ext": true
     }
    ],
-   "work": "\"Come On\""
+   "work": "\"Come On\"",
+   "koAuto": true
   },
   {
-   "ko": "Best OST Award",
+   "ko": "베스트 OST",
    "en": "Best OST Award",
    "tier": "본상",
    "winners": [
@@ -177,10 +186,11 @@
      "ext": true
     }
    ],
-   "work": "\"Losing My Mind\" (My Girlfriend Is a Gumiho)"
+   "work": "\"Losing My Mind\" (My Girlfriend Is a Gumiho)",
+   "koAuto": true
   },
   {
-   "ko": "Netizen Popularity Award",
+   "ko": "네티즌 인기상",
    "en": "Netizen Popularity Award",
    "tier": "인기",
    "winners": [
@@ -189,10 +199,11 @@
      "gko": "슈퍼주니어"
     }
    ],
-   "work": "\"Bonamana\""
+   "work": "\"Bonamana\"",
+   "koAuto": true
   },
   {
-   "ko": "Hot Trend Award",
+   "ko": "핫 트렌드",
    "en": "Hot Trend Award",
    "tier": "특별",
    "winners": [
@@ -201,7 +212,8 @@
      "gko": "소녀시대"
     }
    ],
-   "work": "\"Hoot\""
+   "work": "\"Hoot\"",
+   "koAuto": true
   }
  ]
 }

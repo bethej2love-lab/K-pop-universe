@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Most Popular Music Video",
+   "ko": "인기 뮤직비디오",
    "en": "Most Popular Music Video",
    "tier": "대상",
    "winners": [
@@ -24,10 +24,11 @@
      "id": "a1039"
     }
    ],
-   "work": "\"It's Raining\""
+   "work": "\"It's Raining\"",
+   "koAuto": true
   },
   {
-   "ko": "Music Video of the Year",
+   "ko": "올해의 뮤직비디오",
    "en": "Music Video of the Year",
    "tier": "대상",
    "winners": [
@@ -36,10 +37,11 @@
      "id": "a1037"
     }
    ],
-   "work": "\"My Name\""
+   "work": "\"My Name\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Male Video",
+   "ko": "베스트 신인 남자 비디오",
    "en": "Best New Male Video",
    "tier": "신인",
    "winners": [
@@ -48,10 +50,11 @@
      "ext": true
     }
    ],
-   "work": "\"Because You're My Woman\""
+   "work": "\"Because You're My Woman\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Female Video",
+   "ko": "베스트 신인 여자 비디오",
    "en": "Best New Female Video",
    "tier": "신인",
    "winners": [
@@ -60,10 +63,11 @@
      "ext": true
     }
    ],
-   "work": "\"Women with Beautiful Mind\""
+   "work": "\"Women with Beautiful Mind\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Group Video",
+   "ko": "베스트 신인 그룹 비디오",
    "en": "Best New Group Video",
    "tier": "신인",
    "winners": [
@@ -72,10 +76,11 @@
      "gko": "동방신기"
     }
    ],
-   "work": "\"Hug\""
+   "work": "\"Hug\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Group Video",
+   "ko": "베스트 그룹 비디오",
    "en": "Best Group Video",
    "tier": "본상",
    "winners": [
@@ -84,10 +89,11 @@
      "ext": true
     }
    ],
-   "work": "\"Disco King\""
+   "work": "\"Disco King\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Male Group Video",
+   "ko": "베스트 남자 그룹 비디오",
    "en": "Best Male Group Video",
    "tier": "본상",
    "winners": [
@@ -96,10 +102,11 @@
      "gko": "신화"
     }
    ],
-   "work": "\"Angel\""
+   "work": "\"Angel\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Female Group Video",
+   "ko": "베스트 여자 그룹 비디오",
    "en": "Best Female Group Video",
    "tier": "본상",
    "winners": [
@@ -108,10 +115,11 @@
      "gko": "슈가"
     }
    ],
-   "work": "\"Secret\""
+   "work": "\"Secret\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Male Video",
+   "ko": "베스트 남자 비디오",
    "en": "Best Male Video",
    "tier": "본상",
    "winners": [
@@ -120,10 +128,11 @@
      "ext": true
     }
    ],
-   "work": "\"Passion\""
+   "work": "\"Passion\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Female Video",
+   "ko": "베스트 여자 비디오",
    "en": "Best Female Video",
    "tier": "본상",
    "winners": [
@@ -132,10 +141,11 @@
      "ext": true
     }
    ],
-   "work": "\"Whistle to Me\""
+   "work": "\"Whistle to Me\"",
+   "koAuto": true
   },
   {
-   "ko": "Best R&B Video",
+   "ko": "베스트 R&B 비디오",
    "en": "Best R&B Video",
    "tier": "본상",
    "winners": [
@@ -144,10 +154,11 @@
      "ext": true
     }
    ],
-   "work": "\"Incurable Illness\""
+   "work": "\"Incurable Illness\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Rock Video",
+   "ko": "베스트 록 비디오",
    "en": "Best Rock Video",
    "tier": "본상",
    "winners": [
@@ -156,10 +167,11 @@
      "ext": true
     }
    ],
-   "work": "\"Live Wire\""
+   "work": "\"Live Wire\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Hip Hop Video",
+   "ko": "베스트 힙합 비디오",
    "en": "Best Hip Hop Video",
    "tier": "본상",
    "winners": [
@@ -168,7 +180,8 @@
      "ext": true
     }
    ],
-   "work": "\"Friend\" (ft. In Sooni)"
+   "work": "\"Friend\" (ft. In Sooni)",
+   "koAuto": true
   },
   {
    "ko": "Best Director",
@@ -183,7 +196,7 @@
    "work": "\"Timeless\", \"Because You're My Woman\", \"When That Day Comes\""
   },
   {
-   "ko": "Best Dance Video",
+   "ko": "베스트 댄스 비디오",
    "en": "Best Dance Video",
    "tier": "본상",
    "winners": [
@@ -192,10 +205,11 @@
      "gko": "신화"
     }
    ],
-   "work": "\"Brand New\""
+   "work": "\"Brand New\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Ballad Video",
+   "ko": "베스트 발라드 비디오",
    "en": "Best Ballad Video",
    "tier": "본상",
    "winners": [
@@ -204,10 +218,11 @@
      "ext": true
     }
    ],
-   "work": "\"When That Day Comes\""
+   "work": "\"When That Day Comes\"",
+   "koAuto": true
   },
   {
-   "ko": "Best OST",
+   "ko": "베스트 OST",
    "en": "Best OST",
    "tier": "본상",
    "winners": [
@@ -216,10 +231,11 @@
      "ext": true
     }
    ],
-   "work": "\"By Your Side\" (Lovers in Paris)"
+   "work": "\"By Your Side\" (Lovers in Paris)",
+   "koAuto": true
   },
   {
-   "ko": "Best International Artist",
+   "ko": "베스트 해외 아티스트",
    "en": "Best International Artist",
    "tier": "본상",
    "winners": [
@@ -228,7 +244,8 @@
      "ext": true
     }
    ],
-   "work": "\"Yeah!\""
+   "work": "\"Yeah!\"",
+   "koAuto": true
   }
  ]
 }

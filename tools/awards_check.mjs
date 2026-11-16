@@ -58,7 +58,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
       if (r.kind === 'unresolved') { unresolved.push(`${a.file} · ${c.ko} · ${w.name}${r.why ? ' (' + r.why + ')' : ''}`); continue; }
       if (r.kind === 'ambiguous') { ambiguous.push(`${a.file} · ${c.ko} · ${w.name} → ${r.candidates.join(', ')}`); continue; }
       linked++;
-      const rec = { id: a.id, edition: a.edition, award: a.name, category: c.ko, en: c.en, tier: c.tier, ...(c.work ? { work: c.work } : {}), ...(c.day ? { day: c.day } : {}) };
+      const rec = { id: a.id, edition: a.edition, award: a.name, awardEn: a.nameEn, category: c.ko, en: c.en, tier: c.tier, ...(c.work ? { work: c.work } : {}), ...(c.day ? { day: c.day } : {}) };
       if (r.gko) (byGroup[r.gko] || (byGroup[r.gko] = [])).push({ ...rec, ...(r.kind === 'member' ? { member: r.mko } : {}) });
       if (r.kind === 'member') (byMember[r.artistId] || (byMember[r.artistId] = [])).push(rec);
     }
@@ -67,7 +67,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   if (ambiguous.length) console.log('\n[모호 — 데이터에 of(소속 그룹)를 적을 것]\n' + ambiguous.join('\n'));
   if (unresolved.length) console.log('\n[못 찾음 — 등록 안 된 가수·그룹일 수 있음(정상), 표기가 다르면 name을 고칠 것]\n' + unresolved.join('\n'));
   if (process.argv.includes('--write')) {
-    fs.writeFileSync(path.join(ROOT, 'awards', 'index.json'), JSON.stringify({ built: new Date().toISOString().slice(0, 10), awards: awards.map(a => ({ id: a.id, edition: a.edition, name: a.name, dates: a.dates })), byGroup, byMember }));
+    fs.writeFileSync(path.join(ROOT, 'awards', 'index.json'), JSON.stringify({ built: new Date().toISOString().slice(0, 10), awards: awards.map(a => ({ id: a.id, edition: a.edition, name: a.name, nameEn: a.nameEn, dates: a.dates })), byGroup, byMember }));
     console.log('awards/index.json 생성');
   }
   if (process.argv.includes('--strict') && (unresolved.length || ambiguous.length)) process.exit(1);

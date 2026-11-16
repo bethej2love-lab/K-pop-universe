@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Grand Award",
+   "ko": "그랜드",
    "en": "Grand Award",
    "tier": "대상",
    "winners": [
@@ -23,10 +23,11 @@
      "name": "NCT Dream",
      "gko": "엔시티 드림"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Main Award",
+   "ko": "본상",
    "en": "Main Award",
    "tier": "본상",
    "winners": [
@@ -102,10 +103,11 @@
      "name": "Zerobaseone",
      "gko": "제로베이스원"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Song Award",
+   "ko": "베스트 노래",
    "en": "Best Song Award",
    "tier": "본상",
    "winners": [
@@ -114,10 +116,11 @@
      "gko": "뉴진스"
     }
    ],
-   "work": "\"OMG\""
+   "work": "\"OMG\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Album Award",
+   "ko": "베스트 앨범",
    "en": "Best Album Award",
    "tier": "본상",
    "winners": [
@@ -126,10 +129,11 @@
      "gko": "세븐틴"
     }
    ],
-   "work": "FML"
+   "work": "FML",
+   "koAuto": true
   },
   {
-   "ko": "Rookie Award",
+   "ko": "신인",
    "en": "Rookie Award",
    "tier": "신인",
    "winners": [
@@ -141,10 +145,11 @@
      "name": "Zerobaseone",
      "gko": "제로베이스원"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Performance",
+   "ko": "베스트 퍼포먼스",
    "en": "Best Performance",
    "tier": "본상",
    "winners": [
@@ -152,10 +157,11 @@
      "name": "Billlie",
      "gko": "빌리"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Popularity Award",
+   "ko": "인기상",
    "en": "Popularity Award",
    "tier": "인기",
    "winners": [
@@ -163,10 +169,11 @@
      "name": "Kim Ho-joong",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Hallyu Special Award",
+   "ko": "한류 스페셜",
    "en": "Hallyu Special Award",
    "tier": "인기",
    "winners": [
@@ -174,10 +181,11 @@
      "name": "Kim Ho-joong",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Trot Award",
+   "ko": "트로트",
    "en": "Trot Award",
    "tier": "특별",
    "winners": [
@@ -185,10 +193,11 @@
      "name": "Young Tak",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Ballad Award",
+   "ko": "발라드",
    "en": "Ballad Award",
    "tier": "특별",
    "winners": [
@@ -196,10 +205,11 @@
      "name": "Young K",
      "id": "a0795"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "OST Award",
+   "ko": "OST",
    "en": "OST Award",
    "tier": "특별",
    "winners": [
@@ -207,10 +217,11 @@
      "name": "Baekhyun",
      "id": "a0372"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "R&B Hiphop Award",
+   "ko": "R&B 힙합",
    "en": "R&B Hiphop Award",
    "tier": "특별",
    "winners": [
@@ -218,10 +229,11 @@
      "name": "Dynamic Duo",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "New Wave Star",
+   "ko": "신인 웨이브 스타",
    "en": "New Wave Star",
    "tier": "특별",
    "winners": [
@@ -237,10 +249,11 @@
      "name": "Yuju",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "World Best Artist",
+   "ko": "월드 베스트 아티스트",
    "en": "World Best Artist",
    "tier": "특별",
    "winners": [
@@ -248,10 +261,11 @@
      "name": "Blackpink",
      "gko": "블랙핑크"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Discovery of the Year",
+   "ko": "올해의 발견",
    "en": "Discovery of the Year",
    "tier": "특별",
    "winners": [
@@ -259,10 +273,11 @@
      "name": "Fifty Fifty",
      "gko": "피프티피프티"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Band Award",
+   "ko": "밴드",
    "en": "Band Award",
    "tier": "특별",
    "winners": [
@@ -270,10 +285,11 @@
      "name": "Xdinary Heroes",
      "gko": "엑스디너리 히어로즈"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "K-pop Special Award",
+   "ko": "K팝 스페셜 어워드",
    "en": "K-pop Special Award",
    "tier": "특별",
    "winners": [
@@ -281,7 +297,8 @@
      "name": "Sandara Park",
      "id": "a0527"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "Lifetime Achievement Award",
@@ -356,7 +373,7 @@
    ]
   },
   {
-   "ko": "Global Producer Award",
+   "ko": "글로벌 프로듀서",
    "en": "Global Producer Award",
    "tier": "특별",
    "winners": [
@@ -372,7 +389,8 @@
      "name": "Youngjae",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   }
  ]
 }

@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Digital Daesang (Song of the Year)",
+   "ko": "음원 대상(올해의 노래)",
    "en": "Digital Daesang (Song of the Year)",
    "tier": "대상",
    "winners": [
@@ -24,10 +24,11 @@
      "gko": "에스파"
     }
    ],
-   "work": "\"Supernova\""
+   "work": "\"Supernova\"",
+   "koAuto": true
   },
   {
-   "ko": "Album Daesang (Album of the Year)",
+   "ko": "앨범 대상(올해의 앨범)",
    "en": "Album Daesang (Album of the Year)",
    "tier": "대상",
    "winners": [
@@ -36,10 +37,11 @@
      "gko": "세븐틴"
     }
    ],
-   "work": "Spill the Feels"
+   "work": "Spill the Feels",
+   "koAuto": true
   },
   {
-   "ko": "Digital Song Bonsang",
+   "ko": "음원 본상",
    "en": "Digital Song Bonsang",
    "tier": "본상",
    "winners": [
@@ -83,10 +85,11 @@
      "name": "TWS",
      "gko": "투어스"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Album Bonsang",
+   "ko": "음반 본상",
    "en": "Album Bonsang",
    "tier": "본상",
    "winners": [
@@ -130,10 +133,11 @@
      "name": "Zerobaseone",
      "gko": "제로베이스원"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Rookie Artist of the Year",
+   "ko": "신인 올해의 아티스트",
    "en": "Rookie Artist of the Year",
    "tier": "신인",
    "winners": [
@@ -153,10 +157,11 @@
      "name": "TWS",
      "gko": "투어스"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Most Popular Artist – Female",
+   "ko": "인기 아티스트 여자",
    "en": "Most Popular Artist – Female",
    "tier": "인기",
    "winners": [
@@ -164,10 +169,11 @@
      "name": "Le Sserafim",
      "gko": "르세라핌"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Most Popular Artist – Male",
+   "ko": "인기 아티스트 남자",
    "en": "Most Popular Artist – Male",
    "tier": "인기",
    "winners": [
@@ -175,10 +181,11 @@
      "name": "Plave",
      "gko": "플레이브"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Band",
+   "ko": "베스트 밴드",
    "en": "Best Band",
    "tier": "본상",
    "winners": [
@@ -186,10 +193,11 @@
      "name": "Day6",
      "gko": "데이식스"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Group",
+   "ko": "베스트 그룹",
    "en": "Best Group",
    "tier": "본상",
    "winners": [
@@ -197,10 +205,11 @@
      "name": "Le Sserafim",
      "gko": "르세라핌"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best OST",
+   "ko": "베스트 OST",
    "en": "Best OST",
    "tier": "본상",
    "winners": [
@@ -209,10 +218,11 @@
      "ext": true
     }
    ],
-   "work": "\"Love You with All My Heart\""
+   "work": "\"Love You with All My Heart\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Producer",
+   "ko": "베스트 프로듀서",
    "en": "Best Producer",
    "tier": "본상",
    "winners": [
@@ -220,10 +230,11 @@
      "name": "Pledis Entertainment",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Solo",
+   "ko": "베스트 솔로",
    "en": "Best Solo",
    "tier": "본상",
    "winners": [
@@ -231,10 +242,11 @@
      "name": "Yuqi",
      "id": "a0118"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Cosmopolitan Artist of the Year",
+   "ko": "코즈모폴리턴 올해의 아티스트",
    "en": "Cosmopolitan Artist of the Year",
    "tier": "특별",
    "winners": [
@@ -242,7 +254,8 @@
      "name": "NewJeans",
      "gko": "뉴진스"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "Fans' Choice with Nongshim Shin Ramyun",
@@ -256,7 +269,7 @@
    ]
   },
   {
-   "ko": "Global K-pop Artist",
+   "ko": "글로벌 K팝 아티스트",
    "en": "Global K-pop Artist",
    "tier": "특별",
    "winners": [
@@ -268,7 +281,8 @@
      "name": "Ive",
      "gko": "아이브"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "Golden Honorable Choice",
@@ -286,7 +300,7 @@
    ]
   },
   {
-   "ko": "Next Generation",
+   "ko": "넥스트 제너레이션",
    "en": "Next Generation",
    "tier": "특별",
    "winners": [
@@ -294,7 +308,8 @@
      "name": "Kiss of Life",
      "gko": "키스오브라이프"
     }
-   ]
+   ],
+   "koAuto": true
   }
  ]
 }

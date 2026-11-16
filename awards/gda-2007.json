@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Digital Daesang (Song of the Year)",
+   "ko": "음원 대상(올해의 노래)",
    "en": "Digital Daesang (Song of the Year)",
    "tier": "대상",
    "winners": [
@@ -24,10 +24,11 @@
      "ext": true
     }
    ],
-   "work": "\"If You're Gonna Be Like This\""
+   "work": "\"If You're Gonna Be Like This\"",
+   "koAuto": true
   },
   {
-   "ko": "Album Daesang (Album of the Year)",
+   "ko": "앨범 대상(올해의 앨범)",
    "en": "Album Daesang (Album of the Year)",
    "tier": "대상",
    "winners": [
@@ -36,10 +37,11 @@
      "ext": true
     }
    ],
-   "work": "The Sentimental Chord"
+   "work": "The Sentimental Chord",
+   "koAuto": true
   },
   {
-   "ko": "Digital Song Bonsang",
+   "ko": "음원 본상",
    "en": "Digital Song Bonsang",
    "tier": "본상",
    "winners": [
@@ -55,10 +57,11 @@
      "name": "Wonder Girls",
      "gko": "원더걸스"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Album Bonsang",
+   "ko": "음반 본상",
    "en": "Album Bonsang",
    "tier": "본상",
    "winners": [
@@ -90,10 +93,11 @@
      "name": "Yangpa",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Trot Award",
+   "ko": "베스트 트로트",
    "en": "Best Trot Award",
    "tier": "본상",
    "winners": [
@@ -102,10 +106,11 @@
      "ext": true
     }
    ],
-   "work": "\"First Love\""
+   "work": "\"First Love\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Hip-Hop Award",
+   "ko": "베스트 힙합",
    "en": "Best Hip-Hop Award",
    "tier": "본상",
    "winners": [
@@ -114,10 +119,11 @@
      "ext": true
     }
    ],
-   "work": "\"Attendance Check\" (feat. Naul)"
+   "work": "\"Attendance Check\" (feat. Naul)",
+   "koAuto": true
   },
   {
-   "ko": "Rookie Artist of the Year",
+   "ko": "신인 올해의 아티스트",
    "en": "Rookie Artist of the Year",
    "tier": "신인",
    "winners": [
@@ -137,10 +143,11 @@
      "name": "Girls' Generation",
      "gko": "소녀시대"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Popularity Award",
+   "ko": "인기상",
    "en": "Popularity Award",
    "tier": "인기",
    "winners": [
@@ -160,7 +167,8 @@
      "name": "Wonder Girls",
      "gko": "원더걸스"
     }
-   ]
+   ],
+   "koAuto": true
   }
  ]
 }

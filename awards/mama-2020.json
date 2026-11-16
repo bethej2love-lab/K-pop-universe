@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Artist of the Year",
+   "ko": "올해의 아티스트",
    "en": "Artist of the Year",
    "tier": "대상",
    "winners": [
@@ -23,10 +23,11 @@
      "name": "BTS",
      "gko": "방탄소년단"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Song of the Year",
+   "ko": "올해의 노래",
    "en": "Song of the Year",
    "tier": "대상",
    "winners": [
@@ -35,10 +36,11 @@
      "gko": "방탄소년단"
     }
    ],
-   "work": "\"Dynamite\""
+   "work": "\"Dynamite\"",
+   "koAuto": true
   },
   {
-   "ko": "Album of the Year",
+   "ko": "올해의 앨범",
    "en": "Album of the Year",
    "tier": "대상",
    "winners": [
@@ -47,10 +49,11 @@
      "gko": "방탄소년단"
     }
    ],
-   "work": "Map of the Soul: 7"
+   "work": "Map of the Soul: 7",
+   "koAuto": true
   },
   {
-   "ko": "Worldwide Icon of the Year",
+   "ko": "올해의 월드와이드 아이콘",
    "en": "Worldwide Icon of the Year",
    "tier": "대상",
    "winners": [
@@ -58,10 +61,11 @@
      "name": "BTS",
      "gko": "방탄소년단"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Male Group",
+   "ko": "베스트 남자 그룹",
    "en": "Best Male Group",
    "tier": "본상",
    "winners": [
@@ -69,10 +73,11 @@
      "name": "BTS",
      "gko": "방탄소년단"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Female Group",
+   "ko": "베스트 여자 그룹",
    "en": "Best Female Group",
    "tier": "본상",
    "winners": [
@@ -80,10 +85,11 @@
      "name": "Blackpink",
      "gko": "블랙핑크"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Male Artist",
+   "ko": "베스트 남자 아티스트",
    "en": "Best Male Artist",
    "tier": "본상",
    "winners": [
@@ -91,10 +97,11 @@
      "name": "Baekhyun",
      "id": "a0372"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Male Group",
+   "ko": "베스트 댄스 퍼포먼스 남자 그룹",
    "en": "Best Dance Performance – Male Group",
    "tier": "본상",
    "winners": [
@@ -103,10 +110,11 @@
      "gko": "방탄소년단"
     }
    ],
-   "work": "\"Dynamite\""
+   "work": "\"Dynamite\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Female Group",
+   "ko": "베스트 댄스 퍼포먼스 여자 그룹",
    "en": "Best Dance Performance – Female Group",
    "tier": "본상",
    "winners": [
@@ -115,10 +123,11 @@
      "gko": "블랙핑크"
     }
    ],
-   "work": "\"How You Like That\""
+   "work": "\"How You Like That\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Solo",
+   "ko": "베스트 댄스 퍼포먼스 솔로",
    "en": "Best Dance Performance – Solo",
    "tier": "본상",
    "winners": [
@@ -127,10 +136,11 @@
      "id": "a0977"
     }
    ],
-   "work": "\"Maria\""
+   "work": "\"Maria\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Vocal Performance – Solo",
+   "ko": "베스트 보컬 퍼포먼스 솔로",
    "en": "Best Vocal Performance – Solo",
    "tier": "본상",
    "winners": [
@@ -139,10 +149,11 @@
      "id": "a0207"
     }
    ],
-   "work": "\"Blueming\""
+   "work": "\"Blueming\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Vocal Performance – Group",
+   "ko": "베스트 보컬 퍼포먼스 그룹",
    "en": "Best Vocal Performance – Group",
    "tier": "본상",
    "winners": [
@@ -151,10 +162,11 @@
      "gko": "마마무"
     }
    ],
-   "work": "\"Hip\""
+   "work": "\"Hip\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Collaboration",
+   "ko": "베스트 콜라보레이션",
    "en": "Best Collaboration",
    "tier": "본상",
    "winners": [
@@ -167,10 +179,11 @@
      "id": "a0185"
     }
    ],
-   "work": "\"Eight\""
+   "work": "\"Eight\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Female Artist",
+   "ko": "베스트 신인 여자 아티스트",
    "en": "Best New Female Artist",
    "tier": "신인",
    "winners": [
@@ -178,10 +191,11 @@
      "name": "Weeekly",
      "gko": "위클리"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Band Performance",
+   "ko": "베스트 밴드 퍼포먼스",
    "en": "Best Band Performance",
    "tier": "본상",
    "winners": [
@@ -190,10 +204,11 @@
      "gko": "데이식스"
     }
    ],
-   "work": "\"Zombie\""
+   "work": "\"Zombie\"",
+   "koAuto": true
   },
   {
-   "ko": "Best OST",
+   "ko": "베스트 OST",
    "en": "Best OST",
    "tier": "본상",
    "winners": [
@@ -202,10 +217,11 @@
      "ext": true
     }
    ],
-   "work": "\"Start Over\" (Itaewon Class)"
+   "work": "\"Start Over\" (Itaewon Class)",
+   "koAuto": true
   },
   {
-   "ko": "Best HipHop & Urban Music",
+   "ko": "베스트 힙합&어반 뮤직",
    "en": "Best HipHop & Urban Music",
    "tier": "본상",
    "winners": [
@@ -214,10 +230,11 @@
      "id": "a0972"
     }
    ],
-   "work": "\"Any Song\""
+   "work": "\"Any Song\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Music Video",
+   "ko": "베스트 뮤직비디오",
    "en": "Best Music Video",
    "tier": "본상",
    "winners": [
@@ -226,7 +243,8 @@
      "gko": "방탄소년단"
     }
    ],
-   "work": "\"Dynamite\""
+   "work": "\"Dynamite\"",
+   "koAuto": true
   }
  ]
 }

@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Best Popular Music Video",
+   "ko": "베스트 인기 뮤직 비디오",
    "en": "Best Popular Music Video",
    "tier": "대상",
    "winners": [
@@ -24,10 +24,11 @@
      "gko": "H.O.T."
     }
    ],
-   "work": "\"Outside Castle\""
+   "work": "\"Outside Castle\"",
+   "koAuto": true
   },
   {
-   "ko": "Music Video of the Year",
+   "ko": "올해의 뮤직비디오",
    "en": "Music Video of the Year",
    "tier": "대상",
    "winners": [
@@ -36,10 +37,11 @@
      "ext": true
     }
    ],
-   "work": "\"Do You Know\""
+   "work": "\"Do You Know\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Female Artist",
+   "ko": "베스트 신인 여자 아티스트",
    "en": "Best New Female Artist",
    "tier": "신인",
    "winners": [
@@ -48,10 +50,11 @@
      "id": "a1037"
     }
    ],
-   "work": "\"ID; Peace B\""
+   "work": "\"ID; Peace B\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Male Artist",
+   "ko": "베스트 신인 남자 아티스트",
    "en": "Best New Male Artist",
    "tier": "신인",
    "winners": [
@@ -60,10 +63,11 @@
      "ext": true
     }
    ],
-   "work": "\"Forever\""
+   "work": "\"Forever\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Group",
+   "ko": "베스트 신인 그룹",
    "en": "Best New Group",
    "tier": "신인",
    "winners": [
@@ -72,10 +76,11 @@
      "gko": "샤크라"
     }
    ],
-   "work": "\"Han (Come A Come)\""
+   "work": "\"Han (Come A Come)\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Mixed Group",
+   "ko": "베스트 혼성 그룹",
    "en": "Best Mixed Group",
    "tier": "본상",
    "winners": [
@@ -84,10 +89,11 @@
      "ext": true
     }
    ],
-   "work": "\"Great!\""
+   "work": "\"Great!\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Male Group",
+   "ko": "베스트 남자 그룹",
    "en": "Best Male Group",
    "tier": "본상",
    "winners": [
@@ -96,10 +102,11 @@
      "gko": "god"
     }
    ],
-   "work": "\"Love And Memory\""
+   "work": "\"Love And Memory\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Female Group",
+   "ko": "베스트 여자 그룹",
    "en": "Best Female Group",
    "tier": "본상",
    "winners": [
@@ -108,10 +115,11 @@
      "gko": "핑클"
     }
    ],
-   "work": "\"Now\""
+   "work": "\"Now\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Female Artist",
+   "ko": "베스트 여자 아티스트",
    "en": "Best Female Artist",
    "tier": "본상",
    "winners": [
@@ -120,10 +128,11 @@
      "ext": true
     }
    ],
-   "work": "\"Coming of Age Ceremony\""
+   "work": "\"Coming of Age Ceremony\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Male Artist",
+   "ko": "베스트 남자 아티스트",
    "en": "Best Male Artist",
    "tier": "본상",
    "winners": [
@@ -132,10 +141,11 @@
      "ext": true
     }
    ],
-   "work": "\"The Unwritten Legend\""
+   "work": "\"The Unwritten Legend\"",
+   "koAuto": true
   },
   {
-   "ko": "Best R&B Performance",
+   "ko": "베스트 R&B 퍼포먼스",
    "en": "Best R&B Performance",
    "tier": "본상",
    "winners": [
@@ -144,10 +154,11 @@
      "ext": true
     }
    ],
-   "work": "\"Are You Going?\""
+   "work": "\"Are You Going?\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Rock Performance",
+   "ko": "베스트 록 퍼포먼스",
    "en": "Best Rock Performance",
    "tier": "본상",
    "winners": [
@@ -156,10 +167,11 @@
      "ext": true
     }
    ],
-   "work": "\"Ultramania\""
+   "work": "\"Ultramania\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Hip Hop Performance",
+   "ko": "베스트 힙합 퍼포먼스",
    "en": "Best Hip Hop Performance",
    "tier": "본상",
    "winners": [
@@ -168,10 +180,11 @@
      "ext": true
     }
    ],
-   "work": "\"DOC Blues\""
+   "work": "\"DOC Blues\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Indie Performance",
+   "ko": "베스트 인디 퍼포먼스",
    "en": "Best Indie Performance",
    "tier": "본상",
    "winners": [
@@ -180,10 +193,11 @@
      "ext": true
     }
    ],
-   "work": "\"Circus Magic\""
+   "work": "\"Circus Magic\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance",
+   "ko": "베스트 댄스 퍼포먼스",
    "en": "Best Dance Performance",
    "tier": "본상",
    "winners": [
@@ -192,10 +206,11 @@
      "ext": true
     }
    ],
-   "work": "\"The First Love\""
+   "work": "\"The First Love\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Ballad Performance",
+   "ko": "베스트 발라드 퍼포먼스",
    "en": "Best Ballad Performance",
    "tier": "본상",
    "winners": [
@@ -204,10 +219,11 @@
      "ext": true
     }
    ],
-   "work": "\"Do You Know\""
+   "work": "\"Do You Know\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Music Video Director",
+   "ko": "베스트 뮤직비디오 감독",
    "en": "Best Music Video Director",
    "tier": "본상",
    "winners": [
@@ -215,7 +231,8 @@
      "name": "Kim Se-hun",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   }
  ]
 }

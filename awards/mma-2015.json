@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Top 10 Artists",
+   "ko": "TOP 10 아티스트",
    "en": "Top 10 Artists",
    "tier": "본상",
    "winners": [
@@ -59,10 +59,11 @@
      "name": "Hyukoh",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Album of the Year",
+   "ko": "올해의 앨범",
    "en": "Album of the Year",
    "tier": "대상",
    "winners": [
@@ -71,10 +72,11 @@
      "gko": "엑소"
     }
    ],
-   "work": "Exodus"
+   "work": "Exodus",
+   "koAuto": true
   },
   {
-   "ko": "Artist of the Year",
+   "ko": "올해의 아티스트",
    "en": "Artist of the Year",
    "tier": "대상",
    "winners": [
@@ -82,10 +84,11 @@
      "name": "Big Bang",
      "gko": "빅뱅"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Song of the Year",
+   "ko": "올해의 노래",
    "en": "Song of the Year",
    "tier": "대상",
    "winners": [
@@ -94,10 +97,11 @@
      "gko": "빅뱅"
     }
    ],
-   "work": "\"Bang Bang Bang\""
+   "work": "\"Bang Bang Bang\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Male Artist",
+   "ko": "베스트 신인 남자 아티스트",
    "en": "Best New Male Artist",
    "tier": "신인",
    "winners": [
@@ -105,10 +109,11 @@
      "name": "iKon",
      "gko": "아이콘"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best New Female Artist",
+   "ko": "베스트 신인 여자 아티스트",
    "en": "Best New Female Artist",
    "tier": "신인",
    "winners": [
@@ -116,10 +121,11 @@
      "name": "GFriend",
      "gko": "여자친구"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Award (Male)",
+   "ko": "베스트 댄스 (남자)",
    "en": "Best Dance Award (Male)",
    "tier": "본상",
    "winners": [
@@ -128,10 +134,11 @@
      "gko": "방탄소년단"
     }
    ],
-   "work": "\"I Need U\""
+   "work": "\"I Need U\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Award (Female)",
+   "ko": "베스트 댄스 (여자)",
    "en": "Best Dance Award (Female)",
    "tier": "본상",
    "winners": [
@@ -140,10 +147,11 @@
      "gko": "레드벨벳"
     }
    ],
-   "work": "\"Ice Cream Cake\""
+   "work": "\"Ice Cream Cake\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Rap/Hip Hop Award",
+   "ko": "베스트 랩/힙합",
    "en": "Best Rap/Hip Hop Award",
    "tier": "본상",
    "winners": [
@@ -152,10 +160,11 @@
      "ext": true
     }
    ],
-   "work": "\"Fire\""
+   "work": "\"Fire\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Ballad Award",
+   "ko": "베스트 발라드",
    "en": "Best Ballad Award",
    "tier": "본상",
    "winners": [
@@ -168,10 +177,11 @@
      "id": "a0795"
     }
    ],
-   "work": "\"Shouldn't Have...\""
+   "work": "\"Shouldn't Have...\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Indie Award",
+   "ko": "베스트 인디",
    "en": "Best Indie Award",
    "tier": "본상",
    "winners": [
@@ -184,10 +194,11 @@
      "id": "a0976"
     }
    ],
-   "work": "\"The Sunlight Hurts\""
+   "work": "\"The Sunlight Hurts\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Rock Award",
+   "ko": "베스트 록",
    "en": "Best Rock Award",
    "tier": "본상",
    "winners": [
@@ -196,10 +207,11 @@
      "id": "a0480"
     }
    ],
-   "work": "\"The Answer\""
+   "work": "\"The Answer\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Trot Award",
+   "ko": "베스트 트로트",
    "en": "Best Trot Award",
    "tier": "본상",
    "winners": [
@@ -208,10 +220,11 @@
      "ext": true
     }
    ],
-   "work": "\"Love Wi-Fi\""
+   "work": "\"Love Wi-Fi\"",
+   "koAuto": true
   },
   {
-   "ko": "Best OST Award",
+   "ko": "베스트 OST",
    "en": "Best OST Award",
    "tier": "본상",
    "winners": [
@@ -224,10 +237,11 @@
      "ext": true
     }
    ],
-   "work": "\"Spring Is Gone By Chance(A Girl Who Sees Smells)\""
+   "work": "\"Spring Is Gone By Chance(A Girl Who Sees Smells)\"",
+   "koAuto": true
   },
   {
-   "ko": "Hot Trend Award",
+   "ko": "핫 트렌드",
    "en": "Hot Trend Award",
    "tier": "특별",
    "winners": [
@@ -235,7 +249,8 @@
      "name": "Infinite Challenge",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "Best R&B / Soul",
@@ -250,7 +265,7 @@
    "work": "\"Living in the Same Time\""
   },
   {
-   "ko": "Best Pop",
+   "ko": "베스트 팝",
    "en": "Best Pop",
    "tier": "본상",
    "winners": [
@@ -259,7 +274,8 @@
      "ext": true
     }
    ],
-   "work": "\"Uptown Funk\" (ft. Bruno Mars)"
+   "work": "\"Uptown Funk\" (ft. Bruno Mars)",
+   "koAuto": true
   }
  ]
 }

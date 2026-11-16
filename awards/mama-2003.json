@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Most Popular Music Video",
+   "ko": "인기 뮤직비디오",
    "en": "Most Popular Music Video",
    "tier": "대상",
    "winners": [
@@ -24,10 +24,11 @@
      "id": "a0844"
     }
    ],
-   "work": "\"10 Minutes\""
+   "work": "\"10 Minutes\"",
+   "koAuto": true
   },
   {
-   "ko": "Music Video of the Year",
+   "ko": "올해의 뮤직비디오",
    "en": "Music Video of the Year",
    "tier": "대상",
    "winners": [
@@ -36,10 +37,11 @@
      "ext": true
     }
    ],
-   "work": "\"Break Away\""
+   "work": "\"Break Away\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Male Artist",
+   "ko": "베스트 신인 남자 아티스트",
    "en": "Best New Male Artist",
    "tier": "신인",
    "winners": [
@@ -48,10 +50,11 @@
      "ext": true
     }
    ],
-   "work": "\"Come Back to Me\""
+   "work": "\"Come Back to Me\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Female Artist",
+   "ko": "베스트 신인 여자 아티스트",
    "en": "Best New Female Artist",
    "tier": "신인",
    "winners": [
@@ -60,10 +63,11 @@
      "id": "a0577"
     }
    ],
-   "work": "\"Azalea\""
+   "work": "\"Azalea\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Group",
+   "ko": "베스트 신인 그룹",
    "en": "Best New Group",
    "tier": "신인",
    "winners": [
@@ -72,10 +76,11 @@
      "ext": true
     }
    ],
-   "work": "\"Break Away\""
+   "work": "\"Break Away\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Mixed Group",
+   "ko": "베스트 혼성 그룹",
    "en": "Best Mixed Group",
    "tier": "본상",
    "winners": [
@@ -84,10 +89,11 @@
      "ext": true
     }
    ],
-   "work": "\"Emergency\""
+   "work": "\"Emergency\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Male Group",
+   "ko": "베스트 남자 그룹",
    "en": "Best Male Group",
    "tier": "본상",
    "winners": [
@@ -96,10 +102,11 @@
      "gko": "신화"
     }
    ],
-   "work": "\"Your Wedding\""
+   "work": "\"Your Wedding\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Female Group",
+   "ko": "베스트 여자 그룹",
    "en": "Best Female Group",
    "tier": "본상",
    "winners": [
@@ -108,10 +115,11 @@
      "gko": "쥬얼리"
     }
    ],
-   "work": "\"I Really Like You\""
+   "work": "\"I Really Like You\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Male Artist",
+   "ko": "베스트 남자 아티스트",
    "en": "Best Male Artist",
    "tier": "본상",
    "winners": [
@@ -120,10 +128,11 @@
      "ext": true
     }
    ],
-   "work": "\"With Me\""
+   "work": "\"With Me\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Female Artist",
+   "ko": "베스트 여자 아티스트",
    "en": "Best Female Artist",
    "tier": "본상",
    "winners": [
@@ -132,10 +141,11 @@
      "ext": true
     }
    ],
-   "work": "\"Solitary\""
+   "work": "\"Solitary\"",
+   "koAuto": true
   },
   {
-   "ko": "Best R&B Performance",
+   "ko": "베스트 R&B 퍼포먼스",
    "en": "Best R&B Performance",
    "tier": "본상",
    "winners": [
@@ -144,10 +154,11 @@
      "ext": true
     }
    ],
-   "work": "\"Missing You\""
+   "work": "\"Missing You\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Rock Performance",
+   "ko": "베스트 록 퍼포먼스",
    "en": "Best Rock Performance",
    "tier": "본상",
    "winners": [
@@ -156,10 +167,11 @@
      "ext": true
     }
    ],
-   "work": "\"Flying Duck\""
+   "work": "\"Flying Duck\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Hip Hop Performance",
+   "ko": "베스트 힙합 퍼포먼스",
    "en": "Best Hip Hop Performance",
    "tier": "본상",
    "winners": [
@@ -168,10 +180,11 @@
      "ext": true
     }
    ],
-   "work": "\"With a Dogged Spirit\""
+   "work": "\"With a Dogged Spirit\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Music Video Director",
+   "ko": "베스트 뮤직비디오 감독",
    "en": "Best Music Video Director",
    "tier": "본상",
    "winners": [
@@ -180,10 +193,11 @@
      "ext": true
     }
    ],
-   "work": "\"My Silent Conflict\" (Moon Hee-joon) and \"Flower\" (Lee Seung-hwan)"
+   "work": "\"My Silent Conflict\" (Moon Hee-joon) and \"Flower\" (Lee Seung-hwan)",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance",
+   "ko": "베스트 댄스 퍼포먼스",
    "en": "Best Dance Performance",
    "tier": "본상",
    "winners": [
@@ -192,10 +206,11 @@
      "id": "a1037"
     }
    ],
-   "work": "\"Atlantis Princess\""
+   "work": "\"Atlantis Princess\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Ballad Performance",
+   "ko": "베스트 발라드 퍼포먼스",
    "en": "Best Ballad Performance",
    "tier": "본상",
    "winners": [
@@ -204,10 +219,11 @@
      "ext": true
     }
    ],
-   "work": "\"Piano\""
+   "work": "\"Piano\"",
+   "koAuto": true
   },
   {
-   "ko": "Best International Artist",
+   "ko": "베스트 해외 아티스트",
    "en": "Best International Artist",
    "tier": "본상",
    "winners": [
@@ -216,7 +232,8 @@
      "ext": true
     }
    ],
-   "work": "\"Somewhere I Belong\""
+   "work": "\"Somewhere I Belong\"",
+   "koAuto": true
   }
  ]
 }

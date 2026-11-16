@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Album of the Year",
+   "ko": "올해의 앨범",
    "en": "Album of the Year",
    "tier": "대상",
    "winners": [
@@ -24,10 +24,11 @@
      "gko": "동방신기"
     }
    ],
-   "work": "Mirotic"
+   "work": "Mirotic",
+   "koAuto": true
   },
   {
-   "ko": "Artist of the Year",
+   "ko": "올해의 아티스트",
    "en": "Artist of the Year",
    "tier": "대상",
    "winners": [
@@ -35,10 +36,11 @@
      "name": "Big Bang",
      "gko": "빅뱅"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Song of the Year",
+   "ko": "올해의 노래",
    "en": "Song of the Year",
    "tier": "대상",
    "winners": [
@@ -47,10 +49,11 @@
      "gko": "원더걸스"
     }
    ],
-   "work": "\"Nobody\""
+   "work": "\"Nobody\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Music Video",
+   "ko": "베스트 뮤직비디오",
    "en": "Best Music Video",
    "tier": "본상",
    "winners": [
@@ -59,10 +62,11 @@
      "gko": "원더걸스"
     }
    ],
-   "work": "\"Nobody\""
+   "work": "\"Nobody\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Male Artist",
+   "ko": "베스트 신인 남자 아티스트",
    "en": "Best New Male Artist",
    "tier": "신인",
    "winners": [
@@ -71,10 +75,11 @@
      "gko": "샤이니"
     }
    ],
-   "work": "\"Replay\""
+   "work": "\"Replay\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Female Artist",
+   "ko": "베스트 신인 여자 아티스트",
    "en": "Best New Female Artist",
    "tier": "신인",
    "winners": [
@@ -83,10 +88,11 @@
      "ext": true
     }
    ],
-   "work": "\"I Love You Even Though I Hate You\""
+   "work": "\"I Love You Even Though I Hate You\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Male Group",
+   "ko": "베스트 남자 그룹",
    "en": "Best Male Group",
    "tier": "본상",
    "winners": [
@@ -95,10 +101,11 @@
      "gko": "빅뱅"
     }
    ],
-   "work": "\"Haru Haru\""
+   "work": "\"Haru Haru\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Female Group",
+   "ko": "베스트 여자 그룹",
    "en": "Best Female Group",
    "tier": "본상",
    "winners": [
@@ -107,10 +114,11 @@
      "gko": "원더걸스"
     }
    ],
-   "work": "\"Nobody\""
+   "work": "\"Nobody\"",
+   "koAuto": true
   },
   {
-   "ko": "Best House & Electronic",
+   "ko": "베스트 하우스&일렉트로닉",
    "en": "Best House & Electronic",
    "tier": "본상",
    "winners": [
@@ -119,10 +127,11 @@
      "gko": "쥬얼리"
     }
    ],
-   "work": "\"One More Time\""
+   "work": "\"One More Time\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance",
+   "ko": "베스트 댄스 퍼포먼스",
    "en": "Best Dance Performance",
    "tier": "본상",
    "winners": [
@@ -131,10 +140,11 @@
      "id": "a0844"
     }
    ],
-   "work": "\"U-Go-Girl\""
+   "work": "\"U-Go-Girl\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Male Artist",
+   "ko": "베스트 남자 아티스트",
    "en": "Best Male Artist",
    "tier": "본상",
    "winners": [
@@ -143,10 +153,11 @@
      "ext": true
     }
    ],
-   "work": "\"Moai\""
+   "work": "\"Moai\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Female Artist",
+   "ko": "베스트 여자 아티스트",
    "en": "Best Female Artist",
    "tier": "본상",
    "winners": [
@@ -155,7 +166,8 @@
      "id": "a0844"
     }
    ],
-   "work": "\"U-Go-Girl\""
+   "work": "\"U-Go-Girl\"",
+   "koAuto": true
   },
   {
    "ko": "Best Ballad/R&B Performance",
@@ -170,7 +182,7 @@
    "work": "\"Don't Go Don't Go\""
   },
   {
-   "ko": "Best Rock Performance",
+   "ko": "베스트 록 퍼포먼스",
    "en": "Best Rock Performance",
    "tier": "본상",
    "winners": [
@@ -179,10 +191,11 @@
      "ext": true
     }
    ],
-   "work": "\"Time To Walk Memories\""
+   "work": "\"Time To Walk Memories\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Hip Hop Performance",
+   "ko": "베스트 힙합 퍼포먼스",
    "en": "Best Hip Hop Performance",
    "tier": "본상",
    "winners": [
@@ -191,10 +204,11 @@
      "ext": true
     }
    ],
-   "work": "\"One\" (ft. Ji Sun)"
+   "work": "\"One\" (ft. Ji Sun)",
+   "koAuto": true
   },
   {
-   "ko": "Best OST",
+   "ko": "베스트 OST",
    "en": "Best OST",
    "tier": "본상",
    "winners": [
@@ -207,7 +221,8 @@
      "ext": true
     }
    ],
-   "work": "\"Fate Reverse\" (East of Eden)"
+   "work": "\"Fate Reverse\" (East of Eden)",
+   "koAuto": true
   }
  ]
 }

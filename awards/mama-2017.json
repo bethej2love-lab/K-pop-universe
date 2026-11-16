@@ -50,7 +50,7 @@
    "work": "\"Signal\""
   },
   {
-   "ko": "Best Music Video",
+   "ko": "베스트 뮤직비디오",
    "en": "Best Music Video",
    "tier": "본상",
    "winners": [
@@ -59,10 +59,11 @@
      "gko": "방탄소년단"
     }
    ],
-   "work": "\"Spring Day\""
+   "work": "\"Spring Day\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Male Artist",
+   "ko": "베스트 남자 아티스트",
    "en": "Best Male Artist",
    "tier": "본상",
    "winners": [
@@ -70,10 +71,11 @@
      "name": "Zico",
      "id": "a0972"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Female Artist",
+   "ko": "베스트 여자 아티스트",
    "en": "Best Female Artist",
    "tier": "본상",
    "winners": [
@@ -81,10 +83,11 @@
      "name": "IU",
      "id": "a0207"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Male Group",
+   "ko": "베스트 남자 그룹",
    "en": "Best Male Group",
    "tier": "본상",
    "winners": [
@@ -92,10 +95,11 @@
      "name": "Wanna One",
      "gko": "워너원"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Female Group",
+   "ko": "베스트 여자 그룹",
    "en": "Best Female Group",
    "tier": "본상",
    "winners": [
@@ -103,10 +107,11 @@
      "name": "Red Velvet",
      "gko": "레드벨벳"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Male Group",
+   "ko": "베스트 댄스 퍼포먼스 남자 그룹",
    "en": "Best Dance Performance – Male Group",
    "tier": "본상",
    "winners": [
@@ -115,10 +120,11 @@
      "gko": "세븐틴"
     }
    ],
-   "work": "\"Don't Wanna Cry\""
+   "work": "\"Don't Wanna Cry\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Female Group",
+   "ko": "베스트 댄스 퍼포먼스 여자 그룹",
    "en": "Best Dance Performance – Female Group",
    "tier": "본상",
    "winners": [
@@ -127,10 +133,11 @@
      "gko": "트와이스"
     }
    ],
-   "work": "\"Signal\""
+   "work": "\"Signal\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Solo",
+   "ko": "베스트 댄스 퍼포먼스 솔로",
    "en": "Best Dance Performance – Solo",
    "tier": "본상",
    "winners": [
@@ -139,10 +146,11 @@
      "ext": true
     }
    ],
-   "work": "\"Move\""
+   "work": "\"Move\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Collaboration",
+   "ko": "베스트 콜라보레이션",
    "en": "Best Collaboration",
    "tier": "본상",
    "winners": [
@@ -155,10 +163,11 @@
      "id": "a0373"
     }
    ],
-   "work": "\"Nosedive\""
+   "work": "\"Nosedive\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Vocal Performance – Female",
+   "ko": "베스트 보컬 퍼포먼스 여자",
    "en": "Best Vocal Performance – Female",
    "tier": "본상",
    "winners": [
@@ -167,10 +176,11 @@
      "ext": true
     }
    ],
-   "work": "\"You, Clouds, Rain\""
+   "work": "\"You, Clouds, Rain\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Vocal Performance – Male",
+   "ko": "베스트 보컬 퍼포먼스 남자",
    "en": "Best Vocal Performance – Male",
    "tier": "본상",
    "winners": [
@@ -179,10 +189,11 @@
      "ext": true
     }
    ],
-   "work": "\"Like It?\""
+   "work": "\"Like It?\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Vocal Performance – Group",
+   "ko": "베스트 보컬 퍼포먼스 그룹",
    "en": "Best Vocal Performance – Group",
    "tier": "본상",
    "winners": [
@@ -191,10 +202,11 @@
      "ext": true
     }
    ],
-   "work": "\"Tell Me You Love Me\""
+   "work": "\"Tell Me You Love Me\"",
+   "koAuto": true
   },
   {
-   "ko": "Best OST",
+   "ko": "베스트 OST",
    "en": "Best OST",
    "tier": "본상",
    "winners": [
@@ -203,10 +215,11 @@
      "ext": true
     }
    ],
-   "work": "\"I Will Go to You Like the First Snow\" (Guardian: The Lonely and Great God)"
+   "work": "\"I Will Go to You Like the First Snow\" (Guardian: The Lonely and Great God)",
+   "koAuto": true
   },
   {
-   "ko": "Best Band Performance",
+   "ko": "베스트 밴드 퍼포먼스",
    "en": "Best Band Performance",
    "tier": "본상",
    "winners": [
@@ -215,10 +228,11 @@
      "ext": true
     }
    ],
-   "work": "\"TOMBOY\""
+   "work": "\"TOMBOY\"",
+   "koAuto": true
   },
   {
-   "ko": "Best HipHop & Urban Music",
+   "ko": "베스트 힙합&어반 뮤직",
    "en": "Best HipHop & Urban Music",
    "tier": "본상",
    "winners": [
@@ -227,10 +241,11 @@
      "ext": true
     }
    ],
-   "work": "\"Don't Know You\""
+   "work": "\"Don't Know You\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Artist – Male",
+   "ko": "베스트 신인 남자",
    "en": "Best New Artist – Male",
    "tier": "신인",
    "winners": [
@@ -238,10 +253,11 @@
      "name": "Wanna One",
      "gko": "워너원"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best New Artist – Female",
+   "ko": "베스트 신인 여자",
    "en": "Best New Artist – Female",
    "tier": "신인",
    "winners": [
@@ -249,10 +265,11 @@
      "name": "PRISTIN",
      "gko": "프리스틴"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Mwave Global Fans' Choice",
+   "ko": "엠웨이브 글로벌 팬스 초이스",
    "en": "Mwave Global Fans' Choice",
    "tier": "인기",
    "winners": [
@@ -261,7 +278,8 @@
      "gko": "엑소"
     }
    ],
-   "work": "\"Ko Ko Bop\""
+   "work": "\"Ko Ko Bop\"",
+   "koAuto": true
   },
   {
    "ko": "2017 Favorite KPOP Star",

@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Artist of the Year",
+   "ko": "올해의 아티스트",
    "en": "Artist of the Year",
    "tier": "대상",
    "winners": [
@@ -23,10 +23,11 @@
      "name": "G-Dragon",
      "id": "a0199"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Song of the Year",
+   "ko": "올해의 노래",
    "en": "Song of the Year",
    "tier": "대상",
    "winners": [
@@ -39,10 +40,11 @@
      "ext": true
     }
    ],
-   "work": "\"APT.\""
+   "work": "\"APT.\"",
+   "koAuto": true
   },
   {
-   "ko": "Album of the Year",
+   "ko": "올해의 앨범",
    "en": "Album of the Year",
    "tier": "대상",
    "winners": [
@@ -51,10 +53,11 @@
      "gko": "스트레이키즈"
     }
    ],
-   "work": "Karma"
+   "work": "Karma",
+   "koAuto": true
   },
   {
-   "ko": "Fans' Choice of the Year",
+   "ko": "팬스 초이스 올해",
    "en": "Fans' Choice of the Year",
    "tier": "대상",
    "winners": [
@@ -62,10 +65,11 @@
      "name": "Enhypen",
      "gko": "엔하이픈"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Female Group",
+   "ko": "베스트 여자 그룹",
    "en": "Best Female Group",
    "tier": "본상",
    "winners": [
@@ -73,10 +77,11 @@
      "name": "Aespa",
      "gko": "에스파"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Male Artist",
+   "ko": "베스트 남자 아티스트",
    "en": "Best Male Artist",
    "tier": "본상",
    "winners": [
@@ -84,10 +89,11 @@
      "name": "G-Dragon",
      "id": "a0199"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Female Group",
+   "ko": "베스트 댄스 퍼포먼스 여자 그룹",
    "en": "Best Dance Performance – Female Group",
    "tier": "본상",
    "winners": [
@@ -96,10 +102,11 @@
      "gko": "에스파"
     }
    ],
-   "work": "\"Whiplash\""
+   "work": "\"Whiplash\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Male Solo",
+   "ko": "베스트 댄스 퍼포먼스 남자 솔로",
    "en": "Best Dance Performance – Male Solo",
    "tier": "본상",
    "winners": [
@@ -108,10 +115,11 @@
      "id": "a0199"
     }
    ],
-   "work": "\"Too Bad\""
+   "work": "\"Too Bad\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Female Solo",
+   "ko": "베스트 댄스 퍼포먼스 여자 솔로",
    "en": "Best Dance Performance – Female Solo",
    "tier": "본상",
    "winners": [
@@ -120,10 +128,11 @@
      "id": "a0204"
     }
    ],
-   "work": "\"Like Jennie\""
+   "work": "\"Like Jennie\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Vocal Performance – Solo",
+   "ko": "베스트 보컬 퍼포먼스 솔로",
    "en": "Best Vocal Performance – Solo",
    "tier": "본상",
    "winners": [
@@ -132,10 +141,11 @@
      "id": "a0205"
     }
    ],
-   "work": "\"Toxic Till the End\""
+   "work": "\"Toxic Till the End\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Vocal Performance – Group",
+   "ko": "베스트 보컬 퍼포먼스 그룹",
    "en": "Best Vocal Performance – Group",
    "tier": "본상",
    "winners": [
@@ -144,10 +154,11 @@
      "ext": true
     }
    ],
-   "work": "\"Stitching\""
+   "work": "\"Stitching\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Rap & Hip Hop Performance",
+   "ko": "베스트 랩·힙합 퍼포먼스",
    "en": "Best Rap & Hip Hop Performance",
    "tier": "본상",
    "winners": [
@@ -156,10 +167,11 @@
      "ext": true
     }
    ],
-   "work": "\"Music\""
+   "work": "\"Music\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Band Performance",
+   "ko": "베스트 밴드 퍼포먼스",
    "en": "Best Band Performance",
    "tier": "본상",
    "winners": [
@@ -168,10 +180,11 @@
      "gko": "데이식스"
     }
    ],
-   "work": "\"Maybe Tomorrow\""
+   "work": "\"Maybe Tomorrow\"",
+   "koAuto": true
   },
   {
-   "ko": "Best OST",
+   "ko": "베스트 OST",
    "en": "Best OST",
    "tier": "본상",
    "winners": [
@@ -180,10 +193,11 @@
      "ext": true
     }
    ],
-   "work": "\"Golden\""
+   "work": "\"Golden\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Collaboration",
+   "ko": "베스트 콜라보레이션",
    "en": "Best Collaboration",
    "tier": "본상",
    "winners": [
@@ -196,10 +210,11 @@
      "ext": true
     }
    ],
-   "work": "\"APT.\""
+   "work": "\"APT.\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Music Video",
+   "ko": "베스트 뮤직비디오",
    "en": "Best Music Video",
    "tier": "본상",
    "winners": [
@@ -208,10 +223,11 @@
      "id": "a0204"
     }
    ],
-   "work": "\"Zen\""
+   "work": "\"Zen\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Choreography",
+   "ko": "베스트 안무",
    "en": "Best Choreography",
    "tier": "본상",
    "winners": [
@@ -220,10 +236,11 @@
      "gko": "에스파"
     }
    ],
-   "work": "\"Whiplash\""
+   "work": "\"Whiplash\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Artist",
+   "ko": "베스트 신인",
    "en": "Best New Artist",
    "tier": "신인",
    "winners": [
@@ -235,10 +252,11 @@
      "name": "Hearts2Hearts",
      "gko": "하츠투하츠"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Fans' Choice Top 10 – Female",
+   "ko": "팬스 초이스 TOP 10 여자",
    "en": "Fans' Choice Top 10 – Female",
    "tier": "본상",
    "winners": [
@@ -282,10 +300,11 @@
      "name": "Twice",
      "gko": "트와이스"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Fans' Choice Top 10 – Male",
+   "ko": "팬스 초이스 TOP 10 남자",
    "en": "Fans' Choice Top 10 – Male",
    "tier": "본상",
    "winners": [
@@ -329,7 +348,8 @@
      "name": "Zerobaseone",
      "gko": "제로베이스원"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "Worldwide KCONer's Choice",
@@ -366,7 +386,7 @@
    ]
   },
   {
-   "ko": "Favorite Global Performer",
+   "ko": "페이보릿 글로벌 퍼포머",
    "en": "Favorite Global Performer",
    "tier": "인기",
    "winners": [
@@ -374,7 +394,8 @@
      "name": "Ive",
      "gko": "아이브"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "Telasa Favorite Global Artist",
@@ -388,7 +409,7 @@
    ]
   },
   {
-   "ko": "Favorite Female Group",
+   "ko": "페이보릿 여자 그룹",
    "en": "Favorite Female Group",
    "tier": "인기",
    "winners": [
@@ -396,10 +417,11 @@
      "name": "Ive",
      "gko": "아이브"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Global Trend Song",
+   "ko": "글로벌 트렌드 노래",
    "en": "Global Trend Song",
    "tier": "특별",
    "winners": [
@@ -408,10 +430,11 @@
      "gko": "아이브"
     }
    ],
-   "work": "\"Rebel Heart\""
+   "work": "\"Rebel Heart\"",
+   "koAuto": true
   },
   {
-   "ko": "Favorite Male Group",
+   "ko": "페이보릿 남자 그룹",
    "en": "Favorite Male Group",
    "tier": "인기",
    "winners": [
@@ -419,10 +442,11 @@
      "name": "BoyNextDoor",
      "gko": "보이넥스트도어"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Inspiring Achievement",
+   "ko": "인스파이어링 어치브먼트",
    "en": "Inspiring Achievement",
    "tier": "특별",
    "winners": [
@@ -430,10 +454,11 @@
      "name": "Super Junior",
      "gko": "슈퍼주니어"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Favorite Rising Star",
+   "ko": "페이보릿 라이징 스타",
    "en": "Favorite Rising Star",
    "tier": "신인",
    "winners": [
@@ -441,10 +466,11 @@
      "name": "Izna",
      "gko": "이즈나"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Music Visionary of the Year",
+   "ko": "뮤직 비저너리 올해",
    "en": "Music Visionary of the Year",
    "tier": "특별",
    "winners": [
@@ -452,10 +478,11 @@
      "name": "KPop Demon Hunters",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Favorite Asian Artist",
+   "ko": "페이보릿 아시안 아티스트",
    "en": "Favorite Asian Artist",
    "tier": "인기",
    "winners": [
@@ -463,7 +490,8 @@
      "name": "JO1",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "Breakthrough Artist",

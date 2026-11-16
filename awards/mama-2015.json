@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Artist of the Year",
+   "ko": "올해의 아티스트",
    "en": "Artist of the Year",
    "tier": "대상",
    "winners": [
@@ -23,10 +23,11 @@
      "name": "Big Bang",
      "gko": "빅뱅"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Album of the Year",
+   "ko": "올해의 앨범",
    "en": "Album of the Year",
    "tier": "대상",
    "winners": [
@@ -35,10 +36,11 @@
      "gko": "엑소"
     }
    ],
-   "work": "Exodus"
+   "work": "Exodus",
+   "koAuto": true
   },
   {
-   "ko": "Song of the Year",
+   "ko": "올해의 노래",
    "en": "Song of the Year",
    "tier": "대상",
    "winners": [
@@ -47,10 +49,11 @@
      "gko": "빅뱅"
     }
    ],
-   "work": "\"Bang Bang Bang\""
+   "work": "\"Bang Bang Bang\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Music Video",
+   "ko": "베스트 뮤직비디오",
    "en": "Best Music Video",
    "tier": "본상",
    "winners": [
@@ -59,10 +62,11 @@
      "gko": "빅뱅"
     }
    ],
-   "work": "\"Bae Bae\""
+   "work": "\"Bae Bae\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Male Artist",
+   "ko": "베스트 남자 아티스트",
    "en": "Best Male Artist",
    "tier": "본상",
    "winners": [
@@ -70,10 +74,11 @@
      "name": "Park Jin-young",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Female Artist",
+   "ko": "베스트 여자 아티스트",
    "en": "Best Female Artist",
    "tier": "본상",
    "winners": [
@@ -81,10 +86,11 @@
      "name": "Taeyeon",
      "id": "a0166"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Male Group",
+   "ko": "베스트 남자 그룹",
    "en": "Best Male Group",
    "tier": "본상",
    "winners": [
@@ -92,10 +98,11 @@
      "name": "Exo",
      "gko": "엑소"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Female Group",
+   "ko": "베스트 여자 그룹",
    "en": "Best Female Group",
    "tier": "본상",
    "winners": [
@@ -103,10 +110,11 @@
      "name": "Girls' Generation",
      "gko": "소녀시대"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Male Group",
+   "ko": "베스트 댄스 퍼포먼스 남자 그룹",
    "en": "Best Dance Performance – Male Group",
    "tier": "본상",
    "winners": [
@@ -115,10 +123,11 @@
      "gko": "샤이니"
     }
    ],
-   "work": "\"View\""
+   "work": "\"View\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Female Group",
+   "ko": "베스트 댄스 퍼포먼스 여자 그룹",
    "en": "Best Dance Performance – Female Group",
    "tier": "본상",
    "winners": [
@@ -127,10 +136,11 @@
      "gko": "레드벨벳"
     }
    ],
-   "work": "\"Ice Cream Cake\""
+   "work": "\"Ice Cream Cake\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Solo",
+   "ko": "베스트 댄스 퍼포먼스 솔로",
    "en": "Best Dance Performance – Solo",
    "tier": "본상",
    "winners": [
@@ -139,7 +149,8 @@
      "ext": true
     }
    ],
-   "work": "\"Roll Deep\""
+   "work": "\"Roll Deep\"",
+   "koAuto": true
   },
   {
    "ko": "Best Collaboration and Unit",
@@ -158,7 +169,7 @@
    "work": "\"Just\""
   },
   {
-   "ko": "Best Vocal Performance – Male",
+   "ko": "베스트 보컬 퍼포먼스 남자",
    "en": "Best Vocal Performance – Male",
    "tier": "본상",
    "winners": [
@@ -167,10 +178,11 @@
      "ext": true
     }
    ],
-   "work": "\"Eat\""
+   "work": "\"Eat\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Vocal Performance – Female",
+   "ko": "베스트 보컬 퍼포먼스 여자",
    "en": "Best Vocal Performance – Female",
    "tier": "본상",
    "winners": [
@@ -179,10 +191,11 @@
      "ext": true
     }
    ],
-   "work": "\"Mind Your Own Business\""
+   "work": "\"Mind Your Own Business\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Band Performance",
+   "ko": "베스트 밴드 퍼포먼스",
    "en": "Best Band Performance",
    "tier": "본상",
    "winners": [
@@ -191,10 +204,11 @@
      "gko": "씨엔블루"
     }
    ],
-   "work": "\"Cinderella\""
+   "work": "\"Cinderella\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Rap Performance",
+   "ko": "베스트 랩 퍼포먼스",
    "en": "Best Rap Performance",
    "tier": "본상",
    "winners": [
@@ -203,10 +217,11 @@
      "ext": true
     }
    ],
-   "work": "\"Me You\" (ft. Baek Ye-rin)"
+   "work": "\"Me You\" (ft. Baek Ye-rin)",
+   "koAuto": true
   },
   {
-   "ko": "Best New Artist – Male",
+   "ko": "베스트 신인 남자",
    "en": "Best New Artist – Male",
    "tier": "신인",
    "winners": [
@@ -214,10 +229,11 @@
      "name": "iKon",
      "gko": "아이콘"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best New Artist – Female",
+   "ko": "베스트 신인 여자",
    "en": "Best New Artist – Female",
    "tier": "신인",
    "winners": [
@@ -225,7 +241,8 @@
      "name": "Twice",
      "gko": "트와이스"
     }
-   ]
+   ],
+   "koAuto": true
   }
  ]
 }

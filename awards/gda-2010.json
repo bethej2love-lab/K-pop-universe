@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Digital Daesang (Song of the Year)",
+   "ko": "음원 대상(올해의 노래)",
    "en": "Digital Daesang (Song of the Year)",
    "tier": "대상",
    "winners": [
@@ -24,10 +24,11 @@
      "gko": "2AM"
     }
    ],
-   "work": "\"Can't Let You Go Even If I Die\""
+   "work": "\"Can't Let You Go Even If I Die\"",
+   "koAuto": true
   },
   {
-   "ko": "Disc Daesang (Album of the Year)",
+   "ko": "음반 대상(올해의 앨범)",
    "en": "Disc Daesang (Album of the Year)",
    "tier": "대상",
    "winners": [
@@ -36,10 +37,11 @@
      "gko": "소녀시대"
     }
    ],
-   "work": "Oh!"
+   "work": "Oh!",
+   "koAuto": true
   },
   {
-   "ko": "Digital Song Bonsang",
+   "ko": "음원 본상",
    "en": "Digital Song Bonsang",
    "tier": "본상",
    "winners": [
@@ -59,10 +61,11 @@
      "name": "Miss A",
      "gko": "미쓰에이"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Album Bonsang",
+   "ko": "음반 본상",
    "en": "Album Bonsang",
    "tier": "본상",
    "winners": [
@@ -86,10 +89,11 @@
      "name": "Super Junior",
      "gko": "슈퍼주니어"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Rock Award",
+   "ko": "베스트 록",
    "en": "Best Rock Award",
    "tier": "본상",
    "winners": [
@@ -98,10 +102,11 @@
      "gko": "에프티아일랜드"
     }
    ],
-   "work": "\"Love Love Love\""
+   "work": "\"Love Love Love\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Artist Award",
+   "ko": "베스트 신인",
    "en": "Best New Artist Award",
    "tier": "신인",
    "winners": [
@@ -110,10 +115,11 @@
      "gko": "씨스타"
     }
    ],
-   "work": "\"Push Push\""
+   "work": "\"Push Push\"",
+   "koAuto": true
   },
   {
-   "ko": "Popular Artist Award",
+   "ko": "인기 아티스트",
    "en": "Popular Artist Award",
    "tier": "인기",
    "winners": [
@@ -129,7 +135,8 @@
      "name": "Super Junior",
      "gko": "슈퍼주니어"
     }
-   ]
+   ],
+   "koAuto": true
   }
  ]
 }

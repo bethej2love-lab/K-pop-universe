@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Song of the Year",
+   "ko": "올해의 노래",
    "en": "Song of the Year",
    "tier": "대상",
    "winners": [
@@ -24,10 +24,11 @@
      "id": "a1041"
     }
    ],
-   "work": "\"Gangnam Style\""
+   "work": "\"Gangnam Style\"",
+   "koAuto": true
   },
   {
-   "ko": "Artist of the Year",
+   "ko": "올해의 아티스트",
    "en": "Artist of the Year",
    "tier": "대상",
    "winners": [
@@ -35,10 +36,11 @@
      "name": "BigBang",
      "gko": "빅뱅"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Album of the Year",
+   "ko": "올해의 앨범",
    "en": "Album of the Year",
    "tier": "대상",
    "winners": [
@@ -47,10 +49,11 @@
      "gko": "슈퍼주니어"
     }
    ],
-   "work": "Sexy, Free & Single"
+   "work": "Sexy, Free & Single",
+   "koAuto": true
   },
   {
-   "ko": "Best Music Video",
+   "ko": "베스트 뮤직비디오",
    "en": "Best Music Video",
    "tier": "본상",
    "winners": [
@@ -59,10 +62,11 @@
      "id": "a1041"
     }
    ],
-   "work": "\"Gangnam Style\""
+   "work": "\"Gangnam Style\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Male Artist",
+   "ko": "베스트 남자 아티스트",
    "en": "Best Male Artist",
    "tier": "본상",
    "winners": [
@@ -70,10 +74,11 @@
      "name": "G-Dragon",
      "id": "a0199"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Female Artist",
+   "ko": "베스트 여자 아티스트",
    "en": "Best Female Artist",
    "tier": "본상",
    "winners": [
@@ -81,10 +86,11 @@
      "name": "IU",
      "id": "a0207"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Female Group",
+   "ko": "베스트 여자 그룹",
    "en": "Best Female Group",
    "tier": "본상",
    "winners": [
@@ -92,10 +98,11 @@
      "name": "Sistar",
      "gko": "씨스타"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Male Group",
+   "ko": "베스트 댄스 퍼포먼스 남자 그룹",
    "en": "Best Dance Performance – Male Group",
    "tier": "본상",
    "winners": [
@@ -104,10 +111,11 @@
      "gko": "샤이니"
     }
    ],
-   "work": "\"Sherlock\""
+   "work": "\"Sherlock\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Female Group",
+   "ko": "베스트 댄스 퍼포먼스 여자 그룹",
    "en": "Best Dance Performance – Female Group",
    "tier": "본상",
    "winners": [
@@ -116,10 +124,11 @@
      "gko": "에프엑스"
     }
    ],
-   "work": "\"Electric Shock\""
+   "work": "\"Electric Shock\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Solo",
+   "ko": "베스트 댄스 퍼포먼스 솔로",
    "en": "Best Dance Performance – Solo",
    "tier": "본상",
    "winners": [
@@ -128,10 +137,11 @@
      "id": "a1041"
     }
    ],
-   "work": "\"Gangnam Style\""
+   "work": "\"Gangnam Style\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Band Performance",
+   "ko": "베스트 밴드 퍼포먼스",
    "en": "Best Band Performance",
    "tier": "본상",
    "winners": [
@@ -140,10 +150,11 @@
      "ext": true
     }
    ],
-   "work": "\"Cherry Blossom Ending\""
+   "work": "\"Cherry Blossom Ending\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Vocal Performance – Group",
+   "ko": "베스트 보컬 퍼포먼스 그룹",
    "en": "Best Vocal Performance – Group",
    "tier": "본상",
    "winners": [
@@ -152,10 +163,11 @@
      "ext": true
     }
    ],
-   "work": "\"Will Think Of You\""
+   "work": "\"Will Think Of You\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Vocal Performance – Solo",
+   "ko": "베스트 보컬 퍼포먼스 솔로",
    "en": "Best Vocal Performance – Solo",
    "tier": "본상",
    "winners": [
@@ -164,10 +176,11 @@
      "ext": true
     }
    ],
-   "work": "\"I Need You\""
+   "work": "\"I Need You\"",
+   "koAuto": true
   },
   {
-   "ko": "Best OST",
+   "ko": "베스트 OST",
    "en": "Best OST",
    "tier": "본상",
    "winners": [
@@ -180,10 +193,11 @@
      "id": "a0996"
     }
    ],
-   "work": "\"All For You\" (Reply 1997)"
+   "work": "\"All For You\" (Reply 1997)",
+   "koAuto": true
   },
   {
-   "ko": "Best Rap Performance",
+   "ko": "베스트 랩 퍼포먼스",
    "en": "Best Rap Performance",
    "tier": "본상",
    "winners": [
@@ -192,10 +206,11 @@
      "ext": true
     }
    ],
-   "work": "\"Up\""
+   "work": "\"Up\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Male Artist",
+   "ko": "베스트 신인 남자 아티스트",
    "en": "Best New Male Artist",
    "tier": "신인",
    "winners": [
@@ -203,10 +218,11 @@
      "name": "Busker Busker",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best New Female Artist",
+   "ko": "베스트 신인 여자 아티스트",
    "en": "Best New Female Artist",
    "tier": "신인",
    "winners": [
@@ -214,10 +230,11 @@
      "name": "Ailee",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "International Favorite Artist",
+   "ko": "해외 페이보릿 아티스트",
    "en": "International Favorite Artist",
    "tier": "인기",
    "winners": [
@@ -226,10 +243,11 @@
      "id": "a1041"
     }
    ],
-   "work": "\"Gangnam Style\""
+   "work": "\"Gangnam Style\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Collaboration Performance",
+   "ko": "베스트 콜라보레이션 퍼포먼스",
    "en": "Best Collaboration Performance",
    "tier": "본상",
    "winners": [
@@ -238,10 +256,11 @@
      "ext": true
     }
    ],
-   "work": "\"Trouble Maker\""
+   "work": "\"Trouble Maker\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Global Group – Female",
+   "ko": "베스트 글로벌 그룹 여자",
    "en": "Best Global Group – Female",
    "tier": "본상",
    "winners": [
@@ -249,10 +268,11 @@
      "name": "Kara",
      "gko": "카라"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Global Group – Male",
+   "ko": "베스트 글로벌 그룹 남자",
    "en": "Best Global Group – Male",
    "tier": "본상",
    "winners": [
@@ -260,7 +280,8 @@
      "name": "Super Junior",
      "gko": "슈퍼주니어"
     }
-   ]
+   ],
+   "koAuto": true
   }
  ]
 }

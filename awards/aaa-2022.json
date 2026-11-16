@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Grand Prize",
+   "ko": "그랜드 상",
    "en": "Grand Prize",
    "tier": "대상",
    "winners": [
@@ -43,10 +43,11 @@
      "name": "Seventeen",
      "gko": "세븐틴"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Fabulous Award",
+   "ko": "파뷸러스",
    "en": "Fabulous Award",
    "tier": "특별",
    "winners": [
@@ -54,10 +55,11 @@
      "name": "Lim Young-woong",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Television",
+   "ko": "TV",
    "en": "Television",
    "tier": "특별",
    "winners": [
@@ -65,10 +67,11 @@
      "name": "Seventeen",
      "gko": "세븐틴"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Artist Award",
+   "ko": "베스트 아티스트",
    "en": "Best Artist Award",
    "tier": "본상",
    "winners": [
@@ -84,10 +87,11 @@
      "name": "Park Min-young",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Television",
+   "ko": "TV",
    "en": "Television",
    "tier": "특별",
    "winners": [
@@ -103,10 +107,11 @@
      "name": "The Rampage",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Asia Celebrity",
+   "ko": "아시아 셀러브리티",
    "en": "Asia Celebrity",
    "tier": "특별",
    "winners": [
@@ -126,10 +131,11 @@
      "name": "Billkin",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Television",
+   "ko": "TV",
    "en": "Television",
    "tier": "특별",
    "winners": [
@@ -145,10 +151,11 @@
      "name": "Lyodra",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Idol Plus Popularity Award",
+   "ko": "아이돌 플러스 인기상",
    "en": "Idol Plus Popularity Award",
    "tier": "인기",
    "winners": [
@@ -156,10 +163,11 @@
      "name": "Kim Seon-ho",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Television / Film",
+   "ko": "TV·영화",
    "en": "Television / Film",
    "tier": "특별",
    "winners": [
@@ -167,10 +175,11 @@
      "name": "BTS",
      "gko": "방탄소년단"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "DCM Popularity Award",
+   "ko": "DCM 인기상",
    "en": "DCM Popularity Award",
    "tier": "인기",
    "winners": [
@@ -182,10 +191,11 @@
      "name": "Kim Se-jeong",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Television / Film",
+   "ko": "TV·영화",
    "en": "Television / Film",
    "tier": "특별",
    "winners": [
@@ -197,10 +207,11 @@
      "name": "Lim Young-woong",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Rookie of the Year",
+   "ko": "올해의 신인",
    "en": "Rookie of the Year",
    "tier": "신인",
    "winners": [
@@ -212,10 +223,11 @@
      "name": "Seo Bum-june",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Television / Film",
+   "ko": "TV·영화",
    "en": "Television / Film",
    "tier": "특별",
    "winners": [
@@ -231,10 +243,11 @@
      "name": "NewJeans",
      "gko": "뉴진스"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Icon Award",
+   "ko": "베스트 아이콘",
    "en": "Best Icon Award",
    "tier": "본상",
    "winners": [
@@ -242,10 +255,11 @@
      "name": "Im Jae-hyuk",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Television / Film",
+   "ko": "TV·영화",
    "en": "Television / Film",
    "tier": "특별",
    "winners": [
@@ -257,10 +271,11 @@
      "name": "Verivery",
      "gko": "베리베리"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Focus Award",
+   "ko": "포커스",
    "en": "Focus Award",
    "tier": "특별",
    "winners": [
@@ -268,10 +283,11 @@
      "name": "Haknyeon",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Television / Film",
+   "ko": "TV·영화",
    "en": "Television / Film",
    "tier": "특별",
    "winners": [
@@ -287,10 +303,11 @@
      "name": "Trendz",
      "gko": "트렌드지"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "New Wave Award",
+   "ko": "신인 웨이브",
    "en": "New Wave Award",
    "tier": "특별",
    "winners": [
@@ -302,10 +319,11 @@
      "name": "Choi Si-won",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Television / Film",
+   "ko": "TV·영화",
    "en": "Television / Film",
    "tier": "특별",
    "winners": [
@@ -321,10 +339,11 @@
      "name": "Kep1er",
      "gko": "케플러"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Emotive Award",
+   "ko": "베스트 이모티브",
    "en": "Best Emotive Award",
    "tier": "본상",
    "winners": [
@@ -332,10 +351,11 @@
      "name": "Na In-woo",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Television / Film",
+   "ko": "TV·영화",
    "en": "Television / Film",
    "tier": "특별",
    "winners": [
@@ -347,10 +367,11 @@
      "name": "Nmixx",
      "gko": "엔믹스"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Choice Award",
+   "ko": "베스트 초이스",
    "en": "Best Choice Award",
    "tier": "인기",
    "winners": [
@@ -358,10 +379,11 @@
      "name": "Kim Seon-ho",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Television / Film",
+   "ko": "TV·영화",
    "en": "Television / Film",
    "tier": "특별",
    "winners": [
@@ -385,10 +407,11 @@
      "name": "Pentagon",
      "gko": "펜타곤"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Hot Trend Award",
+   "ko": "핫 트렌드",
    "en": "Hot Trend Award",
    "tier": "특별",
    "winners": [
@@ -400,10 +423,11 @@
      "name": "Park Min-young",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Television / Film",
+   "ko": "TV·영화",
    "en": "Television / Film",
    "tier": "특별",
    "winners": [
@@ -423,10 +447,11 @@
      "name": "Seventeen",
      "gko": "세븐틴"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Potential Award",
+   "ko": "포텐셜",
    "en": "Potential Award",
    "tier": "특별",
    "winners": [
@@ -434,10 +459,11 @@
      "name": "Kang Daniel",
      "id": "a0325"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Television / Film",
+   "ko": "TV·영화",
    "en": "Television / Film",
    "tier": "특별",
    "winners": [
@@ -457,10 +483,11 @@
      "name": "Billlie",
      "gko": "빌리"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Acting Performance Award",
+   "ko": "베스트 연기",
    "en": "Best Acting Performance Award",
    "tier": "본상",
    "winners": [
@@ -480,10 +507,11 @@
      "name": "Choi Si-won",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Actor Award",
+   "ko": "베스트 배우",
    "en": "Best Actor Award",
    "tier": "본상",
    "winners": [
@@ -503,10 +531,11 @@
      "name": "Kwon Yu-ri",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Musician Award",
+   "ko": "베스트 뮤지션",
    "en": "Best Musician Award",
    "tier": "본상",
    "winners": [
@@ -530,10 +559,11 @@
      "name": "NiziU",
      "gko": "니쥬"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Producer Award",
+   "ko": "베스트 프로듀서",
    "en": "Best Producer Award",
    "tier": "본상",
    "winners": [
@@ -541,10 +571,11 @@
      "name": "Starship Entertainment",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "AAA Scene Stealer",
+   "ko": "AAA 씬 스틸러",
    "en": "AAA Scene Stealer",
    "tier": "특별",
    "winners": [
@@ -552,10 +583,11 @@
      "name": "Ryu Kyung-soo",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "AAA Best Achievement Award",
+   "ko": "AAA 베스트 업적",
    "en": "AAA Best Achievement Award",
    "tier": "특별",
    "winners": [
@@ -563,7 +595,8 @@
      "name": "Kwon Yu-ri",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   }
  ]
 }

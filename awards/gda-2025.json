@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Digital Daesang (Song of the Year)",
+   "ko": "음원 대상(올해의 노래)",
    "en": "Digital Daesang (Song of the Year)",
    "tier": "대상",
    "winners": [
@@ -24,10 +24,11 @@
      "id": "a0199"
     }
    ],
-   "work": "\"Home Sweet Home\""
+   "work": "\"Home Sweet Home\"",
+   "koAuto": true
   },
   {
-   "ko": "Album Daesang (Album of the Year)",
+   "ko": "앨범 대상(올해의 앨범)",
    "en": "Album Daesang (Album of the Year)",
    "tier": "대상",
    "winners": [
@@ -36,10 +37,11 @@
      "gko": "스트레이키즈"
     }
    ],
-   "work": "Karma"
+   "work": "Karma",
+   "koAuto": true
   },
   {
-   "ko": "Artist Daesang (Artist of the Year)",
+   "ko": "아티스트 대상 (아티스트 올해)",
    "en": "Artist Daesang (Artist of the Year)",
    "tier": "대상",
    "winners": [
@@ -47,10 +49,11 @@
      "name": "Jennie",
      "id": "a0204"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Rookie Artist of the Year",
+   "ko": "신인 올해의 아티스트",
    "en": "Rookie Artist of the Year",
    "tier": "신인",
    "winners": [
@@ -62,10 +65,11 @@
      "name": "Cortis",
      "gko": "코르티스"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Digital Song Bonsang",
+   "ko": "음원 본상",
    "en": "Digital Song Bonsang",
    "tier": "본상",
    "winners": [
@@ -109,10 +113,11 @@
      "name": "Zo Zazz",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Album Bonsang",
+   "ko": "음반 본상",
    "en": "Album Bonsang",
    "tier": "본상",
    "winners": [
@@ -156,10 +161,11 @@
      "name": "Zerobaseone",
      "gko": "제로베이스원"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Most Popular Artist – Female",
+   "ko": "인기 아티스트 여자",
    "en": "Most Popular Artist – Female",
    "tier": "인기",
    "winners": [
@@ -167,10 +173,11 @@
      "name": "Hearts2Hearts",
      "gko": "하츠투하츠"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Most Popular Artist – Male",
+   "ko": "인기 아티스트 남자",
    "en": "Most Popular Artist – Male",
    "tier": "인기",
    "winners": [
@@ -178,7 +185,8 @@
      "name": "Jin",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "Golden Choice",
@@ -196,7 +204,7 @@
    ]
   },
   {
-   "ko": "Next Generation",
+   "ko": "넥스트 제너레이션",
    "en": "Next Generation",
    "tier": "특별",
    "winners": [
@@ -204,10 +212,11 @@
      "name": "KiiiKiii",
      "gko": "키키"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Cosmopolitan Artist Award",
+   "ko": "코즈모폴리턴 아티스트",
    "en": "Cosmopolitan Artist Award",
    "tier": "특별",
    "winners": [
@@ -215,7 +224,8 @@
      "name": "Ive",
      "gko": "아이브"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "Global Impact Award",
@@ -229,7 +239,7 @@
    ]
   },
   {
-   "ko": "Best Performance",
+   "ko": "베스트 퍼포먼스",
    "en": "Best Performance",
    "tier": "본상",
    "winners": [
@@ -241,7 +251,8 @@
      "name": "TWS",
      "gko": "투어스"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "Naver AI Choice",
@@ -255,7 +266,7 @@
    ]
   },
   {
-   "ko": "Best Group",
+   "ko": "베스트 그룹",
    "en": "Best Group",
    "tier": "본상",
    "winners": [
@@ -263,7 +274,8 @@
      "name": "Monsta X",
      "gko": "몬스타엑스"
     }
-   ]
+   ],
+   "koAuto": true
   }
  ]
 }

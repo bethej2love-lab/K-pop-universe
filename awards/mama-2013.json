@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Album of the Year",
+   "ko": "올해의 앨범",
    "en": "Album of the Year",
    "tier": "대상",
    "winners": [
@@ -24,10 +24,11 @@
      "gko": "엑소"
     }
    ],
-   "work": "XOXO"
+   "work": "XOXO",
+   "koAuto": true
   },
   {
-   "ko": "Artist of the Year",
+   "ko": "올해의 아티스트",
    "en": "Artist of the Year",
    "tier": "대상",
    "winners": [
@@ -35,10 +36,11 @@
      "name": "G-Dragon",
      "id": "a0199"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Song of the Year",
+   "ko": "올해의 노래",
    "en": "Song of the Year",
    "tier": "대상",
    "winners": [
@@ -47,7 +49,8 @@
      "ext": true
     }
    ],
-   "work": "\"Bounce\""
+   "work": "\"Bounce\"",
+   "koAuto": true
   },
   {
    "ko": "Nissan Juke Best Music Video",
@@ -62,7 +65,7 @@
    "work": "\"Coup D'Etat\" (Director: Seo Hyun-seung)"
   },
   {
-   "ko": "Best Male Artist",
+   "ko": "베스트 남자 아티스트",
    "en": "Best Male Artist",
    "tier": "본상",
    "winners": [
@@ -70,10 +73,11 @@
      "name": "G-Dragon",
      "id": "a0199"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Female Artist",
+   "ko": "베스트 여자 아티스트",
    "en": "Best Female Artist",
    "tier": "본상",
    "winners": [
@@ -81,10 +85,11 @@
      "name": "Lee Hyori",
      "id": "a0844"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Male Group",
+   "ko": "베스트 남자 그룹",
    "en": "Best Male Group",
    "tier": "본상",
    "winners": [
@@ -92,10 +97,11 @@
      "name": "Infinite",
      "gko": "인피니트"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Female Group",
+   "ko": "베스트 여자 그룹",
    "en": "Best Female Group",
    "tier": "본상",
    "winners": [
@@ -103,10 +109,11 @@
      "name": "Girls' Generation",
      "gko": "소녀시대"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance - Male Group",
+   "ko": "베스트 댄스 퍼포먼스 남자 그룹",
    "en": "Best Dance Performance - Male Group",
    "tier": "본상",
    "winners": [
@@ -115,10 +122,11 @@
      "gko": "엑소"
     }
    ],
-   "work": "\"Growl\""
+   "work": "\"Growl\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance - Female Group",
+   "ko": "베스트 댄스 퍼포먼스 여자 그룹",
    "en": "Best Dance Performance - Female Group",
    "tier": "본상",
    "winners": [
@@ -127,10 +135,11 @@
      "gko": "씨스타"
     }
    ],
-   "work": "\"Give It to Me\""
+   "work": "\"Give It to Me\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance - Male Solo",
+   "ko": "베스트 댄스 퍼포먼스 남자 솔로",
    "en": "Best Dance Performance - Male Solo",
    "tier": "본상",
    "winners": [
@@ -139,10 +148,11 @@
      "id": "a0199"
     }
    ],
-   "work": "\"Crooked\""
+   "work": "\"Crooked\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance - Female Solo",
+   "ko": "베스트 댄스 퍼포먼스 여자 솔로",
    "en": "Best Dance Performance - Female Solo",
    "tier": "본상",
    "winners": [
@@ -151,10 +161,11 @@
      "id": "a0528"
     }
    ],
-   "work": "\"The Baddest Female\""
+   "work": "\"The Baddest Female\"",
+   "koAuto": true
   },
   {
-   "ko": "International Favorite Artist",
+   "ko": "해외 페이보릿 아티스트",
    "en": "International Favorite Artist",
    "tier": "인기",
    "winners": [
@@ -162,10 +173,11 @@
      "name": "Ylvis",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Band Performance",
+   "ko": "베스트 밴드 퍼포먼스",
    "en": "Best Band Performance",
    "tier": "본상",
    "winners": [
@@ -174,10 +186,11 @@
      "ext": true
     }
    ],
-   "work": "\"First Love\""
+   "work": "\"First Love\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Vocal Performance - Male",
+   "ko": "베스트 보컬 퍼포먼스 남자",
    "en": "Best Vocal Performance - Male",
    "tier": "본상",
    "winners": [
@@ -186,10 +199,11 @@
      "ext": true
     }
    ],
-   "work": "\"Return\""
+   "work": "\"Return\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Vocal Performance - Female",
+   "ko": "베스트 보컬 퍼포먼스 여자",
    "en": "Best Vocal Performance - Female",
    "tier": "본상",
    "winners": [
@@ -198,10 +212,11 @@
      "ext": true
     }
    ],
-   "work": "\"U&I\""
+   "work": "\"U&I\"",
+   "koAuto": true
   },
   {
-   "ko": "Best OST",
+   "ko": "베스트 OST",
    "en": "Best OST",
    "tier": "본상",
    "winners": [
@@ -210,10 +225,11 @@
      "ext": true
     }
    ],
-   "work": "\"Touch Love\" (Master's Sun)"
+   "work": "\"Touch Love\" (Master's Sun)",
+   "koAuto": true
   },
   {
-   "ko": "Best Rap Performance",
+   "ko": "베스트 랩 퍼포먼스",
    "en": "Best Rap Performance",
    "tier": "본상",
    "winners": [
@@ -222,10 +238,11 @@
      "ext": true
     }
    ],
-   "work": "\"BAAAM\""
+   "work": "\"BAAAM\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Male Artist",
+   "ko": "베스트 신인 남자 아티스트",
    "en": "Best New Male Artist",
    "tier": "신인",
    "winners": [
@@ -233,10 +250,11 @@
      "name": "Roy Kim",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best New Female Artist",
+   "ko": "베스트 신인 여자 아티스트",
    "en": "Best New Female Artist",
    "tier": "신인",
    "winners": [
@@ -244,7 +262,8 @@
      "name": "Crayon Pop",
      "gko": "크레용팝"
     }
-   ]
+   ],
+   "koAuto": true
   }
  ]
 }

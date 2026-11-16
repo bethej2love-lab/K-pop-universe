@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Top 10 Artists",
+   "ko": "TOP 10 아티스트",
    "en": "Top 10 Artists",
    "tier": "본상",
    "winners": [
@@ -59,10 +59,11 @@
      "name": "NCT Dream",
      "gko": "엔시티 드림"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Song of the Year",
+   "ko": "올해의 노래",
    "en": "Song of the Year",
    "tier": "대상",
    "winners": [
@@ -71,10 +72,11 @@
      "gko": "방탄소년단"
     }
    ],
-   "work": "\"Butter\""
+   "work": "\"Butter\"",
+   "koAuto": true
   },
   {
-   "ko": "Artist of the Year",
+   "ko": "올해의 아티스트",
    "en": "Artist of the Year",
    "tier": "대상",
    "winners": [
@@ -82,10 +84,11 @@
      "name": "IU",
      "id": "a0207"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Album of the Year",
+   "ko": "올해의 앨범",
    "en": "Album of the Year",
    "tier": "대상",
    "winners": [
@@ -94,10 +97,11 @@
      "id": "a0207"
     }
    ],
-   "work": "Lilac"
+   "work": "Lilac",
+   "koAuto": true
   },
   {
-   "ko": "Record of the Year",
+   "ko": "올해의 레코드",
    "en": "Record of the Year",
    "tier": "대상",
    "winners": [
@@ -105,10 +109,11 @@
      "name": "Aespa",
      "gko": "에스파"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Hot Trend Award",
+   "ko": "핫 트렌드",
    "en": "Hot Trend Award",
    "tier": "특별",
    "winners": [
@@ -116,10 +121,11 @@
      "name": "Brave Girls",
      "gko": "브브걸"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best New Artist",
+   "ko": "베스트 신인",
    "en": "Best New Artist",
    "tier": "신인",
    "winners": [
@@ -131,10 +137,11 @@
      "name": "Aespa",
      "gko": "에스파"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Netizen Popularity Award",
+   "ko": "네티즌 인기상",
    "en": "Netizen Popularity Award",
    "tier": "인기",
    "winners": [
@@ -142,10 +149,11 @@
      "name": "BTS",
      "gko": "방탄소년단"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Male Group",
+   "ko": "베스트 남자 그룹",
    "en": "Best Male Group",
    "tier": "본상",
    "winners": [
@@ -153,10 +161,11 @@
      "name": "BTS",
      "gko": "방탄소년단"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Female Group",
+   "ko": "베스트 여자 그룹",
    "en": "Best Female Group",
    "tier": "본상",
    "winners": [
@@ -164,10 +173,11 @@
      "name": "Aespa",
      "gko": "에스파"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Male Solo",
+   "ko": "베스트 남자 솔로",
    "en": "Best Male Solo",
    "tier": "본상",
    "winners": [
@@ -175,10 +185,11 @@
      "name": "Lim Young-woong",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Female Solo",
+   "ko": "베스트 여자 솔로",
    "en": "Best Female Solo",
    "tier": "본상",
    "winners": [
@@ -186,10 +197,11 @@
      "name": "IU",
      "id": "a0207"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Collaboration",
+   "ko": "베스트 콜라보레이션",
    "en": "Best Collaboration",
    "tier": "본상",
    "winners": [
@@ -202,10 +214,11 @@
      "gko": "방탄소년단"
     }
    ],
-   "work": "\"My Universe\""
+   "work": "\"My Universe\"",
+   "koAuto": true
   },
   {
-   "ko": "Best OST",
+   "ko": "베스트 OST",
    "en": "Best OST",
    "tier": "본상",
    "winners": [
@@ -214,7 +227,8 @@
      "ext": true
     }
    ],
-   "work": "\"Rain and You\""
+   "work": "\"Rain and You\"",
+   "koAuto": true
   }
  ]
 }

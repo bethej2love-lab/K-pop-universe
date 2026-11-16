@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Grand Artist",
+   "ko": "그랜드 아티스트",
    "en": "Grand Artist",
    "tier": "대상",
    "winners": [
@@ -23,10 +23,11 @@
      "name": "Ateez",
      "gko": "에이티즈"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Grand Performer",
+   "ko": "그랜드 퍼포머",
    "en": "Grand Performer",
    "tier": "대상",
    "winners": [
@@ -34,10 +35,11 @@
      "name": "BoyNextDoor",
      "gko": "보이넥스트도어"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Grand Record",
+   "ko": "그랜드 레코드",
    "en": "Grand Record",
    "tier": "대상",
    "winners": [
@@ -45,10 +47,11 @@
      "name": "Stray Kids",
      "gko": "스트레이키즈"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Grand Song",
+   "ko": "그랜드 노래",
    "en": "Grand Song",
    "tier": "대상",
    "winners": [
@@ -56,10 +59,11 @@
      "name": "Ive",
      "gko": "아이브"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Grand Honor's Choice",
+   "ko": "그랜드 아너스 초이스",
    "en": "Grand Honor's Choice",
    "tier": "대상",
    "winners": [
@@ -75,10 +79,11 @@
      "name": "Stray Kids",
      "gko": "스트레이키즈"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Artist 10",
+   "ko": "베스트 아티스트 10",
    "en": "Best Artist 10",
    "tier": "본상",
    "winners": [
@@ -122,10 +127,11 @@
      "name": "Xikers",
      "gko": "싸이커스"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Music 10",
+   "ko": "베스트 뮤직 10",
    "en": "Best Music 10",
    "tier": "본상",
    "winners": [
@@ -169,10 +175,11 @@
      "name": "Suho",
      "id": "a0370"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Adult Contemporary",
+   "ko": "베스트 어덜트 컨템포러리",
    "en": "Best Adult Contemporary",
    "tier": "본상",
    "winners": [
@@ -184,7 +191,8 @@
      "name": "Lee Chan-won",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "Best Virtual Artist",
@@ -199,7 +207,7 @@
    "work": "\"Dash\""
   },
   {
-   "ko": "Best Hip-Hop",
+   "ko": "베스트 힙합",
    "en": "Best Hip-Hop",
    "tier": "본상",
    "winners": [
@@ -208,10 +216,11 @@
      "id": "a0186"
     }
    ],
-   "work": "\"Killin' It Girl\""
+   "work": "\"Killin' It Girl\"",
+   "koAuto": true
   },
   {
-   "ko": "Best OST",
+   "ko": "베스트 OST",
    "en": "Best OST",
    "tier": "본상",
    "winners": [
@@ -220,10 +229,11 @@
      "id": "a0375"
     }
    ],
-   "work": "\"Forever\""
+   "work": "\"Forever\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Music Video",
+   "ko": "베스트 뮤직비디오",
    "en": "Best Music Video",
    "tier": "본상",
    "winners": [
@@ -232,10 +242,11 @@
      "ext": true
     }
    ],
-   "work": "\"Don't Say You Love Me\""
+   "work": "\"Don't Say You Love Me\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance",
+   "ko": "베스트 댄스 퍼포먼스",
    "en": "Best Dance Performance",
    "tier": "본상",
    "winners": [
@@ -244,10 +255,11 @@
      "gko": "아홉"
     }
    ],
-   "work": "\"Rendezvous\""
+   "work": "\"Rendezvous\"",
+   "koAuto": true
   },
   {
-   "ko": "Trend of the Year – K-pop Group",
+   "ko": "올해의 트렌드 K팝 그룹",
    "en": "Trend of the Year – K-pop Group",
    "tier": "특별",
    "winners": [
@@ -255,10 +267,11 @@
      "name": "NewJeans",
      "gko": "뉴진스"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Trend of the Year – K-pop Solo",
+   "ko": "올해의 트렌드 K팝 솔로",
    "en": "Trend of the Year – K-pop Solo",
    "tier": "특별",
    "winners": [
@@ -266,10 +279,11 @@
      "name": "V",
      "id": "a0188"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Trend of the Year – Trot",
+   "ko": "올해의 트렌드 트로트",
    "en": "Trend of the Year – Trot",
    "tier": "특별",
    "winners": [
@@ -277,10 +291,11 @@
      "name": "Lee Chan-won",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Trend of the Year – Rookie",
+   "ko": "올해의 트렌드 신인",
    "en": "Trend of the Year – Rookie",
    "tier": "신인",
    "winners": [
@@ -288,7 +303,8 @@
      "name": "Carmen",
      "gko": "하츠투하츠"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "BIGC Global Star Award",
@@ -369,7 +385,7 @@
    ]
   },
   {
-   "ko": "Best Band",
+   "ko": "베스트 밴드",
    "en": "Best Band",
    "tier": "본상",
    "winners": [
@@ -381,10 +397,11 @@
      "name": "Xdinary Heroes",
      "gko": "엑스디너리 히어로즈"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Memory",
+   "ko": "베스트 메모리",
    "en": "Best Memory",
    "tier": "본상",
    "winners": [
@@ -392,10 +409,11 @@
      "name": "Woodz",
      "id": "a0609"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Selling Album",
+   "ko": "베스트 셀링 앨범",
    "en": "Best Selling Album",
    "tier": "본상",
    "winners": [
@@ -404,7 +422,8 @@
      "gko": "스트레이키즈"
     }
    ],
-   "work": "Karma"
+   "work": "Karma",
+   "koAuto": true
   },
   {
    "ko": "Best Streaming Song",
@@ -419,7 +438,7 @@
    "work": "\"Whiplash\""
   },
   {
-   "ko": "Best Trot Performance",
+   "ko": "베스트 트로트 퍼포먼스",
    "en": "Best Trot Performance",
    "tier": "본상",
    "winners": [
@@ -427,10 +446,11 @@
      "name": "Park Seo-jin",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Trot Stage",
+   "ko": "베스트 트로트 무대",
    "en": "Best Trot Stage",
    "tier": "본상",
    "winners": [
@@ -438,10 +458,11 @@
      "name": "Jang Min-ho",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Stage",
+   "ko": "베스트 무대",
    "en": "Best Stage",
    "tier": "본상",
    "winners": [
@@ -449,10 +470,11 @@
      "name": "Cravity",
      "gko": "크래비티"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Producer",
+   "ko": "베스트 프로듀서",
    "en": "Best Producer",
    "tier": "본상",
    "winners": [
@@ -460,10 +482,11 @@
      "name": "Teddy Park",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "IS Rookie",
+   "ko": "IS 신인",
    "en": "IS Rookie",
    "tier": "신인",
    "winners": [
@@ -479,10 +502,11 @@
      "name": "Meovv",
      "gko": "미야오"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "IS Rising Star",
+   "ko": "IS 라이징 스타",
    "en": "IS Rising Star",
    "tier": "신인",
    "winners": [
@@ -506,10 +530,11 @@
      "name": "KiiiKiii",
      "gko": "키키"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "K-pop Global Artist",
+   "ko": "K팝 글로벌 아티스트",
    "en": "K-pop Global Artist",
    "tier": "특별",
    "winners": [
@@ -521,7 +546,8 @@
      "name": "Nexz",
      "gko": "넥스지"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "Style Icon",
@@ -535,7 +561,7 @@
    ]
   },
   {
-   "ko": "Best Global K-pop Star",
+   "ko": "베스트 글로벌 K팝 스타",
    "en": "Best Global K-pop Star",
    "tier": "본상",
    "winners": [
@@ -543,7 +569,8 @@
      "name": "Ive",
      "gko": "아이브"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "Hulu Japanese Popularity",
@@ -568,7 +595,7 @@
    ]
   },
   {
-   "ko": "Best Vocal Performance",
+   "ko": "베스트 보컬 퍼포먼스",
    "en": "Best Vocal Performance",
    "tier": "본상",
    "winners": [
@@ -576,10 +603,11 @@
      "name": "BtoB",
      "gko": "비투비"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Solo Artist – Female",
+   "ko": "베스트 솔로 아티스트 여자",
    "en": "Best Solo Artist – Female",
    "tier": "본상",
    "winners": [
@@ -587,10 +615,11 @@
      "name": "Dayoung",
      "id": "a0661"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Solo Artist – Male",
+   "ko": "베스트 솔로 아티스트 남자",
    "en": "Best Solo Artist – Male",
    "tier": "본상",
    "winners": [
@@ -598,7 +627,8 @@
      "name": "Suho",
      "id": "a0370"
     }
-   ]
+   ],
+   "koAuto": true
   }
  ]
 }

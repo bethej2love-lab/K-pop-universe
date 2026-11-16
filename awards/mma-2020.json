@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Top 10 Artists",
+   "ko": "TOP 10 아티스트",
    "en": "Top 10 Artists",
    "tier": "본상",
    "winners": [
@@ -59,10 +59,11 @@
      "name": "Iz*One",
      "gko": "아이즈원"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Song of the Year",
+   "ko": "올해의 노래",
    "en": "Song of the Year",
    "tier": "대상",
    "winners": [
@@ -71,10 +72,11 @@
      "gko": "방탄소년단"
     }
    ],
-   "work": "\"Dynamite\""
+   "work": "\"Dynamite\"",
+   "koAuto": true
   },
   {
-   "ko": "Artist of the Year",
+   "ko": "올해의 아티스트",
    "en": "Artist of the Year",
    "tier": "대상",
    "winners": [
@@ -82,10 +84,11 @@
      "name": "BTS",
      "gko": "방탄소년단"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Album of the Year",
+   "ko": "올해의 앨범",
    "en": "Album of the Year",
    "tier": "대상",
    "winners": [
@@ -94,10 +97,11 @@
      "gko": "방탄소년단"
     }
    ],
-   "work": "Map of the Soul: 7"
+   "work": "Map of the Soul: 7",
+   "koAuto": true
   },
   {
-   "ko": "Best New Artist",
+   "ko": "베스트 신인",
    "en": "Best New Artist",
    "tier": "신인",
    "winners": [
@@ -109,10 +113,11 @@
      "name": "Weeekly",
      "gko": "위클리"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Netizen Popularity Award",
+   "ko": "네티즌 인기상",
    "en": "Netizen Popularity Award",
    "tier": "인기",
    "winners": [
@@ -120,10 +125,11 @@
      "name": "BTS",
      "gko": "방탄소년단"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Award (Male)",
+   "ko": "베스트 댄스 (남자)",
    "en": "Best Dance Award (Male)",
    "tier": "본상",
    "winners": [
@@ -132,10 +138,11 @@
      "gko": "방탄소년단"
     }
    ],
-   "work": "\"Dynamite\""
+   "work": "\"Dynamite\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Award (Female)",
+   "ko": "베스트 댄스 (여자)",
    "en": "Best Dance Award (Female)",
    "tier": "본상",
    "winners": [
@@ -144,10 +151,11 @@
      "gko": "블랙핑크"
     }
    ],
-   "work": "\"How You Like That\""
+   "work": "\"How You Like That\"",
+   "koAuto": true
   },
   {
-   "ko": "Best R&B/Soul Award",
+   "ko": "베스트 R&B/소울",
    "en": "Best R&B/Soul Award",
    "tier": "본상",
    "winners": [
@@ -156,10 +164,11 @@
      "id": "a1201"
     }
    ],
-   "work": "\"Square (2017)\""
+   "work": "\"Square (2017)\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Rap/Hip Hop Award",
+   "ko": "베스트 랩/힙합",
    "en": "Best Rap/Hip Hop Award",
    "tier": "본상",
    "winners": [
@@ -184,10 +193,11 @@
      "ext": true
     }
    ],
-   "work": "\"I'mma Do\""
+   "work": "\"I'mma Do\"",
+   "koAuto": true
   },
   {
-   "ko": "Best OST Award",
+   "ko": "베스트 OST",
    "en": "Best OST Award",
    "tier": "본상",
    "winners": [
@@ -196,10 +206,11 @@
      "ext": true
     }
    ],
-   "work": "\"Aloha\""
+   "work": "\"Aloha\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Rock Award",
+   "ko": "베스트 록",
    "en": "Best Rock Award",
    "tier": "본상",
    "winners": [
@@ -208,10 +219,11 @@
      "id": "a0207"
     }
    ],
-   "work": "\"Eight\" featuring Suga"
+   "work": "\"Eight\" featuring Suga",
+   "koAuto": true
   },
   {
-   "ko": "Best Pop Award",
+   "ko": "베스트 팝",
    "en": "Best Pop Award",
    "tier": "본상",
    "winners": [
@@ -220,10 +232,11 @@
      "ext": true
     }
    ],
-   "work": "\"To Die For\""
+   "work": "\"To Die For\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Ballad Award",
+   "ko": "베스트 발라드",
    "en": "Best Ballad Award",
    "tier": "본상",
    "winners": [
@@ -232,10 +245,11 @@
      "ext": true
     }
    ],
-   "work": "\"Dear.\""
+   "work": "\"Dear.\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Indie Award",
+   "ko": "베스트 인디",
    "en": "Best Indie Award",
    "tier": "본상",
    "winners": [
@@ -244,10 +258,11 @@
      "ext": true
     }
    ],
-   "work": "Leo (featuring Baekhyun)"
+   "work": "Leo (featuring Baekhyun)",
+   "koAuto": true
   },
   {
-   "ko": "Best Trot Award",
+   "ko": "베스트 트로트",
    "en": "Best Trot Award",
    "tier": "본상",
    "winners": [
@@ -256,10 +271,11 @@
      "ext": true
     }
    ],
-   "work": "\"Trust in Me\""
+   "work": "\"Trust in Me\"",
+   "koAuto": true
   },
   {
-   "ko": "Hot Trend Award",
+   "ko": "핫 트렌드",
    "en": "Hot Trend Award",
    "tier": "특별",
    "winners": [
@@ -267,7 +283,8 @@
      "name": "Trot Men 6",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   }
  ]
 }

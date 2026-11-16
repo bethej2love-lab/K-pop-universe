@@ -61,7 +61,7 @@
    ]
   },
   {
-   "ko": "Best Male Group",
+   "ko": "베스트 남자 그룹",
    "en": "Best Male Group",
    "tier": "본상",
    "winners": [
@@ -69,10 +69,11 @@
      "name": "Seventeen",
      "gko": "세븐틴"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Female Group",
+   "ko": "베스트 여자 그룹",
    "en": "Best Female Group",
    "tier": "본상",
    "winners": [
@@ -80,10 +81,11 @@
      "name": "Aespa",
      "gko": "에스파"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Male Artist",
+   "ko": "베스트 남자 아티스트",
    "en": "Best Male Artist",
    "tier": "본상",
    "winners": [
@@ -91,10 +93,11 @@
      "name": "Jungkook",
      "id": "a0189"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Male Group",
+   "ko": "베스트 댄스 퍼포먼스 남자 그룹",
    "en": "Best Dance Performance – Male Group",
    "tier": "본상",
    "winners": [
@@ -103,10 +106,11 @@
      "gko": "투어스"
     }
    ],
-   "work": "\"Plot Twist\""
+   "work": "\"Plot Twist\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Female Group",
+   "ko": "베스트 댄스 퍼포먼스 여자 그룹",
    "en": "Best Dance Performance – Female Group",
    "tier": "본상",
    "winners": [
@@ -115,10 +119,11 @@
      "gko": "에스파"
     }
    ],
-   "work": "\"Supernova\""
+   "work": "\"Supernova\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Vocal Performance – Solo",
+   "ko": "베스트 보컬 퍼포먼스 솔로",
    "en": "Best Vocal Performance – Solo",
    "tier": "본상",
    "winners": [
@@ -127,10 +132,11 @@
      "id": "a1308"
     }
    ],
-   "work": "\"Bam Yang Gang\""
+   "work": "\"Bam Yang Gang\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Vocal Performance – Group",
+   "ko": "베스트 보컬 퍼포먼스 그룹",
    "en": "Best Vocal Performance – Group",
    "tier": "본상",
    "winners": [
@@ -139,10 +145,11 @@
      "gko": "아이들"
     }
    ],
-   "work": "\"Fate\""
+   "work": "\"Fate\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Male Solo",
+   "ko": "베스트 댄스 퍼포먼스 남자 솔로",
    "en": "Best Dance Performance – Male Solo",
    "tier": "본상",
    "winners": [
@@ -151,10 +158,11 @@
      "id": "a0189"
     }
    ],
-   "work": "\"Standing Next to You\""
+   "work": "\"Standing Next to You\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Female Solo",
+   "ko": "베스트 댄스 퍼포먼스 여자 솔로",
    "en": "Best Dance Performance – Female Solo",
    "tier": "본상",
    "winners": [
@@ -163,10 +171,11 @@
      "id": "a0204"
     }
    ],
-   "work": "\"You & Me\""
+   "work": "\"You & Me\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Male Artist",
+   "ko": "베스트 신인 남자 아티스트",
    "en": "Best New Male Artist",
    "tier": "신인",
    "winners": [
@@ -174,10 +183,11 @@
      "name": "TWS",
      "gko": "투어스"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best New Female Artist",
+   "ko": "베스트 신인 여자 아티스트",
    "en": "Best New Female Artist",
    "tier": "신인",
    "winners": [
@@ -185,10 +195,11 @@
      "name": "Illit",
      "gko": "아일릿"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best OST",
+   "ko": "베스트 OST",
    "en": "Best OST",
    "tier": "본상",
    "winners": [
@@ -197,10 +208,11 @@
      "ext": true
     }
    ],
-   "work": "\"Love You With All My Heart\""
+   "work": "\"Love You With All My Heart\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Band Performance",
+   "ko": "베스트 밴드 퍼포먼스",
    "en": "Best Band Performance",
    "tier": "본상",
    "winners": [
@@ -209,10 +221,11 @@
      "gko": "큐더블유이알"
     }
    ],
-   "work": "\"T.B.H\""
+   "work": "\"T.B.H\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Rap & Hip Hop Performance",
+   "ko": "베스트 랩·힙합 퍼포먼스",
    "en": "Best Rap & Hip Hop Performance",
    "tier": "본상",
    "winners": [
@@ -221,10 +234,11 @@
      "id": "a0972"
     }
    ],
-   "work": "\"Spot!\""
+   "work": "\"Spot!\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Collaboration",
+   "ko": "베스트 콜라보레이션",
    "en": "Best Collaboration",
    "tier": "본상",
    "winners": [
@@ -233,10 +247,11 @@
      "id": "a0972"
     }
    ],
-   "work": "\"Spot!\""
+   "work": "\"Spot!\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Music Video",
+   "ko": "베스트 뮤직비디오",
    "en": "Best Music Video",
    "tier": "본상",
    "winners": [
@@ -245,10 +260,11 @@
      "gko": "에스파"
     }
    ],
-   "work": "\"Armageddon\""
+   "work": "\"Armageddon\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Choreography",
+   "ko": "베스트 안무",
    "en": "Best Choreography",
    "tier": "본상",
    "winners": [
@@ -257,10 +273,11 @@
      "gko": "에스파"
     }
    ],
-   "work": "\"Supernova\""
+   "work": "\"Supernova\"",
+   "koAuto": true
   },
   {
-   "ko": "Fans' Choice Top 10 – Male",
+   "ko": "팬스 초이스 TOP 10 남자",
    "en": "Fans' Choice Top 10 – Male",
    "tier": "본상",
    "winners": [
@@ -304,10 +321,11 @@
      "name": "Zerobaseone",
      "gko": "제로베이스원"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Fans' Choice Top 10 – Female",
+   "ko": "팬스 초이스 TOP 10 여자",
    "en": "Fans' Choice Top 10 – Female",
    "tier": "본상",
    "winners": [
@@ -351,10 +369,11 @@
      "name": "Unis",
      "gko": "유니스"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Favorite Rising Artist",
+   "ko": "페이보릿 라이징 아티스트",
    "en": "Favorite Rising Artist",
    "tier": "신인",
    "winners": [
@@ -362,10 +381,11 @@
      "name": "Meovv",
      "gko": "미야오"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Favorite New Asian Artist",
+   "ko": "페이보릿 신인 아시안 아티스트",
    "en": "Favorite New Asian Artist",
    "tier": "인기",
    "winners": [
@@ -373,10 +393,11 @@
      "name": "Me:I",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Favorite Male Group",
+   "ko": "페이보릿 남자 그룹",
    "en": "Favorite Male Group",
    "tier": "인기",
    "winners": [
@@ -384,10 +405,11 @@
      "name": "Treasure",
      "gko": "트레저"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Favorite Dance Performance – Male Group",
+   "ko": "페이보릿 댄스 퍼포먼스 남자 그룹",
    "en": "Favorite Dance Performance – Male Group",
    "tier": "인기",
    "winners": [
@@ -395,10 +417,11 @@
      "name": "BoyNextDoor",
      "gko": "보이넥스트도어"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Favorite Global Performer – Male",
+   "ko": "페이보릿 글로벌 퍼포머 남자",
    "en": "Favorite Global Performer – Male",
    "tier": "인기",
    "winners": [
@@ -406,10 +429,11 @@
      "name": "Riize",
      "gko": "라이즈"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Favorite Global Performer – Female",
+   "ko": "페이보릿 글로벌 퍼포머 여자",
    "en": "Favorite Global Performer – Female",
    "tier": "인기",
    "winners": [
@@ -417,10 +441,11 @@
      "name": "Ive",
      "gko": "아이브"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Favorite Asian Artist",
+   "ko": "페이보릿 아시안 아티스트",
    "en": "Favorite Asian Artist",
    "tier": "인기",
    "winners": [
@@ -428,7 +453,8 @@
      "name": "INI",
      "id": "a0865"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "Favorite Global Trending Music",
@@ -442,7 +468,7 @@
    ]
   },
   {
-   "ko": "Inspiring Achievement",
+   "ko": "인스파이어링 어치브먼트",
    "en": "Inspiring Achievement",
    "tier": "특별",
    "winners": [
@@ -450,10 +476,11 @@
      "name": "J. Y. Park",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Music Visionary of the Year",
+   "ko": "뮤직 비저너리 올해",
    "en": "Music Visionary of the Year",
    "tier": "특별",
    "winners": [
@@ -461,7 +488,8 @@
      "name": "G-Dragon",
      "id": "a0199"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "CJ Global Performance",

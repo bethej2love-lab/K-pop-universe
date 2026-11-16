@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Best Popular Music Video",
+   "ko": "베스트 인기 뮤직 비디오",
    "en": "Best Popular Music Video",
    "tier": "대상",
    "winners": [
@@ -24,10 +24,11 @@
      "gko": "H.O.T."
     }
    ],
-   "work": "\"I Yah!\""
+   "work": "\"I Yah!\"",
+   "koAuto": true
   },
   {
-   "ko": "Music Video of the Year",
+   "ko": "올해의 뮤직비디오",
    "en": "Music Video of the Year",
    "tier": "대상",
    "winners": [
@@ -36,10 +37,11 @@
      "ext": true
     }
    ],
-   "work": "\"A Request\""
+   "work": "\"A Request\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Group",
+   "ko": "베스트 신인 그룹",
    "en": "Best New Group",
    "tier": "신인",
    "winners": [
@@ -48,10 +50,11 @@
      "ext": true
     }
    ],
-   "work": "\"Farewell\""
+   "work": "\"Farewell\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Solo Artist",
+   "ko": "베스트 신인 솔로 아티스트",
    "en": "Best New Solo Artist",
    "tier": "신인",
    "winners": [
@@ -60,10 +63,11 @@
      "id": "a1272"
     }
    ],
-   "work": "\"Come\""
+   "work": "\"Come\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Female Artist",
+   "ko": "베스트 여자 아티스트",
    "en": "Best Female Artist",
    "tier": "본상",
    "winners": [
@@ -72,10 +76,11 @@
      "ext": true
     }
    ],
-   "work": "\"I Don't Know\""
+   "work": "\"I Don't Know\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Male Artist",
+   "ko": "베스트 남자 아티스트",
    "en": "Best Male Artist",
    "tier": "본상",
    "winners": [
@@ -84,10 +89,11 @@
      "ext": true
     }
    ],
-   "work": "\"A Request\""
+   "work": "\"A Request\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Group",
+   "ko": "베스트 그룹",
    "en": "Best Group",
    "tier": "본상",
    "winners": [
@@ -96,10 +102,11 @@
      "gko": "H.O.T."
     }
    ],
-   "work": "\"I Yah!\""
+   "work": "\"I Yah!\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Rock Performance",
+   "ko": "베스트 록 퍼포먼스",
    "en": "Best Rock Performance",
    "tier": "본상",
    "winners": [
@@ -108,10 +115,11 @@
      "ext": true
     }
    ],
-   "work": "\"Fall\""
+   "work": "\"Fall\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Hip Hop Performance",
+   "ko": "베스트 힙합 퍼포먼스",
    "en": "Best Hip Hop Performance",
    "tier": "본상",
    "winners": [
@@ -120,10 +128,11 @@
      "ext": true
     }
    ],
-   "work": "\"Man's Story – My Way\""
+   "work": "\"Man's Story – My Way\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Indie Performance",
+   "ko": "베스트 인디 퍼포먼스",
    "en": "Best Indie Performance",
    "tier": "본상",
    "winners": [
@@ -132,10 +141,11 @@
      "ext": true
     }
    ],
-   "work": "\"Youth 98\""
+   "work": "\"Youth 98\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance",
+   "ko": "베스트 댄스 퍼포먼스",
    "en": "Best Dance Performance",
    "tier": "본상",
    "winners": [
@@ -144,10 +154,11 @@
      "id": "a1272"
     }
    ],
-   "work": "\"Come\""
+   "work": "\"Come\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Ballad Performance",
+   "ko": "베스트 발라드 퍼포먼스",
    "en": "Best Ballad Performance",
    "tier": "본상",
    "winners": [
@@ -156,10 +167,11 @@
      "ext": true
     }
    ],
-   "work": "\"For Your Soul\""
+   "work": "\"For Your Soul\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Music Video Director",
+   "ko": "베스트 뮤직비디오 감독",
    "en": "Best Music Video Director",
    "tier": "본상",
    "winners": [
@@ -168,10 +180,11 @@
      "ext": true
     }
    ],
-   "work": "\"I Yah!\" by H.O.T."
+   "work": "\"I Yah!\" by H.O.T.",
+   "koAuto": true
   },
   {
-   "ko": "Best International Artist",
+   "ko": "베스트 해외 아티스트",
    "en": "Best International Artist",
    "tier": "본상",
    "winners": [
@@ -180,7 +193,8 @@
      "ext": true
     }
    ],
-   "work": "\"Livin' La Vida Loca\""
+   "work": "\"Livin' La Vida Loca\"",
+   "koAuto": true
   }
  ]
 }

@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Grand Award",
+   "ko": "그랜드",
    "en": "Grand Award",
    "tier": "대상",
    "winners": [
@@ -23,10 +23,11 @@
      "name": "NCT 127",
      "gko": "엔시티 127"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Main Award",
+   "ko": "본상",
    "en": "Main Award",
    "tier": "본상",
    "winners": [
@@ -82,10 +83,11 @@
      "name": "The Boyz",
      "gko": "더보이즈"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Song Award",
+   "ko": "베스트 노래",
    "en": "Best Song Award",
    "tier": "본상",
    "winners": [
@@ -94,10 +96,11 @@
      "id": "a0207"
     }
    ],
-   "work": "\"Lilac\""
+   "work": "\"Lilac\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Album Award",
+   "ko": "베스트 앨범",
    "en": "Best Album Award",
    "tier": "본상",
    "winners": [
@@ -106,10 +109,11 @@
      "gko": "엔시티 드림"
     }
    ],
-   "work": "Hot Sauce"
+   "work": "Hot Sauce",
+   "koAuto": true
   },
   {
-   "ko": "Rookie of the Year",
+   "ko": "올해의 신인",
    "en": "Rookie of the Year",
    "tier": "신인",
    "winners": [
@@ -125,10 +129,11 @@
      "name": "Omega X",
      "gko": "오메가엑스"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Performance",
+   "ko": "베스트 퍼포먼스",
    "en": "Best Performance",
    "tier": "본상",
    "winners": [
@@ -140,10 +145,11 @@
      "name": "STAYC",
      "gko": "스테이씨"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Popularity Award",
+   "ko": "인기상",
    "en": "Popularity Award",
    "tier": "인기",
    "winners": [
@@ -151,10 +157,11 @@
      "name": "Lim Young-woong",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "K-wave Popularity Award",
+   "ko": "K웨이브 인기상",
    "en": "K-wave Popularity Award",
    "tier": "인기",
    "winners": [
@@ -162,10 +169,11 @@
      "name": "Exo",
      "gko": "엑소"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Trot Award",
+   "ko": "트로트",
    "en": "Trot Award",
    "tier": "특별",
    "winners": [
@@ -173,10 +181,11 @@
      "name": "Lim Young-woong",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Ballad Award",
+   "ko": "발라드",
    "en": "Ballad Award",
    "tier": "특별",
    "winners": [
@@ -184,10 +193,11 @@
      "name": "Wendy",
      "id": "a0163"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "OST Award",
+   "ko": "OST",
    "en": "OST Award",
    "tier": "특별",
    "winners": [
@@ -196,10 +206,11 @@
      "ext": true
     }
    ],
-   "work": "\"Love Always Run Away\""
+   "work": "\"Love Always Run Away\"",
+   "koAuto": true
   },
   {
-   "ko": "R&B Hiphop Award",
+   "ko": "R&B 힙합",
    "en": "R&B Hiphop Award",
    "tier": "특별",
    "winners": [
@@ -207,10 +218,11 @@
      "name": "Hyuna",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "World Best Artist Award",
+   "ko": "월드 베스트 아티스트",
    "en": "World Best Artist Award",
    "tier": "특별",
    "winners": [
@@ -218,7 +230,8 @@
      "name": "BTS",
      "gko": "방탄소년단"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "Special Judge Award",
@@ -232,7 +245,7 @@
    ]
   },
   {
-   "ko": "Discovery of the Year",
+   "ko": "올해의 발견",
    "en": "Discovery of the Year",
    "tier": "특별",
    "winners": [
@@ -240,7 +253,8 @@
      "name": "Lang Lee",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "U+Idol Live Best Artist Award",

@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Album of the Year",
+   "ko": "올해의 앨범",
    "en": "Album of the Year",
    "tier": "대상",
    "winners": [
@@ -24,10 +24,11 @@
      "gko": "엑소"
     }
    ],
-   "work": "Overdose"
+   "work": "Overdose",
+   "koAuto": true
   },
   {
-   "ko": "Song of the Year",
+   "ko": "올해의 노래",
    "en": "Song of the Year",
    "tier": "대상",
    "winners": [
@@ -36,10 +37,11 @@
      "id": "a0200"
     }
    ],
-   "work": "\"Eyes, Nose, Lips\""
+   "work": "\"Eyes, Nose, Lips\"",
+   "koAuto": true
   },
   {
-   "ko": "Artist of the Year",
+   "ko": "올해의 아티스트",
    "en": "Artist of the Year",
    "tier": "대상",
    "winners": [
@@ -47,10 +49,11 @@
      "name": "Exo",
      "gko": "엑소"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Music Video",
+   "ko": "베스트 뮤직비디오",
    "en": "Best Music Video",
    "tier": "본상",
    "winners": [
@@ -59,10 +62,11 @@
      "gko": "2PM"
     }
    ],
-   "work": "\"Go Crazy!\""
+   "work": "\"Go Crazy!\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Male Artist",
+   "ko": "베스트 남자 아티스트",
    "en": "Best Male Artist",
    "tier": "본상",
    "winners": [
@@ -70,10 +74,11 @@
      "name": "Taeyang",
      "id": "a0200"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Female Artist",
+   "ko": "베스트 여자 아티스트",
    "en": "Best Female Artist",
    "tier": "본상",
    "winners": [
@@ -81,10 +86,11 @@
      "name": "IU",
      "id": "a0207"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Male Group",
+   "ko": "베스트 남자 그룹",
    "en": "Best Male Group",
    "tier": "본상",
    "winners": [
@@ -92,10 +98,11 @@
      "name": "Exo",
      "gko": "엑소"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Female Group",
+   "ko": "베스트 여자 그룹",
    "en": "Best Female Group",
    "tier": "본상",
    "winners": [
@@ -103,10 +110,11 @@
      "name": "Sistar",
      "gko": "씨스타"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Male Group",
+   "ko": "베스트 댄스 퍼포먼스 남자 그룹",
    "en": "Best Dance Performance – Male Group",
    "tier": "본상",
    "winners": [
@@ -115,10 +123,11 @@
      "gko": "인피니트"
     }
    ],
-   "work": "\"Last Romeo\""
+   "work": "\"Last Romeo\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Female Group",
+   "ko": "베스트 댄스 퍼포먼스 여자 그룹",
    "en": "Best Dance Performance – Female Group",
    "tier": "본상",
    "winners": [
@@ -127,10 +136,11 @@
      "gko": "걸스데이"
     }
    ],
-   "work": "\"Something\""
+   "work": "\"Something\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Solo",
+   "ko": "베스트 댄스 퍼포먼스 솔로",
    "en": "Best Dance Performance – Solo",
    "tier": "본상",
    "winners": [
@@ -139,10 +149,11 @@
      "id": "a0517"
     }
    ],
-   "work": "\"Full Moon\""
+   "work": "\"Full Moon\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Collaboration",
+   "ko": "베스트 콜라보레이션",
    "en": "Best Collaboration",
    "tier": "본상",
    "winners": [
@@ -155,10 +166,11 @@
      "ext": true
     }
    ],
-   "work": "\"Some\""
+   "work": "\"Some\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Rap Performance",
+   "ko": "베스트 랩 퍼포먼스",
    "en": "Best Rap Performance",
    "tier": "본상",
    "winners": [
@@ -167,10 +179,11 @@
      "ext": true
     }
    ],
-   "work": "\"Happen Ending\""
+   "work": "\"Happen Ending\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Band Performance",
+   "ko": "베스트 밴드 퍼포먼스",
    "en": "Best Band Performance",
    "tier": "본상",
    "winners": [
@@ -179,10 +192,11 @@
      "gko": "씨엔블루"
     }
    ],
-   "work": "\"Can't Stop\""
+   "work": "\"Can't Stop\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Vocal Performance – Male",
+   "ko": "베스트 보컬 퍼포먼스 남자",
    "en": "Best Vocal Performance – Male",
    "tier": "본상",
    "winners": [
@@ -191,10 +205,11 @@
      "id": "a0200"
     }
    ],
-   "work": "\"Eyes, Nose, Lips\""
+   "work": "\"Eyes, Nose, Lips\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Vocal Performance – Female",
+   "ko": "베스트 보컬 퍼포먼스 여자",
    "en": "Best Vocal Performance – Female",
    "tier": "본상",
    "winners": [
@@ -203,10 +218,11 @@
      "ext": true
     }
    ],
-   "work": "\"Singing Got Better\""
+   "work": "\"Singing Got Better\"",
+   "koAuto": true
   },
   {
-   "ko": "Best OST",
+   "ko": "베스트 OST",
    "en": "Best OST",
    "tier": "본상",
    "winners": [
@@ -215,10 +231,11 @@
      "ext": true
     }
    ],
-   "work": "\"My Destiny\" (My Love from the Star)"
+   "work": "\"My Destiny\" (My Love from the Star)",
+   "koAuto": true
   },
   {
-   "ko": "Best New Artist",
+   "ko": "베스트 신인",
    "en": "Best New Artist",
    "tier": "신인",
    "winners": [
@@ -226,7 +243,8 @@
      "name": "Winner",
      "gko": "위너"
     }
-   ]
+   ],
+   "koAuto": true
   }
  ]
 }

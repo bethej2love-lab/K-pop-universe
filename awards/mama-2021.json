@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Artist of the Year",
+   "ko": "올해의 아티스트",
    "en": "Artist of the Year",
    "tier": "대상",
    "winners": [
@@ -23,10 +23,11 @@
      "name": "BTS",
      "gko": "방탄소년단"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Song of the Year",
+   "ko": "올해의 노래",
    "en": "Song of the Year",
    "tier": "대상",
    "winners": [
@@ -35,10 +36,11 @@
      "gko": "방탄소년단"
     }
    ],
-   "work": "\"Butter\""
+   "work": "\"Butter\"",
+   "koAuto": true
   },
   {
-   "ko": "Album of the Year",
+   "ko": "올해의 앨범",
    "en": "Album of the Year",
    "tier": "대상",
    "winners": [
@@ -47,10 +49,11 @@
      "gko": "방탄소년단"
     }
    ],
-   "work": "Be"
+   "work": "Be",
+   "koAuto": true
   },
   {
-   "ko": "Worldwide Icon of the Year",
+   "ko": "올해의 월드와이드 아이콘",
    "en": "Worldwide Icon of the Year",
    "tier": "대상",
    "winners": [
@@ -58,10 +61,11 @@
      "name": "BTS",
      "gko": "방탄소년단"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Male Group",
+   "ko": "베스트 남자 그룹",
    "en": "Best Male Group",
    "tier": "본상",
    "winners": [
@@ -69,10 +73,11 @@
      "name": "BTS",
      "gko": "방탄소년단"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Female Group",
+   "ko": "베스트 여자 그룹",
    "en": "Best Female Group",
    "tier": "본상",
    "winners": [
@@ -80,10 +85,11 @@
      "name": "Twice",
      "gko": "트와이스"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Male Artist",
+   "ko": "베스트 남자 아티스트",
    "en": "Best Male Artist",
    "tier": "본상",
    "winners": [
@@ -91,10 +97,11 @@
      "name": "Baekhyun",
      "id": "a0372"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Female Artist",
+   "ko": "베스트 여자 아티스트",
    "en": "Best Female Artist",
    "tier": "본상",
    "winners": [
@@ -102,10 +109,11 @@
      "name": "IU",
      "id": "a0207"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Male Group",
+   "ko": "베스트 댄스 퍼포먼스 남자 그룹",
    "en": "Best Dance Performance – Male Group",
    "tier": "본상",
    "winners": [
@@ -114,10 +122,11 @@
      "gko": "방탄소년단"
     }
    ],
-   "work": "\"Butter\""
+   "work": "\"Butter\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Female Group",
+   "ko": "베스트 댄스 퍼포먼스 여자 그룹",
    "en": "Best Dance Performance – Female Group",
    "tier": "본상",
    "winners": [
@@ -126,10 +135,11 @@
      "gko": "에스파"
     }
    ],
-   "work": "\"Next Level\""
+   "work": "\"Next Level\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Solo",
+   "ko": "베스트 댄스 퍼포먼스 솔로",
    "en": "Best Dance Performance – Solo",
    "tier": "본상",
    "winners": [
@@ -138,10 +148,11 @@
      "id": "a0205"
     }
    ],
-   "work": "\"On The Ground\""
+   "work": "\"On The Ground\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Vocal Performance",
+   "ko": "베스트 보컬 퍼포먼스",
    "en": "Best Vocal Performance",
    "tier": "본상",
    "winners": [
@@ -150,10 +161,11 @@
      "id": "a0207"
     }
    ],
-   "work": "\"Celebrity\""
+   "work": "\"Celebrity\"",
+   "koAuto": true
   },
   {
-   "ko": "Best OST",
+   "ko": "베스트 OST",
    "en": "Best OST",
    "tier": "본상",
    "winners": [
@@ -162,10 +174,11 @@
      "ext": true
     }
    ],
-   "work": "\"I Like You\" (Hospital Playlist Season 2)"
+   "work": "\"I Like You\" (Hospital Playlist Season 2)",
+   "koAuto": true
   },
   {
-   "ko": "Best Collaboration",
+   "ko": "베스트 콜라보레이션",
    "en": "Best Collaboration",
    "tier": "본상",
    "winners": [
@@ -178,10 +191,11 @@
      "id": "a0207"
     }
    ],
-   "work": "\"Nakka\""
+   "work": "\"Nakka\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Male Artist",
+   "ko": "베스트 신인 남자 아티스트",
    "en": "Best New Male Artist",
    "tier": "신인",
    "winners": [
@@ -189,10 +203,11 @@
      "name": "Enhypen",
      "gko": "엔하이픈"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best New Female Artist",
+   "ko": "베스트 신인 여자 아티스트",
    "en": "Best New Female Artist",
    "tier": "신인",
    "winners": [
@@ -200,10 +215,11 @@
      "name": "Aespa",
      "gko": "에스파"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best HipHop & Urban Music",
+   "ko": "베스트 힙합&어반 뮤직",
    "en": "Best HipHop & Urban Music",
    "tier": "본상",
    "winners": [
@@ -212,10 +228,11 @@
      "ext": true
     }
    ],
-   "work": "\"Melody\""
+   "work": "\"Melody\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Band Performance",
+   "ko": "베스트 밴드 퍼포먼스",
    "en": "Best Band Performance",
    "tier": "본상",
    "winners": [
@@ -224,10 +241,11 @@
      "ext": true
     }
    ],
-   "work": "\"A Thought on an Autumn Night\""
+   "work": "\"A Thought on an Autumn Night\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Music Video",
+   "ko": "베스트 뮤직비디오",
    "en": "Best Music Video",
    "tier": "본상",
    "winners": [
@@ -236,10 +254,11 @@
      "gko": "방탄소년단"
     }
    ],
-   "work": "\"Butter\""
+   "work": "\"Butter\"",
+   "koAuto": true
   },
   {
-   "ko": "Worldwide Fans' Choice Top 10",
+   "ko": "월드와이드 팬스 초이스 TOP 10",
    "en": "Worldwide Fans' Choice Top 10",
    "tier": "본상",
    "winners": [
@@ -283,10 +302,11 @@
      "name": "Twice",
      "gko": "트와이스"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Favorite Asian Artist",
+   "ko": "페이보릿 아시안 아티스트",
    "en": "Favorite Asian Artist",
    "tier": "인기",
    "winners": [
@@ -294,10 +314,11 @@
      "name": "INI",
      "id": "a0865"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Favorite International Artist",
+   "ko": "페이보릿 해외 아티스트",
    "en": "Favorite International Artist",
    "tier": "인기",
    "winners": [
@@ -305,7 +326,8 @@
      "name": "Ed Sheeran",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   }
  ]
 }

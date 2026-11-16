@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Artist of the Year – Global Digital Music",
+   "ko": "올해의 아티스트 글로벌 음원",
    "en": "Artist of the Year – Global Digital Music",
    "tier": "본상",
    "winners": [
@@ -24,10 +24,11 @@
      "gko": "아이브"
     }
    ],
-   "work": "\"Eleven\""
+   "work": "\"Eleven\"",
+   "koAuto": true
   },
   {
-   "ko": "December 2021",
+   "ko": "2021년 12월",
    "en": "December 2021",
    "tier": "특별",
    "winners": [
@@ -36,10 +37,11 @@
      "gko": "케플러"
     }
    ],
-   "work": "\"Wa Da Da\""
+   "work": "\"Wa Da Da\"",
+   "koAuto": true
   },
   {
-   "ko": "February 2022",
+   "ko": "2022년 2월",
    "en": "February 2022",
    "tier": "특별",
    "winners": [
@@ -48,10 +50,11 @@
      "id": "a0166"
     }
    ],
-   "work": "\"INVU\""
+   "work": "\"INVU\"",
+   "koAuto": true
   },
   {
-   "ko": "March 2022",
+   "ko": "2022년 3월",
    "en": "March 2022",
    "tier": "특별",
    "winners": [
@@ -60,10 +63,11 @@
      "gko": "아이들"
     }
    ],
-   "work": "\"Tomboy\""
+   "work": "\"Tomboy\"",
+   "koAuto": true
   },
   {
-   "ko": "April 2022",
+   "ko": "2022년 4월",
    "en": "April 2022",
    "tier": "특별",
    "winners": [
@@ -72,10 +76,11 @@
      "gko": "아이브"
     }
    ],
-   "work": "\"Love Dive\""
+   "work": "\"Love Dive\"",
+   "koAuto": true
   },
   {
-   "ko": "May 2022",
+   "ko": "2022년 5월",
    "en": "May 2022",
    "tier": "특별",
    "winners": [
@@ -84,10 +89,11 @@
      "gko": "르세라핌"
     }
    ],
-   "work": "\"Fearless\""
+   "work": "\"Fearless\"",
+   "koAuto": true
   },
   {
-   "ko": "June 2022",
+   "ko": "2022년 6월",
    "en": "June 2022",
    "tier": "특별",
    "winners": [
@@ -96,10 +102,11 @@
      "gko": "방탄소년단"
     }
    ],
-   "work": "\"Yet to Come (The Most Beautiful Moment)\""
+   "work": "\"Yet to Come (The Most Beautiful Moment)\"",
+   "koAuto": true
   },
   {
-   "ko": "July 2022",
+   "ko": "2022년 7월",
    "en": "July 2022",
    "tier": "특별",
    "winners": [
@@ -108,10 +115,11 @@
      "gko": "에스파"
     }
    ],
-   "work": "\"Girls\""
+   "work": "\"Girls\"",
+   "koAuto": true
   },
   {
-   "ko": "August 2022",
+   "ko": "2022년 8월",
    "en": "August 2022",
    "tier": "특별",
    "winners": [
@@ -120,10 +128,11 @@
      "gko": "블랙핑크"
     }
    ],
-   "work": "\"Pink Venom\""
+   "work": "\"Pink Venom\"",
+   "koAuto": true
   },
   {
-   "ko": "September 2022",
+   "ko": "2022년 9월",
    "en": "September 2022",
    "tier": "특별",
    "winners": [
@@ -132,10 +141,11 @@
      "gko": "블랙핑크"
     }
    ],
-   "work": "\"Shut Down\""
+   "work": "\"Shut Down\"",
+   "koAuto": true
   },
   {
-   "ko": "October 2022",
+   "ko": "2022년 10월",
    "en": "October 2022",
    "tier": "특별",
    "winners": [
@@ -144,10 +154,11 @@
      "gko": "르세라핌"
     }
    ],
-   "work": "\"Antifragile\""
+   "work": "\"Antifragile\"",
+   "koAuto": true
   },
   {
-   "ko": "November 2022",
+   "ko": "2022년 11월",
    "en": "November 2022",
    "tier": "특별",
    "winners": [
@@ -156,10 +167,11 @@
      "gko": "있지"
     }
    ],
-   "work": "\"Cheshire\""
+   "work": "\"Cheshire\"",
+   "koAuto": true
   },
   {
-   "ko": "Artist of the Year – Physical Album",
+   "ko": "올해의 아티스트 음반",
    "en": "Artist of the Year – Physical Album",
    "tier": "본상",
    "winners": [
@@ -168,10 +180,11 @@
      "ext": true
     }
    ],
-   "work": "Universe"
+   "work": "Universe",
+   "koAuto": true
   },
   {
-   "ko": "1st Quarter",
+   "ko": "1분기",
    "en": "1st Quarter",
    "tier": "특별",
    "winners": [
@@ -180,10 +193,11 @@
      "gko": "세븐틴"
     }
    ],
-   "work": "Face the Sun"
+   "work": "Face the Sun",
+   "koAuto": true
   },
   {
-   "ko": "3rd Quarter",
+   "ko": "3분기",
    "en": "3rd Quarter",
    "tier": "특별",
    "winners": [
@@ -192,10 +206,11 @@
      "gko": "방탄소년단"
     }
    ],
-   "work": "Proof"
+   "work": "Proof",
+   "koAuto": true
   },
   {
-   "ko": "4th Quarter",
+   "ko": "4분기",
    "en": "4th Quarter",
    "tier": "특별",
    "winners": [
@@ -204,10 +219,11 @@
      "gko": "스트레이키즈"
     }
    ],
-   "work": "Maxident"
+   "work": "Maxident",
+   "koAuto": true
   },
   {
-   "ko": "New Artist of the Year",
+   "ko": "올해의 신인",
    "en": "New Artist of the Year",
    "tier": "신인",
    "winners": [
@@ -216,10 +232,11 @@
      "gko": "뉴진스"
     }
    ],
-   "work": "\"Attention\""
+   "work": "\"Attention\"",
+   "koAuto": true
   },
   {
-   "ko": "Digital Music",
+   "ko": "음원",
    "en": "Digital Music",
    "tier": "본상",
    "winners": [
@@ -228,7 +245,8 @@
      "gko": "아이브"
     }
    ],
-   "work": "After Like"
+   "work": "After Like",
+   "koAuto": true
   }
  ]
 }

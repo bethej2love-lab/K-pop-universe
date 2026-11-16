@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Grand Artist",
+   "ko": "그랜드 아티스트",
    "en": "Grand Artist",
    "tier": "대상",
    "winners": [
@@ -23,10 +23,11 @@
      "name": "NewJeans",
      "gko": "뉴진스"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Grand Performer",
+   "ko": "그랜드 퍼포머",
    "en": "Grand Performer",
    "tier": "대상",
    "winners": [
@@ -34,10 +35,11 @@
      "name": "Day6",
      "gko": "데이식스"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Grand Record",
+   "ko": "그랜드 레코드",
    "en": "Grand Record",
    "tier": "대상",
    "winners": [
@@ -45,10 +47,11 @@
      "name": "(G)I-dle",
      "gko": "아이들"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Grand Song",
+   "ko": "그랜드 노래",
    "en": "Grand Song",
    "tier": "대상",
    "winners": [
@@ -57,10 +60,11 @@
      "gko": "에스파"
     }
    ],
-   "work": "\"Supernova\""
+   "work": "\"Supernova\"",
+   "koAuto": true
   },
   {
-   "ko": "Grand Honor's Choice",
+   "ko": "그랜드 아너스 초이스",
    "en": "Grand Honor's Choice",
    "tier": "대상",
    "winners": [
@@ -76,10 +80,11 @@
      "name": "Zerobaseone",
      "gko": "제로베이스원"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Artist 10",
+   "ko": "베스트 아티스트 10",
    "en": "Best Artist 10",
    "tier": "본상",
    "winners": [
@@ -123,10 +128,11 @@
      "name": "Zerobaseone",
      "gko": "제로베이스원"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Song 10",
+   "ko": "베스트 노래 10",
    "en": "Best Song 10",
    "tier": "본상",
    "winners": [
@@ -170,10 +176,11 @@
      "name": "Treasure",
      "gko": "트레저"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Adult Contemporary",
+   "ko": "베스트 어덜트 컨템포러리",
    "en": "Best Adult Contemporary",
    "tier": "본상",
    "winners": [
@@ -189,10 +196,11 @@
      "name": "Young Tak",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Band",
+   "ko": "베스트 밴드",
    "en": "Best Band",
    "tier": "본상",
    "winners": [
@@ -204,10 +212,11 @@
      "name": "QWER",
      "gko": "큐더블유이알"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Hip-Hop",
+   "ko": "베스트 힙합",
    "en": "Best Hip-Hop",
    "tier": "본상",
    "winners": [
@@ -215,10 +224,11 @@
      "name": "Lee Young-ji",
      "id": "a1038"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best R&B",
+   "ko": "베스트 R&B",
    "en": "Best R&B",
    "tier": "본상",
    "winners": [
@@ -230,10 +240,11 @@
      "name": "D.O.",
      "id": "a0375"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best OST",
+   "ko": "베스트 OST",
    "en": "Best OST",
    "tier": "본상",
    "winners": [
@@ -242,10 +253,11 @@
      "id": "a1546"
     }
    ],
-   "work": "\"I Think I Did\""
+   "work": "\"I Think I Did\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Memory",
+   "ko": "베스트 메모리",
    "en": "Best Memory",
    "tier": "본상",
    "winners": [
@@ -254,10 +266,11 @@
      "ext": true
     }
    ],
-   "work": "\"She Is\""
+   "work": "\"She Is\"",
+   "koAuto": true
   },
   {
-   "ko": "Trend of the Year – K-pop Group",
+   "ko": "올해의 트렌드 K팝 그룹",
    "en": "Trend of the Year – K-pop Group",
    "tier": "특별",
    "winners": [
@@ -265,10 +278,11 @@
      "name": "Unis",
      "gko": "유니스"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Trend of the Year – K-pop Solo",
+   "ko": "올해의 트렌드 K팝 솔로",
    "en": "Trend of the Year – K-pop Solo",
    "tier": "특별",
    "winners": [
@@ -276,10 +290,11 @@
      "name": "V",
      "id": "a0188"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Trend of the Year – Trot Star",
+   "ko": "올해의 트렌드 트로트 스타",
    "en": "Trend of the Year – Trot Star",
    "tier": "특별",
    "winners": [
@@ -287,10 +302,11 @@
      "name": "Lee Chan-won",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Trend of the Year – Trot Rookie",
+   "ko": "올해의 트렌드 트로트 신인",
    "en": "Trend of the Year – Trot Rookie",
    "tier": "신인",
    "winners": [
@@ -298,7 +314,8 @@
      "name": "Park Ji-hyeon",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "CALIVERSE, Transcendent Artist of the Year",
@@ -360,7 +377,7 @@
    ]
   },
   {
-   "ko": "Best Selling Album",
+   "ko": "베스트 셀링 앨범",
    "en": "Best Selling Album",
    "tier": "본상",
    "winners": [
@@ -369,10 +386,11 @@
      "gko": "세븐틴"
     }
    ],
-   "work": "Seventeenth Heaven"
+   "work": "Seventeenth Heaven",
+   "koAuto": true
   },
   {
-   "ko": "Best Producer",
+   "ko": "베스트 프로듀서",
    "en": "Best Producer",
    "tier": "본상",
    "winners": [
@@ -384,10 +402,11 @@
      "name": "SM Entertainment",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "IS Rising Star",
+   "ko": "IS 라이징 스타",
    "en": "IS Rising Star",
    "tier": "신인",
    "winners": [
@@ -403,7 +422,8 @@
      "name": "NCT Wish",
      "gko": "엔시티 위시"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "IS Rookies",
@@ -421,7 +441,7 @@
    ]
   },
   {
-   "ko": "K-pop Global Artist",
+   "ko": "K팝 글로벌 아티스트",
    "en": "K-pop Global Artist",
    "tier": "특별",
    "winners": [
@@ -433,7 +453,8 @@
      "name": "NiziU",
      "gko": "니쥬"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "K-pop Global Rookies",
@@ -447,7 +468,7 @@
    ]
   },
   {
-   "ko": "K-pop Legendary Artist",
+   "ko": "K팝 레전더리 아티스트",
    "en": "K-pop Legendary Artist",
    "tier": "특별",
    "winners": [
@@ -455,7 +476,8 @@
      "name": "TVXQ!",
      "gko": "동방신기"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "Most Streamed Song",
@@ -470,7 +492,7 @@
    "work": "\"Supernova\""
   },
   {
-   "ko": "Best Group",
+   "ko": "베스트 그룹",
    "en": "Best Group",
    "tier": "본상",
    "winners": [
@@ -478,10 +500,11 @@
      "name": "Riize",
      "gko": "라이즈"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Rock Ballad",
+   "ko": "베스트 록 발라드",
    "en": "Best Rock Ballad",
    "tier": "본상",
    "winners": [
@@ -489,10 +512,11 @@
      "name": "Lee Mu-jin",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Solo Artist",
+   "ko": "베스트 솔로 아티스트",
    "en": "Best Solo Artist",
    "tier": "본상",
    "winners": [
@@ -504,10 +528,11 @@
      "name": "Yuqi",
      "id": "a0118"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Stage",
+   "ko": "베스트 무대",
    "en": "Best Stage",
    "tier": "본상",
    "winners": [
@@ -515,7 +540,8 @@
      "name": "Treasure",
      "gko": "트레저"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "Photogenic",

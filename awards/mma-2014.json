@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Top 10 Artists",
+   "ko": "TOP 10 아티스트",
    "en": "Top 10 Artists",
    "tier": "본상",
    "winners": [
@@ -59,10 +59,11 @@
      "name": "Taeyang",
      "id": "a0200"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Album of the Year",
+   "ko": "올해의 앨범",
    "en": "Album of the Year",
    "tier": "대상",
    "winners": [
@@ -71,10 +72,11 @@
      "gko": "god"
     }
    ],
-   "work": "Chapter 8"
+   "work": "Chapter 8",
+   "koAuto": true
   },
   {
-   "ko": "Artist of the Year",
+   "ko": "올해의 아티스트",
    "en": "Artist of the Year",
    "tier": "대상",
    "winners": [
@@ -82,10 +84,11 @@
      "name": "IU",
      "id": "a0207"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Song of the Year",
+   "ko": "올해의 노래",
    "en": "Song of the Year",
    "tier": "대상",
    "winners": [
@@ -94,10 +97,11 @@
      "id": "a0200"
     }
    ],
-   "work": "\"Eyes, Nose, Lips\""
+   "work": "\"Eyes, Nose, Lips\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Artist",
+   "ko": "베스트 신인",
    "en": "Best New Artist",
    "tier": "신인",
    "winners": [
@@ -105,10 +109,11 @@
      "name": "Winner",
      "gko": "위너"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Award",
+   "ko": "베스트 댄스",
    "en": "Best Dance Award",
    "tier": "본상",
    "winners": [
@@ -120,10 +125,11 @@
      "name": "Apink",
      "gko": "에이핑크"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Rap/Hip Hop Award",
+   "ko": "베스트 랩/힙합",
    "en": "Best Rap/Hip Hop Award",
    "tier": "본상",
    "winners": [
@@ -136,10 +142,11 @@
      "id": "a1002"
     }
    ],
-   "work": "\"A Midsummer Night's Sweetness\""
+   "work": "\"A Midsummer Night's Sweetness\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Indie Award",
+   "ko": "베스트 인디",
    "en": "Best Indie Award",
    "tier": "본상",
    "winners": [
@@ -148,10 +155,11 @@
      "ext": true
     }
    ],
-   "work": "\"Lean on Me\" (ft. Park Se-young)"
+   "work": "\"Lean on Me\" (ft. Park Se-young)",
+   "koAuto": true
   },
   {
-   "ko": "Best Rock Award",
+   "ko": "베스트 록",
    "en": "Best Rock Award",
    "tier": "본상",
    "winners": [
@@ -160,7 +168,8 @@
      "gko": "씨엔블루"
     }
    ],
-   "work": "\"Can't Stop\""
+   "work": "\"Can't Stop\"",
+   "koAuto": true
   },
   {
    "ko": "Best Electronic Award",
@@ -175,7 +184,7 @@
    "work": "\"Come Back Home\""
   },
   {
-   "ko": "Best Ballad Award",
+   "ko": "베스트 발라드",
    "en": "Best Ballad Award",
    "tier": "본상",
    "winners": [
@@ -184,10 +193,11 @@
      "ext": true
     }
    ],
-   "work": "\"Wind That Blows\""
+   "work": "\"Wind That Blows\"",
+   "koAuto": true
   },
   {
-   "ko": "Best OST Award",
+   "ko": "베스트 OST",
    "en": "Best OST Award",
    "tier": "본상",
    "winners": [
@@ -196,7 +206,8 @@
      "ext": true
     }
    ],
-   "work": "\"My Destiny\" (My Love from the Star)"
+   "work": "\"My Destiny\" (My Love from the Star)",
+   "koAuto": true
   },
   {
    "ko": "Best R&B / Soul Award",
@@ -211,7 +222,7 @@
    "work": "\"You You You\""
   },
   {
-   "ko": "Best Folk Award",
+   "ko": "베스트 포크",
    "en": "Best Folk Award",
    "tier": "본상",
    "winners": [
@@ -220,10 +231,11 @@
      "gko": "악뮤"
     }
    ],
-   "work": "\"200%\""
+   "work": "\"200%\"",
+   "koAuto": true
   },
   {
-   "ko": "Netizen Popularity Award",
+   "ko": "네티즌 인기상",
    "en": "Netizen Popularity Award",
    "tier": "인기",
    "winners": [
@@ -231,10 +243,11 @@
      "name": "Beast",
      "gko": "하이라이트"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Hot Trend Award",
+   "ko": "핫 트렌드",
    "en": "Hot Trend Award",
    "tier": "특별",
    "winners": [
@@ -247,7 +260,8 @@
      "ext": true
     }
    ],
-   "work": "\"Some\""
+   "work": "\"Some\"",
+   "koAuto": true
   }
  ]
 }

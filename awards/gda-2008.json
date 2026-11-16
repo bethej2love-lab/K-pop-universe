@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Digital Daesang (Song of the Year)",
+   "ko": "음원 대상(올해의 노래)",
    "en": "Digital Daesang (Song of the Year)",
    "tier": "대상",
    "winners": [
@@ -24,10 +24,11 @@
      "gko": "쥬얼리"
     }
    ],
-   "work": "\"One More Time\""
+   "work": "\"One More Time\"",
+   "koAuto": true
   },
   {
-   "ko": "Disc Daesang (Album of the Year)",
+   "ko": "음반 대상(올해의 앨범)",
    "en": "Disc Daesang (Album of the Year)",
    "tier": "대상",
    "winners": [
@@ -36,10 +37,11 @@
      "gko": "동방신기"
     }
    ],
-   "work": "Mirotic"
+   "work": "Mirotic",
+   "koAuto": true
   },
   {
-   "ko": "Digital Song Bonsang",
+   "ko": "음원 본상",
    "en": "Digital Song Bonsang",
    "tier": "본상",
    "winners": [
@@ -59,10 +61,11 @@
      "name": "Wonder Girls",
      "gko": "원더걸스"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Album Bonsang",
+   "ko": "음반 본상",
    "en": "Album Bonsang",
    "tier": "본상",
    "winners": [
@@ -90,10 +93,11 @@
      "name": "TVXQ",
      "gko": "동방신기"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Trot Award",
+   "ko": "베스트 트로트",
    "en": "Best Trot Award",
    "tier": "본상",
    "winners": [
@@ -102,10 +106,11 @@
      "ext": true
     }
    ],
-   "work": "\"Jang Yoon-jeong Twist\""
+   "work": "\"Jang Yoon-jeong Twist\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Rock Award",
+   "ko": "베스트 록",
    "en": "Best Rock Award",
    "tier": "본상",
    "winners": [
@@ -114,10 +119,11 @@
      "ext": true
     }
    ],
-   "work": "\"Time Walking On Memories\""
+   "work": "\"Time Walking On Memories\"",
+   "koAuto": true
   },
   {
-   "ko": "Rookie of the Year (Digital Category)",
+   "ko": "올해의 신인 (음원 부문)",
    "en": "Rookie of the Year (Digital Category)",
    "tier": "신인",
    "winners": [
@@ -126,10 +132,11 @@
      "ext": true
     }
    ],
-   "work": "\"Love and War\""
+   "work": "\"Love and War\"",
+   "koAuto": true
   },
   {
-   "ko": "Rookie of the Year (Album Category)",
+   "ko": "올해의 신인 (음반 부문)",
    "en": "Rookie of the Year (Album Category)",
    "tier": "신인",
    "winners": [
@@ -138,10 +145,11 @@
      "gko": "샤이니"
     }
    ],
-   "work": "The Shinee World"
+   "work": "The Shinee World",
+   "koAuto": true
   },
   {
-   "ko": "Popularity Award",
+   "ko": "인기상",
    "en": "Popularity Award",
    "tier": "인기",
    "winners": [
@@ -161,7 +169,8 @@
      "name": "TVXQ",
      "gko": "동방신기"
     }
-   ]
+   ],
+   "koAuto": true
   }
  ]
 }

@@ -8,6 +8,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { koCategory } from './awards_ko.mjs';
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const GROUPS = JSON.parse(fs.readFileSync(path.join(ROOT, 'groups.json'), 'utf8'));
 const ARTISTS = JSON.parse(fs.readFileSync(path.join(ROOT, 'artists.json'), 'utf8'));
@@ -158,7 +159,8 @@ async function collect(id, year, force) {
       }
     }
     const seenW = new Set(); const uniq = winners.filter(w => { const k = w.name + '|' + (w.gko || w.id || ''); if (seenW.has(k)) return false; seenW.add(k); return true; }); // 같은 이름 부문이 여러 개(AAA 대상 등)면 합쳐지며 중복 → 제거
-    return { ko: c.en, en: c.en, tier: tierOf(c.en, c.daesang), winners: uniq, ...(work ? { work } : {}) };
+    const koName = koCategory(c.en); // 한글 부문명(번역 사전에 없으면 영어 그대로 — 화면에서 언어별로 고름)
+    return { ko: koName || c.en, en: c.en, ...(koName ? { koAuto: true } : {}), tier: tierOf(c.en, c.daesang), winners: uniq, ...(work ? { work } : {}) };
   });
   const doc = {
     id, edition: String(year), name: def.name, nameEn: def.nameEn, dates: [date || String(year)], venue: '',

@@ -75,6 +75,19 @@ const path = require('path');
     assert.deepEqual(names(cat(k, '그랜드 아너스 초이스', '2026-11-08')), ['있지', '키키']);
     assert.equal(cat(k, '베스트 아티스트').winners.length, 15);
   });
+  // 한·영 부문명 — 화면 언어에 맞게 고르려면 모든 부문에 ko·en이 있어야 하고, 번역기는 대표 부문을 정확히 옮겨야 한다
+  const { koCategory } = await import(require('url').pathToFileURL(path.join(__dirname, '..', 'tools', 'awards_ko.mjs')).href);
+  check('부문명 번역기: 대표 부문', () => {
+    const T = { 'Artist of the Year': '올해의 아티스트', 'Best Female Group': '베스트 여자 그룹', 'Best New Artist': '베스트 신인', 'Top 10': 'TOP 10', 'Best Dance Performance – Male Group': '베스트 댄스 퍼포먼스 남자 그룹', 'Digital Daesang (Song of the Year)': '음원 대상(올해의 노래)', 'February 2020': '2020년 2월' };
+    for (const [en, ko] of Object.entries(T)) assert.equal(koCategory(en), ko, en);
+  });
+  check('번역 못 하는 부문명은 null(영어로 남긴다)', () => assert.equal(koCategory('Qoo10 Artist of the Year'), null));
+  check('자동 수집 파일은 한글 부문명이 80% 이상 채워져 있다', () => {
+    let n = 0, ok = 0;
+    for (const a of awards) if (a.autoSource) for (const c of a.categories) { n++; if (c.koAuto) ok++; }
+    assert.ok(n > 0 && ok / n >= 0.8, `${ok}/${n}`);
+  });
+  check('영영 부문명 en이 모든 부문에 있다(영어 화면용)', () => { for (const a of awards) for (const c of a.categories) assert.ok(c.en, a.file + ' ' + c.ko); });
   check('영케이는 데이식스 멤버(Young K)로 연결된다', () => {
     const k = get('kgma', '2026'); const r = resolveWinner(cat(k, '그랜드 아티스트').winners[0]);
     assert.equal(r.kind, 'member'); assert.equal(r.gko, '데이식스');

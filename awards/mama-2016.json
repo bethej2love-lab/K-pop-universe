@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Artist of the Year",
+   "ko": "올해의 아티스트",
    "en": "Artist of the Year",
    "tier": "대상",
    "winners": [
@@ -23,10 +23,11 @@
      "name": "BTS",
      "gko": "방탄소년단"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Album of the Year",
+   "ko": "올해의 앨범",
    "en": "Album of the Year",
    "tier": "대상",
    "winners": [
@@ -35,10 +36,11 @@
      "gko": "엑소"
     }
    ],
-   "work": "Ex'Act"
+   "work": "Ex'Act",
+   "koAuto": true
   },
   {
-   "ko": "Song of the Year",
+   "ko": "올해의 노래",
    "en": "Song of the Year",
    "tier": "대상",
    "winners": [
@@ -47,10 +49,11 @@
      "gko": "트와이스"
     }
    ],
-   "work": "\"Cheer Up\""
+   "work": "\"Cheer Up\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Music Video",
+   "ko": "베스트 뮤직비디오",
    "en": "Best Music Video",
    "tier": "본상",
    "winners": [
@@ -59,10 +62,11 @@
      "gko": "블랙핑크"
     }
    ],
-   "work": "\"Whistle\""
+   "work": "\"Whistle\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Male Artist",
+   "ko": "베스트 남자 아티스트",
    "en": "Best Male Artist",
    "tier": "본상",
    "winners": [
@@ -70,10 +74,11 @@
      "name": "Zico",
      "id": "a0972"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Female Artist",
+   "ko": "베스트 여자 아티스트",
    "en": "Best Female Artist",
    "tier": "본상",
    "winners": [
@@ -81,10 +86,11 @@
      "name": "Taeyeon",
      "id": "a0166"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Male Group",
+   "ko": "베스트 남자 그룹",
    "en": "Best Male Group",
    "tier": "본상",
    "winners": [
@@ -92,10 +98,11 @@
      "name": "Exo",
      "gko": "엑소"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Female Group",
+   "ko": "베스트 여자 그룹",
    "en": "Best Female Group",
    "tier": "본상",
    "winners": [
@@ -103,10 +110,11 @@
      "name": "Twice",
      "gko": "트와이스"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Male Group",
+   "ko": "베스트 댄스 퍼포먼스 남자 그룹",
    "en": "Best Dance Performance – Male Group",
    "tier": "본상",
    "winners": [
@@ -115,10 +123,11 @@
      "gko": "방탄소년단"
     }
    ],
-   "work": "\"Blood Sweat & Tears\""
+   "work": "\"Blood Sweat & Tears\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Female Group",
+   "ko": "베스트 댄스 퍼포먼스 여자 그룹",
    "en": "Best Dance Performance – Female Group",
    "tier": "본상",
    "winners": [
@@ -127,10 +136,11 @@
      "gko": "여자친구"
     }
    ],
-   "work": "\"Rough\""
+   "work": "\"Rough\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Solo",
+   "ko": "베스트 댄스 퍼포먼스 솔로",
    "en": "Best Dance Performance – Solo",
    "tier": "본상",
    "winners": [
@@ -139,10 +149,11 @@
      "ext": true
     }
    ],
-   "work": "\"Press Your Number\""
+   "work": "\"Press Your Number\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Collaboration",
+   "ko": "베스트 콜라보레이션",
    "en": "Best Collaboration",
    "tier": "본상",
    "winners": [
@@ -155,10 +166,11 @@
      "id": "a0372"
     }
    ],
-   "work": "\"Dream\""
+   "work": "\"Dream\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Vocal Performance – Group",
+   "ko": "베스트 보컬 퍼포먼스 그룹",
    "en": "Best Vocal Performance – Group",
    "tier": "본상",
    "winners": [
@@ -167,10 +179,11 @@
      "ext": true
     }
    ],
-   "work": "\"Beside Me\""
+   "work": "\"Beside Me\"",
+   "koAuto": true
   },
   {
-   "ko": "Best OST",
+   "ko": "베스트 OST",
    "en": "Best OST",
    "tier": "본상",
    "winners": [
@@ -179,10 +192,11 @@
      "ext": true
     }
    ],
-   "work": "\"Don't Worry\" (Reply 1988)"
+   "work": "\"Don't Worry\" (Reply 1988)",
+   "koAuto": true
   },
   {
-   "ko": "Best Vocal Performance – Male Solo",
+   "ko": "베스트 보컬 퍼포먼스 남자 솔로",
    "en": "Best Vocal Performance – Male Solo",
    "tier": "본상",
    "winners": [
@@ -191,10 +205,11 @@
      "ext": true
     }
    ],
-   "work": "\"Don't Forget\" featuring Taeyeon"
+   "work": "\"Don't Forget\" featuring Taeyeon",
+   "koAuto": true
   },
   {
-   "ko": "Best Vocal Performance – Female Solo",
+   "ko": "베스트 보컬 퍼포먼스 여자 솔로",
    "en": "Best Vocal Performance – Female Solo",
    "tier": "본상",
    "winners": [
@@ -203,10 +218,11 @@
      "ext": true
     }
    ],
-   "work": "\"If You\""
+   "work": "\"If You\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Band Performance",
+   "ko": "베스트 밴드 퍼포먼스",
    "en": "Best Band Performance",
    "tier": "본상",
    "winners": [
@@ -215,10 +231,11 @@
      "gko": "씨엔블루"
     }
    ],
-   "work": "\"You're So Fine\""
+   "work": "\"You're So Fine\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Rap Performance",
+   "ko": "베스트 랩 퍼포먼스",
    "en": "Best Rap Performance",
    "tier": "본상",
    "winners": [
@@ -231,10 +248,11 @@
      "ext": true
     }
    ],
-   "work": "\"Puzzle\""
+   "work": "\"Puzzle\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Artist – Male",
+   "ko": "베스트 신인 남자",
    "en": "Best New Artist – Male",
    "tier": "신인",
    "winners": [
@@ -242,10 +260,11 @@
      "name": "NCT 127",
      "gko": "엔시티 127"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best New Artist – Female",
+   "ko": "베스트 신인 여자",
    "en": "Best New Artist – Female",
    "tier": "신인",
    "winners": [
@@ -253,7 +272,8 @@
      "name": "I.O.I",
      "gko": "아이오아이"
     }
-   ]
+   ],
+   "koAuto": true
   }
  ]
 }

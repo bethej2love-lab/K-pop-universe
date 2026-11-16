@@ -61,7 +61,7 @@
    ]
   },
   {
-   "ko": "Best Male Group",
+   "ko": "베스트 남자 그룹",
    "en": "Best Male Group",
    "tier": "본상",
    "winners": [
@@ -69,10 +69,11 @@
      "name": "Seventeen",
      "gko": "세븐틴"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Female Group",
+   "ko": "베스트 여자 그룹",
    "en": "Best Female Group",
    "tier": "본상",
    "winners": [
@@ -80,10 +81,11 @@
      "name": "NewJeans",
      "gko": "뉴진스"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Male Artist",
+   "ko": "베스트 남자 아티스트",
    "en": "Best Male Artist",
    "tier": "본상",
    "winners": [
@@ -91,10 +93,11 @@
      "name": "Jimin",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Female Artist",
+   "ko": "베스트 여자 아티스트",
    "en": "Best Female Artist",
    "tier": "본상",
    "winners": [
@@ -102,10 +105,11 @@
      "name": "Jisoo",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Male Group",
+   "ko": "베스트 댄스 퍼포먼스 남자 그룹",
    "en": "Best Dance Performance – Male Group",
    "tier": "본상",
    "winners": [
@@ -114,10 +118,11 @@
      "gko": "세븐틴"
     }
    ],
-   "work": "\"Super\""
+   "work": "\"Super\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Female Group",
+   "ko": "베스트 댄스 퍼포먼스 여자 그룹",
    "en": "Best Dance Performance – Female Group",
    "tier": "본상",
    "winners": [
@@ -126,10 +131,11 @@
      "gko": "뉴진스"
     }
    ],
-   "work": "\"Ditto\""
+   "work": "\"Ditto\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Vocal Performance – Solo",
+   "ko": "베스트 보컬 퍼포먼스 솔로",
    "en": "Best Vocal Performance – Solo",
    "tier": "본상",
    "winners": [
@@ -138,10 +144,11 @@
      "ext": true
     }
    ],
-   "work": "\"Let's Break Up\""
+   "work": "\"Let's Break Up\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Vocal Performance – Group",
+   "ko": "베스트 보컬 퍼포먼스 그룹",
    "en": "Best Vocal Performance – Group",
    "tier": "본상",
    "winners": [
@@ -150,10 +157,11 @@
      "gko": "악뮤"
     }
    ],
-   "work": "\"Love Lee\""
+   "work": "\"Love Lee\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Male Solo",
+   "ko": "베스트 댄스 퍼포먼스 남자 솔로",
    "en": "Best Dance Performance – Male Solo",
    "tier": "본상",
    "winners": [
@@ -162,10 +170,11 @@
      "id": "a0189"
     }
    ],
-   "work": "\"Seven\""
+   "work": "\"Seven\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Dance Performance – Female Solo",
+   "ko": "베스트 댄스 퍼포먼스 여자 솔로",
    "en": "Best Dance Performance – Female Solo",
    "tier": "본상",
    "winners": [
@@ -174,10 +183,11 @@
      "ext": true
     }
    ],
-   "work": "\"Flower\""
+   "work": "\"Flower\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Male Artist",
+   "ko": "베스트 신인 남자 아티스트",
    "en": "Best New Male Artist",
    "tier": "신인",
    "winners": [
@@ -185,10 +195,11 @@
      "name": "Zerobaseone",
      "gko": "제로베이스원"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best New Female Artist",
+   "ko": "베스트 신인 여자 아티스트",
    "en": "Best New Female Artist",
    "tier": "신인",
    "winners": [
@@ -196,10 +207,11 @@
      "name": "TripleS",
      "gko": "트리플에스"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best OST",
+   "ko": "베스트 OST",
    "en": "Best OST",
    "tier": "본상",
    "winners": [
@@ -208,10 +220,11 @@
      "gko": "방탄소년단"
     }
    ],
-   "work": "\"The Planet\""
+   "work": "\"The Planet\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Rap & HipHop Performance",
+   "ko": "베스트 랩·힙합 퍼포먼스",
    "en": "Best Rap & HipHop Performance",
    "tier": "본상",
    "winners": [
@@ -220,10 +233,11 @@
      "id": "a0185"
     }
    ],
-   "work": "\"People Pt. 2\""
+   "work": "\"People Pt. 2\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Collaboration",
+   "ko": "베스트 콜라보레이션",
    "en": "Best Collaboration",
    "tier": "본상",
    "winners": [
@@ -232,10 +246,11 @@
      "id": "a0189"
     }
    ],
-   "work": "\"Seven\""
+   "work": "\"Seven\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Music Video",
+   "ko": "베스트 뮤직비디오",
    "en": "Best Music Video",
    "tier": "본상",
    "winners": [
@@ -244,10 +259,11 @@
      "ext": true
     }
    ],
-   "work": "\"Flower\""
+   "work": "\"Flower\"",
+   "koAuto": true
   },
   {
-   "ko": "Worldwide Fans' Choice Top 10",
+   "ko": "월드와이드 팬스 초이스 TOP 10",
    "en": "Worldwide Fans' Choice Top 10",
    "tier": "본상",
    "winners": [
@@ -291,10 +307,11 @@
      "name": "Zerobaseone",
      "gko": "제로베이스원"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Favorite New Artist",
+   "ko": "페이보릿 신인 아티스트",
    "en": "Favorite New Artist",
    "tier": "신인",
    "winners": [
@@ -306,10 +323,11 @@
      "name": "Zerobaseone",
      "gko": "제로베이스원"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Favorite Asian Male Group",
+   "ko": "페이보릿 아시안 남자 그룹",
    "en": "Favorite Asian Male Group",
    "tier": "인기",
    "winners": [
@@ -317,10 +335,11 @@
      "name": "INI",
      "id": "a0865"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Favorite International Artist",
+   "ko": "페이보릿 해외 아티스트",
    "en": "Favorite International Artist",
    "tier": "인기",
    "winners": [
@@ -328,7 +347,8 @@
      "name": "Yoshiki",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "Favourite Asian Female Group",
@@ -342,7 +362,7 @@
    ]
   },
   {
-   "ko": "Favorite Dance Performance – Male Group",
+   "ko": "페이보릿 댄스 퍼포먼스 남자 그룹",
    "en": "Favorite Dance Performance – Male Group",
    "tier": "인기",
    "winners": [
@@ -350,10 +370,11 @@
      "name": "Treasure",
      "gko": "트레저"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Favorite Dance Performance – Female Group",
+   "ko": "페이보릿 댄스 퍼포먼스 여자 그룹",
    "en": "Favorite Dance Performance – Female Group",
    "tier": "인기",
    "winners": [
@@ -361,10 +382,11 @@
      "name": "Le Sserafim",
      "gko": "르세라핌"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Favorite Global Performer – Male Group",
+   "ko": "페이보릿 글로벌 퍼포머 남자 그룹",
    "en": "Favorite Global Performer – Male Group",
    "tier": "인기",
    "winners": [
@@ -372,7 +394,8 @@
      "name": "Ateez",
      "gko": "에이티즈"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "Favourite Global Performer – Female Group",
@@ -386,7 +409,7 @@
    ]
   },
   {
-   "ko": "Inspiring Achievement",
+   "ko": "인스파이어링 어치브먼트",
    "en": "Inspiring Achievement",
    "tier": "특별",
    "winners": [
@@ -394,7 +417,8 @@
      "name": "TVXQ",
      "gko": "동방신기"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
    "ko": "Neo Flip Artist Award",

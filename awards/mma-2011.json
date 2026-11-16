@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Top 10 Artists",
+   "ko": "TOP 10 아티스트",
    "en": "Top 10 Artists",
    "tier": "본상",
    "winners": [
@@ -59,10 +59,11 @@
      "name": "Sistar",
      "gko": "씨스타"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Album of the Year",
+   "ko": "올해의 앨범",
    "en": "Album of the Year",
    "tier": "대상",
    "winners": [
@@ -71,10 +72,11 @@
      "gko": "투애니원"
     }
    ],
-   "work": "2NE1 2nd Mini Album"
+   "work": "2NE1 2nd Mini Album",
+   "koAuto": true
   },
   {
-   "ko": "Artist of the Year",
+   "ko": "올해의 아티스트",
    "en": "Artist of the Year",
    "tier": "대상",
    "winners": [
@@ -82,10 +84,11 @@
      "name": "Beast",
      "gko": "하이라이트"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Song of the Year",
+   "ko": "올해의 노래",
    "en": "Song of the Year",
    "tier": "대상",
    "winners": [
@@ -94,10 +97,11 @@
      "id": "a0207"
     }
    ],
-   "work": "\"Good Day\""
+   "work": "\"Good Day\"",
+   "koAuto": true
   },
   {
-   "ko": "Best New Artist",
+   "ko": "베스트 신인",
    "en": "Best New Artist",
    "tier": "신인",
    "winners": [
@@ -105,10 +109,11 @@
      "name": "Huh Gak",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Music Video",
+   "ko": "베스트 뮤직비디오",
    "en": "Best Music Video",
    "tier": "본상",
    "winners": [
@@ -117,10 +122,11 @@
      "gko": "티아라"
     }
    ],
-   "work": "\"Roly-Poly\""
+   "work": "\"Roly-Poly\"",
+   "koAuto": true
   },
   {
-   "ko": "Best Rap/Hip Hop Award",
+   "ko": "베스트 랩/힙합",
    "en": "Best Rap/Hip Hop Award",
    "tier": "본상",
    "winners": [
@@ -129,10 +135,11 @@
      "ext": true
     }
    ],
-   "work": "\"Oh Yeah\" (featuring Park Bom)"
+   "work": "\"Oh Yeah\" (featuring Park Bom)",
+   "koAuto": true
   },
   {
-   "ko": "Best Rock Award",
+   "ko": "베스트 록",
    "en": "Best Rock Award",
    "tier": "본상",
    "winners": [
@@ -141,10 +148,11 @@
      "gko": "씨엔블루"
     }
    ],
-   "work": "\"Intuition\""
+   "work": "\"Intuition\"",
+   "koAuto": true
   },
   {
-   "ko": "Best R&B/Ballad Award",
+   "ko": "베스트 R&B/발라드",
    "en": "Best R&B/Ballad Award",
    "tier": "본상",
    "winners": [
@@ -153,10 +161,11 @@
      "ext": true
     }
    ],
-   "work": "\"Please\""
+   "work": "\"Please\"",
+   "koAuto": true
   },
   {
-   "ko": "Best OST Award",
+   "ko": "베스트 OST",
    "en": "Best OST Award",
    "tier": "본상",
    "winners": [
@@ -165,7 +174,8 @@
      "ext": true
     }
    ],
-   "work": "\"Pit-A-Pat\" (from The Greatest Love)"
+   "work": "\"Pit-A-Pat\" (from The Greatest Love)",
+   "koAuto": true
   },
   {
    "ko": "Hot Trend Award (Variety)",
@@ -180,7 +190,7 @@
    "work": "West Coast Highway Song Festival"
   },
   {
-   "ko": "Netizen Popularity Award",
+   "ko": "네티즌 인기상",
    "en": "Netizen Popularity Award",
    "tier": "인기",
    "winners": [
@@ -189,7 +199,8 @@
      "gko": "슈퍼주니어"
     }
    ],
-   "work": "\"Mr. Simple\""
+   "work": "\"Mr. Simple\"",
+   "koAuto": true
   }
  ]
 }

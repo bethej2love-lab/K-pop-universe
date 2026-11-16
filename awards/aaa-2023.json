@@ -15,7 +15,7 @@
  "note": "위키백과 영문판 표 자동 수집(수상자만, 부문명은 영문 그대로). 사람이 확인한 한글 정본이 생기면 그 파일로 교체.",
  "categories": [
   {
-   "ko": "Grand Prize",
+   "ko": "그랜드 상",
    "en": "Grand Prize",
    "tier": "대상",
    "winners": [
@@ -43,10 +43,11 @@
      "name": "Lim Young-woong",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Artist Award",
+   "ko": "베스트 아티스트",
    "en": "Best Artist Award",
    "tier": "본상",
    "winners": [
@@ -62,10 +63,11 @@
      "name": "Kim Seon-ho",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Television / Film",
+   "ko": "TV·영화",
    "en": "Television / Film",
    "tier": "특별",
    "winners": [
@@ -93,10 +95,11 @@
      "name": "The Boyz",
      "gko": "더보이즈"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Fabulous Award",
+   "ko": "파뷸러스",
    "en": "Fabulous Award",
    "tier": "특별",
    "winners": [
@@ -108,10 +111,11 @@
      "name": "Kathryn Bernardo",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Television / Film",
+   "ko": "TV·영화",
    "en": "Television / Film",
    "tier": "특별",
    "winners": [
@@ -127,10 +131,11 @@
      "name": "Stray Kids",
      "gko": "스트레이키즈"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Rookie of the Year",
+   "ko": "올해의 신인",
    "en": "Rookie of the Year",
    "tier": "신인",
    "winners": [
@@ -142,10 +147,11 @@
      "name": "Moon Sang-min",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Television / Film",
+   "ko": "TV·영화",
    "en": "Television / Film",
    "tier": "특별",
    "winners": [
@@ -153,10 +159,11 @@
      "name": "Zerobaseone",
      "gko": "제로베이스원"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Asia Celebrity",
+   "ko": "아시아 셀러브리티",
    "en": "Asia Celebrity",
    "tier": "특별",
    "winners": [
@@ -168,10 +175,11 @@
      "name": "Kim Seon-ho",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Television",
+   "ko": "TV",
    "en": "Television",
    "tier": "특별",
    "winners": [
@@ -187,10 +195,11 @@
      "name": "NewJeans",
      "gko": "뉴진스"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Emotive Award",
+   "ko": "베스트 이모티브",
    "en": "Best Emotive Award",
    "tier": "본상",
    "winners": [
@@ -198,10 +207,11 @@
      "name": "Suho",
      "id": "a0370"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Television / Film",
+   "ko": "TV·영화",
    "en": "Television / Film",
    "tier": "특별",
    "winners": [
@@ -217,10 +227,11 @@
      "name": "Oneus",
      "gko": "원어스"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Hot Trend Award",
+   "ko": "핫 트렌드",
    "en": "Hot Trend Award",
    "tier": "특별",
    "winners": [
@@ -232,10 +243,11 @@
      "name": "Lee Jun-ho",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Television / Film",
+   "ko": "TV·영화",
    "en": "Television / Film",
    "tier": "특별",
    "winners": [
@@ -251,10 +263,11 @@
      "name": "SB19",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Popularity Award",
+   "ko": "인기상",
    "en": "Popularity Award",
    "tier": "인기",
    "winners": [
@@ -266,10 +279,11 @@
      "name": "Kim Se-jeong",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Television / Film",
+   "ko": "TV·영화",
    "en": "Television / Film",
    "tier": "특별",
    "winners": [
@@ -281,10 +295,11 @@
      "name": "Sakurazaka46",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Icon Award",
+   "ko": "베스트 아이콘",
    "en": "Best Icon Award",
    "tier": "본상",
    "winners": [
@@ -292,10 +307,11 @@
      "name": "Cha Joo-young",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Television / Film",
+   "ko": "TV·영화",
    "en": "Television / Film",
    "tier": "특별",
    "winners": [
@@ -311,10 +327,11 @@
      "name": "Tempest",
      "gko": "템페스트"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "New Wave Award",
+   "ko": "신인 웨이브",
    "en": "New Wave Award",
    "tier": "특별",
    "winners": [
@@ -322,10 +339,11 @@
      "name": "Park Jae-chan",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Television / Film",
+   "ko": "TV·영화",
    "en": "Television / Film",
    "tier": "특별",
    "winners": [
@@ -341,10 +359,11 @@
      "name": "Yao Chen",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Potential Award",
+   "ko": "포텐셜",
    "en": "Potential Award",
    "tier": "특별",
    "winners": [
@@ -352,10 +371,11 @@
      "name": "Yoo Seon-ho",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Television / Film",
+   "ko": "TV·영화",
    "en": "Television / Film",
    "tier": "특별",
    "winners": [
@@ -371,10 +391,11 @@
      "name": "Paul Blanco",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Focus Award",
+   "ko": "포커스",
    "en": "Focus Award",
    "tier": "특별",
    "winners": [
@@ -386,10 +407,11 @@
      "name": "Ahn Dong-goo",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Television / Film",
+   "ko": "TV·영화",
    "en": "Television / Film",
    "tier": "특별",
    "winners": [
@@ -401,10 +423,11 @@
      "name": "Lun8",
      "gko": "루네이트"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Performance Award",
+   "ko": "베스트 퍼포먼스",
    "en": "Best Performance Award",
    "tier": "본상",
    "winners": [
@@ -412,10 +435,11 @@
      "name": "Le Sserafim",
      "gko": "르세라핌"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Top of K-pop Record Award",
+   "ko": "TOP K팝 레코드",
    "en": "Top of K-pop Record Award",
    "tier": "특별",
    "winners": [
@@ -423,10 +447,11 @@
      "name": "Kim Jae-joong",
      "id": "a0595"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Actor Award",
+   "ko": "베스트 배우",
    "en": "Best Actor Award",
    "tier": "본상",
    "winners": [
@@ -450,10 +475,11 @@
      "name": "Melai Cantiveros",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Scene Stealer Award",
+   "ko": "씬 스틸러",
    "en": "Scene Stealer Award",
    "tier": "특별",
    "winners": [
@@ -461,10 +487,11 @@
      "name": "Jung Sung-il",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Musician Award",
+   "ko": "베스트 뮤지션",
    "en": "Best Musician Award",
    "tier": "본상",
    "winners": [
@@ -488,10 +515,11 @@
      "name": "Zerobaseone",
      "gko": "제로베이스원"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Acting Performance Award",
+   "ko": "베스트 연기",
    "en": "Best Acting Performance Award",
    "tier": "본상",
    "winners": [
@@ -511,10 +539,11 @@
      "name": "Suho",
      "id": "a0370"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Choice Award",
+   "ko": "베스트 초이스",
    "en": "Best Choice Award",
    "tier": "인기",
    "winners": [
@@ -562,10 +591,11 @@
      "name": "NewJeans",
      "gko": "뉴진스"
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Producer Award",
+   "ko": "베스트 프로듀서",
    "en": "Best Producer Award",
    "tier": "본상",
    "winners": [
@@ -573,10 +603,11 @@
      "name": "Starship Entertainment",
      "ext": true
     }
-   ]
+   ],
+   "koAuto": true
   },
   {
-   "ko": "Best Creator Award",
+   "ko": "베스트 크리에이터",
    "en": "Best Creator Award",
    "tier": "본상",
    "winners": [
@@ -584,7 +615,8 @@
      "name": "3Racha",
      "gko": "스트레이키즈"
     }
-   ]
+   ],
+   "koAuto": true
   }
  ]
 }
