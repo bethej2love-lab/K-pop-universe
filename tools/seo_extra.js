@@ -291,6 +291,8 @@ function bilingualSongTitle(raw, fallback) {
 }
 // 투어·콘서트·팬미팅 이름(따옴표·괄호 안) — 곡 연결에서 그 이름 속 곡을 빼는 데만 쓴다
 const TOUR_NAME_RE = /(tour|투어|concert|콘서트|fan\s*-?\s*meeting|팬미팅|fan-?con|팬콘)\s*[\[<'"‘“《〈「(]\s*([^\]>'"’”》〉」)]{2,60})/ig;
+// 앨범의 구조 트랙(곡이 아닌 인트로·아웃트로·간주·스킷·프롤로그·에필로그) 기본형 — 곡 페이지 대상에서 뺀다. 'Opening'·'Ending'처럼 실제 곡명인 경우가 있는 건 넣지 않는다.
+const STRUCTURAL_TRACKS = new Set(['intro', 'outro', 'interlude', 'skit', 'prologue', 'epilogue', '인트로', '아웃트로', '인터루드', '스킷', '프롤로그', '에필로그']);
 // 곡명은 보통 따옴표 안에, 행사·투어·프로그램 이름은 따옴표 밖(@…, | …, '… TOUR')에 있다(2026-11-16 Codex 곡 오분류 66+21개 —
 // NCT WISH 'Sticky'가 "INTO THE WISH" 콘서트명 때문에 곡 'WISH'로, NEXZ 'Simmer'가 "COMEBACKSHOW O-RLY?"로, 'Legacy'가 "HELLMATE TOUR"로 잡힘).
 // f(text) = 그 글에서 곡 기본형 배열을 돌려주는 매처(S.f를 감싼 것). 순수 함수라 따로 테스트한다.
@@ -320,7 +322,9 @@ function buildSongs({ ROOT, groups, artists, EX, vids, minVids = 4 }) {
     if (!d || !vids[g] || !vids[g].length) continue;
     const albums = [...Object.values(d.g || {}), ...Object.values(d.m || {}).flatMap(x => [...(x.d || []), ...(x.u || []).flatMap(u => (u && u.albums) || [])])];
     // 별칭(한글 소리 표기·공식 영문 제목)까지 — 앱 루틴(admin.js)과 같은 곡 목록(2026-11-11)
-    const songs = S.K(S.L(albums, persons), g);
+    // 곡이 아닌 구조 트랙(Intro·Outro 등)은 곡 페이지·멤버×곡 페이지를 만들지 않는다(2026-11-16 사용자 "intro는 노래 제목이 아닌데" —
+    // 에이티즈 성화 /s/intro/ 등 6그룹 12주소×한·영). 앨범 수록 목록(디스코)에는 그대로 있고, 곡 페이지·영상 곡 연결 후보에서만 뺀다.
+    const songs = S.K(S.L(albums, persons), g).filter(s => !STRUCTURAL_TRACKS.has(s.b));
     if (!songs.length) continue;
     // 곡 → 처음 실린 앨범(가장 이른 발매)·타이틀곡 여부·크레딧
     const meta = {};
@@ -383,4 +387,4 @@ const roundViews = n => { if (!n) return 0; const p = Math.pow(10, Math.max(0, M
 
 const EXTRA_CSS =`.vid-list{padding-left:20px;margin:0;}.vid-list li{font-size:13.5px;margin-bottom:7px;}.vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}.note{font-size:11px;color:rgba(150,170,210,0.55);margin:6px 0 0;}.rel a{color:rgba(210,225,255,0.95);text-decoration:none;}.sp-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 10px;}@media(min-width:620px){.sp-tiles{grid-template-columns:repeat(5,minmax(0,1fr));}}.sp-tile{display:block;text-decoration:none;min-width:0;}.sp-tile img,.sp-tile-ph{display:block;width:100%;aspect-ratio:1;border-radius:10px;object-fit:cover;background:#1e1e21;}.sp-tile-t{display:block;font-size:12.5px;margin-top:6px;color:rgba(228,236,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.sp-tile-n{display:block;font-size:11px;color:rgba(160,180,230,0.6);}.mf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;margin-bottom:6px;}@media(min-width:620px){.mf-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}.mf-card{display:block;min-width:0;text-decoration:none;}.mf-th{display:block;position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#17171a;}.mf-th img{width:100%;height:100%;object-fit:cover;display:block;}.mf-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.38;margin-top:7px;color:rgba(228,236,255,0.94);}.mf-y{display:block;font-size:11.5px;color:rgba(160,180,230,0.6);margin-top:2px;}`;
 
-module.exports = { refineSongsByTitle, vidCards, loadStatic, packCredits, bilingualSongTitle, prefetch, groupExtra, memberExtra, ages, EXTRA_CSS, fmtViews, prefetchGroupVideos, buildSongs, roundViews, esc };
+module.exports = { STRUCTURAL_TRACKS, refineSongsByTitle, vidCards, loadStatic, packCredits, bilingualSongTitle, prefetch, groupExtra, memberExtra, ages, EXTRA_CSS, fmtViews, prefetchGroupVideos, buildSongs, roundViews, esc };

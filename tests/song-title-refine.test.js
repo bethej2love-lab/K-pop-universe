@@ -32,5 +32,14 @@ check('따옴표 없는 제목·곡 없음은 건드리지 않는다', () => {
 check('여러 곡이 잡혔는데 따옴표 안에서는 하나도 안 잡히면 원래대로(합동 무대 보존)', () => {
   assert.deepEqual(run("성한빈 'Killin Me + UNDEAD' @MCOUNTDOWN", { killinme: 'killin me', undead: 'undead' }).sort(), ['killinme', 'undead']);
 });
+// 곡이 아닌 구조 트랙은 곡 페이지 대상에서 뺀다(2026-11-16 사용자 "성화/s/intro는 노래 제목이 아닌데")
+const { STRUCTURAL_TRACKS } = require('../tools/seo_extra.js');
+check('구조 트랙(intro·outro·interlude·skit·prologue·epilogue, 한글 포함)은 곡 후보에서 제외', () => {
+  for (const b of ['intro', 'outro', 'interlude', 'skit', 'prologue', 'epilogue', '인트로', '아웃트로']) assert.ok(STRUCTURAL_TRACKS.has(b), b);
+});
+check('실제 곡명일 수 있는 것은 제외하지 않는다(opening·ending·solo·love·me·i)', () => {
+  for (const b of ['opening', 'ending', 'solo', 'love', 'me', 'i', 'introperson', 'interludeoasis']) assert.ok(!STRUCTURAL_TRACKS.has(b), b);
+});
+check('seo_extra 곡 목록 만들기가 그 집합으로 거른다', () => assert.ok(require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'tools', 'seo_extra.js'), 'utf8').includes('.filter(s => !STRUCTURAL_TRACKS.has(s.b))')));
 console.log(failures ? '실패 ' + failures : '🎉 곡 제목 보강 테스트 통과');
 process.exit(failures ? 1 : 0);
