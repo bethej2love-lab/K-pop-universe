@@ -3657,6 +3657,7 @@ function _fetchGroupHeroCands(gko){
   _groupHeroCandP.set(gko,p);
   return p;
 }
+const _groupThumbOk=v=>v.category!=='variety'&&!(v.category==='other'&&!v.source_handle);
 // 마지막 폴백 — 그룹 영상 후보(그룹별 한 번만 조회). 멤버 태깅이 비었거나 본인이 들어간 영상, 조회수 순.
 const _srGroupThumbsP=new Map();
 function _fetchGroupThumbs(gko,memberKo){
@@ -3665,13 +3666,14 @@ function _fetchGroupThumbs(gko,memberKo){
   if(_srGroupThumbsP.has(k))return _srGroupThumbsP.get(k);
   const p=(async()=>{
     try{
-      let q=sb.from(_YT_TABLE).select('id,thumb,view_count,is_short').eq('group_ko',gko);
+      let q=sb.from(_YT_TABLE).select('id,thumb,view_count,is_short,category,source_handle').eq('group_ko',gko);
       if(memberKo)q=q.or(`members.eq.{},members.cs.{${_pgFilterVal(memberKo)}}`);
       q=q.or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
          .or('content_flag.is.null,content_flag.neq.hidden').or('content_flag.is.null,content_flag.neq.개별출연');
       const{data,error}=await q.order('published_at',{ascending:false}).limit(30);
       if(error||!data)return [];
-      return data.filter(v=>v.thumb).sort((x,y)=>(!!x.is_short-!!y.is_short)||((y.view_count||0)-(x.view_count||0)));
+      // 예능·출처 없는 '기타' 영상은 그룹이 잘못 붙은 타인 영상일 가능성이 커서 뺀다(2026-11-17 Codex 검수 — 크나큰 김현종←나혼자산다 전현무 클립, 슈퍼노바 윤성모←박보검 챌린지, 티아라 아름←옛 단체 무대). 남는 게 없으면 기본 아바타.
+      return data.filter(v=>v.thumb&&_groupThumbOk(v)).sort((x,y)=>(!!x.is_short-!!y.is_short)||((y.view_count||0)-(x.view_count||0)));
     }catch(e){return [];}
   })();
   _srGroupThumbsP.set(k,p);return p;
