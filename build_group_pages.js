@@ -1400,6 +1400,13 @@ function songPagePath(gko, b, lang) {
   const gp = groupPagePath(gko, lang);
   return gp ? `${gp}s/${b}/` : null;
 }
+// 곡·멤버×곡 페이지 영상 정렬/더 보기용 데이터(2026-11-17) — seo_vids.js 가 읽는다. [[id, 제목, 'yyyy-mm-dd', 조회수], …] 인기순 최대 400개.
+// '<'는 </script> 를 못 닫게 < 로(백슬래시를 코드에 직접 안 쓰려고 charCode 사용).
+function vidsDataScript(vids) {
+  const arr = vids.slice(0, 400).map(v => [v.id, String(v.title || ''), v.published_at ? String(v.published_at).slice(0, 10) : '', v.view_count || 0]);
+  const json = JSON.stringify(arr).split('<').join(String.fromCharCode(92) + 'u003c');
+  return `<script type="application/json" id="kpu-vids">${json}</script>\n  <script src="/seo_vids.js" defer></script>`;
+}
 function songLinksHtml(gko, lang) {
   const list = SONGS[gko] || [];
   if (!list.length) return '';
@@ -1956,7 +1963,7 @@ function memberFaceUrl(a, gko) {
   return id ? ytThumb(id, 'mqdefault') : null;
 }
 // 스타일은 저장소의 song-page.css 한 파일(페이지마다 넣으면 3만 쪽 × 5KB) — 바꾸면 SONG_CSS_V를 올릴 것
-const SONG_CSS_V = 8;
+const SONG_CSS_V = 9;
 function songShareVideo(vids) {
   return vids.find(v => (v.category === 'live' || FANCAM_RE.test(v.title || ''))
     && !/\bM\/?V\b|music\s*video|뮤직비디오|\bteaser\b|티저/i.test(v.title || '')) || vids[0];
@@ -2168,10 +2175,12 @@ ${LIST_FWD}
   ${creditsHtml}
   ${top.length > 1 ? `
   <h2>${ms ? (isEn ? 'Most viewed fancams' : '조회수 많은 직캠') : (isEn ? 'Most viewed fancams & stages' : '조회수 많은 직캠·무대')}</h2>
-  <div class="grid">
+  ${vids.length > 8 ? '<div class="kpu-sortbar" id="kpu-sortbar" style="display:none"></div>' : ''}
+  <div class="grid"${vids.length > 8 ? ' id="kpu-grid"' : ''}>
     ${grid}
   </div>` : ''}
-  ${vids.length > top.length ? `<p class="note">${isEn ? `Top ${top.length} of ${vids.length} videos` : `영상 ${vids.length}개 중 상위 ${top.length}개`}</p>` : ''}
+  ${vids.length > top.length ? `<p class="note" id="kpu-vnote">${isEn ? `Top ${top.length} of ${vids.length} videos` : `영상 ${vids.length}개 중 상위 ${top.length}개`}</p>` : ''}
+  ${vids.length > 8 && top.length > 1 ? vidsDataScript(vids) : ''}
   ${facesHtml}
   ${ms ? `
   <h2>${isEn ? `All "${songLabel}" videos` : `'${songLabel}' 전체 영상`}</h2>
