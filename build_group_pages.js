@@ -246,7 +246,10 @@ const WIDE_FILE = path.join(ROOT, 'og_wide.json');
 let WIDE = {};
 try { WIDE = JSON.parse(fs.readFileSync(WIDE_FILE, 'utf8')); } catch (e) { /* 첫 빌드 */ }
 const WIDE_Q = { x: 'maxresdefault', 7: 'hq720', m: 'mqdefault' };
-function wideThumb(id) { return `https://i.ytimg.com/vi/${id}/${WIDE_Q[WIDE[id]] || 'mqdefault'}.jpg`; }
+// 11-17 네이버에서 위아래 검은 띠 — 확인 대상이 곡·멤버×곡·직캠 허브 영상뿐이라 케미(2,607)·프로그램(761)·음방·커버 등 ~3,600쪽의 대표 영상은
+// 한 번도 확인이 안 돼 320×180(mqdefault)로 나갔다. 확인 안 된 영상을 여기 모아 두었다가 빌드 끝에 확인하고 og_wide.json에 쌓는다(다음 빌드부터 반영).
+const WIDE_MISS = new Set();
+function wideThumb(id) { if (id && !WIDE[id]) WIDE_MISS.add(id); return `https://i.ytimg.com/vi/${id}/${WIDE_Q[WIDE[id]] || 'mqdefault'}.jpg`; }
 async function probeWide(ids) {
   const max = +(process.env.OG_WIDE_MAX || 8000);
   const todo = [...new Set(ids)].filter(id => id && !WIDE[id]).slice(0, max);
@@ -2002,7 +2005,8 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
   }
   const heroImage = top[0] ? ytThumb(top[0].id) : ogImageForGroup(gko, info);
   const preview = songShareVideo(vids);
-  const ogImage = preview ? wideThumb(preview.id) : heroImage, ogSz = ogSizeFor(ogImage);
+  // 대표 영상이 없을 때 예전엔 hqdefault(4:3, 16:9 영상은 위아래 검은 띠가 이미지에 박혀 있음)를 그대로 og:image로 썼다 — 16:9 썸네일로
+  const ogImage = preview ? wideThumb(preview.id) : (top[0] ? wideThumb(top[0].id) : heroImage), ogSz = ogSizeFor(ogImage);
   const jsonLd = ms ? {
     '@context': 'https://schema.org', '@type': 'CollectionPage', name: h1, url: selfUrl, description: desc,
     about: [{ '@type': 'Person', name: mName, url: `${SITE}/${memberPagePath(ms.a, lang)}` }, { '@type': 'MusicRecording', name: songLabel, url: songUrl, byArtist: { '@type': 'MusicGroup', name: gName } }],
@@ -3014,6 +3018,8 @@ else (async () => {
   try { await buildShowPages(); } catch (e) { console.warn(`⚠️ 음방 회차 페이지 건너뜀: ${e.message}`); }
   buildWinsPages();
   try { await buildChemPages(); } catch (e) { console.warn(`⚠️ 조합 페이지 건너뜀(기존 페이지 유지): ${e.message}`); }
+  // 위 페이지들이 쓴 대표 영상 중 16:9 확인 안 된 것 — 지금 확인해 og_wide.json에 저장(이번 빌드엔 mqdefault로 나갔고 다음 빌드부터 큰 이미지)
+  try { if (WIDE_MISS.size) { console.log(`16:9 썸네일 미확인 영상 ${WIDE_MISS.size}개 — 확인해서 저장`); await probeWide([...WIDE_MISS]); } } catch (e) { console.warn('⚠️ 미확인 16:9 썸네일 확인 건너뜀:', e.message); }
   console.log(`곡 페이지 ${songPageCount}곡 · 멤버×곡 페이지 ${memberSongPageCount}개 × 2개 언어`);
   let relPages = [], hubLinks = { ko: [], en: [] };
   try {
