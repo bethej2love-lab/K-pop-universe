@@ -352,6 +352,53 @@ const pages = []; // {loc, alt: {ko,en}} for sitemap + hreflang bookkeeping
 
 const groupKos = Object.keys(groups);
 // DB 보강 데이터를 받은 뒤에 만들도록 함수로 감쌌다(2026-10-16) — 메인(파일 끝)에서 prefetch 후 호출
+// ── 정적 '이어서 보기' 카드 — 그룹·앨범·케미·멤버 직캠 허브(2026-11-17 사용자: "앱 로딩이 느려 이탈 — 정적으로 되는 건 정적끼리, 새 페이지는 만들지 말고 있는 정적 페이지를 잇기") ──
+// 영상을 눌러 재생 화면이 뜨면 아래에 나오는 카드(seo_play.js가 <script id="kpu-next">를 읽는다). 이 템플릿들엔 그게 없어서 기본 카드(앱으로 가는 '더 둘러보기')가 떴다.
+// 아래 카드는 전부 **이미 만들어지는 정적 페이지**로만 잇는다(곡·멤버 직캠·앨범·그룹·케미). 모양은 nextItemsJson과 같다({k,t,s,img|im,h,m}).
+function nextCardsJson(items) {
+  const arr = (items || []).filter(Boolean).slice(0, 5);
+  return arr.length ? `<script type="application/json" id="kpu-next">${JSON.stringify(arr).split('<').join(String.fromCharCode(92) + 'u003c')}</script>` : '';
+}
+const _topVidId = vs => { const v = (vs || []).slice().sort((p, q) => (q.view_count || 0) - (p.view_count || 0))[0]; return v ? (v.id || v.v || '') : ''; };
+const _nmOf = (x, isEn) => isEn ? (x.name.en || x.name.ko) : (x.displayName || x.name.ko);
+function groupNextJson(gko, lang) {
+  try {
+    const isEn = lang === 'en', info = groups[gko]; if (!info) return '';
+    const songs = (SONGS[gko] || []).slice().sort((p, q) => q.vids.length - p.vids.length);
+    const songItem = s => ({ k: isEn ? 'Song fancams' : '곡별 직캠·무대', t: s.bilingualTitle || s.title, s: isEn ? `${s.vids.length} videos` : `영상 ${s.vids.length}개`, img: _topVidId(s.vids), m: s.title, h: `${SITE}/${songPagePath(gko, s.b, lang)}` });
+    const mems = membersOf(gko).map(a => ({ a, hub: FANCAM_HUB.get(a) })).filter(x => x.hub && x.hub.length).sort((p, q) => q.hub.length - p.hub.length);
+    const memItem = x => ({ k: isEn ? 'Member fancams' : '멤버 직캠', t: _nmOf(x.a, isEn), s: isEn ? `${x.hub.length} fancams` : `직캠 ${x.hub.length}개`, img: x.hub[0].id || '', h: `${SITE}/${memberFancamPagePath(x.a, lang)}` });
+    const als = albumsFor(gko).slice().sort((p, q) => String(q.al.releaseDate || '').localeCompare(String(p.al.releaseDate || '')));
+    const albItem = x => ({ k: isEn ? 'Album' : '앨범', t: x.al.title, s: isEn ? `${(x.al.tracks || []).length} tracks` : `수록곡 ${(x.al.tracks || []).length}곡`, im: x.al.cover || '', h: `${SITE}/${albumPagePath(gko, x.slug, lang)}` });
+    const out = [];
+    [songs[0] && songItem(songs[0]), mems[0] && memItem(mems[0]), als[0] && albItem(als[0]), songs[1] && songItem(songs[1]), mems[1] && memItem(mems[1])].forEach(x => x && out.push(x));
+    return nextCardsJson(out);
+  } catch (e) { return ''; }
+}
+function albumNextJson(g, al, slug, i, list, songB, lang) {
+  try {
+    const isEn = lang === 'en', info = groups[g]; if (!info) return '';
+    const gd = isEn ? (info.en || g) : g;
+    const out = [];
+    const tt = al.titleTrack || ((al.tracks || []).find(t => t.isTitle) || {}).title || '';
+    const tb = tt ? _CRED_SB(tt) : '';
+    if (tb && songB.has(tb)) out.push({ k: isEn ? 'Title track' : '타이틀곡', t: tt, s: isEn ? 'Fancams & stages' : '직캠·무대 모음', im: al.cover || '', m: tt, h: `${SITE}/${songPagePath(g, tb, lang)}` });
+    out.push({ k: isEn ? 'Group' : '그룹', t: gd, s: isEn ? 'Stages · MVs · members' : '무대 · 뮤비 · 멤버', im: al.cover || '', h: `${SITE}/${groupPagePath(g, lang)}` });
+    [list[i - 1], list[i + 1]].forEach(x => x && out.push({ k: isEn ? 'Album' : '앨범', t: x.al.title, s: isEn ? `${(x.al.tracks || []).length} tracks` : `수록곡 ${(x.al.tracks || []).length}곡`, im: x.al.cover || '', h: `${SITE}/${albumPagePath(g, x.slug, lang)}` }));
+    return nextCardsJson(out);
+  } catch (e) { return ''; }
+}
+function chemNextJson(p, lang, byMember) {
+  try {
+    const isEn = lang === 'en', out = [];
+    const hubItem = a => { const hub = FANCAM_HUB.get(a); return hub && hub.length ? { k: isEn ? 'Member fancams' : '멤버 직캠', t: _nmOf(a, isEn), s: isEn ? `${hub.length} fancams` : `직캠 ${hub.length}개`, img: hub[0].id || '', h: `${SITE}/${memberFancamPagePath(a, lang)}` } : null; };
+    out.push(hubItem(p.a), hubItem(p.b));
+    const G = isEn ? (groups[p.g].en || p.g) : p.g;
+    out.push({ k: isEn ? 'Group' : '그룹', t: G, s: isEn ? 'Stages · MVs · members' : '무대 · 뮤비 · 멤버', img: (p.v && p.v[0] && p.v[0].id) || '', h: `${SITE}/${groupPagePath(p.g, lang)}` });
+    [...new Set([...(byMember.get(p.a) || []), ...(byMember.get(p.b) || [])])].filter(o => o !== p).sort((x, y) => y.n - x.n).slice(0, 2).forEach(o => out.push({ k: isEn ? 'Another pair' : '다른 조합', t: `${_nmOf(o.a, isEn)} × ${_nmOf(o.b, isEn)}`, s: isEn ? `${o.n} videos together` : `함께 나온 영상 ${o.n}개`, img: (o.v && o.v[0] && o.v[0].id) || '', h: `${SITE}/${chemPagePath(o.g, o.a, o.b, lang)}` }));
+    return nextCardsJson(out.filter(Boolean));
+  } catch (e) { return ''; }
+}
 function buildGroupPages() {
 groupKos.forEach(ko => {
   const info = groups[ko];
@@ -545,6 +592,7 @@ ${SEO_GA_TAG}
     </ul>` : ''; })()}
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a> · <a href="${SITE}/about.html">${isEn ? 'About · removal requests' : '사이트 소개 · 삭제 요청'}</a></div>
   <div class="cta-dock"><a class="cta" href="${SITE}/${deepLinkHash}">${isEn ? 'View videos in the Universe →' : '직캠·영상 아카이브 보기 →'}</a></div>
+  ${groupNextJson(ko, lang)}
 </div>
 </body>
 </html>
@@ -1918,6 +1966,7 @@ ${matesHtml}
   <p class="lead"><a href="${profileUrl}">${isEn ? `${mName} profile →` : `${mName} 프로필 →`}</a></p>
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a> · <a href="${SITE}/about.html">${isEn ? 'About · removal requests' : '사이트 소개 · 삭제 요청'}</a></div>
   <div class="cta-dock"><a class="cta" href="${SITE}/#g=${hashEsc(gko)}&m=${hashEsc(a.name.ko)}">${isEn ? 'View all videos in the Universe →' : '직캠·영상 아카이브 보기 →'}</a></div>
+  ${nextItemsJson(a, lang)}
 </div>
 </body>
 </html>
@@ -2528,7 +2577,7 @@ function groupTileHtml(g, lang, sub) {
   const nm = lang === 'en' ? (groups[g].en || g) : g;
   return `<a class="sp-tile" href="${SITE}/${groupPagePath(g, lang)}">${id ? `<img src="https://i.ytimg.com/vi/${id}/mqdefault.jpg" alt="" loading="lazy" style="aspect-ratio:16/9">` : '<span class="sp-tile-ph" style="aspect-ratio:16/9"></span>'}<span class="sp-tile-t">${escHtml(nm)}</span><span class="sp-tile-n">${escHtml(sub || '')}</span></a>`;
 }
-function simplePageHtml({ lang, selfUrl, altUrl, koUrl, title, h1, desc, body, kind, ogImage }) {
+function simplePageHtml({ lang, selfUrl, altUrl, koUrl, title, h1, desc, body, kind, ogImage, next }) {
   const isEn = lang === 'en';
   return `<!DOCTYPE html>
 <html lang="${isEn ? 'en' : 'ko'}">
@@ -2561,6 +2610,7 @@ ${SEO_GA_TAG}
   <h1 class="rank-h1">${escHtml(h1)}</h1>
   <p class="lead">${escHtml(desc)}</p>
 ${body}
+${next || ''}
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a> · <a href="${SITE}/about.html">${isEn ? 'About · removal requests' : '사이트 소개 · 삭제 요청'}</a></div>
   <div class="cta-dock"><a class="cta" href="${SITE}/">${isEn ? 'Explore the K-POP UNIVERSE →' : 'K-POP UNIVERSE에서 더 보기 →'}</a></div>
 </div>
@@ -2642,7 +2692,7 @@ async function buildChemPages() {
 ${others.length ? `  <h2 class="rank-h">${isEn ? 'More pairs' : '다른 조합'}</h2>
   <ul class="chips">${others.map(o => `<li><a href="${SITE}/${chemPagePath(o.g, o.a, o.b, lang)}">${escHtml(nm(o.a, isEn))} × ${escHtml(nm(o.b, isEn))}</a> ${o.n}</li>`).join('')}</ul>` : ''}`;
       const top = p.v[0];
-      let html = simplePageHtml({ lang, selfUrl: `${SITE}/${rel}`, altUrl: `${SITE}/${altRel}`, koUrl: `${SITE}/${chemPagePath(p.g, p.a, p.b, 'ko')}`, title, h1, desc, body, kind: 'chem', ogImage: top ? wideThumb(top.id) : null });
+      let html = simplePageHtml({ next: chemNextJson(p, lang, byMember), lang, selfUrl: `${SITE}/${rel}`, altUrl: `${SITE}/${altRel}`, koUrl: `${SITE}/${chemPagePath(p.g, p.a, p.b, 'ko')}`, title, h1, desc, body, kind: 'chem', ogImage: top ? wideThumb(top.id) : null });
       html = html.replace('<meta charset="UTF-8">', '<meta charset="UTF-8">\n' + CHEM_FWD);
       writeSimple(rel, html, '0.4');
     }
@@ -2805,7 +2855,7 @@ function buildAlbumPages() {
   <ol class="vid-list">${rows}</ol>
   ${nb ? `<p class="note">${nb}</p>` : ''}
   <p class="note">${isEn ? 'Credits: Melon.' : '크레딧 출처: 멜론.'}</p>`;
-        writeSimple(rel, simplePageHtml({ lang, selfUrl: `${SITE}/${rel}`, altUrl: `${SITE}/${albumPagePath(g, slug, isEn ? 'ko' : 'en')}`, koUrl: `${SITE}/${albumPagePath(g, slug, 'ko')}`, title, h1, desc, body, kind: 'album', ogImage: al.cover || undefined }), '0.5');
+        writeSimple(rel, simplePageHtml({ next: albumNextJson(g, al, slug, i, list, songB, lang), lang, selfUrl: `${SITE}/${rel}`, altUrl: `${SITE}/${albumPagePath(g, slug, isEn ? 'ko' : 'en')}`, koUrl: `${SITE}/${albumPagePath(g, slug, 'ko')}`, title, h1, desc, body, kind: 'album', ogImage: al.cover || undefined }), '0.5');
         n++;
       }
     });

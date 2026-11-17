@@ -24823,6 +24823,24 @@ async function _collectAwardNews(){
     }).sort((a,b)=>b.score-a.score);
   }catch(err){console.warn('[feed] 시상식 소식 실패 — 이 줄만 빠집니다',err);return [];}
 }
+// For You '내 최애 소식'용 — 이번 주 시상식 줄은 항상 싣되(큰 행사), 내 최애(즐겨찾기 그룹·멤버, 최애 멤버의 소속 그룹 포함)가 받은 상이 있으면
+// 부제를 '⭐ 에스파 올해의 글로벌-K 아티스트 · … · 11.14~15'로 바꿔 먼저 보여 준다. 수상 파일은 눌러야 받는 게 아니라 여기서 한 번 받는다(7KB).
+async function _favAwardNews(gs){
+  try{
+    const base=await _collectAwardNews();if(!base.length)return [];
+    const ko=currentLang==='ko';
+    return await Promise.all(base.map(async a=>{
+      const j=await _awardFile(a.award),hits=[],seen=new Set();
+      if(j&&Array.isArray(j.categories))j.categories.forEach(c=>(c.winners||[]).forEach(w=>{
+        const tg=_awardWinnerTarget(w);
+        const mine=!!tg&&((tg.gko&&gs.has(tg.gko))||(tg.art&&favMembers.has(_mFavKey(tg.art))));
+        if(mine&&!seen.has(w.name)){seen.add(w.name);hits.push(_awardName(w.name)+' '+(ko?c.ko:(c.en||c.ko)));}
+      }));
+      if(!hits.length)return a;
+      return {...a,sub:'⭐ '+hits.slice(0,3).join(' · ')+(hits.length>3?' +'+(hits.length-3):'')+' · '+_awardRange(a.award)};
+    }));
+  }catch(e){return [];}
+}
 function _awardFile(e){
   const k=e.id+'-'+e.edition;
   if(!_awardFileCache.has(k))_awardFileCache.set(k,fetch('awards/'+k+'.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).catch(()=>null).then(j=>{if(!j)_awardFileCache.delete(k);return j;}));
@@ -24983,8 +25001,9 @@ async function _buildFeedFavNews(){
     const gs=new Set(favGroups),names=new Set();
     favMembers.forEach(k=>{const i=String(k).indexOf(':');if(i<0)return;const g=k.slice(0,i),n=k.slice(i+1);if(g&&g!=='솔로')gs.add(g);if(n)names.add(n);});
     const mine=(await _collectWeekNews()).filter(r=>(r.gko&&(gs.has(r.gko)||names.has(r.gko)))||(r.mko&&names.has(r.mko))).map(r=>({...r}));
-    if(!mine.length)return;
-    _renderNewsList(list,mine);
+    const awards=await _favAwardNews(gs); // 이번 주 시상식(2026-11-17 사용자 "For You 내 최애 소식에도 당연히") — 내 최애 수상이 있으면 줄 부제에 먼저
+    if(!mine.length&&!awards.length)return;
+    _renderNewsList(list,mine,awards);
     section.style.display='';
   }catch(e){console.warn('[feed] 내 최애 소식 선반 실패 — 이 선반만 빠집니다',e);}
 }

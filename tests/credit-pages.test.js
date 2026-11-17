@@ -44,7 +44,7 @@ console.log(`\n${pass} 통과 / ${fail} 실패`);if(fail)process.exitCode=1;
 {
   const A0=src.indexOf('// ── 앨범 페이지'),A1=src.indexOf('function buildAgencyPages');
   const ap=[];const c2={require,fs,path,ROOT,console:{log(){}},artists:ctx.artists,groups:ctx.groups,SONGS:{},SITE:ctx.SITE,escHtml:ctx.escHtml,
-    simplePageHtml:o=>o,writeSimple:(rel,o)=>ap.push({rel,...o}),songPagePath:(g,b,l)=>`g/${g}/s/${b}/`};vm.createContext(c2);
+    simplePageHtml:o=>o,albumNextJson:()=>'',writeSimple:(rel,o)=>ap.push({rel,...o}),songPagePath:(g,b,l)=>`g/${g}/s/${b}/`};vm.createContext(c2);
   vm.runInContext(['urlSafeKo','slugify','groupPagePath','bilingualLabel'].map(pick).join('\n')+'\nconst _CRED_SB='+src.match(/const _CRED_SB = (\(\(\) => \{[\s\S]*?\}\)\(\));/)[1]+';\n'+src.slice(A0,A1),c2);
   vm.runInContext('buildAlbumPages()',c2);
   const ko2=ap.filter(p=>p.lang==='ko');

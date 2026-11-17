@@ -57,6 +57,12 @@ let pass = 0, fail = 0; const ok = (c, m, extra) => { if (c) { pass++; console.l
     await sleep(1500);
     const card = await ev(c, "typeof _openGCko!=='undefined'?_openGCko:null");
     ok(!!card, '수상자(칩) 클릭 → 그룹 카드가 열림', String(card));
+    // 6) For You 내 최애 소식 — 즐겨찾기(에스파·코르티스 성현)가 받은 상이 줄 부제에 먼저 나온다
+    await ev(c, "favGroups.add('에스파');favMembers.add('코르티스:성현');_buildFeedFavNews()");
+    await sleep(1500);
+    const fav = JSON.parse(await ev(c, "JSON.stringify({show:document.getElementById('feed-favnews-section').style.display!=='none',rows:document.querySelectorAll('#feed-favnews .feed-news-row').length,sub:(document.querySelector('#feed-favnews .feed-news-sub')||{}).textContent,badge:(document.querySelector('#feed-favnews .feed-news-badge')||{}).textContent})"));
+    ok(fav.show && fav.rows >= 1 && fav.badge === '🏆 시상식' && /⭐/.test(fav.sub || '') && /에스파/.test(fav.sub || ''), 'For You 내 최애 소식: 시상식 줄 + ⭐ 내 최애 수상 부제', JSON.stringify(fav));
+    console.log('    부제:', fav.sub);
     const errs = JSON.parse(await ev(c, 'JSON.stringify(__errs)'));
     ok(errs.length === 0, '페이지 오류 0건', errs.slice(0, 3).join(' | '));
     // 스크린샷(눈으로 확인용)
