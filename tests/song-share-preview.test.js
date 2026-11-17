@@ -45,7 +45,7 @@ const vids=[{id:'mv',title:'Snowy Summer MV',category:'mv'},
   {id:'stage',title:'Snowy Summer music show stage',category:'live'}];
 const s={b:'snowysummer',title:'Snowy Summer',vids};
 const html=ctx.songLikePageHtml({gko:'Alpha',info:{en:'Alpha'},s,lang:'ko',others:[]});
-assert.match(html,/og:title" content="Snowy Summer 직캠·무대 모음/);
+assert.match(html,/og:title" content="Alpha - Snowy Summer 직캠·무대 모음/,'naming style: 아티스트 - 곡 (docs/NAMING.md, 11-17 곡 페이지도 같은 순서)');
 assert.match(html,/og:image" content="https:\/\/i.ytimg.com\/vi\/stage\/mqdefault.jpg/,'share preview is 16:9 (no 4:3 black bars)');
 assert.match(html,/class="hero" href="https:\/\/www.youtube.com\/watch\?v=mv"[^>]*><img src="https:\/\/i.ytimg.com\/vi\/mv\/hqdefault.jpg/);
 assert.match(html,/FORWARD_LIST_HASH/);
