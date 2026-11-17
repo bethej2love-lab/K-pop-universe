@@ -24790,6 +24790,34 @@
     },
     "discography": [
       {
+        "title": "i love you to the moon and back",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/150/69/750/15069750_20261022153623_500.jpg",
+        "releaseDate": "2026.10.23",
+        "trackCount": 3,
+        "titleTrack": "to the moon :)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "to the moon :)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "insomnia",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "เมฆขาว (white clouds)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15069750"
+      },
+      {
         "title": "오싹한 연애 OST Part 6",
         "type": "OST",
         "releaseDate": "2026.08.09",
@@ -51344,6 +51372,24 @@
       "namu": "https://namu.wiki/w/로제(BLACKPINK)"
     },
     "discography": [
+      {
+        "title": "new trick",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/145/60/049/14560049_20260917101340_500.jpg",
+        "releaseDate": "2026.09.18",
+        "trackCount": 1,
+        "titleTrack": "new trick",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "new trick",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14560049"
+      },
       {
         "title": "Messy (From F1® The Movie)",
         "type": "싱글",
@@ -289728,6 +289774,29 @@
       }
     ],
     "discography": [
+      {
+        "title": "마피아킹 OST",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/146/23/824/14623824_20261006121652_500.jpg",
+        "releaseDate": "2026.10.07",
+        "trackCount": 2,
+        "titleTrack": "Drawn In Your Light",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Drawn In Your Light",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Drawn In Your Light (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "14623824"
+      },
       {
         "title": "The Calling",
         "type": "싱글",
