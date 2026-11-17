@@ -8,7 +8,8 @@ const code = src.slice(from, until);
 const fixture = Array.from({length: 12007}, (_, i) => ({id: String(i).padStart(6,'0'), group_ko:'group', content_flag: i === 4 ? 'hidden' : null}));
 fixture[5].group_ko = 'not-in-roster';
 let calls = 0, fail = false;
-const ctx = vm.createContext({URL, AbortSignal, console: {log(){}}, SB_URL: 'https://fixture.invalid', SB_KEY:'not-a-key', groups: {group:{}},
+// setTimeout: 재생성 DB 페이스 조절(5f247053, 연속 조회 사이 쉼)이 fetchRelationRows에서 쓴다
+const ctx = vm.createContext({URL, AbortSignal, setTimeout, console: {log(){}}, SB_URL: 'https://fixture.invalid', SB_KEY:'not-a-key', groups: {group:{}},
   fetch: async url => {
     calls++; if (fail) return {ok:false,status:500,json:async()=>({code:'57014',message:'statement timeout'})};
     const p = new URL(url).searchParams;
