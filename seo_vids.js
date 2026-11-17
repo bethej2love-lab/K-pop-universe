@@ -33,8 +33,13 @@
   var more=document.createElement('button');more.type='button';more.className='kpu-more';
   grid.parentNode.insertBefore(more,grid.nextSibling);
   var chips={};
+  // 위 제목(h2) — 정렬에 맞춰 '조회수 많은'만 바꾼다(최신순→'최신', 날짜순→'오래된', 영문 Most viewed→Newest/Oldest)
+  var h2=bar.previousElementSibling;while(h2&&h2.tagName!=='H2')h2=h2.previousElementSibling;
+  var h0=h2?h2.textContent:'';
+  var HW=EN?{pop:'Most viewed',nw:'Newest',old:'Oldest'}:{pop:'조회수 많은',nw:'최신',old:'오래된'};
+  function setHead(){if(!h2||h0.indexOf(HW.pop)<0)return;h2.textContent=sort==='pop'?h0:h0.split(HW.pop).join(HW[sort]);}
   [['pop',L.pop],['nw',L.nw],['old',L.old]].forEach(function(p){
-    var b=document.createElement('button');b.type='button';b.textContent=p[1];b.setAttribute('data-s',p[0]);
+    var b=document.createElement('button');b.type='button';b.textContent=p[1];b.setAttribute('data-s',p[0]);if(p[0]==='old'){b.title=EN?'Oldest first':'오래된 순';b.setAttribute('aria-label',EN?'Oldest first':'날짜순 (오래된 순)');}
     b.addEventListener('click',function(){if(sort===p[0])return;sort=p[0];shown=STEP;touched=true;ga('seo_vid_sort',{kind:sort,n:data.length});render();});
     bar.appendChild(b);chips[p[0]]=b;
   });
@@ -48,6 +53,7 @@
     grid.textContent='';grid.appendChild(frag);
     if(window.kpuRelDates)window.kpuRelDates(grid);
     Object.keys(chips).forEach(function(k){chips[k].className=k===sort?'on':'';chips[k].setAttribute('aria-pressed',k===sort?'true':'false');});
+    setHead();
     var left=list.length-to;
     more.style.display=left>0?'':'none';more.textContent=L.more+' ('+left+(EN?L.left:L.left)+')';
     var note=document.getElementById('kpu-vnote');if(note)note.style.display='none';

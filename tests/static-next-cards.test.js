@@ -51,3 +51,10 @@ check('케미 페이지: 두 멤버 직캠·그룹·다른 조합(자기 자신 
 check('JSON 출력에 </script>를 닫을 수 있는 < 가 없다', () => { const h = ctx.groupNextJson('그룹A', 'ko'); const inner = /id="kpu-next">([\s\S]*?)<\/script>/.exec(h)[1]; assert(!inner.includes('<')); assert(inner.includes(String.fromCharCode(92) + 'u003c'), '앨범 제목 <b>가 이스케이프돼야 한다'); });
 check('데이터가 없는 그룹은 빈 문자열(스크립트 없음)', () => { assert.equal(ctx.groupNextJson('없는그룹', 'ko'), ''); });
 console.log(total + ' checks / ' + failed + ' failed'); if (failed) process.exitCode = 1;
+// 그룹 페이지 바로가기 칩(Codex 11-17 검수) — 소스 검사: 섹션 id와 칩이 짝이어야 한다
+{
+  const src2 = fs.readFileSync(path.join(__dirname, '..', 'build_group_pages.js'), 'utf8');
+  const ok2 = (c, m) => { if (c) { console.log('✅ ' + m); } else { console.error('FAIL ' + m); process.exitCode = 1; } };
+  ok2(/<h2 id="members">/.test(src2) && /<h2 id="songs">/.test(src2) && /<h2 id="albums">/.test(src2), '그룹 페이지 섹션 제목에 id(members·songs·albums)');
+  ok2(/class="member-list jump"/.test(src2) && /href="#\$\{x\[1\]\}"/.test(src2), '그룹 맨 위 바로가기 칩이 그 id로 이동');
+}
