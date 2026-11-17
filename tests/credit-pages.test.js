@@ -10,7 +10,7 @@ const pages=[];
 const ctx={require,fs,path,ROOT,SEO:require('../tools/seo_extra.js'),console:{log(){}},
   artists:JSON.parse(fs.readFileSync(path.join(ROOT,'artists.json'),'utf8')),groups:JSON.parse(fs.readFileSync(path.join(ROOT,'groups.json'),'utf8')),
   SONGS:{},SITE:'https://kpop-universe.kr',escHtml:s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'),
-  simplePageHtml:o=>o,nextCardsJson:()=>'',FANCAM_HUB:new Map(),_nmOf:()=>'',grpCard:()=>null,memberFancamPagePath:()=>'',writeSimple:(rel,o)=>pages.push({rel,...o}),ogImageForMember:()=>'',songPagePath:(g,b,l)=>`g/${g}/s/${b}/`};
+  simplePageHtml:o=>o,nextCardsJson:()=>'',safeNext:()=>'',FANCAM_HUB:new Map(),_nmOf:()=>'',grpCard:()=>null,memberFancamPagePath:()=>'',writeSimple:(rel,o)=>pages.push({rel,...o}),ogImageForMember:()=>'',songPagePath:(g,b,l)=>`g/${g}/s/${b}/`};
 vm.createContext(ctx);
 const jA=src.indexOf('const JOSA_READ_AS_WORD'),jB=src.indexOf('\n}',src.indexOf('function josa('))+2; // 조사 판정 상수~josa 함수(빌더 그대로)
 ctx.soloSuffix=()=>({ko:'',en:''}); // 솔로 동명이인 꼬리는 이 검사 범위 밖
