@@ -1953,7 +1953,7 @@ function memberFaceUrl(a, gko) {
   return id ? ytThumb(id, 'mqdefault') : null;
 }
 // 스타일은 저장소의 song-page.css 한 파일(페이지마다 넣으면 3만 쪽 × 5KB) — 바꾸면 SONG_CSS_V를 올릴 것
-const SONG_CSS_V = 7;
+const SONG_CSS_V = 8;
 function songShareVideo(vids) {
   return vids.find(v => (v.category === 'live' || FANCAM_RE.test(v.title || ''))
     && !/\bM\/?V\b|music\s*video|뮤직비디오|\bteaser\b|티저/i.test(v.title || '')) || vids[0];
@@ -2061,12 +2061,14 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
     (others || []).slice().sort((p, q) => q.vids.length - p.vids.length).slice(0, OTHER_MAX).forEach(o => { const k = o.album || o.title; if (!byAl.has(k)) { byAl.set(k, { name: o.album || '', cover: o.cover || '', date: String(o.date || '').slice(0, 4), songs: [], n: 0 }); albumGroups.push(byAl.get(k)); } const g = byAl.get(k); g.songs.push(o); g.n += o.vids.length; if (!g.cover && o.cover) g.cover = o.cover; });
     albumGroups.sort((x, y) => y.n - x.n);
   }
+  // 다른 곡 섹션의 앨범 커버·제목 → 그 앨범 트랙리스트 페이지(2026-11-17 사용자). 앨범 페이지가 실제로 만들어지는 목록(albumsFor)에서 앨범명으로 찾는다.
+  const albumHref = name => { if (!name) return ''; try { const x = albumsFor(gko).find(y => y.al.title === name); return x ? SITE + '/' + albumPagePath(gko, x.slug, lang) : ''; } catch (e) { return ''; } };
   const songName = o => isEn ? (o.enTitle || o.bilingualTitle || o.title) : (o.bilingualTitle || o.title);
   const otherTiles = albumGroups.length ? '\n  <h2>' + (isEn ? 'More songs by ' + escHtml(gName) : escHtml(gko) + '의 다른 곡') + '</h2>\n  <div class="sp-albums">\n    '
-    + albumGroups.map(g => '<div class="sp-al">' + (g.cover ? '<img class="sp-al-c" src="' + escHtml(g.cover) + '" alt="" loading="lazy">' : '<span class="sp-al-c sp-tile-ph"></span>')
-      + '<div class="sp-al-h">' + (g.name ? '<b>' + escHtml(g.name) + '</b>' : '') + (g.date ? '<span>' + g.date + '</span>' : '') + '</div><ol class="sp-al-l">'
+    + albumGroups.map(g => { const aHref = albumHref(g.name), aOpen = aHref ? '<a class="sp-al-a" href="' + aHref + '">' : '', aClose = aHref ? '</a>' : ''; return '<div class="sp-al">' + aOpen + (g.cover ? '<img class="sp-al-c" src="' + escHtml(g.cover) + '" alt="' + escHtml(g.name) + '" loading="lazy">' : '<span class="sp-al-c sp-tile-ph"></span>') + aClose
+      + '<div class="sp-al-h">' + (g.name ? aOpen + '<b>' + escHtml(g.name) + '</b>' + aClose : '') + (g.date ? '<span>' + g.date + '</span>' : '') + '</div><ol class="sp-al-l">'
       + g.songs.map(o => '<li><a href="' + SITE + '/' + songPagePath(gko, o.b, lang) + '"><span class="t">' + escHtml(songName(o)) + '</span><span class="n">' + (isEn ? o.vids.length + ' videos' : '영상 ' + o.vids.length) + '</span></a></li>').join('')
-      + '</ol></div>').join('\n    ') + '\n  </div>'
+      + '</ol></div>'; }).join('\n    ') + '\n  </div>'
       + '\n  <p class="lead"><a href="' + SITE + '/' + groupPagePath(gko, lang) + '">' + (isEn ? 'All ' + escHtml(gName) + ' songs, fancams &amp; stages →' : escHtml(gko) + ' 전체 곡·직캠·무대 보기 →') + '</a></p>' : '';
   // 멤버×곡 ↔ 멤버 직캠 전체 페이지 오가기(2026-11-11) — 위에 '← 직캠 전체', 아래에 같은 멤버의 다른 곡 직캠
   const hubUrl = ms && FANCAM_HUB.has(ms.a) ? `${SITE}/${memberFancamPagePath(ms.a, lang)}` : '';
