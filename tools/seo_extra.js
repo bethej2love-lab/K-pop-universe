@@ -312,6 +312,17 @@ const STRUCTURAL_TRACKS = new Set(['intro', 'outro', 'interlude', 'skit', 'prolo
 // f(text) = 그 글에서 곡 기본형 배열을 돌려주는 매처(S.f를 감싼 것). 순수 함수라 따로 테스트한다.
 const QUOTED_RE = /[“‘'"]([^“”‘’'"]{2,60})[”’'"]/g;
 const TOUR_SUFFIX_RE = /([A-Za-z][A-Za-z0-9 '’:!?.&\-]{2,40}?)\s+(?:world\s+)?(?:tour|concert|encore|fan\s*-?\s*meeting)\b/ig;
+// 곡 페이지 '직캠·무대'에 안 맞는 영상(2026-11-17, Codex 팬 관점 검수 — 스트레이키즈 This & That 곡 페이지 상위에 앨범 트레일러·메이킹·다른 수록곡 UNVEIL).
+// 앨범 이름과 같은 곡이면 앨범 홍보 영상 제목에 곡명이 그대로 들어 있어 곡 영상으로 잡힌다. 분류가 live·mv인 영상(음방·직캠·안무·MV)은 항상 둔다 — 실제 무대가
+// other로 분류된 경우(SBS 인기가요·가요대전)가 있어 other를 통째로 빼지 않고, **other 중 제목·형식이 비공연인 것만** 뺀다.
+const NON_PERF_RE = /\b(trailer|teaser|reaction|mashup|guide video|lyrics? (video|visualizer)|visualizer|making( film)?|behind|unveil|spoiler|preview|highlight medley|track ?list|jacket|interview|unboxing|album (film|talk)|intro)\b|트레일러|티저|리액션|메이킹|비하인드|가이드 영상|가사 영상|스포일러|프리뷰|하이라이트 메들리|인터뷰|언박싱/i;
+function isNonPerformance(v) {
+  if (!v) return false;
+  if (v.category === 'live' || v.category === 'mv') return false;
+  if ((v.content_formats || []).some(f => /^EV:/.test(f))) return false; // 시상식·연말 무대는 그대로
+  if ((v.content_formats || []).some(f => /비하인드|variety|예능/.test(f))) return true;
+  return NON_PERF_RE.test(String(v.title || ''));
+}
 function refineSongsByTitle(title, bs, f) {
   if (!bs || !bs.length) return bs;
   const t = String(title || '');
@@ -386,7 +397,9 @@ function buildSongs({ ROOT, groups, artists, EX, vids, minVids = 4 }) {
     const toBase = new Map(); songs.forEach(s => { toBase.set(s.b, s.b); (s.alias || []).forEach(al => { if (!toBase.has(al.n)) toBase.set(al.n, s.b); }); });
     const winBy = {};
     (EX.wins[g] || []).forEach(w => { const b = toBase.get(S.B(w.song_title || '')) || toBase.get(S.N(w.song_title || '')); if (b) winBy[b] = (winBy[b] || 0) + 1; });
-    const list = [...bucket.values()].filter(s => s.vids.length >= minVids).map(s => { const m = meta[s.b] || {}; return Object.assign(s, m, { title: m.name || s.title, wins: winBy[s.b] || 0 }); });
+    // 비공연 영상 거르기 — 거른 뒤 하나도 안 남으면 원래대로(빈 페이지 방지). 페이지를 만들지 말지(minVids)는 거르기 전 개수로 — 기존 곡 페이지가 사라지지 않게.
+    bucket.forEach(s => { s.vidsAll = s.vids.length; const perf = s.vids.filter(v => !isNonPerformance(v)); if (perf.length) s.vids = perf; });
+    const list = [...bucket.values()].filter(s => s.vidsAll >= minVids).map(s => { const m = meta[s.b] || {}; return Object.assign(s, m, { title: m.name || s.title, wins: winBy[s.b] || 0 }); });
     list.forEach(s => s.vids.sort((a, b) => (b.view_count || 0) - (a.view_count || 0)));
     if (list.length) {
       out[g] = list.sort((a, b) => b.vids.length - a.vids.length);
@@ -401,4 +414,4 @@ const roundViews = n => { if (!n) return 0; const p = Math.pow(10, Math.max(0, M
 
 const EXTRA_CSS =`.vid-list{padding-left:20px;margin:0;}.vid-list li{font-size:13.5px;margin-bottom:7px;}.vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}.note{font-size:11px;color:rgba(150,170,210,0.55);margin:6px 0 0;}.rel a{color:rgba(210,225,255,0.95);text-decoration:none;}.sp-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 10px;}@media(min-width:620px){.sp-tiles{grid-template-columns:repeat(5,minmax(0,1fr));}}.sp-tile{display:block;text-decoration:none;min-width:0;}.sp-tile img,.sp-tile-ph{display:block;width:100%;aspect-ratio:1;border-radius:10px;object-fit:cover;background:#1e1e21;}.sp-tile-t{display:block;font-size:12.5px;margin-top:6px;color:rgba(228,236,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.sp-tile-n{display:block;font-size:11px;color:rgba(160,180,230,0.6);}.mf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;margin-bottom:6px;}@media(min-width:620px){.mf-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}.mf-card{display:block;min-width:0;text-decoration:none;}.mf-th{display:block;position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#17171a;}.mf-th img{width:100%;height:100%;object-fit:cover;display:block;}.mf-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.38;margin-top:7px;color:rgba(228,236,255,0.94);}.mf-y{display:block;font-size:11.5px;color:rgba(160,180,230,0.6);margin-top:2px;}`;
 
-module.exports = { STRUCTURAL_TRACKS, refineSongsByTitle, vidCards, loadStatic, packCredits, bilingualSongTitle, prefetch, groupExtra, memberExtra, ages, EXTRA_CSS, fmtViews, fmtVC, prefetchGroupVideos, buildSongs, roundViews, esc };
+module.exports = { STRUCTURAL_TRACKS, isNonPerformance, refineSongsByTitle, vidCards, loadStatic, packCredits, bilingualSongTitle, prefetch, groupExtra, memberExtra, ages, EXTRA_CSS, fmtViews, fmtVC, prefetchGroupVideos, buildSongs, roundViews, esc };
