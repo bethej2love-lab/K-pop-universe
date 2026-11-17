@@ -59,7 +59,7 @@ ck(/yt_channel_videos!inner\([^)]*is_short/.test(fn), '조회수 마일스톤 �
 // 전폭 헤드라인은 2026-10-28에 뺐다(사용자 "1열 너무 크다") — 가로 소식은 2열, 쇼츠는 그 칸에 안 섞음
 ck(!fn.includes('_appendNewsHero') && fn.includes('_compactMv=!r.isShort&&'), '가로 소식(MV·티저·조회수)은 2열, 쇼츠는 그 칸에 안 섞음');
 ck(/_appendNewsItems\(list,/.test(fn) && !/_appendNewsRow\(list,r\)/.test(fn), '소식 렌더가 쇼츠 2열 경로(_appendNewsItems)를 탐');
-ck(/if\(!items\.length\)return;/.test(fn), '세 소스 다 비면 섹션을 그대로 숨김(억지로 안 채움)');
+ck(/if\(!items\.length(&&!awards\.length)?\)return;/.test(fn), '세 소스(+이번 주 시상식)가 다 비면 섹션을 그대로 숨김(억지로 안 채움)');
 
 // 앨범 커버 클릭 = 아티스트 카드 + 그 앨범 상세(2026-10-12). 그룹·멤버 두 경로 다.
 const navFn = extractBraces(html, /^function _albumCardNav\(/m, '_albumCardNav');

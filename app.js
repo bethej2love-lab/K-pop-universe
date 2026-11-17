@@ -11849,7 +11849,9 @@ async function _sbSelectAll(build){
 function _picSized(u,w){
   if(!u||typeof u!=='string')return u;
   const m=/^(https:\/\/[^/]+\.supabase\.co)\/storage\/v1\/object\/public\/(artist-pics\/[^?#]+\.(?:jpe?g|png|webp))$/i.exec(u);
-  return m?m[1]+'/storage/v1/render/image/public/'+m[2]+'?width='+w+'&quality=75':u;
+  // ⚠️ resize=contain 필수(2026-11-17 사고): width만 주면 기본 'cover'라 **높이는 원본 그대로 두고 가로만 잘라** 세로 띠(600×750 → 240×750)가 온다 —
+  // 동그라미에 채우면 얼굴이 확대돼 보였다(투어스 영재). contain이면 비율대로(600×750 → 240×300).
+  return m?m[1]+'/storage/v1/render/image/public/'+m[2]+'?width='+w+'&resize=contain&quality=75':u;
 }
 class _PicMap extends Map{
   get(k){return _picSized(super.get(k),240);}
@@ -24791,6 +24793,115 @@ async function _openShowEp(showKey,date,opt){
   const sub=list.length?(ko?`${teams.size}팀 · 영상 ${sections.reduce((n,x)=>n+x.songs.length,0)}개`:`${teams.size} acts · ${sections.reduce((n,x)=>n+x.songs.length,0)} videos`):(ko?'아직 수집된 영상이 없어요':'No videos collected yet');
   _openFeedListOverlay(title,sub,sections.flatMap(x=>x.songs),{sections,facets:list.length?[epFacet,kindFacet]:[epFacet]});
 }
+// ── 시상식 소식(2026-11-17 사용자 "mma 큰 행사라 this week에 나와야 — 수상 목록·무대 영상 둘 다") ─────────────────────────────
+// 데이터: awards/events.json(tools/build_awards_events.mjs가 만든 작은 목록, 수 KB) → 최근 며칠 안에 열린 시상식만. 눌렀을 때만 그 시상식 파일 하나(awards/{id}-{edition}.json) 받음.
+// 이번 주 소식 맨 위에 고정(_renderNewsList awards) — 줄 안 '수상 목록 ›'은 제자리에서 펼치고, '무대 영상 ›'은 음방 회차 화면(_openShowEp)처럼 팀별 목록으로.
+// 영상 조회: published_ts 구간(idx_ytcv_published_ts) + title_norm 키워드(트라이그램 색인) — 둘 다 색인이라 가볍다. 정렬은 DB가 아니라 여기서(ORDER BY+LIMIT 금지).
+const _AWARD_WINDOW_DAYS=9; // 마지막 날부터 이 일수 안이면 '이번 주'
+let _awardEvP=null;
+const _awardFileCache=new Map();
+function _awardEvents(){
+  return _awardEvP||(_awardEvP=fetch('awards/events.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).then(j=>(j&&Array.isArray(j.events))?j.events:[]).catch(()=>[]));
+}
+function _awardDay(s){return Date.parse(String(s)+'T00:00:00Z');}
+function _awardRange(e){
+  const a=String(e.start).split('-'),b=String(e.end).split('-');
+  const md=x=>x[1]+'.'+x[2];
+  return e.start===e.end?md(a):(a[1]===b[1]?md(a)+'~'+b[2]:md(a)+'~'+md(b));
+}
+function _awardName(n){const g=GROUPS[n];return currentLang==='ko'?n:((g&&g.en)||n);}
+// 지금(KST) 기준 '이번 주' 시상식 → 소식 항목들. 실패·없으면 빈 배열.
+async function _collectAwardNews(){
+  try{
+    const evs=await _awardEvents();if(!evs.length)return [];
+    const ko=currentLang==='ko',today=_awardDay(new Date(Date.now()+9*3600e3).toISOString().slice(0,10));
+    return evs.filter(e=>e&&e.start&&e.end&&_awardDay(e.start)<=today&&today-_awardDay(e.end)<=_AWARD_WINDOW_DAYS*864e5).map(e=>{
+      const ago=Math.round((today-_awardDay(e.end))/864e5);
+      const top=[...new Set((e.top||[]).flatMap(c=>c.names||[]))].slice(0,4).map(_awardName);
+      const sub=[_awardRange(e),e.venue,top.length?((ko?'대상 ':'Grand prizes ')+top.join(' · ')):''].filter(Boolean).join(' · ');
+      return {type:'award',title:(ko?e.name:(e.nameEn||e.name))+' '+e.edition,sub,score:300-ago,award:e,nav:()=>{}};
+    }).sort((a,b)=>b.score-a.score);
+  }catch(err){console.warn('[feed] 시상식 소식 실패 — 이 줄만 빠집니다',err);return [];}
+}
+function _awardFile(e){
+  const k=e.id+'-'+e.edition;
+  if(!_awardFileCache.has(k))_awardFileCache.set(k,fetch('awards/'+k+'.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).catch(()=>null).then(j=>{if(!j)_awardFileCache.delete(k);return j;}));
+  return _awardFileCache.get(k);
+}
+// 수상자 이름 → 카드(그룹 > 그 사람). 카드가 없는 이름(작품·개인 등)은 글자로만.
+function _awardWinnerTarget(w){
+  const gk=w.gko&&GROUPS[w.gko]?w.gko:(GROUPS[w.name]?w.name:null);
+  const art=!gk&&w.id?ARTISTS.find(a=>a.id===w.id):null;
+  return gk?{gko:gk}:art?{art}:null;
+}
+function _awardOpenWinner(w){
+  const t=_awardWinnerTarget(w);if(!t)return;
+  _feedNav(()=>{
+    const cx=window.innerWidth/2,cy=isMob()?window.innerHeight*0.4:window.innerHeight/2;
+    if(t.gko){if(isMob())showGC(t.gko,cx,cy,false,false,null,false);else showGC(t.gko,cx,cy);}
+    else if(t.art){if(isMob())showT(t.art,cx,cy,false,false,false);else showT(t.art,cx,cy);}
+  });
+}
+// 소식 줄 안 '수상 목록' 펼침 — 부문(대상 먼저) → 수상자 칩. 처음 펼칠 때만 파일을 받는다.
+async function _awardFillDetail(box,e){
+  if(box.dataset.filled)return;box.dataset.filled='1';
+  const ko=currentLang==='ko';box.textContent=ko?'불러오는 중…':'Loading…';
+  const j=await _awardFile(e);
+  if(!j||!Array.isArray(j.categories)){box.dataset.filled='';box.textContent=ko?'수상 목록을 불러오지 못했어요':'Couldn’t load the winners';return;}
+  box.textContent='';
+  const ORDER=['대상','본상','신인','인기','특별'],TL={대상:['대상','Grand Prize'],본상:['본상','Main Awards'],신인:['신인상','New Artist'],인기:['인기상','Popularity'],특별:['특별상','Special']};
+  const tiers=[...new Set(j.categories.map(c=>c.tier))].sort((a,b)=>{const ia=ORDER.indexOf(a),ib=ORDER.indexOf(b);return (ia<0?99:ia)-(ib<0?99:ib);});
+  tiers.forEach(t=>{
+    const h=document.createElement('div');h.className='fa-tier';h.textContent=(TL[t]||[t,t])[ko?0:1];box.appendChild(h);
+    j.categories.filter(c=>c.tier===t).forEach(c=>{
+      const row=document.createElement('div');row.className='fa-row';
+      const cat=document.createElement('span');cat.className='fa-c';cat.textContent=ko?c.ko:(c.en||c.ko);row.appendChild(cat);
+      const ws=document.createElement('span');ws.className='fa-w';
+      (c.winners||[]).forEach(w=>{
+        const tg=_awardWinnerTarget(w);
+        const el=document.createElement(tg?'button':'span');if(tg)el.type='button';
+        el.className='fa-chip'+(tg?' fa-link':'');el.textContent=_awardName(w.name);
+        if(tg)el.addEventListener('click',ev=>{ev.stopPropagation();_awardOpenWinner(w);});
+        ws.appendChild(el);
+      });
+      if(c.work){const wk=document.createElement('span');wk.className='fa-work';wk.textContent=c.work;ws.appendChild(wk);}
+      row.appendChild(ws);box.appendChild(row);
+    });
+  });
+  if(Array.isArray(j.src)&&j.src[0]){const s=document.createElement('div');s.className='fa-src';s.textContent=ko?'출처: 언론 보도 종합':'Source: news reports';box.appendChild(s);}
+}
+// 시상식 무대 영상 화면 — 음방 회차 화면(_openShowEp)과 같은 모양: 팀별 섹션, 대상 받은 팀은 🏆.
+const _awardEvCache=new Map();let _awardEvReq=0;
+async function _openAwardEv(e){
+  if(!e||!sb)return;
+  const ko=currentLang==='ko',myReq=++_awardEvReq,ck=e.id+'-'+e.edition,title=(ko?e.name:(e.nameEn||e.name))+' '+e.edition;
+  let got=_awardEvCache.get(ck);
+  if(!got||Date.now()-got.at>3*60e3){
+    _openFeedListOverlay(title,ko?'불러오는 중…':'Loading…',[],{});
+    const myIntent=_feedListIntent;
+    const COLS='id,title,thumb,is_short,group_ko,members,with_members,with_groups,published_at,published_ts,view_count,source_handle,content_flag'+_durCol();
+    const t0=new Date(_awardDay(e.start)-864e5).toISOString(),t1=new Date(_awardDay(e.end)+14*864e5).toISOString();
+    const kwOr=(e.kw||[]).map(x=>'title_norm.ilike.*'+x+'*').join(',');
+    const r=kwOr?await sb.from(_YT_TABLE).select(COLS).eq('is_short',false).gte('published_ts',t0).lt('published_ts',t1).or(kwOr)
+      .or('content_flag.is.null,content_flag.not.in.("보류","hidden","무관")').limit(400).then(x=>x,()=>({error:1})):{data:[]};
+    if(myReq!==_awardEvReq)return;
+    const stale=myIntent!==_feedListIntent;
+    if(r.error){if(!stale)document.getElementById('feed-list-sub').textContent=ko?'불러오지 못했어요. 잠시 후 다시 열어 주세요.':'Couldn’t load. Try again shortly.';return;}
+    got={at:Date.now(),rows:_filterBannedVideos(r.data||[])};
+    _awardEvCache.set(ck,got);
+    if(stale)return;
+  }
+  const grand=new Set((e.top||[]).flatMap(c=>c.names||[]));
+  const teams=new Map();
+  got.rows.forEach(v=>{const g=v.group_ko||'';if(!teams.has(g))teams.set(g,[]);teams.get(g).push(v);});
+  const vidUrl=v=>'https://www.youtube.com/watch?v='+v.id;
+  const toSong=v=>({..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko});
+  const tl=[...teams.entries()].map(([g,l])=>[g,l.sort((a,b)=>(b.view_count||0)-(a.view_count||0))]).sort((x,y)=>(grand.has(y[0])-grand.has(x[0]))||((y[1][0].view_count||0)-(x[1][0].view_count||0)));
+  const sections=tl.map(([g,l])=>({title:(g?_awardName(g):(ko?'기타':'Other'))+(grand.has(g)?(ko?' 🏆 대상':' 🏆 Grand Prize'):''),songs:l.map(toSong)}));
+  const n=sections.reduce((a,x)=>a+x.songs.length,0);
+  const sub=n?(ko?`${_awardRange(e)} · ${teams.size}팀 · 영상 ${n}개`:`${_awardRange(e)} · ${teams.size} acts · ${n} videos`):(ko?'아직 수집된 영상이 없어요':'No videos collected yet');
+  _openFeedListOverlay(title,sub,sections.flatMap(x=>x.songs),{sections});
+}
 // 발견 탭 This Week 맨 아래 'Music Shows' 레일 — 지난 7일 방송된 음방 회차(최근 방송 먼저), 칸마다 그날 1위.
 // 누르면 그 회차 화면. (2026-11-05 사용자: 처음엔 This Week 맨 위 칩 줄이었는데 "배치도 안 맞고 디자인도 구리고, 상단일 필요 없다,
 // 1위 정보랑 연결" → 맨 아래 레일로 내리고 1위를 같이 보여준다. 1위 소식 줄에도 '회차 무대' 링크(_appendNewsRow).)
@@ -24850,7 +24961,8 @@ async function _buildFeedDailyNews(){
   try{
     const items=(await _collectWeekNews()).map(r=>({...r})); // 렌더가 _s/_pair를 덧붙이므로 복사본
     // 결방 안내는 Music Shows 레일에서만 표시한다(대표 소식으로 올리지 않음).
-    _renderNewsList(list,items);
+    const awards=await _collectAwardNews(); // 이번 주 시상식(정적 파일 — DB 안 씀)
+    _renderNewsList(list,items,awards);
     try{_buildShowEpRail(items).catch(()=>{});}catch(e){}
     window._discoverNewsItems=items;
     _updateNewsWidgets(items);
@@ -24876,8 +24988,9 @@ async function _buildFeedFavNews(){
     section.style.display='';
   }catch(e){console.warn('[feed] 내 최애 소식 선반 실패 — 이 선반만 빠집니다',e);}
 }
-function _renderNewsList(list,items){
-  if(!items.length)return;
+function _renderNewsList(list,items,awards){
+  awards=awards||[]; // 이번 주 시상식(2026-11-17) — 맨 위 고정, 점수·종류 돌려뽑기와 별개
+  if(!items.length&&!awards.length)return;
   // ── 1면 레이아웃(2026-09-28, 사용자: "일렬 리스트라 보기 별로") ── 신문 1면처럼 **가장 큰 소식 하나**를 크게,
   // 그다음 4개만 한 줄씩, 나머지는 접는다. 우선순위: 음방 1위 > MV > 티저 > 조회수 돌파(큰 단계일수록 위).
   const _PRI={win:100,mv:80,teaser:50};
@@ -24904,7 +25017,7 @@ function _renderNewsList(list,items){
     return arr;
   };
   const shown=_even(top,pool);
-  _appendNewsItems(list,shown);
+  _appendNewsItems(list,awards.map(r=>({...r})).concat(shown));
   if(pool.length){
     const more=document.createElement('button');more.type='button';more.className='feed-news-more';
     const extra=_even(pool,null);
@@ -24958,9 +25071,9 @@ function _appendNewsItems(container,arr){
     if(tw){const b=document.createElement('span');b.className='feed-news-badge fnb-milestone';b.textContent='📈 조회수';tw.appendChild(b);}
   });
 }
-function _appendNewsRow(container,{type,title,sub,thumb,nav,square,plain,show,date}){
-  const LABELS={album:'💿 신보',win:'🏆 1위',mv:'🎬 MV',teaser:'🎬 티저',milestone:'📈 조회수',break:'결방'};
-  const CLS={album:'fnb-album',win:'fnb-win',mv:'fnb-mv',teaser:'fnb-teaser',milestone:'fnb-milestone',break:'fnb-break'};
+function _appendNewsRow(container,{type,title,sub,thumb,nav,square,plain,show,date,award}){
+  const LABELS={award:'🏆 시상식',album:'💿 신보',win:'🏆 1위',mv:'🎬 MV',teaser:'🎬 티저',milestone:'📈 조회수',break:'결방'};
+  const CLS={award:'fnb-award',album:'fnb-album',win:'fnb-win',mv:'fnb-mv',teaser:'fnb-teaser',milestone:'fnb-milestone',break:'fnb-break'};
   const row=document.createElement('div');
   // 썸네일이 주인공인 소식 — 조회수 돌파와 MV·티저(2026-10-22 사용자: "MV도 조회수처럼 썸네일 위 배지로, 지금은 눈에 안 들어온다")
   const isMedia=!plain&&!!thumb&&(type==='milestone'||type==='mv'||type==='teaser');
@@ -24981,6 +25094,16 @@ function _appendNewsRow(container,{type,title,sub,thumb,nav,square,plain,show,da
     ep.textContent=currentLang==='ko'?'회차 무대 보기 ›':'All stages ›';
     ep.addEventListener('click',e=>{e.stopPropagation();_openShowEp(show,date);});
     body.appendChild(ep);
+  }
+  // 시상식 — '수상 목록'은 줄 안에서 펼치고 '무대 영상'은 팀별 목록 화면으로(2026-11-17)
+  if(type==='award'&&award){
+    const ko=currentLang==='ko';
+    const btns=document.createElement('div');btns.className='feed-news-btns';
+    const det=document.createElement('div');det.className='feed-award-detail';det.hidden=true;
+    const mk=(txt,fn)=>{const b=document.createElement('button');b.type='button';b.className='feed-news-ep';b.textContent=txt;b.addEventListener('click',ev=>{ev.stopPropagation();fn(b);});return b;};
+    btns.appendChild(mk(ko?'수상 목록 ›':'Winners ›',b=>{det.hidden=!det.hidden;b.textContent=det.hidden?(ko?'수상 목록 ›':'Winners ›'):(ko?'접기 ˄':'Hide ˄');if(!det.hidden)_awardFillDetail(det,award);}));
+    btns.appendChild(mk(ko?'무대 영상 ›':'Stages ›',()=>_openAwardEv(award)));
+    body.appendChild(btns);body.appendChild(det);
   }
   if(isMedia){
     // 이미지를 맨 위 전폭으로, 배지는 썸네일 위 오버레이
