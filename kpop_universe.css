@@ -1772,7 +1772,6 @@
   .gc-link-icon.gc-link-icon-youtube,#tt-links .gc-link-icon.gc-link-icon-youtube{width:28.6px;height:20px;}
   .gc-link-icon.gc-link-icon-youtube:hover{color:inherit;}
   /* 2줄 구분자 — weverse 등 line2 항목 앞에 삽입돼 아이콘 행을 나눈다 */
-  .gc-links-br{flex-basis:100%;height:0;}
   #gc-grid,#tt-info-grid{display:flex;flex-direction:column;gap:1px;margin-top:7px;padding-top:9px;border-top:0.5px solid rgba(255,255,255,0.10);}
   /* 멤버 카드 안에서는 이름(.tn)·그룹칩(#tg-row)이 전부 padding-left:4px로 살짝 들여져 있는데
      이 정보 줄만 0이라 왼쪽으로 삐져나와 보였음 — 같은 4px로 맞춘다(2026-08-10, 사용자 제보) */
@@ -3957,6 +3956,7 @@
   #tt-name-row .fav-btn,#tt-name-row .share-btn{position:relative;top:-1.5px;}
   #gc-name-row{display:inline-flex;align-items:center;gap:8px;margin-bottom:6px;max-width:100%;}
   #gc-name-row #gc-name{margin-bottom:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .gc-en-inline{font-size:var(--fz-meta);color:#7898b8;letter-spacing:.08em;text-transform:uppercase;font-weight:500;white-space:nowrap;flex-shrink:0;}
   /* 하트·트로피·공유를 SNS 아이콘과 같은 16px로 통일(원래 svg 13px에 아이콘별 top 미세보정이 얹혀 있어
      모바일에서 크기·정렬이 들쭉날쭉했음, 2026-08-28 사용자 요청). 보정 top을 0으로 리셋하고 gc-name-row의
      align-items:center에만 맡겨 서로 + 그룹명과 세로 중앙. (그룹 카드 전용 — 멤버 카드는 안 건드림) */

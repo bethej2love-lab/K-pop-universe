@@ -282045,6 +282045,39 @@
   },
   {
     "name": {
+      "ko": "문현아",
+      "en": "Moonhyuna"
+    },
+    "group": {
+      "ko": "솔로",
+      "en": "Solo"
+    },
+    "active": false,
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "links": {
+      "namu": "https://namu.wiki/w/%EB%AC%B8%ED%98%84%EC%95%84(%EB%82%98%EC%9D%B8%EB%AE%A4%EC%A7%80%EC%8A%A4)"
+    },
+    "id": "a1898",
+    "groups": [
+      {
+        "ko": "솔로",
+        "en": "Solo"
+      },
+      {
+        "ko": "나인뮤지스",
+        "en": "9MUSES",
+        "active": false,
+        "left": "2016.10.04",
+        "joined": "2010.10"
+      }
+    ],
+    "joined": "2010.10"
+  },
+  {
+    "name": {
       "ko": "렉시",
       "en": "Lexi"
     },

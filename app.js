@@ -840,9 +840,12 @@ function _refreshOpenCardText(){
       document.getElementById('gc-name').textContent=currentLang==='ko'?_openGCko:(info.en||_openGCko);
       {
         const _enShow=currentLang==='ko'&&info.en&&info.en!==_openGCko; // 키가 영문인 그룹(A2O MAY·SOUL)은 제목과 같은 글자가 두 번 보였다
+        const _enInlineShow=_enShow&&!isMob(); // 웹 한국어: 한글명 오른쪽 인라인, 모바일: 아래 행(gc-en-row)
         const _enEl=document.getElementById('gc-en');
-        _enEl.textContent=_enShow?info.en:'';
-        _enEl.style.display=_enShow?'':'none'; // 비어있으면 flex 흐름에서 완전히 빼서 뒤 아이콘 앞에 gap이 안 붙게
+        _enEl.textContent=_enShow&&!_enInlineShow?info.en:'';
+        _enEl.style.display=_enShow&&!_enInlineShow?'':'none';
+        const _enInlineEl=document.getElementById('gc-en-inline');
+        if(_enInlineEl){_enInlineEl.textContent=_enInlineShow?info.en:'';_enInlineEl.hidden=!_enInlineShow;}
         // 영문명이 길어 A안(영문+SNS 한 줄)에서 어정쩡하게 눌리는 그룹만 강제로 세로 분리(4줄)한다
         // (2026-08-28, 사용자 지정 목록 — 나머지는 flex-wrap 자동). 추가 그룹은 여기 배열에 넣으면 됨.
         document.getElementById('gc-en-row').classList.toggle('gc-en-stack',
@@ -12519,8 +12522,7 @@ async function _renderIgTagged(prefix,a){
     box.hidden=false;sec.hidden=false;_enableDragScroll(strip);
   }catch(e){}
 }
-// 1줄: youtube · instagram · instagram2 · x · tiktok  /  2줄(line2): weverse · namu · homepage
-// line2:true 항목 앞에 flex-basis:100% div 삽입 → 줄바꿈(_renderGcLinks)
+// SNS 아이콘 순서: youtube · instagram · instagram2 · x · tiktok · weverse · namu · homepage
 const _LINK_DEFS=[
   // ⚠️ YouTube API Services 감사(2026-11-16, III.F.2a) — 윤곽선 단색 아이콘이 브랜딩 규정 위반으로 지적됐다. 공식 아이콘 모양·색 그대로(변형·투명도·필터 금지), 높이 20dp 이상(CSS .gc-link-icon-youtube).
   {key:'youtube',label:'YouTube',svg:'<svg viewBox="0 0 28.57 20" role="img" aria-label="YouTube"><path fill="#FF0000" d="M27.9727 3.12324C27.6435 1.89323 26.6768 0.926623 25.4468 0.597366C23.2197 2.24288e-07 14.285 0 14.285 0C14.285 0 5.35042 2.24288e-07 3.12323 0.597366C1.89323 0.926623 0.926623 1.89323 0.597366 3.12324C2.24288e-07 5.35042 0 10 0 10C0 10 2.24288e-07 14.6496 0.597366 16.8768C0.926623 18.1068 1.89323 19.0734 3.12323 19.4026C5.35042 20 14.285 20 14.285 20C14.285 20 23.2197 20 25.4468 19.4026C26.6768 19.0734 27.6435 18.1068 27.9727 16.8768C28.5701 14.6496 28.5701 10 28.5701 10C28.5701 10 28.5701 5.35042 27.9727 3.12324Z"/><path fill="#FFFFFF" d="M11.4253 14.2854L18.8477 10.0004L11.4253 5.71533V14.2854Z"/></svg>'},
@@ -12530,7 +12532,7 @@ const _LINK_DEFS=[
   {key:'instagram2',label:'Instagram',svg:'<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.6"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor"/></svg>'},
   {key:'x',label:'X',svg:'<svg viewBox="-3 -3 30 30" fill="currentColor"><path d="M18.24 2.25h3.31L14.32 10.5l8.5 11.25H16.2l-4.72-6.23-5.4 6.23H2.75l7.73-8.84L2 2.25h6.06l4.26 5.63L18.24 2.25zm-1.16 17.52h1.83L7.08 4.13H5.12L17.08 19.77z"/></svg>'},
   {key:'tiktok',label:'TikTok',svg:'<svg viewBox="0 0 24 24" fill="none"><path d="M15 17a5 5 0 1 1-5-5V2h3.3c.4 3 2.8 5.4 5.7 5.8v3.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'},
-  {key:'weverse',line2:true,label:'Weverse',svg:'<svg viewBox="0 0 24 24" fill="none"><path d="M12 21C6 17 2 13 2 9 2 6 4.5 4 7.5 4 9.5 4 11.2 5.8 12 7.5 12.8 5.8 14.5 4 16.5 4 19.5 4 22 6 22 9 22 13 18 17 12 21z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>'},
+  {key:'weverse',label:'Weverse',svg:'<svg viewBox="0 0 24 24" fill="none"><path d="M12 21C6 17 2 13 2 9 2 6 4.5 4 7.5 4 9.5 4 11.2 5.8 12 7.5 12.8 5.8 14.5 4 16.5 4 19.5 4 22 6 22 9 22 13 18 17 12 21z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>'},
   {key:'namu',label:'나무위키',svg:'<svg viewBox="0 0 24 24" fill="none"><path d="M12 2L6 11h4L5 19h6v3h2v-3h6l-5-8h4L12 2z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>'},
   // 공식 홈페이지(2026-10-28 엑스러브 b.stage 팬 페이지 — 사용자 추가). 지구본
   {key:'homepage',label:'Homepage',svg:'<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>'}
@@ -12646,12 +12648,9 @@ function _renderGcLinks(links,wrapId,ctx){
   wrap.innerHTML='';delete wrap.dataset.fpTok;
   let any=false;
   if(links){
-    let line2Inserted=false;
-    _LINK_DEFS.forEach(({key,label,svg,line2})=>{
+    _LINK_DEFS.forEach(({key,label,svg})=>{
       const url=links[key];
       if(!url)return;
-      // 2줄 레이아웃: weverse 등 line2:true 항목이 처음 등장할 때 줄바꿈 삽입
-      if(line2&&!line2Inserted){line2Inserted=true;const br=document.createElement('div');br.className='gc-links-br';wrap.appendChild(br);}
       any=true;
       const a=document.createElement('a');
       a.className='gc-link-icon gc-link-icon-'+key; // 아이콘별 미세 간격 보정(예: 틱톡↔나무위키)용 타겟팅
