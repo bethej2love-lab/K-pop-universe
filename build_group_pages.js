@@ -361,6 +361,53 @@ function nextCardsJson(items) {
 }
 const _topVidId = vs => { const v = (vs || []).slice().sort((p, q) => (q.view_count || 0) - (p.view_count || 0))[0]; return v ? (v.id || v.v || '') : ''; };
 const _nmOf = (x, isEn) => isEn ? (x.name.en || x.name.ko) : (x.displayName || x.name.ko);
+// ── 커버 원곡(2026-11-17 사용자 "에잇턴 Love Dive는 아이브 원곡인데 정적 페이지에 티가 안 난다") ─────────────────────────────────────────
+// 서바이벌 경연 앨범(disco의 contest:true — 로드 투 킹덤·킹덤·PEAK TIME 등)의 수록곡 중, **다른 그룹이 더 먼저 정규 발매한 같은 곡**이 딱 한 팀으로 특정되면 그 곡은 그 팀의 커버다.
+// 정확도 근거(전 그룹 실측): 경연 앨범 수록곡만 쓴다. 컴필레이션(THE BEST·ALL TIME BEST·ONE 등 자기 베스트 앨범)까지 넣으면 2PM 'CRUSH'·'FLASHLIGHT'(2PM 자기 곡)이 다른 그룹 곡명과 같다는
+// 이유로 커버로 오인된다 — 컴필은 뺀다. 기본형 4글자 미만·원곡 후보가 2팀 이상(모호)·이미 본인 정규 발매가 있는 곡은 제외. 크레딧(작사·작곡) 대조는 경연 곡에 크레딧이 없어 못 한다.
+const COVER_ORIGIN = new Map(); // 'g|b' → {og, ob, otitle, year}   (커버한 쪽 → 원곡)
+const COVERED_BY = new Map();   // 'og|ob' → [{g, b, title, program}] (원곡 쪽 → 커버한 팀들)
+function computeCoverOrigins() {
+  COVER_ORIGIN.clear(); COVERED_BY.clear();
+  const norm = d => String(d || '').replace(/\./g, '-').slice(0, 10);
+  const fileKey = s => String(s).replace(/[\/\\]/g, '_').replace(/[.\s]+$/, '');
+  const REG = al => !al.contest && !/컴필레이션|리믹스|OST|라이브|베스트|프로젝트/.test(al.type || '') && !/\b(live|concert|remix|best|ost)\b|라이브|콘서트/i.test(al.title || '');
+  const owners = new Map(), cand = [];
+  for (const g of Object.keys(groups)) {
+    let d; try { d = JSON.parse(fs.readFileSync(path.join(ROOT, 'disco/g', fileKey(g) + '.json'), 'utf8')); } catch (e) { continue; }
+    const albums = [...Object.values(d.g || {}), ...Object.values(d.m || {}).flatMap(x => [...(x.d || []), ...(x.u || []).flatMap(u => (u && u.albums) || [])])];
+    for (const al of albums) for (const t of (al.tracks || [])) {
+      if (!t || !t.title) continue; const b = _CRED_SB(t.title); if (!b || b.length < 4) continue;
+      if (REG(al)) { if (!owners.has(b)) owners.set(b, []); owners.get(b).push({ g, title: String(t.title).replace(/\s*[\(\[].*$/, '').trim() || t.title, date: norm(al.releaseDate) }); }
+      else if (al.contest) cand.push({ g, b, title: String(t.title).replace(/\s*[\(\[].*$/, '').trim() || t.title, date: norm(al.releaseDate), program: al.program || '' });
+    }
+  }
+  for (const c of cand) {
+    const all = owners.get(c.b) || [];
+    if (all.some(o => o.g === c.g) || COVER_ORIGIN.has(c.g + '|' + c.b)) continue;
+    const os = all.filter(o => o.date && c.date && o.date < c.date);
+    const og = [...new Set(os.map(o => o.g))]; if (og.length !== 1) continue;
+    const o = os.slice().sort((x, y) => x.date.localeCompare(y.date))[0];
+    COVER_ORIGIN.set(c.g + '|' + c.b, { og: og[0], ob: c.b, otitle: o.title, year: o.date.slice(0, 4) });
+    const k = og[0] + '|' + c.b; if (!COVERED_BY.has(k)) COVERED_BY.set(k, []);
+    COVERED_BY.get(k).push({ g: c.g, b: c.b, title: c.title, program: c.program });
+  }
+}
+// 곡 페이지 정보 칩 — 원곡(이 곡이 커버일 때) / 커버(다른 팀이 이 곡을 경연에서 커버했을 때). 링크는 그 곡 페이지가 있으면 곡 페이지, 없으면 그룹 페이지, 그것도 없으면 글자만.
+function coverChipsHtml(gko, s, lang) {
+  const isEn = lang === 'en', out = [];
+  const gn = g => isEn ? ((groups[g] && groups[g].en) || g) : g;
+  const songUrl = (g, b) => (SONGS[g] || []).some(x => x.b === b) ? `${SITE}/${songPagePath(g, b, lang)}` : (groups[g] ? `${SITE}/${groupPagePath(g, lang)}` : '');
+  const link = (url, text) => url ? `<a href="${url}">${escHtml(text)}</a>` : escHtml(text);
+  const co = COVER_ORIGIN.get(gko + '|' + s.b);
+  if (co) out.push(`<li><b>${isEn ? 'Original' : '원곡'}</b>${link(songUrl(co.og, co.ob), `${gn(co.og)} · ${co.otitle}${co.year ? ` (${co.year})` : ''}`)}</li>`);
+  const cb = COVERED_BY.get(gko + '|' + s.b);
+  if (cb && cb.length) {
+    const shown = cb.slice(0, 3).map(x => link(songUrl(x.g, x.b), `${gn(x.g)}${x.program ? ` (${x.program.replace(/\s*[:：].*$/, '')})` : ''}`)).join(', ');
+    out.push(`<li><b>${isEn ? 'Covered by' : '커버'}</b>${shown}${cb.length > 3 ? (isEn ? ` +${cb.length - 3}` : ` 외 ${cb.length - 3}팀`) : ''}</li>`);
+  }
+  return out.join('');
+}
 function grpCard(gko, lang) {
   const info = groups[gko]; if (!info) return null; const isEn = lang === 'en';
   const gi = ogImageForGroup(gko, info);
@@ -2115,7 +2162,7 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
   </div>` : '';
   const chip = (k, v) => v ? `<li><b>${k}</b>${escHtml(v)}</li>` : '';
   const chipsHtml = `<ul class="chips">
-    ${chip(isEn ? 'Release' : '발매', date)}${chip(isEn ? 'Album' : '앨범', s.album)}${s.wins ? `<li><b>${isEn ? 'Music show wins' : '음악방송 1위'}</b>${s.wins}${isEn ? '' : '회'}</li>` : ''}
+    ${chip(isEn ? 'Release' : '발매', date)}${chip(isEn ? 'Album' : '앨범', s.album)}${s.wins ? `<li><b>${isEn ? 'Music show wins' : '음악방송 1위'}</b>${s.wins}${isEn ? '' : '회'}</li>` : ''}${coverChipsHtml(gko, s, lang)}
   </ul>`;
   // 크레딧(2026-11-12 사용자 "작사작곡은 뭔 기준? 작사인지 작곡인지 구분, 단독도 따로"): 예전엔 '작사 A, B…(6명) 작곡 A, B…(6명)'을 페이지 맨 아래
   // '다른 곡' 타일 밑에 붙여서 어느 곡 얘기인지, 누가 무엇을 했는지 안 읽혔다. 이제 이 곡 기준으로 사람마다 한 칩: 이름 + 역할(작사·작곡·편곡),
@@ -3115,6 +3162,7 @@ else (async () => {
     VIDS = vids;
     SONGS = SEO.buildSongs({ ROOT, groups, artists, EX, vids });
     console.log(`곡 데이터: ${Object.keys(SONGS).length}그룹 · ${Object.values(SONGS).reduce((n, l) => n + l.length, 0)}곡`);
+    computeCoverOrigins(); // 곡 페이지 '원곡·커버' 칩 — 디스코 파일만 읽는다(DB 없음)
     computeMemberSongs(); // 멤버 페이지에 '곡별 직캠'을 실어야 하므로 멤버 페이지보다 먼저
     computeFancamHubs(); // 멤버·멤버×곡 페이지가 직캠 전체 페이지로 링크하므로 그보다 먼저
   } catch (e) { console.warn('⚠️ 곡 페이지 건너뜀:', e.message); }

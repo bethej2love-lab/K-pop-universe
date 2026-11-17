@@ -25,7 +25,7 @@ assert.deepEqual(JSON.parse(writes.get('/fixture/share_routes/Empty.json')),{g:[
 assert.equal(pages.length,8,'both languages and member pages are still generated');
 
 // Render the real template: preview changes without moving the existing MV hero.
-const ctx={SITE:'https://example.test',SONG_CSS_V:4,FANCAM_RE:/직캠|fancam|facecam/i,
+const ctx={SITE:'https://example.test',SONG_CSS_V:4,coverChipsHtml:()=>'',FANCAM_RE:/직캠|fancam|facecam/i,
   ytThumb:id=>`https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
   wideThumb:id=>`https://i.ytimg.com/vi/${id}/mqdefault.jpg`,ogSizeFor:()=>({w:320,h:180}),
   FANCAM_HUB:new Map(),MEMBER_SONGS_BY_ARTIST:new Map(),memberFancamPagePath:(a,l)=>`${l}/${a.id}/fancams/`,
