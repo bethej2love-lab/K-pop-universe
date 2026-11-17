@@ -41,6 +41,7 @@
   .discog-list{display:block;}
   .discog-list li{display:block;margin-bottom:6px;background:none;border:none;padding:0 0 6px;border-bottom:0.5px solid rgba(255,255,255,0.06);border-radius:0;}
   .member-list a{color:rgba(210,225,255,0.95);text-decoration:none;}
+  .more-songs{margin-top:10px;}.more-songs summary{cursor:pointer;color:rgba(160,190,255,0.9);font-size:13.5px;padding:8px 0;min-height:40px;display:flex;align-items:center;}.more-songs[open] summary{margin-bottom:6px;}
   .tag{font-size:10px;color:rgba(150,175,255,0.6);}
   .yr{color:rgba(150,175,255,0.55);font-size:12px;}
   .cta-dock{position:sticky;bottom:0;z-index:5;margin-top:30px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#0a0a0d 62%,rgba(10,10,13,0));}
@@ -76,11 +77,11 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   
   <h2>Mano fancams</h2>
   <div class="mf-grid">
-    <a class="mf-card" href="https://www.youtube.com/watch?v=86VQZSvd9mU" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/86VQZSvd9mU/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[UNFILTERED CAM] VAYONN MANO(마노) &#39;MUAH!&#39; 4K | STUDIO CHOOM ORIGINAL</span><span class="mf-y">2026.07.10 · 3K</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=EPgCI2a8fms" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/EPgCI2a8fms/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[플리캠 4K] VAYONN MANO ‘MUAH!’ (베이온 마노 직캠) | Simply K-Pop EP.15 260717</span><span class="mf-y">2026.07.17 · 1K</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=Ovitx6q2oSY" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/Ovitx6q2oSY/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[쇼챔직캠 4K] VAYONN MANO (베이온 마노) - MUAH! | Show Champion | EP.603 | 260715</span><span class="mf-y">2026.07.15 · 1K</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=K_bWm7jHBeY" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/K_bWm7jHBeY/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[쇼챔직캠 4K] VAYONN MANO (베이온 마노) - Watta Day | Show Champion | EP.604 | 260722</span><span class="mf-y">2026.07.22 · 494</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=5ybsYvO0hGE" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/5ybsYvO0hGE/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[플리캠 4K] VAYONN MANO ‘Watta Day’ (베이온 마노 직캠) | Simply K-Pop EP.15 260717</span><span class="mf-y">2026.07.17 · 419</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=86VQZSvd9mU" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/86VQZSvd9mU/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[UNFILTERED CAM] VAYONN MANO(마노) &#39;MUAH!&#39; 4K | STUDIO CHOOM ORIGINAL</span><span class="mf-y">2026.07.10 · 3K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=EPgCI2a8fms" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/EPgCI2a8fms/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[플리캠 4K] VAYONN MANO ‘MUAH!’ (베이온 마노 직캠) | Simply K-Pop EP.15 260717</span><span class="mf-y">2026.07.17 · 1K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=Ovitx6q2oSY" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/Ovitx6q2oSY/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[쇼챔직캠 4K] VAYONN MANO (베이온 마노) - MUAH! | Show Champion | EP.603 | 260715</span><span class="mf-y">2026.07.15 · 1K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=K_bWm7jHBeY" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/K_bWm7jHBeY/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[쇼챔직캠 4K] VAYONN MANO (베이온 마노) - Watta Day | Show Champion | EP.604 | 260722</span><span class="mf-y">2026.07.22 · 400+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=5ybsYvO0hGE" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/5ybsYvO0hGE/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[플리캠 4K] VAYONN MANO ‘Watta Day’ (베이온 마노 직캠) | Simply K-Pop EP.15 260717</span><span class="mf-y">2026.07.17 · 400+</span></a>
   </div>
   <p class="intro">Mano is a K-pop idol of South Korean nationality, born in 2009. Member of VAYONN.</p>
   
@@ -119,7 +120,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/unis/bang-yunha/">Bang Yunha</a> <span class="tag">UNIS</span></li>
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/베이온/마노/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"MUAH!","s":"3 fancams of Mano","img":"86VQZSvd9mU","m":"MUAH!","h":"https://kpop-universe.kr/#g=베이온&m=마노&song=MUAH!"},{"k":"Same song","t":"Masato · MUAH!","s":"7 fancams","img":"Q6e0gTG1pjc","m":"MUAH!","h":"https://kpop-universe.kr/#g=베이온&m=마사토&song=MUAH!"},{"k":"Group","t":"VAYONN","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/aMcpff0JPeo/mqdefault.jpg","h":"https://kpop-universe.kr/#g=베이온"},{"k":"Chemistry","t":"Mano × Masato","s":"24 videos together","img":"LMYAggOis4c","h":"https://kpop-universe.kr/#chem=%EB%A7%88%EB%85%B8~%EB%B2%A0%EC%9D%B4%EC%98%A8%2C%EB%A7%88%EC%82%AC%ED%86%A0~%EB%B2%A0%EC%9D%B4%EC%98%A8"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"MUAH!","s":"3 fancams of Mano","img":"86VQZSvd9mU","m":"MUAH!","h":"https://kpop-universe.kr/en/g/vayonn/mano/s/muah/"},{"k":"Same song","t":"Masato · MUAH!","s":"7 fancams","img":"Q6e0gTG1pjc","m":"MUAH!","h":"https://kpop-universe.kr/en/g/vayonn/masato/s/muah/"},{"k":"Group","t":"VAYONN","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/aMcpff0JPeo/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/vayonn/"}]</script>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=베이온&m=마노">View profile, fancams & stages →</a></div>
 </div>
 </body>

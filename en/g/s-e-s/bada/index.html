@@ -41,6 +41,7 @@
   .discog-list{display:block;}
   .discog-list li{display:block;margin-bottom:6px;background:none;border:none;padding:0 0 6px;border-bottom:0.5px solid rgba(255,255,255,0.06);border-radius:0;}
   .member-list a{color:rgba(210,225,255,0.95);text-decoration:none;}
+  .more-songs{margin-top:10px;}.more-songs summary{cursor:pointer;color:rgba(160,190,255,0.9);font-size:13.5px;padding:8px 0;min-height:40px;display:flex;align-items:center;}.more-songs[open] summary{margin-bottom:6px;}
   .tag{font-size:10px;color:rgba(150,175,255,0.6);}
   .yr{color:rgba(150,175,255,0.55);font-size:12px;}
   .cta-dock{position:sticky;bottom:0;z-index:5;margin-top:30px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#0a0a0d 62%,rgba(10,10,13,0));}
@@ -76,13 +77,13 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   
   <h2>Bada fancams</h2>
   <div class="mf-grid">
-    <a class="mf-card" href="https://www.youtube.com/watch?v=Eyuc_utGzhQ" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/Eyuc_utGzhQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] 바다 직캠 4K &#39;괴도 + Rover + Smoke + Birthday&#39; (Bada FanCam) | @MCOUNTDOWN_2025.3.27</span><span class="mf-y">2025.03.27 · 13K</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=dAkAwmDCsFA" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/dAkAwmDCsFA/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 바다 &#39;Kiss Me Baby&#39; (BADA FanCam) @SBS Inkigayo 250105</span><span class="mf-y">2025.01.08 · 12K</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=SYnewxCZtpY" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/SYnewxCZtpY/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[K-Choreo 8K] 바다 직캠 &#39;Dreams Come True + Next Level&#39; (BADA Choreography) @가요대축제 글로벌페스티벌 241220</span><span class="mf-y">2024.12.22 · 7K</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=yKseEW53HrI" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/yKseEW53HrI/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[K-Choreo Tower Cam 4K] 바다  직캠 &#39;Kiss Me Baby&#39;(BADA Choreography) l @MusicBank KBS 250117</span><span class="mf-y">2025.01.20 · 2K</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=9pyNgnsNkaE" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/9pyNgnsNkaE/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[K-Choreo Tower Cam 4K] 바다  직캠 &#39;Icy Girl&#39;(BADA Choreography) l @MusicBank KBS 250627</span><span class="mf-y">2025.06.30 · 1K</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=au9lmWv4lZc" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/au9lmWv4lZc/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[K-Choreo Tower Cam 4K] 바다  직캠 &#39;Kiss Me Baby&#39;(BADA Choreography) l @MusicBank KBS 250110</span><span class="mf-y">2025.01.13 · 1K</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=Elh2u67ANtc" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/Elh2u67ANtc/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[FAN CAM 4K] 환상비행 - LEE BADA [THE SHOW] 260811 방송</span><span class="mf-y">2026.08.11 · 299</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=Eyuc_utGzhQ" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/Eyuc_utGzhQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] 바다 직캠 4K &#39;괴도 + Rover + Smoke + Birthday&#39; (Bada FanCam) | @MCOUNTDOWN_2025.3.27</span><span class="mf-y">2025.03.27 · 13K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=dAkAwmDCsFA" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/dAkAwmDCsFA/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 바다 &#39;Kiss Me Baby&#39; (BADA FanCam) @SBS Inkigayo 250105</span><span class="mf-y">2025.01.08 · 12K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=SYnewxCZtpY" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/SYnewxCZtpY/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[K-Choreo 8K] 바다 직캠 &#39;Dreams Come True + Next Level&#39; (BADA Choreography) @가요대축제 글로벌페스티벌 241220</span><span class="mf-y">2024.12.22 · 7K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=yKseEW53HrI" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/yKseEW53HrI/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[K-Choreo Tower Cam 4K] 바다  직캠 &#39;Kiss Me Baby&#39;(BADA Choreography) l @MusicBank KBS 250117</span><span class="mf-y">2025.01.20 · 2K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=9pyNgnsNkaE" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/9pyNgnsNkaE/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[K-Choreo Tower Cam 4K] 바다  직캠 &#39;Icy Girl&#39;(BADA Choreography) l @MusicBank KBS 250627</span><span class="mf-y">2025.06.30 · 1K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=au9lmWv4lZc" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/au9lmWv4lZc/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[K-Choreo Tower Cam 4K] 바다  직캠 &#39;Kiss Me Baby&#39;(BADA Choreography) l @MusicBank KBS 250110</span><span class="mf-y">2025.01.13 · 1K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=Elh2u67ANtc" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/Elh2u67ANtc/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[FAN CAM 4K] 환상비행 - LEE BADA [THE SHOW] 260811 방송</span><span class="mf-y">2026.08.11 · 200+</span></a>
   </div>
   <p class="intro">Bada is a K-pop idol of South Korean nationality, born in 1980. Member of S.E.S..</p>
   
@@ -170,7 +171,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/chakra/hwangbo/">Hwangbo</a> <span class="tag">Chakra</span></li>
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/S.E.S/바다/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"국지성 호우","s":"4 fancams of Bada","img":"31VoA1UMyXI","m":"국지성 호우","h":"https://kpop-universe.kr/#g=S.E.S.&m=바다&song=국지성%20호우"},{"k":"Group","t":"S.E.S.","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/asf16ziTgYY/mqdefault.jpg","h":"https://kpop-universe.kr/#g=S.E.S."}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"국지성 호우","s":"4 fancams of Bada","img":"31VoA1UMyXI","m":"국지성 호우","h":"https://kpop-universe.kr/en/g/s-e-s/bada/s/국지성호우/"},{"k":"Group","t":"S.E.S.","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/asf16ziTgYY/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/s-e-s/"}]</script>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=S.E.S.&m=바다">View profile, fancams & stages →</a></div>
 </div>
 </body>
