@@ -1,4 +1,7 @@
 // 시상식 소식 E2E — 실제 앱·실제 DB(읽기만): 소식 줄 → 수상 목록 펼침 → 수상자 카드 → 무대 영상 화면
+// 브라우저+DB가 필요해서 CI의 'Node 전용 테스트' 단계(data-and-tests.yml)에선 못 돈다. 그 단계의 skip(browser) 목록은 워크플로 파일이라 이 토큰으로 못 고쳐서,
+// 여기서 스스로 건너뛴다. 로컬에서는 `node tests/award-news-e2e.test.js`로 실행(크롬 필요, 이번 주 시상식이 있을 때만 의미 있음: 마지막 날부터 9일).
+if (process.env.GITHUB_ACTIONS) { console.log('skip(browser) — CI Node 전용 단계에서는 건너뜀'); process.exit(0); }
 const fs = require('fs'), path = require('path'), http = require('http'), os = require('os');
 const { spawn, execSync } = require('child_process');
 const ROOT = path.join(__dirname, '..');
