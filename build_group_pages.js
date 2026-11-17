@@ -799,8 +799,8 @@ artists.forEach(a => {
       ? `${who} Profile, Age, ${xm.titleBits.length ? 'Fancams, ' : ''}Birthday | K-POP UNIVERSE`
       : `${who} 프로필·나이·${xm.titleBits.length ? '직캠·' : ''}생일 | K-POP UNIVERSE`;
     const ageBits = isEn
-      ? [bdayIso ? `born ${a.bday}` : '', ag.debutAge ? `debuted at ${ag.debutAge}` : '', ...xm.facts].filter(Boolean).join(', ')
-      : [bdayIso ? `${a.bday} 생` : '', ag.debutAge ? `${ag.debutAge}세 데뷔` : '', ...xm.facts].filter(Boolean).join(', ');
+      ? [bdayIso ? `born ${a.bday}` : '', ag.debutDate ? `debuted ${ag.debutDate}` : '', ...xm.facts].filter(Boolean).join(', ')
+      : [bdayIso ? `${a.bday} 생` : '', ag.debutDate ? `${ag.debutDate} 데뷔` : '', ...xm.facts].filter(Boolean).join(', ');
     const desc = (hasFancams ? (isEn ? `${fancams.length} ${en}${isSolo ? '' : ` (${groupInfo.en || primaryGko})`} fancams, most viewed first. ` : `${isSolo ? '' : primaryGko + ' '}${ko} 직캠 ${fancams.length}개를 조회수 순으로. `) : '') + (isEn
       ? `${en}${groupDisplay ? ` of ${groupDisplay}` : ''}: ${ageBits || 'profile'}. Fancams, stages and connections on K-POP UNIVERSE.`
       : `${ko}${groupDisplay ? `(${groupDisplay})` : ''}: ${ageBits || '프로필'}. 직캠·무대 영상과 함께한 아이돌을 K-POP UNIVERSE에서.`);
@@ -887,9 +887,8 @@ ${SEO_GA_TAG}
   <div class="meta">
     ${groupDisplay ? `<span><b>${groupLabel}</b> ${escHtml(bilingualLabel(groupDisplay,isEn?primaryGko:groupInfo.en))}</span>` : ''}
     ${bdayIso ? `<span><b>${debutLabel}</b> ${escHtml(a.bday)}${ag.age && a.active !== false ? (isEn ? ` (age ${ag.age})` : ` (만 ${ag.age}세)`) : ''}</span>` : ''}
-    ${ag.debutAge ? `<span><b>${isEn ? 'Debut age' : '데뷔 나이'}</b> ${isEn ? ag.debutAge : ag.debutAge + '세'}</span>` : ''}
+    ${ag.debutDate ? `<span><b>${isEn ? 'Debut' : '데뷔'}</b> ${ag.debutDate}</span>` : ''}
     ${agency ? `<span><b>${agencyLabel}</b> ${escHtml(agency)}</span>` : ''}
-    <span><b>${statusLbl}</b> ${escHtml(statusLabel)}</span>
   </div>
   ${hasFancams ? `
   <h2>${isEn ? `${escHtml(en)} fancams` : `${escHtml(ko)} 직캠`}</h2>

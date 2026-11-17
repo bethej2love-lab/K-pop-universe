@@ -256,11 +256,15 @@ function ages(a, groupInfos) {
   if (!m) return {};
   const b = Date.UTC(+m[1], (+m[2] || 7) - 1, +m[3] || 1);
   const age = Math.floor((Date.now() - b) / (365.2425 * 864e5));
-  let debutAge = null;
+  let debutDate = null;
   const ds = [...(groupInfos || []).filter(Boolean).map(g => songLib(path.join(__dirname,'..')).D(g.joined,g.debut)), a.debut].filter(Boolean).map(date => String(date).match(/(\d{4})\D?(\d{1,2})?\D?(\d{1,2})?/)).filter(Boolean)
     .map(d => Date.UTC(+d[1], (+d[2] || 7) - 1, +d[3] || 1));
-  if (ds.length) { const v = (Math.min(...ds) - b) / (365.2425 * 864e5); if (v > 10 && v < 40) debutAge = Math.floor(v); }
-  return { age: age > 8 && age < 90 ? age : null, debutAge };
+  if (ds.length) {
+    const minTs = Math.min(...ds);
+    const d = new Date(minTs);
+    debutDate = `${d.getUTCFullYear()}.${String(d.getUTCMonth()+1).padStart(2,'0')}.${String(d.getUTCDate()).padStart(2,'0')}`;
+  }
+  return { age: age > 8 && age < 90 ? age : null, debutDate };
 }
 
 // ── 곡 페이지 데이터(2026-10-16, 검색 노출 2단계) ─────────────────────────────────────────────

@@ -8293,16 +8293,18 @@ function _sortMixedByAspect(arr){
   for(const s of (arr||[]))(_songIsShort(s)?shorts:norms).push(s);
   return norms.concat(shorts);
 }
-// items는 호출부에서 이미 _sortMixedByAspect로 비율별 정렬돼 들어온다(가로 블록→쇼츠 블록). 여기선 순서를
-// 그대로 두고, 비율이 바뀌는 경계에서 2열 중 첫 칸에 홀로 남는 카드만 2열 폭으로 넓혀(wide) 다음 비율이
-// 반드시 새 행에서 시작하게 한다 — 그래야 한 행이 항상 같은 비율로만 채워진다. 넓힌 칸(홀로 남은 가로)은
-// featured처럼 2열 폭 16:9로 그려진다. 쇼츠는 넓히면 세로로 과하게 커서(2026-08-06 사용자 제보) 경계에서만
-// 넓히고 목록 끝에서 홀로 남는 건 1칸 그대로 둔다.
+// 비율이 바뀌는 경계에서 2열 중 첫 칸에 홀로 남는 가로 카드만 2열 폭으로 넓혀(wide) 다음 비율이
+// 반드시 새 행에서 시작하게 한다. 쇼츠는 넓히면 세로로 과하게 커서(2026-08-06 제보) 가로가 1번째 열에
+// 홀로 남는 경우만 넓히고, 쇼츠가 1번째 열인 경우엔 경계에서도 col만 리셋한다.
+// 호출부에서 _sortMixedByAspect를 더 이상 쓰지 않으므로 — 날짜순 등 원래 순서를 유지하면서 경계만 처리.
 function _groupMixedVids(items){
   const out=[];let col=0,prevCat=null;
   for(let i=0;i<items.length;i++){
     const cat=_songIsShort(items[i])?'short':'norm';
-    if(col===1&&prevCat!==null&&cat!==prevCat){out[out.length-1].wide=true;col=0;}
+    if(col===1&&prevCat!==null&&cat!==prevCat){
+      if(prevCat==='norm')out[out.length-1].wide=true; // 가로가 홀로 남을 때만 넓힘
+      col=0;
+    }
     out.push({song:items[i],wide:false});
     col=(col+1)%2;prevCat=(col===1)?cat:null;
   }
@@ -23401,7 +23403,7 @@ function _openFeedListOverlay(title,sub,songs,ctx){
       let col=0;p.forEach(e=>{col=e.wide?0:(col+1)%2;});if(col===1)p[p.length-1].wide=true;
       _secStart.set(_paired.length,sec.title);_paired.push(...p);
     });
-  }else _paired=_ranked?(songs||[]).map(x=>({song:x,wide:false})):_groupMixedVids(ctx&&ctx.colId?(songs||[]):_sortMixedByAspect(songs));
+  }else _paired=_ranked?(songs||[]).map(x=>({song:x,wide:false})):_groupMixedVids(songs||[]);
   const orderedSongs=_paired.map(e=>e.song);
   const _wideFlags=_paired.map(e=>e.wide);
   if(_feedListObserver)_feedListObserver.disconnect(); // 직전에 끝까지 안 스크롤하고 닫았을 경우 대비
