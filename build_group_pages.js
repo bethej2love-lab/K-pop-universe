@@ -1900,17 +1900,19 @@ function fancamPageHtml(a, lang) {
   const topIds = new Set(fancams.slice(0, FANCAM_RANK_N).map(v => v.id));
   const recentTop = fancams.filter(v => String(v.published_at || '').slice(0, 10) >= _yr && !topIds.has(v.id)).slice(0, 6);
   const recentGrid = recentTop.length >= 3 ? recentTop.map(v => fancamCardHtml(v, isEn)).join('\n    ') : '';
-  const songNav = songs.length > 1 ? `<ul class="chips">${songs.map((x, i) => `<li><a href="#s${i}">${escHtml(songLabel(x.s))} <span>${x.vids.length}</span></a></li>`).join('')}</ul>` : '';
+  // 곡별 개수 — 도착(멤버×곡) 페이지가 있으면 그 페이지의 개수를 쓴다. 허브가 모은 직캠과 도착 페이지가 모은 영상의 기준이 달라 22↔24처럼 어긋났다(2026-11-17 Codex).
+  const nOf = x => { if (!x.page) return x.vids.length; const m = (MEMBER_SONGS_BY_SONG.get(gko + '|' + x.s.b) || []).find(y => y.a === a); return m ? m.vids.length : x.vids.length; };
+  const songNav = songs.length > 1 ? `<ul class="chips">${songs.map((x, i) => `<li><a href="#s${i}">${escHtml(songLabel(x.s))} <span>${nOf(x)}</span></a></li>`).join('')}</ul>` : '';
   const songSections = songs.map((x, i) => {
     const pageUrl = x.page ? `${SITE}/${memberSongPagePath(a, x.s.b, lang)}` : '';
     const shown = x.page ? x.vids.slice(0, FANCAM_PER_SONG) : x.vids;
     const label = isEn ? `${mName} "${songLabel(x.s)}" fancams` : `${mName} '${songLabel(x.s)}' 직캠`;
     return `
-  <h2 id="s${i}">${pageUrl ? `<a href="${pageUrl}">${escHtml(label)} ›</a>` : escHtml(label)} <span class="h-n">${x.vids.length}</span></h2>
+  <h2 id="s${i}">${pageUrl ? `<a href="${pageUrl}">${escHtml(label)} ›</a>` : escHtml(label)} <span class="h-n">${nOf(x)}</span></h2>
   <div class="grid">
     ${shown.map(v => fancamCardHtml(v, isEn)).join('\n    ')}
-  </div>${pageUrl && x.vids.length > shown.length ? `
-  <p class="lead"><a href="${pageUrl}">${isEn ? `All ${x.vids.length} "${songLabel(x.s)}" fancams →` : `'${songLabel(x.s)}' 직캠 ${x.vids.length}개 전체 보기 →`}</a></p>` : ''}`;
+  </div>${pageUrl && nOf(x) > shown.length ? `
+  <p class="lead"><a href="${pageUrl}">${isEn ? `All ${nOf(x)} "${songLabel(x.s)}" fancams →` : `'${songLabel(x.s)}' 직캠 ${nOf(x)}개 전체 보기 →`}</a></p>` : ''}`;
   }).join('\n');
   const restHtml = rest.length ? `
   <h2>${isEn ? 'Other fancams' : '그 밖의 직캠'} <span class="h-n">${rest.length}</span></h2>
@@ -2047,7 +2049,9 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
   const ms = member || null;
   const mName = ms ? (isEn ? ms.nmEn : ms.nm) : '';
   const mFull = ms ? (isEn ? bilingualLabel(ms.nmEn,ms.nm) : bilingualLabel(ms.nm,ms.nmEn)) : '';
-  const vids = ms ? ms.vids : s.vids;
+  // 멤버×곡 '직캠 모음'은 직캠·무대가 먼저, 그 멤버 개인 버전 공식 MV(category mv)는 뒤로(2026-11-17 Codex 검수 — 하니 Hype Boy 대표가 개인 버전 MV(1,120만)라
+  // 입덕직캠(395만)보다 위였다). 곡 페이지(그룹 단위)는 MV가 대표인 게 자연스러워 그대로. 조회수 순서는 각 묶음 안에서 유지.
+  const vids = ms ? ms.vids.filter(v => v.category !== 'mv').concat(ms.vids.filter(v => v.category === 'mv')) : s.vids;
   const top = vids.slice(0, 30);
   const selfPath = ms ? memberSongPagePath(ms.a, s.b, lang) : songPagePath(gko, s.b, lang);
   const altPath = ms ? memberSongPagePath(ms.a, s.b, isEn ? 'ko' : 'en') : songPagePath(gko, s.b, isEn ? 'ko' : 'en');

@@ -315,7 +315,7 @@ const TOUR_SUFFIX_RE = /([A-Za-z][A-Za-z0-9 '’:!?.&\-]{2,40}?)\s+(?:world\s+)?
 // 곡 페이지 '직캠·무대'에 안 맞는 영상(2026-11-17, Codex 팬 관점 검수 — 스트레이키즈 This & That 곡 페이지 상위에 앨범 트레일러·메이킹·다른 수록곡 UNVEIL).
 // 앨범 이름과 같은 곡이면 앨범 홍보 영상 제목에 곡명이 그대로 들어 있어 곡 영상으로 잡힌다. 분류가 live·mv인 영상(음방·직캠·안무·MV)은 항상 둔다 — 실제 무대가
 // other로 분류된 경우(SBS 인기가요·가요대전)가 있어 other를 통째로 빼지 않고, **other 중 제목·형식이 비공연인 것만** 뺀다.
-const NON_PERF_RE = /\b(trailer|teaser|reaction|mashup|guide video|lyrics? (video|visualizer)|visualizer|making( film)?|behind|unveil|spoiler|preview|highlight medley|track ?list|jacket|interview|unboxing|album (film|talk)|intro)\b|트레일러|티저|리액션|메이킹|비하인드|가이드 영상|가사 영상|스포일러|프리뷰|하이라이트 메들리|인터뷰|언박싱/i;
+const NON_PERF_RE = /\b(trailer|teaser|reaction|mashup|guide video|lyrics? (video|visualizer)|visualizer|making( film)?|behind|unveil|spoiler|preview|highlight medley|track ?list|jacket|interview|unboxing|album (film|talk)|compilations?|intro)\b|트레일러|티저|리액션|메이킹|비하인드|가이드 영상|가사 영상|스포일러|프리뷰|하이라이트 메들리|인터뷰|언박싱|모아보기/i;
 function isNonPerformance(v) {
   if (!v) return false;
   if (v.category === 'live' || v.category === 'mv') return false;

@@ -58,3 +58,10 @@ console.log(total + ' checks / ' + failed + ' failed'); if (failed) process.exit
   ok2(/<h2 id="members">/.test(src2) && /<h2 id="songs">/.test(src2) && /<h2 id="albums">/.test(src2), '그룹 페이지 섹션 제목에 id(members·songs·albums)');
   ok2(/class="member-list jump"/.test(src2) && /href="#\$\{x\[1\]\}"/.test(src2), '그룹 맨 위 바로가기 칩이 그 id로 이동');
 }
+// Codex 11-17 검수 대응 — 소스 검사: ①멤버×곡 직캠 모음은 mv를 뒤로 ②허브의 곡별 개수는 도착 페이지 개수
+{
+  const src3 = fs.readFileSync(path.join(__dirname, '..', 'build_group_pages.js'), 'utf8');
+  const ok3 = (c, m) => { if (c) { console.log('✅ ' + m); } else { console.error('FAIL ' + m); process.exitCode = 1; } };
+  ok3(/ms\.vids\.filter\(v => v\.category !== 'mv'\)\.concat\(ms\.vids\.filter\(v => v\.category === 'mv'\)\)/.test(src3), '멤버×곡 페이지: 개인 버전 공식 MV(mv)는 직캠·무대 뒤로(대표가 MV가 되지 않게)');
+  ok3(/const nOf = x =>/.test(src3) && /MEMBER_SONGS_BY_SONG\.get\(gko \+ '\|' \+ x\.s\.b\)/.test(src3) && !/<span class="h-n">\$\{x\.vids\.length\}/.test(src3), '직캠 허브 곡별 개수는 도착 페이지 개수(nOf)');
+}

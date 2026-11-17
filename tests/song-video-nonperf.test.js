@@ -25,6 +25,9 @@ const DROP = [
   V('mk2', 'Stray Kids "THIS & THAT" Jacket MAKING FILM', 'other', ['비하인드']),
   V('in1', 'Stray Kids [INTRO "THIS & THAT"]', 'other'),
   V('va1', '[SUB] This & That… What CAN’T Stray Kids Do? | YouTube K-bongbakdu EP.3', 'other', ['variety']),
+  // 에이티즈 산 BAD(Codex 11-17): 예능 K-909의 '모아보기'(여러 방송 클립 모음)가 곡명 BAD 때문에 곡 영상으로 잡혔다
+  V('co1', '💥남자 냄새 진동💥 북부대공 걔💥다 죽자💥 ＜BAD＞  \'그 파트\' 주인공 ATEEZ(에이티즈) 최산 모아보기｜K-909｜JTBC 230617 방송 외', 'other'),
+  V('co2', 'ATEEZ Fancam Compilation of BAD', 'other'),
 ];
 check('판정: 공연은 두고 비공연만 뺀다', () => {
   KEEP.forEach(v => assert.equal(SEO.isNonPerformance(v), false, '남겨야 함: ' + v.title));
