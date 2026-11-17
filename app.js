@@ -24182,6 +24182,7 @@ function _openIgViewer(m,handle,idx){
     // Interactive Swipe Transition"). 예전엔 손을 뗀 뒤 40px 넘었는지만 보고 사진을 툭 바꿨다. 처음 8px로 방향을 정해 아래로 쓸어 닫기와 안 싸운다.
     const md=ov.querySelector('#igv-media');let sx=null,sy=0,hx=null,hdx=0,hv=0,ht=0;
     md.addEventListener('touchstart',e=>{
+      if(_igv&&_igv.anim)_igvSettle();
       if(!_igv||_igv.tagEditor||_igv.pics.length<2||_igv.anim||e.touches.length!==1){sx=null;return;}
       sx=e.touches[0].clientX;sy=e.touches[0].clientY;hx=null;hdx=0;hv=0;ht=performance.now();
     },{passive:true});
@@ -24196,9 +24197,9 @@ function _openIgViewer(m,handle,idx){
     },{passive:false});
     const mdEnd=()=>{
       if(sx==null||hx!=='x'){sx=null;return;}sx=null;
-      const w=md.clientWidth||1,fast=performance.now()-ht<90&&Math.abs(hv)>0.35;
+      const w=md.clientWidth||1,fast=performance.now()-ht<120&&Math.abs(hv)>0.25;
       const d=hdx<0?1:-1,n=_igv.i+d;
-      if(n>=0&&n<_igv.pics.length&&(Math.abs(hdx)>w*0.22||(fast&&Math.abs(hdx)>12&&Math.sign(hv)===Math.sign(hdx))))_igvGo(d);
+      if(n>=0&&n<_igv.pics.length&&(Math.abs(hdx)>w*0.16||(fast&&Math.abs(hdx)>10&&Math.sign(hv)===Math.sign(hdx))))_igvGo(d);
       else _igvPos(0,true);
     };
     md.addEventListener('touchend',mdEnd,{passive:true});
@@ -24307,7 +24308,12 @@ function _igvPre(k){
   if(im.decode)im.decode().catch(()=>{});
   return im;
 }
-function _igvPreload(){if(!_igv)return;const i=_igv.i;[i+1,i+2,i+3,i-1].forEach(_igvPre);}
+function _igvPreload(){
+  if(!_igv)return;const view=_igv,i=view.i;
+  [i+1,i+2,i+3,i+4,i-1].forEach(_igvPre); // 바로 넘길 장들은 지금
+  // 나머지(최대 20장)도 한가할 때 전부 — 인스타처럼 어디로 넘겨도 이미 받아져 있게(2026-11-17 "슉슉 빠르게")
+  if(!view._preAll&&view.pics.length>6){view._preAll=1;(window.requestIdleCallback||(f=>setTimeout(f,400)))(()=>{if(_igv!==view)return;for(let k=0;k<view.pics.length;k++)_igvPre(k);});}
+}
 // 지금 장과 양옆 장을 dx만큼 옮긴다(anim이면 스르륵). 양옆 장은 사진 틀 폭만큼 떨어져 있다.
 function _igvPos(dx,anim){
   const ov=document.getElementById('igv-overlay');if(!ov)return;
@@ -24318,7 +24324,10 @@ function _igvPos(dx,anim){
 }
 // 넘기기 — 버튼·방향키·손 뗀 뒤 모두 같은 미끄러짐으로 끝낸다. 다 미끄러진 뒤 지금 장을 바꾸고(이미 받은 그림이라 decode 후 바로) 제자리로.
 function _igvGo(d){
-  if(!_igv||_igv.anim||_igv.tagEditor)return;const n=_igv.i+d;if(n<0||n>=_igv.pics.length)return;
+  if(!_igv||_igv.tagEditor)return;
+  // 연달아 넘길 때(손가락이 다시 닿거나 방향키 연타): 진행 중인 미끄러짐을 지금 끝내고 바로 다음 장으로 — 인스타처럼 끊김 없이(2026-11-17). 끝낼 수 없으면 이 입력은 무시.
+  if(_igv.anim){_igvSettle();if(_igv.anim)return;}
+  const n=_igv.i+d;if(n<0||n>=_igv.pics.length)return;
   const ov=document.getElementById('igv-overlay'),md=ov&&ov.querySelector('#igv-media');
   const w=md?md.clientWidth:0;
   if(!w){_igv.i=n;_igvShow();return;}
@@ -24328,13 +24337,23 @@ function _igvGo(d){
   ready.then(()=>{
     if(_igv!==cur)return;
     _igvPos(-d*w,true);
-    setTimeout(()=>{
-      if(_igv!==cur)return;
+    // 미끄러짐 .19초(예전 .26초) 뒤 지금 장을 바꾸고 제자리로. sync=true(settle)면 decode를 안 기다리고 바로.
+    const fin=sync=>{
+      if(_igv!==cur||cur._settle!==fin)return;
+      cur._settle=null;clearTimeout(cur._tm);
       const img=ov.querySelector('#igv-img');img.src=cur.pics[n];
-      const fin=()=>{if(_igv!==cur)return;cur.i=n;cur.anim=false;_igvShow();_igvPos(0,false);};
-      (img.decode?img.decode():Promise.resolve()).then(fin,fin);
-    },260);
+      const done=()=>{if(_igv!==cur)return;cur.i=n;cur.anim=false;_igvShow();_igvPos(0,false);};
+      if(sync===true){done();return;}
+      // 미리 받아 풀어 둔 그림이라 거의 즉시 — decode가 늦어도 120ms 넘게 안 기다린다
+      (img.decode?Promise.race([img.decode(),new Promise(r=>setTimeout(r,120))]):Promise.resolve()).then(done,done);
+    };
+    cur._settle=fin;cur._tm=setTimeout(fin,190);
   });
+}
+// 진행 중인 넘기기를 지금 끝낸다(손가락이 다시 닿거나 방향키가 연달아 올 때). 안 받아 기다리는 중(미끄러지기 전)이면 아무것도 안 한다.
+function _igvSettle(){
+  if(!_igv||!_igv._settle)return;
+  _igv._settle(true);
 }
 function _closeIgViewer(){
   const ov=document.getElementById('igv-overlay');
