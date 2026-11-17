@@ -1,3 +1,10 @@
+# 네이버 검색로봇(Yeti)에게만 영어 페이지(/en/)를 막는다 — 2026-11-17 사용자: 네이버에서 영어 페이지가 한국어 대신 뜬다.
+# 구글 등 다른 로봇은 아래 * 규칙 그대로 /en/ 포함 전부 수집(hreflang으로 언어 연결). Yeti 그룹을 따로 만들면 * 그룹은 안 읽으니 Allow: /를 같이 둔다.
+# 되돌리려면 Yeti 그룹의 Disallow: /en/ 한 줄만 지울 것.
+User-agent: Yeti
+Allow: /
+Disallow: /en/
+
 User-agent: *
 Allow: /
 
