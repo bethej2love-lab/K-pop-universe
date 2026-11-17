@@ -1722,16 +1722,16 @@ function nextItemsJson(a, lang) {
   const topVid = vids => (vids || []).slice().sort((p, q) => (q.view_count || 0) - (p.view_count || 0))[0];
   const songs = (MEMBER_SONGS_BY_ARTIST.get(a) || []).filter(y => y.gko === gko);
   const songItem = x => { const ms = (MEMBER_SONGS_BY_SONG.get(gko + '|' + x.s.b) || []).find(y => y.a === a); const v = ms && topVid(ms.vids);
-    return { k: isEn ? 'Every stage' : '모든 무대', t: x.s.title, s: isEn ? `${x.n} fancams of ${nm(a)}` : `${nm(a)} 직캠 ${x.n}개`, img: v ? v.id : '', m: x.s.title, h: `${SITE}/#g=${hashEsc(gko)}&m=${hashEsc(a.name.ko)}&song=${hashEsc(x.s.title)}` }; };
+    return { k: isEn ? 'Every stage' : '모든 무대', t: x.s.title, s: isEn ? `${x.n} fancams of ${nm(a)}` : `${nm(a)} 직캠 ${x.n}개`, img: v ? v.id : '', m: x.s.title, h: `${SITE}/${memberSongPagePath(a, x.s.b, lang)}` }; };
   const items = [];
   if (songs[0]) items.push(songItem(songs[0]));
   if (songs[0]) { const mate = (MEMBER_SONGS_BY_SONG.get(gko + '|' + songs[0].s.b) || []).find(y => y.a !== a); if (mate) { const v = topVid(mate.vids);
-    items.push({ k: isEn ? 'Same song' : '같은 곡', t: `${nm(mate.a)} · ${songs[0].s.title}`, s: isEn ? `${mate.vids.length} fancams` : `직캠 ${mate.vids.length}개`, img: v ? v.id : '', m: songs[0].s.title, h: `${SITE}/#g=${hashEsc(gko)}&m=${hashEsc(mate.a.name.ko)}&song=${hashEsc(songs[0].s.title)}` }); } }
+    items.push({ k: isEn ? 'Same song' : '같은 곡', t: `${nm(mate.a)} · ${songs[0].s.title}`, s: isEn ? `${mate.vids.length} fancams` : `직캠 ${mate.vids.length}개`, img: v ? v.id : '', m: songs[0].s.title, h: `${SITE}/${memberSongPagePath(mate.a, songs[0].s.b, lang)}` }); } }
   { const G = isEn ? (groups[gko].en || gko) : gko; const gi = ogImageForGroup(gko, groups[gko]);
-    items.push({ k: isEn ? 'Group' : '그룹', t: G, s: isEn ? 'Stages · MVs · members' : '무대 · 뮤비 · 멤버', im: /og-image\.png$/.test(gi) ? '' : gi.replace('/maxresdefault.', '/mqdefault.').replace('/hq720.', '/mqdefault.'), h: `${SITE}/#g=${hashEsc(gko)}` }); }
+    items.push({ k: isEn ? 'Group' : '그룹', t: G, s: isEn ? 'Stages · MVs · members' : '무대 · 뮤비 · 멤버', im: /og-image\.png$/.test(gi) ? '' : gi.replace('/maxresdefault.', '/mqdefault.').replace('/hq720.', '/mqdefault.'), h: `${SITE}/${groupPagePath(gko, lang)}` }); }
   const c = chemPartnersOf(a)[0];
   if (c) { const key = [a, c.other].map(x => x.name.ko + '~' + c.g).join(',');
-    items.push({ k: isEn ? 'Chemistry' : '케미', t: `${nm(a)} × ${nm(c.other)}`, s: isEn ? `${c.n} videos together` : `함께 나온 영상 ${c.n}개`, img: vidId(c.v), h: `${SITE}/#chem=${encodeURIComponent(key)}` }); }
+    items.push({ k: isEn ? 'Chemistry' : '케미', t: `${nm(a)} × ${nm(c.other)}`, s: isEn ? `${c.n} videos together` : `함께 나온 영상 ${c.n}개`, img: vidId(c.v), h: (() => { const [p1, p2] = a.name.ko.localeCompare(c.other.name.ko, 'ko') > 0 ? [c.other, a] : [a, c.other]; const cp = chemPagePath(c.g, p1, p2, lang); return cp ? `${SITE}/${cp}` : `${SITE}/#chem=${encodeURIComponent(key)}`; })() }); }
   if (songs[1]) items.push(songItem(songs[1]));
   if (!items.length) return '';
   return `<script type="application/json" id="kpu-next">${JSON.stringify(items).replace(/</g, '\\u003c')}</script>`;
@@ -2103,23 +2103,23 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
   const songNext = (() => {
     const topV = vs => (vs || []).slice().sort((p, q) => (q.view_count || 0) - (p.view_count || 0))[0];
     const memItem = (x, title) => { const v = topV(x.vids); const nm = isEn ? x.nmEn : x.nm;
-      return { k: isEn ? 'Member fancams' : '멤버 직캠', t: `${nm} · ${title}`, s: isEn ? `${x.vids.length} fancams` : `직캠 ${x.vids.length}개`, img: v ? v.id : '', m: title, h: `${SITE}/#g=${hashEsc(gko)}&m=${hashEsc(x.a.name.ko)}&song=${hashEsc(s.title)}` }; };
+      return { k: isEn ? 'Member fancams' : '멤버 직캠', t: `${nm} · ${title}`, s: isEn ? `${x.vids.length} fancams` : `직캠 ${x.vids.length}개`, img: v ? v.id : '', m: title, h: `${SITE}/${memberSongPagePath(x.a, s.b, lang)}` }; };
     const grpItem = () => { const gi = ogImageForGroup(gko, info);
-      return { k: isEn ? 'Group' : '그룹', t: gName, s: isEn ? 'Stages · MVs · members' : '무대 · 뮤비 · 멤버', im: /og-image\.png$/.test(gi) ? '' : gi.replace('/maxresdefault.', '/mqdefault.').replace('/hq720.', '/mqdefault.'), h: `${SITE}/#g=${hashEsc(gko)}` }; };
+      return { k: isEn ? 'Group' : '그룹', t: gName, s: isEn ? 'Stages · MVs · members' : '무대 · 뮤비 · 멤버', im: /og-image\.png$/.test(gi) ? '' : gi.replace('/maxresdefault.', '/mqdefault.').replace('/hq720.', '/mqdefault.'), h: `${SITE}/${groupPagePath(gko, lang)}` }; };
     const items = [];
     if (ms) {
       const mate = msList.filter(x => x.a !== ms.a).sort((p, q) => q.vids.length - p.vids.length)[0];
       if (mate) items.push(memItem(mate, s.title));
       const o = (MEMBER_SONGS_BY_ARTIST.get(ms.a) || []).filter(x => x.s.b !== s.b)[0];
       if (o) { const om = (MEMBER_SONGS_BY_SONG.get(gko + '|' + o.s.b) || []).find(y => y.a === ms.a); const v = om && topV(om.vids);
-        items.push({ k: isEn ? 'Another song' : '다른 곡', t: `${mName} · ${o.s.title}`, s: isEn ? `${o.n} fancams` : `직캠 ${o.n}개`, img: v ? v.id : '', m: o.s.title, h: `${SITE}/#g=${hashEsc(gko)}&m=${hashEsc(ms.a.name.ko)}&song=${hashEsc(o.s.title)}` }); }
+        items.push({ k: isEn ? 'Another song' : '다른 곡', t: `${mName} · ${o.s.title}`, s: isEn ? `${o.n} fancams` : `직캠 ${o.n}개`, img: v ? v.id : '', m: o.s.title, h: `${SITE}/${memberSongPagePath(ms.a, o.s.b, lang)}` }); }
       const sv = topV(s.vids);
-      items.push({ k: isEn ? 'Whole song' : '곡 전체', t: s.title, s: isEn ? `${s.vids.length} fancams & stages` : `직캠·무대 ${s.vids.length}개`, img: sv ? sv.id : '', h: `${SITE}/#g=${hashEsc(gko)}&song=${hashEsc(s.title)}` });
+      items.push({ k: isEn ? 'Whole song' : '곡 전체', t: s.title, s: isEn ? `${s.vids.length} fancams & stages` : `직캠·무대 ${s.vids.length}개`, img: sv ? sv.id : '', h: `${SITE}/${songPagePath(gko, s.b, lang)}` });
       items.push(grpItem());
     } else {
       msList.slice().sort((p, q) => q.vids.length - p.vids.length).slice(0, 2).forEach(x => items.push(memItem(x, s.title)));
       const o = (others || []).find(x => x.b !== s.b);
-      if (o) items.push({ k: isEn ? 'Another song' : '다른 곡', t: o.title, s: isEn ? `${o.vids.length} videos` : `영상 ${o.vids.length}개`, im: o.cover || '', h: `${SITE}/#g=${hashEsc(gko)}&song=${hashEsc(o.title)}` });
+      if (o) items.push({ k: isEn ? 'Another song' : '다른 곡', t: o.title, s: isEn ? `${o.vids.length} videos` : `영상 ${o.vids.length}개`, im: o.cover || '', h: `${SITE}/${songPagePath(gko, o.b, lang)}` });
       items.push(grpItem());
     }
     return `<script type="application/json" id="kpu-next">${JSON.stringify(items).replace(/</g, '\\u003c')}</script>`;
