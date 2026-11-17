@@ -1037,6 +1037,18 @@
     #yt-lightbox.lb-browse #yt-lb-main{flex:1;min-width:0;}
     #yt-lightbox.lb-browse #yt-lb-uplist{width:320px;flex-shrink:0;max-height:min(80vh,720px);overflow-y:auto;padding-left:2px;overscroll-behavior:contain;will-change:transform;}
     #yt-lightbox.lb-browse #yt-lb-uplist-scroll{padding-bottom:8px;}
+    /* Up Next 패널 토글 버튼 — 데스크톱 비-narrow 모드 전용 */
+    #yt-lightbox.lb-browse:not(.lb-narrow) #yt-lb-uplist-tog{display:flex;align-items:center;justify-content:center;width:20px;height:28px;border-radius:6px;border:none;background:rgba(255,255,255,0.05);color:rgba(180,200,240,0.5);font-size:11px;cursor:var(--kpu-cursor-pointer,pointer);flex-shrink:0;padding:0;transition:background .15s,color .15s;margin-right:4px;}
+    #yt-lightbox.lb-browse:not(.lb-narrow) #yt-lb-uplist-tog:hover{background:rgba(255,255,255,0.1);color:rgba(200,215,255,0.9);}
+    /* 패널 닫힌 상태: surf·label·nav·scroll 숨김, uplist는 narrow strip만 남김 */
+    #yt-lightbox.lb-browse.lb-uplist-off:not(.lb-narrow) #yt-lb-uplist{width:36px;overflow:hidden;padding-left:0;}
+    #yt-lightbox.lb-browse.lb-uplist-off:not(.lb-narrow) #yt-lb-uplist-hd{flex-direction:column;align-items:center;padding:0;margin:0;}
+    #yt-lightbox.lb-browse.lb-uplist-off:not(.lb-narrow) #yt-lb-uplist-label,
+    #yt-lightbox.lb-browse.lb-uplist-off:not(.lb-narrow) #yt-lb-uplist-nav,
+    #yt-lightbox.lb-browse.lb-uplist-off:not(.lb-narrow) #yt-lb-surf,
+    #yt-lightbox.lb-browse.lb-uplist-off:not(.lb-narrow) #yt-lb-uplist-scroll{display:none!important;}
+    #yt-lightbox.lb-browse.lb-uplist-off:not(.lb-narrow) #yt-lb-uplist-tog{margin:8px 0 0;width:28px;height:28px;}
+    #yt-lightbox.lb-browse.lb-uplist-off:not(.lb-narrow) #yt-lb-wrap{max-width:calc((100vh - 330px) * 16 / 9 + 62px);}
     /* 좁은 재생 화면(800px 미만, app.js _lbNarrowSync — 2026-11-04 Codex 검수122차): Up Next를 영상 옆(320px 고정)이 아니라 아래로.
        예전엔 844px 화면에서 카드를 열면 영상이 138×78로 눌리고 Up Next가 영상을 덮었다. wrap 전체가 한 번에 스크롤된다. */
     #yt-lightbox.lb-browse.lb-narrow #yt-lb-wrap{flex-direction:column;align-items:stretch;gap:14px;max-height:100%;overflow-y:auto;overscroll-behavior:contain;}
@@ -2879,8 +2891,8 @@
   .sr-related-chips{display:flex;flex-wrap:wrap;gap:6px;padding:7px 10px 5px;}
   .sr-chip{flex-shrink:0;font-size:11px;padding:4px 10px;border-radius:20px;background:rgba(255,255,255,0.07);color:rgba(200,220,255,0.8);border:none;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;font-family:inherit;}
   .sr-chip:hover{background:rgba(255,255,255,0.13);}
-  .sr-chip-credit{background:rgba(255,200,80,0.09);color:rgba(255,215,100,0.82);}
-  .sr-chip-credit:hover{background:rgba(255,200,80,0.16);}
+  .sr-chip-credit{background:rgba(150,175,255,0.08);color:rgba(170,210,255,0.75);}
+  .sr-chip-credit:hover{background:rgba(150,175,255,0.15);}
   .sr-cowriter-section{border-top:0.5px solid rgba(255,255,255,0.05);padding-bottom:4px;}
   .sr-cowriter-chips{display:flex;flex-wrap:wrap;gap:6px;padding:4px 13px 6px;}
   .sr-cowriter-chip{font-size:11px;padding:3px 9px;border-radius:12px;background:rgba(150,200,255,0.08);color:rgba(170,210,255,0.75);border:none;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;font-family:inherit;}

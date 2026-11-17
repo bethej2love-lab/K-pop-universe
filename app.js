@@ -5813,7 +5813,7 @@ function _lbMoreOpen(){
   const flag=$('yt-lb-flag'),mute=$('yt-lb-mute'),conn=$('yt-lb-conn-btn'),edit=$('yt-lb-edit');
   const rows=[
     flag&&vis(flag)?{el:flag,t:flag.classList.contains('flagged')?(isKo?'입덕 영상 표시 빼기':'Remove debut flag'):(isKo?'입덕 영상으로 표시':'Mark as my debut video'),on:flag.classList.contains('flagged')}:null,
-    {el:$('yt-lb-fs'),t:isKo?'전체 화면':'Full screen'},
+    {el:{click:_lbRequestFs},t:isKo?'전체 화면':'Full screen'},
     mute?{el:mute,t:mute.getAttribute('aria-label')||(isKo?'소리':'Sound')}:null,
     conn&&conn.style.display!=='none'?{el:conn,t:isKo?'연결 보기':'Connections'}:null,
     edit&&_isAdmin()&&_lbApiId((_lbPlaylist&&_lbIdx>=0)?_lbPlaylist[_lbIdx]:null)?{el:edit,t:isKo?'출연 멤버 지정(관리자)':'Tag members (admin)'}:null,
@@ -7429,6 +7429,7 @@ function _lbSwitchToBrowse(){
   _lbSessionMode='browse';
   lb.classList.add('lb-browse');
   wrap.classList.remove('lb-ui-hidden');
+  const _ulTog=document.getElementById('yt-lb-uplist-tog');if(_ulTog){_ulTog.hidden=false;_ulTog.textContent=lb.classList.contains('lb-uplist-off')?'›':'‹';}
   _lbUpdateToolbar();
   _lbUpdateMemberInfo();
   _lbUpdateUplist();
@@ -7436,6 +7437,7 @@ function _lbSwitchToBrowse(){
 function _lbSwitchToShorts(){
   _lbSessionMode='shorts';
   document.getElementById('yt-lightbox').classList.remove('lb-browse');
+  const _ulTog=document.getElementById('yt-lb-uplist-tog');if(_ulTog)_ulTog.hidden=true;
   document.getElementById('yt-lb-wrap').classList.remove('lb-ui-hidden');
   _lbUpdateToolbar();
   _lbUpdateMemberInfo();
@@ -7633,6 +7635,18 @@ document.getElementById('yt-lb-uplist-label').addEventListener('click',e=>{
   e.currentTarget.setAttribute('aria-expanded',closed?'false':'true');
 });
 document.getElementById('yt-lb-uplist-next').addEventListener('click',e=>{e.stopPropagation();_lbGo(1);});
+// Up Next 패널 접기/펼치기 (데스크톱 lb-browse 전용)
+{
+  const _tog=document.getElementById('yt-lb-uplist-tog');
+  const _lb=document.getElementById('yt-lightbox');
+  if(_tog)_tog.addEventListener('click',e=>{
+    e.stopPropagation();
+    const off=_lb.classList.toggle('lb-uplist-off');
+    _tog.textContent=off?'›':'‹';
+    try{localStorage.setItem('kpu_lb_uplist_off',off?'1':'');}catch(_){}
+  });
+  try{if(localStorage.getItem('kpu_lb_uplist_off')){_lb.classList.add('lb-uplist-off');if(_tog){_tog.textContent='›';}}}catch(_){}
+}
 // 큐 시트 이벤트
 document.getElementById('yt-lb-queue-btn').addEventListener('click',e=>{e.stopPropagation();_openQueueSheet();});
 document.getElementById('yt-lb-queue-backdrop').addEventListener('click',_closeQueueSheet);
