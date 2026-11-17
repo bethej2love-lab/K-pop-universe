@@ -494,6 +494,7 @@ ${LIST_FWD}
   .discog-list{display:block;}
   .discog-list li{display:block;margin-bottom:6px;background:none;border:none;padding:0 0 6px;border-bottom:0.5px solid rgba(255,255,255,0.06);border-radius:0;}
   .member-list a{color:rgba(210,225,255,0.95);text-decoration:none;}
+  .more-songs{margin-top:10px;}.more-songs summary{cursor:pointer;color:rgba(160,190,255,0.9);font-size:13.5px;padding:8px 0;min-height:40px;display:flex;align-items:center;}.more-songs[open] summary{margin-bottom:6px;}
   .tag{font-size:10px;color:rgba(150,175,255,0.6);}
   .yr{color:rgba(150,175,255,0.55);font-size:12px;}
   .cta-dock{position:sticky;bottom:0;z-index:5;margin-top:30px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#0a0a0d 62%,rgba(10,10,13,0));}
@@ -747,6 +748,7 @@ ${LIST_FWD}
   .discog-list{display:block;}
   .discog-list li{display:block;margin-bottom:6px;background:none;border:none;padding:0 0 6px;border-bottom:0.5px solid rgba(255,255,255,0.06);border-radius:0;}
   .member-list a{color:rgba(210,225,255,0.95);text-decoration:none;}
+  .more-songs{margin-top:10px;}.more-songs summary{cursor:pointer;color:rgba(160,190,255,0.9);font-size:13.5px;padding:8px 0;min-height:40px;display:flex;align-items:center;}.more-songs[open] summary{margin-bottom:6px;}
   .tag{font-size:10px;color:rgba(150,175,255,0.6);}
   .yr{color:rgba(150,175,255,0.55);font-size:12px;}
   .cta-dock{position:sticky;bottom:0;z-index:5;margin-top:30px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#0a0a0d 62%,rgba(10,10,13,0));}
@@ -1403,7 +1405,11 @@ function songLinksHtml(gko, lang) {
     <h2>${isEn ? 'Fancams & stages by song' : '곡별 직캠·무대'}</h2>
     <ul class="member-list rel">
       ${list.slice(0, 40).map(s => `<li><a href="${SITE}/${songPagePath(gko, s.b, lang)}">${escHtml(s.bilingualTitle || s.title)}</a></li>`).join('\n      ')}
-    </ul>`;
+    </ul>${list.length > 40 ? `
+    <details class="more-songs"><summary>${isEn ? `${list.length - 40} more songs` : `나머지 ${list.length - 40}곡 더 보기`}</summary>
+    <ul class="member-list rel">
+      ${list.slice(40).map(s => `<li><a href="${SITE}/${songPagePath(gko, s.b, lang)}">${escHtml(s.bilingualTitle || s.title)}</a></li>`).join('\n      ')}
+    </ul></details>` : ''}`; // 40곡 넘는 그룹(샤이니 96·세븐틴 95·방탄 84)은 나머지 곡 페이지가 어디서도 링크를 못 받았다(고아 583개) — 접어서라도 전부 링크
 }
 // ── 합쳐진 판본 곡 페이지 정리(2026-11-11) ────────────────────────────────────────────────────────────────
 // 곡 목록에서 판본 곡('plot twist (Japanese ver.)')을 한국 원곡('첫 만남은 계획대로 되지 않아')에 합치면(shared.js _songAddNicks)
@@ -2102,7 +2108,15 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
   const crumbs = ms
     ? `<div class="crumbs"><a href="${SITE}/${groupPagePath(gko, lang)}">${escHtml(gName)}</a> › <a href="${SITE}/${memberPagePath(ms.a, lang)}">${escHtml(mName)}</a> › <a href="${songUrl}">${escHtml(s.bilingualTitle || s.title)}</a></div>${hubUrl ? `
   <p class="hub-back"><a href="${hubUrl}" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:20px;background:rgba(150,175,255,0.1);border:0.5px solid rgba(150,175,255,0.3);color:#dce6ff;text-decoration:none;font-size:13.5px">${isEn ? `← All ${mName} fancams (${hubTotal})` : `← ${mName} 직캠 전체 보기 (${hubTotal})`}</a></p>` : ''}`
-    : `<div class="crumbs"><a href="${SITE}/${groupPagePath(gko, lang)}">${escHtml(gName)}</a> › ${escHtml(s.title)}</div>`;
+    : `<div class="crumbs"><a href="${SITE}/${groupPagePath(gko, lang)}">${escHtml(gName)}</a> › ${(() => {
+      // 곡 → 앨범 링크(2026-11-17 링크 점검: 앨범 페이지는 곡을 링크하는데 곡 페이지는 앨범을 안 링크했다 — 일방통행).
+      // 이 곡이 수록된 앨범(같은 앨범명 우선, 없으면 첫 번째)의 트랙리스트 페이지로. 앨범 페이지가 실제로 만들어지는 목록(albumsFor)에서만 찾는다.
+      try {
+        const als = albumsFor(gko).filter(x => (x.al.tracks || []).some(t => t && t.title && _CRED_SB(t.title) === s.b));
+        const alb = als.find(x => x.al.title === s.album) || als[0];
+        return alb ? `<a href="${SITE}/${albumPagePath(gko, alb.slug, lang)}">${escHtml(alb.al.title)}</a> › ` : '';
+      } catch (e) { return ''; }
+    })()}${escHtml(s.title)}</div>`;
   const lead = ms
     ? (isEn ? `${gName} ${mName}'s individual fancams and face cams of "${songLabel}", most viewed first.` : `${gko} ${mName}의 '${songLabel}' 개인 직캠·페이스캠을 조회수 순으로 모았어요.`)
     : '';
