@@ -74,6 +74,7 @@ const server = http.createServer((req, res) => {
     if (!(await ev(cdp, `typeof showGC==='function'&&ARTISTS.length>0`))) { bad('앱 미준비'); throw new Error('미준비'); }
     const open = async () => (await ev(cdp, `[...document.querySelectorAll('.open')].filter(e=>e.id&&e.getBoundingClientRect().width>0).map(e=>e.id).join(' ')`)).split(' ');
     const has = (o, id) => o.includes(id);
+    const focusInfo = async () => (await ev(cdp, `(function(){var a=document.activeElement;return (a?a.tagName+(a.id?'#'+a.id:''):'none')+' hasFocus='+document.hasFocus()+' iframes='+document.querySelectorAll('iframe').length})()`));
     const esc = async () => { for (const type of ['keyDown', 'keyUp']) await cdp.send('Input.dispatchKeyEvent', { type, key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 }); await sleep(900); };
     const reset = async () => { await ev(cdp, `(function(){try{closeLightbox()}catch(e){};try{closeConnCard()}catch(e){};try{closeCards()}catch(e){};history.replaceState(null,'',location.pathname);return 1})()`); await sleep(900); };
     const LB = `openLightbox('https://www.youtube.com/watch?v=4Hyx7TZ2cXg',false,null,0,{groupKo:'에스파'})`;
@@ -85,10 +86,10 @@ const server = http.createServer((req, res) => {
     if (!has(o, 'yt-lightbox') && has(o, 'side-panel') && h.includes('에스파')) ok('① 영상 닫기 = 영상만, 카드·주소 유지'); else bad(`① ${o} ${h}`);
     // ②
     await ev(cdp, `(${LB},1)`); await sleep(1500); await esc(); o = await open();
-    if (!has(o, 'yt-lightbox') && has(o, 'side-panel')) ok('② ESC = 영상만'); else bad(`② ${o}`);
+    if (!has(o, 'yt-lightbox') && has(o, 'side-panel')) ok('② ESC = 영상만'); else bad(`② ${o} | ${await focusInfo()}`);
     // ③
     await ev(cdp, `(showT(${KA}),1)`); await sleep(2500); o = await open();
-    if (has(o, 'member-panel')) { await esc(); o = await open(); if (!has(o, 'member-panel') && has(o, 'side-panel')) ok('③ 그룹+멤버에서 ESC = 멤버 카드만'); else bad(`③ ${o}`); } else bad(`③ 사전조건 멤버 패널 없음 ${o}`);
+    if (has(o, 'member-panel')) { await esc(); o = await open(); if (!has(o, 'member-panel') && has(o, 'side-panel')) ok('③ 그룹+멤버에서 ESC = 멤버 카드만'); else bad(`③ ${o} | ${await focusInfo()}`); } else bad(`③ 사전조건 멤버 패널 없음 ${o}`);
     // ④
     await ev(cdp, `(document.getElementById('sp-wide-btn').click(),1)`); await sleep(900); o = await open();
     const wide = await ev(cdp, `document.body.classList.contains('card-wide')`);

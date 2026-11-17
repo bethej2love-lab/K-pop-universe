@@ -1,0 +1,385 @@
+{
+ "note": "2026-11-17 Codex 추천 상단 검수 후속 — 다른 가수 영상(그룹 멤버 이름·곡명 충돌)을 content_flag=무관으로, 빅뱅 대성 합동 무대는 members를 실제 출연자 3명으로. 이전 값 기록(되돌리기용).",
+ "무관": [
+  "7eMK0UIFtFk",
+  "CqBTZ9uku8s",
+  "zPzIXobs6SQ",
+  "G9-zY5gwuCg",
+  "hn4XiirKdNE",
+  "LhzfWyateww",
+  "oWBdMuoa7lA",
+  "UjwSgWQXChI",
+  "REPZc2nzlyw",
+  "RyKcxGpoWrA",
+  "WSCaZze564A",
+  "X29h0TrJfSM",
+  "zYjjqrNzqt4",
+  "EbEoLSFJil0",
+  "v5ZXYcM3_Ok"
+ ],
+ "members_fix": {
+  "QtFNIZV_RO8": {
+   "이전": [
+    "대성"
+   ],
+   "이후": [
+    "지드래곤",
+    "태양",
+    "대성"
+   ]
+  }
+ },
+ "이전_상태": [
+  {
+   "id": "7eMK0UIFtFk",
+   "group_ko": "우아",
+   "members": [
+    "우연"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "content_flag": null,
+   "category": "live"
+  },
+  {
+   "id": "CqBTZ9uku8s",
+   "group_ko": "루셈블",
+   "members": [
+    "비비"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "content_flag": null,
+   "category": "live"
+  },
+  {
+   "id": "EbEoLSFJil0",
+   "group_ko": "이세계아이돌",
+   "members": [
+    "아이네"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "content_flag": null,
+   "category": "variety"
+  },
+  {
+   "id": "G9-zY5gwuCg",
+   "group_ko": "엘즈업",
+   "members": [
+    "나나"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "content_flag": null,
+   "category": "live"
+  },
+  {
+   "id": "hn4XiirKdNE",
+   "group_ko": "킥플립",
+   "members": [
+    "동화"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "content_flag": null,
+   "category": "live"
+  },
+  {
+   "id": "LhzfWyateww",
+   "group_ko": "하츠웨이브",
+   "members": [
+    "데인"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "content_flag": null,
+   "category": "live"
+  },
+  {
+   "id": "oWBdMuoa7lA",
+   "group_ko": "프림로즈",
+   "members": [
+    "레이니"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "content_flag": null,
+   "category": "live"
+  },
+  {
+   "id": "QtFNIZV_RO8",
+   "group_ko": "빅뱅",
+   "members": [
+    "대성"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "content_flag": null,
+   "category": "live"
+  },
+  {
+   "id": "REPZc2nzlyw",
+   "group_ko": "공원소녀",
+   "members": [
+    "레나"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "content_flag": null,
+   "category": "live"
+  },
+  {
+   "id": "RyKcxGpoWrA",
+   "group_ko": "힛지스",
+   "members": [
+    "비비"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "content_flag": null,
+   "category": "live"
+  },
+  {
+   "id": "UjwSgWQXChI",
+   "group_ko": "프림로즈",
+   "members": [
+    "레이니"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "content_flag": null,
+   "category": "live"
+  },
+  {
+   "id": "v5ZXYcM3_Ok",
+   "group_ko": "블랭키",
+   "members": [
+    "마이키"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "content_flag": null,
+   "category": "variety"
+  },
+  {
+   "id": "WSCaZze564A",
+   "group_ko": "업텐션",
+   "members": [
+    "이환희"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "content_flag": null,
+   "category": "live"
+  },
+  {
+   "id": "X29h0TrJfSM",
+   "group_ko": "우아",
+   "members": [
+    "민서"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "content_flag": null,
+   "category": "live"
+  },
+  {
+   "id": "zPzIXobs6SQ",
+   "group_ko": "루셈블",
+   "members": [
+    "비비"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "content_flag": null,
+   "category": "variety"
+  },
+  {
+   "id": "zYjjqrNzqt4",
+   "group_ko": "하트오브우먼",
+   "members": [
+    "아인"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "content_flag": null,
+   "category": "live"
+  }
+ ],
+ "킬링보이스_후속": {
+  "note": "딩고 킬링보이스 등 다른 가수 공연이 멤버 이름·낱말 충돌로 붙은 21건을 건별 판단 후 무관 처리. 정상으로 남긴 것: 강타·XIA·규현·려욱·예성·소유·김성규(해당 그룹 멤버의 솔로 활동). 애매해서 안 건드림: jX1_jrVH4cA(휘성 with 아인).",
+  "무관": [
+   "2DdUJDPT0oQ",
+   "4ywyi6OeSy4",
+   "b7xt0XRj_po",
+   "4w3p3ef2ydQ",
+   "T0JlkKODigU",
+   "MnEa3idwsos",
+   "Vpromp90G4g",
+   "cUA0WJAGwDo",
+   "r_2aKiw9vjI",
+   "U3QIEt7jdfM",
+   "YbLXavSS-iI",
+   "6KKIo4-6jh8",
+   "DQK2geMTHtU",
+   "HH7glp3wZZo",
+   "mMwsjQ0PfJM",
+   "n239KWMz_wc",
+   "uQElREKRP_I",
+   "yzPeeUkRdd4",
+   "lHILyDraRvA",
+   "UsYlkCSvPHs",
+   "kM0J9whqIH0"
+  ],
+  "이전_상태": [
+   {
+    "id": "2DdUJDPT0oQ",
+    "group_ko": "데이식스",
+    "members": [
+     "Jae"
+    ]
+   },
+   {
+    "id": "4ywyi6OeSy4",
+    "group_ko": "드림노트",
+    "members": [
+     "미소"
+    ]
+   },
+   {
+    "id": "b7xt0XRj_po",
+    "group_ko": "러블리즈",
+    "members": [
+     "JIN"
+    ]
+   },
+   {
+    "id": "4w3p3ef2ydQ",
+    "group_ko": "스테이씨",
+    "members": [
+     "윤"
+    ]
+   },
+   {
+    "id": "T0JlkKODigU",
+    "group_ko": "스트레이키즈",
+    "members": [
+     "한"
+    ]
+   },
+   {
+    "id": "MnEa3idwsos",
+    "group_ko": "써니",
+    "members": [
+     "써니"
+    ]
+   },
+   {
+    "id": "Vpromp90G4g",
+    "group_ko": "엔믹스",
+    "members": [
+     "배이"
+    ]
+   },
+   {
+    "id": "cUA0WJAGwDo",
+    "group_ko": "엔시티 127",
+    "members": [
+     "마크"
+    ]
+   },
+   {
+    "id": "r_2aKiw9vjI",
+    "group_ko": "엔하이픈",
+    "members": [
+     "제이"
+    ]
+   },
+   {
+    "id": "U3QIEt7jdfM",
+    "group_ko": "올데이프로젝트",
+    "members": [
+     "타잔"
+    ]
+   },
+   {
+    "id": "YbLXavSS-iI",
+    "group_ko": "윈터",
+    "members": [
+     "윈터"
+    ]
+   },
+   {
+    "id": "6KKIo4-6jh8",
+    "group_ko": "이즈나",
+    "members": [
+     "유사랑"
+    ]
+   },
+   {
+    "id": "DQK2geMTHtU",
+    "group_ko": "이즈나",
+    "members": [
+     "유사랑"
+    ]
+   },
+   {
+    "id": "HH7glp3wZZo",
+    "group_ko": "이즈나",
+    "members": [
+     "유사랑"
+    ]
+   },
+   {
+    "id": "mMwsjQ0PfJM",
+    "group_ko": "이즈나",
+    "members": [
+     "유사랑"
+    ]
+   },
+   {
+    "id": "n239KWMz_wc",
+    "group_ko": "이즈나",
+    "members": [
+     "유사랑"
+    ]
+   },
+   {
+    "id": "uQElREKRP_I",
+    "group_ko": "이즈나",
+    "members": [
+     "유사랑"
+    ]
+   },
+   {
+    "id": "yzPeeUkRdd4",
+    "group_ko": "이즈나",
+    "members": [
+     "유사랑"
+    ]
+   },
+   {
+    "id": "lHILyDraRvA",
+    "group_ko": "있지",
+    "members": [
+     "유나"
+    ]
+   },
+   {
+    "id": "UsYlkCSvPHs",
+    "group_ko": "쟈니",
+    "members": [
+     "쟈니"
+    ]
+   },
+   {
+    "id": "kM0J9whqIH0",
+    "group_ko": "튜넥스",
+    "members": [
+     "제온"
+    ]
+   }
+  ]
+ }
+}
