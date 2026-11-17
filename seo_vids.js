@@ -36,10 +36,11 @@
   // 위 제목(h2) — 정렬에 맞춰 '조회수 많은'만 바꾼다(최신순→'최신', 날짜순→'오래된', 영문 Most viewed→Newest/Oldest)
   var h2=bar.previousElementSibling;while(h2&&h2.tagName!=='H2')h2=h2.previousElementSibling;
   var h0=h2?h2.textContent:'';
-  var HW=EN?{pop:'Most viewed',nw:'Newest',old:'Oldest'}:{pop:'조회수 많은',nw:'최신',old:'오래된'};
-  function setHead(){if(!h2||h0.indexOf(HW.pop)<0)return;h2.textContent=sort==='pop'?h0:h0.split(HW.pop).join(HW[sort]);}
+  // 한국어 '날짜순'은 '오래된'이라 부르지 않는다(사용자 11-17: 유튜브도 날짜순) — 제목에서 '조회수 많은 '만 뗀다. 영문은 앱 라벨(Oldest)과 같게.
+  var HW=EN?{pop:'Most viewed',nw:'Newest',old:'Oldest'}:{pop:'조회수 많은',nw:'최신',old:''};
+  function setHead(){if(!h2||h0.indexOf(HW.pop+' ')<0)return;h2.textContent=sort==='pop'?h0:h0.split(HW.pop+' ').join(HW[sort]?HW[sort]+' ':'');}
   [['pop',L.pop],['nw',L.nw],['old',L.old]].forEach(function(p){
-    var b=document.createElement('button');b.type='button';b.textContent=p[1];b.setAttribute('data-s',p[0]);if(p[0]==='old'){b.title=EN?'Oldest first':'오래된 순';b.setAttribute('aria-label',EN?'Oldest first':'날짜순 (오래된 순)');}
+    var b=document.createElement('button');b.type='button';b.textContent=p[1];b.setAttribute('data-s',p[0]);if(p[0]==='old'&&EN){b.title='Oldest first';b.setAttribute('aria-label','Oldest first');}
     b.addEventListener('click',function(){if(sort===p[0])return;sort=p[0];shown=STEP;touched=true;ga('seo_vid_sort',{kind:sort,n:data.length});render();});
     bar.appendChild(b);chips[p[0]]=b;
   });
