@@ -1763,6 +1763,9 @@
   }
   .gc-link-icon:hover{color:rgba(200,220,255,0.95);transform:translateY(-1px);}
   .gc-link-icon svg{width:100%;height:100%;}
+  /* YouTube 공식 아이콘(2026-11-17, API 감사 III.F.2a): 원본 비율 28.57:20, 높이 20px 이상. 색·모양은 SVG에 고정이라 hover 색 변화가 닿지 않게 한다. */
+  .gc-link-icon.gc-link-icon-youtube,#tt-links .gc-link-icon.gc-link-icon-youtube{width:28.6px;height:20px;}
+  .gc-link-icon.gc-link-icon-youtube:hover{color:inherit;}
   #gc-grid,#tt-info-grid{display:flex;flex-direction:column;gap:1px;margin-top:7px;padding-top:9px;border-top:0.5px solid rgba(255,255,255,0.10);}
   /* 멤버 카드 안에서는 이름(.tn)·그룹칩(#tg-row)이 전부 padding-left:4px로 살짝 들여져 있는데
      이 정보 줄만 0이라 왼쪽으로 삐져나와 보였음 — 같은 4px로 맞춘다(2026-08-10, 사용자 제보) */

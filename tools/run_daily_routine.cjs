@@ -236,6 +236,11 @@ async function main() {
       45000, v => v === true);
     if (!adminReady) throw new Error('admin.js가 로드되지 않음(_admRunRoutine 없음) — 관리자 세션/스크립트 로드 실패');
     console.log(`[routine] admin.js 로드 확인 — ${IS_CLEANUP ? '청소 루틴' : '일일 루틴'} 시작`);
+    // YouTube API 감사 III.D.1c(2026-11-17) — 이 실행이 쓰는 키(Actions 시크릿)의 구글 프로젝트 번호. 번호만 남기고 키는 출력하지 않는다.
+    if (YT_KEY) {
+      const proj = await evalExpr(cdp, "typeof _ytKeyProjectProbe==='function' ? _ytKeyProjectProbe(_ytApiKey()) : null", true).catch(() => null);
+      console.log(`[routine] YouTube API 키 프로젝트 번호: ${proj || '확인 못 함'} (감사 보고서 번호 795312566718)`);
+    }
 
     // 5. 루틴 실행 — 오래 걸리므로 await 없이 발사하고 완료 여부를 폴링한다
     if (IS_CLEANUP) {

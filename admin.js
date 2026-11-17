@@ -4,6 +4,21 @@
 
 
 function _ytApiKey(){return(localStorage.getItem('kpu_yt_key')||'').trim();}
+// API 키가 속한 Google Cloud 프로젝트 번호(2026-11-17, YouTube API 감사 III.D.1c "같은 클라이언트에 프로젝트 번호가 여러 개인가"). 키 값은 어디에도 남기지 않고 번호만 돌려준다.
+// 꺼져 있는 다른 API(Cloud Translation)를 키로 한 번 불러 오류 응답에서 번호를 읽는다 — 쿼터를 쓰지 않는다(유튜브 API 호출 아님).
+// 응답 형태: SERVICE_DISABLED면 details[].metadata.consumer="projects/번호"·message에 "in project 번호", API 키가 서비스 제한(API_KEY_SERVICE_BLOCKED)이어도 consumer가 온다.
+function _ytKeyProjectFrom(text){
+  const t=String(text||'');
+  const m=/"consumer"\s*:\s*"projects\/(\d{6,})"/.exec(t)||/(?:in project|project number|project #|project)[\s:#]*(\d{6,})/i.exec(t);
+  return m?m[1]:null;
+}
+async function _ytKeyProjectProbe(key){
+  if(!key)return null;
+  try{
+    const r=await fetch('https://translate.googleapis.com/language/translate/v2?q=a&target=en&key='+encodeURIComponent(key));
+    return _ytKeyProjectFrom(await r.text());
+  }catch(e){return null;}
+}
 
 // YouTube API가 title/description을 HTML 엔티티로 이스케이프해서 내려주는 경우가 있음(예: 어퍼스트로피가
 // "&#39;"로, "&"가 "&amp;"로) — JSON이라 자동으로 안 풀리고 그대로 문자열에 박혀서, 화면은 textContent로
@@ -828,7 +843,64 @@ async function _ytUnavailSupported(){
 // 루틴 자체는 3시간마다 도니까 그대로 넣으면 하루 8배치 = 3,200유닛으로 지갑이 터진다.
 // 마지막 실행 시각을 DB(admin_meta)에 남겨 기기·워크플로가 달라도 하루 1회가 지켜지게 한다
 // — localStorage로 하면 GitHub Actions 러너가 매번 새 프로필이라 "기록 없음"이 되어 매번 돈다.
-const _VIEW_ROTATE_GAP_MS=20*3600*1000;   // 20시간 — 루틴 주기(3h)와 안 겹치게 넉넉히
+// ⚠️ 2026-11-17 YouTube API 감사(III.E.4a "API 데이터를 얼마나 자주 갱신·삭제하나", 정책 상한 30일): 하루 1배치(2만)면 영상 61만 건 한 바퀴가 약 31일이라 한도를 구조적으로 못 지켰다
+//    (실측 30일 초과 110,648건). 간격을 20h→11h로 줄여 daily-routine(6시간마다)이 하루 최대 2배치(≈4만) → 한 바퀴 약 15일, 밀린 분은 3~4일에 해소. 배치당 ≈50분(실측 49분31초)이라 루틴 제한(135분) 안.
+const _VIEW_ROTATE_GAP_MS=11*3600*1000;
+// 삭제·비공개로 확인된 지 30일 지난 영상의 저장 데이터를 지운다(2026-11-17, YouTube API 감사 III.E.4 — 원본이 사라진 영상의 API 데이터는 보존하지 않는다).
+// 순환 갱신이 매번 다시 조회하므로 30일 넘게 '없음'이면 진짜 삭제·비공개다(일시 장애면 되살아남 처리로 unavailable_at이 풀린다). 대량 삭제 사고 방지로 한 번에 1,000건 넘으면 멈춘다.
+// FK 자식(yt_view_milestones — 조회수 마일스톤 기록)을 먼저 지운다. 권한/제약으로 못 지우면 경고만 남기고 다음 실행에 재시도.
+async function _ytPurgeGoneApiData(){
+  if(!sb||!(await _ytUnavailSupported()))return 0;
+  const cutoff=new Date(Date.now()-30*86400000).toISOString();
+  const{count,error:ce}=await sb.from(_YT_TABLE).select('id',{count:'exact',head:true}).lt('unavailable_at',cutoff);
+  if(ce){console.warn('[삭제 데이터 정리] 대상 조회 실패: '+ce.message);return 0;}
+  if(!count)return 0;
+  if(count>1000){console.warn('[삭제 데이터 정리] 대상 '+count+'건이 1,000건을 넘어 안전을 위해 멈춤 — 수동 확인 필요(API 장애로 대량 표시됐을 수 있음)');return 0;}
+  const key=_ytApiKey();
+  if(!key){console.warn('[삭제 데이터 정리] API 키가 없어 재확인 없이는 지우지 않습니다');return 0;}
+  let total=0,revived=0;
+  for(let round=0;round<10;round++){
+    const{data,error}=await sb.from(_YT_TABLE).select('id').lt('unavailable_at',cutoff).limit(200);
+    if(error||!data||!data.length)break;
+    let ids=data.map(r=>r.id);
+    // 지우기 직전에 YouTube API로 **진짜 사라졌는지 다시 확인**한다(2026-11-17 실측: 표시 후 순환이 아직 못 돌아온 140건 중 23건이 실제론 재생 가능한 오표시였다).
+    // 살아 있는 건 지우지 않고 표시만 푼다. API가 오류를 내면 아무것도 지우지 않고 멈춘다. videos.list는 쿼터 1/콜(50개).
+    const alive=new Set();let apiOk=true;
+    for(let i=0;i<ids.length&&apiOk;i+=50){
+      try{
+        const r=await fetch('https://www.googleapis.com/youtube/v3/videos?part=id&id='+ids.slice(i,i+50).map(encodeURIComponent).join(',')+'&key='+encodeURIComponent(key));
+        const j=await r.json();
+        if(!r.ok||!Array.isArray(j.items)){apiOk=false;break;}
+        j.items.forEach(it=>alive.add(it.id));
+      }catch(e){apiOk=false;}
+    }
+    if(!apiOk){console.warn('[삭제 데이터 정리] 재확인 API 호출 실패 — 이번엔 아무것도 지우지 않음');break;}
+    if(alive.size){
+      const up=await sb.from(_YT_TABLE).update({unavailable_at:null}).in('id',[...alive]);
+      if(up.error){console.warn('[삭제 데이터 정리] 되살아난 영상 표시 해제 실패: '+up.error.message);break;}
+      revived+=alive.size;ids=ids.filter(id=>!alive.has(id));
+    }
+    if(!ids.length)continue;
+    const ms=await sb.from('yt_view_milestones').delete().in('video_id',ids);
+    if(ms.error)console.warn('[삭제 데이터 정리] 마일스톤 기록 삭제 실패(무시하고 계속): '+ms.error.message);
+    const del=await sb.from(_YT_TABLE).delete().in('id',ids);
+    if(del.error){console.warn('[삭제 데이터 정리] 영상 삭제 실패: '+del.error.message);break;}
+    total+=ids.length;
+  }
+  if(total||revived)console.log('[삭제 데이터 정리] 삭제·비공개 30일 경과 영상 '+total+'건의 저장 데이터를 삭제'+(revived?', 실제론 재생 가능한 '+revived+'건은 표시만 해제':'')+'했습니다.');
+  return total;
+}
+// 가장 오래전에 갱신된 영상이 며칠 전인지(한도 30일) — 순환이 따라잡고 있는지 매 실행 로그로 본다.
+async function _ytLogOldestApiAge(){
+  try{
+    const{data}=await sb.from(_YT_TABLE).select('view_count_synced_at').not('view_count_synced_at','is',null)
+      .order('view_count_synced_at',{ascending:true}).limit(1);
+    const t=data&&data[0]&&data[0].view_count_synced_at;if(!t)return null;
+    const days=Math.floor((Date.now()-new Date(t).getTime())/86400000);
+    console.log('[API 갱신 감시] 가장 오래전에 갱신된 영상: '+days+'일 전 (정책 한도 30일'+(days>30?' — ⚠ 초과, 순환이 따라잡는 중':'')+')');
+    return days;
+  }catch(e){return null;}
+}
 async function _ytRotateViewCountDaily(){
   const last=await _admMetaGet('last_viewcount_rotate');
   const waited=Date.now()-last;
@@ -841,6 +913,8 @@ async function _ytRotateViewCountDaily(){
   //    3시간 뒤 루틴이 또 400유닛을 시도하고 또 터진다(빈 지갑을 하루 8번 두드리는 꼴).
   await _admMetaSet('last_viewcount_rotate',Date.now());
   await _ytRotateViewCountRefresh();
+  await _ytPurgeGoneApiData().catch(e=>console.warn('[삭제 데이터 정리] '+e.message));
+  await _ytLogOldestApiAge();
 }
 async function _ytRotateViewCountRefresh(){
   const key=_ytApiKey();
@@ -11859,6 +11933,17 @@ document.getElementById('vid-tag-thumb-refresh').addEventListener('click',async 
   const keyEl=document.getElementById('sp-yt-key');
   const saved=localStorage.getItem('kpu_yt_key')||'';
   if(keyEl&&saved)keyEl.value=saved;
+  if(keyEl){
+    const AUDIT_PROJECT='795312566718'; // 2026-11-16 YouTube API 감사 보고서에 적힌 프로젝트 번호
+    const note=document.createElement('div');note.style.cssText='font-size:11px;opacity:.75;margin:-4px 0 8px;';keyEl.insertAdjacentElement('afterend',note);
+    const showProj=async()=>{
+      const k=keyEl.value.trim();if(!k){note.textContent='';return;}
+      note.textContent='이 키의 구글 프로젝트 번호 확인 중…';
+      const p=await _ytKeyProjectProbe(k);
+      note.textContent=p?('이 키의 구글 프로젝트 번호: '+p+(p===AUDIT_PROJECT?' (감사 번호와 같음 ✓)':' ⚠ 감사 번호('+AUDIT_PROJECT+')와 다름 — 프로젝트가 둘 이상이면 하나로 통합')):'프로젝트 번호를 확인하지 못함(키 오류이거나 응답에 번호 없음)';
+    };
+    showProj();keyEl.addEventListener('change',showProj);
+  }
   keyEl?.addEventListener('change',e=>localStorage.setItem('kpu_yt_key',e.target.value.trim()));
   keyEl?.addEventListener('blur',e=>localStorage.setItem('kpu_yt_key',e.target.value.trim()));
   _admExecBind('sp-yt-sync',async()=>{
@@ -12833,7 +12918,7 @@ async function _admRunRoutine(withSync,opts){
   //    47만 건이면 24일에 전체 한 바퀴. 지금(월 1회 수동)보다 촘촘하다.
   //    ⚠️ 하루 한 번만 — 루틴은 3시간마다 도는데 매번 돌면 3,200유닛/일이라 지갑이 터진다.
   //    ⚠️ 실패해도 루틴은 계속된다(각 단계가 try/catch). 쿼터가 모자란 날은 이 단계만 건너뛰는 셈.
-  steps.push({name:'8. 조회수 순환 갱신 (하루 1배치 · 2만개)',fn:_ytRotateViewCountDaily});
+  steps.push({name:'8. 조회수 순환 갱신 (11시간 간격 · 회당 2만개 · 하루 최대 2회)',fn:_ytRotateViewCountDaily});
   // 9. 조회수 마일스톤 — 최근 업로드 빠른 순환(2026-09-23) — 위 8번과 별개 큐. 8번은 전체를 24일에
   //    한 바퀴 돌아 마일스톤 크로싱을 뉴스로 쓰기엔 너무 늦다 — 최근 90일 업로드만 매 루틴(3시간)마다
   //    돌려서 당일 크로싱을 잡는다. 게이트 없음(하루 1회 제한 없이 루틴마다 실행), 실패해도 조용히

@@ -1,0 +1,1207 @@
+{
+ "note": "2026-11-17 YouTube API 감사 III.E.4a 조치 — 삭제·비공개 확인 후 30일 지난 영상 중, oEmbed로 지금도 사라진 것으로 재확인된 116건의 저장 데이터를 삭제했다. 제목·썸네일·조회수 등 API 데이터는 보관하지 않고 우리 쪽 태깅 정보(id·그룹·멤버·분류)만 기록. 재생 가능으로 확인된 23건은 unavailable_at 표시만 해제(revived), 판단 불가 1건(mnH1ersmPk0, oEmbed 409)은 그대로 둠.",
+ "deleted_count": 116,
+ "revived_ids": [
+  "iD5pZJFgrH4",
+  "kRSxPCGbh-g",
+  "krTiVhrlbyw",
+  "kRUFoAZafOI",
+  "krssC-Jvw8s",
+  "KRthztcXaTA",
+  "KrtNh_v0cWc",
+  "KRsRV-efSp8",
+  "kRve7nwDO7I",
+  "kRV1z6sc1t4",
+  "KRvAg4yy2Hk",
+  "Krv5UfWCUR4",
+  "KRuGSA895c0",
+  "kRuZWJloaKo",
+  "kruTSS55-JY",
+  "KRUkhfeLWKE",
+  "krVVY9plygE",
+  "kRVtajlqV9c",
+  "KRwjnJSRFbA",
+  "KRvsXuYc2a4",
+  "kRvJaKNaFkg",
+  "KrxKyyXkZ6g",
+  "kRvgdPPAC0g"
+ ],
+ "left_as_is": [
+  "mnH1ersmPk0"
+ ],
+ "rows": [
+  {
+   "id": "F_4VzHQ_6bk",
+   "group_ko": "앤팀",
+   "members": [],
+   "with_groups": [
+    "82메이저"
+   ],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-09-16 08:54:51.943+00"
+  },
+  {
+   "id": "5scSkrqP4Jc",
+   "group_ko": "피프티피프티",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-09-21 17:44:17.254+00"
+  },
+  {
+   "id": "ikUVBMSTYtI",
+   "group_ko": "이펙스",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-23 01:36:50.67+00"
+  },
+  {
+   "id": "ZYtlgs-zVBM",
+   "group_ko": "오마이걸",
+   "members": [
+    "효정"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-23 01:37:09.567+00"
+  },
+  {
+   "id": "wWKqIuAuxqs",
+   "group_ko": "웨이션브이",
+   "members": [],
+   "with_groups": [
+    "나우즈"
+   ],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-09-23 01:38:00.842+00"
+  },
+  {
+   "id": "rELqR8aLvrM",
+   "group_ko": "템페스트",
+   "members": [
+    "한빈"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-09-23 01:40:14.505+00"
+  },
+  {
+   "id": "INIoIZoiO7M",
+   "group_ko": "애프터스쿨",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-23 01:40:44.28+00"
+  },
+  {
+   "id": "6SYymdyc5g8",
+   "group_ko": "우아",
+   "members": [
+    "나나"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-23 04:03:22.469+00"
+  },
+  {
+   "id": "6TjCU1VXzkM",
+   "group_ko": "쥬얼리",
+   "members": [
+    "서인영"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-23 04:03:22.469+00"
+  },
+  {
+   "id": "AMzckeVBttQ",
+   "group_ko": "펜타곤",
+   "members": [
+    "후이"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "variety",
+   "unavailable_at": "2026-09-23 04:20:18.747+00"
+  },
+  {
+   "id": "HyS-h5R4-js",
+   "group_ko": "싸이커스",
+   "members": [
+    "민재",
+    "수민",
+    "예찬"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-23 08:58:19.447+00"
+  },
+  {
+   "id": "iOqTEBfCO6w",
+   "group_ko": "클릭비",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-23 08:58:44.492+00"
+  },
+  {
+   "id": "KnswJsRCzQ4",
+   "group_ko": "이븐",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-23 09:00:12.497+00"
+  },
+  {
+   "id": "p-NnD49mrSQ",
+   "group_ko": "아워벌스데이",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-09-23 15:01:02.378+00"
+  },
+  {
+   "id": "p735WpZq0uM",
+   "group_ko": "아이들",
+   "members": [
+    "소연"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-09-23 15:01:09.994+00"
+  },
+  {
+   "id": "rvdxtV7-e6M",
+   "group_ko": "소녀시대",
+   "members": [],
+   "with_groups": [
+    "알파드라이브원",
+    "몬스타엑스",
+    "엔시티 127"
+   ],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-09-23 15:03:31.261+00"
+  },
+  {
+   "id": "t1n3DWfaZ7w",
+   "group_ko": "하이라이트",
+   "members": [
+    "손동운"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-23 15:04:35.211+00"
+  },
+  {
+   "id": "UZOKWix-41Q",
+   "group_ko": "피프티피프티",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-09-23 15:06:15.247+00"
+  },
+  {
+   "id": "X4E2KmKIxXQ",
+   "group_ko": "아이콘",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-09-23 19:02:33.33+00"
+  },
+  {
+   "id": "Wmor4PWhy6Q",
+   "group_ko": "엔시티 드림",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-23 23:52:41.795+00"
+  },
+  {
+   "id": "zJ7sv3sVeis",
+   "group_ko": "하츠투하츠",
+   "members": [],
+   "with_groups": [
+    "키키",
+    "엔하이픈"
+   ],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-09-24 03:58:43.311+00"
+  },
+  {
+   "id": "ZrAi6xeAZx4",
+   "group_ko": "원어스",
+   "members": [
+    "서호"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-24 03:58:53.43+00"
+  },
+  {
+   "id": "5C6ibo-oqGU",
+   "group_ko": "피프티피프티",
+   "members": [],
+   "with_groups": [
+    "프로미스나인",
+    "아이덴티티"
+   ],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-09-24 03:59:45.296+00"
+  },
+  {
+   "id": "C1FxTHTXUls",
+   "group_ko": "리센느",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-09-24 03:59:45.296+00"
+  },
+  {
+   "id": "NOiMVvV3ltw",
+   "group_ko": "엔시티 127",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-24 03:59:51.222+00"
+  },
+  {
+   "id": "_ossp2PhfSI",
+   "group_ko": "수영",
+   "members": [
+    "수영"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-24 04:00:17.186+00"
+  },
+  {
+   "id": "0HSvBs73UXA",
+   "group_ko": "블랙핑크",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-24 04:00:57.973+00"
+  },
+  {
+   "id": "3qhWPXXcNHk",
+   "group_ko": "하이라이트",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-09-24 04:02:35.373+00"
+  },
+  {
+   "id": "3Y9MTQlN4wc",
+   "group_ko": "아홉",
+   "members": [],
+   "with_groups": [],
+   "with_members": [
+    "이특(슈퍼주니어)",
+    "희철(슈퍼주니어)"
+   ],
+   "category": "live",
+   "unavailable_at": "2026-09-24 04:02:46.312+00"
+  },
+  {
+   "id": "7R-d3OV0YL4",
+   "group_ko": "시크릿",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-24 09:06:01.964+00"
+  },
+  {
+   "id": "8jNRZLzPGgk",
+   "group_ko": "키비츠",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-24 09:06:39.05+00"
+  },
+  {
+   "id": "9gyGGMDx9lU",
+   "group_ko": "리센느",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-09-24 09:07:20.822+00"
+  },
+  {
+   "id": "9sJsLMdjBLA",
+   "group_ko": "키키",
+   "members": [
+    "지유",
+    "수이"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-24 09:07:29.062+00"
+  },
+  {
+   "id": "C6JhFVhRd1Q",
+   "group_ko": "레드벨벳",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-09-24 09:10:40.244+00"
+  },
+  {
+   "id": "yCZvJ11A_Ys",
+   "group_ko": "세븐틴",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-09-24 14:59:18.742+00"
+  },
+  {
+   "id": "GoSWemH_FvM",
+   "group_ko": "아이덴티티",
+   "members": [
+    "김은성",
+    "이청명",
+    "곽기웅",
+    "김도훈"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-09-24 15:04:36.623+00"
+  },
+  {
+   "id": "Hc5zPQMqU7k",
+   "group_ko": "세이마이네임",
+   "members": [
+    "메이"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-24 19:13:10.299+00"
+  },
+  {
+   "id": "KYzOmbpVqro",
+   "group_ko": "아워벌스데이",
+   "members": [],
+   "with_groups": [
+    "엔하이픈",
+    "키스오브라이프",
+    "키키"
+   ],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-09-24 19:13:50.953+00"
+  },
+  {
+   "id": "L7MR8RF08lE",
+   "group_ko": "프로미스나인",
+   "members": [],
+   "with_groups": [
+    "아이덴티티",
+    "에잇턴",
+    "카드"
+   ],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-09-24 19:14:11.928+00"
+  },
+  {
+   "id": "lx5GnW_rO24",
+   "group_ko": "넥스지",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-24 19:15:18.996+00"
+  },
+  {
+   "id": "mLzCUmuKNlY",
+   "group_ko": "소디엑",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-24 19:16:38.62+00"
+  },
+  {
+   "id": "zDcsZezbKkI",
+   "group_ko": "에이티즈",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-26 03:37:50.331+00"
+  },
+  {
+   "id": "Nn1ivATY_b8",
+   "group_ko": "싸이커스",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-26 09:36:38.427+00"
+  },
+  {
+   "id": "jKwgFnQt3D8",
+   "group_ko": "에이티즈",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-27 04:29:27.295+00"
+  },
+  {
+   "id": "uaqNcr1UH5A",
+   "group_ko": "아이들",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-28 00:35:55.638+00"
+  },
+  {
+   "id": "Bl_xC1SI5n8",
+   "group_ko": "샤이니",
+   "members": [
+    "민호"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-09-28 10:22:33.278+00"
+  },
+  {
+   "id": "BGY1SW9u51k",
+   "group_ko": "오마이걸",
+   "members": [
+    "효정"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-28 19:28:30.823+00"
+  },
+  {
+   "id": "fOtRj9WGSJY",
+   "group_ko": "몬스타엑스",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-28 19:29:03.899+00"
+  },
+  {
+   "id": "Vjr2pVtW314",
+   "group_ko": "우주소녀",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-29 02:48:57.29+00"
+  },
+  {
+   "id": "S3Xv0kA0kuA",
+   "group_ko": "소디엑",
+   "members": [
+    "범수"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-29 10:50:53.59+00"
+  },
+  {
+   "id": "jIhj4eR6PbA",
+   "group_ko": "아이덴티티",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-29 22:17:31.283+00"
+  },
+  {
+   "id": "62namU2wVuE",
+   "group_ko": "방탄소년단",
+   "members": [
+    "진",
+    "제이홉",
+    "지민",
+    "뷔",
+    "정국"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "variety",
+   "unavailable_at": "2026-09-30 04:37:19.211+00"
+  },
+  {
+   "id": "m6lWpn6nQag",
+   "group_ko": "에프티아일랜드",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-09-30 17:49:10.609+00"
+  },
+  {
+   "id": "W_adgFtlMR0",
+   "group_ko": "보이넥스트도어",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-01 05:40:12.389+00"
+  },
+  {
+   "id": "HxubmSTmYZk",
+   "group_ko": "트와이스",
+   "members": [
+    "사나"
+   ],
+   "with_groups": [
+    "니쥬"
+   ],
+   "with_members": [],
+   "category": "variety",
+   "unavailable_at": "2026-10-01 13:28:11.634+00"
+  },
+  {
+   "id": "M3GW8ZiRRNg",
+   "group_ko": "올데이프로젝트",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-10-01 13:28:22.659+00"
+  },
+  {
+   "id": "i1OX-RtRxNQ",
+   "group_ko": "골든차일드",
+   "members": [
+    "홍주찬"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "variety",
+   "unavailable_at": "2026-10-01 13:33:34.002+00"
+  },
+  {
+   "id": "g17ZQok7rOI",
+   "group_ko": "큐더블유이알",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-02 17:37:59.239+00"
+  },
+  {
+   "id": "L81eCoc0bZo",
+   "group_ko": "싸이커스",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-02 17:38:10.119+00"
+  },
+  {
+   "id": "-qwAEd__M5A",
+   "group_ko": "아이브",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-02 22:30:54.682+00"
+  },
+  {
+   "id": "0Iq2QEr8d8Y",
+   "group_ko": "우주소녀",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-02 22:41:58.077+00"
+  },
+  {
+   "id": "z5GVSEDMRN4",
+   "group_ko": "쥬얼리",
+   "members": [
+    "서인영"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "variety",
+   "unavailable_at": "2026-10-02 23:00:03.512+00"
+  },
+  {
+   "id": "UpXxXilM-Po",
+   "group_ko": "우주소녀",
+   "members": [
+    "다영"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-03 04:04:04.148+00"
+  },
+  {
+   "id": "wmxbJ684QJo",
+   "group_ko": "유스피어",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-03 12:04:55.737+00"
+  },
+  {
+   "id": "3IdqPsyicnI",
+   "group_ko": "알파드라이브원",
+   "members": [
+    "아르노"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-03 21:41:45.329+00"
+  },
+  {
+   "id": "xzd24Ik62E0",
+   "group_ko": "아일릿",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-03 22:16:05.813+00"
+  },
+  {
+   "id": "5QGSohw6t-0",
+   "group_ko": "킥플립",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-04 12:46:59.662+00"
+  },
+  {
+   "id": "7re7W9zcaDg",
+   "group_ko": "설아",
+   "members": [
+    "설아"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-04 22:13:02.86+00"
+  },
+  {
+   "id": "XXGaM6ZE9QE",
+   "group_ko": "투모로우바이투게더",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-10-05 14:25:59.111+00"
+  },
+  {
+   "id": "P0IxuHomn24",
+   "group_ko": "투모로우바이투게더",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-10-05 14:27:01.489+00"
+  },
+  {
+   "id": "8lhXRTPrJzc",
+   "group_ko": "넥스지",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-05 22:35:59.831+00"
+  },
+  {
+   "id": "a5JIa6DsHzc",
+   "group_ko": "더보이즈",
+   "members": [
+    "뉴"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-05 23:08:20.9+00"
+  },
+  {
+   "id": "GxlVEC6UjuY",
+   "group_ko": "클로즈유어아이즈",
+   "members": [],
+   "with_groups": [
+    "크래비티",
+    "원어스",
+    "티아이오티"
+   ],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-10-06 13:44:23.981+00"
+  },
+  {
+   "id": "iyEdl_jd2H4",
+   "group_ko": "킥플립",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-10-06 13:44:23.981+00"
+  },
+  {
+   "id": "PCYtkJLk5vY",
+   "group_ko": "킥플립",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-10-06 13:44:32.253+00"
+  },
+  {
+   "id": "C5PwlQevCDw",
+   "group_ko": "알파드라이브원",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-06 20:46:34.899+00"
+  },
+  {
+   "id": "c8euD0YfK4M",
+   "group_ko": "우주소녀",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-06 20:47:20.849+00"
+  },
+  {
+   "id": "LJOG8kGnK8s",
+   "group_ko": "투모로우바이투게더",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-10-07 01:27:08.935+00"
+  },
+  {
+   "id": "oHRl_ern2D8",
+   "group_ko": "하이라이트",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-07 18:50:30.276+00"
+  },
+  {
+   "id": "DMbGNpauLLo",
+   "group_ko": "투모로우바이투게더",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-07 19:43:41.221+00"
+  },
+  {
+   "id": "dMLosJSWDak",
+   "group_ko": "아이브",
+   "members": [
+    "레이"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-07 19:43:59.975+00"
+  },
+  {
+   "id": "bJydOVeY7wY",
+   "group_ko": "러블리즈",
+   "members": [
+    "Kei"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "variety",
+   "unavailable_at": "2026-10-08 10:43:07.697+00"
+  },
+  {
+   "id": "e3Gh2h_5L5o",
+   "group_ko": "아이브",
+   "members": [
+    "레이"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-08 18:59:56.745+00"
+  },
+  {
+   "id": "DUXmAONGHzs",
+   "group_ko": "오마이걸",
+   "members": [
+    "효정"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-08 19:48:13.091+00"
+  },
+  {
+   "id": "xfMkCcuPRdw",
+   "group_ko": "올아워즈",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-08 19:48:33.902+00"
+  },
+  {
+   "id": "qqHmjqlSa_w",
+   "group_ko": "튜넥스",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-09 11:02:48.089+00"
+  },
+  {
+   "id": "BEpFwoJPo6s",
+   "group_ko": "뉴비트",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-09 18:19:27.54+00"
+  },
+  {
+   "id": "gxl_Qk_pPQo",
+   "group_ko": "아이브",
+   "members": [
+    "레이"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-09 19:17:16.319+00"
+  },
+  {
+   "id": "hTnLF9U-adE",
+   "group_ko": "원어스",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-10 17:26:27.685+00"
+  },
+  {
+   "id": "qtDYtTtIRTo",
+   "group_ko": "킥플립",
+   "members": [],
+   "with_groups": [
+    "니쥬",
+    "올데이프로젝트",
+    "튜이드"
+   ],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-10-11 01:17:25.887+00"
+  },
+  {
+   "id": "hQATGK6FvMg",
+   "group_ko": "투어스",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-11 10:09:22.565+00"
+  },
+  {
+   "id": "JkSWMS1sHsU",
+   "group_ko": "아이브",
+   "members": [
+    "레이"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-11 17:49:40.216+00"
+  },
+  {
+   "id": "6GaKJGvyKcA",
+   "group_ko": "오마이걸",
+   "members": [
+    "효정"
+   ],
+   "with_groups": [],
+   "with_members": [
+    "김재환(김재환)"
+   ],
+   "category": "other",
+   "unavailable_at": "2026-10-12 15:18:45.947+00"
+  },
+  {
+   "id": "LyAObj6VR9E",
+   "group_ko": "네이즈",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-12 15:19:37.392+00"
+  },
+  {
+   "id": "Tx6-Z1kMmBg",
+   "group_ko": "방탄소년단",
+   "members": [
+    "진"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-12 15:20:17.279+00"
+  },
+  {
+   "id": "_yZFI98Mme4",
+   "group_ko": "유스피어",
+   "members": [
+    "채나",
+    "로아"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-13 14:12:51.63+00"
+  },
+  {
+   "id": "yvvlKiEwy58",
+   "group_ko": "앳하트",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-13 14:13:59.913+00"
+  },
+  {
+   "id": "M9lxrF1nSJw",
+   "group_ko": "아이브",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-13 14:16:42.22+00"
+  },
+  {
+   "id": "Mxhxvar-7ik",
+   "group_ko": "엔시티 드림",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-13 14:31:02.45+00"
+  },
+  {
+   "id": "HhLKf-Xq4dM",
+   "group_ko": "캣츠아이",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "variety",
+   "unavailable_at": "2026-10-14 08:54:06.95+00"
+  },
+  {
+   "id": "SrlrnjpRGCA",
+   "group_ko": "엔시티 위시",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-14 08:58:53.015+00"
+  },
+  {
+   "id": "TS7QPu1CZtE",
+   "group_ko": "아이브",
+   "members": [],
+   "with_groups": [],
+   "with_members": [
+    "이솔(키키)",
+    "하음(키키)",
+    "키야(키키)"
+   ],
+   "category": "challenge",
+   "unavailable_at": "2026-10-14 15:36:16.719+00"
+  },
+  {
+   "id": "updqDiRFC2w",
+   "group_ko": "82메이저",
+   "members": [
+    "조성일",
+    "윤예찬"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-14 15:36:44.901+00"
+  },
+  {
+   "id": "o1lalV2LkVc",
+   "group_ko": "씨엔블루",
+   "members": [
+    "이정신"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-14 15:50:51.534+00"
+  },
+  {
+   "id": "Ov5uiQeZ8ec",
+   "group_ko": "아이브",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-14 16:20:25.256+00"
+  },
+  {
+   "id": "uqyV7eZP60s",
+   "group_ko": "엔시티 위시",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-14 19:31:20.124+00"
+  },
+  {
+   "id": "egOovyShWuI",
+   "group_ko": "플레이브",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-10-15 15:09:50.831+00"
+  },
+  {
+   "id": "LoiOuCep_0E",
+   "group_ko": "티아이오티",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-15 15:18:10.204+00"
+  },
+  {
+   "id": "Rg2T_OTAnZg",
+   "group_ko": "오마이걸",
+   "members": [
+    "효정"
+   ],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-15 15:24:30.967+00"
+  },
+  {
+   "id": "XAomU4u1BxE",
+   "group_ko": "에이티즈",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-15 15:48:23.839+00"
+  },
+  {
+   "id": "B7L6GJcy5Ps",
+   "group_ko": "엔플라잉",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-16 00:08:37.302+00"
+  },
+  {
+   "id": "-yL2VBbSHnE",
+   "group_ko": "A2O SOUL",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-16 15:17:10.495+00"
+  },
+  {
+   "id": "heItpRvGzVU",
+   "group_ko": "투모로우바이투게더",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-17 08:48:44.73+00"
+  },
+  {
+   "id": "nocqSj3bnmQ",
+   "group_ko": "코르티스",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "other",
+   "unavailable_at": "2026-10-17 18:13:00.776+00"
+  },
+  {
+   "id": "OckzCUG2Pl0",
+   "group_ko": "보이넥스트도어",
+   "members": [],
+   "with_groups": [
+    "엔시티 위시",
+    "올데이프로젝트",
+    "킥플립"
+   ],
+   "with_members": [],
+   "category": "live",
+   "unavailable_at": "2026-10-17 20:32:26.685+00"
+  },
+  {
+   "id": "yRWm1pd9s8w",
+   "group_ko": "틴탑",
+   "members": [],
+   "with_groups": [],
+   "with_members": [],
+   "category": "mv",
+   "unavailable_at": "2026-10-17 20:32:56.188+00"
+  }
+ ]
+}

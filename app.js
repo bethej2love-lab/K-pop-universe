@@ -12499,7 +12499,8 @@ async function _renderIgTagged(prefix,a){
   }catch(e){}
 }
 const _LINK_DEFS=[
-  {key:'youtube',label:'YouTube',svg:'<svg viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="4" stroke="currentColor" stroke-width="1.6"/><path d="M10 9.5l5 2.5-5 2.5z" fill="currentColor"/></svg>'},
+  // ⚠️ YouTube API Services 감사(2026-11-16, III.F.2a) — 윤곽선 단색 아이콘이 브랜딩 규정 위반으로 지적됐다. 공식 아이콘 모양·색 그대로(변형·투명도·필터 금지), 높이 20dp 이상(CSS .gc-link-icon-youtube).
+  {key:'youtube',label:'YouTube',svg:'<svg viewBox="0 0 28.57 20" role="img" aria-label="YouTube"><path fill="#FF0000" d="M27.9727 3.12324C27.6435 1.89323 26.6768 0.926623 25.4468 0.597366C23.2197 2.24288e-07 14.285 0 14.285 0C14.285 0 5.35042 2.24288e-07 3.12323 0.597366C1.89323 0.926623 0.926623 1.89323 0.597366 3.12324C2.24288e-07 5.35042 0 10 0 10C0 10 2.24288e-07 14.6496 0.597366 16.8768C0.926623 18.1068 1.89323 19.0734 3.12323 19.4026C5.35042 20 14.285 20 14.285 20C14.285 20 23.2197 20 25.4468 19.4026C26.6768 19.0734 27.6435 18.1068 27.9727 16.8768C28.5701 14.6496 28.5701 10 28.5701 10C28.5701 10 28.5701 5.35042 27.9727 3.12324Z"/><path fill="#FFFFFF" d="M11.4253 14.2854L18.8477 10.0004L11.4253 5.71533V14.2854Z"/></svg>'},
   {key:'instagram',label:'Instagram',svg:'<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.6"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor"/></svg>'},
   // 인스타 2개인 그룹(예: 브브걸=BBGIRLS 새 계정 + 브레이브걸스 구 공식)용 보조 인스타 아이콘 — 메인(instagram) 바로 오른쪽에 그린다.
   // 프로필 사진 클릭은 여전히 메인(links.instagram)으로 가고(_gcPicCfg), 이건 링크 줄에 아이콘만 하나 더.
