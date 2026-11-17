@@ -2406,6 +2406,9 @@ function animate(){
   // 위 ⚠️의 제외 사유는 peek(반만 덮음) 때문이었다. 전체 열림은 화면을 탭바까지 다 덮고, 뒤는
   // rgba(12,12,15,0.78)+blur(18px)라 느린 자동회전이 멈춰도 눈에 안 띈다 — 반대로 계속 그리면 매 프레임
   // 전체화면 블러 재계산까지 겹친다(#feed-list-overlay와 같은 이중 부담). 데스크톱은 옆 패널이라 제외.
+  // 인스타 사진 뷰어(2026-11-17 사용자 "사진 넘기기 아직 느리다") — 모바일에선 뷰어 패널이 화면을 거의 다 덮는데(뒤는 rgba(0,0,0,.78)) 이 목록에 없어서, 사진을 넘기는 내내 뒤에서
+  // 3D 우주가 계속 그려지고 있었다(GPU·CPU 경합 → 미끄러짐이 뻑뻑). 모바일에서만 — 데스크톱은 무대 옆 패널이라 뒤 우주가 보여 멈추면 얼어붙은 게 눈에 띈다.
+  if(isMob()&&document.getElementById('igv-overlay')?.classList.contains('open'))return;
   if(isMob()){const _fo=document.getElementById('feed-overlay');if(_fo&&_fo.classList.contains('open')&&!_fo.classList.contains('peek'))return;}
   // col-photo-overlay(사진 그리드)·col-target-overlay(대상 선택기)는 display:flex/none·DOM생성/제거로
   // 토글되어 위 .open 목록에 넣을 수 없다. 둘 다 inset:0 + backdrop-filter:blur(20px) 전체화면이라

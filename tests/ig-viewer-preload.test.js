@@ -49,3 +49,11 @@ check('연달아 넘기면 진행 중인 미끄러짐을 바로 끝내고 다음
 });
 // check()가 비동기 결과를 못 잡으니 약간 기다렸다 요약
 setTimeout(()=>{console.log(total+' checks / '+failed+' failed');if(failed)process.exitCode=1;},50);
+
+// 모바일에서 인스타 뷰어가 열려 있으면 3D 우주 렌더를 멈춘다(2026-11-17 사용자 "사진 넘기기 아직 느리다") — 헤드리스 실측: 옛 코드 뷰어 열림 중 프레임 6/2초, 새 코드 0, 닫으면 복귀.
+// 소스 검사: animate()의 모바일 스킵 조건에 igv-overlay가 있어야 한다(데스크톱은 무대 옆 패널이라 제외).
+{
+  const a0 = src.indexOf('function animate(){'), body = src.slice(a0, a0 + 9000);
+  const okSrc = /if\(isMob\(\)&&document\.getElementById\('igv-overlay'\)\?\.classList\.contains\('open'\)\)return;/.test(body);
+  setTimeout(() => { if (okSrc) console.log('✅ animate(): 모바일에서 igv-overlay가 열려 있으면 3D 렌더를 건너뛴다'); else { console.error('FAIL animate()에 igv-overlay 스킵이 없음'); process.exitCode = 1; } }, 60);
+}
