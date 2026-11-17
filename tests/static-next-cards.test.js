@@ -71,3 +71,14 @@ console.log(total + ' checks / ' + failed + ' failed'); if (failed) process.exit
   const ok4 = (c, m) => { if (c) { console.log('✅ ' + m); } else { console.error('FAIL ' + m); process.exitCode = 1; } };
   ok4(/const verTag = isVer \?/.test(src4) && /\$\{verTag\}\$\{t\.isTitle/.test(src4) && /버전 · 원곡 페이지로 이동/.test(src4), '앨범 트랙리스트: 일본어·영어 버전 등은 원곡 페이지로 간다는 표기');
 }
+
+// 첫 화면 진입점(Codex UX 제안, 2026-11-17): 곡 페이지의 '영상에 나온 멤버'(같은 곡 다른 멤버)는 영상 그리드 위, 멤버 프로필의 '직캠 전체 곡별로 보기'는 영상 그리드 위.
+{
+  const s = fs.readFileSync(path.join(__dirname, '..', 'build_group_pages.js'), 'utf8');
+  const iChips = s.indexOf('  ${chipsHtml}\n  ${facesHtml}'), iGrid = s.indexOf('<div class="grid"${vids.length > 8');
+  assert(iChips > 0 && iGrid > iChips, '곡 페이지: facesHtml이 chips 바로 뒤·그리드 앞에 와야 함');
+  assert.equal(s.split('${facesHtml}').length, 2, 'facesHtml은 한 번만 출력');
+  const iHub = s.indexOf('class="hub-more hub-top"'), iMf = s.indexOf('<div class="mf-grid">', iHub);
+  assert(iHub > 0 && iMf > iHub, '멤버 프로필: 허브 링크가 mf-grid 앞에 와야 함');
+  console.log('✅ 첫 화면 진입점: 곡 페이지 얼굴 목록·멤버 프로필 허브 링크가 영상 그리드 위');
+}

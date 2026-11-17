@@ -893,9 +893,10 @@ ${SEO_GA_TAG}
   </div>
   ${hasFancams ? `
   <h2>${isEn ? `${escHtml(en)} fancams` : `${escHtml(ko)} 직캠`}</h2>
+  ${hubUrl ? `<p class="hub-more hub-top"><a href="${hubUrl}">${isEn ? `All ${fancams.length} fancams by song →` : `직캠 전체 ${fancams.length}개 곡별로 보기 →`}</a></p>` : ''}
   <div class="mf-grid">
     ${fancams.slice(0, 24).map(v => `<a class="mf-card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">${escHtml(v.title)}</span><span class="mf-y">${[v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? SEO.fmtVC(v.view_count) : ''].filter(Boolean).join(' · ')}</span></a>`).join('\n    ')}
-  </div>${hubUrl ? `<p class="hub-more"><a href="${hubUrl}">${isEn ? `All ${fancams.length} fancams by song →` : `직캠 전체 ${fancams.length}개 곡별로 보기 →`}</a></p>` : fancams.length > 24 ? `<p class="note">${isEn ? `Top 24 of ${fancams.length} fancams` : `직캠 ${fancams.length}개 중 상위 24개`}</p>` : ''}` : ''}
+  </div>${hubUrl ? '' : fancams.length > 24 ? `<p class="note">${isEn ? `Top 24 of ${fancams.length} fancams` : `직캠 ${fancams.length}개 중 상위 24개`}</p>` : ''}` : ''}
   ${memberIntroHtml(a, affiliations, lang)}
   ${xm.hasCredits ? '' : creditLinkHtml(a, lang)}
   ${affiliationHtml(lang)}
@@ -2297,6 +2298,7 @@ ${LIST_FWD}
   ${crumbs}
   ${lead ? `<p class="lead">${escHtml(lead)}</p>` : ''}
   ${chipsHtml}
+  ${facesHtml}
   ${top.length > 1 ? `
   <h2>${ms ? (isEn ? 'Most viewed fancams' : '조회수 많은 직캠') : (isEn ? 'Most viewed fancams & stages' : '조회수 많은 직캠·무대')}</h2>
   ${vids.length > 8 ? '<div class="kpu-sortbar" id="kpu-sortbar" style="display:none"></div>' : ''}
@@ -2305,7 +2307,6 @@ ${LIST_FWD}
   </div>` : ''}
   ${vids.length > top.length ? `<p class="note" id="kpu-vnote">${isEn ? `Top ${top.length} of ${vids.length} videos` : `영상 ${vids.length}개 중 상위 ${top.length}개`}</p>` : ''}
   ${vids.length > 8 && top.length > 1 ? vidsDataScript(vids) : ''}
-  ${facesHtml}
   ${ms ? `
   <h2>${isEn ? `All "${songLabel}" videos` : `'${songLabel}' 전체 영상`}</h2>
   <p class="lead"><a href="${songUrl}">${escHtml(isEn ? `${gName} "${songLabel}" fancams & stages (${s.vids.length})` : `${gko} '${songLabel}' 직캠·무대 모음 (${s.vids.length}개)`)} ›</a></p>${mySongsHtml}` : ''}
