@@ -1967,7 +1967,7 @@ function memberFaceUrl(a, gko) {
   return id ? ytThumb(id, 'mqdefault') : null;
 }
 // 스타일은 저장소의 song-page.css 한 파일(페이지마다 넣으면 3만 쪽 × 5KB) — 바꾸면 SONG_CSS_V를 올릴 것
-const SONG_CSS_V = 9;
+const SONG_CSS_V = 10;
 function songShareVideo(vids) {
   return vids.find(v => (v.category === 'live' || FANCAM_RE.test(v.title || ''))
     && !/\bM\/?V\b|music\s*video|뮤직비디오|\bteaser\b|티저/i.test(v.title || '')) || vids[0];
@@ -2059,10 +2059,11 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
   const RL = isEn ? { l: 'Lyrics', c: 'Music', a: 'Arrangement', solo: 'Sole ' } : { l: '작사', c: '작곡', a: '편곡', solo: '단독 ' };
   const soloOf = { l: L.length === 1, c: C.length === 1, a: A.length === 1 };
   const roleTxt = p => ['l', 'c', 'a'].filter(k => p.r.has(k)).map(k => (soloOf[k] ? RL.solo : '') + RL[k]).join(' · ');
-  const CR_MAX = 16;
-  const crItems = people.slice(0, CR_MAX).map(p => '<li><span class="cp-n">' + escHtml(p.n) + '</span><span class="cp-r">' + escHtml(roleTxt(p)) + '</span></li>').join('')
-    + (people.length > CR_MAX ? '<li class="cp-more">' + (isEn ? '+' + (people.length - CR_MAX) + ' more' : '외 ' + (people.length - CR_MAX) + '명') + '</li>' : '');
-  const creditsHtml = people.length ? '<div class="credits"><b class="credits-h">' + (isEn ? 'Credits' : '크레딧') + '</b><ul class="credit-ppl">' + crItems + '</ul></div>' : '';
+  // 알약 테두리는 눌러지는 것처럼 보여서(2026-11-17 사용자) 역할별 한 줄 글자로. 우리 아티스트만 점선 밑줄 링크 → 그 사람 작사·작곡 곡 목록.
+  const CR_PER = 8;
+  const crName = n => { const ca = creditArtistFor(s.b, n); const href = ca ? creditPagePath(ca, lang) : ''; return href ? '<a class="cr-a" href="' + SITE + '/' + href + '">' + escHtml(n) + '</a>' : '<span>' + escHtml(n) + '</span>'; };
+  const crRow = (k, arr) => arr.length ? '<p class="cr-row"><span class="cr-r">' + (soloOf[k] ? RL.solo : '') + RL[k] + '</span>' + arr.slice(0, CR_PER).map(crName).join(', ') + (arr.length > CR_PER ? (isEn ? ' +' + (arr.length - CR_PER) + ' more' : ' 외 ' + (arr.length - CR_PER) + '명') : '') + '</p>' : '';
+  const creditsHtml = people.length ? '<div class="credits"><b class="credits-h">' + (isEn ? 'Credits' : '크레딧') + '</b>' + crRow('l', L) + crRow('c', C) + crRow('a', A) + '</div>' : '';
   const grid = top.slice(1).map(v => `<a class="card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="${ytThumb(v.id, 'mqdefault')}" alt="" loading="lazy"></span><span class="card-t">${escHtml(v.title)}</span><span class="card-y">${[v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? SEO.fmtVC(v.view_count) : ''].filter(Boolean).join(' · ')}</span></a>`).join('\n    ');
   // 멤버×곡 페이지엔 '그룹의 다른 곡'을 싣지 않는다 — 곡 페이지에 있고, 1만 쪽에 같은 타일을 반복하면 용량만 커진다
   // 다른 곡 — 앨범별로 묶어 커버 한 번 + 그 아래 수록곡 목록(2026-11-12 사용자 "같은 커버가 10장씩 반복돼 정신 사납다, 앨범 썸네일 아래에 곡 정보 쭉").
@@ -2177,7 +2178,6 @@ ${LIST_FWD}
   ${crumbs}
   ${lead ? `<p class="lead">${escHtml(lead)}</p>` : ''}
   ${chipsHtml}
-  ${creditsHtml}
   ${top.length > 1 ? `
   <h2>${ms ? (isEn ? 'Most viewed fancams' : '조회수 많은 직캠') : (isEn ? 'Most viewed fancams & stages' : '조회수 많은 직캠·무대')}</h2>
   ${vids.length > 8 ? '<div class="kpu-sortbar" id="kpu-sortbar" style="display:none"></div>' : ''}
@@ -2190,6 +2190,7 @@ ${LIST_FWD}
   ${ms ? `
   <h2>${isEn ? `All "${songLabel}" videos` : `'${songLabel}' 전체 영상`}</h2>
   <p class="lead"><a href="${songUrl}">${escHtml(isEn ? `${gName} "${songLabel}" fancams & stages (${s.vids.length})` : `${gko} '${songLabel}' 직캠·무대 모음 (${s.vids.length}개)`)} ›</a></p>${mySongsHtml}` : ''}
+  ${creditsHtml}
   ${otherTiles}
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a> · <a href="${SITE}/about.html">${isEn ? 'About · removal requests' : '사이트 소개 · 삭제 요청'}</a></div>
   <div class="cta-dock"><a class="cta" href="${SITE}/#g=${hashEsc(gko)}${ms ? '&m=' + hashEsc(ms.a.name.ko) : ''}&song=${hashEsc(s.title)}">${isEn ? 'View videos in the Universe →' : '직캠·영상 아카이브 보기 →'}</a></div>
@@ -2679,6 +2680,21 @@ function creditsFor(a) {
     }
   }
   return _CREDITS.get(a) || null;
+}
+// 크레딧 이름 → 우리 유니버스 아티스트(2026-11-17). 이름만 같다고 잇지 않는다(동명이인) — 그 아티스트의 크레딧 목록(artist_credits.json)에
+// **이 곡(b)이 실제로 들어 있고** 이름(한글·영문·표기명)이 같을 때만. 작사·작곡 곡 목록 페이지가 있는 사람(크레딧 CREDIT_MIN곡 이상)만 대상.
+let _CREDIT_BY_SONG = null;
+const _normCr = x => String(x || '').trim().toLowerCase();
+function creditArtistFor(songB, name) {
+  if (!_CREDIT_BY_SONG) {
+    _CREDIT_BY_SONG = new Map();
+    for (const a of artists) {
+      const c = creditsFor(a); if (!c || !creditPagePath(a, 'ko')) continue;
+      const names = [a.name && a.name.ko, a.name && a.name.en, a.displayName].filter(Boolean).map(_normCr);
+      for (const s of [...c.ly, ...c.co]) for (const nm of names) { const k = s.b + '|' + nm; if (!_CREDIT_BY_SONG.has(k)) _CREDIT_BY_SONG.set(k, a); }
+    }
+  }
+  return _CREDIT_BY_SONG.get(songB + '|' + _normCr(name)) || null;
 }
 function creditPagePath(a, lang) { const mp = memberPagePath(a, lang); return mp ? `${mp}credits/` : null; }
 function creditLinkHtml(a, lang) {

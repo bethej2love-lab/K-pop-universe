@@ -57,14 +57,13 @@ h2{font-size:17px;margin:26px 0 12px;color:#fff;}
 .sp-al-l .n{flex:none;font-size:11px;color:rgba(160,180,230,0.55);}
 .sp-al-l li a:hover .t{color:#fff;}
 @media(max-width:420px){.sp-albums{grid-template-columns:minmax(0,1fr);}}
-/* 크레딧 — 사람마다 이름 + 역할(작사·작곡·편곡, 혼자면 '단독') 칩(2026-11-12) */
-.credits{margin:10px 0 4px;}
-.credits-h{display:block;font-size:11.5px;font-weight:600;letter-spacing:.04em;color:rgba(185,200,240,0.6);margin:0 0 7px;}
-.credit-ppl{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px;}
-.credit-ppl li{display:inline-flex;align-items:baseline;gap:6px;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);font-size:12.5px;min-width:0;}
-.credit-ppl .cp-n{color:rgba(232,236,248,0.95);font-weight:600;}
-.credit-ppl .cp-r{color:rgba(185,200,240,0.62);font-size:11.5px;}
-.credit-ppl .cp-more{color:rgba(185,200,240,0.55);background:none;border-color:transparent;}
+/* 크레딧 — 역할별 한 줄 글자(2026-11-17 알약 테두리 제거: 눌러지는 것처럼 보임). 우리 아티스트만 점선 밑줄 링크 */
+.credits{margin:20px 0 4px;}
+.credits-h{display:block;font-size:11.5px;font-weight:600;letter-spacing:.04em;color:rgba(185,200,240,0.6);margin:0 0 6px;}
+.cr-row{margin:0 0 3px;font-size:12.5px;line-height:1.6;color:rgba(200,212,240,0.68);}
+.cr-r{display:inline-block;min-width:4.6em;margin-right:8px;font-size:11.5px;color:rgba(185,200,240,0.48);}
+.cr-a{color:rgba(205,220,255,0.92);text-decoration:underline dotted rgba(170,190,240,0.45);text-underline-offset:3px;}
+.cr-a:hover{text-decoration-style:solid;}
 .cta-dock{position:sticky;bottom:0;z-index:5;margin-top:30px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#0a0a0d 62%,rgba(10,10,13,0));}
 .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
 .lang-switch{margin-top:36px;font-size:12px;}

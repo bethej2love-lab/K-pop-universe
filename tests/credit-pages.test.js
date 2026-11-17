@@ -30,6 +30,10 @@ const ko=pages.filter(p=>p.lang==='ko'),en=pages.filter(p=>p.lang==='en');
 if(ko.length>300&&ko.length===en.length)ok(`작사·작곡 페이지 ${ko.length}명 × 2개 언어`);else bad(`페이지 수 ko ${ko.length} en ${en.length}`);
 const w=ko.find(p=>p.rel==='g/스트레이키즈/방찬/credits/');
 if(w&&/스트레이키즈 방찬\(Stray Kids Bang Chan\) 작사·작곡 곡 목록/.test(w.title)&&/작사 \d+곡/.test(w.title))ok('방찬: '+w.title);else bad('방찬 페이지 '+JSON.stringify(w&&w.title));
+// 크레딧 이름 → 우리 아티스트 링크(2026-11-17): 그 사람 크레딧에 이 곡이 있을 때만 연결 — 이름이 같다고 잇지 않는다(동명이인)
+{const bc=ctx.artists.find(x=>x.name&&x.name.ko==='방찬'&&x.group&&x.group.ko==='스트레이키즈');const cc=bc&&ctx.creditsFor(bc);
+  if(cc&&cc.ly.length){const sb=cc.ly[0].b;const hit=ctx.creditArtistFor(sb,'방찬'),hit2=ctx.creditArtistFor(sb,' 방찬 '),none=ctx.creditArtistFor(sb,'존재하지않는작곡가'),other=ctx.creditArtistFor('zzz-없는곡','방찬');
+    if(hit===bc&&hit2===bc&&!none&&!other)ok('크레딧 이름→아티스트: 곡이 크레딧에 있을 때만 연결');else bad('크레딧 연결 '+[hit===bc,hit2===bc,!none,!other].join(','));}else bad('방찬 크레딧 없음');}
 // 같은 곡의 리믹스·버전은 한 번만 — 작사 목록 안 제목이 서로 다른지
 {const items=w?[...w.body.split('<h2>')[1].matchAll(/<li>(.*?)<\/li>/g)].map(m=>m[1].replace(/<[^>]+>/g,'')):[];if(items.length&&new Set(items).size===items.length)ok(`작사 목록 ${items.length}곡 중복 없음`);else bad('작사 목록 중복');}
 const rm=ko.find(p=>/\/알엠\/credits\/$/.test(p.rel));if(rm&&/방탄소년단 알엠이 작사에 참여한/.test(rm.desc))ok('조사: '+rm.desc.slice(0,40));else bad('알엠 설명 '+JSON.stringify(rm&&rm.desc));
