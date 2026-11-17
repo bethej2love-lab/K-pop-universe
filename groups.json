@@ -238456,6 +238456,69 @@
   },
   "discography": [
    {
+    "title": "PATHFINDER",
+    "type": "정규",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/65/789/15165789_20261116101759_500.jpg",
+    "releaseDate": "2026.11.17",
+    "trackCount": 10,
+    "titleTrack": "King’s Way",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "King’s Way",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "Splish Splash",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "Full of You",
+      "isTitle": false
+     },
+     {
+      "no": 4,
+      "title": "Cautious",
+      "isTitle": false
+     },
+     {
+      "no": 5,
+      "title": "Fairytales",
+      "isTitle": false
+     },
+     {
+      "no": 6,
+      "title": "Sorry Not Sorry",
+      "isTitle": false
+     },
+     {
+      "no": 7,
+      "title": "Big Shot",
+      "isTitle": false
+     },
+     {
+      "no": 8,
+      "title": "NOM!",
+      "isTitle": false
+     },
+     {
+      "no": 9,
+      "title": "일 년 만이야 (It's Been a Year)",
+      "isTitle": false
+     },
+     {
+      "no": 10,
+      "title": "AURORA",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15165789"
+   },
+   {
     "title": "DEFINITION",
     "type": "미니 4집",
     "isMain": true,

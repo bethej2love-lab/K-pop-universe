@@ -16756,6 +16756,24 @@
     "id": "a0045",
     "discography": [
       {
+        "title": "NO RETURN",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/66/769/15166769_20261116143739_500.jpg",
+        "releaseDate": "2026.11.17",
+        "trackCount": 1,
+        "titleTrack": "NO RETURN",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "NO RETURN",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15166769"
+      },
+      {
         "title": "나의 유죄인간 OST Part 4",
         "type": "OST",
         "isMain": false,
@@ -62920,6 +62938,29 @@
       }
     ],
     "discography": [
+      {
+        "title": "J-POP REMAKE Vol.5",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/66/859/15166859_20261116151739_500.jpg",
+        "releaseDate": "2026.11.17",
+        "trackCount": 2,
+        "titleTrack": "사쿠란보",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "사쿠란보",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "사쿠란보 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15166859"
+      },
       {
         "title": "보기 드문 여자 (Feat. NOWIMYOUNG (나우아임영))",
         "type": "싱글",
