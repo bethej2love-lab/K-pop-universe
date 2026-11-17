@@ -2003,7 +2003,8 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
     h1 = isEn ? `${mFull} "${songLabel}" Fancams` : `${mFull} '${songLabel}' 직캠`;
     sub = isEn ? `${gFull} · ${vids.length} fancams` : `${gFull} · 직캠 ${vids.length}개`;
   } else {
-    title = isEn ? `${songLabel} Fancams & Stages - ${gFull} | K-POP UNIVERSE` : `${songLabel} 직캠·무대 모음 - ${gFull} | K-POP UNIVERSE`;
+    // 아티스트가 먼저, 곡이 뒤(2026-11-17 사용자 "웬만하면 아티스트 - 곡"). 멤버×곡·앨범·그룹 제목은 이미 그 순서였고 곡 페이지만 반대였다.
+    title = isEn ? `${gFull} - ${songLabel} Fancams & Stages | K-POP UNIVERSE` : `${gFull} - ${songLabel} 직캠·무대 모음 | K-POP UNIVERSE`;
     desc = isEn
       ? `${gName} "${songLabel}" — ${facts.join(', ')}. ${s.vids.length} fancams and stage videos, most viewed first${L.length ? `, lyrics by ${L.slice(0, 3).join(', ')}` : ''}.`
       : `${gko} '${songLabel}' — ${facts.join(', ')}. 직캠·무대 영상 ${s.vids.length}개를 조회수 순으로${L.length ? `, 작사 ${L.slice(0, 3).join(', ')}` : ''}.`;
