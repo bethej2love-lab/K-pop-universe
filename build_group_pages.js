@@ -219,6 +219,10 @@ function ogSizeFor(url) {
   if (/maxresdefault|hq720/.test(url)) return { w: 1280, h: 720 };
   if (/mqdefault/.test(url)) return { w: 320, h: 180 };
   if (/hqdefault/.test(url)) return { w: 480, h: 360 };
+  // 앨범 커버(멜론 _500.jpg·스포티파이 640·애플)는 정사각인데 아래 기본값 1200×630으로 선언돼 있었다(11-17) — 실제 크기로
+  if (/cdnimg\.melon\.co\.kr/.test(url)) return { w: 500, h: 500 };
+  if (/i\.scdn\.co/.test(url)) return { w: 640, h: 640 };
+  if (/mzstatic\.com/.test(url)) return { w: 600, h: 600 };
   if (/supabase\.co\/storage/.test(url)) return { w: 600, h: 600 }; // 등록 프로필 사진(영상이 없을 때의 대체, 대개 정사각)
   return { w: 1200, h: 630 }; // 자체 og-image.png
 }
