@@ -2048,7 +2048,11 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
   const albumGroups = [];
   if (!ms) {
     const byAl = new Map();
-    (others || []).forEach(o => { const k = o.album || o.title; if (!byAl.has(k)) { byAl.set(k, { name: o.album || '', cover: o.cover || '', date: String(o.date || '').slice(0, 4), songs: [], n: 0 }); albumGroups.push(byAl.get(k)); } const g = byAl.get(k); g.songs.push(o); g.n += o.vids.length; if (!g.cover && o.cover) g.cover = o.cover; });
+    // 2026-11-17 사용자 "검색한 곡이 아닌 같은 팀의 다른 곡 페이지가 뜬다" — 곡 페이지 본문이 짧은데(실측 위너 SOSO 1,274자) 같은 팀 곡 제목
+    // 19개가 통째로 들어 있어 다른 곡 검색어에 걸렸다. 영상 많은 상위 OTHER_MAX곡만 싣고, 나머진 아래 '전체 곡' 링크(그룹 페이지)로 —
+    // 그룹 페이지가 곡 페이지 대부분을 이미 링크하니(위너 24/31) 크롤 경로는 그대로다.
+    const OTHER_MAX = 6;
+    (others || []).slice().sort((p, q) => q.vids.length - p.vids.length).slice(0, OTHER_MAX).forEach(o => { const k = o.album || o.title; if (!byAl.has(k)) { byAl.set(k, { name: o.album || '', cover: o.cover || '', date: String(o.date || '').slice(0, 4), songs: [], n: 0 }); albumGroups.push(byAl.get(k)); } const g = byAl.get(k); g.songs.push(o); g.n += o.vids.length; if (!g.cover && o.cover) g.cover = o.cover; });
     albumGroups.sort((x, y) => y.n - x.n);
   }
   const songName = o => isEn ? (o.enTitle || o.bilingualTitle || o.title) : (o.bilingualTitle || o.title);
@@ -2056,7 +2060,8 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
     + albumGroups.map(g => '<div class="sp-al">' + (g.cover ? '<img class="sp-al-c" src="' + escHtml(g.cover) + '" alt="" loading="lazy">' : '<span class="sp-al-c sp-tile-ph"></span>')
       + '<div class="sp-al-h">' + (g.name ? '<b>' + escHtml(g.name) + '</b>' : '') + (g.date ? '<span>' + g.date + '</span>' : '') + '</div><ol class="sp-al-l">'
       + g.songs.map(o => '<li><a href="' + SITE + '/' + songPagePath(gko, o.b, lang) + '"><span class="t">' + escHtml(songName(o)) + '</span><span class="n">' + (isEn ? o.vids.length + ' videos' : '영상 ' + o.vids.length) + '</span></a></li>').join('')
-      + '</ol></div>').join('\n    ') + '\n  </div>' : '';
+      + '</ol></div>').join('\n    ') + '\n  </div>'
+      + '\n  <p class="lead"><a href="' + SITE + '/' + groupPagePath(gko, lang) + '">' + (isEn ? 'All ' + escHtml(gName) + ' songs, fancams &amp; stages →' : escHtml(gko) + ' 전체 곡·직캠·무대 보기 →') + '</a></p>' : '';
   // 멤버×곡 ↔ 멤버 직캠 전체 페이지 오가기(2026-11-11) — 위에 '← 직캠 전체', 아래에 같은 멤버의 다른 곡 직캠
   const hubUrl = ms && FANCAM_HUB.has(ms.a) ? `${SITE}/${memberFancamPagePath(ms.a, lang)}` : '';
   const hubTotal = hubUrl ? FANCAM_HUB.get(ms.a).length : 0;
@@ -2740,7 +2745,7 @@ function buildAlbumPages() {
         }).join('');
         const tt = al.titleTrack || ((al.tracks || []).find(t => t.isTitle) || {}).title || '';
         const h1 = isEn ? `${gd} — ${al.title}` : `${g} ${al.title}`;
-        const title = isEn ? `${gd} '${al.title}' Tracklist — ${type} (${date}) | K-POP UNIVERSE` : `${g} '${al.title}' 수록곡·트랙리스트 — ${type} (${date}) | K-POP UNIVERSE`;
+        const title = isEn ? `${gd} '${al.title}' Tracklist — ${type} | K-POP UNIVERSE` : `${g} '${al.title}' 수록곡·트랙리스트 — ${type} | K-POP UNIVERSE`; // 발매일은 제목에서 뺌(11-17 사용자) — 설명에만
         const desc = isEn ? `${gd} ${type} '${al.title}' released ${date}${tt ? `, title track '${tt}'` : ''} — ${al.tracks.length} tracks with lyrics/music credits.` : `${g} ${type} '${al.title}'(${date} 발매)${tt ? ` 타이틀곡 '${tt}'` : ''} — 수록곡 ${al.tracks.length}곡과 곡별 작사·작곡.`;
         const nb = [list[i - 1], list[i + 1]].map((x, k) => x ? `<a href="${SITE}/${albumPagePath(g, x.slug, lang)}">${k ? '← ' : ''}${escHtml(x.al.title)}${k ? '' : ' →'}</a>` : '').filter(Boolean).join(' · ');
         const body = `  ${al.cover ? `<img class="sp-cover" src="${escHtml(al.cover)}" alt="${escHtml(al.title)}" loading="lazy" style="width:100%;max-width:320px;border-radius:12px;display:block;margin:4px 0 16px">` : ''}
