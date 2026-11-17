@@ -24538,6 +24538,12 @@ async function _buildFeedFavAlbums(){
 // 이번 주 소식 데이터(음방 1위·MV/티저·조회수 돌파) — 발견 탭 This Week's K-pop과 For You '내 최애 소식'이 같이 쓴다(2026-10-16).
 // 두 탭이 거의 동시에 빌드되므로 3분 동안은 같은 조회 결과(Promise)를 나눠 쓴다. 항목엔 gko/mko(누구 소식인지)가 붙는다.
 let _weekNewsP=null,_weekNewsAt=0,_feedDailyNewsP=null;
+const _MV_NOISE_RE=/(^|[^a-z0-9])(mma|mama|kgma|gda|aaa|sma|tma)(20[0-9][0-9])?([^a-z0-9]|$)|시상식|어워드|어워즈|awards?([^a-z]|$)|수상 ?소감|올해의 (뮤직비디오|아티스트|앨범|노래|레코드|베스트송|신인)|골든디스크|가요대전|가요대축제|production meeting|making film|메이킹|비하인드|behind|reaction|리액션|commentary|interview|인터뷰|mashup/i;
+function _mvNewsNoise(v){
+  if(!v)return false;
+  if((v.content_formats||[]).some(f=>/^EV:/.test(f)))return true;
+  return _MV_NOISE_RE.test(String(v.title||''));
+}
 function _collectWeekNews(){
   if(_weekNewsP&&Date.now()-_weekNewsAt<180000)return _weekNewsP;
   _weekNewsAt=Date.now();
@@ -24555,7 +24561,7 @@ function _collectWeekNews(){
     // 1위 영상 후보(winVid)는 1위가 없어도 그냥 받는다(가벼운 1주 창 조회) — 기다리는 것보다 싸다.
     const [winsRes,mvRes,milesRes,winVidRes]=await Promise.all([
       sb.from('music_show_wins').select('*').gte('win_date',sevenDaysAgo).lte('win_date',today).order('win_date',{ascending:false}).order('show',{ascending:true}).then(r=>r,()=>({data:[]})),
-      sb.from(_YT_TABLE).select('id,title,thumb,is_short,group_ko,content_flag,published_at,source_tier'+_durCol())
+      sb.from(_YT_TABLE).select('id,title,thumb,is_short,group_ko,content_flag,published_at,source_tier,content_formats'+_durCol())
         .gte('published_at',sevenDaysAgo).lt('published_at',tomorrow)
         .or('title_norm.ilike.%m/v%,title_norm.ilike.%[mv]%,title_norm.ilike.% mv%,title_norm.ilike.%mv %,title_norm.ilike.%music video%,title_norm.ilike.%뮤직비디오%,title_norm.ilike.%뮤비%,title_norm.ilike.%리릭%,title_norm.ilike.%lyric%,title_norm.ilike.%티저%,title_norm.ilike.%teaser%,title_norm.ilike.%예고편%')
         // ⚠️ .not(in)만 쓰면 content_flag가 비어 있는(NULL) 행 — 즉 거의 전부 — 이 같이 빠진다(SQL NULL NOT IN = 거짓).
@@ -24668,7 +24674,9 @@ function _collectWeekNews(){
     const _mvTierRank={official:0,idol:1,music:2};
     const _mvBest=new Map();
     // 무관(관리자가 "이 그룹 영상 아님"으로 정정한 것)도 다른 영상 그리드처럼 뺀다(2026-11-03 주호·닐로 MV가 소식에 뜸).
-    const _mvOut=v=>v.content_flag==='보류'||v.content_flag==='hidden'||v.content_flag==='무관';
+    // 시상식·행사 영상과 MV 제작 뒷이야기는 'MV 소식'이 아니다(2026-11-17 사용자: MMA '올해의 뮤직비디오' 수상소감 영상이 MV 배지로 잡혔다 — 제목에 '뮤직비디오'가 있다는 이유로).
+    // ①시상식 약칭(MMA·MAMA·KGMA…, 앞뒤가 글자·숫자가 아닐 때만 — gamma 같은 낱말 안은 제외)·시상식·어워드·수상소감 ②형식 태그가 시상식(EV:) ③제작 뒷이야기(Making·Behind·Production Meeting·Reaction·Commentary).
+    const _mvOut=v=>v.content_flag==='보류'||v.content_flag==='hidden'||v.content_flag==='무관'||_mvNewsNoise(v);
     (mvRes.data||[]).forEach(v=>{
       if(_mvOut(v))return;
       const t=v.title||'';
@@ -24810,17 +24818,44 @@ function _awardRange(e){
   return e.start===e.end?md(a):(a[1]===b[1]?md(a)+'~'+b[2]:md(a)+'~'+md(b));
 }
 function _awardName(n){const g=GROUPS[n];return currentLang==='ko'?n:((g&&g.en)||n);}
+// 시상식 줄 대표 영상(2026-11-17 사용자 "시상식 왜 영상 없어? 대표 영상 뽑아서 썸네일, 제일 큰 상 받은 팀 위주로") — 그 시상식 무대 영상 중 **대상 받은 팀**(events.json top 순서:
+// 올해의 아티스트 → 앨범 → …)의 가장 많이 본 무대. 첫 대상 팀에 무대 영상이 없으면(예: 월드투어 중) 다음 대상 팀, 그래도 없으면 전체 최다 조회 무대.
+// 수상소감·인터뷰·비하인드·예고 같은 건 대표로 안 쓴다. 조회는 published_ts 구간+title_norm 키워드(둘 다 색인)·정렬은 여기서. 5분 캐시.
+const _AWARD_REP_NOISE=/수상 ?소감|소감|인터뷰|interview|비하인드|behind|리액션|reaction|레드카펫|red carpet|포토|photo|예고|trailer|티저|teaser|하이라이트|highlight|모음|스케치|speech/i;
+const _awardRepCache=new Map();
+function _awardRepVideo(e){
+  const k=e.id+'-'+e.edition,hit=_awardRepCache.get(k);
+  if(hit&&Date.now()-hit.at<5*60e3)return hit.p;
+  const p=(async()=>{
+    if(!sb||!(e.kw&&e.kw.length))return null;
+    try{
+      const t0=new Date(_awardDay(e.start)-864e5).toISOString(),t1=new Date(_awardDay(e.end)+14*864e5).toISOString();
+      const kwOr=e.kw.map(x=>'title_norm.ilike.*'+x+'*').join(',');
+      const r=await sb.from(_YT_TABLE).select('id,title,thumb,is_short,group_ko,view_count,published_at,category').eq('is_short',false).gte('published_ts',t0).lt('published_ts',t1).or(kwOr)
+        .or('content_flag.is.null,content_flag.not.in.("보류","hidden","무관")').limit(150).then(x=>x,()=>({error:1}));
+      if(r.error)return null;
+      const rows=_filterBannedVideos(r.data||[]).filter(v=>v&&v.thumb&&v.category==='live'&&!_AWARD_REP_NOISE.test(v.title||''));
+      const byViews=l=>l.slice().sort((x,y)=>(y.view_count||0)-(x.view_count||0));
+      for(const n of [...new Set((e.top||[]).flatMap(c=>c.names||[]))]){const c=byViews(rows.filter(v=>v.group_ko===n));if(c.length)return c[0];}
+      return byViews(rows)[0]||null;
+    }catch(err){return null;}
+  })();
+  _awardRepCache.set(k,{at:Date.now(),p});
+  return p;
+}
 // 지금(KST) 기준 '이번 주' 시상식 → 소식 항목들. 실패·없으면 빈 배열.
 async function _collectAwardNews(){
   try{
     const evs=await _awardEvents();if(!evs.length)return [];
     const ko=currentLang==='ko',today=_awardDay(new Date(Date.now()+9*3600e3).toISOString().slice(0,10));
-    return evs.filter(e=>e&&e.start&&e.end&&_awardDay(e.start)<=today&&today-_awardDay(e.end)<=_AWARD_WINDOW_DAYS*864e5).map(e=>{
+    return (await Promise.all(evs.filter(e=>e&&e.start&&e.end&&_awardDay(e.start)<=today&&today-_awardDay(e.end)<=_AWARD_WINDOW_DAYS*864e5).map(async e=>{
       const ago=Math.round((today-_awardDay(e.end))/864e5);
       const top=[...new Set((e.top||[]).flatMap(c=>c.names||[]))].slice(0,4).map(_awardName);
       const sub=[_awardRange(e),e.venue,top.length?((ko?'대상 ':'Grand prizes ')+top.join(' · ')):''].filter(Boolean).join(' · ');
-      return {type:'award',title:(ko?e.name:(e.nameEn||e.name))+' '+e.edition,sub,score:300-ago,award:e,nav:()=>{}};
-    }).sort((a,b)=>b.score-a.score);
+      const rep=await _awardRepVideo(e); // 대표 무대 영상 — 없으면 썸네일 없이
+      const nav=rep?()=>openLightbox('https://www.youtube.com/watch?v='+rep.id,false,null,0,{groupKo:rep.group_ko},false,true):()=>{};
+      return {type:'award',title:(ko?e.name:(e.nameEn||e.name))+' '+e.edition,sub,score:300-ago,award:e,thumb:rep?rep.thumb:null,nav};
+    }))).sort((a,b)=>b.score-a.score);
   }catch(err){console.warn('[feed] 시상식 소식 실패 — 이 줄만 빠집니다',err);return [];}
 }
 // For You '내 최애 소식'용 — 이번 주 시상식 줄은 항상 싣되(큰 행사), 내 최애(즐겨찾기 그룹·멤버, 최애 멤버의 소속 그룹 포함)가 받은 상이 있으면
@@ -24977,9 +25012,9 @@ async function _buildFeedDailyNews(){
   if(!list||!sb)return;
   list.innerHTML='';
   try{
-    const items=(await _collectWeekNews()).map(r=>({...r})); // 렌더가 _s/_pair를 덧붙이므로 복사본
+    const [items0,awards]=await Promise.all([_collectWeekNews(),_collectAwardNews()]); // 소식·시상식(+대표 영상) 동시 — 이번 주 시상식은 정적 파일+색인 조회라 늘 기다림이 안 늘어난다
+    const items=items0.map(r=>({...r})); // 렌더가 _s/_pair를 덧붙이므로 복사본
     // 결방 안내는 Music Shows 레일에서만 표시한다(대표 소식으로 올리지 않음).
-    const awards=await _collectAwardNews(); // 이번 주 시상식(정적 파일 — DB 안 씀)
     _renderNewsList(list,items,awards);
     try{_buildShowEpRail(items).catch(()=>{});}catch(e){}
     window._discoverNewsItems=items;

@@ -40,6 +40,17 @@ let pass = 0, fail = 0; const ok = (c, m, extra) => { if (c) { pass++; console.l
     await sleep(300);
     const row = JSON.parse(await ev(c, "JSON.stringify({rows:document.querySelectorAll('#feed-dailynews .feed-news-row').length,badge:(document.querySelector('#feed-dailynews .feed-news-badge')||{}).textContent,title:(document.querySelector('#feed-dailynews .feed-news-title')||{}).textContent,btns:[...document.querySelectorAll('#feed-dailynews .feed-news-btns button')].map(b=>b.textContent)})"));
     ok(row.rows >= 1 && row.badge === '🏆 시상식' && /멜론뮤직어워드 2026/.test(row.title || '') && row.btns.length >= 2 && row.btns.length === row.rows * 2, '소식 줄: 🏆 시상식 · 멜론뮤직어워드 2026 · 버튼 2개', JSON.stringify(row));
+    // 2-b) 대표 영상 썸네일 — 대상 받은 팀의 무대 영상(수상소감 등 제외), 줄에 썸네일이 그려진다 (사용자 11-17)
+    const rep = JSON.parse(await ev(c, "(async()=>{const e=(await _awardEvents()).find(x=>x.id==='mma'&&x.edition==='2026');const v=await _awardRepVideo(e);const aw=await _collectAwardNews();return JSON.stringify({top:[...new Set(e.top.flatMap(x=>x.names))],v:v&&{id:v.id,title:v.title,g:v.group_ko,vc:v.view_count,cat:v.category},thumb:(aw.find(x=>x.award.id==='mma')||{}).thumb||null,img:document.querySelectorAll('#feed-dailynews .feed-news-row .feed-news-tw img').length})})()"));
+    ok(rep.v && rep.top.includes(rep.v.g) && rep.v.cat === 'live' && !/수상 ?소감|인터뷰|비하인드/.test(rep.v.title) && !!rep.thumb, '대표 영상 = 대상 받은 팀의 무대 영상(수상소감·인터뷰 제외)·썸네일 있음', JSON.stringify(rep.v));
+    console.log('    대표:', rep.v && (rep.v.g + ' | ' + rep.v.title.slice(0, 60) + ' | ' + rep.v.vc));
+    await ev(c, "(async()=>{const list=document.getElementById('feed-dailynews');list.innerHTML='';_renderNewsList(list,[],await _collectAwardNews());})()");
+    await sleep(400);
+    ok(await ev(c, "document.querySelectorAll('#feed-dailynews .feed-news-row .feed-news-tw img').length>=1"), '시상식 줄에 대표 영상 썸네일이 그려진다');
+    // 2-c) MV 소식에 시상식·수상소감·제작 뒷이야기가 안 섞인다
+    const mv = JSON.parse(await ev(c, "(async()=>JSON.stringify((await _collectWeekNews()).filter(x=>x.type==='mv'||x.type==='teaser').map(x=>String(x.title))))()"));
+    const bad = mv.filter(t => /MMA|MAMA|KGMA|수상 ?소감|올해의|어워드|시상식|Production Meeting|MAKING|Behind|Reaction/i.test(t));
+    ok(bad.length === 0, 'MV·티저 소식에 시상식·수상소감·제작 뒷이야기 영상이 없다(' + mv.length + '개 중)', bad.join(' | '));
     // 3) 수상 목록 펼침
     await ev(c, "document.querySelector('#feed-dailynews .feed-news-btns button').click()");
     for (let i = 0; i < 20; i++) { await sleep(300); if (await ev(c, "document.querySelectorAll('.feed-award-detail .fa-row').length>0")) break; }
