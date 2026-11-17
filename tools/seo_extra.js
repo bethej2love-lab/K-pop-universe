@@ -310,7 +310,8 @@ const STRUCTURAL_TRACKS = new Set(['intro', 'outro', 'interlude', 'skit', 'prolo
 // 곡명은 보통 따옴표 안에, 행사·투어·프로그램 이름은 따옴표 밖(@…, | …, '… TOUR')에 있다(2026-11-16 Codex 곡 오분류 66+21개 —
 // NCT WISH 'Sticky'가 "INTO THE WISH" 콘서트명 때문에 곡 'WISH'로, NEXZ 'Simmer'가 "COMEBACKSHOW O-RLY?"로, 'Legacy'가 "HELLMATE TOUR"로 잡힘).
 // f(text) = 그 글에서 곡 기본형 배열을 돌려주는 매처(S.f를 감싼 것). 순수 함수라 따로 테스트한다.
-const QUOTED_RE = /[“‘'"]([^“”‘’'"]{2,60})[”’'"]/g;
+// 따옴표 안 곡명 — 글자·숫자 바로 옆의 작은따옴표는 따옴표가 아니라 어포스트로피다(2026-11-17: God's·Don't의 '가 따옴표로 읽혀 '神메뉴' (… 'God's Menu')가 쪼개졌다).
+const QUOTED_RE = /(?<![A-Za-z0-9])[“‘'"]([^“”‘’'"]{2,60})[”’'"](?![A-Za-z0-9])/g;
 const TOUR_SUFFIX_RE = /([A-Za-z][A-Za-z0-9 '’:!?.&\-]{2,40}?)\s+(?:world\s+)?(?:tour|concert|encore|fan\s*-?\s*meeting)\b/ig;
 // 곡 페이지 '직캠·무대'에 안 맞는 영상(2026-11-17, Codex 팬 관점 검수 — 스트레이키즈 This & That 곡 페이지 상위에 앨범 트레일러·메이킹·다른 수록곡 UNVEIL).
 // 앨범 이름과 같은 곡이면 앨범 홍보 영상 제목에 곡명이 그대로 들어 있어 곡 영상으로 잡힌다. 분류가 live·mv인 영상(음방·직캠·안무·MV)은 항상 둔다 — 실제 무대가
@@ -328,7 +329,9 @@ function refineSongsByTitle(title, bs, f) {
   const t = String(title || '');
   const quoted = [...t.matchAll(QUOTED_RE)].map(m => m[1]);
   if (!quoted.length) return bs; // 따옴표 없는 제목은 근거가 약해 그대로
-  const qbs = f(quoted.join(' | ')) || [];
+  // 따옴표 안 글자만 떼어 다시 곡을 찾을 땐 **따옴표를 다시 씌운다** — 따옴표 없는 글에선 4글자 미만 곡명(神메뉴·락·특)을 믿지 않는 규칙 때문에 qbs가 비어,
+  // '神메뉴'처럼 따옴표로 감싼 직캠·무대 영상이 전부 곡에서 떨어졌다(2026-11-17 Codex 검수 — 스트레이키즈 현진 神메뉴 9개 중 1개만 연결, 멤버 페이지 0개).
+  const qbs = f(quoted.map(q => '"' + q + '"').join(' | ')) || [];
   if (bs.length > 1) { const keep = bs.filter(x => qbs.includes(x)); return keep.length ? keep : bs; } // ① 여러 곡이 잡히면 따옴표 안에서 잡힌 곡만
   if (qbs.includes(bs[0])) return bs;
   // ② 한 곡만 잡혔는데 따옴표 밖에서만 잡힘: '@'·'|' 뒤(행사·프로그램 꼬리)나 '○○ TOUR' 이름 속이면 곡이 아니다
