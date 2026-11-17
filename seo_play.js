@@ -230,9 +230,9 @@
       document.head.appendChild(st);
       var fmt=function(n){n=+n||0;if(!n)return '';if(n>=1e6)return Math.floor(n/1e6)+'M+';if(n>=1e3)return Math.floor(n/1e3)+'K+';if(n>=100)return Math.floor(n/100)*100+'+';return '<100';};
       var sec=document.createElement('section');sec.className='kpu-hot';
-      var hd=document.createElement('div');hd.className='kpu-hot-h';var h2=document.createElement('h2');h2.textContent=EN?'Most-watched fancams this week':'이번 주 많이 본 직캠';hd.appendChild(h2);
+      var hd=document.createElement('div');hd.className='kpu-hot-h';var h2=document.createElement('h2');h2.textContent=EN?'Trending fancams this week':'이번 주 인기 직캠';hd.appendChild(h2);
       var more=document.createElement('a');more.href=(EN?'/en':'')+'/rank/fancam/'+new Date().getFullYear()+'/';more.textContent=(EN?'Rankings':'직캠 순위')+' ›';hd.appendChild(more);sec.appendChild(hd);
-      var sb=document.createElement('p');sb.className='kpu-hot-s';sb.textContent=EN?'Fancams posted in the last 7 days, by views':'최근 7일 올라온 직캠 · 조회수 순';sec.appendChild(sb);
+      var sb=document.createElement('p');sb.className='kpu-hot-s';sb.textContent=EN?'Fancams posted in the last 7 days · trending':'최근 7일 올라온 직캠 · 인기순'; // 순서는 조회수 순위+이 사이트에서의 재생(서버 get_hot_fancams)을 섞은 점수 — '조회수 순'이라 적으면 숫자 순서와 어긋나 보였다(2026-11-17 Codex)sec.appendChild(sb);
       var row=document.createElement('div');row.className='kpu-hot-r';
       items.slice(0,12).forEach(function(x,i){
         var a=document.createElement('a');a.className='kpu-hot-c';a.href='https://www.youtube.com/watch?v='+x.id;a.target='_blank';a.rel='noopener';
