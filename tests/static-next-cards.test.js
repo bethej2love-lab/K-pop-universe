@@ -65,3 +65,9 @@ console.log(total + ' checks / ' + failed + ' failed'); if (failed) process.exit
   ok3(/ms\.vids\.filter\(v => v\.category !== 'mv'\)\.concat\(ms\.vids\.filter\(v => v\.category === 'mv'\)\)/.test(src3), '멤버×곡 페이지: 개인 버전 공식 MV(mv)는 직캠·무대 뒤로(대표가 MV가 되지 않게)');
   ok3(/const nOf = x =>/.test(src3) && /MEMBER_SONGS_BY_SONG\.get\(gko \+ '\|' \+ x\.s\.b\)/.test(src3) && !/<span class="h-n">\$\{x\.vids\.length\}/.test(src3), '직캠 허브 곡별 개수는 도착 페이지 개수(nOf)');
 }
+// 앨범 트랙리스트의 버전 곡 표기(Codex 11-17) — 소스 검사
+{
+  const src4 = fs.readFileSync(path.join(__dirname, '..', 'build_group_pages.js'), 'utf8');
+  const ok4 = (c, m) => { if (c) { console.log('✅ ' + m); } else { console.error('FAIL ' + m); process.exitCode = 1; } };
+  ok4(/const verTag = isVer \?/.test(src4) && /\$\{verTag\}\$\{t\.isTitle/.test(src4) && /버전 · 원곡 페이지로 이동/.test(src4), '앨범 트랙리스트: 일본어·영어 버전 등은 원곡 페이지로 간다는 표기');
+}

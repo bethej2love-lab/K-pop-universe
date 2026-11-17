@@ -2874,9 +2874,13 @@ function buildAlbumPages() {
         const names = arr => [...new Set((arr || []).map(x => Array.isArray(x) ? x[0] : x).filter(Boolean))].join(', ');
         const rows = (al.tracks || []).map(t => {
           const b = _CRED_SB(t.title || ''), href = b && songB.has(b) ? `${SITE}/${songPagePath(g, b, lang)}` : null;
+          // 버전 곡(일본어·영어 버전·Inst. 등)은 원곡 페이지로 간다 — 누르기 전에 알 수 있게 작게 표기(2026-11-17 Codex: LUCID DREAM 'REBEL HEART -Japanese version-'이
+          // 한국 원곡 MV·음방 페이지로 열리는데 표시가 없었다). 버전별 영상 아카이브는 없다.
+          const isVer = !!href && /((japanese|korean|english|chinese)[ ]*ver|일본어|한국어|영어|중국어|버전|(^|[ (-])(ver[.]?|version)([ ).-]|$)|(^|[ (-])(inst[.]?|instrumental|remix|acoustic)([ ).-]|$))/i.test(t.title || '');
+          const verTag = isVer ? ` <span class="yr">${isEn ? 'version · opens the original song page' : '버전 · 원곡 페이지로 이동'}</span>` : '';
           const cr = t.cr || {}, ly = names(cr.l), co = names(cr.c);
           const credit = [ly && `${isEn ? 'Lyrics' : '작사'} ${escHtml(ly)}`, co && `${isEn ? 'Music' : '작곡'} ${escHtml(co)}`].filter(Boolean).join(' · ');
-          return `<li>${href ? `<a href="${href}">${escHtml(t.title)}</a>` : escHtml(t.title)}${t.isTitle ? (isEn ? ' <b>(title)</b>' : ' <b>(타이틀)</b>') : ''}${credit ? `<br><span class="yr">${credit}</span>` : ''}</li>`;
+          return `<li>${href ? `<a href="${href}">${escHtml(t.title)}</a>` : escHtml(t.title)}${verTag}${t.isTitle ? (isEn ? ' <b>(title)</b>' : ' <b>(타이틀)</b>') : ''}${credit ? `<br><span class="yr">${credit}</span>` : ''}</li>`;
         }).join('');
         const tt = al.titleTrack || ((al.tracks || []).find(t => t.isTitle) || {}).title || '';
         const h1 = isEn ? `${gd} — ${al.title}` : `${g} ${al.title}`;
