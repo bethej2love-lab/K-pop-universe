@@ -24294,7 +24294,20 @@ function _igvShow(){
   all.hidden=!_igv.per;all.textContent=_igv.full?(ko?'사진별 글 보기':'Per-photo text'):(ko?'본문 전체 보기':'Show full caption');
   ov.querySelector('#igv-prev').disabled=ov.querySelector('#igv-next').disabled=!!_igv.tagEditor;
   _igvRenderTags();
+  _igvPreload();
 }
+// 사진 미리 받기(2026-11-17 사용자 "인스타 옆으로 사진 느리게 넘어가고 순간 번쩍거린다"). 예전엔 지금 장과 양옆 1장씩만 받아 두고, 한 장 넘긴 뒤에야 다음 장을
+// 받기 시작해서 빨리 넘기면 아직 안 받은 사진이 빈 채로 미끄러져 들어왔다(=느림·번쩍). 앞으로 3장·뒤 1장을 미리 받아 두고(최대 20장짜리 게시물도 몇 장뿐),
+// 이미지 객체를 _igv.pre에 붙들어 둬 메모리에서 안 사라지게 한다. 받는 김에 decode()로 그림 풀기까지 끝내 둔다.
+function _igvPre(k){
+  if(!_igv||k<0||k>=_igv.pics.length)return null;
+  const pre=_igv.pre||(_igv.pre=new Map());
+  if(pre.has(k))return pre.get(k);
+  const im=new Image();im.decoding='async';im.src=_igv.pics[k];pre.set(k,im);
+  if(im.decode)im.decode().catch(()=>{});
+  return im;
+}
+function _igvPreload(){if(!_igv)return;const i=_igv.i;[i+1,i+2,i+3,i-1].forEach(_igvPre);}
 // 지금 장과 양옆 장을 dx만큼 옮긴다(anim이면 스르륵). 양옆 장은 사진 틀 폭만큼 떨어져 있다.
 function _igvPos(dx,anim){
   const ov=document.getElementById('igv-overlay');if(!ov)return;
@@ -24310,13 +24323,18 @@ function _igvGo(d){
   const w=md?md.clientWidth:0;
   if(!w){_igv.i=n;_igvShow();return;}
   const cur=_igv;cur.anim=true;
-  _igvPos(-d*w,true);
-  setTimeout(()=>{
+  // 아직 안 받은 사진이면 받아질 때까지(최대 1.5초) 기다렸다 미끄러뜨린다 — 빈 사진이 들어왔다 로딩되며 번쩍이던 것(2026-11-17). 대기 중엔 anim이 켜져 중복 넘기기 없음.
+  const nb=_igvPre(n),ready=nb&&!(nb.complete&&nb.naturalWidth)?new Promise(r=>{nb.addEventListener('load',r,{once:true});nb.addEventListener('error',r,{once:true});setTimeout(r,1500);}):Promise.resolve();
+  ready.then(()=>{
     if(_igv!==cur)return;
-    const img=ov.querySelector('#igv-img');img.src=cur.pics[n];
-    const fin=()=>{if(_igv!==cur)return;cur.i=n;cur.anim=false;_igvShow();_igvPos(0,false);};
-    (img.decode?img.decode():Promise.resolve()).then(fin,fin);
-  },260);
+    _igvPos(-d*w,true);
+    setTimeout(()=>{
+      if(_igv!==cur)return;
+      const img=ov.querySelector('#igv-img');img.src=cur.pics[n];
+      const fin=()=>{if(_igv!==cur)return;cur.i=n;cur.anim=false;_igvShow();_igvPos(0,false);};
+      (img.decode?img.decode():Promise.resolve()).then(fin,fin);
+    },260);
+  });
 }
 function _closeIgViewer(){
   const ov=document.getElementById('igv-overlay');
