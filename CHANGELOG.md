@@ -146,6 +146,8 @@
 - **[kpop_universe.css]** 가로 영상 전체화면 버튼 안 눌림 수정: `#yt-lb-fs-cap`이 가로 영상(`#yt-lb-video-box:not(.is-shorts)`)에서 유튜브 플레이어 전체화면 버튼 위를 덮어 클릭이 막혔다 → `pointer-events:none;cursor:default` 추가. 쇼츠는 플레이어 UI 구조가 달라 해당 없음.
 - **[app.js]** 탐험 탭 영상 클릭 시 피드 패널 스크롤 오작동 수정: `lb-narrow` 모드(탐험 탭 옆 좁은 재생 화면 — `yt-lightbox.getBoundingClientRect().width < 800`)에서 `#yt-lb-uplist`가 CSS `overflow:visible`로 바뀌는데, 이 상태에서 `_lbUpdateUplist()`의 `scrollIntoView` 호출이 가장 가까운 overflow:auto 조상(feed-pane-rec/disc)을 스크롤시켜 영상 클릭 시 화면이 그 카드 위치로 내려갔다. `lb-narrow`가 아닐 때만 `scrollIntoView` 호출.
 - **[updates.json]** 2026-11-17 주간 업데이트 초안 추가 — 사용자 확인 후 배포.
+- ⏳ **updates.json 11-17 초안 사용자 확인 후 배포** — 항목: MMA·KGMA This Week·직캠 TOP 10·For You 인스타·최근 검색 곡/행사·인스타 빠른 넘기기. 맞으면 그대로, 수정 있으면 반영 후 `git add updates.json && git commit -m "data: 주간 업데이트 11-17 배포"` → push.
+- ⏳ **탐험 탭 가로 썸네일 품질** — 현재 mqdefault(320×180). 웹에서 maxresdefault(1280×720) 먼저 시도·없으면 폴백(`_fillFeedCardThumb` 또는 `_setFeedCardThumb` 쪽). 미착수.
 
 ## 2026-11-16 (Claude Code/Fable 집 — 시작 체크 + 합류·탈퇴일 마무리(Codex ④))
 - [완료] **시작 체크(🏠 0번)**: ①정적 재생성 — 07:06 빌드 성공·배포됨, intro 3주소(더보이즈·제로베이스원·en) 전부 부모로 넘어가는 stub ✅, 직캠 전체 페이지 TOP 10+최근 1년 ✅, 조회수 nK/nM("3.1M") ✅ ②`static_pages_status` 54,269개(검색용 48,088·넘김 6,181) — 넘김 +2,000은 구조 트랙 곡 페이지 넘김 전환분, 정상 ③ig_media 27,284행(퇴근 시점 23,892 → +3,392, 채우기 작동) ④CI: Data validation 빨간불(07:06·07:13)은 다음 커밋(href=null 수정)으로 해소돼 최신 초록. **Browser smoke 빨간불 3개(stage-venue-album·program-facets ko·vid-list-share)는 DB 요청이 35~37초 걸린 타임아웃** — 07:20 정적 재생성과 겹친 시간대, 코드 원인 아님으로 보고 재생성 끝난 뒤 실패 잡만 재실행 예약(이 노트북엔 gh 없음 — 키체인 토큰으로 GitHub API 직접 호출)
