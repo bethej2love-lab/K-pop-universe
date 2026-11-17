@@ -1736,12 +1736,7 @@
   #feed-igmag.feed-album-grid>.feed-card .feed-card-thumb-wrap,#feed-favigmag.feed-album-grid>.feed-card .feed-card-thumb-wrap{aspect-ratio:4/5;position:relative;}
   .ig-mag-rail{margin-top:-10px;} /* 1행과 붙여 한 섹션으로 읽히게 */
   .ig-mag-rail[hidden]{display:none;} /* -10px: 쇼츠 그리드 실측(웹 190·폰 169)에 맞춤 */
-  /* 틱톡 아이콘의 원형 콘텐츠가 x=5~15(24단위 기준) 좌측에 치우쳐 있어 우측 여백이 크고(16px 아이콘
-     기준 ≈6px), 바로 뒤 나무위키 아이콘과의 시각적 gap이 다른 쌍보다 넓어 보임(2026-08-14, 사용자 제보).
-     margin:-7px 기본값보다 더 음수로 설정해 나무위키 아이콘을 왼쪽으로 당겨야 gap이 줄어든다
-     (덜 음수인 -3px는 반대 방향 — 오른쪽으로 밀어 gap을 더 늘림). */
-  .gc-link-icon-tiktok + .gc-link-icon-namu{margin-left:-9px;}
-  /* SNS 아이콘 쌍별 간격 미세 정리(2026-08-28, 사용자 요청 — 기본 gap 9px에서 특정 쌍만 좁힘) */
+  /* SNS 아이콘 쌍별 간격 미세 정리 */
   .gc-link-icon-instagram + .gc-link-icon-x{margin-left:-5px;}
   .gc-link-icon-x + .gc-link-icon-tiktok{margin-left:-4px;}
   /* 가족관계 — 연결 카드 헤더 바로 아래, 콜라보 목록과 구분되는 별도 섹션(2026-08-13,
@@ -1753,19 +1748,19 @@
   .conn-family-row:hover{background:rgba(255,255,255,0.06);color:rgba(220,235,255,0.96);}
   .gc-link-icon{
     display:flex;align-items:center;justify-content:center;
-    width:16px;height:16px;color:rgba(150,175,220,0.66);
+    width:20px;height:20px;color:rgba(150,175,220,0.66);
     transition:color .15s,transform .15s;
-    /* 14~16px 아이콘은 손가락으로 정확히 누르기 어렵다는 실측 확인(2026-08-12) — 시각적 크기/간격은
-       그대로 두고 패딩+음수 마진으로 실제 탭 가능 영역만 넓힌다(전역 border-box 리셋 아래선 패딩이
-       안쪽을 깎아먹으므로 이 요소만 content-box로 되돌림, 음수 마진으로 레이아웃 자리는 원래 크기
-       그대로 보존). 배경/보더 없는 순수 아이콘이라 이 트릭이 시각적으로 전혀 티 안 남. */
-    box-sizing:content-box;padding:7px;margin:-7px;
+    /* 아이콘은 패딩+음수 마진으로 실제 탭 가능 영역을 넓힌다(전역 border-box 리셋 아래선 패딩이
+       안쪽을 깎아먹으므로 이 요소만 content-box로 되돌림). 배경/보더 없는 순수 아이콘이라 시각적으로 티 안 남. */
+    box-sizing:content-box;padding:6px;margin:-6px;
   }
   .gc-link-icon:hover{color:rgba(200,220,255,0.95);transform:translateY(-1px);}
   .gc-link-icon svg{width:100%;height:100%;}
   /* YouTube 공식 아이콘(2026-11-17, API 감사 III.F.2a): 원본 비율 28.57:20, 높이 20px 이상. 색·모양은 SVG에 고정이라 hover 색 변화가 닿지 않게 한다. */
   .gc-link-icon.gc-link-icon-youtube,#tt-links .gc-link-icon.gc-link-icon-youtube{width:28.6px;height:20px;}
   .gc-link-icon.gc-link-icon-youtube:hover{color:inherit;}
+  /* 2줄 구분자 — weverse 등 line2 항목 앞에 삽입돼 아이콘 행을 나눈다 */
+  .gc-links-br{flex-basis:100%;height:0;}
   #gc-grid,#tt-info-grid{display:flex;flex-direction:column;gap:1px;margin-top:7px;padding-top:9px;border-top:0.5px solid rgba(255,255,255,0.10);}
   /* 멤버 카드 안에서는 이름(.tn)·그룹칩(#tg-row)이 전부 padding-left:4px로 살짝 들여져 있는데
      이 정보 줄만 0이라 왼쪽으로 삐져나와 보였음 — 같은 4px로 맞춘다(2026-08-10, 사용자 제보) */
