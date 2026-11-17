@@ -7359,6 +7359,9 @@ function _lbSetIframeSrc(url){
   if(url)fr.src=url;else fr.removeAttribute('src');
   old.replaceWith(fr);
   _lbCcOffVid=null; // 새 틀 = 새 재생 — 같은 영상을 다시 열어도 자막 끄기 신호를 다시 보낸다(_lbCaptionsOffOnce 주석)
+  // 데스크톱: iframe이 로드되면 YouTube 플레이어가 포커스를 가져가 ESC가 부모 window에 안 옴 — 부모로 돌려줌
+  // 모바일은 무대 옆 패널 아닌 전체화면이라 포커스 반환 불필요
+  if(!isMob())fr.addEventListener('load',()=>window.focus(),{once:true});
   return fr;
 }
 function _lbPushHist(){
