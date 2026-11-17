@@ -84,6 +84,15 @@ const fmtViews = (n) => {
   if (n >= 1e3) return Math.floor(n / 1e3) + 'K';
   return String(n);
 };
+// 영상 조회수 표기 = 앱 _fmtVC와 같게(2026-11-17 통일): 1M+ · 34K+ · 800+ · <100. 0/없음은 빈 문자열(칸 자체를 안 그림).
+const fmtVC = (n) => {
+  n = +n || 0;
+  if (!n) return '';
+  if (n >= 1e6) return Math.floor(n / 1e6) + 'M+';
+  if (n >= 1e3) return Math.floor(n / 1e3) + 'K+';
+  if (n >= 100) return Math.floor(n / 100) * 100 + '+';
+  return '<100';
+};
 const fmtPeople = (n, en) => !n ? '' : en ? (n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : Math.round(n / 1e3) + 'K') : (n >= 1e4 ? (n >= 1e5 ? Math.round(n / 1e4) : (n / 1e4).toFixed(1).replace(/\.0$/, '')) + '만 명' : n.toLocaleString() + '명');
 const fmtUsd = n => !n ? '' : n >= 1e9 ? '$' + (n / 1e9).toFixed(1) + 'B' : n >= 1e6 ? '$' + (n / 1e6).toFixed(n >= 1e8 ? 0 : 1) + 'M' : '$' + Math.round(n / 1e3) + 'K';
 const ytUrl = id => `https://www.youtube.com/watch?v=${id}`;
@@ -179,7 +188,7 @@ function groupExtra(ko, lang, EX, ST, opts) {
 // v: {id,title,published_at?,view_count?,sub?} — sub가 있으면 날짜·조회수 대신 그 줄(예: feat.)
 function vidCards(list, en) {
   return list.filter(v => v && v.id).map(v => {
-    const y = v.sub != null && v.sub !== '' ? v.sub : [v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? fmtViews(v.view_count) : ''].filter(Boolean).join(' · ');
+    const y = v.sub != null && v.sub !== '' ? v.sub : [v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? fmtVC(v.view_count) : ''].filter(Boolean).join(' · ');
     return `<a class="mf-card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">${esc(v.title)}</span>${y ? `<span class="mf-y">${esc(y)}</span>` : ''}</a>`;
   }).join('');
 }
@@ -392,4 +401,4 @@ const roundViews = n => { if (!n) return 0; const p = Math.pow(10, Math.max(0, M
 
 const EXTRA_CSS =`.vid-list{padding-left:20px;margin:0;}.vid-list li{font-size:13.5px;margin-bottom:7px;}.vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}.note{font-size:11px;color:rgba(150,170,210,0.55);margin:6px 0 0;}.rel a{color:rgba(210,225,255,0.95);text-decoration:none;}.sp-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 10px;}@media(min-width:620px){.sp-tiles{grid-template-columns:repeat(5,minmax(0,1fr));}}.sp-tile{display:block;text-decoration:none;min-width:0;}.sp-tile img,.sp-tile-ph{display:block;width:100%;aspect-ratio:1;border-radius:10px;object-fit:cover;background:#1e1e21;}.sp-tile-t{display:block;font-size:12.5px;margin-top:6px;color:rgba(228,236,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.sp-tile-n{display:block;font-size:11px;color:rgba(160,180,230,0.6);}.mf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;margin-bottom:6px;}@media(min-width:620px){.mf-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}.mf-card{display:block;min-width:0;text-decoration:none;}.mf-th{display:block;position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#17171a;}.mf-th img{width:100%;height:100%;object-fit:cover;display:block;}.mf-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.38;margin-top:7px;color:rgba(228,236,255,0.94);}.mf-y{display:block;font-size:11.5px;color:rgba(160,180,230,0.6);margin-top:2px;}`;
 
-module.exports = { STRUCTURAL_TRACKS, refineSongsByTitle, vidCards, loadStatic, packCredits, bilingualSongTitle, prefetch, groupExtra, memberExtra, ages, EXTRA_CSS, fmtViews, prefetchGroupVideos, buildSongs, roundViews, esc };
+module.exports = { STRUCTURAL_TRACKS, refineSongsByTitle, vidCards, loadStatic, packCredits, bilingualSongTitle, prefetch, groupExtra, memberExtra, ages, EXTRA_CSS, fmtViews, fmtVC, prefetchGroupVideos, buildSongs, roundViews, esc };

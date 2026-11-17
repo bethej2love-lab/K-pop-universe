@@ -228,7 +228,7 @@
         +'.kpu-hot-c .v{display:block;font-size:11.5px;color:rgba(190,205,240,.55);margin-top:3px}'
         +'@media(min-width:900px){.kpu-hot-c{flex-basis:220px}}';
       document.head.appendChild(st);
-      var fmt=function(n){n=+n||0;if(EN)return n>=1e6?(n/1e6).toFixed(n>=1e7?0:1)+'M views':n>=1e3?Math.round(n/1e3)+'K views':n+' views';return n>=1e4?(n>=1e5?Math.round(n/1e4):(n/1e4).toFixed(1))+'만 회':n.toLocaleString()+'회';};
+      var fmt=function(n){n=+n||0;if(!n)return '';if(n>=1e6)return Math.floor(n/1e6)+'M+';if(n>=1e3)return Math.floor(n/1e3)+'K+';if(n>=100)return Math.floor(n/100)*100+'+';return '<100';};
       var sec=document.createElement('section');sec.className='kpu-hot';
       var hd=document.createElement('div');hd.className='kpu-hot-h';var h2=document.createElement('h2');h2.textContent=EN?'Most-watched fancams this week':'이번 주 많이 본 직캠';hd.appendChild(h2);
       var more=document.createElement('a');more.href=(EN?'/en':'')+'/rank/fancam/'+new Date().getFullYear()+'/';more.textContent=(EN?'Rankings':'직캠 순위')+' ›';hd.appendChild(more);sec.appendChild(hd);
@@ -379,4 +379,30 @@
       }
     }
   }catch(e){}
+})();
+
+// 영상 날짜 표기(2026-11-17, 앱 _fmtVidAgo와 통일): 정적 HTML엔 yyyy.mm.dd로 굽고(검색엔진·JS 꺼진 환경 그대로), 브라우저가 7일 안이면 'N일 전'(en: Nd ago)으로 바꾼다.
+// 날짜만 있고 시각을 모르는 값이라 앱과 같이 오늘 올라온 건 날짜 칸을 뺀다("N시간 전"을 못 말하므로). 카드 메타(.card-y·.mf-y)만 대상 — 동적으로 그린 카드는 seo_vids.js가 다시 부른다.
+(function(){
+  window.kpuRelDates=function(root){
+    try{
+      var EN=/^\/en\//.test(location.pathname)||document.documentElement.lang==='en';
+      var n=new Date(),t0=new Date(n.getFullYear(),n.getMonth(),n.getDate()).getTime();
+      [].forEach.call((root||document).querySelectorAll('.card-y,.mf-y'),function(el){
+        if(el.getAttribute('data-rd'))return;
+        el.setAttribute('data-rd','1');
+        var ch=false;
+        var parts=el.textContent.split(' · ').map(function(p){
+          var m=/^(\d{4})\.(\d{2})\.(\d{2})$/.exec(p);if(!m)return p;
+          var d=Math.round((t0-new Date(+m[1],+m[2]-1,+m[3]).getTime())/86400000);
+          if(d>=7)return p;
+          ch=true;
+          if(d<=0)return '';
+          return EN?(d+'d ago'):(d+'일 전');
+        }).filter(Boolean);
+        if(ch)el.textContent=parts.join(' · ');
+      });
+    }catch(e){}
+  };
+  window.kpuRelDates();
 })();

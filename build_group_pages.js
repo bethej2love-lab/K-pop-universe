@@ -788,7 +788,7 @@ ${SEO_GA_TAG}
   ${hasFancams ? `
   <h2>${isEn ? `${escHtml(en)} fancams` : `${escHtml(ko)} 직캠`}</h2>
   <div class="mf-grid">
-    ${fancams.slice(0, 24).map(v => `<a class="mf-card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">${escHtml(v.title)}</span><span class="mf-y">${[v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? SEO.fmtViews(v.view_count) : ''].filter(Boolean).join(' · ')}</span></a>`).join('\n    ')}
+    ${fancams.slice(0, 24).map(v => `<a class="mf-card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">${escHtml(v.title)}</span><span class="mf-y">${[v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? SEO.fmtVC(v.view_count) : ''].filter(Boolean).join(' · ')}</span></a>`).join('\n    ')}
   </div>${hubUrl ? `<p class="hub-more"><a href="${hubUrl}">${isEn ? `All ${fancams.length} fancams by song →` : `직캠 전체 ${fancams.length}개 곡별로 보기 →`}</a></p>` : fancams.length > 24 ? `<p class="note">${isEn ? `Top 24 of ${fancams.length} fancams` : `직캠 ${fancams.length}개 중 상위 24개`}</p>` : ''}` : ''}
   ${memberIntroHtml(a, affiliations, lang)}
   ${xm.hasCredits ? '' : creditLinkHtml(a, lang)}
@@ -1002,7 +1002,7 @@ function hubPageHtml(lang, relLinks) {
   const isEn = lang === 'en';
   const selfUrl = `${SITE}/${isEn ? 'en/g/' : 'g/'}`;
   const altUrl = `${SITE}/${isEn ? 'g/' : 'en/g/'}`;
-  const title = isEn ? 'All K-pop Groups — Profiles, Members & Videos | K-POP UNIVERSE' : '케이팝 그룹 전체 목록 — 멤버·데뷔일·직캠 | K-POP UNIVERSE';
+  const title = isEn ? 'All K-pop Groups — Profiles, Members & Videos | K-POP UNIVERSE' : '케이팝 그룹 전체 목록 — 멤버·데뷔일·직캠 | All K-pop Groups | K-POP UNIVERSE';
   const desc = isEn
     ? `Browse all ${groupKos.length} K-pop groups on K-POP UNIVERSE. Each group page includes debut date, member profiles, discography, and fancam archive.`
     : `K-POP UNIVERSE에서 케이팝 그룹 ${groupKos.length}팀의 데뷔일·멤버 프로필·디스코그래피·직캠을 한눈에 탐험하세요.`;
@@ -1308,7 +1308,7 @@ async function buildRelationPages() {
       const A = gname(a, lang), B = gname(b, lang);
       const html = relPageHtml({
         lang,
-        title: isEn ? `${A} × ${B} — videos together | K-POP UNIVERSE` : `${A} × ${B} 같이 나온 영상 ${vs.length}개 | K-POP UNIVERSE`,
+        title: isEn ? `${A} × ${B} — videos together | K-POP UNIVERSE` : `${bilingualLabel(A, gname(a, 'en'))} × ${bilingualLabel(B, gname(b, 'en'))} 같이 나온 영상 ${vs.length}개 | K-POP UNIVERSE`,
         desc: isEn ? `${vs.length} videos featuring both ${A} and ${B}.` : `${A}${josa(A, '와/과')} ${B}${josa(B, '이/가')} 함께 나온 영상 ${vs.length}개를 모았어요.`,
         h1: `${A} × ${B}`,
         sub: isEn ? `${glink(a, lang)} and ${glink(b, lang)} appeared together` : `${glink(a, lang)} · ${glink(b, lang)} 함께 나온 영상`,
@@ -1336,7 +1336,7 @@ async function buildRelationPages() {
       const N = gname(gko, lang);
       const html = relPageHtml({
         lang,
-        title: isEn ? `${N} cover songs & covered by others | K-POP UNIVERSE` : `${N} 커버곡 · ${N} 곡 커버 영상 | K-POP UNIVERSE`,
+        title: isEn ? `${N} cover songs & covered by others | K-POP UNIVERSE` : `${bilingualLabel(N, gname(gko, 'en'))} 커버곡 · ${N} 곡 커버 영상 | K-POP UNIVERSE`,
         desc: isEn ? `${mine.length} songs covered by ${N}, and ${theirs.length} covers of ${N} songs by other artists.`
                    : `${N}${josa(N, '이/가')} 커버한 곡 ${mine.length}개와, 다른 아티스트가 커버한 ${N} 곡 ${theirs.length}개.`,
         h1: isEn ? `${N} — covers` : `${N} 커버`,
@@ -1647,7 +1647,7 @@ function groupStageVids(gko) {
 }
 // 썸네일 카드 그리드(멤버·그룹 페이지 공용, 스타일은 seo_extra EXTRA_CSS .mf-*)
 function vidCardsHtml(list, isEn) {
-  return list.map(v => `<a class="mf-card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">${escHtml(v.title)}</span><span class="mf-y">${[v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? SEO.fmtViews(v.view_count) : ''].filter(Boolean).join(' · ')}</span></a>`).join('');
+  return list.map(v => `<a class="mf-card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">${escHtml(v.title)}</span><span class="mf-y">${[v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? SEO.fmtVC(v.view_count) : ''].filter(Boolean).join(' · ')}</span></a>`).join('');
 }
 function memberSongPagePath(a, b, lang) { return `${memberPagePath(a, lang)}s/${b}/`; }
 // 멤버×곡 페이지에 들어갈 개인 영상(2026-11-13 Codex — 윤호 'Guerrilla'에 일본 여행 브이로그, 지민 'Black Swan'에 비하인드, 로제
@@ -1764,7 +1764,7 @@ function computeFancamHubs() {
   }
 }
 function fancamCardHtml(v, isEn, rank) {
-  return `<a class="card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="${ytThumb(v.id, 'mqdefault')}" alt="" loading="lazy">${rank ? `<span class="rk">${rank}</span>` : ''}</span><span class="card-t">${escHtml(v.title)}</span><span class="card-y">${[v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? SEO.fmtViews(v.view_count) : ''].filter(Boolean).join(' · ')}</span></a>`;
+  return `<a class="card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="${ytThumb(v.id, 'mqdefault')}" alt="" loading="lazy">${rank ? `<span class="rk">${rank}</span>` : ''}</span><span class="card-t">${escHtml(v.title)}</span><span class="card-y">${[v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? SEO.fmtVC(v.view_count) : ''].filter(Boolean).join(' · ')}</span></a>`;
 }
 // 곡별 묶음 — 곡 페이지와 같은 곡 데이터(SONGS)에서 그 영상이 속한 곡을 찾는다. 곡이 안 잡힌 직캠은 맨 아래 '그 밖의 직캠'
 function fancamsBySong(a, gko, fancams) {
@@ -2063,7 +2063,7 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
   const crItems = people.slice(0, CR_MAX).map(p => '<li><span class="cp-n">' + escHtml(p.n) + '</span><span class="cp-r">' + escHtml(roleTxt(p)) + '</span></li>').join('')
     + (people.length > CR_MAX ? '<li class="cp-more">' + (isEn ? '+' + (people.length - CR_MAX) + ' more' : '외 ' + (people.length - CR_MAX) + '명') + '</li>' : '');
   const creditsHtml = people.length ? '<div class="credits"><b class="credits-h">' + (isEn ? 'Credits' : '크레딧') + '</b><ul class="credit-ppl">' + crItems + '</ul></div>' : '';
-  const grid = top.slice(1).map(v => `<a class="card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="${ytThumb(v.id, 'mqdefault')}" alt="" loading="lazy"></span><span class="card-t">${escHtml(v.title)}</span><span class="card-y">${[v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? SEO.fmtViews(v.view_count) : ''].filter(Boolean).join(' · ')}</span></a>`).join('\n    ');
+  const grid = top.slice(1).map(v => `<a class="card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="${ytThumb(v.id, 'mqdefault')}" alt="" loading="lazy"></span><span class="card-t">${escHtml(v.title)}</span><span class="card-y">${[v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? SEO.fmtVC(v.view_count) : ''].filter(Boolean).join(' · ')}</span></a>`).join('\n    ');
   // 멤버×곡 페이지엔 '그룹의 다른 곡'을 싣지 않는다 — 곡 페이지에 있고, 1만 쪽에 같은 타일을 반복하면 용량만 커진다
   // 다른 곡 — 앨범별로 묶어 커버 한 번 + 그 아래 수록곡 목록(2026-11-12 사용자 "같은 커버가 10장씩 반복돼 정신 사납다, 앨범 썸네일 아래에 곡 정보 쭉").
   // 앨범 순서는 그 앨범 곡들의 영상 수 합, 앨범 안은 영상 많은 순(예전 타일 순서와 같은 기준).
@@ -2241,7 +2241,7 @@ function buildRankPages() {
         : `아이돌 개인 직캠 조회수 순위${d.slug ? `(${d.koShort})` : ''} TOP ${list.length}. 1위 ${gn(top)} ${nm(top)} ${SEO.fmtViews(top.v.view_count, false)}. 매주 갱신.`;
       const jsonLd = { '@context': 'https://schema.org', '@type': 'ItemList', name: h1, url: selfUrl,
         itemListElement: list.slice(0, 20).map((x, i) => ({ '@type': 'ListItem', position: i + 1, url: `https://www.youtube.com/watch?v=${x.v.id}`, name: x.v.title })) };
-      const cards = list.map((x, i) => `<a class="card" href="https://www.youtube.com/watch?v=${x.v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/${x.v.id}/mqdefault.jpg" alt="" loading="lazy"><span class="rank-n">${i + 1}</span></span><span class="card-t">${escHtml(x.v.title)}</span><span class="card-y">${escHtml(`${nm(x)} · ${gn(x)}`)} · ${SEO.fmtViews(x.v.view_count)}</span></a>`).join('\n    ');
+      const cards = list.map((x, i) => `<a class="card" href="https://www.youtube.com/watch?v=${x.v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/${x.v.id}/mqdefault.jpg" alt="" loading="lazy"><span class="rank-n">${i + 1}</span></span><span class="card-t">${escHtml(x.v.title)}</span><span class="card-y">${escHtml(`${nm(x)} · ${gn(x)}`)} · ${[x.v.published_at ? String(x.v.published_at).slice(0, 10).replace(/-/g, '.') : '', SEO.fmtVC(x.v.view_count)].filter(Boolean).join(' · ')}</span></a>`).join('\n    ');
       // 같은 순위 표에서 1~20위 멤버의 직캠 모음 페이지로(내부 링크)
       const seen = new Set(), who = [];
       list.slice(0, 40).forEach(x => { const k = x.gko + '|' + x.a.name.ko; if (seen.has(k) || who.length >= 20) return; seen.add(k); who.push(x); });
@@ -2251,7 +2251,7 @@ function buildRankPages() {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${escHtml(h1)} | K-POP UNIVERSE</title>
+<title>${escHtml(isEn ? h1 : `${h1} | ${d.en}`)} | K-POP UNIVERSE</title>
 <meta name="description" content="${escHtml(desc)}">
 <link rel="canonical" href="${selfUrl}">
 <link rel="alternate" hreflang="${isEn ? 'ko' : 'en'}" href="${altUrl}">
@@ -2341,6 +2341,7 @@ function buildProgramPages() {
     const render = (lang, gko) => {
       const isEn = lang === 'en';
       const pName = isEn ? (p.en || p.label) : p.label;
+      const pFull = isEn ? pName : bilingualLabel(p.label, p.en); // 등록된 영문명이 있을 때만 병기(지어내지 않음)
       const list = gko ? rows.filter(r => r.gko === gko) : rows;
       const gName = gko ? (isEn ? (groups[gko].en || gko) : gko) : '';
       const gFull = gko ? (isEn ? gName : `${gko}${groups[gko].en && groups[gko].en !== gko ? `(${groups[gko].en})` : ''}`) : '';
@@ -2348,13 +2349,13 @@ function buildProgramPages() {
       const selfUrl = `${SITE}/${rel}`, altUrl = `${SITE}/${programPagePath(p.key, gko, isEn ? 'ko' : 'en')}`, koUrl = `${SITE}/${programPagePath(p.key, gko, 'ko')}`;
       const h1 = gko ? (isEn ? `${gName} × ${pName}` : `${gko} ${p.label} 모음`) : (isEn ? `${pName} — K-pop idol videos` : `${p.label} 모음`);
       const title = gko
-        ? (isEn ? `${gName} ${pName} Videos (${list.length}) | K-POP UNIVERSE` : `${gko} ${p.label} 모음 - ${gFull} ${p.label} 영상 ${list.length}개 | K-POP UNIVERSE`)
-        : (isEn ? `${pName} — ${rows.length} K-pop Idol Videos | K-POP UNIVERSE` : `${p.label} 모음 - 아이돌 ${p.label} 영상 ${rows.length}개 | K-POP UNIVERSE`);
+        ? (isEn ? `${gName} ${pName} Videos (${list.length}) | K-POP UNIVERSE` : `${gko} ${pFull} 모음 - ${gFull} ${p.label} 영상 ${list.length}개 | K-POP UNIVERSE`)
+        : (isEn ? `${pName} — ${rows.length} K-pop Idol Videos | K-POP UNIVERSE` : `${pFull} 모음 - 아이돌 ${p.label} 영상 ${rows.length}개 | K-POP UNIVERSE`);
       const desc = gko
         ? (isEn ? `${list.length} ${pName} videos of ${gName}, most viewed first.` : `${gko}${josa(gko, '이/가')} 나온 ${p.label} 영상 ${list.length}개를 조회수 순으로 모았어요.`)
         : (isEn ? `${rows.length} ${pName} videos of ${teams.length} K-pop groups, most viewed first.` : `아이돌 ${teams.length}팀의 ${p.label} 영상 ${rows.length}개를 조회수 순으로. 팀별로도 볼 수 있어요.`);
       const top = list.slice(0, gko ? 36 : 48);
-      const cards = top.map(r => `<a class="card" href="https://www.youtube.com/watch?v=${r.v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/${r.v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">${escHtml(r.v.title)}</span><span class="card-y">${gko ? '' : escHtml(isEn ? (groups[r.gko].en || r.gko) : r.gko) + ' · '}${[r.v.published_at ? String(r.v.published_at).slice(0, 10).replace(/-/g, '.') : '', r.v.view_count ? SEO.fmtViews(r.v.view_count) : ''].filter(Boolean).join(' · ')}</span></a>`).join('\n    ');
+      const cards = top.map(r => `<a class="card" href="https://www.youtube.com/watch?v=${r.v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/${r.v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">${escHtml(r.v.title)}</span><span class="card-y">${gko ? '' : escHtml(isEn ? (groups[r.gko].en || r.gko) : r.gko) + ' · '}${[r.v.published_at ? String(r.v.published_at).slice(0, 10).replace(/-/g, '.') : '', r.v.view_count ? SEO.fmtVC(r.v.view_count) : ''].filter(Boolean).join(' · ')}</span></a>`).join('\n    ');
       const teamChips = gko ? '' : `
   <h2>${isEn ? 'By group' : '팀별로 보기'}</h2>
   <ul class="chips">
@@ -2447,7 +2448,7 @@ function buildYearPages() {
       const label = a => { const g = groups[a.group.ko]; const nm = isEn ? (a.name.en || a.name.ko) : (a.displayName || a.name.ko); return { nm, gn: g ? (isEn ? (g.en || a.group.ko) : a.group.ko) : (isEn ? 'Solo' : '솔로') }; };
       const top = list.slice(0, 6).map(a => { const l = label(a); return isEn ? `${l.nm} (${l.gn})` : `${l.gn} ${l.nm}`; });
       h1 = isEn ? `K-pop idols born in ${y}` : `${y}년생 아이돌`;
-      title = isEn ? `K-pop Idols Born in ${y} — ${n} idols incl. ${top.slice(0, 3).join(', ')} | K-POP UNIVERSE` : `${y}년생 아이돌 - ${top.slice(0, 3).join('·')} 등 ${n}명 | K-POP UNIVERSE`;
+      title = isEn ? `K-pop Idols Born in ${y} — ${n} idols incl. ${top.slice(0, 3).join(', ')} | K-POP UNIVERSE` : `${y}년생 아이돌 - ${top.slice(0, 3).join('·')} 등 ${n}명 | K-pop Idols Born in ${y} | K-POP UNIVERSE`;
       desc = isEn ? `${n} K-pop idols born in ${y}: ${top.join(', ')} and more. Birthdays, groups and fancams.` : `${y}년에 태어난 아이돌 ${n}명 — ${top.join(', ')} 등. 생일·소속 그룹·직캠 모음으로 바로 가요.`;
       cards = list.map(a => { const l = label(a); const gk = groups[a.group.ko] ? a.group.ko : null; const img = memberFaceUrl(a, gk || a.group.ko);
         return `<a class="face" href="${SITE}/${memberPagePath(a, lang)}"><span class="face-img">${img ? `<img src="${img}" alt="${escHtml(l.nm)}" loading="lazy">` : ''}</span><span class="face-nm">${escHtml(l.nm)}</span><span class="face-n">${escHtml(l.gn)} · ${escHtml(String(a.bday).slice(5).replace('.', '/'))}</span></a>`; }).join('\n    ');
@@ -2456,7 +2457,7 @@ function buildYearPages() {
       n = list.length;
       const nm = g => isEn ? (groups[g].en || g) : g;
       h1 = isEn ? `K-pop groups that debuted in ${y}` : `${y}년 데뷔 아이돌 그룹`;
-      title = isEn ? `K-pop Groups Debuted in ${y} — ${list.slice(0, 3).map(nm).join(', ')} and more | K-POP UNIVERSE` : `${y}년 데뷔 아이돌 - ${list.slice(0, 4).map(nm).join('·')} 등 ${n}팀 | K-POP UNIVERSE`;
+      title = isEn ? `K-pop Groups Debuted in ${y} — ${list.slice(0, 3).map(nm).join(', ')} and more | K-POP UNIVERSE` : `${y}년 데뷔 아이돌 - ${list.slice(0, 4).map(nm).join('·')} 등 ${n}팀 | K-pop Groups Debuted in ${y} | K-POP UNIVERSE`;
       desc = isEn ? `${n} K-pop groups that debuted in ${y}: ${list.slice(0, 8).map(nm).join(', ')}. Debut dates, members and fancams.` : `${y}년에 데뷔한 아이돌 그룹 ${n}팀 — ${list.slice(0, 8).map(nm).join(', ')}. 데뷔일·멤버·직캠 모음.`;
       cards = list.map(g => { const t = OG_THUMBS.groups && OG_THUMBS.groups[g]; const id = t && (String(t).match(/\/vi\/([^/]+)\//) || [])[1];
         return `<a class="sp-tile" href="${SITE}/${groupPagePath(g, lang)}">${id ? `<img src="https://i.ytimg.com/vi/${id}/mqdefault.jpg" alt="" loading="lazy" style="aspect-ratio:16/9">` : '<span class="sp-tile-ph" style="aspect-ratio:16/9"></span>'}<span class="sp-tile-t">${escHtml(nm(g))}</span><span class="sp-tile-n">${escHtml(String(groups[g].debut || ''))}</span></a>`; }).join('\n    ');
@@ -2623,12 +2624,12 @@ async function buildChemPages() {
         else if (Math.abs(+ya - +yb) === 1) facts.push([isEn ? 'Age' : '나이', isEn ? `Born ${Math.min(+ya, +yb)}–${Math.max(+ya, +yb)}` : `${Math.min(+ya, +yb)}·${Math.max(+ya, +yb)}년생`]);
       }
       facts.push([isEn ? 'Together' : '같이 나옴', isEn ? `${p.n} videos · ${p.only} just the two` : `${p.n}개 · 둘만 ${p.only}개`]);
-      const title = isEn ? `${A} & ${B} (${G}) — ${p.n} Videos Together | K-POP UNIVERSE` : `${A} ${B} 케미 - ${G} ${A}·${B} 함께 나온 영상 ${p.n}개 | K-POP UNIVERSE`;
+      const title = isEn ? `${A} & ${B} (${G}) — ${p.n} Videos Together | K-POP UNIVERSE` : `${bilingualLabel(A, nm(p.a, true))} ${bilingualLabel(B, nm(p.b, true))} 케미 - ${bilingualLabel(G, groups[p.g].en)} ${A}·${B} 함께 나온 영상 ${p.n}개 | K-POP UNIVERSE`;
       const h1 = `${A} × ${B}`;
       const desc = isEn ? `${p.n} videos with ${G}'s ${A} and ${B} together (group videos excluded), ${p.only} with just the two — fancams, stages, shorts and variety.`
         : `${G} ${A}·${B} 함께 나온 영상 ${p.n}개(단체 영상 제외), 둘만 나온 영상 ${p.only}개 — 직캠·무대·쇼츠·예능을 조회수 순으로.`;
       const face = a => { const img = memberFaceUrl(a, p.g); return `<a class="face" href="${SITE}/${memberPagePath(a, lang)}"><span class="face-img">${img ? `<img src="${img}" alt="${escHtml(nm(a, isEn))}" loading="lazy">` : ''}</span><span class="face-nm">${escHtml(nm(a, isEn))}</span></a>`; };
-      const cards = p.v.map(v => `<a class="card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">${escHtml(v.t || '')}</span><span class="card-y">${[v.pa ? String(v.pa).replace(/-/g, '.') : '', v.vc ? SEO.fmtViews(v.vc) : ''].filter(Boolean).join(' · ')}</span></a>`).join('');
+      const cards = p.v.map(v => `<a class="card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">${escHtml(v.t || '')}</span><span class="card-y">${[v.pa ? String(v.pa).replace(/-/g, '.') : '', v.vc ? SEO.fmtVC(v.vc) : ''].filter(Boolean).join(' · ')}</span></a>`).join('');
       const others = [...new Set([...(byMember.get(p.a) || []), ...(byMember.get(p.b) || [])])].filter(o => o !== p).sort((x, y) => y.n - x.n).slice(0, 8);
       const chemHash = `#chem=${encodeURIComponent(`${p.a.name.ko}~${p.g},${p.b.name.ko}~${p.g}`)}`;
       const body = `  <div class="faces" style="justify-content:center;align-items:center">${face(p.a)}<span aria-hidden="true" style="color:#FFB0D0;font-size:18px;margin:0 4px 22px">✦</span>${face(p.b)}</div>
@@ -2708,7 +2709,7 @@ function buildCreditPages() {
       const both = new Set(c.ly.map(s => s.b).filter(b => c.co.some(s => s.b === b)));
       const li = s => { const h = songHref(a, s, lang); const t = escHtml(s.title); return `<li>${h ? `<a href="${h}">${t}</a>` : t}${both.has(s.b) ? (isEn ? ' <span class="yr">lyrics & music</span>' : ' <span class="yr">작사·작곡</span>') : ''}</li>`; };
       const h1 = isEn ? `${nm} — songs written & composed` : `${nm} 작사·작곡 곡`;
-      const title = isEn ? `${who} Songwriting Credits — ${c.ly.length} Lyrics · ${c.co.length} Compositions | K-POP UNIVERSE` : `${who} 작사·작곡 곡 목록 — 작사 ${c.ly.length}곡 · 작곡 ${c.co.length}곡 | K-POP UNIVERSE`;
+      const title = isEn ? `${who} Songwriting Credits — ${c.ly.length} Lyrics · ${c.co.length} Compositions | K-POP UNIVERSE` : `${bilingualLabel(who, `${groups[gk] ? (groups[gk].en || gk) : ''} ${a.name.en || a.name.ko}`.trim())} 작사·작곡 곡 목록 — 작사 ${c.ly.length}곡 · 작곡 ${c.co.length}곡 | K-POP UNIVERSE`;
       const top = [...new Set([...c.ly, ...c.co].map(s => s.title))].slice(0, 5).join(isEn ? ', ' : '·');
       const desc = isEn ? `${who} has ${c.ly.length} lyric and ${c.co.length} composition credits (Melon credits) — ${top}.` : `${who}${josa(nm, '이/가')} 작사에 참여한 곡 ${c.ly.length}곡, 작곡 ${c.co.length}곡(멜론 크레딧 기준) — ${top} 등.`;
       const mp = memberPagePath(a, lang);
@@ -2779,7 +2780,7 @@ function buildAlbumPages() {
         }).join('');
         const tt = al.titleTrack || ((al.tracks || []).find(t => t.isTitle) || {}).title || '';
         const h1 = isEn ? `${gd} — ${al.title}` : `${g} ${al.title}`;
-        const title = isEn ? `${gd} '${al.title}' Tracklist — ${type} | K-POP UNIVERSE` : `${g} '${al.title}' 수록곡·트랙리스트 — ${type} | K-POP UNIVERSE`; // 발매일은 제목에서 뺌(11-17 사용자) — 설명에만
+        const title = isEn ? `${gd} '${al.title}' Tracklist — ${type} | K-POP UNIVERSE` : `${bilingualLabel(g, groups[g].en)} '${al.title}' 수록곡·트랙리스트 — ${type} | K-POP UNIVERSE`; // 발매일은 제목에서 뺌(11-17 사용자) — 설명에만
         const desc = isEn ? `${gd} ${type} '${al.title}' released ${date}${tt ? `, title track '${tt}'` : ''} — ${al.tracks.length} tracks with lyrics/music credits.` : `${g} ${type} '${al.title}'(${date} 발매)${tt ? ` 타이틀곡 '${tt}'` : ''} — 수록곡 ${al.tracks.length}곡과 곡별 작사·작곡.`;
         const nb = [list[i - 1], list[i + 1]].map((x, k) => x ? `<a href="${SITE}/${albumPagePath(g, x.slug, lang)}">${k ? '← ' : ''}${escHtml(x.al.title)}${k ? '' : ' →'}</a>` : '').filter(Boolean).join(' · ');
         const body = `  ${al.cover ? `<img class="sp-cover" src="${escHtml(al.cover)}" alt="${escHtml(al.title)}" loading="lazy" style="width:100%;max-width:320px;border-radius:12px;display:block;margin:4px 0 16px">` : ''}
@@ -2810,7 +2811,7 @@ function buildAgencyPages() {
     const nm = g => isEn ? (groups[g].en || g) : g;
     const rel = agencyPagePath(name, lang);
     const h1 = isEn ? `${disp} K-pop groups` : `${name} 소속 아이돌`;
-    const title = isEn ? `${disp} K-pop Groups — ${gs.slice(0, 4).map(nm).join(', ')} (${gs.length}) | K-POP UNIVERSE` : `${name} 소속 아이돌 - ${gs.slice(0, 4).map(nm).join('·')} 등 ${gs.length}팀 | K-POP UNIVERSE`;
+    const title = isEn ? `${disp} K-pop Groups — ${gs.slice(0, 4).map(nm).join(', ')} (${gs.length}) | K-POP UNIVERSE` : `${bilingualLabel(name, nameEn)} 소속 아이돌 - ${gs.slice(0, 4).map(nm).join('·')} 등 ${gs.length}팀 | K-POP UNIVERSE`;
     const desc = isEn ? `${gs.length} K-pop groups from ${disp}: ${gs.slice(0, 10).map(nm).join(', ')}. Members, debut dates and fancams.` : `${name} 소속(출신) 아이돌 그룹 ${gs.length}팀 — ${gs.slice(0, 10).map(nm).join(', ')}. 멤버·데뷔일·직캠 모음으로 바로 가요.`;
     const body = `  <div class="sp-tiles">
     ${gs.map(g => groupTileHtml(g, lang, `${String(groups[g].debut || '').slice(0, 4)}${groups[g].active === false ? (isEn ? ' · disbanded' : ' · 해체') : ''}`)).join('\n    ')}
@@ -2882,11 +2883,11 @@ async function buildShowPages() {
     const rel = showPagePath(s, e.date, lang);
     const h1 = isEn ? `${sName} ${e.date} — stages & fancams` : `${s.key} ${fmtD(e.date)} 무대·직캠 모아보기`;
     const title = isEn ? `${sName} ${e.date} Lineup — ${names.slice(0, 4).join(', ')} · ${cams} Fancams | K-POP UNIVERSE`
-      : `${s.key} ${e.date.slice(2).replace(/-/g, '')} 출연진·직캠 - ${names.slice(0, 4).join('·')} 등 ${tl.length}팀 | K-POP UNIVERSE`;
+      : `${bilingualLabel(s.key, s.en)} ${e.date.slice(2).replace(/-/g, '')} 출연진·직캠 - ${names.slice(0, 4).join('·')} 등 ${tl.length}팀 | K-POP UNIVERSE`;
     const winTxt = wins.map(w => `${w.group_ko ? gName(w.group_ko, isEn) : (w.member_ko || '')} '${w.song_title}'`).join(', ');
     const desc = isEn ? `${sName} on ${e.date}: ${tl.length} acts (${names.slice(0, 8).join(', ')}), ${cnt('stage')} stages and ${cams} fancams from the official channel.${winTxt ? ` No.1: ${winTxt}.` : ''}`
       : `${fmtD(e.date)} ${s.key} 출연 ${tl.length}팀(${names.slice(0, 8).join(', ')}) — 공식 채널 무대 ${cnt('stage')}개·직캠 ${cams}개를 팀별로.${winTxt ? ` 1위: ${winTxt}.` : ''}`;
-    const card = r => `<a class="card" href="https://www.youtube.com/watch?v=${r.v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/${r.v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">${escHtml(r.v.title)}</span><span class="card-y">${[MS_KIND[r.kind][isEn ? 1 : 0], r.kind !== 'stage' && r.kind !== 'encore' && (r.v.members || []).length === 1 ? r.v.members[0] : '', r.v.view_count ? SEO.fmtViews(r.v.view_count) : ''].filter(Boolean).map(escHtml).join(' · ')}</span></a>`;
+    const card = r => `<a class="card" href="https://www.youtube.com/watch?v=${r.v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/${r.v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">${escHtml(r.v.title)}</span><span class="card-y">${[MS_KIND[r.kind][isEn ? 1 : 0], r.kind !== 'stage' && r.kind !== 'encore' && (r.v.members || []).length === 1 ? r.v.members[0] : '', r.v.view_count ? SEO.fmtVC(r.v.view_count) : ''].filter(Boolean).map(escHtml).join(' · ')}</span></a>`;
     const sections = tl.map(([g, l], idx) => {
       const p = performer(g, l, isEn);
       l.sort((a, b) => ORDER.indexOf(a.kind) - ORDER.indexOf(b.kind) || (b.v.view_count || 0) - (a.v.view_count || 0));
@@ -2952,7 +2953,7 @@ function buildWinsPages() {
     const top = [...cnt.values()].sort((a, b) => b.n - a.n);
     const rel = winsPagePath(y, lang);
     const h1 = isEn ? `K-pop music show wins in ${y}` : `${y} 음악방송 1위 목록`;
-    const title = isEn ? `${y} K-pop Music Show Wins — ${top.slice(0, 3).map(x => `${x.k.name} ${x.n}`).join(', ')} | K-POP UNIVERSE` : `${y} 음악방송 1위 목록 - ${top.slice(0, 3).map(x => `${x.k.name} ${x.n}회`).join('·')} | K-POP UNIVERSE`;
+    const title = isEn ? `${y} K-pop Music Show Wins — ${top.slice(0, 3).map(x => `${x.k.name} ${x.n}`).join(', ')} | K-POP UNIVERSE` : `${y} 음악방송 1위 목록 - ${top.slice(0, 3).map(x => `${x.k.name} ${x.n}회`).join('·')} | ${y} K-pop Music Show Wins | K-POP UNIVERSE`;
     const desc = isEn ? `All ${list.length} K-pop music show wins of ${y} (Music Bank, Inkigayo, M Countdown…). Most wins: ${top.slice(0, 5).map(x => `${x.k.name} (${x.n})`).join(', ')}.` : `${y}년 음악방송 1위 ${list.length}회 전체(뮤직뱅크·인기가요·엠카운트다운 등). 최다 1위: ${top.slice(0, 5).map(x => `${x.k.name} ${x.n}회`).join(', ')}.`;
     const link = (k, t) => k.href ? `<a href="${k.href}">${escHtml(t)}</a>` : escHtml(t);
     const body = `  <ul class="rank-tabs">${WIN_YEARS.slice().reverse().map(o => o === y ? `<li class="on">${o}</li>` : `<li><a href="${SITE}/${winsPagePath(o, lang)}">${o}</a></li>`).join('')}</ul>

@@ -14,7 +14,7 @@
   var STEP=30,sort='pop',shown=STEP,touched=false;
   function ga(n,p){try{if(typeof gtag==='function')gtag('event',n,p||{});}catch(e){}}
   function f1(x){var v=Math.floor(x*10+1e-9)/10;return v%1===0?String(v):v.toFixed(1);}
-  function views(n){n=+n||0;if(!n)return '';if(n>=1e9)return (n>=1e10?String(Math.floor(n/1e9)):f1(n/1e9))+'B';if(n>=1e6)return (n>=1e7?String(Math.floor(n/1e6)):f1(n/1e6))+'M';if(n>=1e3)return Math.floor(n/1e3)+'K';return String(n);}
+  function views(n){n=+n||0;if(!n)return '';if(n>=1e6)return Math.floor(n/1e6)+'M+';if(n>=1e3)return Math.floor(n/1e3)+'K+';if(n>=100)return Math.floor(n/100)*100+'+';return '<100';} // 앱 _fmtVC와 같게
   function dot(d){return d?String(d).slice(0,10).split('-').join('.'):'';}
   function sorted(){
     var a=data.slice();
@@ -46,6 +46,7 @@
     var frag=document.createDocumentFragment();
     for(var i=from;i<to;i++)frag.appendChild(card(list[i]));
     grid.textContent='';grid.appendChild(frag);
+    if(window.kpuRelDates)window.kpuRelDates(grid);
     Object.keys(chips).forEach(function(k){chips[k].className=k===sort?'on':'';chips[k].setAttribute('aria-pressed',k===sort?'true':'false');});
     var left=list.length-to;
     more.style.display=left>0?'':'none';more.textContent=L.more+' ('+left+(EN?L.left:L.left)+')';

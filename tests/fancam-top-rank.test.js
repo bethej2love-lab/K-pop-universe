@@ -10,7 +10,7 @@ function extract(name) {
   for (; i < src.length; i++) { if (src[i] === '{') d++; else if (src[i] === '}' && --d === 0) break; }
   return src.slice(s, i + 1);
 }
-const box = { ytThumb: (id, q) => `https://i.ytimg.com/vi/${id}/${q || 'hq'}.jpg`, escHtml: s => String(s).replace(/</g, '&lt;'), SEO: { fmtViews: n => n + '회' } };
+const box = { ytThumb: (id, q) => `https://i.ytimg.com/vi/${id}/${q || 'hq'}.jpg`, escHtml: s => String(s).replace(/</g, '&lt;'), SEO: { fmtViews: n => n + '회', fmtVC: n => n + '회' } };
 vm.createContext(box); vm.runInContext(extract('fancamCardHtml'), box);
 const v = { id: 'abc123', title: 'T <x>', published_at: '2026-01-02T00:00:00Z', view_count: 1234 };
 check('순위를 주면 카드에 번호 배지가 붙는다', () => { const h = vm.runInContext('fancamCardHtml(__v,false,3)', Object.assign(box, { __v: v })); assert.ok(h.includes('<span class="rk">3</span>'), h); });
