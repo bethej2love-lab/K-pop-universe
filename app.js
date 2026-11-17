@@ -6019,7 +6019,8 @@ function _lbUpdateUplist(){
     });
   }
   [...scrollEl.children].forEach((row,i)=>row.classList.toggle('is-current',i===_lbIdx));
-  if(_lbIdx>=0)scrollEl.children[_lbIdx]?.scrollIntoView({block:'nearest',behavior:'smooth'});
+  // lb-narrow(탐험 탭 옆 좁은 재생)에선 #yt-lb-uplist가 overflow:visible이라 scrollIntoView가 feed-pane을 스크롤시킴
+  if(_lbIdx>=0&&!document.getElementById('yt-lightbox')?.classList.contains('lb-narrow'))scrollEl.children[_lbIdx]?.scrollIntoView({block:'nearest',behavior:'smooth'});
   // 카운터: 쇼츠 세션은 예전처럼 같은 타입끼리만 세고, 브라우즈 세션은(쇼츠 섞인 목록도 그대로 순서대로
   // 넘어가므로) 목록 전체 기준 "몇 번째 / 총 몇 개"로 센다(2026-08-11, forceBrowseMode 통일).
   if(_lbSessionMode==='shorts'){
