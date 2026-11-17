@@ -5270,7 +5270,9 @@ function _applyCoverExcludeQuery(q){
 //  · '비하인드'/'behind': 2026-08-27 사용자 요청 — 무대 뒤 촬영분은 무대가 아니다. 실측으로 걸리는 게
 //    전부 "[BEHIND THE SHOW]", "콘서트 비하인드", "안무 연습 비하인드", "Performance Film Behind"류라
 //    오제외 위험이 낮았다(category='live' 115,762건 중 비하인드 919 · behind 1,373).
-const _LIVE_EXCLUDE=['엠카드림','비하인드','behind','생일 라이브','생일라이브','birthday live','실시간 라이브'];
+// 2026-11-17 Codex 추천 상단 검수 — 퍼포먼스 첫 영상이 콘서트 극장상영 예고편(BTS)·방송 코너(인기가요 끝나면 매점가요)·타 팀 무대를 보는 반응 영상(하츠투하츠 → 에스파)이 live로 저장돼 상단에 올랐다.
+// 공연이 아닌 것만 좁게: '예고편'·'official trailer'·'reaction to'(영문 반응 영상 관용 표기)·'매점가요'(SBS 코너명). 'reaction' 단독은 곡명(Chain Reaction)과 겹쳐 쓰지 않는다.
+const _LIVE_EXCLUDE=['엠카드림','비하인드','behind','생일 라이브','생일라이브','birthday live','실시간 라이브','예고편','official trailer','reaction to','매점가요'];
 // ⚠️ 라이브 탭 조건은 **여기 한 곳**에서만 만든다. 예전엔 같은 or/not 조합이 세 군데(대표영상 선정·
 // 그리드 목록·탭 노출 판정)에 복붙돼 있었고, 실제로 탭 노출 판정에는 제외 조건이 통째로 빠져 있어서
 // "탭은 보이는데 열면 빈 목록"이 될 수 있었다(2026-08-27 정리). 커버 탭의 _applyCoverExcludeQuery와
