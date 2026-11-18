@@ -65,7 +65,12 @@
   .top2 .meta{font-size:14.5px;margin-bottom:0;}
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
+  /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
+  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
+  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
 }
+/* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
+.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -97,7 +102,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <a class="mf-card" href="https://www.youtube.com/watch?v=79Q0_a4XTlc" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/79Q0_a4XTlc/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] 언차일드 티나 직캠 4K &#39;UNCHILD&#39; (UNCHILD TINA FanCam) | @MCOUNTDOWN_2026.4.23</span><span class="mf-y">2026.04.23 · 12K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=6sfuo0o67vs" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/6sfuo0o67vs/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[K-Fancam] 언차일드 티나 직캠 &#39;UNCHILD&#39; (UNCHILD TINA Fancam) @뮤직뱅크(Music Bank) 260424</span><span class="mf-y">2026.04.25 · 10K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=9PKzvcuWHz0" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/9PKzvcuWHz0/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[플리캠 4K] UNCHILD TINA ‘UNCHILD’ (언차일드 티나 직캠) | Simply K-Pop EP.06 260515</span><span class="mf-y">2026.05.15 · 2K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=7xmkPPKDVmA" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/7xmkPPKDVmA/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[캐치캠 4K 가로] UNCHILD TINA ‘TiNG TiNG’ (언차일드 티나 직캠) l SHOW K-POP l 261116</span><span class="mf-y">2026.11.17 · 1K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=7xmkPPKDVmA" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/7xmkPPKDVmA/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[캐치캠 4K 가로] UNCHILD TINA ‘TiNG TiNG’ (언차일드 티나 직캠) l SHOW K-POP l 261116</span><span class="mf-y">2026.11.17 · 2K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=TLdsCicfVFA" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/TLdsCicfVFA/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[캐치캠 4K] UNCHILD TINA ‘TiNG TiNG’ (언차일드 티나 직캠) l SHOW K-POP l 261116</span><span class="mf-y">2026.11.16 · 1K+</span></a>
   </div>
   <p class="intro">언차일드 멤버. 중국 출신. 2008년생.</p>

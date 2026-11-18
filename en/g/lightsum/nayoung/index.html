@@ -65,7 +65,12 @@
   .top2 .meta{font-size:14.5px;margin-bottom:0;}
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
+  /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
+  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
+  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
 }
+/* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
+.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -81,7 +86,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
   <div class="top2">
     <h1>Nayoung(나영)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/jydJ6k4JW88/maxresdefault.jpg" alt="Nayoung" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/4f2bbaea-79cf-414c-a510-a577d0734912.jpg" alt="Nayoung" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>Group</b> LIGHTSUM(라잇썸)</span>
       <span><b>Birthday</b> 2002.11.30 (age 23)</span>
@@ -104,9 +109,9 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <a class="mf-card" href="https://www.youtube.com/watch?v=nsmUNQe1MTA" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/nsmUNQe1MTA/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[쇼챔직캠 4K] LIGHTSUM NAYOUNG - Honey or Spice (라잇썸 나영 - 허니 오어 스파이스) | Show Champion | EP.496 | 231018</span><span class="mf-y">2023.10.18 · 49K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=Bo7jGn3st_M" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/Bo7jGn3st_M/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[K-Fancam] 라잇썸 나영 직캠 &#39;Vanila&#39; (LIGHTSUM NAYOUNG Fancam) l @MusicBank 210611</span><span class="mf-y">2021.06.11 · 44K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=Be6BnM9QzDI" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/Be6BnM9QzDI/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 라잇썸 나영 &#39;ALIVE&#39; (LIGHTSUM NAYOUNG FanCam)│@SBS Inkigayo_2022.06.19.</span><span class="mf-y">2022.06.21 · 40K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=5yneZ4lOcPg" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/5yneZ4lOcPg/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] 라잇썸 나영 직캠 4K &#39;어떡해 (Doshite KR ver.)&#39; (LIGHTSUM NAYOUNG FanCam) | @MCOUNTDOWN_2026.10.22</span><span class="mf-y">2026.10.22 · 33K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=WNztYu0DA-Y" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/WNztYu0DA-Y/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 라잇썸 나영 &#39;Vanilla&#39; (LIGHTSUM NAYOUNGFaceCam)│@SBS Inkigayo_2021.06.13.</span><span class="mf-y">2021.06.15 · 33K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=mtnY7oVChJI" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/mtnY7oVChJI/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 라잇썸 나영 &#39;Vanilla&#39; (LIGHTSUM NAYOUNG FanCam)│@SBS Inkigayo_2021.06.13.</span><span class="mf-y">2021.06.14 · 33K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=5yneZ4lOcPg" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/5yneZ4lOcPg/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] 라잇썸 나영 직캠 4K &#39;어떡해 (Doshite KR ver.)&#39; (LIGHTSUM NAYOUNG FanCam) | @MCOUNTDOWN_2026.10.22</span><span class="mf-y">2026.10.22 · 32K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=RmwUaUtHuYY" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/RmwUaUtHuYY/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">LIGHTSUM(라잇썸) - &#39;ALIVE&#39; (나영 Focus) @ MEDIA SHOWCASE</span><span class="mf-y">2022.05.25 · 31K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=F_TPqmQIVl4" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/F_TPqmQIVl4/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 라잇썸 나영 &#39;VIVACE&#39; (LIGHTSUM NAYOUNG FanCam)│@SBS Inkigayo_2021.10.17.</span><span class="mf-y">2021.10.18 · 30K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=Yu-lylKu9ag" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/Yu-lylKu9ag/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[플리캠 4K 가로] LIGHTSUM NAYOUNG &#39;VIVACE&#39; (라잇썸 나영 직캠) l Simply K-Pop Ep.492</span><span class="mf-y">2021.11.05 · 29K+</span></a>

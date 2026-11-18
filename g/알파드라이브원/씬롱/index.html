@@ -65,7 +65,12 @@
   .top2 .meta{font-size:14.5px;margin-bottom:0;}
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
+  /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
+  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
+  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
 }
+/* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
+.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -113,8 +118,8 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <a class="mf-card" href="https://www.youtube.com/watch?v=fzq2vqj-11A" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/fzq2vqj-11A/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[입덕직캠] 알파드라이브원 씬롱 직캠 4K &#39;FORMULA&#39; (ALPHA DRIVE ONE XINLONG FanCam) | @MCOUNTDOWN_2026.1.15</span><span class="mf-y">2026.01.17 · 42K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=YBZ2SWq1950" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/YBZ2SWq1950/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[입덕직캠] 알파드라이브원 씬롱 직캠 4K &#39;Talk to me&#39; (ALPHA DRIVE ONE XINLONG FanCam) | @MCOUNTDOWN_2026.10.22</span><span class="mf-y">2026.10.23 · 42K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=kdATT6vGohs" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/kdATT6vGohs/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] 보이스토리 씬롱 직캠 4K &#39;Alpha (Korean Ver.)&#39; (BOY STORY XINLONG FanCam) | @MCOUNTDOWN_2024.3.7</span><span class="mf-y">2024.03.07 · 39K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=V6HsEBNGK3g" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/V6HsEBNGK3g/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] 알파드라이브원 씬롱 직캠 4K &#39;Talk to me&#39; (ALPHA DRIVE ONE XINLONG FanCam) | @MCOUNTDOWN_2026.10.22</span><span class="mf-y">2026.10.22 · 38K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=oXo0_UchlJI" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/oXo0_UchlJI/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[입덕직캠] 알파드라이브원 씬롱 직캠 4K &#39;BORN DIRE&#39; (ALPHA DRIVE ONE XINLONG FanCam) | @MCOUNTDOWN_2026.8.27</span><span class="mf-y">2026.08.30 · 38K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=V6HsEBNGK3g" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/V6HsEBNGK3g/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] 알파드라이브원 씬롱 직캠 4K &#39;Talk to me&#39; (ALPHA DRIVE ONE XINLONG FanCam) | @MCOUNTDOWN_2026.10.22</span><span class="mf-y">2026.10.22 · 37K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=VAYkcnXeOnQ" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/VAYkcnXeOnQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] 알파드라이브원 씬롱 직캠 4K &#39;Diamond Hour&#39; (ALPHA DRIVE ONE XINLONG FanCam) | @MCOUNTDOWN_2026.8.27</span><span class="mf-y">2026.08.27 · 35K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=AGRsernFCoY" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/AGRsernFCoY/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[#최애직캠] ALPHA DRIVE ONE XINLONG (알파드라이브원 씬롱) – OMG! | 쇼! 음악중심 | MBC260530</span><span class="mf-y">2026.06.01 · 33K+</span></a>
   </div>

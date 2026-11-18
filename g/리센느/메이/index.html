@@ -65,7 +65,12 @@
   .top2 .meta{font-size:14.5px;margin-bottom:0;}
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
+  /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
+  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
+  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
 }
+/* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
+.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -96,7 +101,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <a class="mf-card" href="https://www.youtube.com/watch?v=GX4I0MyI6I0" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/GX4I0MyI6I0/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[입덕직캠] 리센느 메이 직캠 4K &#39;다시 만난 세계 (Into The New World)&#39; (RESCENE MAY FanCam) | @MCOUNTDOWN_2025.2.6</span><span class="mf-y">2025.02.08 · 126K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=F9ZKVxJ6pAs" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/F9ZKVxJ6pAs/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[입덕직캠] 리센느 메이 직캠 &#39;LOVE ATTACK&#39; (RESCENE MAY FanCam) | @MCOUNTDOWN_2026.6.18</span><span class="mf-y">2026.06.20 · 73K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=HDVFnlfVf8c" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/HDVFnlfVf8c/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[입덕직캠] 리센느 메이 직캠 4K &#39;Pretty Girl&#39; (RESCENE MAY FanCam) | @MCOUNTDOWN_2026.7.9</span><span class="mf-y">2026.07.11 · 54K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=oUcpQLqtbSY" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/oUcpQLqtbSY/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[쇼챔 원픽캠 4K] RESCENE MAY (리센느 메이) - 백화요란 (Inside Out) | Show Champion | EP.618 | 261111</span><span class="mf-y">2026.11.12 · 51K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=oUcpQLqtbSY" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/oUcpQLqtbSY/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[쇼챔 원픽캠 4K] RESCENE MAY (리센느 메이) - 백화요란 (Inside Out) | Show Champion | EP.618 | 261111</span><span class="mf-y">2026.11.12 · 52K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=yDeoT_I7rJA" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/yDeoT_I7rJA/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[얼빡직캠 4K] 리센느 메이 &#39;With&#39; (RESCENE MAY Facecam) @뮤직뱅크(Music Bank) 261106</span><span class="mf-y">2026.11.06 · 51K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=qafesEI2TMA" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/qafesEI2TMA/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[UNFILTERED CAM] RESCENE MAY(메이) &#39;With&#39; 4K | STUDIO CHOOM ORIGINAL</span><span class="mf-y">2026.11.05 · 38K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=hlyhddaC6qg" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/hlyhddaC6qg/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 리센느 메이 &#39;Glow Up&#39; (RESCENE MAY FanCam) @SBS Inkigayo 250216</span><span class="mf-y">2025.02.19 · 37K+</span></a>
@@ -116,7 +121,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <a class="mf-card" href="https://www.youtube.com/watch?v=EClkhEf7ouY" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/EClkhEf7ouY/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[쇼챔 원픽캠 4K] RESCENE MAY (리센느 메이) - Deja Vu | Show Champion | EP.603 | 260715</span><span class="mf-y">2026.07.16 · 11K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=qWEcQq1Rg0s" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/qWEcQq1Rg0s/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] 리센느 메이 직캠 4K &#39;다시 만난 세계 (Into The New World)&#39; (RESCENE MAY FanCam) | @MCOUNTDOWN_2025.2.6</span><span class="mf-y">2025.02.06 · 11K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=5o8YbaT0Lfo" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/5o8YbaT0Lfo/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[쇼챔직캠 4K] RESCENE MAY(리센느 메이) - Runaway | Show Champion | EP.593 | 260415</span><span class="mf-y">2026.04.15 · 11K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=LwssH3REVrY" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/LwssH3REVrY/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[K-Fancam] 리센느 메이 &#39;With&#39; (RESCENE MAY Fancam) @뮤직뱅크(Music Bank) 261106</span><span class="mf-y">2026.11.06 · 11K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=wS9r815KJiM" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/wS9r815KJiM/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[#최애직캠] RESCENE MAY (리센느 메이) – With | 쇼! 음악중심 | MBC261114</span><span class="mf-y">2026.11.16 · 11K+</span></a>
   </div>
   <p class="intro">리센느 멤버. 한국 출신. 2008년생.</p>
   
