@@ -65,7 +65,12 @@
   .top2 .meta{font-size:14.5px;margin-bottom:0;}
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
+  /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
+  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
+  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
 }
+/* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
+.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -162,9 +167,9 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/g-i-dle/s/lion/">LION</a></li>
       <li><a href="https://kpop-universe.kr/en/g/g-i-dle/s/allergy/">Allergy</a></li>
       <li><a href="https://kpop-universe.kr/en/g/g-i-dle/s/wife/">Wife</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/g-i-dle/s/사랑해/">사랑해</a></li>
       <li><a href="https://kpop-universe.kr/en/g/g-i-dle/s/freak/">FREAK</a></li>
       <li><a href="https://kpop-universe.kr/en/g/g-i-dle/s/villaindies/">VILLAIN DIES</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/g-i-dle/s/사랑해/">사랑해</a></li>
       <li><a href="https://kpop-universe.kr/en/g/g-i-dle/s/crow/">Crow</a></li>
       <li><a href="https://kpop-universe.kr/en/g/g-i-dle/s/baditude/">BADITUDE</a></li>
       <li><a href="https://kpop-universe.kr/en/g/g-i-dle/s/popstars/">POP/STARS</a></li>
@@ -179,12 +184,11 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/g-i-dle/s/radio/">Radio</a></li>
       <li><a href="https://kpop-universe.kr/en/g/g-i-dle/s/giant/">Giant</a></li>
     </ul>
-    <details class="more-songs"><summary>8 more songs</summary>
+    <details class="more-songs"><summary>7 more songs</summary>
     <ul class="member-list rel">
       <li><a href="https://kpop-universe.kr/en/g/g-i-dle/s/bonnieclyde/">Bonnie &amp; Clyde</a></li>
       <li><a href="https://kpop-universe.kr/en/g/g-i-dle/s/bloom/">Bloom</a></li>
       <li><a href="https://kpop-universe.kr/en/g/g-i-dle/s/iwantthat/">I Want That</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/g-i-dle/s/주세요/">주세요</a></li>
       <li><a href="https://kpop-universe.kr/en/g/g-i-dle/s/꿈결같아서/">꿈결같아서</a></li>
       <li><a href="https://kpop-universe.kr/en/g/g-i-dle/s/どうしよっかな/">どうしよっかな</a></li>
       <li><a href="https://kpop-universe.kr/en/g/g-i-dle/s/everytimeidle/">Everytime</a></li>

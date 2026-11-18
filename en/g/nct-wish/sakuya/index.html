@@ -65,7 +65,12 @@
   .top2 .meta{font-size:14.5px;margin-bottom:0;}
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
+  /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
+  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
+  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
 }
+/* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
+.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -81,7 +86,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
   <div class="top2">
     <h1>Sakuya(사쿠야)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/xkpYqd1oZ1Q/maxresdefault.jpg" alt="Sakuya" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/7a83a2a9-2d7d-4c0f-8866-346f509ec433.png" alt="Sakuya" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>Group</b> NCT WISH(엔시티 위시)</span>
       <span><b>Birthday</b> 2007.11.18 (age 19)</span>
@@ -98,7 +103,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <a class="mf-card" href="https://www.youtube.com/watch?v=4piiI9198iw" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/4piiI9198iw/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 엔시티 위시 사쿠야 &#39;Steady&#39; (NCT WISH SAKUYA FaceCam) @SBS Inkigayo 240929</span><span class="mf-y">2024.09.30 · 223K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=ETHnPqmRvDg" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/ETHnPqmRvDg/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">【4K】“TT (원곡: TWICE)” 251225 SBS가요대전 in INSPIRE ARENA SAKUYA FOCUS FANCAM</span><span class="mf-y">2025.12.25 · 198K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=DRF8c_EdWw8" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/DRF8c_EdWw8/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">【4K】240721 SBS 가요대전 SUMMER  Special Stage &quot;으쌰!으쌰!&quot; NCT WISH SAKUYA FOCUS-Multi fancam</span><span class="mf-y">2024.07.22 · 174K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=XwaWaZ2KRw4" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/XwaWaZ2KRw4/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 엔시티 위시 사쿠야 &#39;I SPY&#39; (NCT WISH SAKUYA FaceCam) @SBS Inkigayo 261101</span><span class="mf-y">2026.11.04 · 136K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=XwaWaZ2KRw4" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/XwaWaZ2KRw4/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 엔시티 위시 사쿠야 &#39;I SPY&#39; (NCT WISH SAKUYA FaceCam) @SBS Inkigayo 261101</span><span class="mf-y">2026.11.04 · 137K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=w-x41wBJ39g" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/w-x41wBJ39g/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[#최애직캠] NCT WISH SAKUYA (엔시티 위시 사쿠야) – WISH | 쇼! 음악중심 | MBC240309방송</span><span class="mf-y">2024.03.11 · 123K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=yx1wU8_JqCc" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/yx1wU8_JqCc/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 엔시티 위시 사쿠야 &#39;Miracle&#39; (NCT WISH SAKUYA FaceCam) @SBS Inkigayo 250126</span><span class="mf-y">2025.01.27 · 122K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=bSRE7COS934" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/bSRE7COS934/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 엔시티 위시 사쿠야 &#39;Surf&#39; (NCT WISH SAKUYA FaceCam) @SBS Inkigayo 250817</span><span class="mf-y">2025.08.18 · 100K+</span></a>

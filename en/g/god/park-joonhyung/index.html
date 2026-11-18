@@ -65,7 +65,12 @@
   .top2 .meta{font-size:14.5px;margin-bottom:0;}
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
+  /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
+  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
+  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
 }
+/* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
+.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -81,7 +86,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
   <div class="top2">
     <h1>Park Joonhyung(박준형)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/3hEVMQ-UkSg/maxresdefault.jpg" alt="Park Joonhyung" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/6c6fbbf9-1c63-4426-bb9d-3f46f62e7e0f.jpg" alt="Park Joonhyung" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>Group</b> god</span>
       <span><b>Birthday</b> 1969.07.20 (age 57)</span>
@@ -99,7 +104,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   
     <h2>Most viewed fancams & stages</h2>
-    <div class="mf-grid"><a class="mf-card" href="https://www.youtube.com/watch?v=4jY3cD7TlyQ" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/4jY3cD7TlyQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MV] Junhyung(준형) (2BiC(투빅)) _ Bye Bye Bye(안녕 안녕 안녕)</span><span class="mf-y">2015.03.11 · 151K+</span></a><a class="mf-card" href="https://www.youtube.com/watch?v=n3FoyeFe_hg" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/n3FoyeFe_hg/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[LIVE] 미스트롯 김소유 -10분 내로(김연자) / 박준형 정경미의 2시만세</span><span class="mf-y">2019.07.01 · 69K+</span></a><a class="mf-card" href="https://www.youtube.com/watch?v=cLgmuw4ovhw" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/cLgmuw4ovhw/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[LIVE] MBC도 흠뻑 반한 홍자매 케미, 홍지윤 - 오라 &amp; 홍주현 - 위로 / 박준형, 정경미의 2시 만세 / MBC 211011 방송</span><span class="mf-y">2021.10.12 · 62K+</span></a><a class="mf-card" href="https://www.youtube.com/watch?v=rn0BtlwZlWg" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/rn0BtlwZlWg/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[LIVE] 박창근 - 어느 목석의 사랑 &amp; 엄마 / 박준형, 정경미의 2시 만세 / MBC 220221 방송</span><span class="mf-y">2022.02.22 · 40K+</span></a><a class="mf-card" href="https://www.youtube.com/watch?v=1gi0PNRotmY" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/1gi0PNRotmY/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[LIVE] 양지은&amp;홍지윤&amp;김다현 - 타령 모음곡 + 방아요 / 박준형 정경미의 2시 만세  / MBC 220103 방송</span><span class="mf-y">2022.01.03 · 30K+</span></a></div>
+    <div class="mf-grid"><a class="mf-card" href="https://www.youtube.com/watch?v=n3FoyeFe_hg" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/n3FoyeFe_hg/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[LIVE] 미스트롯 김소유 -10분 내로(김연자) / 박준형 정경미의 2시만세</span><span class="mf-y">2019.07.01 · 69K+</span></a><a class="mf-card" href="https://www.youtube.com/watch?v=cLgmuw4ovhw" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/cLgmuw4ovhw/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[LIVE] MBC도 흠뻑 반한 홍자매 케미, 홍지윤 - 오라 &amp; 홍주현 - 위로 / 박준형, 정경미의 2시 만세 / MBC 211011 방송</span><span class="mf-y">2021.10.12 · 62K+</span></a><a class="mf-card" href="https://www.youtube.com/watch?v=rn0BtlwZlWg" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/rn0BtlwZlWg/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[LIVE] 박창근 - 어느 목석의 사랑 &amp; 엄마 / 박준형, 정경미의 2시 만세 / MBC 220221 방송</span><span class="mf-y">2022.02.22 · 40K+</span></a><a class="mf-card" href="https://www.youtube.com/watch?v=1gi0PNRotmY" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/1gi0PNRotmY/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[LIVE] 양지은&amp;홍지윤&amp;김다현 - 타령 모음곡 + 방아요 / 박준형 정경미의 2시 만세  / MBC 220103 방송</span><span class="mf-y">2022.01.03 · 30K+</span></a><a class="mf-card" href="https://www.youtube.com/watch?v=jR90K1wzzrY" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/jR90K1wzzrY/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[LIVE] 김용임 - 인생 시계 &amp; 사랑님 / 박준형, 박영진의 2시만세 / MBC 220801 방송</span><span class="mf-y">2022.08.02 · 26K+</span></a></div>
     <h2>Songwriting credits</h2>
     <p class="intro">Lyrics 4 · Music 3</p>
     <ul class="member-list">
