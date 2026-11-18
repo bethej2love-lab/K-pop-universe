@@ -28,6 +28,7 @@
 - 무거운 조회 금지: `ILIKE '%…%'` 전체 훑기, 여러 그룹 OR + 조회수 정렬, 같은 큰 조회 반복. 큰 조회는 한 번 받아 파일에 두고 다시 쓴다. 2026-11-13에 이걸로 DB가 20분 넘게 멈췄다.
 - SQL에 `BEGIN`을 넣지 않는다(실행기가 커밋 없이 끝나 600건이 취소된 적이 있다). 실행 뒤에는 건수를 다시 조회해 반영을 확인한다.
 - "0건"이 나오면 진짜 0건인지, 타임아웃·한글 깨짐인지 먼저 의심한다.
+- **백업 표를 만들면 바로 잠근다**: `create table ... as select` 다음 줄에 `alter table ... enable row level security; revoke all on ... from anon, authenticated;`. 2026-11-18 Supabase 보안 경고(rls_disabled_in_public)가 백업 4표 때문이었다 — 익명 사용자가 읽고 쓸 수 있었다.
 
 ## 커밋·배포
 - 커밋 전 `node tests/syntax.test.js`. 화면을 건드렸으면 `node tests/smoke.test.js`도.

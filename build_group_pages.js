@@ -1966,7 +1966,7 @@ function fancamPageHtml(a, lang) {
     about: { '@type': 'Person', name: mName, url: profileUrl, ...(info ? { memberOf: { '@type': 'MusicGroup', name: gName, url: `${SITE}/${groupPagePath(gko, lang)}` } } : {}) },
     mainEntity: { '@type': 'ItemList', numberOfItems: fancams.length, itemListElement: fancams.filter(v => iso(v.published_at)).slice(0, 10).map((v, i) => ({
       '@type': 'ListItem', position: i + 1, item: { '@type': 'VideoObject', name: v.title, description: v.title, url: `https://www.youtube.com/watch?v=${v.id}`, embedUrl: `https://www.youtube.com/embed/${v.id}`,
-        thumbnailUrl: [ytThumb(v.id, 'mqdefault'), ytThumb(v.id)], uploadDate: iso(v.published_at),
+        thumbnailUrl: [wideThumb(v.id), ytThumb(v.id, 'mqdefault')], /* 4:3 hqdefault는 빼고 16:9만(검은 띠) */ uploadDate: iso(v.published_at),
         interactionStatistic: v.view_count ? { '@type': 'InteractionCounter', interactionType: { '@type': 'WatchAction' }, userInteractionCount: v.view_count } : undefined } })) },
   };
   // TOP 10 순위(조회수 순, 번호 배지) + 최근 1년 안에 올라온 것 중 인기 상위(조회수는 누적이라 '최근 1년 업로드' 기준 — 기간 조회수 증가량 아님)
@@ -2037,7 +2037,7 @@ ${LIST_FWD}
 <div class="wrap">
   ${languageNav(isEn, altUrl)}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
-  <a class="hero" href="https://www.youtube.com/watch?v=${hero.id}" target="_blank" rel="noopener"><img src="${ytThumb(hero.id)}" alt="${escHtml(hero.title)}"><span class="play"></span><span class="hero-txt"><h1>${escHtml(h1)}</h1><span class="sub">${escHtml(sub)}</span></span></a>
+  <a class="hero" href="https://www.youtube.com/watch?v=${hero.id}" target="_blank" rel="noopener"><img src="${wideThumb(hero.id)}" alt="${escHtml(hero.title)}"><span class="play"></span><span class="hero-txt"><h1>${escHtml(h1)}</h1><span class="sub">${escHtml(sub)}</span></span></a>
   <div class="crumbs">${info ? `<a href="${SITE}/${groupPagePath(gko, lang)}">${escHtml(gName)}</a> › ` : ''}<a href="${profileUrl}">${escHtml(mName)}</a> › ${isEn ? 'Fancams' : '직캠'}</div>
   <p class="lead">${escHtml(isEn ? `Every individual fancam and face cam of ${gName} ${mName}, grouped by song. Most viewed first.` : `${gko} ${mName}의 개인 직캠·페이스캠을 곡별로 모두 모았어요. 조회수 많은 순.`)}</p>
   ${songNav}
@@ -2156,7 +2156,8 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
     h1 = songLabel;
     sub = `${gFull}${s.isTitle ? (isEn ? ' · Title track' : ' · 타이틀곡') : ''}`;
   }
-  const heroImage = top[0] ? ytThumb(top[0].id) : ogImageForGroup(gko, info);
+  // 본문 대표도 16:9로(2026-11-18 Codex — 네이버가 본문 hqdefault(4:3, 위아래 검은 띠)를 검색 썸네일로 집어 갔다. OG만 바꿨던 것)
+  const heroImage = top[0] ? wideThumb(top[0].id) : ogImageForGroup(gko, info);
   const preview = songShareVideo(vids);
   // 대표 영상이 없을 때 예전엔 hqdefault(4:3, 16:9 영상은 위아래 검은 띠가 이미지에 박혀 있음)를 그대로 og:image로 썼다 — 16:9 썸네일로
   const ogImage = preview ? wideThumb(preview.id) : (top[0] ? wideThumb(top[0].id) : heroImage), ogSz = ogSizeFor(ogImage);
