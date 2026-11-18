@@ -3,6 +3,13 @@
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
 
+## 2026-11-18 오후 (Claude Code/Opus — 카드 영상 칸·곡 페이지 근거 기준·검수 초안 처리)
+
+- [완료][app.js _vsOpen/_vsClose] **카드 영상 넓게 보기 = 카드 왼쪽 영상 칸**: 그룹 카드 영상 머리줄 아이콘(옛 ⤢ 목록 창 넓게 보기 자리)을 누르면 #gc-ch-vid 노드를 통째로 무대 칸(#vid-stage)으로 옮김 — 탭·검색·정렬·무한 스크롤 그대로. 위 줄 44px 아이콘만·색 줄 3px(카드와 같은 높이), 6칸 격자(가로 2칸·쇼츠 1칸, 쇼츠 썸네일 높이=가로 썸네일 높이), 펼침 기억(kpu_vid_stage), 다른 카드도 같은 칸. 쇼츠 썸네일 감시는 옮길 때 새 칸 기준으로 다시 건다(_vsRearm). tests/vid-stage.test.js 8건(CI 등록). ⏳ 사용자: 뉴비용 말풍선 안내·기본값(자동 펼침 여부)은 생각해보고 정하기로. 멤버 카드(tv)는 아직 옛 ⤢ 목록 창.
+- [완료][tools/seo_extra.js buildSongs] 곡 페이지는 근거 강한 영상(live·mv·EV 또는 따옴표 안이 곡명 그대로, 회차물 제외) 4개↑ 또는 2~3개+절반↑일 때만 — seoul(지명 가드 포함)·Gol-Cha!·HEALING·Fashion·PAGE·Talk 오생성 정리. 14그룹 실측 693→648.
+- [완료] 정적 /all/ 모아보기 · 정적 프로필 사진 1000행 끊김 · PC 정적 프로필 원 120·SNS 줄·대표 영상 제목/날짜/조회수 · 웹 유튜브 전체화면 버튼(2배속 탭존) · Up Next 접기 버튼 · 폰 쇼츠 재생 가로 꽉 · 카드 글자·여백 통일 · 재시작 계측 관리자 포함 · 제외 키워드 팬채널·OST 면제 · 콜라보 일반 단어 가드(Sunshine·Chris·Soyoung·'도시').
+- [완료][DB] 검수 세션 초안 10개 실행(sql/2026-11-18_*.sql) + 크랙시 우아→김채원 키 정정. 상세는 .audit-worktrees/audit-fixes-20261105/CHANGELOG.md 11-18 Opus 블록.
+
 ## 2026-11-18 (Claude Code/Sonnet — 정적 PC 2단·썸네일·앨범 링크·YouTube 감사 조치·태깅 지연)
 
 > 사용자는 11-19부터 중국 여행(노트북 없음, 폰 Claude Code 웹으로 작업 예정). 이 섹션이 인수인계.
