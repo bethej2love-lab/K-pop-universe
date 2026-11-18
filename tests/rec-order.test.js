@@ -8,6 +8,8 @@ const code = [
   pick(/function _vidCatWeight\(cat\)\{[^\n]*\n/),
   pick(/const _REC_W=[^\n]*\n/),
   pick(/function _recOrder\(vids,memberKo\)\{[\s\S]*?\n\}\n/),
+  pick(/const _COMPILATION_RE=[^\n]*\n/),
+  pick(/function _isCompilationVid\(v\)\{[^\n]*\n/),
 ].join('');
 const ctx = { Math: Object.create(Math), Date, isNaN, Set, Map, _scrapCounts: new Map(), favMembers: new Set(), myProfile: null, _isShortV: v => !!v.is_short };
 ctx.Math.random = () => 0;

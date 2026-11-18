@@ -8391,8 +8391,13 @@ function _recOrder(vids,memberKo){
     const cat=_vidCatWeight(v.category)/4;
     return _REC_W.fresh*fresh+_REC_W.pop*pop+_REC_W.rise*(v._rise?1:0)+_REC_W.heart*heart+_REC_W.fav*fav+_REC_W.cat*cat+_REC_W.rnd*Math.random();
   };
-  return vids.map(v=>({v,s:score(v)})).sort((a,b)=>b.s-a.s).map(x=>x.v);
+  // 모음 영상(개별출연·제목 '모음/몰아보기/.zip' 등)은 첫 화면 맨 뒤로(2026-11-18 사용자 "모음 영상은 중요도가 높진 않음, 최신이어도 추천순 상위에 둘 필요 없음").
+  // 점수 순서는 각 묶음 안에서 그대로. 모음뿐이면 그대로 보인다.
+  return vids.map(v=>({v,s:score(v)-(_isCompilationVid(v)?10:0)})).sort((a,b)=>b.s-a.s).map(x=>x.v);
 }
+// 모음(편집) 영상 — 여러 영상을 이어 붙인 것. 추천순에서만 뒤로 보낸다(목록에서 빼지는 않음).
+const _COMPILATION_RE=/모음|모아보기|몰아보기|총집합|총정리|\bcompilation\b|\.zip\b|zip\]/i;
+function _isCompilationVid(v){return !!v&&(v.content_flag==='개별출연'||_COMPILATION_RE.test(String(v.title||'')));}
 // 상승 신호 — 후보 id만 짧게 조회(각 3초, 실패하면 신호 없이). 결과는 행에 _rise로 붙여 첫 페이지 캐시에도 같이 남는다.
 async function _recMarkRising(vids){
   if(!sb||!vids.length)return;
@@ -29611,6 +29616,8 @@ function _makeChVidController(contId){
       // '기타' 플래그 영상은 후순위로 — 대표영상 후보 제외 + 정상 영상 뒤로 밀기
       const _etcVids=vids.filter(v=>v.content_flag==='기타');
       if(_etcVids.length)vids=[...vids.filter(v=>v.content_flag!=='기타'),..._etcVids];
+      // 모음 영상은 추천순 첫 화면 맨 뒤로(_recOrder) — 위 같은 날 흩기가 몇 칸 당겨 올 수 있어 한 번 더(2026-11-18)
+      if(state.sortMode==='recommend'&&reset){const _cv=vids.filter(_isCompilationVid);if(_cv.length&&_cv.length<vids.length)vids=[...vids.filter(v=>!_isCompilationVid(v)),..._cv];}
       // 첫 로드 + 전체 탭: 스크랩(하트) 최다 영상을 맨 앞으로.
       // _featuredFromDB = 현재 필터 내 하트 최다 영상(하트 없으면 null).
       // 하트 없으면 페이지 내 첫 셔플 영상으로 폴백. 업로드순/오래된순은 건너뜀.

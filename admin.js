@@ -10292,7 +10292,12 @@ function _autoIndividualAppearance(row){
   const STAGE=/(?:라이브|무대|공연|직캠|댄스|칼군무|출근길|퇴근길|1위)\s*(?:모음(?:집)?|모아보기|몰아보기|총정리)|\blive\s+compilation\b|\bstage\s+compilation\b/i;
   const AWARDS=/가요대전|가요대제전|가요대축제|\bMAMA\b|\bAAA\b|골든디스크|서울가요대상|\bKMF\b/i;
   const TOGETHER=/\bMC\b|케미|메들리|medley|mashup|매시업|합동|합창|콜라보|듀엣|대진|파이널|퀸덤퍼즐|하이라이트 구간|남매|찐친|선후배|\bcollab(?:oration)?\b|\bduet\b|\bwith\b|\bfeat(?:uring)?\b|\bvs\b|\s[x×]\s|[&＆]/i;
-  if(!COMP.test(title)||TOGETHER.test(title))return row;
+  // ④ 주제 모음(2026-11-18 사용자 "수능 응원곡 모음 같은 영상은 알아서 개별출연") — 수능·수험생 응원, 명절·새해·연말 인사, 캐롤처럼
+  // 시즌마다 여러 팀 영상을 엮는 것. 모음 말이 있으면 2팀↑, 모음 말이 없어도 수능/수험생 '응원'이면 3팀↑(각자 찍은 응원 메시지 묶음).
+  const THEME=/수능|수험생|응원\s*(?:곡|송|메시지|영상)|새해\s*인사|설\s*인사|설날|추석|한가위|명절\s*인사|연말\s*인사|크리스마스|캐롤|carol|\bchristmas\b|new\s*year/i;
+  const EXAM_CHEER=/(?:수능|수험생)[^|｜]*응원|응원[^|｜]*(?:수능|수험생)/;
+  if(TOGETHER.test(title))return row;
+  if(!COMP.test(title)&&!EXAM_CHEER.test(title))return row;
   const tl=title.toLowerCase();
   const unit=typeof _PROJECT_UNITS==='object'&&_PROJECT_UNITS&&Object.entries(_PROJECT_UNITS).some(([k,u])=>[k,...(u.names||[])].some(n=>{
     n=String(n||'').toLowerCase();if(n.length<3&&!/[가-힣0-9]/.test(n))return false; // SC·JX 같은 짧은 영문은 오탐(V8처럼 숫자 섞인 건 유지)
@@ -10305,7 +10310,9 @@ function _autoIndividualAppearance(row){
   for(const member of row.with_members||[]){const m=String(member).match(/\(([^()]+)\)$/);if(m&&GROUPS[m[1]])groups.add(m[1]);}
   const n=groups.size;
   // ③은 "총집합"만으론 안 됨 — 한자리에 모인 행사일 수도 있다. 모음·몰아보기·.zip처럼 이어 붙인 게 분명한 말일 때만.
-  const hit=(n>=2&&(STAGE.test(title)||AWARDS.test(title)))||(n>=3&&/모음|모아보기|몰아보기|compilation|zip/i.test(title));
+  const comp=COMP.test(title);
+  const hit=(comp&&n>=2&&(STAGE.test(title)||AWARDS.test(title)||THEME.test(title)))||(n>=3&&/모음|모아보기|몰아보기|compilation|zip/i.test(title))
+    ||(n>=3&&EXAM_CHEER.test(title));
   return hit?{...row,..._flagPatch('개별출연','auto')}:row;
 }
 async function _ytUpsertVideos(rows,opts){

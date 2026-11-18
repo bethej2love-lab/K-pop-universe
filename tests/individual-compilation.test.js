@@ -23,5 +23,16 @@ let total=0,failed=0;async function check(name,task){total++;try{await task();}c
  await check('2-team awards compilation',async()=>{assert.equal((await run({...base,group_ko:'스트레이키즈',with_groups:['엔믹스'],title:"'Stray Kids'부터 'NMIXX'까지 JYP 모음 #2025SBS가요대전"})).row.content_flag,'개별출연');});
  await check('2-team non-stage compilation stays (예능 모음은 같은 회차일 수 있음)',async()=>{assert.equal((await run({...base,group_ko:'에스파',with_groups:['아이브'],title:'아이브 에스파 냉장고 모음｜냉장고를 부탁해'})).row.content_flag,null);});
  for(const title of ['10월 2주차 쇼챔피언 MC 모음.zip (트와이스, 여자친구, 러블리즈)','멍캣 케미 모음.zip 트와이스 여자친구 러블리즈','트와이스&여자친구&러블리즈 먹방 모음집','트와이스 댄스메들리 직캠 모음 (feat. 여자친구, 러블리즈)'])await check('together compilation stays: '+title.slice(0,25),async()=>{assert.equal((await run({...three,title})).row.content_flag,null);});
+ // 2026-11-18 주제 모음(수능 응원·명절 인사) — 사용자 "수능 응원곡 모음 같은 영상은 알아서 개별출연"
+ const two={...base,group_ko:'아이브',with_groups:['르세라핌']};
+ for(const title of ['수능 응원곡 모음 🔥 아이브 르세라핌','2027 수능 응원 플레이리스트 모아보기 | IVE LE SSERAFIM','추석 인사 모음.zip 아이브 르세라핌','크리스마스 캐롤 무대 모음 아이브 르세라핌'])await check('theme compilation 2팀: '+title.slice(0,25),async()=>{assert.equal((await run({...two,title})).row.content_flag,'개별출연');});
+ await check('수능 응원 메시지 3팀(모음 말 없음)',async()=>{assert.equal((await run({...three,title:'수험생 여러분 파이팅! 2027 수능 응원 메시지 | 트와이스 여자친구 러블리즈'})).row.content_flag,'개별출연');});
+ for(const [name,row] of [
+   ['한 팀 수능 응원 영상',{...base,with_groups:[],title:'수험생 여러분, 파이팅!💕 백현 2026 수능 응원 영상 #백현'}],
+   ['한 팀 수능금지곡',{...base,with_groups:[],title:'수능금지곡 #최예나 #네모네모 #yena'}],
+   ['두 팀 수능 응원(모음 말 없음 — 함께 찍었을 수 있음)',{...two,title:'아이브 르세라핌 수능 응원 메시지'}],
+   ['두 팀이 함께한 수능 응원 모음',{...two,title:'아이브 X 르세라핌 수능 응원곡 모음'}],
+   ['두 팀 예능 모음(주제 아님)',{...two,title:'아이브 르세라핌 게임 모음'}],
+ ])await check('theme stays: '+name,async()=>{assert.equal((await run(row)).row.content_flag,null);});
  console.log(total+' checks / '+failed+' failed');if(failed)process.exitCode=1;
 })().catch(e=>{console.error(e);process.exitCode=1;});
