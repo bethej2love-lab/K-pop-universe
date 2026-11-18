@@ -65,7 +65,12 @@
   .top2 .meta{font-size:14.5px;margin-bottom:0;}
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
+  /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
+  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
+  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
 }
+/* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
+.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -98,8 +103,8 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <a class="mf-card" href="https://www.youtube.com/watch?v=x0yM8uB6bFg" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/x0yM8uB6bFg/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[FOCUS ON FACE] idntt towa(토와) &#39;Yes We Are&#39; | MOVE TO PERFORMANCE (4K)</span><span class="mf-y">2026.01.16 · 4K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=l9Hj6wttcR0" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/l9Hj6wttcR0/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 아이덴티티 토와 &#39;Pretty Boy Swag&#39; (idntt towa FanCam) @SBS Inkigayo 260111</span><span class="mf-y">2026.01.13 · 3K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=LjvR67SwSIM" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/LjvR67SwSIM/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[쇼챔직캠 4K] idntt Towa(아이덴티티 토와) - Pretty Boy Swag | Show Champion | EP.583 | 260121</span><span class="mf-y">2026.01.21 · 3K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=nfSeRk7dQ64" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/nfSeRk7dQ64/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 아이덴티티 토와 &#39;Pretty Boy Swag&#39; (idntt towa FanCam) @SBS Inkigayo 260118</span><span class="mf-y">2026.01.21 · 1K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=SP4vUvBbu2k" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/SP4vUvBbu2k/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[캐치캠 4K] idntt iida towa ‘Linda Mía’ (아이덴티티 이이다 토와 직캠) l SHOW K-POP l 261026</span><span class="mf-y">2026.10.27 · 1K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=nfSeRk7dQ64" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/nfSeRk7dQ64/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 아이덴티티 토와 &#39;Pretty Boy Swag&#39; (idntt towa FanCam) @SBS Inkigayo 260118</span><span class="mf-y">2026.01.21 · 1K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=qGri45lRhhY" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/qGri45lRhhY/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] 아이덴티티 토와 직캠 4K &#39;Kids Return&#39; (idntt towa FanCam) | @MCOUNTDOWN_2026.7.23</span><span class="mf-y">2026.07.23 · 1K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=Xq8nfcdkLvg" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/Xq8nfcdkLvg/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[쇼챔직캠 4K] idntt towa (아이덴티티 토와) - Kids Return | Show Champion | EP.604 | 260722</span><span class="mf-y">2026.07.22 · 1K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=PiIWqnGeH8k" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/PiIWqnGeH8k/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 아이덴티티 토와 &#39;Kids Return&#39; (idntt towa FanCam) @SBS Inkigayo 260719</span><span class="mf-y">2026.07.21 · 800+</span></a>

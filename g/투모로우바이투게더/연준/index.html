@@ -65,7 +65,12 @@
   .top2 .meta{font-size:14.5px;margin-bottom:0;}
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
+  /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
+  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
+  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
 }
+/* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
+.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -81,7 +86,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
   <div class="top2">
     <h1>연준(Yeonjun)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/FjoweWG4xms/maxresdefault.jpg" alt="연준" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/82abbb5c-cb32-4dec-9212-68c65dde0a2b.jpg" alt="연준" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>소속</b> 투모로우바이투게더(TOMORROW X TOGETHER)</span>
       <span><b>생일</b> 1999.09.13 (만 27세)</span>
@@ -213,7 +218,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/아이들/우기/">우기</a> <span class="tag">아이들</span></li>
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/tomorrow-x-together/yeonjun/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"모든 무대","t":"Beautiful Strangers","s":"연준 직캠 19개","img":"oG16Esx419c","m":"Beautiful Strangers","h":"https://kpop-universe.kr/g/투모로우바이투게더/연준/s/beautifulstrangers/"},{"k":"같은 곡","t":"수빈 · Beautiful Strangers","s":"직캠 20개","img":"OItx-2xQ7L0","m":"Beautiful Strangers","h":"https://kpop-universe.kr/g/투모로우바이투게더/수빈/s/beautifulstrangers/"},{"k":"그룹","t":"투모로우바이투게더","s":"무대 · 뮤비 · 멤버","im":"https://img.youtube.com/vi/zT2hLFMCj6k/mqdefault.jpg","h":"https://kpop-universe.kr/g/투모로우바이투게더/"},{"k":"케미","t":"연준 × 수빈","s":"함께 나온 영상 114개","img":"GjdHAC15wDg","h":"https://kpop-universe.kr/chem/투모로우바이투게더/수빈-연준/"},{"k":"모든 무대","t":"Deja Vu","s":"연준 직캠 15개","img":"iz1gp7oglBQ","m":"Deja Vu","h":"https://kpop-universe.kr/g/투모로우바이투게더/연준/s/dejavu/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"모든 무대","t":"Beautiful Strangers","s":"연준 직캠 19개","img":"oG16Esx419c","m":"Beautiful Strangers","h":"https://kpop-universe.kr/g/투모로우바이투게더/연준/s/beautifulstrangers/"},{"k":"같은 곡","t":"수빈 · Beautiful Strangers","s":"직캠 20개","img":"OItx-2xQ7L0","m":"Beautiful Strangers","h":"https://kpop-universe.kr/g/투모로우바이투게더/수빈/s/beautifulstrangers/"},{"k":"그룹","t":"투모로우바이투게더","s":"무대 · 뮤비 · 멤버","im":"https://img.youtube.com/vi/zT2hLFMCj6k/mqdefault.jpg","h":"https://kpop-universe.kr/g/투모로우바이투게더/"},{"k":"케미","t":"연준 × 수빈","s":"함께 나온 영상 113개","img":"GjdHAC15wDg","h":"https://kpop-universe.kr/chem/투모로우바이투게더/수빈-연준/"},{"k":"모든 무대","t":"Deja Vu","s":"연준 직캠 15개","img":"iz1gp7oglBQ","m":"Deja Vu","h":"https://kpop-universe.kr/g/투모로우바이투게더/연준/s/dejavu/"}]</script>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=투모로우바이투게더&m=연준">프로필·직캠·무대 영상 보기 →</a></div>
 </div>
 </body>

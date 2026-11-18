@@ -65,7 +65,12 @@
   .top2 .meta{font-size:14.5px;margin-bottom:0;}
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
+  /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
+  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
+  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
 }
+/* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
+.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -189,7 +194,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/아이즈원/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=아이즈원">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"환상동화 (Secret Story of the Swan)","s":"215 videos","img":"nnVjsos40qk","m":"환상동화","h":"https://kpop-universe.kr/en/g/iz-one/s/환상동화/"},{"k":"Member fancams","t":"Sakura","s":"290 fancams","img":"5Sm68912ANE","h":"https://kpop-universe.kr/en/g/le-sserafim/sakura/fancams/"},{"k":"Album","t":"One-reeler / Act IV","s":"6 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/105/30/160/10530160_20201207160115_500.jpg","h":"https://kpop-universe.kr/en/g/iz-one/a/onereeleractiv/"},{"k":"Song fancams","t":"Panorama","s":"101 videos","img":"G8GaQdW2wHc","m":"Panorama","h":"https://kpop-universe.kr/en/g/iz-one/s/panorama/"},{"k":"Member fancams","t":"Wonyoung","s":"281 fancams","img":"DqvMi7J_juM","h":"https://kpop-universe.kr/en/g/ive/wonyoung/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"환상동화 (Secret Story of the Swan)","s":"215 videos","img":"nnVjsos40qk","m":"환상동화","h":"https://kpop-universe.kr/en/g/iz-one/s/환상동화/"},{"k":"Member fancams","t":"Sakura","s":"290 fancams","img":"5Sm68912ANE","h":"https://kpop-universe.kr/en/g/le-sserafim/sakura/fancams/"},{"k":"Album","t":"One-reeler / Act IV","s":"6 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/105/30/160/10530160_20201207160115_500.jpg","h":"https://kpop-universe.kr/en/g/iz-one/a/onereeleractiv/"},{"k":"Song fancams","t":"Panorama","s":"101 videos","img":"G8GaQdW2wHc","m":"Panorama","h":"https://kpop-universe.kr/en/g/iz-one/s/panorama/"},{"k":"Member fancams","t":"Wonyoung","s":"282 fancams","img":"DqvMi7J_juM","h":"https://kpop-universe.kr/en/g/ive/wonyoung/fancams/"}]</script>
 </div>
 </body>
 </html>
