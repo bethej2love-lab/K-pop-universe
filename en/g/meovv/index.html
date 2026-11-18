@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,14 +91,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/미야오/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>MEOVV(미야오)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/VyDYzB8bZcg/maxresdefault.jpg" alt="MEOVV" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/9ddaf930-f1d1-4332-92f9-88c4b9577b88.jpg" alt="MEOVV" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>Debut</b> 2024.09.06</span>
       <span><b>Agency</b> THEBLACKLABEL</span>
       <span><b>Fandom</b> PAWMPAWM</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/@MEOVV_OFFICIAL" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://instagram.com/meovv" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/OFFICIAL_MEOVV" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://tiktok.com/@meovv_official" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-namu" href="https://namu.wiki/w/MEOVV" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
   
@@ -117,17 +126,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <h2 id="songs">Fancams & stages by song</h2>
     <ul class="member-list rel">
       <li><a href="https://kpop-universe.kr/en/g/meovv/s/handsup/">HANDS UP</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/meovv/s/띠로리/">띠로리 (DDI RO RI)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/meovv/s/burningup/">BURNING UP</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/meovv/s/띠로리/">띠로리 (DDI RO RI)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/meovv/s/meow/">MEOW</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/meovv/s/gohard/">GO HARD</a></li>
       <li><a href="https://kpop-universe.kr/en/g/meovv/s/droptop/">DROP TOP</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/meovv/s/gohard/">GO HARD</a></li>
       <li><a href="https://kpop-universe.kr/en/g/meovv/s/body/">Body</a></li>
       <li><a href="https://kpop-universe.kr/en/g/meovv/s/hitem/">Hit &#39;Em</a></li>
       <li><a href="https://kpop-universe.kr/en/g/meovv/s/toxic/">TOXIC</a></li>
       <li><a href="https://kpop-universe.kr/en/g/meovv/s/inmyhands/">In My Hands</a></li>
       <li><a href="https://kpop-universe.kr/en/g/meovv/s/indestructible/">Indestructible</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/meovv/s/mememe/">ME ME ME</a></li>
     </ul>
   
     <h2 id="albums">Albums & tracklists</h2>
@@ -159,7 +167,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/미야오/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=미야오">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"HANDS UP","s":"155 videos","img":"rqcNJ2Lqd-8","m":"HANDS UP","h":"https://kpop-universe.kr/en/g/meovv/s/handsup/"},{"k":"Member fancams","t":"Anna","s":"122 fancams","img":"dblLC2fqLXY","h":"https://kpop-universe.kr/en/g/meovv/anna/fancams/"},{"k":"Album","t":"BITE NOW","s":"5 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/136/96/373/13696373_20260529155059_500.jpg","h":"https://kpop-universe.kr/en/g/meovv/a/bitenow/"},{"k":"Song fancams","t":"띠로리 (DDI RO RI)","s":"102 videos","img":"QRSSyK8CgU0","m":"띠로리","h":"https://kpop-universe.kr/en/g/meovv/s/띠로리/"},{"k":"Member fancams","t":"Sooin","s":"75 fancams","img":"uPdh58Vo8WM","h":"https://kpop-universe.kr/en/g/meovv/sooin/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"HANDS UP","s":"141 videos","img":"rqcNJ2Lqd-8","m":"HANDS UP","h":"https://kpop-universe.kr/en/g/meovv/s/handsup/"},{"k":"Member fancams","t":"Anna","s":"122 fancams","img":"dblLC2fqLXY","h":"https://kpop-universe.kr/en/g/meovv/anna/fancams/"},{"k":"Album","t":"BITE NOW","s":"5 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/136/96/373/13696373_20260529155059_500.jpg","h":"https://kpop-universe.kr/en/g/meovv/a/bitenow/"},{"k":"Song fancams","t":"BURNING UP","s":"95 videos","img":"QCG7cWPc19Y","m":"BURNING UP","h":"https://kpop-universe.kr/en/g/meovv/s/burningup/"},{"k":"Member fancams","t":"Sooin","s":"75 fancams","img":"uPdh58Vo8WM","h":"https://kpop-universe.kr/en/g/meovv/sooin/fancams/"}]</script>
 </div>
 </body>
 </html>

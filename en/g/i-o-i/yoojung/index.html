@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,6 +91,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/아이오아이/최유정/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>Yoojung(최유정)</h1>
     <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/df47b285-a772-4a8a-8536-4288ec0abd9b.jpg" alt="Yoojung" loading="eager" width="240" height="240">
@@ -93,6 +101,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>Debut</b> 2016.05.04</span>
       <span><b>Agency</b> Fantagio</span>
     </div>
+    <div class="sns"><a class="sns-instagram" href="https://www.instagram.com/dbeoddl__" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-namu" href="https://namu.wiki/w/최유정" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   
   <h2>Yoojung fancams</h2>
@@ -155,14 +164,14 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <div class="sp-tiles">
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/i-o-i/yoojung/s/siesta/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/107/81/783/10781783_20211117170146_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Siesta</span><span class="sp-tile-n">11 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/i-o-i/yoojung/s/oopsy/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/46/849/10446849_20200618152017_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">OOPSY</span><span class="sp-tile-n">8 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/i-o-i/yoojung/s/비장의무기/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/137/69/432/13769432_20260629153843_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">비장의 무기 (Perfect Target)</span><span class="sp-tile-n">7 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/i-o-i/yoojung/s/pickypicky/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/85/032/10285032_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Picky Picky</span><span class="sp-tile-n">7 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/i-o-i/yoojung/s/crush/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/11/077/10211077_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Crush</span><span class="sp-tile-n">7 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/i-o-i/yoojung/s/dazzledazzle/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/91/579/10391579_20200220152024_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">DAZZLE DAZZLE</span><span class="sp-tile-n">6 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/i-o-i/yoojung/s/cool/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/00/476/10500476_20201007185343_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">COOL</span><span class="sp-tile-n">6 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/i-o-i/yoojung/s/tikitaka/"><img src="https://cdnimg.melon.co.kr/cm/album/images/103/15/976/10315976_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Tiki-Taka</span><span class="sp-tile-n">5 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/i-o-i/yoojung/s/sunflower/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/53/161/11053161_20220913165216_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Sunflower</span><span class="sp-tile-n">4 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/i-o-i/yoojung/s/비장의무기/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/137/69/432/13769432_20260629153843_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">비장의 무기 (Perfect Target)</span><span class="sp-tile-n">4 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/i-o-i/yoojung/s/갑자기/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/133/99/673/13399673_20260518151131_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">갑자기 Suddenly</span><span class="sp-tile-n">3 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/i-o-i/yoojung/s/sunflower/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/53/161/11053161_20220913165216_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Sunflower</span><span class="sp-tile-n">3 fancams</span></a>
     </div>
   
     <h2>Solo Discography</h2>
@@ -192,7 +201,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/g-i-dle/yuqi/">Yuqi</a> <span class="tag">(G)I-DLE</span></li>
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/아이오아이/최유정/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"비장의 무기","s":"7 fancams of Yoojung","img":"lNj5guih82E","m":"비장의 무기","h":"https://kpop-universe.kr/en/g/i-o-i/yoojung/s/비장의무기/"},{"k":"Group","t":"I.O.I","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/mNJFhF8AWko/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/i-o-i/"},{"k":"Chemistry","t":"Yoojung × Somi","s":"17 videos together","img":"Fz11AqW7vI4","h":"https://kpop-universe.kr/en/chem/i-o-i/somi-yoojung/"},{"k":"Every stage","t":"Sunflower","s":"4 fancams of Yoojung","img":"E9A0zeLObrw","m":"Sunflower","h":"https://kpop-universe.kr/en/g/i-o-i/yoojung/s/sunflower/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"비장의 무기","s":"4 fancams of Yoojung","img":"lNj5guih82E","m":"비장의 무기","h":"https://kpop-universe.kr/en/g/i-o-i/yoojung/s/비장의무기/"},{"k":"Group","t":"I.O.I","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/mNJFhF8AWko/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/i-o-i/"},{"k":"Chemistry","t":"Yoojung × Somi","s":"17 videos together","img":"Fz11AqW7vI4","h":"https://kpop-universe.kr/en/chem/i-o-i/somi-yoojung/"},{"k":"Every stage","t":"갑자기","s":"3 fancams of Yoojung","img":"sjtzzjcAuPM","m":"갑자기","h":"https://kpop-universe.kr/en/g/i-o-i/yoojung/s/갑자기/"}]</script>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=아이오아이&m=최유정">View profile, fancams & stages →</a></div>
 </div>
 </body>

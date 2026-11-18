@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,14 +91,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="언어 선택" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/en/g/block-b/" lang="en" hreflang="en" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">View in English</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
+  <a class="brand" href="https://kpop-universe.kr/all/" style="margin-left:10px;">모아보기</a>
   <div class="top2">
     <h1>블락비(Block B)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/LsA5e0mpOZQ/maxresdefault.jpg" alt="블락비" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/1719d38b-e6c2-4ef1-bb1e-ff744ef3bd03.jpg" alt="블락비" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>데뷔</b> 2011.04.15</span>
       <span><b>소속사</b> KQ엔터테인먼트</span>
       <span><b>팬덤명</b> 비비씨</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/@Block_B" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://www.instagram.com/blockb_official_" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/blockb_official" target="_blank" rel="noopener noreferrer">X</a><a class="sns-namu" href="https://namu.wiki/w/블락비" target="_blank" rel="noopener noreferrer">나무위키</a></div>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
   
@@ -125,37 +134,34 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   
     <h2 id="songs">곡별 직캠·무대</h2>
     <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/블락비/s/verygood/">Very Good</a></li>
       <li><a href="https://kpop-universe.kr/g/블락비/s/떠나지마요/">떠나지마요 Don’t Leave</a></li>
-      <li><a href="https://kpop-universe.kr/g/블락비/s/her/">H.E.R</a></li>
+      <li><a href="https://kpop-universe.kr/g/블락비/s/verygood/">Very Good</a></li>
       <li><a href="https://kpop-universe.kr/g/블락비/s/helpme/">Help Me</a></li>
+      <li><a href="https://kpop-universe.kr/g/블락비/s/her/">H.E.R</a></li>
       <li><a href="https://kpop-universe.kr/g/블락비/s/shallwedance/">Shall We Dance</a></li>
-      <li><a href="https://kpop-universe.kr/g/블락비/s/yesterday/">YESTERDAY</a></li>
-      <li><a href="https://kpop-universe.kr/g/블락비/s/아무노래/">아무노래</a></li>
-      <li><a href="https://kpop-universe.kr/g/블락비/s/artist/">Artist</a></li>
-      <li><a href="https://kpop-universe.kr/g/블락비/s/빛이되어줘/">빛이 되어줘 Jackpot</a></li>
       <li><a href="https://kpop-universe.kr/g/블락비/s/makeitrain/">Make It Rain</a></li>
-      <li><a href="https://kpop-universe.kr/g/블락비/s/boysandgirls/">Boys And Girls</a></li>
+      <li><a href="https://kpop-universe.kr/g/블락비/s/yesterday/">YESTERDAY</a></li>
       <li><a href="https://kpop-universe.kr/g/블락비/s/toy/">Toy</a></li>
+      <li><a href="https://kpop-universe.kr/g/블락비/s/빛이되어줘/">빛이 되어줘 Jackpot</a></li>
       <li><a href="https://kpop-universe.kr/g/블락비/s/품행제로/">품행제로</a></li>
       <li><a href="https://kpop-universe.kr/g/블락비/s/summerhate/">Summer Hate</a></li>
-      <li><a href="https://kpop-universe.kr/g/블락비/s/닐리리맘보/">닐리리맘보 Nillili Mambo</a></li>
       <li><a href="https://kpop-universe.kr/g/블락비/s/괴짜/">괴짜 (Freak)</a></li>
+      <li><a href="https://kpop-universe.kr/g/블락비/s/아무노래/">아무노래</a></li>
+      <li><a href="https://kpop-universe.kr/g/블락비/s/artist/">Artist</a></li>
       <li><a href="https://kpop-universe.kr/g/블락비/s/bermudatriangle/">BERMUDA TRIANGLE</a></li>
-      <li><a href="https://kpop-universe.kr/g/블락비/s/말해yesorno/">말해 Yes Or No</a></li>
       <li><a href="https://kpop-universe.kr/g/블락비/s/몇년후에/">몇 년 후에 A Few Years Later</a></li>
       <li><a href="https://kpop-universe.kr/g/블락비/s/보기드문여자/">보기 드문 여자 Dime Girl</a></li>
-      <li><a href="https://kpop-universe.kr/g/블락비/s/난리나/">난리나</a></li>
       <li><a href="https://kpop-universe.kr/g/블락비/s/가서전해/">가서 전해</a></li>
-      <li><a href="https://kpop-universe.kr/g/블락비/s/walkinintherain/">Walkin&#39; in the Rain</a></li>
-      <li><a href="https://kpop-universe.kr/g/블락비/s/品行zero/">品行ZERO</a></li>
+      <li><a href="https://kpop-universe.kr/g/블락비/s/boysandgirls/">Boys And Girls</a></li>
       <li><a href="https://kpop-universe.kr/g/블락비/s/일방적이야/">일방적이야 One Way</a></li>
+      <li><a href="https://kpop-universe.kr/g/블락비/s/닐리리맘보/">닐리리맘보 Nillili Mambo</a></li>
+      <li><a href="https://kpop-universe.kr/g/블락비/s/난리나/">난리나</a></li>
       <li><a href="https://kpop-universe.kr/g/블락비/s/wannab/">Wanna B</a></li>
       <li><a href="https://kpop-universe.kr/g/블락비/s/그대로멈춰라/">그대로 멈춰라! Don&#39;t Move!</a></li>
+      <li><a href="https://kpop-universe.kr/g/블락비/s/천둥벌거숭이/">천둥벌거숭이</a></li>
+      <li><a href="https://kpop-universe.kr/g/블락비/s/walkinintherain/">Walkin&#39; in the Rain</a></li>
       <li><a href="https://kpop-universe.kr/g/블락비/s/보통연애/">보통연애</a></li>
       <li><a href="https://kpop-universe.kr/g/블락비/s/seouldrift/">SEOUL DRIFT</a></li>
-      <li><a href="https://kpop-universe.kr/g/블락비/s/천둥벌거숭이/">천둥벌거숭이</a></li>
-      <li><a href="https://kpop-universe.kr/g/블락비/s/spot/">SPOT!</a></li>
     </ul>
   
     <h2 id="albums">앨범·수록곡</h2>
@@ -201,7 +207,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/block-b/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=블락비">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"Very Good","s":"영상 40개","img":"kJGcO5Une-g","m":"Very Good","h":"https://kpop-universe.kr/g/블락비/s/verygood/"},{"k":"멤버 직캠","t":"지코","s":"직캠 29개","img":"qMpu3vcrbYw","h":"https://kpop-universe.kr/g/블락비/지코/fancams/"},{"k":"앨범","t":"My Zone","s":"수록곡 10곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/107/58/392/10758392_20211029172428_500.jpg","h":"https://kpop-universe.kr/g/블락비/a/myzone/"},{"k":"곡별 직캠·무대","t":"떠나지마요 Don’t Leave","s":"영상 24개","img":"j0FrZ40fPiA","m":"떠나지마요","h":"https://kpop-universe.kr/g/블락비/s/떠나지마요/"},{"k":"멤버 직캠","t":"피오","s":"직캠 13개","img":"BuZzwUcgO-k","h":"https://kpop-universe.kr/g/블락비/피오/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"떠나지마요 Don’t Leave","s":"영상 24개","img":"j0FrZ40fPiA","m":"떠나지마요","h":"https://kpop-universe.kr/g/블락비/s/떠나지마요/"},{"k":"멤버 직캠","t":"지코","s":"직캠 29개","img":"qMpu3vcrbYw","h":"https://kpop-universe.kr/g/블락비/지코/fancams/"},{"k":"앨범","t":"My Zone","s":"수록곡 10곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/107/58/392/10758392_20211029172428_500.jpg","h":"https://kpop-universe.kr/g/블락비/a/myzone/"},{"k":"곡별 직캠·무대","t":"Very Good","s":"영상 23개","img":"kJGcO5Une-g","m":"Very Good","h":"https://kpop-universe.kr/g/블락비/s/verygood/"},{"k":"멤버 직캠","t":"피오","s":"직캠 13개","img":"BuZzwUcgO-k","h":"https://kpop-universe.kr/g/블락비/피오/fancams/"}]</script>
 </div>
 </body>
 </html>

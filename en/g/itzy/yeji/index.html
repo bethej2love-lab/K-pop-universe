@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,6 +91,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/있지/예지/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>Yeji(예지)</h1>
     <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/480117ab-ac79-4fd9-a6ff-312da77cf793.jpg" alt="Yeji" loading="eager" width="240" height="240">
@@ -93,6 +101,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>Debut</b> 2019.02.12</span>
       <span><b>Agency</b> JYP Entertainment</span>
     </div>
+    <div class="sns"><a class="sns-instagram" href="https://www.instagram.com/yezyizhere" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-namu" href="https://namu.wiki/w/예지(ITZY)" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   
   <h2>Yeji fancams</h2>
@@ -139,11 +148,11 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   
     <h2>Fancams by song</h2>
     <div class="sp-tiles">
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/air/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/32/611/11732611_20250310111221_500.jpg?7b8f321965c7e2f00ed43f9f86ec2244" alt="" loading="lazy"><span class="sp-tile-t">Air</span><span class="sp-tile-n">28 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/air/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/32/611/11732611_20250310111221_500.jpg?7b8f321965c7e2f00ed43f9f86ec2244" alt="" loading="lazy"><span class="sp-tile-t">Air</span><span class="sp-tile-n">27 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/cake/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/77/647/11277647_20230731184013_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">CAKE</span><span class="sp-tile-n">19 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/girlswillbegirls/"><img src="https://i.scdn.co/image/ab67616d0000b2736ec0ea1afe86b93fb1840366" alt="" loading="lazy"><span class="sp-tile-t">Girls Will Be Girls</span><span class="sp-tile-n">18 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/sneakers/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/04/992/11004992_20220722175827_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SNEAKERS</span><span class="sp-tile-n">16 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/tunnelvision/"><img src="https://i.scdn.co/image/ab67616d0000b27394407384c0b0302328c44376" alt="" loading="lazy"><span class="sp-tile-t">TUNNEL VISION</span><span class="sp-tile-n">15 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/sneakers/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/04/992/11004992_20220722175827_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SNEAKERS</span><span class="sp-tile-n">15 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/untouchable/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/86/125/11386125_20240108182050_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">UNTOUCHABLE</span><span class="sp-tile-n">14 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/마피아inthemorning/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/00/760/10600760_20210429213541_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">마.피.아. In the morning In the morning (English Version)</span><span class="sp-tile-n">13 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/loco/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/107/21/169/10721169_20210923195418_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">LOCO</span><span class="sp-tile-n">13 fancams</span></a>
@@ -151,18 +160,18 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/motto/"><img src="https://i.scdn.co/image/ab67616d0000b273959e27c83f78e9bf5c44caa0" alt="" loading="lazy"><span class="sp-tile-t">Motto</span><span class="sp-tile-n">11 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/gold/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/15/651/11615651_20241015093752_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">GOLD</span><span class="sp-tile-n">10 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/wannabe/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/00/522/10400522_20200309153009_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">WANNABE</span><span class="sp-tile-n">10 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/달라달라/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/50/473/10250473_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">달라달라 (Dalla Dalla)</span><span class="sp-tile-n">8 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/notshy/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/76/630/10476630_20200818114209_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Not Shy</span><span class="sp-tile-n">8 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/borntobe/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/86/125/11386125_20240108182050_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BORN TO BE</span><span class="sp-tile-n">8 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/달라달라/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/50/473/10250473_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">달라달라 (Dalla Dalla)</span><span class="sp-tile-n">8 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/cheshire/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/111/12/176/11112176_20221129102941_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Cheshire</span><span class="sp-tile-n">8 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/믿지/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/80/092/10580092_20210319125133_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">믿지 (MIDZY)</span><span class="sp-tile-n">8 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/borntobe/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/86/125/11386125_20240108182050_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BORN TO BE</span><span class="sp-tile-n">8 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/kisstell/"><img src="https://i.scdn.co/image/ab67616d0000b2736ec0ea1afe86b93fb1840366" alt="" loading="lazy"><span class="sp-tile-t">Kiss &amp; Tell</span><span class="sp-tile-n">7 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/믿지/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/80/092/10580092_20210319125133_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">믿지 (MIDZY)</span><span class="sp-tile-n">7 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/killshot/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/77/647/11277647_20230731184013_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Kill Shot</span><span class="sp-tile-n">7 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/icy/"><img src="https://cdnimg.melon.co.kr/cm/album/images/103/12/251/10312251_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ICY</span><span class="sp-tile-n">6 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/sorrynotsorry/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/00/760/10600760_20210429213541_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Sorry Not Sorry</span><span class="sp-tile-n">6 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/mrvampire/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/86/125/11386125_20240108182050_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Mr. Vampire</span><span class="sp-tile-n">5 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/crownonmyhead/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/86/125/11386125_20240108182050_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Crown On My Head (예지)</span><span class="sp-tile-n">5 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/swipe/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/107/21/169/10721169_20210923195418_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SWIPE</span><span class="sp-tile-n">4 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/itzy/yeji/s/crownonmyhead/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/86/125/11386125_20240108182050_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Crown On My Head (예지)</span><span class="sp-tile-n">4 fancams</span></a>
     </div>
   
     <h2>Solo Discography</h2>
@@ -191,7 +200,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/stray-kids/felix/">Felix</a> <span class="tag">Stray Kids</span></li>
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/있지/예지/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"Air","s":"28 fancams of Yeji","img":"dlAqAWrRQCs","m":"Air","h":"https://kpop-universe.kr/en/g/itzy/yeji/s/air/"},{"k":"Group","t":"ITZY","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/GurCqi7Rtys/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/itzy/"},{"k":"Chemistry","t":"Yeji × Ryujin","s":"120 videos together","img":"UdiaQcAjzT0","h":"https://kpop-universe.kr/en/chem/itzy/ryujin-yeji/"},{"k":"Every stage","t":"CAKE","s":"19 fancams of Yeji","img":"K9Di1lLSj6Y","m":"CAKE","h":"https://kpop-universe.kr/en/g/itzy/yeji/s/cake/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"Air","s":"27 fancams of Yeji","img":"dlAqAWrRQCs","m":"Air","h":"https://kpop-universe.kr/en/g/itzy/yeji/s/air/"},{"k":"Group","t":"ITZY","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/GurCqi7Rtys/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/itzy/"},{"k":"Chemistry","t":"Yeji × Ryujin","s":"120 videos together","img":"UdiaQcAjzT0","h":"https://kpop-universe.kr/en/chem/itzy/ryujin-yeji/"},{"k":"Every stage","t":"CAKE","s":"19 fancams of Yeji","img":"K9Di1lLSj6Y","m":"CAKE","h":"https://kpop-universe.kr/en/g/itzy/yeji/s/cake/"}]</script>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=있지&m=예지">View profile, fancams & stages →</a></div>
 </div>
 </body>

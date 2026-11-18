@@ -5,7 +5,7 @@
 <script>(function(){var h=location.hash;if(/(^#|&)vf=/.test(h))location.replace('https://kpop-universe.kr/'+h);})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>유키스 수현(U-KISS Soohyun) 프로필·나이·직캠·생일 | K-POP UNIVERSE</title>
-<meta name="description" content="유키스 수현 직캠 24개를 조회수 순으로. 수현(유키스): 1989.03.11 생, 2008.08.28 데뷔, 작사 5곡 참여. 직캠·무대 영상과 함께한 아이돌을 K-POP UNIVERSE에서.">
+<meta name="description" content="유키스 수현 직캠 23개를 조회수 순으로. 수현(유키스): 1989.03.11 생, 2008.08.28 데뷔, 작사 5곡 참여. 직캠·무대 영상과 함께한 아이돌을 K-POP UNIVERSE에서.">
 <link rel="canonical" href="https://kpop-universe.kr/g/유키스/수현/">
 <link rel="alternate" hreflang="en" href="https://kpop-universe.kr/en/g/u-kiss/soohyun/">
 <link rel="alternate" hreflang="ko" href="https://kpop-universe.kr/g/유키스/수현/">
@@ -13,7 +13,7 @@
 <meta property="og:type" content="profile">
 <meta property="og:site_name" content="K-POP UNIVERSE">
 <meta property="og:title" content="수현">
-<meta property="og:description" content="유키스 수현 직캠 24개를 조회수 순으로. 수현(유키스): 1989.03.11 생, 2008.08.28 데뷔, 작사 5곡 참여. 직캠·무대 영상과 함께한 아이돌을 K-POP UNIVERSE에서.">
+<meta property="og:description" content="유키스 수현 직캠 23개를 조회수 순으로. 수현(유키스): 1989.03.11 생, 2008.08.28 데뷔, 작사 5곡 참여. 직캠·무대 영상과 함께한 아이돌을 K-POP UNIVERSE에서.">
 <meta property="og:url" content="https://kpop-universe.kr/g/유키스/수현/">
 <meta property="og:image" content="https://img.youtube.com/vi/I7IgS3Nm6iQ/maxresdefault.jpg">
 <meta property="og:image:width" content="1280">
@@ -21,7 +21,7 @@
 <meta property="og:locale" content="ko_KR">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="수현">
-<meta name="twitter:description" content="유키스 수현 직캠 24개를 조회수 순으로. 수현(유키스): 1989.03.11 생, 2008.08.28 데뷔, 작사 5곡 참여. 직캠·무대 영상과 함께한 아이돌을 K-POP UNIVERSE에서.">
+<meta name="twitter:description" content="유키스 수현 직캠 23개를 조회수 순으로. 수현(유키스): 1989.03.11 생, 2008.08.28 데뷔, 작사 5곡 참여. 직캠·무대 영상과 함께한 아이돌을 K-POP UNIVERSE에서.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/I7IgS3Nm6iQ/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"수현","alternateName":"Soohyun","birthDate":"1989-03-11","nationality":"한국","url":"https://kpop-universe.kr/g/유키스/수현/","image":"https://img.youtube.com/vi/I7IgS3Nm6iQ/maxresdefault.jpg","memberOf":[{"@type":"MusicGroup","name":"유키스"}],"sameAs":["https://www.instagram.com/shinsoohyun89","https://namu.wiki/w/%EC%88%98%ED%98%84(%EC%9C%A0%ED%82%A4%EC%8A%A4)"]}</script>
@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,6 +91,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="언어 선택" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/en/g/u-kiss/soohyun/" lang="en" hreflang="en" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">View in English</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
+  <a class="brand" href="https://kpop-universe.kr/all/" style="margin-left:10px;">모아보기</a>
   <div class="top2">
     <h1>수현(Soohyun)</h1>
     <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/51d8f23c-ef54-4060-92f3-62346592b4f9.jpg" alt="수현" loading="eager" width="240" height="240">
@@ -93,10 +101,11 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>데뷔</b> 2008.08.28</span>
       <span><b>소속사</b> 탱고뮤직</span>
     </div>
+    <div class="sns"><a class="sns-instagram" href="https://www.instagram.com/shinsoohyun89" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-namu" href="https://namu.wiki/w/%EC%88%98%ED%98%84(%EC%9C%A0%ED%82%A4%EC%8A%A4)" target="_blank" rel="noopener noreferrer">나무위키</a></div>
   </div>
   
   <h2>수현 직캠</h2>
-  <p class="hub-more hub-top"><a href="https://kpop-universe.kr/g/유키스/수현/fancams/">직캠 전체 24개 곡별로 보기 →</a></p>
+  <p class="hub-more hub-top"><a href="https://kpop-universe.kr/g/유키스/수현/fancams/">직캠 전체 23개 곡별로 보기 →</a></p>
   <div class="mf-grid">
     <a class="mf-card" href="https://www.youtube.com/watch?v=8qvUQzHqaLM" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/8qvUQzHqaLM/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[Fancam] U-Kiss : Soohyun - Stalker, A.M.N Showcase @ DMC Festival 2016</span><span class="mf-y">2016.10.11 · 4K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=6aTJEiYyZnE" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/6aTJEiYyZnE/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[K-Choreo Tower Cam 4K] 수현(유키스) 직캠 &#39;소주의 요정&#39;(SooHyun (U-KISS) Choreography) l @MusicBank KBS 220812</span><span class="mf-y">2022.08.16 · 2K+</span></a>
@@ -109,7 +118,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <a class="mf-card" href="https://www.youtube.com/watch?v=VKOgbOwSWjM" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/VKOgbOwSWjM/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 수현(유키스) &#39;소주의 요정&#39; (SooHyun(UKISS) &#39;The Soju Fairy&#39; FanCam) @SBS Inkigayo 220814</span><span class="mf-y">2022.08.16 · 1K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=TbVUX-gVQQQ" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/TbVUX-gVQQQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[Fancam] U-Kiss : Soohyun - 0330, A.M.N Showcase @ DMC Festival 2016</span><span class="mf-y">2016.10.11 · 1K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=fdgO8FWpqPo" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/fdgO8FWpqPo/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[쇼챔직캠 4K] SooHyun(UKISS) - The Soju Fairy (수현(유키스) - 소주의 요정) l Show Champion l EP.445</span><span class="mf-y">2022.08.11 · 1K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=cbQTlipolzw" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/cbQTlipolzw/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[K-Choreo Tower Cam 4K] 유수현 직캠 &#39;짜릿하게&#39;(Yu Soohyun Choreography) l @MusicBank KBS 250307</span><span class="mf-y">2025.03.10 · 1K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=F3ojx5js_Qk" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/F3ojx5js_Qk/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[플리캠 4K] SooHyun(UKISS) &#39;The Soju Fairy(소주의 요정)&#39; (수현 직캠) l Simply K -Pop CON-TOUR Ep.532</span><span class="mf-y">2022.08.12 · 1K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=4o788wnjs-I" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/4o788wnjs-I/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[909 세로캠 4K] 유키스 (UKISS) 수현 세로캠 &#39;만만하니 + 빙글빙글 + NEVERLAND&#39; (SOOHYUN FanCam) | @JTBC K-909 230715</span><span class="mf-y">2023.07.15 · 1K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=k_uFJ77EQbI" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/k_uFJ77EQbI/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[909 포커스캠 4K] 유키스 (UKISS) 수현 직캠 &#39;갈래! (The Wonderful Escape)&#39; (SOOHYUN FanCam) | @JTBC K-909 230715</span><span class="mf-y">2023.07.15 · 900+</span></a>
@@ -145,7 +153,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   
     <h2>곡별 직캠</h2>
     <div class="sp-tiles">
-      <a class="sp-tile" href="https://kpop-universe.kr/g/유키스/수현/s/소주의요정/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/18/256/11018256_20220729174348_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">소주의 요정</span><span class="sp-tile-n">직캠 20</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/유키스/수현/s/소주의요정/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/18/256/11018256_20220729174348_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">소주의 요정</span><span class="sp-tile-n">직캠 18</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/유키스/수현/s/갈래/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/74/377/11274377_20230705152042_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">갈래! (The Wonderful Escape)</span><span class="sp-tile-n">직캠 5</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/유키스/수현/s/gray/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/124/69/713/12469713_20260106171745_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Gray.</span><span class="sp-tile-n">직캠 5</span></a>
     </div>
@@ -189,7 +197,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/이엑스아이디/솔지/">솔지</a> <span class="tag">이엑스아이디</span></li>
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/u-kiss/soohyun/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"모든 무대","t":"소주의 요정","s":"수현 직캠 20개","img":"sz9TXCTHSfg","m":"소주의 요정","h":"https://kpop-universe.kr/g/유키스/수현/s/소주의요정/"},{"k":"그룹","t":"유키스","s":"무대 · 뮤비 · 멤버","im":"https://img.youtube.com/vi/_dz_bdrSX2Q/mqdefault.jpg","h":"https://kpop-universe.kr/g/유키스/"},{"k":"케미","t":"수현 × 훈","s":"함께 나온 영상 20개","img":"szrey53A8AU","h":"https://kpop-universe.kr/chem/유키스/수현-훈/"},{"k":"모든 무대","t":"갈래!","s":"수현 직캠 5개","img":"xVqwyka-ZlQ","m":"갈래!","h":"https://kpop-universe.kr/g/유키스/수현/s/갈래/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"모든 무대","t":"소주의 요정","s":"수현 직캠 18개","img":"sz9TXCTHSfg","m":"소주의 요정","h":"https://kpop-universe.kr/g/유키스/수현/s/소주의요정/"},{"k":"그룹","t":"유키스","s":"무대 · 뮤비 · 멤버","im":"https://img.youtube.com/vi/_dz_bdrSX2Q/mqdefault.jpg","h":"https://kpop-universe.kr/g/유키스/"},{"k":"케미","t":"수현 × 훈","s":"함께 나온 영상 20개","img":"szrey53A8AU","h":"https://kpop-universe.kr/chem/유키스/수현-훈/"},{"k":"모든 무대","t":"갈래!","s":"수현 직캠 5개","img":"xVqwyka-ZlQ","m":"갈래!","h":"https://kpop-universe.kr/g/유키스/수현/s/갈래/"}]</script>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=유키스&m=수현">프로필·직캠·무대 영상 보기 →</a></div>
 </div>
 </body>

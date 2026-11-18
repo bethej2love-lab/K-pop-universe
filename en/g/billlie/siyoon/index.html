@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,6 +91,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/빌리/시윤/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>Siyoon(시윤)</h1>
     <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/3b94238e-2d6d-4618-b52a-53332b03b90f.jpg" alt="Siyoon" loading="eager" width="240" height="240">
@@ -93,6 +101,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>Debut</b> 2021.11.10</span>
       <span><b>Agency</b> Mystic Story</span>
     </div>
+    <div class="sns"><a class="sns-instagram" href="https://www.instagram.com/see_uniuni" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-namu" href="https://namu.wiki/w/시윤(Billlie)" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   
   <h2>Siyoon fancams</h2>
@@ -154,7 +163,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/billlie/siyoon/s/zap/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/133/62/714/13362714_20260504112638_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ZAP</span><span class="sp-tile-n">6 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/billlie/siyoon/s/gingamingayo/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/108/77/261/10877261_20220223110341_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">GingaMingaYo</span><span class="sp-tile-n">5 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/billlie/siyoon/s/work/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/133/62/714/13362714_20260504112638_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">WORK</span><span class="sp-tile-n">3 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/billlie/siyoon/s/byob/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/34/897/11334897_20231023113244_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BYOB</span><span class="sp-tile-n">3 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/billlie/siyoon/s/enchantednight白夜/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/07/178/11207178_20230320161927_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">enchanted night ~ 白夜</span><span class="sp-tile-n">3 fancams</span></a>
     </div>
   

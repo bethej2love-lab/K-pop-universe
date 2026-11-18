@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,6 +91,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="언어 선택" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/en/g/cravity/serim/" lang="en" hreflang="en" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">View in English</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
+  <a class="brand" href="https://kpop-universe.kr/all/" style="margin-left:10px;">모아보기</a>
   <div class="top2">
     <h1>세림(Serim)</h1>
     <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/7110d47a-4c4f-48d8-8c15-f42996ec8d9e.jpg" alt="세림" loading="eager" width="240" height="240">
@@ -93,6 +101,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>데뷔</b> 2020.04.14</span>
       <span><b>소속사</b> Starship</span>
     </div>
+    <div class="sns"><a class="sns-instagram" href="https://www.instagram.com/sserimiress" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-namu" href="https://namu.wiki/w/세림" target="_blank" rel="noopener noreferrer">나무위키</a></div>
   </div>
   
   <h2>세림 직캠</h2>
@@ -153,12 +162,12 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <h2>곡별 직캠</h2>
     <div class="sp-tiles">
       <a class="sp-tile" href="https://kpop-universe.kr/g/크래비티/세림/s/partyrock/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/64/954/11064954_20220927100944_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">PARTY ROCK</span><span class="sp-tile-n">직캠 12</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/크래비티/세림/s/breakalltherules/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/17/413/10417413_20200414160155_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Break all the Rules</span><span class="sp-tile-n">직캠 10</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/크래비티/세림/s/breakalltherules/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/17/413/10417413_20200414160155_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Break all the Rules</span><span class="sp-tile-n">직캠 9</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/크래비티/세림/s/groovy/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/111/96/069/11196069_20230306110246_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Groovy</span><span class="sp-tile-n">직캠 9</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/크래비티/세림/s/adrenaline/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/108/95/690/10895690_20220322110013_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Adrenaline</span><span class="sp-tile-n">직캠 8</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/크래비티/세림/s/myturn/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/49/839/10549839_20210119140134_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">My Turn</span><span class="sp-tile-n">직캠 7</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/크래비티/세림/s/loveordie/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/27/268/11427268_20240223163913_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Love or Die</span><span class="sp-tile-n">직캠 6</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/크래비티/세림/s/flame/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/79/981/10479981_20200824151549_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Flame</span><span class="sp-tile-n">직캠 6</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/크래비티/세림/s/loveordie/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/27/268/11427268_20240223163913_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Love or Die</span><span class="sp-tile-n">직캠 6</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/크래비티/세림/s/readyornot/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/18/005/11318005_20230911131859_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Ready or Not</span><span class="sp-tile-n">직캠 5</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/크래비티/세림/s/gaspedal/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/85/586/10685586_20210819142337_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Gas Pedal</span><span class="sp-tile-n">직캠 4</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/크래비티/세림/s/cloud9/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/17/413/10417413_20200414160155_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Cloud 9</span><span class="sp-tile-n">직캠 4</span></a>
@@ -190,7 +199,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/아이들/우기/">우기</a> <span class="tag">아이들</span></li>
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/cravity/serim/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"모든 무대","t":"PARTY ROCK","s":"세림 직캠 12개","img":"6MEJrVpArlk","m":"PARTY ROCK","h":"https://kpop-universe.kr/g/크래비티/세림/s/partyrock/"},{"k":"같은 곡","t":"형준 · PARTY ROCK","s":"직캠 13개","img":"LXaqytVRpGU","m":"PARTY ROCK","h":"https://kpop-universe.kr/g/크래비티/형준/s/partyrock/"},{"k":"그룹","t":"크래비티","s":"무대 · 뮤비 · 멤버","im":"https://img.youtube.com/vi/97IY4VbzOTg/mqdefault.jpg","h":"https://kpop-universe.kr/g/크래비티/"},{"k":"케미","t":"세림 × 형준","s":"함께 나온 영상 52개","img":"cpMH1AsrHC8","h":"https://kpop-universe.kr/chem/크래비티/세림-형준/"},{"k":"모든 무대","t":"Break all the Rules","s":"세림 직캠 10개","img":"byTqnk25zL4","m":"Break all the Rules","h":"https://kpop-universe.kr/g/크래비티/세림/s/breakalltherules/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"모든 무대","t":"PARTY ROCK","s":"세림 직캠 12개","img":"6MEJrVpArlk","m":"PARTY ROCK","h":"https://kpop-universe.kr/g/크래비티/세림/s/partyrock/"},{"k":"같은 곡","t":"형준 · PARTY ROCK","s":"직캠 13개","img":"LXaqytVRpGU","m":"PARTY ROCK","h":"https://kpop-universe.kr/g/크래비티/형준/s/partyrock/"},{"k":"그룹","t":"크래비티","s":"무대 · 뮤비 · 멤버","im":"https://img.youtube.com/vi/97IY4VbzOTg/mqdefault.jpg","h":"https://kpop-universe.kr/g/크래비티/"},{"k":"케미","t":"세림 × 형준","s":"함께 나온 영상 52개","img":"cpMH1AsrHC8","h":"https://kpop-universe.kr/chem/크래비티/세림-형준/"},{"k":"모든 무대","t":"Break all the Rules","s":"세림 직캠 9개","img":"a6ILMIYCRYI","m":"Break all the Rules","h":"https://kpop-universe.kr/g/크래비티/세림/s/breakalltherules/"}]</script>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=크래비티&m=세림">프로필·직캠·무대 영상 보기 →</a></div>
 </div>
 </body>

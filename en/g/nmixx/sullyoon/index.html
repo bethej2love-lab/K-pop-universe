@@ -5,7 +5,7 @@
 <script>(function(){var h=location.hash;if(/(^#|&)vf=/.test(h))location.replace('https://kpop-universe.kr/'+h);})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NMIXX Sullyoon(엔믹스 설윤) Profile, Age, Fancams, Birthday | K-POP UNIVERSE</title>
-<meta name="description" content="236 Sullyoon (NMIXX) fancams, most viewed first. Sullyoon of NMIXX: born 2004.01.26, debuted 2022.02.22. Fancams, stages and connections on K-POP UNIVERSE.">
+<meta name="description" content="235 Sullyoon (NMIXX) fancams, most viewed first. Sullyoon of NMIXX: born 2004.01.26, debuted 2022.02.22. Fancams, stages and connections on K-POP UNIVERSE.">
 <link rel="canonical" href="https://kpop-universe.kr/en/g/nmixx/sullyoon/">
 <link rel="alternate" hreflang="ko" href="https://kpop-universe.kr/g/엔믹스/설윤/">
 <link rel="alternate" hreflang="en" href="https://kpop-universe.kr/en/g/nmixx/sullyoon/">
@@ -13,7 +13,7 @@
 <meta property="og:type" content="profile">
 <meta property="og:site_name" content="K-POP UNIVERSE">
 <meta property="og:title" content="Sullyoon">
-<meta property="og:description" content="236 Sullyoon (NMIXX) fancams, most viewed first. Sullyoon of NMIXX: born 2004.01.26, debuted 2022.02.22. Fancams, stages and connections on K-POP UNIVERSE.">
+<meta property="og:description" content="235 Sullyoon (NMIXX) fancams, most viewed first. Sullyoon of NMIXX: born 2004.01.26, debuted 2022.02.22. Fancams, stages and connections on K-POP UNIVERSE.">
 <meta property="og:url" content="https://kpop-universe.kr/en/g/nmixx/sullyoon/">
 <meta property="og:image" content="https://img.youtube.com/vi/P5ixLSzrqQ8/maxresdefault.jpg">
 <meta property="og:image:width" content="1280">
@@ -21,7 +21,7 @@
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Sullyoon">
-<meta name="twitter:description" content="236 Sullyoon (NMIXX) fancams, most viewed first. Sullyoon of NMIXX: born 2004.01.26, debuted 2022.02.22. Fancams, stages and connections on K-POP UNIVERSE.">
+<meta name="twitter:description" content="235 Sullyoon (NMIXX) fancams, most viewed first. Sullyoon of NMIXX: born 2004.01.26, debuted 2022.02.22. Fancams, stages and connections on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/P5ixLSzrqQ8/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Sullyoon","alternateName":"설윤","birthDate":"2004-01-26","nationality":"KR","url":"https://kpop-universe.kr/en/g/nmixx/sullyoon/","image":"https://img.youtube.com/vi/P5ixLSzrqQ8/maxresdefault.jpg","memberOf":[{"@type":"MusicGroup","name":"NMIXX"}],"sameAs":["https://namu.wiki/w/설윤"]}</script>
@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,6 +91,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/엔믹스/설윤/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>Sullyoon(설윤)</h1>
     <img class="cover" src="https://img.youtube.com/vi/P5ixLSzrqQ8/maxresdefault.jpg" alt="Sullyoon" loading="lazy">
@@ -93,10 +101,11 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>Debut</b> 2022.02.22</span>
       <span><b>Agency</b> JYP Entertainment</span>
     </div>
+    <div class="sns"><a class="sns-namu" href="https://namu.wiki/w/설윤" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   
   <h2>Sullyoon fancams</h2>
-  <p class="hub-more hub-top"><a href="https://kpop-universe.kr/en/g/nmixx/sullyoon/fancams/">All 236 fancams by song →</a></p>
+  <p class="hub-more hub-top"><a href="https://kpop-universe.kr/en/g/nmixx/sullyoon/fancams/">All 235 fancams by song →</a></p>
   <div class="mf-grid">
     <a class="mf-card" href="https://www.youtube.com/watch?v=LTyc7mwLNys" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/LTyc7mwLNys/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[입덕직캠] 엔믹스 설윤 직캠 4K &#39;O.O&#39; (NMIXX SULLYOON FanCam) | @MCOUNTDOWN_2022.3.3</span><span class="mf-y">2022.03.05 · 4M+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=0lYTwMPp74o" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/0lYTwMPp74o/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 엔믹스 설윤 &#39;O.O&#39; (NMIXX SULLYOON FaceCam)│@SBS Inkigayo_2022.03.27.</span><span class="mf-y">2022.03.28 · 1M+</span></a>
@@ -142,12 +151,12 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/nmixx/sullyoon/s/oo/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/108/76/078/10876078_20220222145049_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">O.O</span><span class="sp-tile-n">19 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/nmixx/sullyoon/s/partyoclock/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/77/698/11277698_20230711173225_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Party O&#39;Clock</span><span class="sp-tile-n">18 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/nmixx/sullyoon/s/knowaboutme/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/26/557/11726557_20250317134424_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">KNOW ABOUT ME</span><span class="sp-tile-n">17 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/nmixx/sullyoon/s/bluevalentine/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/121/49/391/12149391_20251013150421_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Blue Valentine</span><span class="sp-tile-n">17 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/nmixx/sullyoon/s/bluevalentine/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/121/49/391/12149391_20251013150421_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Blue Valentine</span><span class="sp-tile-n">16 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/nmixx/sullyoon/s/heavyserenade/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/133/57/541/13357541_20260511133217_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Heavy Serenade</span><span class="sp-tile-n">10 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/nmixx/sullyoon/s/soar/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/77/680/11377680_20240115154038_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Soñar</span><span class="sp-tile-n">8 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/nmixx/sullyoon/s/rollercoaster/"><img src="https://i.scdn.co/image/ab67616d0000b2732267918182f5ebbbf2828a98" alt="" loading="lazy"><span class="sp-tile-t">Roller Coaster</span><span class="sp-tile-n">8 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/nmixx/sullyoon/s/긴소원/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/148/01/628/14801628_20261016112418_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">긴 소원 (Birthday Wish)</span><span class="sp-tile-n">7 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/nmixx/sullyoon/s/runforroses/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/77/680/11377680_20240115154038_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Run For Roses</span><span class="sp-tile-n">7 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/nmixx/sullyoon/s/rollercoaster/"><img src="https://i.scdn.co/image/ab67616d0000b2732267918182f5ebbbf2828a98" alt="" loading="lazy"><span class="sp-tile-t">Roller Coaster</span><span class="sp-tile-n">7 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/nmixx/sullyoon/s/긴소원/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/148/01/628/14801628_20261016112418_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">긴 소원 (Birthday Wish)</span><span class="sp-tile-n">6 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/nmixx/sullyoon/s/youngdumbstupid/"><img src="https://i.scdn.co/image/ab67616d0000b273335510c423df5f2eafa84c2b" alt="" loading="lazy"><span class="sp-tile-t">Young, Dumb, Stupid</span><span class="sp-tile-n">5 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/nmixx/sullyoon/s/占/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/108/76/078/10876078_20220222145049_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">占</span><span class="sp-tile-n">5 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/nmixx/sullyoon/s/highhorse/"><img src="https://i.scdn.co/image/ab67616d0000b273979d03243a52887317dba273" alt="" loading="lazy"><span class="sp-tile-t">High Horse</span><span class="sp-tile-n">4 fancams</span></a>
@@ -174,7 +183,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/riize/anton/">Anton</a> <span class="tag">RIIZE</span></li>
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/엔믹스/설윤/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"DICE","s":"22 fancams of Sullyoon","img":"OPAX-Xu52kg","m":"DICE","h":"https://kpop-universe.kr/en/g/nmixx/sullyoon/s/dice/"},{"k":"Same song","t":"Kyujin · DICE","s":"31 fancams","img":"clLaJkiIHDk","m":"DICE","h":"https://kpop-universe.kr/en/g/nmixx/kyujin/s/dice/"},{"k":"Group","t":"NMIXX","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/8Gp_4xbJG_Q/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/nmixx/"},{"k":"Chemistry","t":"Sullyoon × Bae","s":"85 videos together","img":"3J_TMfEhMkY","h":"https://kpop-universe.kr/en/chem/nmixx/bae-sullyoon/"},{"k":"Every stage","t":"DASH","s":"21 fancams of Sullyoon","img":"xbh9dCfsNWw","m":"DASH","h":"https://kpop-universe.kr/en/g/nmixx/sullyoon/s/dash/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"DICE","s":"22 fancams of Sullyoon","img":"OPAX-Xu52kg","m":"DICE","h":"https://kpop-universe.kr/en/g/nmixx/sullyoon/s/dice/"},{"k":"Same song","t":"Kyujin · DICE","s":"31 fancams","img":"clLaJkiIHDk","m":"DICE","h":"https://kpop-universe.kr/en/g/nmixx/kyujin/s/dice/"},{"k":"Group","t":"NMIXX","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/8Gp_4xbJG_Q/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/nmixx/"},{"k":"Chemistry","t":"Sullyoon × Bae","s":"78 videos together","img":"3J_TMfEhMkY","h":"https://kpop-universe.kr/en/chem/nmixx/bae-sullyoon/"},{"k":"Every stage","t":"DASH","s":"21 fancams of Sullyoon","img":"xbh9dCfsNWw","m":"DASH","h":"https://kpop-universe.kr/en/g/nmixx/sullyoon/s/dash/"}]</script>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=엔믹스&m=설윤">View profile, fancams & stages →</a></div>
 </div>
 </body>

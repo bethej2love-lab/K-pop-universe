@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,14 +91,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/보이넥스트도어/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>BOYNEXTDOOR(보이넥스트도어)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/8XYz1ByUvWY/maxresdefault.jpg" alt="BOYNEXTDOOR" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/1bd8594f-4e2e-496c-b8d9-af6f255a1f39.jpg" alt="BOYNEXTDOOR" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>Debut</b> 2023.05.30</span>
       <span><b>Agency</b> KOZ / HYBE</span>
       <span><b>Fandom</b> ONEDOOR</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://youtube.com/@boynextdoor_official" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://instagram.com/boynextdoor_official" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/BOYNEXTDOOR_KOZ" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://tiktok.com/@boynextdoor_official" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-weverse" href="https://weverse.io/boynextdoor" target="_blank" rel="noopener noreferrer">Weverse</a><a class="sns-namu" href="https://namu.wiki/w/BOYNEXTDOOR" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
   
@@ -136,24 +145,24 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <ul class="member-list rel">
       <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/earthwindfire/">Earth, Wind &amp; Fire</a></li>
       <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/뭣같아/">뭣 같아 But Sometimes</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/hollywoodaction/">Hollywood Action</a></li>
       <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/niceguy/">Nice Guy</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/ifeelgood/">I Feel Good</a></li>
       <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/oneandonly/">One and Only</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/hollywoodaction/">Hollywood Action</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/ifeelgood/">I Feel Good</a></li>
       <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/오늘만iloveyou/">오늘만 I LOVE YOU IF I SAY, I LOVE YOU</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/viral/">VIRAL</a></li>
       <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/부모님관람불가/">부모님 관람불가 Dangerous</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/viral/">VIRAL</a></li>
       <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/animal/">ANIMAL</a></li>
       <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/똑똑똑/">똑똑똑</a></li>
       <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/돌아버리겠다/">돌아버리겠다 But I Like You</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/soletsgoseethestars/">So let&#39;s go see the stars</a></li>
       <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/12378/">123-78</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/soletsgoseethestars/">So let&#39;s go see the stars</a></li>
       <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/adios/">ADIOS!</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/serenade/">Serenade</a></li>
       <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/counttolove/">Count To Love</a></li>
       <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/our/">OUR</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/있잖아/">있잖아 As Time Goes By</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/serenade/">Serenade</a></li>
       <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/crying/">Crying</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/있잖아/">있잖아 As Time Goes By</a></li>
       <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/lifeiscool/">l i f e i s c o o l</a></li>
       <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/abcdlove/">ABCDLOVE</a></li>
       <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/dangerous/">Dangerous</a></li>
@@ -161,9 +170,9 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/itsbeginningtolookalotlikechristmas/">It&#39;s Beginning To Look A Lot Like Christmas</a></li>
       <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/stepbystep/">Step By Step</a></li>
       <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/dearmydarling/">Dear. My Darling</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/boomboomboom/">Boom Boom Boom</a></li>
       <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/upsidedown/">Upside Down</a></li>
       <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/saycheese/">SAY CHEESE!</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/boomboomboom/">Boom Boom Boom</a></li>
       <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/400years/">400 Years</a></li>
       <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/liveinparis/">Live In Paris</a></li>
       <li><a href="https://kpop-universe.kr/en/g/boynextdoor/s/이렇게좋아해본적이없어요/">이렇게 좋아해 본 적이 없어요 Never Loved This Way Before</a></li>
@@ -218,7 +227,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/보이넥스트도어/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=보이넥스트도어">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"Earth, Wind & Fire","s":"224 videos","img":"u9nP3qXQA4o","m":"Earth, Wind & Fire","h":"https://kpop-universe.kr/en/g/boynextdoor/s/earthwindfire/"},{"k":"Member fancams","t":"Jaehyun","s":"291 fancams","img":"PX05ht8so7s","h":"https://kpop-universe.kr/en/g/boynextdoor/jaehyun/fancams/"},{"k":"Album","t":"HOME: DELUXE","s":"14 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/145/93/412/14593412_20260928093719_500.jpg","h":"https://kpop-universe.kr/en/g/boynextdoor/a/homedeluxe/"},{"k":"Song fancams","t":"뭣 같아 But Sometimes","s":"171 videos","img":"97_-_WugRFA","m":"뭣 같아","h":"https://kpop-universe.kr/en/g/boynextdoor/s/뭣같아/"},{"k":"Member fancams","t":"Taesan","s":"274 fancams","img":"bxxCbRKfjHs","h":"https://kpop-universe.kr/en/g/boynextdoor/taesan/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"Earth, Wind & Fire","s":"205 videos","img":"u9nP3qXQA4o","m":"Earth, Wind & Fire","h":"https://kpop-universe.kr/en/g/boynextdoor/s/earthwindfire/"},{"k":"Member fancams","t":"Jaehyun","s":"291 fancams","img":"PX05ht8so7s","h":"https://kpop-universe.kr/en/g/boynextdoor/jaehyun/fancams/"},{"k":"Album","t":"HOME: DELUXE","s":"14 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/145/93/412/14593412_20260928093719_500.jpg","h":"https://kpop-universe.kr/en/g/boynextdoor/a/homedeluxe/"},{"k":"Song fancams","t":"뭣 같아 But Sometimes","s":"161 videos","img":"97_-_WugRFA","m":"뭣 같아","h":"https://kpop-universe.kr/en/g/boynextdoor/s/뭣같아/"},{"k":"Member fancams","t":"Taesan","s":"274 fancams","img":"bxxCbRKfjHs","h":"https://kpop-universe.kr/en/g/boynextdoor/taesan/fancams/"}]</script>
 </div>
 </body>
 </html>

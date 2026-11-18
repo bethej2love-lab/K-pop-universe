@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,14 +91,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="언어 선택" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/en/g/n-ssign/" lang="en" hreflang="en" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">View in English</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
+  <a class="brand" href="https://kpop-universe.kr/all/" style="margin-left:10px;">모아보기</a>
   <div class="top2">
     <h1>엔싸인(n.SSign)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/m_v-hcS7AVk/maxresdefault.jpg" alt="엔싸인" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/60ca82ed-9825-412b-a09d-4a258bcc904a.jpg" alt="엔싸인" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>데뷔</b> 2023.08.09</span>
       <span><b>소속사</b> nCH엔터테인먼트</span>
       <span><b>팬덤명</b> 코스모</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/@nssign_official" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://www.instagram.com/nssign_official" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/nSSign_official" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://www.tiktok.com/@nch_nssign" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-namu" href="https://namu.wiki/w/n.SSign" target="_blank" rel="noopener noreferrer">나무위키</a></div>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
   
@@ -121,16 +130,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   
     <h2 id="songs">곡별 직캠·무대</h2>
     <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/엔싸인/s/웜홀/">웜홀 (Wormhole: New Track)</a></li>
       <li><a href="https://kpop-universe.kr/g/엔싸인/s/happy/">Happy &amp;</a></li>
+      <li><a href="https://kpop-universe.kr/g/엔싸인/s/웜홀/">웜홀 (Wormhole: New Track)</a></li>
       <li><a href="https://kpop-universe.kr/g/엔싸인/s/funkjam/">FUNK JAM</a></li>
       <li><a href="https://kpop-universe.kr/g/엔싸인/s/lovelovelovelovelove/">Love, Love, Love Love Love!</a></li>
       <li><a href="https://kpop-universe.kr/g/엔싸인/s/lovepotion/">Love Potion (백일몽; 白日夢)</a></li>
       <li><a href="https://kpop-universe.kr/g/엔싸인/s/tiger/">Tiger</a></li>
       <li><a href="https://kpop-universe.kr/g/엔싸인/s/ittybitty/">Itty Bitty</a></li>
       <li><a href="https://kpop-universe.kr/g/엔싸인/s/spice/">SPICE</a></li>
-      <li><a href="https://kpop-universe.kr/g/엔싸인/s/higher/">Higher</a></li>
       <li><a href="https://kpop-universe.kr/g/엔싸인/s/funkylikeme/">Funky like me</a></li>
+      <li><a href="https://kpop-universe.kr/g/엔싸인/s/higher/">Higher</a></li>
       <li><a href="https://kpop-universe.kr/g/엔싸인/s/melody/">Melody</a></li>
       <li><a href="https://kpop-universe.kr/g/엔싸인/s/runningafterlove/">Running After Love</a></li>
       <li><a href="https://kpop-universe.kr/g/엔싸인/s/나의바다/">나의 바다 (Memories of us)</a></li>
@@ -140,8 +149,8 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/엔싸인/s/apocalypse/">Apocalypse</a></li>
       <li><a href="https://kpop-universe.kr/g/엔싸인/s/salty/">Salty</a></li>
       <li><a href="https://kpop-universe.kr/g/엔싸인/s/rollercoaster/">Roller Coaster</a></li>
-      <li><a href="https://kpop-universe.kr/g/엔싸인/s/woowoo/">Woo Woo (이게 말이 돼?)</a></li>
       <li><a href="https://kpop-universe.kr/g/엔싸인/s/newstar/">NEW STAR</a></li>
+      <li><a href="https://kpop-universe.kr/g/엔싸인/s/woowoo/">Woo Woo (이게 말이 돼?)</a></li>
       <li><a href="https://kpop-universe.kr/g/엔싸인/s/risingsun/">Rising Sun (순수)</a></li>
       <li><a href="https://kpop-universe.kr/g/엔싸인/s/danceontheearth/">DANCE ON THE EARTH</a></li>
       <li><a href="https://kpop-universe.kr/g/엔싸인/s/everblue/">EVERBLUE</a></li>
@@ -195,7 +204,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/n-ssign/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=엔싸인">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"웜홀 (Wormhole: New Track)","s":"영상 116개","img":"d9IA6y_LUW0","m":"웜홀","h":"https://kpop-universe.kr/g/엔싸인/s/웜홀/"},{"k":"멤버 직캠","t":"카즈타","s":"직캠 80개","img":"9-5qvIZRycQ","h":"https://kpop-universe.kr/g/엔싸인/카즈타/fancams/"},{"k":"앨범","t":"Maze Runner -WAY OUT-","s":"수록곡 5곡","im":"https://i.scdn.co/image/ab67616d0000b2734e2e6d87145fa4b8be1a6dca","h":"https://kpop-universe.kr/g/엔싸인/a/mazerunnerwayout/"},{"k":"곡별 직캠·무대","t":"Happy &","s":"영상 108개","img":"YRzLDQdp4xE","m":"Happy &","h":"https://kpop-universe.kr/g/엔싸인/s/happy/"},{"k":"멤버 직캠","t":"한준","s":"직캠 72개","img":"w_2XseehRRY","h":"https://kpop-universe.kr/g/엔싸인/한준/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"Happy &","s":"영상 104개","img":"YRzLDQdp4xE","m":"Happy &","h":"https://kpop-universe.kr/g/엔싸인/s/happy/"},{"k":"멤버 직캠","t":"카즈타","s":"직캠 80개","img":"9-5qvIZRycQ","h":"https://kpop-universe.kr/g/엔싸인/카즈타/fancams/"},{"k":"앨범","t":"Maze Runner -WAY OUT-","s":"수록곡 5곡","im":"https://i.scdn.co/image/ab67616d0000b2734e2e6d87145fa4b8be1a6dca","h":"https://kpop-universe.kr/g/엔싸인/a/mazerunnerwayout/"},{"k":"곡별 직캠·무대","t":"웜홀 (Wormhole: New Track)","s":"영상 98개","img":"d9IA6y_LUW0","m":"웜홀","h":"https://kpop-universe.kr/g/엔싸인/s/웜홀/"},{"k":"멤버 직캠","t":"한준","s":"직캠 72개","img":"w_2XseehRRY","h":"https://kpop-universe.kr/g/엔싸인/한준/fancams/"}]</script>
 </div>
 </body>
 </html>

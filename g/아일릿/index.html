@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,14 +91,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="언어 선택" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/en/g/illit/" lang="en" hreflang="en" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">View in English</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
+  <a class="brand" href="https://kpop-universe.kr/all/" style="margin-left:10px;">모아보기</a>
   <div class="top2">
     <h1>아일릿(ILLIT)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/xqbPA_O9DZ0/maxresdefault.jpg" alt="아일릿" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/9494c37e-cd5b-4127-96e0-1d5c5eaff873.jpg" alt="아일릿" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>데뷔</b> 2024.03.25</span>
       <span><b>소속사</b> 빌리프랩 / HYBE</span>
       <span><b>팬덤명</b> 글릿</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://youtube.com/@ILLIT_official" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://instagram.com/illit_official" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/ILLIT_official" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://tiktok.com/@illit_official" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-weverse" href="https://weverse.io/illit" target="_blank" rel="noopener noreferrer">Weverse</a><a class="sns-namu" href="https://namu.wiki/w/아일릿" target="_blank" rel="noopener noreferrer">나무위키</a></div>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
   
@@ -127,19 +136,18 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/아일릿/s/notcuteanymore/">NOT CUTE ANYMORE</a></li>
       <li><a href="https://kpop-universe.kr/g/아일릿/s/cherish/">Cherish</a></li>
       <li><a href="https://kpop-universe.kr/g/아일릿/s/jellyous/">jellyous</a></li>
-      <li><a href="https://kpop-universe.kr/g/아일릿/s/체포하겠어/">체포하겠어 You&#39;re Under Arrest</a></li>
-      <li><a href="https://kpop-universe.kr/g/아일릿/s/almondchocolate/">Almond Chocolate</a></li>
       <li><a href="https://kpop-universe.kr/g/아일릿/s/ticktack/">Tick-Tack</a></li>
       <li><a href="https://kpop-universe.kr/g/아일릿/s/luckygirlsyndrome/">Lucky Girl Syndrome</a></li>
+      <li><a href="https://kpop-universe.kr/g/아일릿/s/almondchocolate/">Almond Chocolate</a></li>
+      <li><a href="https://kpop-universe.kr/g/아일릿/s/체포하겠어/">체포하겠어 You&#39;re Under Arrest</a></li>
       <li><a href="https://kpop-universe.kr/g/아일릿/s/myworld/">My World</a></li>
       <li><a href="https://kpop-universe.kr/g/아일릿/s/iykyk/">IYKYK</a></li>
       <li><a href="https://kpop-universe.kr/g/아일릿/s/igotyourback/">I Got Your Back</a></li>
-      <li><a href="https://kpop-universe.kr/g/아일릿/s/mamihlapinatapai/">Mamihlapinatapai</a></li>
       <li><a href="https://kpop-universe.kr/g/아일릿/s/oops/">oops!</a></li>
-      <li><a href="https://kpop-universe.kr/g/아일릿/s/illlikeyou/">I&#39;ll Like You</a></li>
       <li><a href="https://kpop-universe.kr/g/아일릿/s/비밀찾기/">비밀찾기 Secret Quest</a></li>
+      <li><a href="https://kpop-universe.kr/g/아일릿/s/mamihlapinatapai/">Mamihlapinatapai</a></li>
       <li><a href="https://kpop-universe.kr/g/아일릿/s/tokiyotomare/">Toki Yo Tomare</a></li>
-      <li><a href="https://kpop-universe.kr/g/아일릿/s/topping/">Topping</a></li>
+      <li><a href="https://kpop-universe.kr/g/아일릿/s/illlikeyou/">I&#39;ll Like You</a></li>
     </ul>
   
     <h2 id="albums">앨범·수록곡</h2>
@@ -187,7 +195,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/illit/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=아일릿">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"Magnetic","s":"영상 260개","img":"Vk5-c_v4gMU","m":"Magnetic","h":"https://kpop-universe.kr/g/아일릿/s/magnetic/"},{"k":"멤버 직캠","t":"민주","s":"직캠 180개","img":"stnXEC9Q3B4","h":"https://kpop-universe.kr/g/아일릿/민주/fancams/"},{"k":"앨범","t":"BREAK EVEN","s":"수록곡 4곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/150/81/373/15081373_20261026102240_500.jpg","h":"https://kpop-universe.kr/g/아일릿/a/breakeven/"},{"k":"곡별 직캠·무대","t":"It′s Me","s":"영상 164개","img":"bMhDJ0S0OBA","m":"It′s Me","h":"https://kpop-universe.kr/g/아일릿/s/itsme/"},{"k":"멤버 직캠","t":"원희","s":"직캠 146개","img":"fCtT4vZZOVQ","h":"https://kpop-universe.kr/g/아일릿/원희/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"Magnetic","s":"영상 237개","img":"Vk5-c_v4gMU","m":"Magnetic","h":"https://kpop-universe.kr/g/아일릿/s/magnetic/"},{"k":"멤버 직캠","t":"민주","s":"직캠 180개","img":"stnXEC9Q3B4","h":"https://kpop-universe.kr/g/아일릿/민주/fancams/"},{"k":"앨범","t":"BREAK EVEN","s":"수록곡 4곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/150/81/373/15081373_20261026102240_500.jpg","h":"https://kpop-universe.kr/g/아일릿/a/breakeven/"},{"k":"곡별 직캠·무대","t":"It′s Me","s":"영상 135개","img":"bMhDJ0S0OBA","m":"It′s Me","h":"https://kpop-universe.kr/g/아일릿/s/itsme/"},{"k":"멤버 직캠","t":"원희","s":"직캠 146개","img":"fCtT4vZZOVQ","h":"https://kpop-universe.kr/g/아일릿/원희/fancams/"}]</script>
 </div>
 </body>
 </html>

@@ -5,7 +5,7 @@
 <script>(function(){var h=location.hash;if(/(^#|&)vf=/.test(h))location.replace('https://kpop-universe.kr/'+h);})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>hrtz.wav Yun Youngjun(하츠웨이브 윤영준) Fancams &amp; Profile | K-POP UNIVERSE</title>
-<meta name="description" content="6 Yun Youngjun (hrtz.wav) fancams, most viewed first. Yun Youngjun of hrtz.wav: born 2000.03.21, debuted 2026.04.08. Fancams, stages and connections on K-POP UNIVERSE.">
+<meta name="description" content="7 Yun Youngjun (hrtz.wav) fancams, most viewed first. Yun Youngjun of hrtz.wav: born 2000.03.21, debuted 2026.04.08. Fancams, stages and connections on K-POP UNIVERSE.">
 <link rel="canonical" href="https://kpop-universe.kr/en/g/hrtz-wav/yun-youngjun/">
 <link rel="alternate" hreflang="ko" href="https://kpop-universe.kr/g/하츠웨이브/윤영준/">
 <link rel="alternate" hreflang="en" href="https://kpop-universe.kr/en/g/hrtz-wav/yun-youngjun/">
@@ -13,7 +13,7 @@
 <meta property="og:type" content="profile">
 <meta property="og:site_name" content="K-POP UNIVERSE">
 <meta property="og:title" content="Yun Youngjun">
-<meta property="og:description" content="6 Yun Youngjun (hrtz.wav) fancams, most viewed first. Yun Youngjun of hrtz.wav: born 2000.03.21, debuted 2026.04.08. Fancams, stages and connections on K-POP UNIVERSE.">
+<meta property="og:description" content="7 Yun Youngjun (hrtz.wav) fancams, most viewed first. Yun Youngjun of hrtz.wav: born 2000.03.21, debuted 2026.04.08. Fancams, stages and connections on K-POP UNIVERSE.">
 <meta property="og:url" content="https://kpop-universe.kr/en/g/hrtz-wav/yun-youngjun/">
 <meta property="og:image" content="https://img.youtube.com/vi/HxvKgkVu4i8/maxresdefault.jpg">
 <meta property="og:image:width" content="1280">
@@ -21,7 +21,7 @@
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Yun Youngjun">
-<meta name="twitter:description" content="6 Yun Youngjun (hrtz.wav) fancams, most viewed first. Yun Youngjun of hrtz.wav: born 2000.03.21, debuted 2026.04.08. Fancams, stages and connections on K-POP UNIVERSE.">
+<meta name="twitter:description" content="7 Yun Youngjun (hrtz.wav) fancams, most viewed first. Yun Youngjun of hrtz.wav: born 2000.03.21, debuted 2026.04.08. Fancams, stages and connections on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/HxvKgkVu4i8/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Yun Youngjun","alternateName":"윤영준","birthDate":"2000-03-21","nationality":"KR","url":"https://kpop-universe.kr/en/g/hrtz-wav/yun-youngjun/","image":"https://img.youtube.com/vi/HxvKgkVu4i8/maxresdefault.jpg","memberOf":[{"@type":"MusicGroup","name":"hrtz.wav"}],"sameAs":["https://www.instagram.com/youn9wns","https://namu.wiki/w/윤영준(hrtz.wav)"]}</script>
@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,6 +91,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/하츠웨이브/윤영준/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>Yun Youngjun(윤영준)</h1>
     <img class="cover" src="https://img.youtube.com/vi/HxvKgkVu4i8/maxresdefault.jpg" alt="Yun Youngjun" loading="lazy">
@@ -93,6 +101,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>Debut</b> 2026.04.08</span>
       <span><b>Agency</b> 카카오 Ent.</span>
     </div>
+    <div class="sns"><a class="sns-instagram" href="https://www.instagram.com/youn9wns" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-namu" href="https://namu.wiki/w/윤영준(hrtz.wav)" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   
   <h2>Yun Youngjun fancams</h2>
@@ -101,6 +110,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <a class="mf-card" href="https://www.youtube.com/watch?v=lwxFXSPiz-Y" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/lwxFXSPiz-Y/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] 하츠웨이브 윤영준 직캠 4K &#39;ALIVE (Feat. 성찬 of RIIZE)&#39; (hrtz.wav YOUNYOUNGJUN FanCam) | @MCOUNTDOWN</span><span class="mf-y">2026.09.10 · 3K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=7xN4_-EP0cs" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/7xN4_-EP0cs/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[쇼챔 원픽캠 4K] hrtz.wav YOUN YOUNG (하츠웨이브 윤영준) - NINETEEN + Dream | Show Champion | EP.593 | 260415</span><span class="mf-y">2026.04.16 · 3K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=sXsuHdsdV0w" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/sXsuHdsdV0w/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[쇼챔직캠 4K] hrtz.wav 윤영준 (하츠웨이브) - Mind + ALIVE | Show Champion | EP.612 | 260916</span><span class="mf-y">2026.09.17 · 1K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=U29EHHpRgXg" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/U29EHHpRgXg/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 하츠웨이브 윤영준 &#39;NINETEEN&#39; (hrtz.wav YOUN YOUNG JUN FanCam) @SBS Inkigayo 260412</span><span class="mf-y">2026.04.15 · 900+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=J2lgTUnb24k" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/J2lgTUnb24k/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[4K 60P] hrtz.wav(하츠웨이브) 윤영준(YOUN YOUNG JUN) 「ALIVE」 세로 직캠 | ENA K POP UP CHART SHOW(케이팝업 차트쇼)</span><span class="mf-y">2026.09.29 · 700+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=nTvHLXcUIXU" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/nTvHLXcUIXU/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[쇼챔직캠 4K] hrtz.wav 윤영준 (하츠웨이브) - Sunday Morning | Show Champion | EP.615 | 261021</span><span class="mf-y">2026.10.22 · 500+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=aA5UER3xS5M" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/aA5UER3xS5M/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[캐치캠 4K] hrtz.wav YOUN YOUNG JUN ‘ALIVE’ (하츠웨이브 윤영준 직캠) l SHOW K-POP l 261019</span><span class="mf-y">2026.10.21 · 200+</span></a>
@@ -118,6 +128,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <h2>Fancams by song</h2>
     <div class="sp-tiles">
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/hrtz-wav/yun-youngjun/s/alive/"><img src="https://i.scdn.co/image/ab67616d0000b27397ce9ffb59037b0ea1a6e71b" alt="" loading="lazy"><span class="sp-tile-t">ALIVE</span><span class="sp-tile-n">5 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/hrtz-wav/yun-youngjun/s/nineteen/"><img src="https://i.scdn.co/image/ab67616d0000b273a12400572554f6aae5063096" alt="" loading="lazy"><span class="sp-tile-t">NINETEEN</span><span class="sp-tile-n">4 fancams</span></a>
     </div>
   
   
@@ -141,7 +152,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/stray-kids/felix/">Felix</a> <span class="tag">Stray Kids</span></li>
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/하츠웨이브/윤영준/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"ALIVE","s":"5 fancams of Yun Youngjun","img":"HxvKgkVu4i8","m":"ALIVE","h":"https://kpop-universe.kr/en/g/hrtz-wav/yun-youngjun/s/alive/"},{"k":"Same song","t":"Hagiwa · ALIVE","s":"8 fancams","img":"LYxZmBeBEDs","m":"ALIVE","h":"https://kpop-universe.kr/en/g/hrtz-wav/hagiwa/s/alive/"},{"k":"Group","t":"hrtz.wav","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/TUzGjJ-MfhQ/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/hrtz-wav/"},{"k":"Chemistry","t":"Yun Youngjun × Dane","s":"12 videos together","img":"nuL-yTvUa44","h":"https://kpop-universe.kr/en/chem/hrtz-wav/dane-yun-youngjun/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"ALIVE","s":"5 fancams of Yun Youngjun","img":"HxvKgkVu4i8","m":"ALIVE","h":"https://kpop-universe.kr/en/g/hrtz-wav/yun-youngjun/s/alive/"},{"k":"Same song","t":"Hagiwa · ALIVE","s":"8 fancams","img":"LYxZmBeBEDs","m":"ALIVE","h":"https://kpop-universe.kr/en/g/hrtz-wav/hagiwa/s/alive/"},{"k":"Group","t":"hrtz.wav","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/TUzGjJ-MfhQ/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/hrtz-wav/"},{"k":"Chemistry","t":"Yun Youngjun × Dane","s":"12 videos together","img":"nuL-yTvUa44","h":"https://kpop-universe.kr/en/chem/hrtz-wav/dane-yun-youngjun/"},{"k":"Every stage","t":"NINETEEN","s":"4 fancams of Yun Youngjun","img":"-fk2cUH9fDc","m":"NINETEEN","h":"https://kpop-universe.kr/en/g/hrtz-wav/yun-youngjun/s/nineteen/"}]</script>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=하츠웨이브&m=윤영준">View profile, fancams & stages →</a></div>
 </div>
 </body>

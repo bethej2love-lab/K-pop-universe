@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,14 +91,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/원어스/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>ONEUS(원어스)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/KcnFxMfTpfs/maxresdefault.jpg" alt="ONEUS" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/ecd69efc-1418-48f7-bb68-84c437119eb6.jpg" alt="ONEUS" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>Debut</b> 2019.01.09</span>
       <span><b>Agency</b> B.WAVE Entertainment</span>
       <span><b>Fandom</b> TOMOON</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://youtube.com/@ONEUS" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://www.instagram.com/official_oneus/" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/official_ONEUS" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://www.tiktok.com/@bwave_oneus" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-namu" href="https://namu.wiki/w/원어스" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
   
@@ -122,39 +131,39 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <ul class="member-list rel">
       <li><a href="https://kpop-universe.kr/en/g/oneus/s/월하미인/">월하미인 (月下美人 : LUNA)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/oneus/s/samescent/">Same Scent</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/oneus/s/반박불가/">반박불가 (No diggity)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/oneus/s/덤벼/">덤벼 (Bring it on)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/oneus/s/반박불가/">반박불가 (No diggity)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/oneus/s/eraseme/">ERASE ME</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/oneus/s/blackmirror/">BLACK MIRROR</a></li>
       <li><a href="https://kpop-universe.kr/en/g/oneus/s/now/">Now</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/oneus/s/blackmirror/">BLACK MIRROR</a></li>
       <li><a href="https://kpop-universe.kr/en/g/oneus/s/bailaconmigo/">Baila Conmigo</a></li>
       <li><a href="https://kpop-universe.kr/en/g/oneus/s/태양이떨어진다/">태양이 떨어진다 (Twilight)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/oneus/s/x/">X</a></li>
       <li><a href="https://kpop-universe.kr/en/g/oneus/s/ikuk/">IKUK</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/oneus/s/발키리/">발키리 (Valkyrie)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/oneus/s/가자/">가자 (LIT)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/oneus/s/x/">X</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/oneus/s/발키리/">발키리 (Valkyrie)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/oneus/s/눈을돌리지마/">눈을 돌리지마 (Say Yes!)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/oneus/s/쉽게쓰여진노래/">쉽게 쓰여진 노래 (A Song Written Easily)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/oneus/s/tobeornottobe/">TO BE OR NOT TO BE</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/oneus/s/radar/">RADAR</a></li>
       <li><a href="https://kpop-universe.kr/en/g/oneus/s/skydivin/">Skydivin&#39;</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/oneus/s/radar/">RADAR</a></li>
       <li><a href="https://kpop-universe.kr/en/g/oneus/s/잇다있다잊었다/">잇다 있다 잊었다 (Unforgettable)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/oneus/s/루퍼트의눈물/">루퍼트의 눈물 (Rupert&#39;s drop)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/oneus/s/뿌셔/">뿌셔 (BBUSYEO)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/oneus/s/introwhogotthejoker/">Intro : Who Got the Joker?</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/oneus/s/영웅/">영웅 (英雄; Kick It)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/oneus/s/우리의시간은거꾸로흐른다/">우리의 시간은 거꾸로 흐른다 (Rewind)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/oneus/s/levelup/">Level Up</a></li>
       <li><a href="https://kpop-universe.kr/en/g/oneus/s/천만분의1의확률의너/">천만분의 1의 확률의 너 (Gravitation)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/oneus/s/우리의시간은거꾸로흐른다/">우리의 시간은 거꾸로 흐른다 (Rewind)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/oneus/s/comebackhome/">COME BACK HOME</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/oneus/s/영웅/">영웅 (英雄; Kick It)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/oneus/s/introdevilisinthedetail/">Intro : Devil is in the detail</a></li>
       <li><a href="https://kpop-universe.kr/en/g/oneus/s/airplane/">Airplane</a></li>
       <li><a href="https://kpop-universe.kr/en/g/oneus/s/under/">Under</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/oneus/s/iknowyouknow/">I KNOW YOU KNOW</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/oneus/s/levelup/">Level Up</a></li>
       <li><a href="https://kpop-universe.kr/en/g/oneus/s/timemachine/">TIME MACHINE</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/oneus/s/lifeisbeautiful/">Life is Beautiful</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/oneus/s/iknowyouknow/">I KNOW YOU KNOW</a></li>
       <li><a href="https://kpop-universe.kr/en/g/oneus/s/intro창/">Intro : 창</a></li>
       <li><a href="https://kpop-universe.kr/en/g/oneus/s/hatchling/">Hatchling</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/oneus/s/lifeisbeautiful/">Life is Beautiful</a></li>
     </ul>
   
     <h2 id="albums">Albums & tracklists</h2>
@@ -220,7 +229,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/원어스/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=원어스">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"월하미인 (月下美人 : LUNA)","s":"133 videos","img":"oe2_BrZx9mc","m":"월하미인","h":"https://kpop-universe.kr/en/g/oneus/s/월하미인/"},{"k":"Member fancams","t":"Hwanwoong","s":"118 fancams","img":"DnRwe54AiIo","h":"https://kpop-universe.kr/en/g/oneus/hwanwoong/fancams/"},{"k":"Album","t":"FIRST LIGHT : 井","s":"5 tracks","im":"https://i.scdn.co/image/ab67616d0000b27335cae1694c5f60c5bdce605d","h":"https://kpop-universe.kr/en/g/oneus/a/firstlight井/"},{"k":"Song fancams","t":"Same Scent","s":"126 videos","img":"XlqTPCEfiyA","m":"Same Scent","h":"https://kpop-universe.kr/en/g/oneus/s/samescent/"},{"k":"Member fancams","t":"Leedo","s":"96 fancams","img":"RmHGqQ9ZmvY","h":"https://kpop-universe.kr/en/g/oneus/leedo/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"월하미인 (月下美人 : LUNA)","s":"115 videos","img":"oe2_BrZx9mc","m":"월하미인","h":"https://kpop-universe.kr/en/g/oneus/s/월하미인/"},{"k":"Member fancams","t":"Hwanwoong","s":"118 fancams","img":"DnRwe54AiIo","h":"https://kpop-universe.kr/en/g/oneus/hwanwoong/fancams/"},{"k":"Album","t":"FIRST LIGHT : 井","s":"5 tracks","im":"https://i.scdn.co/image/ab67616d0000b27335cae1694c5f60c5bdce605d","h":"https://kpop-universe.kr/en/g/oneus/a/firstlight井/"},{"k":"Song fancams","t":"Same Scent","s":"109 videos","img":"XlqTPCEfiyA","m":"Same Scent","h":"https://kpop-universe.kr/en/g/oneus/s/samescent/"},{"k":"Member fancams","t":"Leedo","s":"96 fancams","img":"RmHGqQ9ZmvY","h":"https://kpop-universe.kr/en/g/oneus/leedo/fancams/"}]</script>
 </div>
 </body>
 </html>

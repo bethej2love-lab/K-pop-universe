@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,6 +91,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="언어 선택" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/en/g/sistar/hyolyn/" lang="en" hreflang="en" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">View in English</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
+  <a class="brand" href="https://kpop-universe.kr/all/" style="margin-left:10px;">모아보기</a>
   <div class="top2">
     <h1>효린(Hyolyn)</h1>
     <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/55f29fd6-394c-4ce4-9a79-331c9dccdc18.jpg" alt="효린" loading="eager" width="240" height="240">
@@ -93,6 +101,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>데뷔</b> 2010.06.03</span>
       <span><b>소속사</b> 스타쉽엔터테인먼트</span>
     </div>
+    <div class="sns"><a class="sns-instagram" href="https://www.instagram.com/xhyolynx/" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-namu" href="https://namu.wiki/w/효린" target="_blank" rel="noopener noreferrer">나무위키</a></div>
   </div>
   
   <h2>효린 직캠</h2>
@@ -157,23 +166,22 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   
     <h2>곡별 직캠</h2>
     <div class="sp-tiles">
-      <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/check/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/138/25/681/13825681_20260721160443_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ChecK</span><span class="sp-tile-n">직캠 14</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/wait/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/64/605/11564605_20240809181806_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Wait</span><span class="sp-tile-n">직캠 14</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/바다보러갈래/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/87/136/10187136_500.jpg?e9552f40cd31b1bc81b2cfe5148cb94d" alt="" loading="lazy"><span class="sp-tile-t">바다보러갈래 (SEE SEA)</span><span class="sp-tile-n">직캠 13</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/달리/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/60/796/10160796_500.jpg?7b8ff7870d3ac1441d6169d2fe4ffeed" alt="" loading="lazy"><span class="sp-tile-t">달리</span><span class="sp-tile-n">직캠 13</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/바다보러갈래/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/87/136/10187136_500.jpg?e9552f40cd31b1bc81b2cfe5148cb94d" alt="" loading="lazy"><span class="sp-tile-t">바다보러갈래 (SEE SEA)</span><span class="sp-tile-n">직캠 12</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/달리/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/60/796/10160796_500.jpg?7b8ff7870d3ac1441d6169d2fe4ffeed" alt="" loading="lazy"><span class="sp-tile-t">달리</span><span class="sp-tile-n">직캠 12</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/check/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/138/25/681/13825681_20260721160443_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ChecK</span><span class="sp-tile-n">직캠 8</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/wait/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/64/605/11564605_20240809181806_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Wait</span><span class="sp-tile-n">직캠 8</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/bluemoon/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/55/259/10055259_500.jpg?1961712f64a969b21161de0cf336ee7a" alt="" loading="lazy"><span class="sp-tile-t">BLUE MOON</span><span class="sp-tile-n">직캠 8</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/layinlow/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/108/38/778/10838778_20220111154717_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Layin&#39; Low</span><span class="sp-tile-n">직캠 8</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/touchmybody/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/68/221/2268221_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Touch My Body</span><span class="sp-tile-n">직캠 6</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/nomore/"><img src="https://cdnimg.melon.co.kr/cm/album/images/113/98/915/11398915_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">NO MORE</span><span class="sp-tile-n">직캠 6</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/saymyname/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/77/445/10477445_20200818182111_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SAY MY NAME</span><span class="sp-tile-n">직캠 6</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/sowhat/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/109/28/857/10928857_20220421174246_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">So What</span><span class="sp-tile-n">직캠 6</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/paradise/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/08/836/10008836_500.jpg?8b8d87a70112355caa7255b8f041be44" alt="" loading="lazy"><span class="sp-tile-t">Paradise</span><span class="sp-tile-n">직캠 6</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/shotty/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/120/91/066/12091066_20250901162336_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SHOTTY</span><span class="sp-tile-n">직캠 5</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/이게사랑이지뭐야/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/83/629/11283629_20230711173208_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">이게 사랑이지 뭐야</span><span class="sp-tile-n">직캠 5</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/nothanks/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/05/996/11005996_20220715162136_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">NO THANKS</span><span class="sp-tile-n">직캠 5</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/saymyname/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/77/445/10477445_20200818182111_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SAY MY NAME</span><span class="sp-tile-n">직캠 5</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/wakaboom/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/05/996/11005996_20220715162136_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Waka Boom</span><span class="sp-tile-n">직캠 5</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/sowhat/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/109/28/857/10928857_20220421174246_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">So What</span><span class="sp-tile-n">직캠 5</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/lovelikethis/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/08/836/10008836_500.jpg?8b8d87a70112355caa7255b8f041be44" alt="" loading="lazy"><span class="sp-tile-t">Love Like This</span><span class="sp-tile-n">직캠 5</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/shakeit/"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/25/345/2325345_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SHAKE IT</span><span class="sp-tile-n">직캠 4</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/이게사랑이지뭐야/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/83/629/11283629_20230711173208_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">이게 사랑이지 뭐야</span><span class="sp-tile-n">직캠 4</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/nothanks/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/05/996/11005996_20220715162136_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">NO THANKS</span><span class="sp-tile-n">직캠 4</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/layinlow/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/108/38/778/10838778_20220111154717_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Layin&#39; Low</span><span class="sp-tile-n">직캠 4</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/니가더잘알잖아/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/88/457/10288457_500.jpg?e8f39f8b5caab59cfcbe15bcd644e6bb" alt="" loading="lazy"><span class="sp-tile-t">니가 더 잘 알잖아 (youknowbetter)</span><span class="sp-tile-n">직캠 4</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/lonely/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/17/251/2217251_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Lonely</span><span class="sp-tile-n">직캠 3</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/씨스타/효린/s/9lives/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/77/445/10477445_20200818182111_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">9LIVES</span><span class="sp-tile-n">직캠 3</span></a>
@@ -235,7 +243,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/비투비/이민혁/">이민혁</a> <span class="tag">비투비</span></li>
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/sistar/hyolyn/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"모든 무대","t":"ChecK","s":"효린 직캠 14개","img":"QJa8TKXNavc","m":"ChecK","h":"https://kpop-universe.kr/g/씨스타/효린/s/check/"},{"k":"그룹","t":"씨스타","s":"무대 · 뮤비 · 멤버","im":"https://img.youtube.com/vi/4t1KEpD9QqM/mqdefault.jpg","h":"https://kpop-universe.kr/g/씨스타/"},{"k":"케미","t":"효린 × 보라","s":"함께 나온 영상 39개","img":"X6XXia5B2Wg","h":"https://kpop-universe.kr/chem/씨스타/보라-효린/"},{"k":"모든 무대","t":"Wait","s":"효린 직캠 14개","img":"URqVqjdY5iY","m":"Wait","h":"https://kpop-universe.kr/g/씨스타/효린/s/wait/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"모든 무대","t":"바다보러갈래","s":"효린 직캠 12개","img":"x0dsngc3F98","m":"바다보러갈래","h":"https://kpop-universe.kr/g/씨스타/효린/s/바다보러갈래/"},{"k":"그룹","t":"씨스타","s":"무대 · 뮤비 · 멤버","im":"https://img.youtube.com/vi/4t1KEpD9QqM/mqdefault.jpg","h":"https://kpop-universe.kr/g/씨스타/"},{"k":"케미","t":"효린 × 보라","s":"함께 나온 영상 39개","img":"X6XXia5B2Wg","h":"https://kpop-universe.kr/chem/씨스타/보라-효린/"},{"k":"모든 무대","t":"달리","s":"효린 직캠 12개","img":"AoZFLCy-P-8","m":"달리","h":"https://kpop-universe.kr/g/씨스타/효린/s/달리/"}]</script>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=씨스타&m=효린">프로필·직캠·무대 영상 보기 →</a></div>
 </div>
 </body>

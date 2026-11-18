@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,6 +91,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/라이즈/쇼타로/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>Shotaro(쇼타로)</h1>
     <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/53144b14-d20b-4057-9a09-b0bdc332818b.png" alt="Shotaro" loading="eager" width="240" height="240">
@@ -93,6 +101,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>Debut</b> 2023.09.04</span>
       <span><b>Agency</b> SM Entertainment</span>
     </div>
+    <div class="sns"><a class="sns-namu" href="https://namu.wiki/w/쇼타로" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   
   <h2>Shotaro fancams</h2>
@@ -135,20 +144,20 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   
     <h2>Fancams by song</h2>
     <div class="sp-tiles">
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/riize/shotaro/s/boomboombass/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/56/179/11456179_20240617152303_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Boom Boom Bass</span><span class="sp-tile-n">36 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/riize/shotaro/s/boomboombass/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/56/179/11456179_20240617152303_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Boom Boom Bass</span><span class="sp-tile-n">32 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/riize/shotaro/s/doyourdance/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/137/31/669/13731669_20260612113905_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Do Your Dance</span><span class="sp-tile-n">25 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/riize/shotaro/s/impossible/"><img src="https://i.scdn.co/image/ab67616d0000b273aaaa5e731ac13b961d02dc2f" alt="" loading="lazy"><span class="sp-tile-t">Impossible</span><span class="sp-tile-n">24 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/riize/shotaro/s/love119/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/94/065/11394065_20240104151541_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Love 119</span><span class="sp-tile-n">21 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/riize/shotaro/s/talksaxy/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/52/519/11352519_20231026160513_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Talk Saxy</span><span class="sp-tile-n">20 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/riize/shotaro/s/flyup/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/96/054/11796054_20250519154637_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Fly Up</span><span class="sp-tile-n">19 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/riize/shotaro/s/getaguitar/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/09/832/11309832_20230904111501_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Get A Guitar</span><span class="sp-tile-n">18 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/riize/shotaro/s/talksaxy/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/52/519/11352519_20231026160513_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Talk Saxy</span><span class="sp-tile-n">18 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/riize/shotaro/s/impossible/"><img src="https://i.scdn.co/image/ab67616d0000b273aaaa5e731ac13b961d02dc2f" alt="" loading="lazy"><span class="sp-tile-t">Impossible</span><span class="sp-tile-n">18 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/riize/shotaro/s/getaguitar/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/09/832/11309832_20230904111501_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Get A Guitar</span><span class="sp-tile-n">16 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/riize/shotaro/s/fame/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/124/02/759/12402759_20251121172323_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Fame</span><span class="sp-tile-n">15 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/riize/shotaro/s/love119/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/94/065/11394065_20240104151541_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Love 119</span><span class="sp-tile-n">14 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/riize/shotaro/s/bagbadback/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/96/054/11796054_20250519154637_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Bag Bad Back</span><span class="sp-tile-n">11 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/riize/shotaro/s/memories/"><img src="https://i.scdn.co/image/ab67616d0000b273de06b9790ac6c49ff680cf70" alt="" loading="lazy"><span class="sp-tile-t">Memories</span><span class="sp-tile-n">7 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/riize/shotaro/s/잉걸/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/96/054/11796054_20250519154637_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">잉걸 (Ember to Solar)</span><span class="sp-tile-n">7 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/riize/shotaro/s/siren/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/09/832/11309832_20230904111501_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Siren</span><span class="sp-tile-n">6 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/riize/shotaro/s/insomnia/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/150/74/721/15074721_20261023150339_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Insomnia</span><span class="sp-tile-n">6 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/riize/shotaro/s/lucky/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/51/663/11551663_20240726113858_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Lucky</span><span class="sp-tile-n">5 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/riize/shotaro/s/siren/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/09/832/11309832_20230904111501_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Siren</span><span class="sp-tile-n">4 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/riize/shotaro/s/hug/"><img src="https://i.scdn.co/image/ab67616d0000b27313a11197c7c1bca4ed31d6a7" alt="" loading="lazy"><span class="sp-tile-t">Hug</span><span class="sp-tile-n">3 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/riize/shotaro/s/likeabomb/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/137/31/669/13731669_20260612113905_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Like a Bomb</span><span class="sp-tile-n">3 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/riize/shotaro/s/overdrive/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/137/31/669/13731669_20260612113905_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Overdrive</span><span class="sp-tile-n">3 fancams</span></a>
@@ -174,7 +183,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/stray-kids/felix/">Felix</a> <span class="tag">Stray Kids</span></li>
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/라이즈/쇼타로/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"Boom Boom Bass","s":"36 fancams of Shotaro","img":"EQwJwazxPhw","m":"Boom Boom Bass","h":"https://kpop-universe.kr/en/g/riize/shotaro/s/boomboombass/"},{"k":"Same song","t":"Wonbin · Boom Boom Bass","s":"42 fancams","img":"k3hCYy_1FtU","m":"Boom Boom Bass","h":"https://kpop-universe.kr/en/g/riize/wonbin/s/boomboombass/"},{"k":"Group","t":"RIIZE","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/GqFnE-z4KrY/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/riize/"},{"k":"Chemistry","t":"Shotaro × Wonbin","s":"78 videos together","img":"yGYSdiG8khE","h":"https://kpop-universe.kr/en/chem/riize/shotaro-wonbin/"},{"k":"Every stage","t":"Do Your Dance","s":"25 fancams of Shotaro","img":"ibexCkVJ7Ew","m":"Do Your Dance","h":"https://kpop-universe.kr/en/g/riize/shotaro/s/doyourdance/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"Boom Boom Bass","s":"32 fancams of Shotaro","img":"FikyBJa7qe4","m":"Boom Boom Bass","h":"https://kpop-universe.kr/en/g/riize/shotaro/s/boomboombass/"},{"k":"Same song","t":"Wonbin · Boom Boom Bass","s":"38 fancams","img":"M6-EyCebOug","m":"Boom Boom Bass","h":"https://kpop-universe.kr/en/g/riize/wonbin/s/boomboombass/"},{"k":"Group","t":"RIIZE","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/GqFnE-z4KrY/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/riize/"},{"k":"Chemistry","t":"Shotaro × Wonbin","s":"78 videos together","img":"yGYSdiG8khE","h":"https://kpop-universe.kr/en/chem/riize/shotaro-wonbin/"},{"k":"Every stage","t":"Do Your Dance","s":"25 fancams of Shotaro","img":"ibexCkVJ7Ew","m":"Do Your Dance","h":"https://kpop-universe.kr/en/g/riize/shotaro/s/doyourdance/"}]</script>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=라이즈&m=쇼타로">View profile, fancams & stages →</a></div>
 </div>
 </body>

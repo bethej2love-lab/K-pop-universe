@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <script>(function(){var h=location.hash;if(/(^#|&)vf=/.test(h))location.replace('https://kpop-universe.kr/'+h);})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CANDY SHOP Sarang(캔디샵 사랑) Profile, Age, Fancams, Birthday | K-POP UNIVERSE</title>
-<meta name="description" content="Sarang of CANDY SHOP: born 2007.11.30, debuted 2024.03.27. Fancams, stages and connections on K-POP UNIVERSE.">
+<title>CANDY SHOP Sarang(캔디샵 사랑) Fancams &amp; Profile | K-POP UNIVERSE</title>
+<meta name="description" content="5 Sarang (CANDY SHOP) fancams, most viewed first. Sarang of CANDY SHOP: born 2007.11.30, debuted 2024.03.27. Fancams, stages and connections on K-POP UNIVERSE.">
 <link rel="canonical" href="https://kpop-universe.kr/en/g/candy-shop/sarang/">
 <link rel="alternate" hreflang="ko" href="https://kpop-universe.kr/g/캔디샵/사랑/">
 <link rel="alternate" hreflang="en" href="https://kpop-universe.kr/en/g/candy-shop/sarang/">
@@ -13,7 +13,7 @@
 <meta property="og:type" content="profile">
 <meta property="og:site_name" content="K-POP UNIVERSE">
 <meta property="og:title" content="Sarang">
-<meta property="og:description" content="Sarang of CANDY SHOP: born 2007.11.30, debuted 2024.03.27. Fancams, stages and connections on K-POP UNIVERSE.">
+<meta property="og:description" content="5 Sarang (CANDY SHOP) fancams, most viewed first. Sarang of CANDY SHOP: born 2007.11.30, debuted 2024.03.27. Fancams, stages and connections on K-POP UNIVERSE.">
 <meta property="og:url" content="https://kpop-universe.kr/en/g/candy-shop/sarang/">
 <meta property="og:image" content="https://img.youtube.com/vi/JCxVncFz5lk/maxresdefault.jpg">
 <meta property="og:image:width" content="1280">
@@ -21,7 +21,7 @@
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Sarang">
-<meta name="twitter:description" content="Sarang of CANDY SHOP: born 2007.11.30, debuted 2024.03.27. Fancams, stages and connections on K-POP UNIVERSE.">
+<meta name="twitter:description" content="5 Sarang (CANDY SHOP) fancams, most viewed first. Sarang of CANDY SHOP: born 2007.11.30, debuted 2024.03.27. Fancams, stages and connections on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/JCxVncFz5lk/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Sarang","alternateName":"사랑","birthDate":"2007-11-30","nationality":"KR","url":"https://kpop-universe.kr/en/g/candy-shop/sarang/","image":"https://img.youtube.com/vi/JCxVncFz5lk/maxresdefault.jpg","memberOf":[{"@type":"MusicGroup","name":"CANDY SHOP"}],"sameAs":["https://namu.wiki/w/사랑(CANDY SHOP)"]}</script>
@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,6 +91,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/캔디샵/사랑/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>Sarang(사랑)</h1>
     <img class="cover" src="https://img.youtube.com/vi/JCxVncFz5lk/maxresdefault.jpg" alt="Sarang" loading="lazy">
@@ -93,8 +101,18 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>Debut</b> 2024.03.27</span>
       <span><b>Agency</b> Brave Entertainment</span>
     </div>
+    <div class="sns"><a class="sns-namu" href="https://namu.wiki/w/사랑(CANDY SHOP)" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   
+  <h2>Sarang fancams</h2>
+  
+  <div class="mf-grid">
+    <a class="mf-card" href="https://www.youtube.com/watch?v=u__O-VLVJ9w" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/u__O-VLVJ9w/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[4K] Candy Shop SARANG | K-pop Star Showcase | MVP FanCam | FULL VER</span><span class="mf-y">2024.04.17 · 100K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=KOZrkRKOJ8c" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/KOZrkRKOJ8c/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 캔디샵 사랑 &#39;Good Girl&#39; (Candy Shop SARANG FanCam)│@SBS Inkigayo 240331</span><span class="mf-y">2024.04.02 · 7K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=akogJv8prBM" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/akogJv8prBM/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 캔디샵 사랑 &#39;Don’t Cry&#39; (Candy Shop SARANG FanCam) @SBS Inkigayo 240623</span><span class="mf-y">2024.06.26 · 5K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=pOrN-uixBPc" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/pOrN-uixBPc/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 캔디샵 사랑 &#39;TIP TOE&#39; (Candy Shop SARANG FanCam) @SBS Inkigayo 250330</span><span class="mf-y">2025.04.02 · 4K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=tdeShHCpq38" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/tdeShHCpq38/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[플리캠 4K] Candy Shop SARANG &#39;TIP TOE&#39; (캔디샵 사랑 직캠) l Simply K-Pop GateWayToKorea</span><span class="mf-y">2025.03.21 · 2K+</span></a>
+  </div>
   <p class="intro">Sarang is a K-pop idol of South Korean nationality, born in 2007. Member of CANDY SHOP.</p>
   
   
@@ -103,8 +121,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/candy-shop/">CANDY SHOP</a></li>
     </ul>
   
-    <h2>Most viewed fancams & stages</h2>
-    <div class="mf-grid"><a class="mf-card" href="https://www.youtube.com/watch?v=u__O-VLVJ9w" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/u__O-VLVJ9w/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[4K] Candy Shop SARANG | K-pop Star Showcase | MVP FanCam | FULL VER</span><span class="mf-y">2024.04.17 · 100K+</span></a><a class="mf-card" href="https://www.youtube.com/watch?v=n2xbzuAQl8c" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/n2xbzuAQl8c/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[캔디샵] 아이돌 환절기 사복 패션 (사랑, 수이) l EP.5  #CandyShop #캔디샵 #쇼챔피언 #올더케이팝</span><span class="mf-y">2026.11.06 · 20K+</span></a><a class="mf-card" href="https://www.youtube.com/watch?v=JCxVncFz5lk" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/JCxVncFz5lk/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">캔디샵 소람&amp;사랑의 첫 라이브에 온 걸 환영해💕</span><span class="mf-y">2024.05.31 · 3K+</span></a><a class="mf-card" href="https://www.youtube.com/watch?v=R6NSqYIZZRY" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/R6NSqYIZZRY/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">XROMEDA LIVE FAN MEETING NOTICE with 수이🐰&amp; 사랑🐯</span><span class="mf-y">2024.07.24 · 2K+</span></a><a class="mf-card" href="https://www.youtube.com/watch?v=tdeShHCpq38" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/tdeShHCpq38/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[플리캠 4K] Candy Shop SARANG &#39;TIP TOE&#39; (캔디샵 사랑 직캠) l Simply K-Pop GateWayToKorea</span><span class="mf-y">2025.03.21 · 2K+</span></a></div>
   
   
   

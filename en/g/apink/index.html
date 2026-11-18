@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,14 +91,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/에이핑크/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>Apink(에이핑크)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/R3SDZx3QZrM/maxresdefault.jpg" alt="Apink" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/36a1d73d-a375-4e9f-bf18-c7c3fbec68fc.jpg" alt="Apink" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>Debut</b> 2011.04.19</span>
       <span><b>Agency</b> With Us Entertainment</span>
       <span><b>Fandom</b> PANDA</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/@officialapink" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://www.instagram.com/official.apink2011" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/Apink_2011" target="_blank" rel="noopener noreferrer">X</a><a class="sns-weverse" href="https://weverse.io/apink" target="_blank" rel="noopener noreferrer">Weverse</a><a class="sns-namu" href="https://namu.wiki/w/Apink" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
   
@@ -138,78 +147,78 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/apink/s/mrchu/">Mr. Chu</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/덤더럼/">덤더럼 (Dumhdurum)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/lovememore/">Love Me More</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/dilemma/">Dilemma</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/내가설렐수있게/">내가 설렐 수 있게 Only One</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/five/">FIVE</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/내가설렐수있게/">내가 설렐 수 있게 Only One</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/dilemma/">Dilemma</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/remember/">Remember</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/uyou/">U You</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/몰라요/">몰라요 I Don&#39;t Know</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/하늘바라기/">하늘바라기</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/hush/">HUSH</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/dnd/">D N D</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/bubibu/">BUBIBU</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/mymy/">My My</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/dnd/">D N D</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/copycat/">Copycat</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/lovelyday/">Lovely Day</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/luv/">LUV</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/copycat/">Copycat</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/너란봄/">너란 봄</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/sunshine/">Sunshine</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/나에게로떠나는여행/">나에게로 떠나는 여행</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/dontmakemelaugh/">Don&#39;t Make Me Laugh</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/sunshine/">Sunshine</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/꿈결처럼/">꿈결처럼 Like a Dream</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/응응/">%%</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/alright/">A L R I G H T</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/away/">AWay</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/꿈결처럼/">꿈결처럼 Like a Dream</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/itgirl/">It Girl</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/pinkchristmas/">PINK CHRISTMAS</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/응응/">%%</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/파도/">파도 (i love LOVE)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/어떤가요/">어떤가요</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/소녀의소년/">소녀의 소년</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/별의별/">별의 별</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/dontmakemelaugh/">Don&#39;t Make Me Laugh</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/secretgarden/">Secret Garden</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/bird/">Bird</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/소녀의소년/">소녀의 소년</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/itgirl/">It Girl</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/nothing/">Nothing</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/안아줘요/">안아줘요 Hug Me</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/별의별/">별의 별</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/파도/">파도 (i love LOVE)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/boompowlove/">Boom Pow Love</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/사랑동화/">사랑동화 Love Story</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/고마워/">고마워 (Thank you)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/pinkchristmas/">PINK CHRISTMAS</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/secret/">Secret</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/candy/">Candy</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/redcarpet/">Red Carpet</a></li>
     </ul>
     <details class="more-songs"><summary>35 more songs</summary>
     <ul class="member-list rel">
       <li><a href="https://kpop-universe.kr/en/g/apink/s/너의모든순간을사랑해/">너의 모든 순간을 사랑해 Moment</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/secret/">Secret</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/보습의중요성/">보습의 중요성</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/서울의달/">서울의 달</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/candy/">Candy</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/redcarpet/">Red Carpet</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/sundaymonday/">SUNDAY MONDAY</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/흰수염고래/">흰수염고래</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/simpleisthebest/">Simple is the best</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/사랑동화/">사랑동화 Love Story</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/보습의중요성/">보습의 중요성</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/loveisblind/">Love is Blind</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/dingdong/">Ding Dong</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/꽃잎점/">꽃잎점 Petal</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/신기하죠/">신기하죠 A Wonderful Love</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/너의밤은어때/">너의 밤은 어때</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/simpleisthebest/">Simple is the best</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/상자/">상자</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/서울의달/">서울의 달</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/bad/">BAD</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/고마워/">고마워 (Thank you)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/bemyself/">Be Myself</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/overwrite/">Overwrite</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/네가손짓해주면/">네가 손짓해주면 The Wave</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/인생한잔/">인생 한잔</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/두고왔나봐요/">두고 왔나 봐요</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/같이걸어요/">같이 걸어요 (Duet. 10cm)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/꽃잎점/">꽃잎점 Petal</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/신기하죠/">신기하죠 A Wonderful Love</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/흰수염고래/">흰수염고래</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/너의밤은어때/">너의 밤은 어때</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/계절이바뀌듯/">계절이 바뀌듯</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/home/">Home</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/bird/">Bird</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/손을잡아줘/">손을 잡아줘 Hold My Hand</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/나만알면돼/">나만 알면 돼 I want you to be happy</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/기적같은이야기/">기적 같은 이야기 Miracle</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/goodmorningbaby/">Good Morning Baby</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/꿈/">꿈</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/apink/s/사랑을위하여/">사랑을 위하여</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/두고왔나봐요/">두고 왔나 봐요</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/그대란정원/">그대란 정원</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/15thseason/">15th Season</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/기적같은이야기/">기적 같은 이야기 Miracle</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/always/">Always</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/wishlist/">Wishlist</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/꿈/">꿈</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/사랑을위하여/">사랑을 위하여</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/인생한잔/">인생 한잔</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/apink/s/같이걸어요/">같이 걸어요 (Duet. 10cm)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/apink/s/everybodyready/">Everybody Ready?</a></li>
     </ul></details>
   
@@ -277,7 +286,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/에이핑크/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=에이핑크">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"NoNoNo","s":"146 videos","img":"hspqQuuuGIw","m":"NoNoNo","h":"https://kpop-universe.kr/en/g/apink/s/nonono/"},{"k":"Member fancams","t":"Jung Eunji","s":"892 fancams","img":"qjv6V4YUz1I","h":"https://kpop-universe.kr/en/g/apink/jung-eunji/fancams/"},{"k":"Album","t":"RE : LOVE","s":"5 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/124/64/999/12464999_20260102175448_500.jpg","h":"https://kpop-universe.kr/en/g/apink/a/relove/"},{"k":"Song fancams","t":"1도 없어 I'm So Sick","s":"103 videos","img":"F4oHuML9U2A","m":"1도 없어","h":"https://kpop-universe.kr/en/g/apink/s/1도없어/"},{"k":"Member fancams","t":"Yoon Bomi","s":"280 fancams","img":"2ivWqlXYDhE","h":"https://kpop-universe.kr/en/g/apink/yoon-bomi/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"NoNoNo","s":"128 videos","img":"hspqQuuuGIw","m":"NoNoNo","h":"https://kpop-universe.kr/en/g/apink/s/nonono/"},{"k":"Member fancams","t":"Jung Eunji","s":"892 fancams","img":"qjv6V4YUz1I","h":"https://kpop-universe.kr/en/g/apink/jung-eunji/fancams/"},{"k":"Album","t":"RE : LOVE","s":"5 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/124/64/999/12464999_20260102175448_500.jpg","h":"https://kpop-universe.kr/en/g/apink/a/relove/"},{"k":"Song fancams","t":"1도 없어 I'm So Sick","s":"91 videos","img":"F4oHuML9U2A","m":"1도 없어","h":"https://kpop-universe.kr/en/g/apink/s/1도없어/"},{"k":"Member fancams","t":"Yoon Bomi","s":"280 fancams","img":"2ivWqlXYDhE","h":"https://kpop-universe.kr/en/g/apink/yoon-bomi/fancams/"}]</script>
 </div>
 </body>
 </html>

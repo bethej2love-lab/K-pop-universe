@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,14 +91,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="언어 선택" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/en/g/kep1er/" lang="en" hreflang="en" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">View in English</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
+  <a class="brand" href="https://kpop-universe.kr/all/" style="margin-left:10px;">모아보기</a>
   <div class="top2">
     <h1>케플러(Kep1er)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/rAcBqAY-h-s/maxresdefault.jpg" alt="케플러" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/59d1d26c-03ea-44a2-8498-9fa902b6befc.jpg" alt="케플러" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>데뷔</b> 2022.01.03</span>
       <span><b>소속사</b> 웨이크원</span>
       <span><b>팬덤명</b> 케플리안</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/@Kep1er_Offcl" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://www.instagram.com/official.kep1er" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/official_kep1er" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://www.tiktok.com/@official_kep1er" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-weverse" href="https://weverse.io/kep1er" target="_blank" rel="noopener noreferrer">Weverse</a><a class="sns-namu" href="https://namu.wiki/w/Kep1er" target="_blank" rel="noopener noreferrer">나무위키</a></div>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
   
@@ -127,15 +136,15 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/케플러/s/wadada/">WA DA DA</a></li>
       <li><a href="https://kpop-universe.kr/g/케플러/s/giddy/">Giddy</a></li>
       <li><a href="https://kpop-universe.kr/g/케플러/s/shootingstar/">Shooting Star</a></li>
-      <li><a href="https://kpop-universe.kr/g/케플러/s/tipitap/">TIPI-TAP</a></li>
       <li><a href="https://kpop-universe.kr/g/케플러/s/up/">Up!</a></li>
       <li><a href="https://kpop-universe.kr/g/케플러/s/wefresh/">We Fresh</a></li>
-      <li><a href="https://kpop-universe.kr/g/케플러/s/bubblegum/">BUBBLE GUM</a></li>
+      <li><a href="https://kpop-universe.kr/g/케플러/s/tipitap/">TIPI-TAP</a></li>
       <li><a href="https://kpop-universe.kr/g/케플러/s/galileo/">Galileo</a></li>
       <li><a href="https://kpop-universe.kr/g/케플러/s/killa/">KILLA</a></li>
+      <li><a href="https://kpop-universe.kr/g/케플러/s/bubblegum/">BUBBLE GUM</a></li>
       <li><a href="https://kpop-universe.kr/g/케플러/s/backtothecity/">Back to the City</a></li>
-      <li><a href="https://kpop-universe.kr/g/케플러/s/mvsk/">MVSK</a></li>
       <li><a href="https://kpop-universe.kr/g/케플러/s/problem/">PROBLEM</a></li>
+      <li><a href="https://kpop-universe.kr/g/케플러/s/mvsk/">MVSK</a></li>
       <li><a href="https://kpop-universe.kr/g/케플러/s/levoya9e/">LE VOYA9E</a></li>
       <li><a href="https://kpop-universe.kr/g/케플러/s/synclove/">sync-love</a></li>
       <li><a href="https://kpop-universe.kr/g/케플러/s/idodoyou/">I do! Do you?</a></li>
@@ -147,10 +156,10 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/케플러/s/straightline/">Straight Line</a></li>
       <li><a href="https://kpop-universe.kr/g/케플러/s/loveonlock/">Love on Lock</a></li>
       <li><a href="https://kpop-universe.kr/g/케플러/s/tropicallight/">Tropical Light</a></li>
-      <li><a href="https://kpop-universe.kr/g/케플러/s/yum/">Yum</a></li>
       <li><a href="https://kpop-universe.kr/g/케플러/s/wingwing/">Wing Wing</a></li>
-      <li><a href="https://kpop-universe.kr/g/케플러/s/tape/">TAPE</a></li>
       <li><a href="https://kpop-universe.kr/g/케플러/s/dreams/">Dreams</a></li>
+      <li><a href="https://kpop-universe.kr/g/케플러/s/yum/">Yum</a></li>
+      <li><a href="https://kpop-universe.kr/g/케플러/s/tape/">TAPE</a></li>
       <li><a href="https://kpop-universe.kr/g/케플러/s/seethelight/">See The Light</a></li>
     </ul>
   
@@ -212,7 +221,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/kep1er/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=케플러">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"WA DA DA","s":"영상 218개","img":"n0j5NPptyM0","m":"WA DA DA","h":"https://kpop-universe.kr/g/케플러/s/wadada/"},{"k":"멤버 직캠","t":"샤오팅","s":"직캠 256개","img":"4J-g7ida_WE","h":"https://kpop-universe.kr/g/케플러/샤오팅/fancams/"},{"k":"앨범","t":"CRACK CODE","s":"수록곡 5곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/132/99/926/13299926_20260330122722_500.jpg","h":"https://kpop-universe.kr/g/케플러/a/crackcode/"},{"k":"곡별 직캠·무대","t":"Giddy","s":"영상 199개","img":"w9ueRzymcU0","m":"Giddy","h":"https://kpop-universe.kr/g/케플러/s/giddy/"},{"k":"멤버 직캠","t":"히카루","s":"직캠 125개","img":"-6R2GlgZAc0","h":"https://kpop-universe.kr/g/케플러/히카루/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"WA DA DA","s":"영상 194개","img":"n0j5NPptyM0","m":"WA DA DA","h":"https://kpop-universe.kr/g/케플러/s/wadada/"},{"k":"멤버 직캠","t":"샤오팅","s":"직캠 256개","img":"4J-g7ida_WE","h":"https://kpop-universe.kr/g/케플러/샤오팅/fancams/"},{"k":"앨범","t":"CRACK CODE","s":"수록곡 5곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/132/99/926/13299926_20260330122722_500.jpg","h":"https://kpop-universe.kr/g/케플러/a/crackcode/"},{"k":"곡별 직캠·무대","t":"Giddy","s":"영상 189개","img":"w9ueRzymcU0","m":"Giddy","h":"https://kpop-universe.kr/g/케플러/s/giddy/"},{"k":"멤버 직캠","t":"히카루","s":"직캠 125개","img":"-6R2GlgZAc0","h":"https://kpop-universe.kr/g/케플러/히카루/fancams/"}]</script>
 </div>
 </body>
 </html>

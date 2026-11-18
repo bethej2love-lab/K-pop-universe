@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,14 +91,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/에스에프나인/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>SF9(에스에프나인)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/K6Ktr6x1oFk/maxresdefault.jpg" alt="SF9" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/1580df94-a05b-4608-8884-7e1bc2dbaadd.jpg" alt="SF9" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>Debut</b> 2016.10.05</span>
       <span><b>Agency</b> FNC Entertainment</span>
       <span><b>Fandom</b> FANTASY</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/@SF9official" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://www.instagram.com/sf9official" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/SF9official" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://www.tiktok.com/@sf9official" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-namu" href="https://namu.wiki/w/SF9" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
   
@@ -123,39 +132,37 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <h2 id="songs">Fancams & stages by song</h2>
     <ul class="member-list rel">
       <li><a href="https://kpop-universe.kr/en/g/sf9/s/teardrop/">Tear Drop</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/sf9/s/scream/">SCREAM</a></li>
       <li><a href="https://kpop-universe.kr/en/g/sf9/s/loverace/">LOVE RACE</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/sf9/s/scream/">SCREAM</a></li>
       <li><a href="https://kpop-universe.kr/en/g/sf9/s/dontworrybehappy/">Don’t Worry, Be Happy</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/sf9/s/팡파레/">팡파레 (Fanfare)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/sf9/s/puzzle/">Puzzle</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/sf9/s/goodguy/">Good Guy</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/sf9/s/팡파레/">팡파레 (Fanfare)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/sf9/s/withoutwings/">Without Wings</a></li>
       <li><a href="https://kpop-universe.kr/en/g/sf9/s/부르릉/">부르릉 (ROAR)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/sf9/s/비보라/">비보라 (BIBORA)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/sf9/s/summerbreeze/">Summer Breeze</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/sf9/s/withoutwings/">Without Wings</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/sf9/s/예뻐지지마/">예뻐지지 마 Enough</a></li>
       <li><a href="https://kpop-universe.kr/en/g/sf9/s/trauma/">Trauma</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/sf9/s/예뻐지지마/">예뻐지지 마 Enough</a></li>
       <li><a href="https://kpop-universe.kr/en/g/sf9/s/mammamia/">MAMMA MIA</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/sf9/s/goodguy/">Good Guy</a></li>
       <li><a href="https://kpop-universe.kr/en/g/sf9/s/rpm/">RPM</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/sf9/s/오솔레미오/">오솔레미오 (O Sole Mio)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/sf9/s/쉽다/">쉽다 (Easy Love)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/sf9/s/한번더사랑하자/">한 번 더 사랑하자 (Love Again)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/sf9/s/오솔레미오/">오솔레미오 (O Sole Mio)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/sf9/s/질렀어/">질렀어</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/sf9/s/오늘이라서/">오늘이라서 (For Fantasy)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/sf9/s/nowornever/">Now or Never(Live 2019 FNC KINGDOM -WINTER FOREST CAMP-)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/sf9/s/watchout/">Watch Out</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/sf9/s/돌고돌아/">돌고 돌아 (Round And Round)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/sf9/s/화끈하게/">화끈하게 Play Hard</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/sf9/s/여전히예뻐/">여전히 예뻐 (Still My Lady)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/sf9/s/muteisoff/">Mute is Off</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/sf9/s/watchout/">Watch Out</a></li>
       <li><a href="https://kpop-universe.kr/en/g/sf9/s/playhard/">Play Hard(Live 2019 FNC KINGDOM -WINTER FOREST CAMP-)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/sf9/s/countdown/">Countdown</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/sf9/s/손잡아줄게/">손잡아 줄게 (Shine Together)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/sf9/s/돌고돌아/">돌고 돌아 (Round And Round)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/sf9/s/muteisoff/">Mute is Off</a></li>
       <li><a href="https://kpop-universe.kr/en/g/sf9/s/dreamer/">Dreamer</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/sf9/s/drive5/">Drive5</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/sf9/s/move/">Move</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/sf9/s/여전히예뻐/">여전히 예뻐 (Still My Lady)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/sf9/s/손잡아줄게/">손잡아 줄게 (Shine Together)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/sf9/s/너와함께라면/">너와 함께라면 (So Beautiful)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/sf9/s/unlimited/">Unlimited</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/sf9/s/drive5/">Drive5</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/sf9/s/countdown/">Countdown</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/sf9/s/move/">Move</a></li>
     </ul>
   
     <h2 id="albums">Albums & tracklists</h2>
@@ -230,7 +237,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/에스에프나인/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=에스에프나인">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"Tear Drop","s":"91 videos","img":"Z0Je7eSXA5s","m":"Tear Drop","h":"https://kpop-universe.kr/en/g/sf9/s/teardrop/"},{"k":"Member fancams","t":"Chani","s":"56 fancams","img":"NLARatsi2jE","h":"https://kpop-universe.kr/en/g/sf9/chani/fancams/"},{"k":"Album","t":"TENACITY","s":"10 tracks","im":"https://i.scdn.co/image/ab67616d0000b273f275893fe11d76fda697eff4","h":"https://kpop-universe.kr/en/g/sf9/a/tenacity/"},{"k":"Song fancams","t":"SCREAM","s":"65 videos","img":"mvk4SnE2Tmo","m":"SCREAM","h":"https://kpop-universe.kr/en/g/sf9/s/scream/"},{"k":"Member fancams","t":"Yoo Taeyang","s":"52 fancams","img":"Sq9kfCI5ZEo","h":"https://kpop-universe.kr/en/g/sf9/yoo-taeyang/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"Tear Drop","s":"88 videos","img":"Z0Je7eSXA5s","m":"Tear Drop","h":"https://kpop-universe.kr/en/g/sf9/s/teardrop/"},{"k":"Member fancams","t":"Chani","s":"56 fancams","img":"NLARatsi2jE","h":"https://kpop-universe.kr/en/g/sf9/chani/fancams/"},{"k":"Album","t":"TENACITY","s":"10 tracks","im":"https://i.scdn.co/image/ab67616d0000b273f275893fe11d76fda697eff4","h":"https://kpop-universe.kr/en/g/sf9/a/tenacity/"},{"k":"Song fancams","t":"LOVE RACE","s":"58 videos","img":"fAmDoiuJgWw","m":"LOVE RACE","h":"https://kpop-universe.kr/en/g/sf9/s/loverace/"},{"k":"Member fancams","t":"Yoo Taeyang","s":"52 fancams","img":"Sq9kfCI5ZEo","h":"https://kpop-universe.kr/en/g/sf9/yoo-taeyang/fancams/"}]</script>
 </div>
 </body>
 </html>

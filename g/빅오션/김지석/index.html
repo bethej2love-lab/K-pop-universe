@@ -5,7 +5,7 @@
 <script>(function(){var h=location.hash;if(/(^#|&)vf=/.test(h))location.replace('https://kpop-universe.kr/'+h);})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>빅오션 김지석(BIG Ocean Kim Jiseok) 직캠 모음·프로필 | K-POP UNIVERSE</title>
-<meta name="description" content="빅오션 김지석 직캠 3개를 조회수 순으로. 김지석(빅오션): 2003.03.05 생, 2024.04.20 데뷔. 직캠·무대 영상과 함께한 아이돌을 K-POP UNIVERSE에서.">
+<meta name="description" content="빅오션 김지석 직캠 4개를 조회수 순으로. 김지석(빅오션): 2003.03.05 생, 2024.04.20 데뷔. 직캠·무대 영상과 함께한 아이돌을 K-POP UNIVERSE에서.">
 <link rel="canonical" href="https://kpop-universe.kr/g/빅오션/김지석/">
 <link rel="alternate" hreflang="en" href="https://kpop-universe.kr/en/g/big-ocean/kim-jiseok/">
 <link rel="alternate" hreflang="ko" href="https://kpop-universe.kr/g/빅오션/김지석/">
@@ -13,7 +13,7 @@
 <meta property="og:type" content="profile">
 <meta property="og:site_name" content="K-POP UNIVERSE">
 <meta property="og:title" content="김지석">
-<meta property="og:description" content="빅오션 김지석 직캠 3개를 조회수 순으로. 김지석(빅오션): 2003.03.05 생, 2024.04.20 데뷔. 직캠·무대 영상과 함께한 아이돌을 K-POP UNIVERSE에서.">
+<meta property="og:description" content="빅오션 김지석 직캠 4개를 조회수 순으로. 김지석(빅오션): 2003.03.05 생, 2024.04.20 데뷔. 직캠·무대 영상과 함께한 아이돌을 K-POP UNIVERSE에서.">
 <meta property="og:url" content="https://kpop-universe.kr/g/빅오션/김지석/">
 <meta property="og:image" content="https://img.youtube.com/vi/2FdooI3YzxI/maxresdefault.jpg">
 <meta property="og:image:width" content="1280">
@@ -21,7 +21,7 @@
 <meta property="og:locale" content="ko_KR">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="김지석">
-<meta name="twitter:description" content="빅오션 김지석 직캠 3개를 조회수 순으로. 김지석(빅오션): 2003.03.05 생, 2024.04.20 데뷔. 직캠·무대 영상과 함께한 아이돌을 K-POP UNIVERSE에서.">
+<meta name="twitter:description" content="빅오션 김지석 직캠 4개를 조회수 순으로. 김지석(빅오션): 2003.03.05 생, 2024.04.20 데뷔. 직캠·무대 영상과 함께한 아이돌을 K-POP UNIVERSE에서.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/2FdooI3YzxI/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"김지석","alternateName":"Kim Jiseok","birthDate":"2003-03-05","nationality":"한국","url":"https://kpop-universe.kr/g/빅오션/김지석/","image":"https://img.youtube.com/vi/2FdooI3YzxI/maxresdefault.jpg","memberOf":[{"@type":"MusicGroup","name":"빅오션"}],"sameAs":["https://www.instagram.com/jiseok_1","https://namu.wiki/w/김지석(BIG Ocean)"]}</script>
@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,6 +91,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="언어 선택" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/en/g/big-ocean/kim-jiseok/" lang="en" hreflang="en" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">View in English</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
+  <a class="brand" href="https://kpop-universe.kr/all/" style="margin-left:10px;">모아보기</a>
   <div class="top2">
     <h1>김지석(Kim Jiseok)</h1>
     <img class="cover" src="https://img.youtube.com/vi/2FdooI3YzxI/maxresdefault.jpg" alt="김지석" loading="lazy">
@@ -93,11 +101,13 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>데뷔</b> 2024.04.20</span>
       <span><b>소속사</b> Parastar Entertainment</span>
     </div>
+    <div class="sns"><a class="sns-instagram" href="https://www.instagram.com/jiseok_1" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-namu" href="https://namu.wiki/w/김지석(BIG Ocean)" target="_blank" rel="noopener noreferrer">나무위키</a></div>
   </div>
   
   <h2>김지석 직캠</h2>
   
   <div class="mf-grid">
+    <a class="mf-card" href="https://www.youtube.com/watch?v=cnsCRoHDRa0" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/cnsCRoHDRa0/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 빅오션 지석 &#39;빛&#39; (Big Ocean Kim Ji Seok &#39;Glow&#39; FanCam) @SBS Inkigayo 240512</span><span class="mf-y">2024.05.14 · 3K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=ls24p6UMB68" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/ls24p6UMB68/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[플리캠 4K] BIG OCEAN Jiseok &#39;FADE OUT&#39; (빅오션 지석 직캠) l Simply K-Pop GateWayToKorea</span><span class="mf-y">2025.05.23 · 600+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=kA1HWRjxbto" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/kA1HWRjxbto/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[4K 60P] 빅오션(Big Ocean) 지석(JISEOK) 「Love Sign」 세로 직캠 | ENA K POP UP CHART SHOW(케이팝업 차트쇼), 261027</span><span class="mf-y">2026.10.27 · 500+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=b-Mse_Q5u3s" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/b-Mse_Q5u3s/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[쇼챔직캠 4K] Big Ocean Jiseok(빅오션 지석) - One Man Army | Show Champion | EP.589 | 260318</span><span class="mf-y">2026.03.18 · 500+</span></a>

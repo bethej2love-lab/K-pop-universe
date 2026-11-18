@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,14 +91,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="언어 선택" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/en/g/b1a4/" lang="en" hreflang="en" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">View in English</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
+  <a class="brand" href="https://kpop-universe.kr/all/" style="margin-left:10px;">모아보기</a>
   <div class="top2">
     <h1>비원에이포(B1A4)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/7SBeyhjCppA/mqdefault.jpg" alt="비원에이포" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/8859574d-a820-49df-8436-b9b61ada4cca.jpg" alt="비원에이포" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>데뷔</b> 2011.04.23</span>
       <span><b>소속사</b> 비원에이포컴퍼니</span>
       <span><b>팬덤명</b> 바나</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/@chB1A4" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://www.instagram.com/b1a4ganatanatda" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/_B1A4OFFICIAL" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://www.tiktok.com/@official_b1a4" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-weverse" href="https://weverse.io/b1a4" target="_blank" rel="noopener noreferrer">Weverse</a><a class="sns-namu" href="https://namu.wiki/w/B1A4" target="_blank" rel="noopener noreferrer">나무위키</a></div>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
   
@@ -125,44 +134,42 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <h2 id="songs">곡별 직캠·무대</h2>
     <ul class="member-list rel">
       <li><a href="https://kpop-universe.kr/g/비원에이포/s/rewind/">REWIND</a></li>
+      <li><a href="https://kpop-universe.kr/g/비원에이포/s/거짓말이야/">거짓말이야</a></li>
+      <li><a href="https://kpop-universe.kr/g/비원에이포/s/영화처럼/">영화처럼</a></li>
       <li><a href="https://kpop-universe.kr/g/비원에이포/s/이게무슨일이야/">이게 무슨 일이야 What&#39;s Happening?</a></li>
       <li><a href="https://kpop-universe.kr/g/비원에이포/s/beautifultarget/">Beautiful Target</a></li>
-      <li><a href="https://kpop-universe.kr/g/비원에이포/s/영화처럼/">영화처럼</a></li>
       <li><a href="https://kpop-universe.kr/g/비원에이포/s/soloday/">Solo Day</a></li>
-      <li><a href="https://kpop-universe.kr/g/비원에이포/s/거짓말이야/">거짓말이야</a></li>
-      <li><a href="https://kpop-universe.kr/g/비원에이포/s/그리워하다/">그리워하다 (Lonely)</a></li>
       <li><a href="https://kpop-universe.kr/g/비원에이포/s/가위바위보/">가위바위보 Rock Paper Scissors</a></li>
-      <li><a href="https://kpop-universe.kr/g/비원에이포/s/잘자요굿나잇/">잘자요 굿나잇 Baby good night</a></li>
-      <li><a href="https://kpop-universe.kr/g/비원에이포/s/おやすみgoodnightoyasumigoodnight/">おやすみGood Night / Oyasumi Good Night</a></li>
+      <li><a href="https://kpop-universe.kr/g/비원에이포/s/그리워하다/">그리워하다 (Lonely)</a></li>
+      <li><a href="https://kpop-universe.kr/g/비원에이포/s/babyimsorry/">BABY I&#39;M SORRY</a></li>
       <li><a href="https://kpop-universe.kr/g/비원에이포/s/悪いことばかり学んでwaruikotobakarimanande/">悪いことばかり学んで / Waruikotobakari Manande</a></li>
-      <li><a href="https://kpop-universe.kr/g/비원에이포/s/sweetgirl/">Sweet Girl</a></li>
+      <li><a href="https://kpop-universe.kr/g/비원에이포/s/歩いてみるaruitemiru/">歩いてみる / Aruite Miru</a></li>
       <li><a href="https://kpop-universe.kr/g/비원에이포/s/悪いことばかり学んでwaruikotobarakimanande/">悪いことばかり学んで / Warui Kotobaraki Manande</a></li>
       <li><a href="https://kpop-universe.kr/g/비원에이포/s/惡いことばかり學んでwaruikotobakarimanannde/">惡いことばかり學んで / Waruikotobakari Manannde</a></li>
-      <li><a href="https://kpop-universe.kr/g/비원에이포/s/babyimsorry/">BABY I&#39;M SORRY</a></li>
-      <li><a href="https://kpop-universe.kr/g/비원에이포/s/歩いてみるaruitemiru/">歩いてみる / Aruite Miru</a></li>
+      <li><a href="https://kpop-universe.kr/g/비원에이포/s/おやすみgoodnightoyasumigoodnight/">おやすみGood Night / Oyasumi Good Night</a></li>
+      <li><a href="https://kpop-universe.kr/g/비원에이포/s/sweetgirl/">Sweet Girl</a></li>
       <li><a href="https://kpop-universe.kr/g/비원에이포/s/步いてみるaruitemiru/">步いてみる / Aruitemiru</a></li>
       <li><a href="https://kpop-universe.kr/g/비원에이포/s/걸어본다/">걸어 본다</a></li>
+      <li><a href="https://kpop-universe.kr/g/비원에이포/s/잘자요굿나잇/">잘자요 굿나잇 Baby good night</a></li>
       <li><a href="https://kpop-universe.kr/g/비원에이포/s/ok/">OK</a></li>
-      <li><a href="https://kpop-universe.kr/g/비원에이포/s/rollin/">Rollin&#39;</a></li>
       <li><a href="https://kpop-universe.kr/g/비원에이포/s/시간을지나마주한너/">시간을 지나 마주한 너</a></li>
-      <li><a href="https://kpop-universe.kr/g/비원에이포/s/whatshappening/">What&#39;s Happening?</a></li>
+      <li><a href="https://kpop-universe.kr/g/비원에이포/s/rollin/">Rollin&#39;</a></li>
       <li><a href="https://kpop-universe.kr/g/비원에이포/s/게으른나/">게으른 나</a></li>
+      <li><a href="https://kpop-universe.kr/g/비원에이포/s/cpr/">CPR</a></li>
       <li><a href="https://kpop-universe.kr/g/비원에이포/s/ムルハンジャンmuruhanjan/">ムルハンジャン / Muruhanjan</a></li>
       <li><a href="https://kpop-universe.kr/g/비원에이포/s/ムルハンジャンmuruhanjyan/">ムルハンジャン / Muru Hanjyan</a></li>
+      <li><a href="https://kpop-universe.kr/g/비원에이포/s/whatshappening/">What&#39;s Happening?</a></li>
       <li><a href="https://kpop-universe.kr/g/비원에이포/s/여름날여름밤/">여름날 여름밤</a></li>
-      <li><a href="https://kpop-universe.kr/g/비원에이포/s/cpr/">CPR</a></li>
       <li><a href="https://kpop-universe.kr/g/비원에이포/s/오렌지색하늘은무슨맛일까/">오렌지색 하늘은 무슨 맛일까? (what is LovE?)</a></li>
-      <li><a href="https://kpop-universe.kr/g/비원에이포/s/날씨좋은날/">날씨 좋은 날</a></li>
       <li><a href="https://kpop-universe.kr/g/비원에이포/s/그렇게있어줘/">그렇게 있어 줘</a></li>
-      <li><a href="https://kpop-universe.kr/g/비원에이포/s/goodtiming/">Good Timing</a></li>
-      <li><a href="https://kpop-universe.kr/g/비원에이포/s/mylove/">My Love</a></li>
-      <li><a href="https://kpop-universe.kr/g/비원에이포/s/yesterday/">Yesterday</a></li>
-      <li><a href="https://kpop-universe.kr/g/비원에이포/s/거대한말/">거대한 말 Adore you</a></li>
       <li><a href="https://kpop-universe.kr/g/비원에이포/s/아이처럼/">아이처럼 Like a child</a></li>
+      <li><a href="https://kpop-universe.kr/g/비원에이포/s/goodtiming/">Good Timing</a></li>
+      <li><a href="https://kpop-universe.kr/g/비원에이포/s/날씨좋은날/">날씨 좋은 날</a></li>
+      <li><a href="https://kpop-universe.kr/g/비원에이포/s/yesterday/">Yesterday</a></li>
+      <li><a href="https://kpop-universe.kr/g/비원에이포/s/whoami/">WHO AM I</a></li>
+      <li><a href="https://kpop-universe.kr/g/비원에이포/s/mylove/">My Love</a></li>
       <li><a href="https://kpop-universe.kr/g/비원에이포/s/쮸쮸쮸/">쮸쮸쮸 (Chu Chu Chu)</a></li>
       <li><a href="https://kpop-universe.kr/g/비원에이포/s/작은상자/">작은 상자</a></li>
-      <li><a href="https://kpop-universe.kr/g/비원에이포/s/whoami/">WHO AM I</a></li>
-      <li><a href="https://kpop-universe.kr/g/비원에이포/s/10times/">10 TIMES</a></li>
     </ul>
   
     <h2 id="albums">앨범·수록곡</h2>
@@ -241,7 +248,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/b1a4/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=비원에이포">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"REWIND","s":"영상 65개","img":"NWXGoLrjv2A","m":"REWIND","h":"https://kpop-universe.kr/g/비원에이포/s/rewind/"},{"k":"멤버 직캠","t":"산들","s":"직캠 26개","img":"fK_bkuk-JPc","h":"https://kpop-universe.kr/g/비원에이포/산들/fancams/"},{"k":"앨범","t":"SET","s":"수록곡 5곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/133/38/638/13338638_20260420115942_500.jpg","h":"https://kpop-universe.kr/g/비원에이포/a/set/"},{"k":"곡별 직캠·무대","t":"이게 무슨 일이야 What's Happening?","s":"영상 47개","img":"oqxHy4G9FMI","m":"이게 무슨 일이야","h":"https://kpop-universe.kr/g/비원에이포/s/이게무슨일이야/"},{"k":"멤버 직캠","t":"공찬","s":"직캠 21개","img":"vqCjQ2jrJww","h":"https://kpop-universe.kr/g/비원에이포/공찬/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"REWIND","s":"영상 59개","img":"NWXGoLrjv2A","m":"REWIND","h":"https://kpop-universe.kr/g/비원에이포/s/rewind/"},{"k":"멤버 직캠","t":"산들","s":"직캠 26개","img":"fK_bkuk-JPc","h":"https://kpop-universe.kr/g/비원에이포/산들/fancams/"},{"k":"앨범","t":"SET","s":"수록곡 5곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/133/38/638/13338638_20260420115942_500.jpg","h":"https://kpop-universe.kr/g/비원에이포/a/set/"},{"k":"곡별 직캠·무대","t":"거짓말이야","s":"영상 31개","img":"x67c_lYqTQ8","m":"거짓말이야","h":"https://kpop-universe.kr/g/비원에이포/s/거짓말이야/"},{"k":"멤버 직캠","t":"공찬","s":"직캠 21개","img":"vqCjQ2jrJww","h":"https://kpop-universe.kr/g/비원에이포/공찬/fancams/"}]</script>
 </div>
 </body>
 </html>

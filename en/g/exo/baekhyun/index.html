@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,6 +91,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/엑소/백현/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>Baekhyun(백현)</h1>
     <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/ca389903-5feb-4452-9268-db0ec1b6e556.jpg" alt="Baekhyun" loading="eager" width="240" height="240">
@@ -93,6 +101,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>Debut</b> 2012.04.08</span>
       <span><b>Agency</b> SM Entertainment</span>
     </div>
+    <div class="sns"><a class="sns-instagram" href="https://www.instagram.com/baekhyunee_exo" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-namu" href="https://namu.wiki/w/백현" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   
   <h2>Baekhyun fancams</h2>
@@ -157,30 +166,23 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   
     <h2>Fancams by song</h2>
     <div class="sp-tiles">
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/candy/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/34/955/10434955_20200525154009_500.jpg?c9d297950c711aa1d00577aca593f50a" alt="" loading="lazy"><span class="sp-tile-t">Candy</span><span class="sp-tile-n">18 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/으르렁/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/96/229/2296229_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">으르렁 (Growl)</span><span class="sp-tile-n">15 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/exploration/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/20/150/10420150_20200420172339_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">EXplOration</span><span class="sp-tile-n">14 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/unvillage/"><img src="https://cdnimg.melon.co.kr/cm/album/images/103/05/581/10305581_500.jpg?e77a9b97244968a081b488f3ea386761" alt="" loading="lazy"><span class="sp-tile-t">UN Village</span><span class="sp-tile-n">14 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/monster/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/89/855/2689855_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Monster</span><span class="sp-tile-n">9 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/chocolate/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/118/07/257/11807257_20250519144040_500.jpg?06bb4706c3b331dff381ed19300e44bd" alt="" loading="lazy"><span class="sp-tile-t">Chocolate</span><span class="sp-tile-n">9 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/pineappleslice/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/86/147/11586147_20240905170415_500.jpg?8f8fc6c5202dc5ba908d1c70a8ffcea9" alt="" loading="lazy"><span class="sp-tile-t">Pineapple Slice</span><span class="sp-tile-n">9 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/lovemeright/"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/21/827/2321827_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">LOVE ME RIGHT</span><span class="sp-tile-n">8 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/kokobop/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/80/589/10080589_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Ko Ko Bop</span><span class="sp-tile-n">8 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/elevator/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/118/07/257/11807257_20250519144040_500.jpg?06bb4706c3b331dff381ed19300e44bd" alt="" loading="lazy"><span class="sp-tile-t">Elevator</span><span class="sp-tile-n">8 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/candy/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/34/955/10434955_20200525154009_500.jpg?c9d297950c711aa1d00577aca593f50a" alt="" loading="lazy"><span class="sp-tile-t">Candy</span><span class="sp-tile-n">15 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/unvillage/"><img src="https://cdnimg.melon.co.kr/cm/album/images/103/05/581/10305581_500.jpg?e77a9b97244968a081b488f3ea386761" alt="" loading="lazy"><span class="sp-tile-t">UN Village</span><span class="sp-tile-n">11 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/exploration/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/20/150/10420150_20200420172339_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">EXplOration</span><span class="sp-tile-n">10 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/pineappleslice/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/86/147/11586147_20240905170415_500.jpg?8f8fc6c5202dc5ba908d1c70a8ffcea9" alt="" loading="lazy"><span class="sp-tile-t">Pineapple Slice</span><span class="sp-tile-n">8 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/chocolate/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/118/07/257/11807257_20250519144040_500.jpg?06bb4706c3b331dff381ed19300e44bd" alt="" loading="lazy"><span class="sp-tile-t">Chocolate</span><span class="sp-tile-n">7 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/creamsoda/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/62/317/11262317_20230710172603_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Cream Soda</span><span class="sp-tile-n">6 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/mama/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/08/026/2108026_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">MAMA</span><span class="sp-tile-n">6 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/power/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/93/773/10093773_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Power</span><span class="sp-tile-n">6 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/loveshot/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/32/781/10232781_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Love Shot</span><span class="sp-tile-n">5 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/나비소녀/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/87/253/2187253_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">나비소녀 (Don&#39;t Go)</span><span class="sp-tile-n">5 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/rendezvous/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/86/147/11586147_20240905170415_500.jpg?8f8fc6c5202dc5ba908d1c70a8ffcea9" alt="" loading="lazy"><span class="sp-tile-t">Rendez-Vous</span><span class="sp-tile-n">5 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/으르렁/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/96/229/2296229_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">으르렁 (Growl)</span><span class="sp-tile-n">5 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/elevator/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/118/07/257/11807257_20250519144040_500.jpg?06bb4706c3b331dff381ed19300e44bd" alt="" loading="lazy"><span class="sp-tile-t">Elevator</span><span class="sp-tile-n">5 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/loveagain/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/34/955/10434955_20200525154009_500.jpg?c9d297950c711aa1d00577aca593f50a" alt="" loading="lazy"><span class="sp-tile-t">Love Again</span><span class="sp-tile-n">5 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/eldorado/"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/11/397/2311397_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">EL DORADO</span><span class="sp-tile-n">4 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/lemonade/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/118/07/257/11807257_20250519144040_500.jpg?06bb4706c3b331dff381ed19300e44bd" alt="" loading="lazy"><span class="sp-tile-t">Lemonade</span><span class="sp-tile-n">4 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/monster/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/89/855/2689855_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Monster</span><span class="sp-tile-n">4 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/bungee/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/34/955/10434955_20200525154009_500.jpg?c9d297950c711aa1d00577aca593f50a" alt="" loading="lazy"><span class="sp-tile-t">Bungee</span><span class="sp-tile-n">4 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/바래다줄게/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/55/218/10055218_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">바래다줄게 (Take You Home)</span><span class="sp-tile-n">4 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/callmebaby/"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/11/397/2311397_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">CALL ME BABY</span><span class="sp-tile-n">3 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/lovemeright/"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/21/827/2321827_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">LOVE ME RIGHT</span><span class="sp-tile-n">3 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/loveshot/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/32/781/10232781_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Love Shot</span><span class="sp-tile-n">3 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/tempo/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/18/750/10218750_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Tempo</span><span class="sp-tile-n">3 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/늑대와미녀/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/87/253/2187253_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">늑대와 미녀 (Wolf)</span><span class="sp-tile-n">3 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/power/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/93/773/10093773_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Power</span><span class="sp-tile-n">3 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/exo/baekhyun/s/bambi/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/84/890/10584890_20210330152241_500.jpg?3d706107cbd2b3b9e9f472bf654f5a23" alt="" loading="lazy"><span class="sp-tile-t">Bambi</span><span class="sp-tile-n">3 fancams</span></a>
     </div>
   
     <h2>Solo Discography</h2>
@@ -231,7 +233,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/winner/lee-seunghoon/">Lee Seunghoon</a> <span class="tag">WINNER</span></li>
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/엑소/백현/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"Candy","s":"18 fancams of Baekhyun","img":"gmgcRWxhmqY","m":"Candy","h":"https://kpop-universe.kr/en/g/exo/baekhyun/s/candy/"},{"k":"Group","t":"EXO","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/cQeeTansp8U/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/exo/"},{"k":"Chemistry","t":"Baekhyun × Kai","s":"42 videos together","img":"90mLqAAK8dQ","h":"https://kpop-universe.kr/en/chem/exo/baekhyun-kai/"},{"k":"Every stage","t":"으르렁","s":"15 fancams of Baekhyun","img":"q2wQosjEN34","m":"으르렁","h":"https://kpop-universe.kr/en/g/exo/baekhyun/s/으르렁/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"Candy","s":"15 fancams of Baekhyun","img":"gmgcRWxhmqY","m":"Candy","h":"https://kpop-universe.kr/en/g/exo/baekhyun/s/candy/"},{"k":"Group","t":"EXO","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/cQeeTansp8U/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/exo/"},{"k":"Chemistry","t":"Baekhyun × Kai","s":"42 videos together","img":"90mLqAAK8dQ","h":"https://kpop-universe.kr/en/chem/exo/baekhyun-kai/"},{"k":"Every stage","t":"UN Village","s":"11 fancams of Baekhyun","img":"-EfjXQgE1e8","m":"UN Village","h":"https://kpop-universe.kr/en/g/exo/baekhyun/s/unvillage/"}]</script>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=엑소&m=백현">View profile, fancams & stages →</a></div>
 </div>
 </body>

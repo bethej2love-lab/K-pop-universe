@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,15 +91,17 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/리센느/제나/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>Zena(제나)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/CBE9FSWMpAc/maxresdefault.jpg" alt="Zena" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/479fa5fe-b520-421f-a490-2aa83a495e30.webp" alt="Zena" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>Group</b> RESCENE(리센느)</span>
       <span><b>Birthday</b> 2008.11.27 (age 17)</span>
       <span><b>Debut</b> 2024.03.27</span>
       <span><b>Agency</b> The Muse Entertainment</span>
     </div>
+    <div class="sns"><a class="sns-instagram" href="https://www.instagram.com/k.im_g.y_" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-namu" href="https://namu.wiki/w/제나(RESCENE)" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   
   <h2>Zena fancams</h2>
@@ -137,18 +146,15 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   
     <h2>Fancams by song</h2>
     <div class="sp-tiles">
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/rescene/zena/s/loveattack/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/75/849/11575849_20240826152240_500.jpg?da43be78cb2cc67e9ee423c739bc09b6/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">LOVE ATTACK</span><span class="sp-tile-n">22 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/rescene/zena/s/dejavu/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/118/75/116/11875116_20250701165641_500.jpg?86da3088c776a346e926b1b4052f227c/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Deja Vu</span><span class="sp-tile-n">21 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/rescene/zena/s/runaway/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/133/12/413/13312413_20260406143448_500.jpg?0d1b1aec895dbf60aa601748ddf64dd9/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Runaway</span><span class="sp-tile-n">15 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/rescene/zena/s/prettygirl/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/137/88/545/13788545_20260707111659_500.jpg?3ef0f9e6af1ea09e3f919c7cb69065ed/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Pretty Girl</span><span class="sp-tile-n">13 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/rescene/zena/s/glowup/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/07/015/11707015_20250204161952_500.jpg?0182a19eaabcf2081a0744212b9f09f1/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Glow Up</span><span class="sp-tile-n">9 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/rescene/zena/s/prettygirl/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/137/88/545/13788545_20260707111659_500.jpg?3ef0f9e6af1ea09e3f919c7cb69065ed/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Pretty Girl</span><span class="sp-tile-n">10 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/rescene/zena/s/with/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/150/82/293/15082293_20261026170443_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">With</span><span class="sp-tile-n">9 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/rescene/zena/s/bloom/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/121/96/394/12196394_20251125142736_500.jpg?5bae99da5dfd7a705e81148b272a1001/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Bloom</span><span class="sp-tile-n">5 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/rescene/zena/s/uhuh/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/50/232/11450232_20240325152500_500.jpg?90cb61e1cabcd0c1808b1fc20f8b01ec/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">UhUh</span><span class="sp-tile-n">5 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/rescene/zena/s/백화요란/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/150/82/293/15082293_20261026170443_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">백화요란 (Inside Out)</span><span class="sp-tile-n">5 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/rescene/zena/s/inmylotion/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/07/015/11707015_20250204161952_500.jpg?0182a19eaabcf2081a0744212b9f09f1/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">In my lotion</span><span class="sp-tile-n">5 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/rescene/zena/s/loveattack/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/75/849/11575849_20240826152240_500.jpg?da43be78cb2cc67e9ee423c739bc09b6/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">LOVE ATTACK</span><span class="sp-tile-n">8 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/rescene/zena/s/glowup/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/07/015/11707015_20250204161952_500.jpg?0182a19eaabcf2081a0744212b9f09f1/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Glow Up</span><span class="sp-tile-n">8 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/rescene/zena/s/dejavu/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/118/75/116/11875116_20250701165641_500.jpg?86da3088c776a346e926b1b4052f227c/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Deja Vu</span><span class="sp-tile-n">7 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/rescene/zena/s/runaway/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/133/12/413/13312413_20260406143448_500.jpg?0d1b1aec895dbf60aa601748ddf64dd9/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Runaway</span><span class="sp-tile-n">7 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/rescene/zena/s/백화요란/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/150/82/293/15082293_20261026170443_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">백화요란 (Inside Out)</span><span class="sp-tile-n">4 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/rescene/zena/s/yoyo/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/30/883/11430883_20240228160647_500.jpg?74668a6f1aef2bb4c67a674108b7bbfd/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">YoYo</span><span class="sp-tile-n">4 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/rescene/zena/s/cottoncandy/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/07/015/11707015_20250204161952_500.jpg?0182a19eaabcf2081a0744212b9f09f1/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Cotton Candy</span><span class="sp-tile-n">3 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/rescene/zena/s/uhuh/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/50/232/11450232_20240325152500_500.jpg?90cb61e1cabcd0c1808b1fc20f8b01ec/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">UhUh</span><span class="sp-tile-n">3 fancams</span></a>
     </div>
   
   
@@ -172,7 +178,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/triples/kwak-yeonji/">Kwak YeonJi</a> <span class="tag">tripleS</span></li>
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/리센느/제나/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"LOVE ATTACK","s":"22 fancams of Zena","img":"Af4OJgJ55z8","m":"LOVE ATTACK","h":"https://kpop-universe.kr/en/g/rescene/zena/s/loveattack/"},{"k":"Same song","t":"Woni · LOVE ATTACK","s":"102 fancams","img":"VINDNiicjb4","m":"LOVE ATTACK","h":"https://kpop-universe.kr/en/g/rescene/woni/s/loveattack/"},{"k":"Group","t":"RESCENE","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/L7OsQMbzmfU/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/rescene/"},{"k":"Chemistry","t":"Zena × Liv","s":"85 videos together","img":"PYzVqgqS09g","h":"https://kpop-universe.kr/en/chem/rescene/liv-zena/"},{"k":"Every stage","t":"Deja Vu","s":"21 fancams of Zena","img":"maQWa95XlLE","m":"Deja Vu","h":"https://kpop-universe.kr/en/g/rescene/zena/s/dejavu/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"Pretty Girl","s":"10 fancams of Zena","img":"yEYidTWBgJY","m":"Pretty Girl","h":"https://kpop-universe.kr/en/g/rescene/zena/s/prettygirl/"},{"k":"Same song","t":"Woni · Pretty Girl","s":"51 fancams","img":"hBMeBdWSqwk","m":"Pretty Girl","h":"https://kpop-universe.kr/en/g/rescene/woni/s/prettygirl/"},{"k":"Group","t":"RESCENE","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/L7OsQMbzmfU/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/rescene/"},{"k":"Chemistry","t":"Zena × Liv","s":"85 videos together","img":"PYzVqgqS09g","h":"https://kpop-universe.kr/en/chem/rescene/liv-zena/"},{"k":"Every stage","t":"With","s":"9 fancams of Zena","img":"SLPVTXPAlNM","m":"With","h":"https://kpop-universe.kr/en/g/rescene/zena/s/with/"}]</script>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=리센느&m=제나">View profile, fancams & stages →</a></div>
 </div>
 </body>

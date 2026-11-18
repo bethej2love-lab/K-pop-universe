@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,6 +91,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="언어 선택" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/en/g/ichillin/yejoo/" lang="en" hreflang="en" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">View in English</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
+  <a class="brand" href="https://kpop-universe.kr/all/" style="margin-left:10px;">모아보기</a>
   <div class="top2">
     <h1>예주(Yejoo)</h1>
     <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/b40ffc6b-94b0-4abf-926f-464a076287db.jpg" alt="예주" loading="eager" width="240" height="240">
@@ -93,6 +101,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>데뷔</b> 2021.09.08</span>
       <span><b>소속사</b> KM엔터테인먼트</span>
     </div>
+    <div class="sns"><a class="sns-instagram" href="https://www.instagram.com/welcometoyezoo" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-namu" href="https://namu.wiki/w/%EC%98%88%EC%A3%BC%28ICHILLIN%27%29" target="_blank" rel="noopener noreferrer">나무위키</a></div>
   </div>
   
   <h2>예주 직캠</h2>
@@ -137,9 +146,9 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <div class="sp-tiles">
       <a class="sp-tile" href="https://kpop-universe.kr/g/아이칠린/예주/s/onmylips/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/36/153/11436153_20240306153010_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ON MY LIPS</span><span class="sp-tile-n">직캠 6</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/아이칠린/예주/s/siren/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/09/104/11209104_20230511180639_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SIREN</span><span class="sp-tile-n">직캠 5</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/아이칠린/예주/s/kickstart/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/88/170/11288170_20230719101731_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">KICK-START (킥스타트)</span><span class="sp-tile-n">직캠 4</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/아이칠린/예주/s/alarm/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/09/104/11209104_20230511180639_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Alarm (알람)</span><span class="sp-tile-n">직캠 4</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/아이칠린/예주/s/official/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/47/694/11647694_20241121152141_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Official</span><span class="sp-tile-n">직캠 4</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/아이칠린/예주/s/kickstart/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/88/170/11288170_20230719101731_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">KICK-START (킥스타트)</span><span class="sp-tile-n">직캠 3</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/아이칠린/예주/s/draw/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/99/753/11099753_20221110111247_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Draw</span><span class="sp-tile-n">직캠 3</span></a>
     </div>
   

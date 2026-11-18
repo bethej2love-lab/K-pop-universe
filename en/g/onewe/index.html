@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,14 +91,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/원위/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>ONEWE(원위)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/B00XKYbU7ts/maxresdefault.jpg" alt="ONEWE" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/b3217aa3-2bdd-4e58-8f52-42765134c977.jpg" alt="ONEWE" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>Debut</b> 2019.05.13</span>
       <span><b>Agency</b> RBW</span>
       <span><b>Fandom</b> WEVE</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/channel/UCj-dtq6jHfj4_fufifPzMEQ" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://www.instagram.com/official_onewe/" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/official_ONEWE" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://www.tiktok.com/@rbw_onewe" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-namu" href="https://namu.wiki/w/원위" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
   
@@ -116,55 +125,53 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   
     <h2 id="songs">Fancams & stages by song</h2>
     <ul class="member-list rel">
+      <li><a href="https://kpop-universe.kr/en/g/onewe/s/별헤는밤/">별 헤는 밤 (The Starry Night)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/onewe/s/미로/">미로 (MAZE)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/onewe/s/비를몰고오는소년/">비를 몰고 오는 소년 (Rain To Be)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/onewe/s/scenario/">Scenario</a></li>
       <li><a href="https://kpop-universe.kr/en/g/onewe/s/추억의소각장/">추억의 소각장 Beautiful Ashes</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/onewe/s/별헤는밤/">별 헤는 밤 (The Starry Night)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/onewe/s/야행성/">야행성 (Regulus)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/onewe/s/비를몰고오는소년/">비를 몰고 오는 소년 (Rain To Be)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/onewe/s/icarus/">ICARUS</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/onewe/s/raintobe/">Rain To Be</a></li>
       <li><a href="https://kpop-universe.kr/en/g/onewe/s/너의우주는/">너의 우주는 (Universe_)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/onewe/s/offroad/">OFF ROAD</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/onewe/s/raintobe/">Rain To Be</a></li>
       <li><a href="https://kpop-universe.kr/en/g/onewe/s/기억속한권의책/">기억 속 한 권의 책 (A book in Memory)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/onewe/s/나의계절봄은끝났다/">나의 계절 봄은 끝났다 End Of Spring (Rock version)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/onewe/s/일방통행/">일방통행 (一方通行 : Traffic Love)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/onewe/s/내영혼에낸scratch/">내 영혼에 낸 Scratch</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/onewe/s/endofspring/">End of Spring</a></li>
       <li><a href="https://kpop-universe.kr/en/g/onewe/s/aurora/">AuRoRa</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/onewe/s/regulus/">Regulus</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/onewe/s/기어이또/">기어이 또 (Still Here)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/onewe/s/내영혼에낸scratch/">내 영혼에 낸 Scratch</a></li>
       <li><a href="https://kpop-universe.kr/en/g/onewe/s/행운의달/">행운의 달 (Lucky 12)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/onewe/s/별/">별 (STAR)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/onewe/s/gravity/">GRAVITY</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/onewe/s/기어이또/">기어이 또 (Still Here)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/onewe/s/별/">별 (STAR)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/onewe/s/regulus/">Regulus</a></li>
       <li><a href="https://kpop-universe.kr/en/g/onewe/s/소행성/">소행성 (Parting)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/onewe/s/제0호선시간역행/">제0호선 시간역행</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/onewe/s/logo/">LOGO</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/onewe/s/기억세탁소/">기억 세탁소 (Eraser)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/onewe/s/베로니카의섬/">베로니카의 섬 (Veronica)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/onewe/s/모르겠다고/">모르겠다고 Q (feat. Hwa Sa)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/onewe/s/endofspring/">End of Spring</a></li>
       <li><a href="https://kpop-universe.kr/en/g/onewe/s/청천을/">청천을 (靑天乙 : Dreamcatcher)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/onewe/s/검은별/">검은 별 (Sole Star)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/onewe/s/유일한사랑이니까/">유일한 사랑이니까 (A piece of You)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/onewe/s/숨바꼭질/">숨바꼭질 (Hide &amp; Seek)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/onewe/s/모르겠다고/">모르겠다고 Q (feat. Hwa Sa)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/onewe/s/룸메이트/">룸메이트 (Roommate)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/onewe/s/내가처음만져본강아지/">내가 처음 만져본 강아지 (Love me)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/onewe/s/기억세탁소/">기억 세탁소 (Eraser)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/onewe/s/다추억/">다 추억 (Reminisce about All)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/onewe/s/바다에적신햇무리반지/">바다에 적신 햇무리 반지 (Solar Halo Ring)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/onewe/s/숨바꼭질/">숨바꼭질 (Hide &amp; Seek)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/onewe/s/일방통행/">일방통행 (一方通行 : Traffic Love)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/onewe/s/크리스마스는이래야지/">크리스마스는 이래야지 (WE X MAS)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/onewe/s/천체/">천체 (COSMOS)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/onewe/s/내가처음만져본강아지/">내가 처음 만져본 강아지 (Love me)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/onewe/s/우리들은행방불명/">우리들은 행방불명 (Neverland)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/onewe/s/관람차/">관람차 (Ferris wheel)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/onewe/s/한여름밤유성우/">한여름 밤 유성우 Meteor Shower</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/onewe/s/바다에적신햇무리반지/">바다에 적신 햇무리 반지 (Solar Halo Ring)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/onewe/s/크리스마스는이래야지/">크리스마스는 이래야지 (WE X MAS)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/onewe/s/유일한사랑이니까/">유일한 사랑이니까 (A piece of You)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/onewe/s/궤도/">궤도 (Orbit_)</a></li>
-    </ul>
-    <details class="more-songs"><summary>6 more songs</summary>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/onewe/s/꿈속에서놓친너옅은잠결에흐르길/">꿈속에서 놓친 너, 옅은 잠결에 흐르길 (Montage_)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/onewe/s/stay/">STAY</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/onewe/s/천체/">천체 (COSMOS)</a></li>
+    </ul>
+    <details class="more-songs"><summary>4 more songs</summary>
+    <ul class="member-list rel">
       <li><a href="https://kpop-universe.kr/en/g/onewe/s/공과사/">공과 사 0&amp;4</a></li>
       <li><a href="https://kpop-universe.kr/en/g/onewe/s/saltyboy/">SALTY BOY</a></li>
       <li><a href="https://kpop-universe.kr/en/g/onewe/s/동서남북/">동서남북 (Omnipresent)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/onewe/s/꿈속에서놓친너옅은잠결에흐르길/">꿈속에서 놓친 너, 옅은 잠결에 흐르길 (Montage_)</a></li>
     </ul></details>
   
     <h2 id="albums">Albums & tracklists</h2>
@@ -223,7 +230,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/원위/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=원위">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"미로 (MAZE)","s":"39 videos","img":"9LPigw3hDAo","m":"미로","h":"https://kpop-universe.kr/en/g/onewe/s/미로/"},{"k":"Member fancams","t":"Yonghoon","s":"26 fancams","img":"e-UcHAFpAzI","h":"https://kpop-universe.kr/en/g/onewe/yonghoon/fancams/"},{"k":"Album","t":"面 : Unknown Atlas","s":"17 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/144/60/770/14460770_20260818171318_500.jpg","h":"https://kpop-universe.kr/en/g/onewe/a/面unknownatlas/"},{"k":"Song fancams","t":"비를 몰고 오는 소년 (Rain To Be)","s":"39 videos","img":"hzzbFTzVSbA","m":"비를 몰고 오는 소년","h":"https://kpop-universe.kr/en/g/onewe/s/비를몰고오는소년/"},{"k":"Member fancams","t":"Kanghyun","s":"24 fancams","img":"KuO2iJ7-PPo","h":"https://kpop-universe.kr/en/g/onewe/kanghyun/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"별 헤는 밤 (The Starry Night)","s":"36 videos","img":"Evj4Qq8F1mQ","m":"별 헤는 밤","h":"https://kpop-universe.kr/en/g/onewe/s/별헤는밤/"},{"k":"Member fancams","t":"Yonghoon","s":"26 fancams","img":"e-UcHAFpAzI","h":"https://kpop-universe.kr/en/g/onewe/yonghoon/fancams/"},{"k":"Album","t":"面 : Unknown Atlas","s":"17 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/144/60/770/14460770_20260818171318_500.jpg","h":"https://kpop-universe.kr/en/g/onewe/a/面unknownatlas/"},{"k":"Song fancams","t":"미로 (MAZE)","s":"34 videos","img":"9LPigw3hDAo","m":"미로","h":"https://kpop-universe.kr/en/g/onewe/s/미로/"},{"k":"Member fancams","t":"Kanghyun","s":"24 fancams","img":"KuO2iJ7-PPo","h":"https://kpop-universe.kr/en/g/onewe/kanghyun/fancams/"}]</script>
 </div>
 </body>
 </html>

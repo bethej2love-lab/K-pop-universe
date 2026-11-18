@@ -5,7 +5,7 @@
 <script>(function(){var h=location.hash;if(/(^#|&)vf=/.test(h))location.replace('https://kpop-universe.kr/'+h);})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ATBO Ryu Junmin(ATBO 류준민) Profile, Age, Fancams, Birthday | K-POP UNIVERSE</title>
-<meta name="description" content="23 Ryu Junmin (ATBO) fancams, most viewed first. Ryu Junmin of ATBO: born 2003.04.05, debuted 2022.07.27. Fancams, stages and connections on K-POP UNIVERSE.">
+<meta name="description" content="24 Ryu Junmin (ATBO) fancams, most viewed first. Ryu Junmin of ATBO: born 2003.04.05, debuted 2022.07.27. Fancams, stages and connections on K-POP UNIVERSE.">
 <link rel="canonical" href="https://kpop-universe.kr/en/g/atbo/ryu-junmin/">
 <link rel="alternate" hreflang="ko" href="https://kpop-universe.kr/g/ATBO/류준민/">
 <link rel="alternate" hreflang="en" href="https://kpop-universe.kr/en/g/atbo/ryu-junmin/">
@@ -13,7 +13,7 @@
 <meta property="og:type" content="profile">
 <meta property="og:site_name" content="K-POP UNIVERSE">
 <meta property="og:title" content="Ryu Junmin">
-<meta property="og:description" content="23 Ryu Junmin (ATBO) fancams, most viewed first. Ryu Junmin of ATBO: born 2003.04.05, debuted 2022.07.27. Fancams, stages and connections on K-POP UNIVERSE.">
+<meta property="og:description" content="24 Ryu Junmin (ATBO) fancams, most viewed first. Ryu Junmin of ATBO: born 2003.04.05, debuted 2022.07.27. Fancams, stages and connections on K-POP UNIVERSE.">
 <meta property="og:url" content="https://kpop-universe.kr/en/g/atbo/ryu-junmin/">
 <meta property="og:image" content="https://img.youtube.com/vi/9NKCbG0q0V4/maxresdefault.jpg">
 <meta property="og:image:width" content="1280">
@@ -21,7 +21,7 @@
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Ryu Junmin">
-<meta name="twitter:description" content="23 Ryu Junmin (ATBO) fancams, most viewed first. Ryu Junmin of ATBO: born 2003.04.05, debuted 2022.07.27. Fancams, stages and connections on K-POP UNIVERSE.">
+<meta name="twitter:description" content="24 Ryu Junmin (ATBO) fancams, most viewed first. Ryu Junmin of ATBO: born 2003.04.05, debuted 2022.07.27. Fancams, stages and connections on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/9NKCbG0q0V4/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Ryu Junmin","alternateName":"류준민","birthDate":"2003-04-05","nationality":"KR","url":"https://kpop-universe.kr/en/g/atbo/ryu-junmin/","image":"https://img.youtube.com/vi/9NKCbG0q0V4/maxresdefault.jpg","memberOf":[{"@type":"MusicGroup","name":"ATBO"}],"sameAs":["https://www.instagram.com/junminrxu","https://namu.wiki/w/류준민(ATBO)"]}</script>
@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,6 +91,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/ATBO/류준민/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>Ryu Junmin(류준민)</h1>
     <img class="cover" src="https://img.youtube.com/vi/9NKCbG0q0V4/maxresdefault.jpg" alt="Ryu Junmin" loading="lazy">
@@ -93,10 +101,11 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>Debut</b> 2022.07.27</span>
       <span><b>Agency</b> IST Entertainment</span>
     </div>
+    <div class="sns"><a class="sns-instagram" href="https://www.instagram.com/junminrxu" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-namu" href="https://namu.wiki/w/류준민(ATBO)" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   
   <h2>Ryu Junmin fancams</h2>
-  <p class="hub-more hub-top"><a href="https://kpop-universe.kr/en/g/atbo/ryu-junmin/fancams/">All 23 fancams by song →</a></p>
+  <p class="hub-more hub-top"><a href="https://kpop-universe.kr/en/g/atbo/ryu-junmin/fancams/">All 24 fancams by song →</a></p>
   <div class="mf-grid">
     <a class="mf-card" href="https://www.youtube.com/watch?v=ptjUbj8ymcc" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/ptjUbj8ymcc/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[THE ORIGIN] EP.04 FANCAM｜류준민 (Ryu Junmin) ‘THRILL RIDE’｜THE ORIGIN - A, B, Or What?｜2022.04.09</span><span class="mf-y">2022.04.11 · 14K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=XOq65P_zRNs" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/XOq65P_zRNs/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[THE ORIGIN] EP.06 FANCAM | 류준민 (Ryu Junmin) ‘하드캐리’ | THE ORIGIN - A, B, Or What? | 2022.04.23</span><span class="mf-y">2022.04.25 · 10K+</span></a>
@@ -111,6 +120,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <a class="mf-card" href="https://www.youtube.com/watch?v=zexP_oXfwjo" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/zexP_oXfwjo/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[THE ORIGIN] EP.06 FANCAM | 류준민 (Ryu Junmin) ‘하드캐리’ | THE ORIGIN - A, B, Or What? | 2022.04.23</span><span class="mf-y">2022.04.25 · 3K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=nXhHsopR62Q" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/nXhHsopR62Q/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[THE ORIGIN] EP.06 FANCAM | 류준민 (Ryu Junmin) ‘하드캐리’ | THE ORIGIN - A, B, Or What? | 2022.04.23</span><span class="mf-y">2022.04.25 · 3K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=uTZBj8ILxbQ" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/uTZBj8ILxbQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[플리캠 4K 가로] ATBO RYU JUNMIN &#39;ATTITUDE&#39; (에이티비오 류준민 직캠) l Simply K -Pop CON-TOUR Ep.545</span><span class="mf-y">2022.11.11 · 3K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=qPPEshrLd4M" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/qPPEshrLd4M/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 에이티비오 류준민 &#39;Must Have Love&#39; (ATBO RYU JUNMIN FanCam) @SBS Inkigayo 231203</span><span class="mf-y">2023.12.04 · 2K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=3pFYTFXUQ1c" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/3pFYTFXUQ1c/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[THE ORIGIN] EP.08 FANCAM | 류준민 (Ryu Junmin) ‘RUN’ | THE ORIGIN - A, B, Or What? | 2022.05.07</span><span class="mf-y">2022.05.09 · 2K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=r1RCsIohGqQ" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/r1RCsIohGqQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[플리캠 4K] ATBO RYU JUNMIN &#39;BOUNCE&#39; (에이티비오 류준민 직캠) l Simply K-Pop CON-TOUR Ep.569</span><span class="mf-y">2023.05.19 · 2K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=0h1yj9fkD5E" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/0h1yj9fkD5E/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[플리캠 4K] ATBO RYU JUNMIN &#39;ATTITUDE&#39; (에이티비오 류준민 직캠) l Simply K-Pop CON-TOUR Ep.544</span><span class="mf-y">2022.11.06 · 2K+</span></a>
@@ -135,6 +145,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <h2>Fancams by song</h2>
     <div class="sp-tiles">
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/atbo/ryu-junmin/s/nexttome/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/46/678/11246678_20230517152042_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Next to Me</span><span class="sp-tile-n">6 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/atbo/ryu-junmin/s/musthavelove/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/72/752/11372752_20231124180005_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Must Have Love</span><span class="sp-tile-n">3 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/atbo/ryu-junmin/s/bounce/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/46/678/11246678_20230517152042_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BOUNCE</span><span class="sp-tile-n">3 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/atbo/ryu-junmin/s/run/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/14/923/11014923_20220727101155_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">RUN</span><span class="sp-tile-n">3 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/atbo/ryu-junmin/s/attitude/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/86/383/11086383_20221025174143_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ATTITUDE</span><span class="sp-tile-n">3 fancams</span></a>
@@ -161,7 +172,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/boynextdoor/sungho/">Sungho</a> <span class="tag">BOYNEXTDOOR</span></li>
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/ATBO/류준민/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"Next to Me","s":"6 fancams of Ryu Junmin","img":"9NKCbG0q0V4","m":"Next to Me","h":"https://kpop-universe.kr/en/g/atbo/ryu-junmin/s/nexttome/"},{"k":"Same song","t":"Oh Junseok · Next to Me","s":"4 fancams","img":"qzm8EQ2u_M0","m":"Next to Me","h":"https://kpop-universe.kr/en/g/atbo/oh-junseok/s/nexttome/"},{"k":"Group","t":"ATBO","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/UsW1vOqwpsI/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/atbo/"},{"k":"Chemistry","t":"Ryu Junmin × Seok Ragwon","s":"32 videos together","img":"tdrCstlfoAw","h":"https://kpop-universe.kr/en/chem/atbo/ryu-junmin-seok-ragwon/"},{"k":"Every stage","t":"BOUNCE","s":"3 fancams of Ryu Junmin","img":"r1RCsIohGqQ","m":"BOUNCE","h":"https://kpop-universe.kr/en/g/atbo/ryu-junmin/s/bounce/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"Next to Me","s":"6 fancams of Ryu Junmin","img":"9NKCbG0q0V4","m":"Next to Me","h":"https://kpop-universe.kr/en/g/atbo/ryu-junmin/s/nexttome/"},{"k":"Same song","t":"Jung Seunghwan · Next to Me","s":"6 fancams","img":"JZBWIaS7zEs","m":"Next to Me","h":"https://kpop-universe.kr/en/g/atbo/jung-seunghwan/s/nexttome/"},{"k":"Group","t":"ATBO","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/UsW1vOqwpsI/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/atbo/"},{"k":"Chemistry","t":"Ryu Junmin × Seok Ragwon","s":"32 videos together","img":"tdrCstlfoAw","h":"https://kpop-universe.kr/en/chem/atbo/ryu-junmin-seok-ragwon/"},{"k":"Every stage","t":"Must Have Love","s":"3 fancams of Ryu Junmin","img":"qPPEshrLd4M","m":"Must Have Love","h":"https://kpop-universe.kr/en/g/atbo/ryu-junmin/s/musthavelove/"}]</script>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=ATBO&m=류준민">View profile, fancams & stages →</a></div>
 </div>
 </body>

@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,14 +91,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/러블리즈/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>Lovelyz(러블리즈)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/k8WfhSZJUVc/maxresdefault.jpg" alt="Lovelyz" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/490f9faa-6f19-4309-8965-3a0ce8a1b2bc.jpg" alt="Lovelyz" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>Debut</b> 2014.11.12</span>
       <span><b>Agency</b> Woollim Entertainment</span>
       <span><b>Fandom</b> Lovelinus</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/@Lovelyz8" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://www.instagram.com/official_lvlz8_" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/Official_LVLZ" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://www.tiktok.com/@lovelyz_official" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-namu" href="https://namu.wiki/w/러블리즈" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
   
@@ -130,33 +139,33 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/obliviate/">Obliviate</a></li>
       <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/그시절우리가사랑했던우리/">그 시절 우리가 사랑했던 우리 (Beautiful Days)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/찾아가세요/">찾아가세요 (Lost N Found)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/ahchoo/">Ah-Choo (아츄)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/그날의너/">그날의 너 (That Day)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/ahchoo/">Ah-Choo (아츄)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/종소리/">종소리 (Twinkle)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/지금우리/">지금, 우리 Now, We</a></li>
       <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/rewind/">REWIND</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/지금우리/">지금, 우리 Now, We</a></li>
       <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/destiny/">Destiny (나의 지구)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/candyjellylove/">Candy Jelly Love</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/closetoyou/">Close To You</a></li>
       <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/tigereyes/">Tiger Eyes</a></li>
       <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/cameo/">Cameo</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/closetoyou/">Close To You</a></li>
       <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/wow/">WoW!</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/moonlight/">Moonlight</a></li>
       <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/그대에게/">그대에게 For You</a></li>
       <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/안녕/">안녕 (Hi~)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/여름한조각/">여름 한 조각 Wag-Zak</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/moonlight/">Moonlight</a></li>
       <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/unforgettable/">Unforgettable</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/삼각형/">삼각형 (Triangle)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/미묘미묘해/">미묘미묘해 Mi-myo Mi-myo</a></li>
       <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/secretstory/">Secret Story</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/삼각형/">삼각형 (Triangle)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/첫눈/">첫눈 First Snow</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/어제처럼굿나잇/">어제처럼 굿나잇 Good Night Like Yesterday</a></li>
       <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/수채화/">수채화 (Watercolor)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/어제처럼굿나잇/">어제처럼 굿나잇 Good Night Like Yesterday</a></li>
       <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/diamond/">Diamond</a></li>
       <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/놀이공원/">놀이공원 Joyland</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/내가너의봄이되어줄게/">내가 너의 봄이 되어줄게</a></li>
       <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/newcar/">NEW CAR</a></li>
       <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/igo/">I Go</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/lovelyz/s/내가너의봄이되어줄게/">내가 너의 봄이 되어줄게</a></li>
     </ul>
   
     <h2 id="albums">Albums & tracklists</h2>
@@ -211,7 +220,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/러블리즈/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=러블리즈">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"Obliviate","s":"121 videos","img":"TArBtJ0IwCc","m":"Obliviate","h":"https://kpop-universe.kr/en/g/lovelyz/s/obliviate/"},{"k":"Member fancams","t":"JIN","s":"109 fancams","img":"0qaYOIgN1ss","h":"https://kpop-universe.kr/en/g/lovelyz/jin/fancams/"},{"k":"Album","t":"Unforgettable","s":"6 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/104/84/139/10484139_20200901154342_500.jpg","h":"https://kpop-universe.kr/en/g/lovelyz/a/unforgettable/"},{"k":"Song fancams","t":"그 시절 우리가 사랑했던 우리 (Beautiful Days)","s":"86 videos","img":"ffNvuDInIjM","m":"그 시절 우리가 사랑했던 우리","h":"https://kpop-universe.kr/en/g/lovelyz/s/그시절우리가사랑했던우리/"},{"k":"Member fancams","t":"Sujeong","s":"66 fancams","img":"ADS0sEqze0o","h":"https://kpop-universe.kr/en/g/lovelyz/sujeong/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"Obliviate","s":"115 videos","img":"TArBtJ0IwCc","m":"Obliviate","h":"https://kpop-universe.kr/en/g/lovelyz/s/obliviate/"},{"k":"Member fancams","t":"JIN","s":"109 fancams","img":"0qaYOIgN1ss","h":"https://kpop-universe.kr/en/g/lovelyz/jin/fancams/"},{"k":"Album","t":"Unforgettable","s":"6 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/104/84/139/10484139_20200901154342_500.jpg","h":"https://kpop-universe.kr/en/g/lovelyz/a/unforgettable/"},{"k":"Song fancams","t":"그 시절 우리가 사랑했던 우리 (Beautiful Days)","s":"78 videos","img":"ffNvuDInIjM","m":"그 시절 우리가 사랑했던 우리","h":"https://kpop-universe.kr/en/g/lovelyz/s/그시절우리가사랑했던우리/"},{"k":"Member fancams","t":"Sujeong","s":"66 fancams","img":"ADS0sEqze0o","h":"https://kpop-universe.kr/en/g/lovelyz/sujeong/fancams/"}]</script>
 </div>
 </body>
 </html>

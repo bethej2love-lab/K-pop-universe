@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,14 +91,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="언어 선택" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/en/g/nct-dream/" lang="en" hreflang="en" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">View in English</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
+  <a class="brand" href="https://kpop-universe.kr/all/" style="margin-left:10px;">모아보기</a>
   <div class="top2">
     <h1>엔시티 드림(NCT Dream)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/P_sEc8Y3_pE/maxresdefault.jpg" alt="엔시티 드림" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/6a3df313-3810-4279-b123-a84c4bb9d20f.jpg" alt="엔시티 드림" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>데뷔</b> 2016.08.25</span>
       <span><b>소속사</b> SM엔터테인먼트</span>
       <span><b>팬덤명</b> 시즈니</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://youtube.com/@NCTDream" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://instagram.com/nct_dream" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/NCTsmtown_DREAM" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://tiktok.com/@nctdreamofficial" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-weverse" href="https://weverse.io/nctdream" target="_blank" rel="noopener noreferrer">Weverse</a><a class="sns-namu" href="https://namu.wiki/w/NCT Dream" target="_blank" rel="noopener noreferrer">나무위키</a></div>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
   
@@ -151,58 +160,56 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/버퍼링/">버퍼링 (Glitch Mode)</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/istj/">ISTJ</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/smoothie/">Smoothie</a></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/beatitup/">Beat It Up</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/whenimwithyou/">When I&#39;m With You</a></li>
+      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/beatitup/">Beat It Up</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/hellofuture/">Hello Future</a></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/beatbox/">Beatbox</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/ridin/">Ridin&#39;</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/candy/">Candy</a></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/boom/">BOOM</a></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/bttf/">BTTF</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/brokenmelodies/">Broken Melodies</a></li>
+      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/bttf/">BTTF</a></li>
+      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/beatbox/">Beatbox</a></li>
+      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/boom/">BOOM</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/chiller/">CHILLER</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/flyingkiss/">Flying Kiss</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/고래/">고래 (Dive Into You)</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/boogiewoogie/">Boogie Woogie</a></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/chewinggum/">Chewing Gum</a></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/yogurtshake/">Yogurt Shake</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/unknown/">UNKNOWN</a></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/wegoup/">We Go Up</a></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/마지막첫사랑/">마지막 첫사랑 (My First and Last)</a></li>
+      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/chewinggum/">Chewing Gum</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/graduation/">Graduation</a></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/arcade/">Arcade</a></li>
+      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/yogurtshake/">Yogurt Shake</a></li>
+      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/마지막첫사랑/">마지막 첫사랑 (My First and Last)</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/diggity/">Diggity</a></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/weyoung/">We Young</a></li>
+      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/wegoup/">We Go Up</a></li>
+      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/arcade/">Arcade</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/quietdown/">Quiet Down</a></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/stronger/">STRONGER</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/sos/">SOS</a></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/likewejustmet/">Like We Just Met</a></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/triggerthefever/">Trigger The Fever</a></li>
+      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/stronger/">STRONGER</a></li>
+      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/weyoung/">We Young</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/rainsinheaven/">Rains in Heaven</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/skateboard/">Skateboard</a></li>
+      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/likewejustmet/">Like We Just Met</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/북극성/">북극성 (Never Goodbye)</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/countdown/">Countdown</a></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/rainbow/">Rainbow (책갈피)</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/joy/">JOY</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/noescape/">No Escape</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/119/">119</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/box/">BOX</a></li>
-    </ul>
-    <details class="more-songs"><summary>나머지 14곡 더 보기</summary>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/덩크슛/">덩크슛 (Dunk Shot)</a></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/poison/">Poison (모래성)</a></li>
+      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/rainbow/">Rainbow (책갈피)</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/tricky/">TRICKY</a></li>
+    </ul>
+    <details class="more-songs"><summary>나머지 12곡 더 보기</summary>
+    <ul class="member-list rel">
+      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/poison/">Poison (모래성)</a></li>
+      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/덩크슛/">덩크슛 (Dunk Shot)</a></li>
+      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/triggerthefever/">Trigger The Fever</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/tempo/">Tempo</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/moonlight/">Moonlight</a></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/replay/">Replay (내일 봐)</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/go/">GO</a></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/dreamafterdream/">Dream After Dream</a></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/숨/">숨 (Breathing)</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/bestfriendever/">Best Friend Ever</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/별밤/">별 밤 (On the way)</a></li>
+      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/dreamafterdream/">Dream After Dream</a></li>
+      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/숨/">숨 (Breathing)</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/오르골/">오르골 (Life Is Still Going On)</a></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/주인공/">주인공 (Irreplaceable)</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 드림/s/thesun/">The Sun</a></li>
     </ul></details>
   
@@ -267,7 +274,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/nct-dream/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=엔시티%20드림">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"맛 (Hot Sauce)","s":"영상 195개","img":"nyzB4teGc14","m":"맛","h":"https://kpop-universe.kr/g/엔시티 드림/s/맛/"},{"k":"멤버 직캠","t":"지성","s":"직캠 269개","img":"9LiNlsz5Ex0","h":"https://kpop-universe.kr/g/엔시티 드림/지성/fancams/"},{"k":"앨범","t":"DREAM AFTER DREAM","s":"수록곡 10곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/150/04/542/15004542_20261106160240_500.jpg","h":"https://kpop-universe.kr/g/엔시티 드림/a/dreamafterdream/"},{"k":"곡별 직캠·무대","t":"버퍼링 (Glitch Mode)","s":"영상 185개","img":"AVxb8uAXCGU","m":"버퍼링","h":"https://kpop-universe.kr/g/엔시티 드림/s/버퍼링/"},{"k":"멤버 직캠","t":"제노","s":"직캠 264개","img":"XEwtf6EdtHo","h":"https://kpop-universe.kr/g/엔시티 드림/제노/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"맛 (Hot Sauce)","s":"영상 178개","img":"FsBr0j85Zvg","m":"맛","h":"https://kpop-universe.kr/g/엔시티 드림/s/맛/"},{"k":"멤버 직캠","t":"지성","s":"직캠 269개","img":"9LiNlsz5Ex0","h":"https://kpop-universe.kr/g/엔시티 드림/지성/fancams/"},{"k":"앨범","t":"DREAM AFTER DREAM","s":"수록곡 10곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/150/04/542/15004542_20261106160240_500.jpg","h":"https://kpop-universe.kr/g/엔시티 드림/a/dreamafterdream/"},{"k":"곡별 직캠·무대","t":"버퍼링 (Glitch Mode)","s":"영상 175개","img":"V-AFc6pVLB4","m":"버퍼링","h":"https://kpop-universe.kr/g/엔시티 드림/s/버퍼링/"},{"k":"멤버 직캠","t":"제노","s":"직캠 264개","img":"XEwtf6EdtHo","h":"https://kpop-universe.kr/g/엔시티 드림/제노/fancams/"}]</script>
 </div>
 </body>
 </html>

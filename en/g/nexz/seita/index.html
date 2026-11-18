@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,6 +91,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/넥스지/세이타/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>Seita(세이타)</h1>
     <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/a1d9b8f2-2d37-4a88-a86b-0d0678190d3b.jpeg" alt="Seita" loading="eager" width="240" height="240">
@@ -93,6 +101,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>Debut</b> 2024.05.20</span>
       <span><b>Agency</b> JYP Entertainment</span>
     </div>
+    <div class="sns"><a class="sns-namu" href="https://namu.wiki/w/%EC%84%B8%EC%9D%B4%ED%83%80%28NEXZ%29" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   
   <h2>Seita fancams</h2>
@@ -142,7 +151,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/nexz/seita/s/ridethevibe/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/61/41/ee/6141ee12-774d-b354-4591-cb240288f59e/4547366685329.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Ride the Vibe</span><span class="sp-tile-n">11 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/nexz/seita/s/saucin/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/144/69/715/14469715_20260821152501_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SAUCIN’</span><span class="sp-tile-n">11 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/nexz/seita/s/nallina/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/8c/20/57/8c205735-ee75-2013-f5a4-b66f977380b0/8809928952963.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">NALLINA</span><span class="sp-tile-n">10 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/nexz/seita/s/mmchk/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/133/49/798/13349798_20260424152052_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Mmchk</span><span class="sp-tile-n">10 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/nexz/seita/s/mmchk/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/133/49/798/13349798_20260424152052_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Mmchk</span><span class="sp-tile-n">9 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/nexz/seita/s/onebite/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/55/85/16/5585163a-51bc-8b62-1315-8b1e3902259c/4547366758788.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">One Bite</span><span class="sp-tile-n">7 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/nexz/seita/s/simmer/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/ac/f3/f8/acf3f8dd-493e-e3cf-b9fe-df6e6d6aa98b/8809928953182.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Simmer</span><span class="sp-tile-n">7 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/nexz/seita/s/imhim/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/53/e9/8c/53e98c76-5520-1f71-db84-20cece4a0bd4/8809928954240.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">I&#39;m Him</span><span class="sp-tile-n">3 fancams</span></a>
@@ -171,7 +180,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/rescene/liv/">Liv</a> <span class="tag">RESCENE</span></li>
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/넥스지/세이타/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"O-RLY?","s":"16 fancams of Seita","img":"3QKmGFddtvA","m":"O-RLY?","h":"https://kpop-universe.kr/en/g/nexz/seita/s/orly/"},{"k":"Same song","t":"YU · O-RLY?","s":"44 fancams","img":"fuGoZ4lDlZ0","m":"O-RLY?","h":"https://kpop-universe.kr/en/g/nexz/yu/s/orly/"},{"k":"Group","t":"NEXZ","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/rKZO4uvETno/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/nexz/"},{"k":"Chemistry","t":"Seita × Tomoya","s":"94 videos together","img":"dq1QZ_Gxtig","h":"https://kpop-universe.kr/en/chem/nexz/seita-tomoya/"},{"k":"Every stage","t":"Beat-Boxer","s":"13 fancams of Seita","img":"nuxY_j-Bg2c","m":"Beat-Boxer","h":"https://kpop-universe.kr/en/g/nexz/seita/s/beatboxer/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"O-RLY?","s":"16 fancams of Seita","img":"3QKmGFddtvA","m":"O-RLY?","h":"https://kpop-universe.kr/en/g/nexz/seita/s/orly/"},{"k":"Same song","t":"YU · O-RLY?","s":"43 fancams","img":"fuGoZ4lDlZ0","m":"O-RLY?","h":"https://kpop-universe.kr/en/g/nexz/yu/s/orly/"},{"k":"Group","t":"NEXZ","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/rKZO4uvETno/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/nexz/"},{"k":"Chemistry","t":"Seita × Tomoya","s":"94 videos together","img":"dq1QZ_Gxtig","h":"https://kpop-universe.kr/en/chem/nexz/seita-tomoya/"},{"k":"Every stage","t":"Beat-Boxer","s":"13 fancams of Seita","img":"nuxY_j-Bg2c","m":"Beat-Boxer","h":"https://kpop-universe.kr/en/g/nexz/seita/s/beatboxer/"}]</script>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=넥스지&m=세이타">View profile, fancams & stages →</a></div>
 </div>
 </body>
