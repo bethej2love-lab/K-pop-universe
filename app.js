@@ -7513,7 +7513,13 @@ function _lbSetIframeSrc(url){
   _lbCcOffVid=null; // 새 틀 = 새 재생 — 같은 영상을 다시 열어도 자막 끄기 신호를 다시 보낸다(_lbCaptionsOffOnce 주석)
   // 데스크톱: iframe이 로드되면 YouTube 플레이어가 포커스를 가져가 ESC가 부모 window에 안 옴 — 부모로 돌려줌
   // 모바일은 무대 옆 패널 아닌 전체화면이라 포커스 반환 불필요
-  if(!isMob())fr.addEventListener('load',()=>{fr.blur();window.focus();},{once:true});
+  // ⚠️ load 이벤트 한 번(once)으론 부족 — 플레이어가 load 뒤 내부 초기화 중 포커스를 다시 가져간다(CI 리눅스
+  //    헤드리스에서 재현: ESC가 iframe으로 먹혀 라이트박스가 안 닫힘, 맥 로컬에선 재탈취 안 돼 안 보였음).
+  //    iframe이 실제로 포커스를 쥐고 있을 때만 load 직후~1초 동안 몇 차례 되돌린다(정상 상태면 아무것도 안 해 키 입력 방해 없음).
+  if(!isMob()){
+    const reclaim=()=>{try{if(document.activeElement===fr){fr.blur();window.focus();}}catch(_){}};
+    fr.addEventListener('load',()=>{reclaim();[150,450,1000].forEach(ms=>setTimeout(reclaim,ms));},{once:true});
+  }
   return fr;
 }
 function _lbPushHist(){

@@ -3,6 +3,10 @@
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
 
+## 2026-11-18 저녁 (Claude Code/Sonnet 집 — CI Browser smoke 빨간불 2개 수리)
+- **⚠️ 어제(11-17 집) 내 CSS 회귀 되돌림 — phone-landscape 빨간불**: `#yt-lb-video-box:not(.is-shorts) #yt-lb-fs-cap{pointer-events:none}`(가로 영상 유튜브 전체화면 버튼 통과 목적)가 **데스크톱 전체화면 우회**를 깼다. fs-cap은 iframe이 `requestFullscreen`을 못 쓰는 환경에서 상위 페이지가 대신 호출하는 폴백인데, pointer-events를 끄니 `elementFromPoint`가 fs-cap을 건너뛰어 `tests/fixtures/lb_fullscreen_touch.cjs`의 '데스크톱 기존 전체화면 우회 유지'(hit이 yt-lb-fs-cap이어야)가 실패(로컬에서도 재현). → 그 두 줄 삭제 + 경고 주석. 로컬 phone-landscape --fullscreen-only 6/6. ⏳ **가로 영상 전체보기 버튼 안 눌림(원래 사용자 문제)은 fs-cap을 죽이지 말고 별도로 — 실기기 검증 필요**(유튜브 네이티브 버튼 vs fs-cap 우회가 iframe 우하단에서 겹침).
+- **desktop-close-layers 빨간불(11-16부터, 내 탓 아님)**: CI 리눅스 헤드리스에서 `yt-lb-iframe`이 load **이후** 포커스를 재탈취(`hasFocus=true`) → ESC가 부모 window에 안 와 라이트박스가 안 닫힘(맥 로컬은 재탈취 안 돼 7/7 통과였음). `app.js _lbSetIframeSrc`의 `{once:true}` 포커스 복구를 보강 — iframe이 실제로 포커스를 쥐고 있을 때만(`document.activeElement===fr`) load 직후·150·450·1000ms에 되돌림(정상 상태면 no-op, 키 입력 방해 없음). 로컬 close-layers 7/7·smoke·syntax 통과. ⚠️ **CI(리눅스)에서 실제 먹는지는 푸시 후 확인** — 안 먹으면 테스트 쪽에서 부모 포커스 복구로 전환(반복 난사 금지).
+
 ## 2026-11-18 오후 (Claude Code/Opus — 카드 영상 칸·곡 페이지 근거 기준·검수 초안 처리)
 
 - [완료][app.js _vsOpen/_vsClose] **카드 영상 넓게 보기 = 카드 왼쪽 영상 칸**: 그룹 카드 영상 머리줄 아이콘(옛 ⤢ 목록 창 넓게 보기 자리)을 누르면 #gc-ch-vid 노드를 통째로 무대 칸(#vid-stage)으로 옮김 — 탭·검색·정렬·무한 스크롤 그대로. 위 줄 44px 아이콘만·색 줄 3px(카드와 같은 높이), 6칸 격자(가로 2칸·쇼츠 1칸, 쇼츠 썸네일 높이=가로 썸네일 높이), 펼침 기억(kpu_vid_stage), 다른 카드도 같은 칸. 쇼츠 썸네일 감시는 옮길 때 새 칸 기준으로 다시 건다(_vsRearm). tests/vid-stage.test.js 8건(CI 등록). ⏳ 사용자: 뉴비용 말풍선 안내·기본값(자동 펼침 여부)은 생각해보고 정하기로. 멤버 카드(tv)는 아직 옛 ⤢ 목록 창.

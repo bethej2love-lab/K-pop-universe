@@ -836,8 +836,9 @@
   /* 터치 기기는 유튜브 버튼이 직접 받는다. iframe 요소의 전체화면 API가 없는 환경에서
      투명 캡이 터치를 가로채면 플레이어의 네이티브 전체화면까지 막힌다(세로/가로 공통). */
   @media(pointer:coarse){#yt-lb-fs-cap{display:none;}}
-  /* 가로 영상에서 fs-cap이 유튜브 플레이어 전체화면 버튼 위를 덮어 클릭이 막혔다 — 쇼츠는 플레이어 UI가 달라 해당 없음 */
-  #yt-lb-video-box:not(.is-shorts) #yt-lb-fs-cap{pointer-events:none;cursor:default;}
+  /* ⚠️ fs-cap을 pointer-events:none으로 끄면 데스크톱 전체화면 우회(iframe이 requestFullscreen을 못 쓰는 환경에서
+     상위 페이지가 대신 호출)가 깨진다 — tests/fixtures/lb_fullscreen_touch.cjs '데스크톱 기존 전체화면 우회 유지'가 막는다.
+     가로 영상에서 유튜브 네이티브 전체화면 버튼이 안 눌리는 문제는 fs-cap을 죽이지 말고 별도로(실기기 검증 필요). */
   /* 모바일 첫 진입 시 1회: 상하로 스와이프해서 영상 넘길 수 있다는 걸 살짝 들썩임으로 암시 */
   @keyframes lb-swipe-hint{0%,100%{transform:translateY(0);}25%{transform:translateY(-16px);}60%{transform:translateY(0);}80%{transform:translateY(10px);}}
   #yt-lb-wrap.swipe-hint{animation:lb-swipe-hint 1s ease-in-out 2;}
