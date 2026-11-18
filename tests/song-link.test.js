@@ -98,5 +98,14 @@ eq(ctx.f('SEVENTEEN - “Super”  VERNON ver. [it’s Live] #MBCWORLD', SVT, ['
 eq(ctx.f('Fate - (G)I-DLE ジーアイドゥル [Music Bank] | KBS WORLD TV 240322', GI, ['아이들', '(G)I-DLE']), ['나는아픈건딱질색이니까'], "'곡 - 가수'에서 가수 이름이 괄호로 시작해도 주인으로 알아봄");
 const BTS = ctx.N(songsOf('방탄소년단'), '방탄소년단');
 eq(ctx.f('BTS - FIRE @인기가요 160515', BTS, ['방탄소년단', 'BTS']), ['불타오르네'], "괄호 영문('불타오르네 (FIRE)')과 같은 일본판 곡은 합쳐짐");
+// 공연(투어)명 속 곡명은 곡이 아니다 — 에이티즈 투어 In Your Fantasy가 곡 In Your Fantasy에 66건 붙던 것(2026-11-18)
+{
+  const ATZ = songsOf('에이티즈'), atz = x => ctx.f(x, ATZ, ['에이티즈', 'ATEEZ']);
+  eq(atz('ATEEZ(에이티즈) WORLD TOUR [IN YOUR FANTASY] IN BANGKOK #Shorts'), [], '투어명 [곡명] 은 곡이 아님');
+  eq(atz('[4K] 260404 NO1 | ATEEZ 2026 [IN YOUR FANTASY] IN BANGKOK | 홍중 FOCUS'), [], '[곡명] IN 도시 도 투어명');
+  eq(atz('ATEEZ(에이티즈) log_logbook | IN YOUR FANTASY in ASIA & AUSTRALIA #4'), [], 'in ASIA & AUSTRALIA 도 투어명');
+  eq(atz("ATEEZ 'In Your Fantasy' SEONGHWA 성화 fancam").includes('inyourfantasy'), true, '따옴표로 감싼 곡 영상은 계속 곡');
+}
+
 console.log(fail ? `💥 곡 연결 테스트 실패 ${fail}건 (통과 ${pass})` : `✅ 곡 연결 테스트 통과 ${pass}건`);
 process.exit(fail ? 1 : 0);

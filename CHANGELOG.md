@@ -2,6 +2,22 @@
 
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
+
+## 2026-11-18 (Claude Code/Sonnet — 정적 PC 2단·썸네일·앨범 링크·YouTube 감사 조치·태깅 지연)
+
+> 사용자는 11-19부터 중국 여행(노트북 없음, 폰 Claude Code 웹으로 작업 예정). 이 섹션이 인수인계.
+
+- **[app.js]** PC 가로 썸네일 업그레이드 — 데스크톱(hover:hover+pointer:fine)에서 가로 썸네일이 뜬 뒤 maxresdefault(1280×720)를 화면 밖에서 받아 진짜 그림일 때만 교체(120×90 플레이스홀더·실패 시 mqdefault 유지, 쇼츠 제외). 전역 load 캡처 리스너(`_mountShortThumb` 바로 아래).
+- **[index.html·app.js·kpop_universe.css]** 앨범 패널: 멜론(주, 초록 채움) + Spotify·Apple Music(보조) 링크. Spotify는 `a.spotifyId`(7,501장 중 114장)가 있으면 앨범 직링크, 없으면 검색. Apple은 검색(kr).
+- **[build_group_pages.js·tools/seo_extra.js]** 그룹·멤버 정적 페이지 PC 2단 — `.top2` 래퍼 + EXTRA_CSS @media(min-width:1000px)에서 1120px·왼쪽 큰 이미지/오른쪽 정보·영상 4열(폰은 그대로). **CI 재생성 뒤 라이브 확인 ⏳**(로컬 미리보기만 함). 다른 정적 템플릿(랭킹·1위·기획사·p/·cover/)은 이미 song-page.css 1120 2단 또는 별도 — 점검 안 함.
+- **[song-page.css·build_group_pages.js]** 음방 회차 페이지 팀별 영상 개수(`.rank-n`)가 화면 왼쪽 위에 겹쳐 뜨던 것 수정(SONG_CSS_V 11).
+- **[DB·app.js]** 외부 채널 GatewayToKorea "IDOL MAKER EP" 시리즈(뷰티 유튜버 씬님·제니파크가 일반인을 아이돌 룩으로 메이크오버 — 아이돌 출연 아님) 61건 content_flag='무관'(flag_source auto) + `_JUNK_TITLE_KEYWORDS_GLOBAL`에 'idol maker ep' 추가(앞으로도 자동). 수동 태그 행 0건.
+- **[app.js]** 웹앱 자동 재시작 계측: app_events `restart_visible`(보던 중 죽음)/`restart_hidden`(백그라운드 회수), k='<초>s[ r]'. 코드에 자동 reload는 없음 → iOS 메모리 킬 가설. ⏳ 며칠 뒤 app_events에서 비율 확인(visible이 많으면 메모리 폭주 — 인스타 뷰어·쇼츠 blob 의심).
+- **[admin.js·tools/run_daily_routine.cjs] YouTube 감사 III.E.4a/III.D.1c 조치**: ①조회수 순환(8번)을 '1-3' 바로 뒤로(앞 단계가 135분 타임아웃을 먹어 40분만 돌고 잘렸음 — 일 갱신 약 1.8만 건, 61만을 30일에 못 돎) ②`last_viewcount_rotate_done` 완료 표식 + 지난 회차 미완료면 5시간 뒤 이어서(기존: 시작 표식만 먼저 찍어 11시간 건너뜀) ③서버 키 프로젝트 번호를 러너(Node)에서 직접 조회(브라우저 CORS로 '확인 못 함'이었음) + 실패 사유(HTTP/reason) 로그. ⏳ **다음 daily-routine 로그에서 `프로젝트 번호` 줄·타임아웃 여부·`[API 갱신 감시]` 확인**, 며칠 뒤 view_count_synced_at 30일 초과(11/18 08:47 기준 113,330) 감소 확인. 전 필드 갱신 증명(thumb·채널메타)·타임아웃 exit 0 위장(TRANSIENT 분기)은 **미처리**. 회신 기한 ≈11/25(메일 원문 확인).
+- **[admin.js]** 매시간 동기화(_syncOnly)에 '1-4. 신규 영상 멤버 태깅(최근 3시간 유입분)' 추가 — 멤버 태깅이 6시간마다 전체 루틴에만 있어 새 영상이 최대 6시간 그룹으로만 보이던 것(For You 최애 멤버 개별 출연 누락). `_atmHourlyScope` 플래그로 autotag 범위를 3시간으로 고정(7일 전량 기록 안 건드림). ⏳ 다음 sync-hourly 로그에서 1-4 단계 소요·오류 확인(DB 부하 주의: 그룹 ~290회 작은 조회).
+- **[shared.js·admin.js·tests/song-link.test.js]** 공연(투어)명 속 곡명 막기 `_songStripTourName` — 에이티즈 투어 [IN YOUR FANTASY]가 곡 In Your Fantasy에 66건 연결되던 것(Codex 여상 Legacy). SONG_RULES_VER v13 → 다음 전량 재계산 때 반영. 이전 Codex 12건(킥플립→멜로망스 등)은 이미 DB에서 무관 처리돼 있어 정적 첫 영상 후보에서 제외됨(확인함).
+- ⏳ 남은 것: 수집 직후 태깅 개선 효과 측정 · PC 전반·어드민 daily 창 글자 크기 키우기(10~11px 285곳, 범위 합의 필요) · Codex ①`_extBuildRows` 채널 주인 무조건 멤버 저장(같은 그룹 다른 멤버 직캠 30건, 매처 절차+차분 필요) · updates.json 11-17 초안은 이미 main에 있음(확인 요청 없이 라이브).
+
 ## 🏠 집 노트북에서 하기 좋은 작업 (2026-11-16 회사 세션 마무리 — 집 세션은 여기부터 읽을 것)
 
 > 집 노트북 Claude Code는 품질이 들쭉날쭉하니(메모리 project_kpop_home_laptop_quality), **범위가 좁고·정답을 테스트로 확인할 수 있고·되돌리기 쉬운 일**만 여기 모았다. 판단·설계가 필요한 건 맨 아래 "집에서 하지 말 것".

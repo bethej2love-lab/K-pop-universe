@@ -496,6 +496,15 @@ function _songBase(title){
 const _SONG_COMMON=new Set(['love','baby','girls','girl','boys','dream','dreams','star','stars','magic','fire','light','heart','money','party','world','summer','winter','spring','happy','sorry','hello','smile','queen','king','game','time','life','home','night','dance','music','angel','crown','rain','snow','blue','gold','free','alone','again','forever','beautiful','intro','outro','interlude','shorts','live','stage','special','teaser','focus','close','with','only','more','what','this','that','yours','mine','good','bad','real','next','last','first','young','wild','sweet','pink','black','white','highlight','behind','vlog','episode','well','habit','yawn','solo','encore','show']); // solo·encore(2026-11-12 Codex): '준호 Solo Concert'·'1위 앵콜'이 박재범 솔로곡 'Solo' 등으로 묶였다 · show(2026-11-16 사용자 제보): 'Show Music Core'·'Show Champion'·'COMEBACK SHOW' 같은 방송 이름이 슈퍼주니어 곡 'Show'로 묶여 성민 Show 페이지 5개가 전부 다른 곡이었다 — 따옴표로 감싼 'Show'만 곡
 // songs: [{b:기본형}] (한 주인의 곡 목록, 중복 기본형 제거된 것) · blockNames: 주인 이름 정규형(그룹 ko/en 등)
 // 반환: 기본형 배열(최대 5) — 키로 쓸 땐 주인 키를 앞에 붙인다
+// 공연(투어)명에 곡명이 들어 있는 경우 — 에이티즈 'WORLD TOUR [IN YOUR FANTASY] IN BANGKOK'·'[IN YOUR FANTASY] IN TAIPEI'·'IN YOUR FANTASY in ASIA & AUSTRALIA'가
+// 곡 In Your Fantasy로 66건 연결돼 곡 페이지에 투어 영상이 섞였다(2026-11-18, Codex 여상 Legacy 건에서 발견). 제목 본문 매칭(②)에서만 이 구간을 지운다.
+// 따옴표 곡명(①)·대시 규칙은 그대로라 'In Your Fantasy' 를 따옴표로 감싼 진짜 곡 영상은 계속 잡힌다.
+function _songStripTourName(s){
+  return String(s||'')
+    .replace(/(?:world\s*tour|tour|콘서트|concert)\s*[\[<＜【「『]([^\]>＞】」』\n]{1,60})[\]>＞】」』]/gi,' ')
+    .replace(/[\[＜【]([^\]＞】\n]{1,60})[\]＞】]\s*(?=in\s+[a-z])/gi,' ')
+    .replace(/[a-z0-9' ]{4,40}?\s+in\s+(?:asia(?:\s*&\s*australia)?|europe|north\s+america|south\s+america|latin\s+america|oceania)\b/gi,' ');
+}
 function _songLinkBases(title,songs,blockNames){
   const t=String(title||'');if(!t||!songs||!songs.length)return [];
   const bset=new Map(songs.map(s=>[s.b,s]));
@@ -533,7 +542,7 @@ function _songLinkBases(title,songs,blockNames){
   }
   for(const m of t.matchAll(/🎵\s*([^\n]+)/g))dash.push(_lead(m[1]));
   // ② 해시태그를 뺀 본문에서 곡명 포함 — 4글자 이상·흔한 낱말 아님·주인 이름 아님. 긴 곡명 안에 든 짧은 곡명은 버린다
-  const noTags=t.replace(/#[^\s#]+/g,' ');
+  const noTags=_songStripTourName(t.replace(/#[^\s#]+/g,' ')); // 공연(투어)명 속 곡명은 곡이 아니다(2026-11-18)
   const body=_songNorm(noTags);
   const tl=noTags.toLowerCase().normalize('NFKC').replace(_SONG_ZW,''); // 단어 경계 검사용(공백·기호 살아 있는 소문자, 폭 0 문자는 뺌)
   const hits=[];
