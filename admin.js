@@ -4543,19 +4543,25 @@ function _sweepNormHay(...parts){
   return parts.filter(Boolean).join(' ').toUpperCase().replace(/[^0-9A-Z가-힣]+/g,' ');
 }
 // 로스터 엔트리에서 그 멤버를 가리킬 수 있는 표기들(정식명·영문명·별칭·성 뗀 이름).
+// 성 뗀 이름이 일상어인 멤버(2026-11-18 검수 세션 제안 ①) — 이정신 '정신'·조한국 '한국'·유아이 '아이'·주학년 '학년'·장수원 '수원'(지명).
+// 가드 A가 성 뗀 변형을 '제목에 문자로 있으면 근거 있음'으로 쳐서 "정신 못 차리는" 같은 9/28 이전 옛 오태깅 282건이 영영 안 걸렸다.
+// 이 변형은 **같은 제목에 같은 팀 다른 멤버의 이름(정식·영문)도 있을 때만** 근거로 인정한다. 근거를 잃은 행은 대개 멤버가 하나뿐이라
+// 가드 B(would-wipe)로 검수 큐에만 간다 — 자동으로 지우지 않는다. '미주'(이미주 — 그룹명 없이 불리는 정당한 사례 60건)는 넣지 말 것.
+const _SWEEP_WEAK_STRIPPED=new Set(['정신','한국','아이','학년','수원']);
 function _sweepMemberNameTokens(mko,roster){
   const e=roster.find(r=>r.ko===mko)||{};
   const out=[mko,e.en].concat(e.aliases||[]).filter(Boolean);
   const st=_atmStripSurname([...String(mko)]);
-  if(st&&st.length>=2)out.push(st);
+  if(st&&st.length>=2&&!_SWEEP_WEAK_STRIPPED.has(st))out.push(st);
   return out;
 }
 // 제목/설명에 그 이름이 문자로 등장하는가(공백·구두점 무시). 등장하면 "근거 없음"이라 말할 수 없다.
 function _sweepNameAppears(mko,roster,hay){
-  return _sweepMemberNameTokens(mko,roster).some(tok=>{
-    const t=_sweepNormHay(tok).trim();
-    return t.length>=2&&hay.includes(t);
-  });
+  const has=tok=>{const t=_sweepNormHay(tok).trim();return t.length>=2&&hay.includes(t);};
+  if(_sweepMemberNameTokens(mko,roster).some(has))return true;
+  // 일상어 변형은 팀 맥락(다른 멤버 정식·영문 이름)이 같이 있을 때만
+  const st=_atmStripSurname([...String(mko)]);
+  return !!(st&&_SWEEP_WEAK_STRIPPED.has(st)&&has(st)&&roster.some(r=>r.ko!==mko&&[r.ko,r.en].some(x=>x&&has(x))));
 }
 // 한 행에 대해 "무엇을 지울지 / 지워도 되는지"를 정하는 순수 판정부 — 가드 A·B·C가 여기 다 모여 있다.
 // DB도 UI도 안 건드리므로 tests/members-sweep-guard.test.js가 실제 제목으로 그대로 돌린다.

@@ -48,6 +48,7 @@ const { _sweepNormHay, _sweepPlanMemberFix } = new Function([
   extractByBraces(/^function _atmNameIsForeign\(/m, '_atmNameIsForeign'),
   extractByBraces(/^function _atmStripSurname\(/m, '_atmStripSurname'),
   extractByBraces(/^function _sweepNormHay\(/m, '_sweepNormHay'),
+  extractStatement(/^const _SWEEP_WEAK_STRIPPED\s*=/m, '_SWEEP_WEAK_STRIPPED'),
   extractByBraces(/^function _sweepMemberNameTokens\(/m, '_sweepMemberNameTokens'),
   extractByBraces(/^function _sweepNameAppears\(/m, '_sweepNameAppears'),
   extractByBraces(/^function _sweepPlanMemberFix\(/m, '_sweepPlanMemberFix'),
@@ -124,5 +125,15 @@ console.log('5) 바뀔 게 없으면 아무것도 안 한다');
   check('변화 없음', { apply: p.apply, reason: p.reason }, { apply: false, reason: 'no-change' });
 }
 
-console.log(fail ? `\n❌ 실패 ${fail}건` : '\n✅ 전부 통과 (10건)');
+console.log('6) 성 뗀 이름이 일상어(정신·한국)면 팀 맥락이 있을 때만 근거 — 2026-11-18 옛 오태깅 282건');
+{
+  const p = plan('씨엔블루', '정신 못 차리는 하루 브이로그', null, ['이정신'], []);
+  check('일상어 "정신"만 있으면 근거 없음 → 검수 큐(자동 삭제 아님)', { apply: p.apply, reason: p.reason }, { apply: false, reason: 'would-wipe' });
+}
+{
+  const p = plan('씨엔블루', '씨엔블루 정용화 정신 직캠', null, ['이정신', '정용화'], []);
+  check('같은 팀 멤버 이름이 함께 있으면 "정신"도 근거', { apply: p.apply, reason: p.reason }, { apply: false, reason: 'no-change' });
+}
+
+console.log(fail ? `\n❌ 실패 ${fail}건` : '\n✅ 전부 통과 (12건)');
 process.exit(fail ? 1 : 0);
