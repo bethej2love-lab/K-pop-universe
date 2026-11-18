@@ -2382,7 +2382,7 @@ function animate(){
   // 열려 있는 동안은 기기 종류와 무관하게 뒤의 3D 우주가 안 보임 — 그런데도 계속 풀 렌더링을 돌리면
   // 안 보이는 화면 그리는 데 GPU/CPU를 써서 정작 그 위에서 재생 중인 유튜브 영상이 끊기게 됨.
   const _lbEl=document.getElementById('yt-lightbox');
-  if(_lbEl.classList.contains('open')){
+  if(_lbEl.classList.contains('open')&&!(_MM&&_MM.full)){ // 우주 모드에선 재생 화면이 비켜 있다(소리만)
     // 캔버스를 합성에서까지 빼는 건 라이트박스가 뒤를 **완전히** 가릴 때만 — 안 그러면 우주가
     // 사라진 게 눈에 보인다. 가리는 경우: 모바일(아래 CSS에서 .open 배경을 불투명으로 깔았다) 또는
     // 브라우즈 모드(#0a0a0d 불투명). 데스크톱 "카드 보며 재생"은 라이트박스가 우측을 비워 그
@@ -2404,7 +2404,8 @@ function animate(){
   // 아래 목록은 "열려 있으면 3D가 사실상 안 보이는" 전체화면 오버레이들 — 전부 `.open`으로 토글된다.
   // ⚠️ 제외한 것: `#feed-overlay`(모바일에서
   //    peek 상태로 반쯤만 덮여 뒤 우주가 보임 — 멈추면 얼어붙은 게 눈에 띈다), `#col-picker`(작은 시트).
-  if(_FULLSCREEN_OVERLAY_IDS.some(id=>document.getElementById(id)?.classList.contains('open')))return;
+  // 웹 미니맵·우주 모드(_MM)에선 이 창들이 화면을 덮지 않는다(무대 패널) — 미니맵은 작아서 싸고, 우주 모드는 패널이 비켜 우주가 보인다(11-18)
+  if(!(_MM&&(_MM.on||_MM.full))&&_FULLSCREEN_OVERLAY_IDS.some(id=>document.getElementById(id)?.classList.contains('open')))return;
   // 탐험 패널 **전체 열림**(모바일, peek 아님)도 스킵(2026-09-28, 사용자 제보 — "탐험 패널 둘러보는데 발열 심함").
   // 위 ⚠️의 제외 사유는 peek(반만 덮음) 때문이었다. 전체 열림은 화면을 탭바까지 다 덮고, 뒤는
   // rgba(12,12,15,0.78)+blur(18px)라 느린 자동회전이 멈춰도 눈에 안 띈다 — 반대로 계속 그리면 매 프레임
@@ -2902,7 +2903,7 @@ function animate(){
   }
   if(!_reduceMotion)_nctRingGroups.forEach(({g})=>g.rotateZ(0.00028*_dtMs/16.67)); // 실경과 기준 회전(렌더 fps 달라도 속도 일정)
   // 위에서 이미 렌더 fps로 게이트했으므로(Tier 1) 여기선 그냥 그린다.
-  renderer.render(scene,camera);
+  renderer.render(scene,(_MM&&_MM.on)?_mmCamera():camera); // 웹 미니맵이면 물러난 전용 카메라
   labelRenderer.render(scene,camera);
   if(window._syncZoomSlider)_syncZoomSlider();
 }
@@ -2919,6 +2920,7 @@ animate();
 // 어긋난 값을 봤더라도 150ms 뒤 한 번 더 맞추며, 배경 다시 그리기(비싼 것)만 디바운스에 남긴다.
 let _uniResizeT=null;
 const _uniApplySize=()=>{
+  if(typeof _MM!=='undefined'&&_MM.on){_mmApply();return;} // 웹 미니맵 중엔 미니맵 크기(아래 _MM)
   const w=window.innerWidth,h=window.innerHeight;
   camera.aspect=w/h;camera.updateProjectionMatrix();
   renderer.setSize(w,h);
@@ -2941,6 +2943,7 @@ window.addEventListener('orientationchange',()=>{
 // iOS에서 탐험 peek·가로 영상 등 오버레이가 viewport를 일시 변경하면 resize가 잘못된 높이로
 // 호출돼 캔버스가 줄어든 채로 고정되는 경우가 있다. 닫힘 경로(_closeFeedOverlay 등)에서 호출.
 function _syncUniverseSize(){
+  if(typeof _MM!=='undefined'&&_MM.on)return;
   const w=window.innerWidth,h=window.innerHeight;
   if(renderer.domElement.style.height===h+'px')return; // 이미 맞으면 skip
   camera.aspect=w/h;camera.updateProjectionMatrix();
@@ -2949,6 +2952,87 @@ function _syncUniverseSize(){
   scene.background=_buildUniverseBg();
 }
 
+// ── 우주 미니맵(2026-11-18 사용자 결정 — TASTE.md 결정 로그) ─────────────────────────────────────────────
+// 웹(≥1024)에서 콘텐츠(탐험·카드·가운데 창)가 하나라도 열려 있으면 '콘텐츠 모드' — 3D 우주를 화면 전체 대신 오른쪽 탭바 바로 왼쪽의
+// 작은 알약 칸(탭바와 같은 높이)에 그린다. 이름표는 숨기고, 카드가 열릴 때 이미 하던 카메라 이동이 그대로 '지금 있는 행성'을 보여준다.
+// 칸을 누르면 '우주 모드'(_MM.full) — 패널들이 잠깐 비키고 우주가 화면 가득. 행성을 눌러 카드가 열리거나 '콘텐츠로'·Esc면 돌아온다.
+// 판정은 _feedWideSync(패널 열림 감시·창 크기·1초 안전망)에서 _mmSync로. 폰·태블릿(<1024)은 그대로 전체 화면 우주.
+// var: showGC·showT·_feedWideSync가 시작 직후(이 줄 실행 전) 불려도 TDZ 예외가 안 나게
+var _MM={on:false,full:false,w:132,h:52,r:12}; // 탭바(37px)보다 조금 크게, 모서리는 덜 둥글게(11-18 사용자)
+// 미니맵 전용 카메라 — 카드를 열면 본 카메라가 행성 바로 앞까지 날아가 작은 칸엔 빛 덩어리만 보였다. 같은 방향에서 뒤로 물러나
+// (우주 반경의 45%) 지금 행성(controls.target)을 가운데 두고 주변까지 보이게 한다. 본 카메라·조작은 그대로라 우주 모드로 펼치면 원래 시점.
+let _mmCam=null;
+function _mmCamera(){
+  if(!_mmCam)_mmCam=camera.clone();
+  _mmCam.fov=camera.fov;_mmCam.aspect=camera.aspect;_mmCam.near=camera.near;_mmCam.far=camera.far;
+  const t=controls.target,dir=camera.position.clone().sub(t);
+  const d=Math.max(dir.length(),UNIVERSE_MAX_DIST*0.45);
+  if(dir.lengthSq()<1e-6)dir.set(0,0.3,1);
+  _mmCam.position.copy(t).add(dir.normalize().multiplyScalar(d));
+  _mmCam.lookAt(t);_mmCam.updateProjectionMatrix();
+  return _mmCam;
+}
+function _mmWanted(){
+  if(!_stageWide()||_MM.full)return false;
+  const open=id=>!!document.getElementById(id)?.classList.contains('open');
+  return open('feed-overlay')||['side-panel','member-panel','conn-panel'].some(open)||(typeof _stageCenterOpen==='function'&&_stageCenterOpen());
+}
+function _mmRect(){
+  const nav=document.getElementById('dh-right');
+  const b=nav&&nav.getBoundingClientRect();
+  const h=_MM.h,top=Math.round(b?b.top+b.height/2-h/2:6); // 탭바와 세로 중심만 맞춘다
+  const right=b&&b.width?b.left-10:window.innerWidth-460;
+  return{x:Math.round(right-_MM.w),y:top,w:_MM.w,h};
+}
+function _mmEls(){
+  let hit=document.getElementById('uni-mini-hit');
+  if(!hit){
+    hit=document.createElement('button');hit.id='uni-mini-hit';hit.type='button';
+    hit.addEventListener('click',e=>{e.stopPropagation();_mmEnterFull();});
+    document.body.appendChild(hit);
+  }
+  let back=document.getElementById('uni-back');
+  if(!back){
+    back=document.createElement('button');back.id='uni-back';back.type='button';
+    back.addEventListener('click',e=>{e.stopPropagation();_mmExitFull();});
+    document.body.appendChild(back);
+  }
+  const ko=typeof currentLang==='undefined'||currentLang==='ko';
+  hit.setAttribute('aria-label',ko?'우주 크게 보기':'Open the universe');hit.title=hit.getAttribute('aria-label');
+  back.textContent=ko?'← 콘텐츠로':'← Back to content';
+  return{hit,back};
+}
+function _mmApply(){
+  const c=renderer.domElement,lab=labelRenderer.domElement;
+  if(_MM.on){
+    const r=_mmRect();
+    Object.assign(c.style,{position:'fixed',left:r.x+'px',top:r.y+'px',borderRadius:_MM.r+'px',zIndex:'3'});
+    renderer.setSize(r.w,r.h);camera.aspect=r.w/r.h;camera.updateProjectionMatrix();
+    lab.style.display='none';
+    const{hit}=_mmEls();Object.assign(hit.style,{left:r.x+'px',top:r.y+'px',width:r.w+'px',height:r.h+'px',borderRadius:_MM.r+'px'});
+  }else{
+    Object.assign(c.style,{position:'',left:'',top:'',borderRadius:'',zIndex:''});
+    const w=window.innerWidth,h=window.innerHeight;
+    renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();
+    labelRenderer.setSize(w,h);lab.style.display='';
+  }
+}
+function _mmSync(){
+  const want=_mmWanted();
+  if(want===_MM.on){if(want){const r=_mmRect(),c=renderer.domElement;if(c.style.left!==r.x+'px'||c.style.top!==r.y+'px')_mmApply();}return;}
+  _MM.on=want;document.body.classList.toggle('uni-mini',want);
+  _mmApply();
+  if(!want)scene.background=_buildUniverseBg();
+}
+function _mmEnterFull(){
+  if(_MM.full)return;
+  _MM.full=true;_mmEls();document.body.classList.add('uni-full');_mmSync();
+}
+function _mmExitFull(){
+  if(!_MM.full)return;
+  _MM.full=false;document.body.classList.remove('uni-full');_mmSync();
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&_MM.full){e.stopPropagation();_mmExitFull();}},true);
 // ── Search & fly-to ───────────────────────────────
 function _startFly(toOrbit,toCam,dur){
   controls.autoRotate=false;
@@ -11588,6 +11672,7 @@ function positionCard(el,cx,cy,cardW,estH){
 // 밀리므로 자리는 그대로 둔다. 모바일 스택 푸시는 openMobSheet가 _cardStack 길이로 스스로 판단한다.
 // (참고: showGC의 4번째는 keepMemberPanel이라 두 함수의 4번째 인자 의미가 서로 다르다 — 혼동 주의)
 function showT(a,cx,cy,keepNavStack,urlMode,_unusedPushMobNav,noFly){
+  if(_MM&&_MM.full)_mmExitFull(); // 우주 모드에서 행성을 눌러 카드를 열면 콘텐츠 모드로(미니맵)
   _freezeSheetBottomBeforeOverwrite('tt');
   _dismissOnboardHint();
   if(!keepNavStack){_memberNavStack=[];_discoverNavStack=[];}
@@ -13846,6 +13931,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 function _feedWideSync(){
   try{_cardYieldSync();}catch(e){}
+  try{_mmSync();}catch(e){}
   _lbFitSync();if(typeof requestAnimationFrame==='function')requestAnimationFrame(_lbNarrowSync);
   const fo=document.getElementById('feed-overlay');if(!fo)return;
   const _w=_stageWide()&&fo.classList.contains('open')?_fwWidth():440;
@@ -15771,6 +15857,7 @@ function _showUnitCard(name,cx,cy,keepMemberPanel,urlMode){
   _syncUrl(urlMode||'push');
 }
 function showGC(ko,cx,cy,keepMemberPanel,skipRipple,urlMode,_unusedPushMobNav){
+  if(_MM&&_MM.full)_mmExitFull(); // 우주 모드에서 행성을 눌러 카드를 열면 콘텐츠 모드로(미니맵)
   if(_isUnitKey(ko))return _showUnitCard(ko.slice(_UNIT_KEY.length),cx,cy,keepMemberPanel,urlMode);
   // 유닛 모드가 숨긴/바꾼 그룹 전용 요소 복구(나머지 줄은 아래에서 그룹 값으로 다시 그린다)
   ['gc-fav','gc-share','gc-card-menu'].forEach(id=>{const x=document.getElementById(id);if(x)x.style.display='';});
