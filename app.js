@@ -5629,6 +5629,8 @@ function openLightbox(url,shorts,playlist,idx,ctx,isAdvance,forceBrowseMode){
   if(!isAdvance){_resetQueueSheet();_lbSessionMode=(shorts&&isMob())?'shorts':'browse';}
   lb.classList.toggle('lb-browse',_lbSessionMode==='browse');
   lb.classList.toggle('lb-shorts-desk',!!(shorts&&!isMob()));
+  // Up Next 접기 버튼(2026-11-18) — 이 기본 열기 경로에선 hidden을 안 풀어서, 세로↔가로 전환을 거친 때만 보였다(사용자 '열고 닫게 해달라' 미결의 원인)
+  {const _t=document.getElementById('yt-lb-uplist-tog');if(_t){_t.hidden=_lbSessionMode!=='browse';_t.textContent=lb.classList.contains('lb-uplist-off')?'‹':'›';}}
   _gaEvent('video_play',{mode:_lbSessionMode,advance:!!isAdvance}); // 쇼츠/브라우즈·최초/넘김 구분(2026-08-29)
   // iOS Safari: display:none 상태의 iframe에서 src를 바꾸면 사용자 제스처 체인이 끊겨 autoplay가 차단됨.
   // 라이트박스를 먼저 열어 iframe이 visible한 상태로 만든 뒤 src를 설정해야 autoplay가 허용됨.
@@ -7574,7 +7576,7 @@ function _lbSwitchToBrowse(){
   _lbSessionMode='browse';
   lb.classList.add('lb-browse');
   wrap.classList.remove('lb-ui-hidden');
-  const _ulTog=document.getElementById('yt-lb-uplist-tog');if(_ulTog){_ulTog.hidden=false;_ulTog.textContent=lb.classList.contains('lb-uplist-off')?'›':'‹';}
+  const _ulTog=document.getElementById('yt-lb-uplist-tog');if(_ulTog){_ulTog.hidden=false;_ulTog.textContent=lb.classList.contains('lb-uplist-off')?'‹':'›';}
   _lbUpdateToolbar();
   _lbUpdateMemberInfo();
   _lbUpdateUplist();
@@ -7787,10 +7789,10 @@ document.getElementById('yt-lb-uplist-next').addEventListener('click',e=>{e.stop
   if(_tog)_tog.addEventListener('click',e=>{
     e.stopPropagation();
     const off=_lb.classList.toggle('lb-uplist-off');
-    _tog.textContent=off?'›':'‹';
+    _tog.textContent=off?'‹':'›'; // 패널이 오른쪽이라: 열림=› (오른쪽으로 접기), 닫힘=‹ (왼쪽으로 펼치기)
     try{localStorage.setItem('kpu_lb_uplist_off',off?'1':'');}catch(_){}
   });
-  try{if(localStorage.getItem('kpu_lb_uplist_off')){_lb.classList.add('lb-uplist-off');if(_tog){_tog.textContent='›';}}}catch(_){}
+  try{if(localStorage.getItem('kpu_lb_uplist_off')){_lb.classList.add('lb-uplist-off');if(_tog){_tog.textContent='‹';}}}catch(_){}
 }
 // 큐 시트 이벤트
 document.getElementById('yt-lb-queue-btn').addEventListener('click',e=>{e.stopPropagation();_openQueueSheet();});

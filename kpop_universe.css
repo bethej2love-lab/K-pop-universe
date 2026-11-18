@@ -5966,3 +5966,23 @@
   .gc-discog-stack:hover .gc-discog-deck-back.d1{transform:translate(13px,-4px) rotate(4deg);}
   .gc-discog-stack:hover .gc-discog-deck-back.d2{transform:translate(22px,-5px) rotate(5.5deg);}
 }
+
+/* 카드 4차(2026-11-18 사용자 지정): 구독자 수 10 · 싱글·연도 줄 10 · 앨범명 11 · 'N명이 좋아해요'·흔적 줄 11 */
+@media (hover:hover) and (pointer:fine){
+  .gc-link-count{font-size:10px;}
+  .gc-discog-type{font-size:10px;}
+  .gc-discog-item-title{font-size:11px;}
+  #side-panel .gc-status-inner{font-size:11px;}
+}
+
+/* Up Next 접기 버튼 — 20×28·반투명이라 있는 줄 몰랐다 → 28×28, 또렷하게(2026-11-18) */
+@media (hover:hover) and (pointer:fine){
+  #yt-lightbox.lb-browse:not(.lb-narrow) #yt-lb-uplist-tog{width:28px;height:28px;font-size:15px;color:rgba(205,218,250,0.85);background:rgba(255,255,255,0.08);margin-right:6px;}
+}
+
+/* 접기 버튼을 재생목록 머리줄 밖(패널 맨 위 오른쪽)으로 — 재생목록 없이 열면 머리줄째 숨어 버튼도 사라졌다(2026-11-18) */
+@media (hover:hover) and (pointer:fine){
+  #yt-lightbox.lb-browse:not(.lb-narrow) #yt-lb-uplist{position:relative;}
+  #yt-lightbox.lb-browse:not(.lb-narrow):not(.lb-uplist-off) #yt-lb-uplist-tog{position:absolute;top:0;right:0;z-index:2;margin:0;}
+  #yt-lightbox.lb-browse.lb-uplist-off:not(.lb-narrow) #yt-lb-uplist-tog{margin:0 auto;}
+}
