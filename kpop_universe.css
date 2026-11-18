@@ -3374,6 +3374,16 @@
   .melon-link-btn{display:inline-flex;align-items:center;gap:3px;margin-top:8px;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:500;
     color:rgba(150,205,170,0.62);background:transparent;border:0.5px solid rgba(0,205,60,0.2);text-decoration:none;transition:background .15s,color .15s;}
   .melon-link-btn:hover{background:rgba(0,205,60,0.1);color:rgba(150,225,170,0.9);}
+  .album-ext-links{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+  .album-ext-links .melon-link-btn{margin-top:0;}
+  .melon-link-btn.ext-sp{color:rgba(150,205,170,0.62);border-color:rgba(30,215,96,0.2);}
+  .melon-link-btn.ext-sp:hover{background:rgba(30,215,96,0.1);}
+  .melon-link-btn.ext-am{color:rgba(240,170,185,0.62);border-color:rgba(250,60,90,0.22);}
+  .melon-link-btn.ext-am:hover{background:rgba(250,60,90,0.1);color:rgba(255,190,200,0.9);}
+  .album-ext-links [hidden]{display:none;}
+  /* 멜론이 주(主) — 곡 정보가 제일 정확하다(2026-11-18 사용자). 스포티파이·애플은 작은 보조 */
+  .album-ext-links .melon-link-btn:not(.ext-sp):not(.ext-am){font-size:13px;font-weight:700;padding:6px 16px;color:rgba(200,245,215,0.98);background:rgba(0,205,60,0.16);border-color:rgba(0,205,60,0.5);}
+  .album-ext-links .melon-link-btn:not(.ext-sp):not(.ext-am):hover{background:rgba(0,205,60,0.26);}
   .gc-discog-track-lyric{flex-shrink:0;align-self:center;display:inline-flex;width:24px;height:24px;margin:-4px -2px -4px 0;border-radius:6px;align-items:center;justify-content:center;opacity:.55;transition:opacity .15s,background .15s;}
   .gc-discog-track-lyric svg{width:15px;height:15px;fill:none;stroke:rgba(170,195,245,0.95);stroke-width:1.8;stroke-linecap:round;}
   .gc-discog-track-lyric:hover{opacity:1;background:rgba(255,255,255,0.06);}

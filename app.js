@@ -5076,6 +5076,30 @@ function _mountShortThumb(img,id,opts){
   };
   _shortThumbWhenNear(img,()=>tryUrl(['oardefault','oar2']));
 }
+// ⭐ 데스크톱 가로 썸네일 화질 올리기(2026-11-18, 사용자 "웹에서 쇼츠 썸네일은 좋은데 가로는 너무 안 좋다").
+// DB thumb이 mqdefault(320×180)라 PC의 넓은 카드(300px↑ ×DPR)에서 흐리다. 가로 썸네일이 다 뜬 뒤 화면 밖에서
+// maxresdefault(1280×720, 16:9라 띠 없음)를 받아보고, 진짜 그림일 때만 바꿔 끼운다 — 유튜브가 없는 영상엔 120×90 회색
+// 플레이스홀더를 주므로 크기로 거르고, 실패하면 아무것도 안 해서 기존 mqdefault가 그대로 남는다(깨질 수 없음).
+// 마우스 쓰는 기기(PC)에서만 — 폰은 데이터·메모리 부담이라 건드리지 않는다. 쇼츠(.is-short)는 _mountShortThumb 담당이라 제외.
+(function(){
+  try{if(!window.matchMedia||!matchMedia('(hover:hover) and (pointer:fine)').matches)return;}catch(e){return;}
+  const SEL='img.feed-card-thumb,img.gc-ch-thumb,img.tvf-thumb';
+  document.addEventListener('load',e=>{
+    const img=e.target;
+    if(!img||img.tagName!=='IMG'||img.dataset.hiRes||!img.matches(SEL)||img.closest('.is-short'))return;
+    const m=/^(https:\/\/(?:i\.ytimg\.com|img\.youtube\.com)\/vi\/[\w-]{11}\/)mqdefault\.jpg(?:\?.*)?$/.exec(img.currentSrc||img.src||'');
+    if(!m)return;
+    img.dataset.hiRes='1';
+    const need=(img.clientWidth||0)*Math.min(window.devicePixelRatio||1,2);
+    if(need&&need<=330)return; // 작은 칸(1배율 330px 이하)은 mqdefault로 충분
+    const hi=new Image();
+    hi.onload=()=>{
+      if(hi.naturalWidth<=120||!img.isConnected)return;
+      (hi.decode?hi.decode():Promise.resolve()).catch(()=>{}).then(()=>{if(img.isConnected&&img.src.indexOf('mqdefault')>-1)img.src=hi.src;});
+    };
+    hi.src=m[1]+'maxresdefault.jpg';
+  },true);
+})();
 // 큰 세로 원본을 카드 폭×DPR(최대 2)로 줄인 blob 주소를 cb로 돌려준다. drawImage는 이 함수 안에서 동기로 끝나므로 호출 직후 원본을 놓아도 된다.
 // DPR 3 화면도 2배면 썸네일로는 차이가 안 보이고 메모리는 절반 이하(2026-10-30).
 function _shortThumbShrink(big,img,cb){
@@ -5199,7 +5223,7 @@ function _filterBannedVideos(list,ko){return(list||[]).filter(v=>!_isBannedVideo
 // 흔히 쓰는 문구 — 제목에 이 단어가 있으면 어느 그룹으로 매칭됐든 무조건 무관 처리한다(사용자 요청, 2026-08-04).
 // _isBannedVideoTitle과 달리 hidden이 아니라 무관 처리(행은 남기되 그룹/멤버 그리드에서만 제외)라 신규
 // 동기화 시 이 체크에 걸리면 content_flag를 '무관'으로 붙여서 저장한다 — 기존 행은 아래 스윕 버튼으로 정리.
-const _JUNK_TITLE_KEYWORDS_GLOBAL=['띵곡팔이','김창옥쇼','이호선상담소','유부녀킬러','유뷰녀 킬러','스트릿레스토랑파이터','십분hook','[#여권들고','프리한19','결혼지옥','오은영리포트','이혼숙려','닥터로이어','언니네산지직송','혼자는 못 해','방과후태리','스프링피버','[#학연]','1호가','퍼펙트글로우','님과 함께2','relay dance battle','물건너온아빠들','물 건너온 아빠들','닥터킴의','최강야구','진짜괜찮은사람','진짜 괜찮은 사람','지금거신전화는','지금 거신 전화는','각집부부','실화탐사대','화성인x파일','[아무튼 출근','[이리와','어쩌다어른','화성인이지만'];
+const _JUNK_TITLE_KEYWORDS_GLOBAL=['띵곡팔이','김창옥쇼','이호선상담소','유부녀킬러','유뷰녀 킬러','스트릿레스토랑파이터','십분hook','[#여권들고','프리한19','결혼지옥','오은영리포트','이혼숙려','닥터로이어','언니네산지직송','혼자는 못 해','방과후태리','스프링피버','[#학연]','1호가','퍼펙트글로우','님과 함께2','relay dance battle','물건너온아빠들','물 건너온 아빠들','닥터킴의','최강야구','진짜괜찮은사람','진짜 괜찮은 사람','지금거신전화는','지금 거신 전화는','각집부부','실화탐사대','화성인x파일','[아무튼 출근','[이리와','어쩌다어른','화성인이지만','idol maker ep'];
 // ⚠️ 대소문자 무시하고 비교한다 — 예전엔 t.includes(k) 그대로였는데, 목록이 전부 한글이라 문제가
 // 안 드러났을 뿐이었음. 영문 키워드('relay dance battle' 등)는 실제 제목이 "Relay Dance Battle"·
 // "RELAY DANCE BATTLE"처럼 대문자가 섞여 있어 그대로 두면 아예 안 걸린다(2026-08-25).
@@ -10310,7 +10334,7 @@ function _gaEvent(name,params){
 // ⚠️ 어드민(본인 테스트)은 세지 않는다. 테이블이 아직 없으면(SQL 미실행) 조용히 버린다.
 // var: _gaEvent가 이 줄보다 먼저 불려도 TDZ 예외가 안 나게(아래 _appEvent가 미초기화면 그냥 건너뜀)
 var _APP_EV=new Set(['view_group','view_member','video_play','search','favorite_group','favorite_member','explore_open',
-  'share_card','deeplink_open','story_to_app','shelf_click','surf_hop','copy_public_collection','save_collection','save_scrap','visit','chem_open','ref','from_seo']);
+  'share_card','deeplink_open','story_to_app','shelf_click','surf_hop','copy_public_collection','save_collection','save_scrap','visit','chem_open','ref','from_seo','restart_visible','restart_hidden']);
 var _appEvQ=[],_appEvT=null,_appEvDead=false;
 function _appEvent(ev,k){
   if(_appEvDead||window._kpuAutomated)return;
@@ -10339,6 +10363,21 @@ async function _appEvFlush(){
     if(localStorage.getItem('kpu_ev_day')===day)return;
     localStorage.setItem('kpu_ev_day',day);
     _appEvent('visit',window._kpuNewVisitor?'new':'ret');
+  }catch(e){}
+})();
+// ⭐ 보다가 혼자 다시 시작(인트로부터 새로 뜸) 감지(2026-11-18, 사용자 "최근 웹앱이 보다가 혼자 인트로 나오면서 새로고침되듯") —
+// 코드엔 자동 새로고침이 없다(서비스 워커도 reload 안 함). 아이폰이 메모리 때문에 웹앱 프로세스를 죽이고 다시 띄우는 걸로 의심되는데
+// 실기기 밖에서는 확인이 안 되니, 직전 실행이 "화면을 보던 중"에 끊겼는지 "백그라운드에서" 끊겼는지를 app_events에 세어 둔다.
+// 10초마다 localStorage에 마지막 생존 시각·보임/숨김을 적고, 다음 시작 때 그 기록이 10분 안이면 이벤트로 남긴다
+// (restart_visible=보다가 죽음 → 메모리 폭주 의심 / restart_hidden=백그라운드에서 회수 → iOS 정상 동작). k=직전 생존~지금 초.
+(function _appRestartProbe(){
+  try{
+    const prev=(localStorage.getItem('kpu_hb')||'').split('|'),ts=+prev[0],st=prev[1];
+    const gap=ts?Math.round((Date.now()-ts)/1000):-1;
+    if(ts&&gap>=0&&gap<600&&(st==='v'||st==='h')){const nv=((performance.getEntriesByType('navigation')[0]||{}).type||'')==='reload'?' r':'';_appEvent(st==='v'?'restart_visible':'restart_hidden',gap+'s'+nv);} // ' r'=브라우저가 reload로 판정(자동 복구·수동 새로고침)
+    const beat=()=>{try{localStorage.setItem('kpu_hb',Date.now()+'|'+(document.hidden?'h':'v'));}catch(e){}};
+    beat();setInterval(()=>{if(!document.hidden)beat();},10000);
+    document.addEventListener('visibilitychange',beat);
   }catch(e){}
 })();
 // 바깥 유입 출처(2026-11-03) — 챗지피티 등이 사이트를 공유하기 시작해서 얼마나 오는지 세려고. 세션당 1번,
@@ -13439,6 +13478,11 @@ function _openGcDiscogDetail(a,idx,ctx){
     const owner=(_dArtist()&&_dArtist().name&&_dArtist().name.ko)||(_discogDetailGko&&!String(_discogDetailGko).startsWith('unit:')?_discogDetailGko:'')||'';
     ml.href=a.melonAlbumId?_melonAlbumUrl(a.melonAlbumId):a.melonVia?_melonAlbumUrl(a.melonVia):'https://www.melon.com/search/total/index.htm?q='+encodeURIComponent((owner+' '+(a.title||'')).trim());
     ml.hidden=false;ml.onclick=e=>e.stopPropagation();}}
+  // 스포티파이·애플뮤직(2026-11-18) — 스포티파이는 수집 때 받은 앨범 ID가 있으면 그 앨범으로, 없으면 "주인 + 앨범명" 검색. 애플뮤직은 ID를 안 모으므로 검색(한국 스토어).
+  {const owner=(_dArtist()&&_dArtist().name&&_dArtist().name.ko)||(_discogDetailGko&&!String(_discogDetailGko).startsWith('unit:')?_discogDetailGko:'')||'';
+    const q=encodeURIComponent((owner+' '+(a.title||'')).trim());
+    const sp=document.getElementById('gc-discog-detail-spotify');if(sp){sp.href=a.spotifyId?'https://open.spotify.com/album/'+encodeURIComponent(a.spotifyId):'https://open.spotify.com/search/'+q;sp.hidden=false;sp.onclick=e=>e.stopPropagation();}
+    const am=document.getElementById('gc-discog-detail-apple');if(am){am.href='https://music.apple.com/kr/search?term='+q;am.hidden=false;am.onclick=e=>e.stopPropagation();}}
   const trackLbl=document.getElementById('gc-discog-detail-track-lbl');
   const tracksEl=document.getElementById('gc-discog-detail-tracks');
   tracksEl.innerHTML='';

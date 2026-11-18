@@ -626,12 +626,14 @@ ${SEO_GA_TAG}
   ${languageNav(isEn, altUrl)}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
   <a class="brand" href="${SITE}/${isEn ? 'en/g/' : 'g/'}" style="margin-left:10px;">${isEn ? 'All groups' : '그룹 전체'}</a>
-  <h1>${escHtml(bilingualLabel(displayName,subName))}</h1>
-  <img class="cover" src="${ogImage}" alt="${escHtml(displayName)}" loading="lazy">
-  <div class="meta">
-    ${debutIso ? `<span><b>${debutLabel}</b> ${escHtml(info.debut)}</span>` : ''}
-    ${agency ? `<span><b>${agencyLabel}</b> ${escHtml(agency)}</span>` : ''}
-    ${info.fandom && info.fandom.ko ? `<span><b>${fandomLabel}</b> ${escHtml(isEn ? (info.fandom.en || info.fandom.ko) : info.fandom.ko)}</span>` : ''}
+  <div class="top2">
+    <h1>${escHtml(bilingualLabel(displayName,subName))}</h1>
+    <img class="cover" src="${ogImage}" alt="${escHtml(displayName)}" loading="lazy">
+    <div class="meta">
+      ${debutIso ? `<span><b>${debutLabel}</b> ${escHtml(info.debut)}</span>` : ''}
+      ${agency ? `<span><b>${agencyLabel}</b> ${escHtml(agency)}</span>` : ''}
+      ${info.fandom && info.fandom.ko ? `<span><b>${fandomLabel}</b> ${escHtml(isEn ? (info.fandom.en || info.fandom.ko) : info.fandom.ko)}</span>` : ''}
+    </div>
   </div>
   ${(() => { const e2 = lang === 'en'; const parts = [[memberListHtml(lang), 'members', e2 ? 'Members' : '멤버'], [songLinksHtml(ko, lang), 'songs', e2 ? 'Songs' : '곡별 직캠'], [albumLinksHtml(ko, lang), 'albums', e2 ? 'Albums' : '앨범']].filter(x => x[0]); return parts.length ? `<ul class="member-list jump" style="margin:4px 0 16px">${parts.map(x => `<li><a href="#${x[1]}">${x[2]}</a></li>`).join('')}</ul>` : ''; })()}
   ${hasStage ? `
@@ -882,13 +884,15 @@ ${SEO_GA_TAG}
   ${languageNav(isEn, altUrl)}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
   <a class="brand" href="${SITE}/${isEn ? 'en/g/' : 'g/'}" style="margin-left:10px;">${isEn ? 'All groups' : '그룹 전체'}</a>
-  <h1>${escHtml(bilingualLabel(displayName,subName))}</h1>
-  <img class="cover" src="${ogImage}" alt="${escHtml(displayName)}" loading="lazy">
-  <div class="meta">
-    ${groupDisplay ? `<span><b>${groupLabel}</b> ${escHtml(bilingualLabel(groupDisplay,isEn?primaryGko:groupInfo.en))}</span>` : ''}
-    ${bdayIso ? `<span><b>${debutLabel}</b> ${escHtml(a.bday)}${ag.age && a.active !== false ? (isEn ? ` (age ${ag.age})` : ` (만 ${ag.age}세)`) : ''}</span>` : ''}
-    ${ag.debutDate ? `<span><b>${isEn ? 'Debut' : '데뷔'}</b> ${ag.debutDate}</span>` : ''}
-    ${agency ? `<span><b>${agencyLabel}</b> ${escHtml(agency)}</span>` : ''}
+  <div class="top2">
+    <h1>${escHtml(bilingualLabel(displayName,subName))}</h1>
+    <img class="cover" src="${ogImage}" alt="${escHtml(displayName)}" loading="lazy">
+    <div class="meta">
+      ${groupDisplay ? `<span><b>${groupLabel}</b> ${escHtml(bilingualLabel(groupDisplay,isEn?primaryGko:groupInfo.en))}</span>` : ''}
+      ${bdayIso ? `<span><b>${debutLabel}</b> ${escHtml(a.bday)}${ag.age && a.active !== false ? (isEn ? ` (age ${ag.age})` : ` (만 ${ag.age}세)`) : ''}</span>` : ''}
+      ${ag.debutDate ? `<span><b>${isEn ? 'Debut' : '데뷔'}</b> ${ag.debutDate}</span>` : ''}
+      ${agency ? `<span><b>${agencyLabel}</b> ${escHtml(agency)}</span>` : ''}
+    </div>
   </div>
   ${hasFancams ? `
   <h2>${isEn ? `${escHtml(en)} fancams` : `${escHtml(ko)} 직캠`}</h2>
