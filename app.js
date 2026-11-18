@@ -3856,10 +3856,15 @@ function _makeSearchItem(h,res,mobSearch,obSearch){
     div._lbItem=h.item||null; // 클릭 시 같은 결과의 영상 전부를 재생목록으로 묶는다(아래 click)
     const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const meta=[h.sub,h.meta].filter(Boolean).join(' · ');
-    div.innerHTML=`<span class="sr-vt">${h.thumb?`<img src="${esc(h.thumb)}" loading="lazy" alt="" referrerpolicy="no-referrer">`:''}<span class="sr-vp">▶</span></span>`
+    const _vid=ytId(h.url||'');
+    // 쇼츠는 세로 틀 + 전용 마운트로 — 가로 썸네일(mqdefault)을 16:9 틀에 cover로 넣으면 좌우 검은 띠만
+    // 크게 잘려 거의 안 보였다(2026-11-19 사용자 제보, 검색창). ⭐ 쇼츠 썸네일은 _mountShortThumb 하나로만.
+    const _sh=(h.item&&_songIsShort(h.item))||isShorts(h.url);
+    div.innerHTML=`<span class="sr-vt${_sh?' is-short':''}">${_sh?'<img alt="" referrerpolicy="no-referrer">':(h.thumb?`<img src="${esc(h.thumb)}" loading="lazy" alt="" referrerpolicy="no-referrer">`:'')}<span class="sr-vp">▶</span></span>`
       +`<span class="sr-vb"><span class="sr-vtitle">${esc(h.name)}</span>${meta?`<span class="sr-vmeta">${esc(meta)}</span>`:''}</span>`;
-    _mkProgBar(div.querySelector('.sr-vt'),ytId(h.url||'')); // 시청 진행 바(유튜브 빨간 줄) — 카드 그리드와 같은 표시
-    _vdur(div.querySelector('.sr-vt'),ytId(h.url||''),h.item&&(h.item.dur||h.item.duration_sec));
+    if(_sh&&_vid)_mountShortThumb(div.querySelector('.sr-vt img'),_vid,{});
+    _mkProgBar(div.querySelector('.sr-vt'),_vid); // 시청 진행 바(유튜브 빨간 줄) — 카드 그리드와 같은 표시
+    _vdur(div.querySelector('.sr-vt'),_vid,h.item&&(h.item.dur||h.item.duration_sec));
   }else{
   div.innerHTML=`<span class="sr-nl"><span class="sr-item-name${h.type==='group'?' sr-group':''}">${_ico}${h.name}</span>${h.alias?`<span class="sr-alias">${h.alias}</span>`:''}</span>${h.sub?`<span class="sr-tag${h.type==='group'?' sr-group':''}${h.subFormer?' sr-tag-former':''}">${h.sub}</span>`:''}`;
   if(h.type==='member'||h.type==='group')div.insertBefore(_srAvatarEl(h),div.firstChild);

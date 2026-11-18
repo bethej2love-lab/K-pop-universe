@@ -29,10 +29,13 @@ check("에스파 'Girls' — 따옴표 무대·직캠이 곡에 붙는다", () =
   const ids = songVids('에스파', rows, /\bgirls\b/i); ['g1', 'g2'].forEach(i => assert(ids.has(i), '붙어야 함: ' + i));
 });
 check("해시태그 #highlight 예능 클립은 곡 Highlight의 진짜 무대가 있으면 곡 영상에서 빠진다(비공연 거르기)", () => {
-  // 곡에 진짜 무대('Highlight' 직캠)가 하나라도 있어야 비공연이 빠진다 — 전부 비공연이면 빈 페이지를 막으려고 원래 목록을 쓴다.
+  // 곡 페이지는 근거 강한 무대가 2개 이상일 때만 생긴다(2026-11-18, 사용자 '정국 seoul 페이지' — 무대 하나+노이즈로는 약한 곡 페이지가 남발됐다).
+  // 그 조건을 채운 상태에서 예능(#highlight) 클립은 빠지고 무대는 남는지 본다 — 이 테스트의 핵심은 비공연 거르기다.
   const x = { ...V('x', '우리 세븐틴 사랑합니다 가사 문맥 너무 찰떡이다 #highlight#놀라운토요일 | amazingsaturday EP.261', 'variety'), content_formats: ['variety'] };
-  const rows = [V('p', "세븐틴 'Highlight' 직캠 4K (SEVENTEEN FanCam)"), x];
-  const ids = songVids('세븐틴', rows, /highlight/i); assert(ids.has('p') && !ids.has('x'), '무대는 남고 예능 클립은 빠져야 함: ' + [...ids].join(','));
+  const rows = [V('p', "세븐틴 (SEVENTEEN) - 'Highlight' @ Show! Music Core"),
+    V('p2', "[입덕직캠] 세븐틴 호시 직캠 4K 'Highlight' (SEVENTEEN HOSHI FanCam) | @MCOUNTDOWN", 'live', ['호시']), x];
+  const ids = songVids('세븐틴', rows, /highlight/i);
+  assert(ids.has('p') && ids.has('p2') && !ids.has('x'), '무대는 남고 예능 클립은 빠져야 함: ' + [...ids].join(','));
 });
 check('어포스트로피만 있는 영어 제목은 따옴표로 오인하지 않는다(QUOTED_RE)', () => {
   const src = fs.readFileSync(path.join(ROOT, 'tools', 'seo_extra.js'), 'utf8'); const m = /const QUOTED_RE = (\/.*\/g);/.exec(src); assert(m, 'QUOTED_RE 없음');
