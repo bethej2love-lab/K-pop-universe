@@ -3,6 +3,10 @@
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
 
+## 2026-11-18 저녁 (Claude Code/Sonnet 집 — 검색 개선 2건)
+- **검색 결과 종류 라벨 제거(사용자 "MMA 모아보기 오른쪽 '행사' 표기 삭제, 있을 필요 없잖아")**: program/festival 모아보기 결과의 `sub`('행사'·'프로그램'/Event·Program)를 안 붙임 — 이름에 이미 '모아보기'로 드러나 중복. 곡의 아티스트명·멤버의 소속 그룹 sub는 유용해 그대로. `app.js` `_matchEventSeries`·`_matchPrograms` 푸시부.
+- **외부 피처링 인물명으로 곡이 검색되던 것(사용자 "'성현' 검색에 곡 '새(피처링 허성현)'가 뜬다, 허성현은 아이돌도 아닌데")**: 곡 검색이 제목 **전체 문자열**로 매칭해 BOBBY '새 (Feat. 허성현 (Huh))'의 '허성현' 일부가 '성현'에 걸렸다. `_songMatchCore(t)`로 feat./ft./featuring/prod.(괄호 안이면 괄호째, 꼬리면 꼬리) 벗긴 **코어 제목**을 인덱스(`s.mt/mtL/mtEn`)에 두고 매칭만 그걸로 — 표시·점수 라벨은 원래 제목. 'With YOU-th'·'Feature'·'eight (Prod.&Feat. SUGA)' 등 10/10 단위검증, search-rank 14/14 통과. 성현 멤버(코르티스 성현·아이딧 박성현)는 멤버 이름 매칭으로 그대로 뜬다.
+
 ## 2026-11-18 저녁 (Claude Code/Sonnet 집 — CI Browser smoke 빨간불 2개 수리)
 - **⚠️ 어제(11-17 집) 내 CSS 회귀 되돌림 — phone-landscape 빨간불**: `#yt-lb-video-box:not(.is-shorts) #yt-lb-fs-cap{pointer-events:none}`(가로 영상 유튜브 전체화면 버튼 통과 목적)가 **데스크톱 전체화면 우회**를 깼다. fs-cap은 iframe이 `requestFullscreen`을 못 쓰는 환경에서 상위 페이지가 대신 호출하는 폴백인데, pointer-events를 끄니 `elementFromPoint`가 fs-cap을 건너뛰어 `tests/fixtures/lb_fullscreen_touch.cjs`의 '데스크톱 기존 전체화면 우회 유지'(hit이 yt-lb-fs-cap이어야)가 실패(로컬에서도 재현). → 그 두 줄 삭제 + 경고 주석. 로컬 phone-landscape --fullscreen-only 6/6. ⏳ **가로 영상 전체보기 버튼 안 눌림(원래 사용자 문제)은 fs-cap을 죽이지 말고 별도로 — 실기기 검증 필요**(유튜브 네이티브 버튼 vs fs-cap 우회가 iframe 우하단에서 겹침).
 - **desktop-close-layers 빨간불(11-16부터, 내 탓 아님)**: CI 리눅스 헤드리스에서 `yt-lb-iframe`이 load **이후** 포커스를 재탈취(`hasFocus=true`) → ESC가 부모 window에 안 와 라이트박스가 안 닫힘(맥 로컬은 재탈취 안 돼 7/7 통과였음). `app.js _lbSetIframeSrc`의 `{once:true}` 포커스 복구를 보강 — iframe이 실제로 포커스를 쥐고 있을 때만(`document.activeElement===fr`) load 직후·150·450·1000ms에 되돌림(정상 상태면 no-op, 키 입력 방해 없음). 로컬 close-layers 7/7·smoke·syntax 통과. ⚠️ **CI(리눅스)에서 실제 먹는지는 푸시 후 확인** — 안 먹으면 테스트 쪽에서 부모 포커스 복구로 전환(반복 난사 금지).

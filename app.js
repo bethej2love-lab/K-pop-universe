@@ -3188,6 +3188,16 @@ function _editDist1(a,b){
 // ⚠️ 인덱스는 **처음 검색할 때 한 번만** 만든다(2만여 건 순회라 로드 시점에 하면 첫 화면이 밀린다).
 let _songIndex=null;
 function _songKey(s){return String(s||'').toLowerCase().replace(/[\s'’".,\-()[\]]/g,'');}
+// 검색 매칭용 코어 제목 — feat./ft./featuring 뒤(괄호째)를 벗긴다. 피처링 인물명으로 곡이 잡히던 것 방지
+// (2026-11-18 사용자: '성현' 검색에 BOBBY '새 (Feat. 허성현 (Huh))'가 뜸 — 허성현은 유니버스 밖 인물).
+// 표시는 원래 제목 그대로 두고 매칭만 코어로. with는 'With YOU-th'처럼 제목에 흔해 벗기지 않는다.
+function _songMatchCore(t){
+  t=String(t||'');
+  // feat./prod.가 괄호 안에 있으면 그 여는 괄호부터 끝까지(중첩 괄호 포함) 벗긴다 — "eight (Prod.&Feat. …)" → "eight"
+  const m=t.match(/[\(\[][^\)\]]*?\b(?:feat|ft|featuring|prod)\b/i);
+  const core=m?t.slice(0,m.index):t.replace(/\s*\b(?:feat|ft|featuring)\.?\s.*$/i,''); // 괄호 없이 꼬리에 붙은 feat도 제거
+  return core.trim()||t;
+}
 function _buildSongIndex(){
   const byKey=new Map();
   // 반주/MR 트랙은 검색 결과에서 노이즈다 — "다시 만난 세계"를 치면 원곡 바로 밑에 (Inst.)가 따라붙는다
@@ -3212,6 +3222,8 @@ function _buildSongIndex(){
   // 해외 팬·음방 기록이 쓰는 영문 제목으로는 곡이 안 잡혔다. 그룹 → 곡 제목(디스코 표기 그대로) → 영문 제목들
   // 주인 = 그룹 이름 또는 솔로·멤버 개인곡이면 그 사람 이름(shared.js _songAliasesFor — 멜론 표기 꼬리 차이 흡수)
   out.forEach(s=>{const al=(typeof _songAliasesFor==='function')&&_songAliasesFor(s.ownerType==='group'?s.owner:(s.owner&&s.owner.name&&s.owner.name.ko),s.title);if(al){s.alt=al;s.altL=al.map(x=>x.toLowerCase());}});
+  // 매칭용 코어 제목(feat. 뒤 제거) — 표시는 s.title, 검색 비교는 s.mt(피처링 외부 인물명으로 안 잡히게)
+  out.forEach(s=>{s.mt=_songMatchCore(s.title);s.mtL=s.mt.toLowerCase();s.mtEn=(typeof _normEn==='function')?_normEn(s.mt):s.mtL;});
   return out;
 }
 // _SONG_ALIASES(곡 영문 제목 별칭)는 shared.js — 정적 페이지 곡 표기와 같은 표
@@ -4612,10 +4624,11 @@ function doSearch(q){
     const songHits=[];
     const _songSeen=new Set();
     for(const s of (_songIndex||[])){
-      const t=s.title,tl=t.toLowerCase();
+      // 매칭은 코어 제목(feat. 벗김)으로 — 피처링 외부 인물명으로 곡이 잡히지 않게(s.mt). 표시·점수 라벨은 아래에서 s.title.
+      const t=s.mt,tl=s.mtL;
       // 영문 별칭(_SONG_ALIASES)으로 잡히면 결과 줄에 그 영문 제목을 같이 보여준다
       const altHit=s.altL?s.alt.find((x,i)=>s.altL[i].includes(ql)||(qln.length>=2&&_normEn(x).includes(qln))):null;
-      if(!altHit&&!(t.includes(q)||tl.includes(ql)||(qln.length>=2&&_normEn(t).includes(qln))||(s.koPho&&s.koPho.includes(q.replace(/ /g,'')))))continue;
+      if(!altHit&&!(t.includes(q)||tl.includes(ql)||(qln.length>=2&&s.mtEn.includes(qln))||(s.koPho&&s.koPho.includes(q.replace(/ /g,'')))))continue;
       songHits.push({s,sc:altHit?Math.min(_mScore(t,q,ql),_mScore(altHit,q,ql)):_mScore(t,q,ql),altHit});_songSeen.add(s);
       if(songHits.length>400)break; // 너무 흔한 단어에서 전체 순회를 계속하지 않게
     }
@@ -4747,7 +4760,7 @@ function doSearch(q){
   // 행사(시상식·페스티벌·해외 특집 음방) 모아보기 — '마마'·'케이콘'·'워터밤'(2026-10-15). 같은 '컬렉션' 탭, 누르면 행사 페이지.
   // 엑소 앨범 'Mama' 같은 곡·앨범 결과는 그대로 같이 뜬다(사용자).
   _matchEventSeries(q).forEach(({s,grade})=>{
-    hits.push({type:'program',name:currentLang==='ko'?`${s.ko} 모아보기`:`${s.ko} Stages`,sub:currentLang==='ko'?'행사':'Event',data:{__festival:s.id},score:grade});
+    hits.push({type:'program',name:currentLang==='ko'?`${s.ko} 모아보기`:`${s.ko} Stages`,data:{__festival:s.id},score:grade});
   });
   _matchPrograms(q,ql,qln).forEach(p=>{
     const qns=ql.replace(/\s+/g,'');
@@ -4763,7 +4776,7 @@ function doSearch(q){
     });
     hits.push({type:'program',
       name:(currentLang==='ko'?`${p.label} 모아보기`:`${p.en||p.label} Collection`),
-      sub:currentLang==='ko'?'프로그램':'Program',data:p,score:grade});
+      data:p,score:grade}); // 종류 라벨('프로그램'/'행사')은 이름에 이미 '모아보기'로 드러나 중복 — 안 붙임(2026-11-18 사용자)
   });
   // ── 두 사람 검색(둘 사이) 정문(2026-09-05, 킬러 6.1) ──────────────────────────
   // "카리나, 장원영" / "카리나 x 장원영" / "A & B"처럼 두 이름을 구분자로 치면, 둘의 연결 카드를 여는
