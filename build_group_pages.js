@@ -626,6 +626,7 @@ ${SEO_GA_TAG}
   ${languageNav(isEn, altUrl)}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
   <a class="brand" href="${SITE}/${isEn ? 'en/g/' : 'g/'}" style="margin-left:10px;">${isEn ? 'All groups' : '그룹 전체'}</a>
+  <a class="brand" href="${SITE}/${isEn ? 'en/all/' : 'all/'}" style="margin-left:10px;">${isEn ? 'Browse all' : '모아보기'}</a>
   <div class="top2">
     <h1>${escHtml(bilingualLabel(displayName,subName))}</h1>
     ${(() => { const pic = groupPicUrl(ko); return pic ? `<img class="cover avatar" src="${pic}" alt="${escHtml(displayName)}" loading="eager" width="240" height="240">` : `<img class="cover" src="${ogImage}" alt="${escHtml(displayName)}" loading="lazy">`; })()}
@@ -884,6 +885,7 @@ ${SEO_GA_TAG}
   ${languageNav(isEn, altUrl)}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
   <a class="brand" href="${SITE}/${isEn ? 'en/g/' : 'g/'}" style="margin-left:10px;">${isEn ? 'All groups' : '그룹 전체'}</a>
+  <a class="brand" href="${SITE}/${isEn ? 'en/all/' : 'all/'}" style="margin-left:10px;">${isEn ? 'Browse all' : '모아보기'}</a>
   <div class="top2">
     <h1>${escHtml(bilingualLabel(displayName,subName))}</h1>
     ${(() => { const pic = memberPicUrl(a); return pic ? `<img class="cover avatar" src="${pic}" alt="${escHtml(displayName)}" loading="eager" width="240" height="240">` : `<img class="cover" src="${ogImage}" alt="${escHtml(displayName)}" loading="lazy">`; })()}
@@ -1159,6 +1161,7 @@ ${SEO_GA_TAG}
   ${languageNav(isEn, altUrl)}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
   <a class="brand" href="${SITE}/${isEn ? 'en/g/' : 'g/'}" style="margin-left:10px;">${isEn ? 'All groups' : '그룹 전체'}</a>
+  <a class="brand" href="${SITE}/${isEn ? 'en/all/' : 'all/'}" style="margin-left:10px;">${isEn ? 'Browse all' : '모아보기'}</a>
   <h1>${isEn ? 'All Groups' : '그룹 전체 목록'}</h1>
   <div class="sub">${escHtml(desc)}</div>
   <ul>
@@ -1219,9 +1222,16 @@ const SB_KEY = 'sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0'; // 앱(index.ht
 let PROFILE_PICS = new Map();
 const picKey = (g, n) => (g || '') + '|' + (n || '');
 async function fetchProfilePics() {
-  const res = await fetch(`${SB_URL}/rest/v1/artist_pics?select=ko_name,group_ko,pic_url&pic_url=like.*supabase.co/storage*`, { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } });
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  const rows = await res.json();
+  // ⚠️ PostgREST는 한 번에 1000행까지만 준다 — 처음엔 한 번만 받아 1,386장 중 1,000장(그룹 사진 188개 중 7개)만 들어왔다(2026-11-18 미리보기에서 발견).
+  //    정렬을 고정하고 1000개씩 나눠 받는다(정렬 없이 나누면 중복·누락).
+  const rows = [];
+  for (let off = 0; off < 20000; off += 1000) {
+    const res = await fetch(`${SB_URL}/rest/v1/artist_pics?select=ko_name,group_ko,pic_url&pic_url=like.*supabase.co/storage*&order=group_ko.asc,ko_name.asc&limit=1000&offset=${off}`, { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const part = await res.json();
+    rows.push(...part);
+    if (part.length < 1000) break;
+  }
   PROFILE_PICS = new Map(rows.filter(r => r.pic_url).map(r => [picKey(r.group_ko, r.ko_name), r.pic_url]));
   console.log(`프로필 사진 ${PROFILE_PICS.size}장(그룹 ${rows.filter(r => !r.ko_name).length})`);
 }
@@ -1351,6 +1361,7 @@ ${SEO_GA_TAG}
   ${languageNav(isEn, altUrl)}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
   <a class="brand" href="${SITE}/${isEn ? 'en/g/' : 'g/'}" style="margin-left:10px;">${isEn ? 'All groups' : '그룹 전체'}</a>
+  <a class="brand" href="${SITE}/${isEn ? 'en/all/' : 'all/'}" style="margin-left:10px;">${isEn ? 'Browse all' : '모아보기'}</a>
   <h1>${escHtml(h1)}</h1>
   <div class="sub">${sub}</div>
 ${secHtml}
@@ -2349,6 +2360,121 @@ ${songNext}
 const RANK_TOP = 100;
 let RANK_LINKS = { ko: [], en: [] }; // 허브(g/)에 싣는 순위 페이지 목록
 function rankPagePath(slug, lang) { return `${lang === 'en' ? 'en/' : ''}rank/fancam/${slug ? slug + '/' : ''}`; }
+
+// ── 정적 페이지 모아보기 /all/ (2026-11-18 사용자 "정적 페이지가 너무 많아 하나하나 보기 힘들다 — 다 한 데 정리한 페이지, 다른 유저도 보게, 나무위키 느낌,
+//    디자인은 원래 정적 페이지처럼, 이미지 잘 활용해서"). 빌드 마지막에 실제로 만든 페이지 주소(pages·관계 페이지)를 종류별로 세고 묶는다 —
+//    목록을 손으로 적지 않으니 새 종류가 생겨도 개수가 저절로 맞는다. 맨 위 인기 직캠(썸네일)·그룹(프로필 원형 사진)은 이미지로, 나머지는 칩 목록.
+function buildAllIndexPages(relPages) {
+  const allLocs = [...pages.map(x => x.loc), ...(relPages || []).map(x => x.loc)];
+  for (const lang of ['ko', 'en']) {
+    const isEn = lang === 'en', pre = SITE + '/' + (isEn ? 'en/' : '');
+    const locs = allLocs.filter(u => u.startsWith(pre) && (isEn || !u.startsWith(SITE + '/en/')));
+    const rel = u => decodeURIComponent(u.slice(pre.length));
+    const pick = re => locs.map(u => { const m = re.exec(rel(u)); return m ? { u, m } : null; }).filter(Boolean);
+    const cnt = re => locs.filter(u => re.test(rel(u))).length;
+    const T = (ko, en) => isEn ? en : ko;
+    const fmt = n => n.toLocaleString(isEn ? 'en-US' : 'ko-KR');
+    // 종류별 묶음
+    const groupKos = Object.keys(groups).filter(k => groups[k] && !groups[k].unit).sort((a, c) => ((groups[c].pri || 0) - (groups[a].pri || 0)) || a.localeCompare(c, 'ko'));
+    const shows = pick(/^show\/([^/]+)\/$/), wins = pick(/^wins\/(\d{4})\/$/), born = pick(/^idols\/born\/(\d{4})\/$/);
+    const agencies = pick(/^agency\/([^/]+)\/$/), progs = pick(/^p\/([^/]+)\/$/), covers = pick(/^cover\/([^/]+)\/$/), collabs = pick(/^collab\/([^/]+)\/$/);
+    const awards = pick(/^awards\/([^/]+)\/$/);
+    const nMember = cnt(/^g\/[^/]+\/[^/]+\/$/) + cnt(/^member\/[^/]+\/$/);
+    const nSong = cnt(/\/s\/[^/]+\/$/), nAlbum = cnt(/\/a\/[^/]+\/$/), nFancam = cnt(/\/fancams\/$/), nCredit = cnt(/\/credits\/$/);
+    const nChem = cnt(/^chem\//), nShowEp = cnt(/^show\/[^/]+\/\d{4}-\d\d-\d\d\/$/);
+    const total = locs.length;
+    const chipList = (arr, label, max) => `<ul class="all-chips">${arr.slice(0, max || 999).map(x => `<li><a href="${x.u}">${escHtml(label ? label(x) : x.m[1])}</a></li>`).join('')}${arr.length > (max || 999) ? `<li class="more">${T('외 ' + fmt(arr.length - max) + '개', '+' + fmt(arr.length - max) + ' more')}</li>` : ''}</ul>`;
+    const sec = (id, title, sub, body, more) => `<section class="all-sec" id="${id}"><div class="all-sec-hd"><h2>${title}</h2>${sub ? `<span class="all-sec-n">${sub}</span>` : ''}${more ? `<a class="all-more" href="${more}">${T('전체 보기', 'View all')} ›</a>` : ''}</div>${body}</section>`;
+    // 맨 위: 인기 직캠(같은 멤버는 한 번만)
+    const seen = new Set(), topCams = [];
+    for (const x of RANK_TOP_FOR_ALL) { const k = x.gko + '|' + x.a.name.ko; if (seen.has(k)) continue; seen.add(k); topCams.push(x); if (topCams.length >= 8) break; }
+    const camCards = topCams.map(x => { const ge = (x.a.groups || []).find(g => g && g.ko === x.gko); const nm = isEn ? ((ge && ge.nameEn) || x.a.name.en || x.a.name.ko) : ((ge && ge.name) || x.a.name.ko); const href = SITE + '/' + (FANCAM_HUB.has(x.a) ? memberFancamPagePath(x.a, lang) : memberPagePath(x.a, lang));
+      return `<a class="card" href="${href}"><span class="card-th"><img src="${wideThumb(x.v.id)}" alt="" loading="lazy"></span><span class="card-t">${escHtml(nm)} · ${escHtml(isEn ? (groups[x.gko].en || x.gko) : x.gko)}</span><span class="card-m">${SEO.fmtViews(x.v.view_count, isEn)}</span></a>`; }).join('');
+    // 그룹: 프로필 원형 사진(없으면 대표 썸네일)
+    const gFaces = groupKos.slice(0, 48).map(k => { const img = groupPicUrl(k) || ogImageForGroup(k, groups[k]); return `<a class="face" href="${SITE}/${groupPagePath(k, lang)}"><span class="face-img"><img src="${img}" alt="" loading="lazy"></span><span class="face-n">${escHtml(isEn ? (groups[k].en || k) : k)}</span></a>`; }).join('');
+    const stats = [[fmt(groupKos.length), T('그룹', 'groups')], [fmt(nMember), T('멤버·솔로', 'artists')], [fmt(nSong), T('곡', 'songs')], [fmt(nAlbum), T('앨범', 'albums')], [fmt(nFancam), T('직캠 모음', 'fancam hubs')], [fmt(nShowEp), T('음방 회차', 'show episodes')]]
+      .map(([n, l]) => `<li><b>${n}</b><span>${l}</span></li>`).join('');
+    const nav = [['top-cams', T('인기 직캠', 'Top fancams')], ['groups', T('그룹', 'Groups')], ['ranks', T('직캠 순위', 'Fancam rankings')], ['shows', T('음악방송', 'Music shows')], ['wins', T('1위 기록', 'Wins')], ['born', T('생년', 'Birth years')], ['agency', T('기획사', 'Agencies')], ['programs', T('프로그램', 'Programs')], ['relations', T('커버·콜라보', 'Covers & collabs')], ['awards', T('시상식', 'Awards')]]
+      .map(([id, l]) => `<li><a href="#${id}">${l}</a></li>`).join('');
+    const h1 = T('K-POP UNIVERSE 모아보기', 'Browse K-POP UNIVERSE');
+    const desc = T(`그룹 ${fmt(groupKos.length)}팀·멤버 ${fmt(nMember)}명·곡 ${fmt(nSong)}곡·직캠과 음악방송·1위 기록까지, K-POP UNIVERSE의 정적 페이지 ${fmt(total)}개를 종류별로 한눈에.`,
+      `All ${fmt(total)} pages of K-POP UNIVERSE in one place — ${fmt(groupKos.length)} groups, ${fmt(nMember)} artists, ${fmt(nSong)} songs, fancams, music shows and wins.`);
+    const selfUrl = pre + 'all/', altUrl = SITE + '/' + (isEn ? '' : 'en/') + 'all/';
+    const html = `<!DOCTYPE html>
+<html lang="${lang}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${escHtml(h1)} | K-POP UNIVERSE</title>
+<meta name="description" content="${escHtml(desc)}">
+<link rel="canonical" href="${selfUrl}">
+<link rel="alternate" hreflang="${isEn ? 'ko' : 'en'}" href="${altUrl}">
+<link rel="alternate" hreflang="${lang}" href="${selfUrl}">
+<link rel="alternate" hreflang="x-default" href="${SITE}/all/">
+<meta property="og:type" content="website"><meta property="og:site_name" content="K-POP UNIVERSE">
+<meta property="og:title" content="${escHtml(h1)}"><meta property="og:description" content="${escHtml(desc)}"><meta property="og:url" content="${selfUrl}">
+${topCams[0] ? `<meta property="og:image" content="${wideThumb(topCams[0].v.id)}">` : ''}
+<link rel="icon" href="${SITE}/icons/icon-192.png" type="image/png">
+<link rel="preconnect" href="https://i.ytimg.com">
+<link rel="stylesheet" href="${SITE}/song-page.css?v=${SONG_CSS_V}">
+<style>
+  .all-stats{display:flex;flex-wrap:wrap;gap:10px 22px;list-style:none;padding:0;margin:4px 0 18px;}
+  .all-stats li{display:flex;align-items:baseline;gap:6px;color:rgba(190,205,240,0.75);font-size:13.5px;}
+  .all-stats b{color:#fff;font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;}
+  .all-nav{display:flex;flex-wrap:wrap;gap:6px;list-style:none;padding:0;margin:0 0 10px;position:sticky;top:0;z-index:4;background:rgba(10,10,13,0.92);padding:10px 0;backdrop-filter:blur(8px);}
+  .all-nav a{display:inline-block;font-size:13px;padding:6px 12px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+  .all-sec{padding-top:26px;margin-top:8px;border-top:0.5px solid rgba(255,255,255,0.08);scroll-margin-top:56px;}
+  .all-sec-hd{display:flex;align-items:baseline;gap:10px;margin-bottom:14px;}
+  .all-sec-hd h2{margin:0;font-size:19px;}
+  .all-sec-n{color:rgba(160,180,230,0.65);font-size:13px;}
+  .all-more{margin-left:auto;font-size:13px;color:rgba(170,195,255,0.85);text-decoration:none;white-space:nowrap;}
+  .all-chips{display:flex;flex-wrap:wrap;gap:6px;list-style:none;padding:0;margin:0;}
+  .all-chips a{display:inline-block;font-size:13px;padding:5px 11px;border-radius:999px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.16);color:rgba(210,222,255,0.88);text-decoration:none;}
+  .all-chips a:hover,.all-nav a:hover{background:rgba(150,175,255,0.16);}
+  .all-chips .more{font-size:12.5px;color:rgba(160,180,230,0.6);padding:5px 4px;}
+  .all-groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:16px 10px;}
+  .all-groups .face{width:auto;}
+  .all-groups .face-img{width:72px;height:72px;}
+  .all-groups .face-img img{transform:none;}
+  .face-n{display:block;font-size:12.5px;color:rgba(215,226,255,0.88);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .all-note{font-size:13px;color:rgba(170,188,230,0.7);margin:10px 0 0;}
+  @media(max-width:700px){.all-nav{position:static;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:6px 0 10px;}.all-nav li{flex:0 0 auto;}.all-groups{grid-template-columns:repeat(auto-fill,minmax(76px,1fr));}.all-groups .face-img{width:64px;height:64px;}}
+</style>
+${SEO_GA_TAG}
+<script src="/seo_play.js" defer></script>
+</head>
+<body>
+<div class="wrap">
+  ${languageNav(isEn, altUrl)}
+  <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
+  <h1 class="rank-h1">${escHtml(h1)}</h1>
+  <p class="lead">${escHtml(desc)}</p>
+  <ul class="all-stats">${stats}</ul>
+  <ul class="all-nav">${nav}</ul>
+  ${camCards ? sec('top-cams', T('인기 직캠', 'Top fancams'), '', `<div class="grid">${camCards}</div>`, SITE + '/' + rankPagePath('', lang)) : ''}
+  ${sec('groups', T('그룹', 'Groups'), T(fmt(groupKos.length) + '팀', fmt(groupKos.length) + ' groups'), `<div class="all-groups">${gFaces}</div><p class="all-note">${T('그룹 페이지마다 멤버·곡별 직캠·앨범·작사작곡 페이지로 이어져요. 멤버 페이지 ' + fmt(nMember) + '개 · 곡 ' + fmt(nSong) + ' · 앨범 ' + fmt(nAlbum) + ' · 작사·작곡 ' + fmt(nCredit), 'Each group page links to members, fancams by song, albums and credits.')}</p>`, SITE + '/' + (isEn ? 'en/' : '') + 'g/')}
+  ${(RANK_LINKS[lang] || []).length ? sec('ranks', T('직캠 순위', 'Fancam rankings'), '', `<ul class="all-chips">${RANK_LINKS[lang].map(x => `<li><a href="${x.href}">${escHtml(x.label.replace(/ \| .*/, ''))}</a></li>`).join('')}</ul>`) : ''}
+  ${shows.length ? sec('shows', T('음악방송', 'Music shows'), T('회차 ' + fmt(nShowEp) + '개', fmt(nShowEp) + ' episodes'), chipList(shows), SITE + '/' + (isEn ? 'en/' : '') + 'show/') : ''}
+  ${wins.length ? sec('wins', T('음악방송 1위 기록', 'Music show wins'), '', chipList(wins.sort((x, y) => y.m[1] - x.m[1]), x => x.m[1] + T('년', ''))) : ''}
+  ${born.length ? sec('born', T('생년별 아이돌', 'Idols by birth year'), '', chipList(born.sort((x, y) => y.m[1] - x.m[1]), x => x.m[1] + T('년생', ''))) : ''}
+  ${agencies.length ? sec('agency', T('기획사', 'Agencies'), T(fmt(agencies.length) + '곳', fmt(agencies.length)), chipList(agencies, null, 80)) : ''}
+  ${progs.length ? sec('programs', T('프로그램·코너', 'Programs'), T(fmt(progs.length) + '개', fmt(progs.length)), (PROGRAM_LINKS[lang] || []).length ? `<ul class="all-chips">${PROGRAM_LINKS[lang].map(x => `<li><a href="${x.href}">${escHtml(String(x.label).replace(/ 모음$| collection$/i, ''))}</a></li>`).join('')}</ul>` : chipList(progs, null, 80)) : ''}
+  ${(covers.length || collabs.length) ? sec('relations', T('커버·콜라보', 'Covers & collabs'), T('커버 ' + fmt(covers.length) + ' · 콜라보 ' + fmt(collabs.length) + (nChem ? ' · 멤버 조합 ' + fmt(nChem) : ''), fmt(covers.length) + ' covers · ' + fmt(collabs.length) + ' collabs'), chipList(covers.concat(collabs), null, 60)) : ''}
+  ${awards.length ? sec('awards', T('시상식', 'Awards'), '', chipList(awards)) : ''}
+  <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a> · <a href="${SITE}/about.html">${isEn ? 'About · removal requests' : '사이트 소개 · 삭제 요청'}</a></div>
+  <div class="cta-dock"><a class="cta" href="${SITE}/">${T('K-POP UNIVERSE에서 탐험하기 →', 'Explore the K-POP UNIVERSE →')}</a></div>
+</div>
+</body>
+</html>
+`;
+    const dir = path.join(ROOT, isEn ? 'en' : '', 'all');
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, 'index.html'), html);
+    pages.push({ loc: selfUrl, priority: '0.9' });
+  }
+  console.log('모아보기 페이지 /all/ · /en/all/');
+}
+let RANK_TOP_FOR_ALL = [];
 function buildRankPages() {
   const all = [];
   for (const gko of Object.keys(VIDS)) {
@@ -2361,6 +2487,7 @@ function buildRankPages() {
     }
   }
   all.sort((x, y) => (y.v.view_count || 0) - (x.v.view_count || 0));
+  RANK_TOP_FOR_ALL = all.slice(0, 40); // 모아보기(/all/) 맨 위 인기 직캠 줄(2026-11-18)
   const thisYear = +TODAY_ISO.slice(0, 4);
   const defs = [
     { slug: '', ko: '아이돌 직캠 조회수 순위 TOP 100 (역대)', en: 'Most Viewed K-pop Fancams of All Time — TOP 100', koShort: '역대', enShort: 'All time', f: () => true },
@@ -3266,6 +3393,7 @@ else (async () => {
   fs.mkdirSync(path.join(ROOT, 'en', 'g'), { recursive: true });
   fs.writeFileSync(path.join(ROOT, 'g', 'index.html'), hubPageHtml('ko', hubLinks.ko.sort(byN)));
   fs.writeFileSync(path.join(ROOT, 'en', 'g', 'index.html'), hubPageHtml('en', hubLinks.en.sort(byN)));
+  try { buildAllIndexPages(relPages); } catch (e) { console.warn('⚠️ 모아보기(/all/) 페이지 건너뜀: ' + e.message); }
 
   // 사이트맵 — 목록 파일(sitemap.xml) + 종류별 쪼갠 파일(sitemaps/*.xml)(2026-10-30). 구글 한도가 파일 하나에 URL 5만 개인데 곡·멤버×곡
   // 페이지로 3만 6천 개가 됐고 페이지 종류를 더 늘릴 계획이라 미리 나눈다. robots.txt·서치콘솔 등록 주소는 sitemap.xml 그대로(목록 파일도 받아준다).
