@@ -904,7 +904,13 @@ async function _ytLogOldestApiAge(){
 async function _ytRotateViewCountDaily(){
   const last=await _admMetaGet('last_viewcount_rotate');
   const waited=Date.now()-last;
-  if(waited<_VIEW_ROTATE_GAP_MS){
+  // ⭐ 지난 회차가 끝까지 못 갔으면(타임아웃으로 페이지째 죽음 → 완료 표식이 안 찍힘) 11시간 간격을 기다리지 않고 한 회차(5시간)만 지나면 이어서 한다
+  //    (2026-11-18 YouTube 감사 III.E.4a — 11/18 루틴이 135분 타임아웃으로 순환 도중 끊겼는데 표식만 먼저 찍혀 11시간을 건너뛰고, 30일 초과가 11만 건으로 쌓였다).
+  //    순환은 가장 오래된 것부터라 이어받아도 중복이 없다. 쿼터 예외로 끝난 날은 finally가 완료 표식을 찍어 기존 간격을 그대로 지킨다.
+  const doneAt=await _admMetaGet('last_viewcount_rotate_done');
+  const unfinished=!!last&&(!doneAt||doneAt<last)&&waited>=5*3600*1000;
+  if(unfinished)console.log('[조회수 순환] 지난 회차가 끝까지 못 갔음 — 간격을 기다리지 않고 이어서 갱신합니다');
+  if(!unfinished&&waited<_VIEW_ROTATE_GAP_MS){
     const h=Math.floor(waited/3600000);
     _ytSetProg(`조회수 순환 갱신 건너뜀 — 마지막 실행 ${last?h+'시간 전':'기록 없음'} (하루 1회)`);
     return;
@@ -912,7 +918,11 @@ async function _ytRotateViewCountDaily(){
   // ⚠️ 표식을 **먼저** 쓴다. 나중에 쓰면 중간에 쿼터가 끊겨 예외가 났을 때 표식이 안 남아,
   //    3시간 뒤 루틴이 또 400유닛을 시도하고 또 터진다(빈 지갑을 하루 8번 두드리는 꼴).
   await _admMetaSet('last_viewcount_rotate',Date.now());
-  await _ytRotateViewCountRefresh();
+  try{
+    await _ytRotateViewCountRefresh();
+  }finally{
+    await _admMetaSet('last_viewcount_rotate_done',Date.now()).catch(()=>{}); // 타임아웃으로 죽으면 여기까지 못 온다 = 미완료 표시
+  }
   await _ytPurgeGoneApiData().catch(e=>console.warn('[삭제 데이터 정리] '+e.message));
   await _ytLogOldestApiAge();
 }
@@ -12928,6 +12938,10 @@ async function _admRunRoutine(withSync,opts){
   //     song_keys 칸이 없으면(SQL 실행 전) 조용히 건너뜀.
   steps.push({name:'10. 영상 ↔ 곡 연결',fn:_ytSweepSongLinks});
   }
+  // ⭐ 조회수 순환(8번)을 '1-3. 조회수 갱신' 바로 뒤로 당긴다(2026-11-18). 뒤쪽이던 시절엔 앞 단계(동명이인 스캔 17분 등)가 135분 타임아웃의 대부분을
+  //    먹어 순환이 40분만 돌고 잘렸다 — 하루 갱신이 약 1.8만 건이라 61만 건을 30일에 못 돌았다. 점검 단계들은 전부 체크포인트 증분이라 뒤로 밀려도 다음 회차가 잇는다.
+  {const _ri=steps.findIndex(x=>x.fn===_ytRotateViewCountDaily);let _ai=steps.findIndex(x=>/^1-3./.test(x.name));
+   if(_ri>=0&&_ai>=0&&_ri>_ai+1){const[_rs]=steps.splice(_ri,1);steps.splice(_ai+1,0,_rs);}}
   const t0=Date.now();
   // 단계가 조용히 실패했는지 진행 문구로 가르는 규칙 — 바로 아래 루프 주석에 근거가 있다.
   // ⚠️ 여기에 '실패'/'오류'를 콜론 없이 넣지 말 것. 성공 문구에도 "N개 일시 실패(다음에 재시도)"처럼

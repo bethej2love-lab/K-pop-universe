@@ -127,6 +127,29 @@ async function evalExpr(cdp, expr, awaitPromise = false) {
   return r?.result?.value;
 }
 
+// 이 키가 속한 구글 클라우드 프로젝트 번호 — 키가 켜져 있지 않은 API를 한 번 불러 오류 메시지(consumer·project 번호)에서 읽는다(YouTube API 감사 III.D.1c).
+async function probeKeyProject(key) {
+  const urls = [
+    'https://translate.googleapis.com/language/translate/v2?q=a&target=en&key=',
+    'https://www.googleapis.com/books/v1/volumes?q=a&key=',
+    'https://sheets.googleapis.com/v4/spreadsheets/1?key=',
+  ];
+  const notes = [];
+  for (const u of urls) {
+    const host = new URL(u).host;
+    try {
+      const res = await fetch(u + encodeURIComponent(key));
+      const t = await res.text();
+      const m = /"consumer"\s*:\s*"projects\/(\d{6,})"/.exec(t) || /(?:in project|project number|project #|project)[\s:#]*(\d{6,})/i.exec(t);
+      if (m) return { proj: m[1], notes };
+      let why = '';
+      try { const j = JSON.parse(t); const e = j.error || {}; why = [e.status, ((e.details || []).map(d => d.reason).filter(Boolean))[0]].filter(Boolean).join('/'); } catch (e) {}
+      notes.push(`${host} HTTP ${res.status}${why ? ' ' + why : ''}`);
+    } catch (e) { notes.push(`${host} 호출 실패 ${(e && (e.code || e.cause && e.cause.code || e.name)) || ''}`); }
+  }
+  return { proj: null, notes };
+}
+
 async function pollUntil(cdp, expr, timeoutMs, isReady = v => !!v, stepMs = 500) {
   const t0 = Date.now();
   while (Date.now() - t0 < timeoutMs) {
@@ -238,8 +261,12 @@ async function main() {
     console.log(`[routine] admin.js 로드 확인 — ${IS_CLEANUP ? '청소 루틴' : '일일 루틴'} 시작`);
     // YouTube API 감사 III.D.1c(2026-11-17) — 이 실행이 쓰는 키(Actions 시크릿)의 구글 프로젝트 번호. 번호만 남기고 키는 출력하지 않는다.
     if (YT_KEY) {
-      const proj = await evalExpr(cdp, "typeof _ytKeyProjectProbe==='function' ? _ytKeyProjectProbe(_ytApiKey()) : null", true).catch(() => null);
-      console.log(`[routine] YouTube API 키 프로젝트 번호: ${proj || '확인 못 함'} (감사 보고서 번호 795312566718)`);
+      // ⭐ 러너(Node)에서 직접 조회한다(2026-11-18) — 브라우저 안 fetch는 CORS로 응답을 못 읽어 11/18 실행이 '확인 못 함'이었다. 키 원문은 출력하지 않고 번호·HTTP 상태·reason만.
+      const pr = await probeKeyProject(YT_KEY);
+      let proj = pr.proj;
+      if (!proj) proj = await evalExpr(cdp, "typeof _ytKeyProjectProbe==='function' ? _ytKeyProjectProbe(_ytApiKey()) : null", true).catch(() => null);
+      console.log(`[routine] YouTube API 키 프로젝트 번호: ${proj || '확인 못 함'} (감사 보고서 번호 795312566718)${proj && String(proj) === '795312566718' ? ' ✓ 같음' : ''}`);
+      if (!proj && pr.notes.length) console.log('[routine] 프로젝트 번호 조회 상세: ' + pr.notes.join(' | '));
     }
 
     // 5. 루틴 실행 — 오래 걸리므로 await 없이 발사하고 완료 여부를 폴링한다
