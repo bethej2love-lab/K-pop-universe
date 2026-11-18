@@ -31,8 +31,9 @@ check("에스파 'Girls' — 따옴표 무대·직캠이 곡에 붙는다", () =
 check("해시태그 #highlight 예능 클립은 곡 Highlight의 진짜 무대가 있으면 곡 영상에서 빠진다(비공연 거르기)", () => {
   // 곡에 진짜 무대('Highlight' 직캠)가 하나라도 있어야 비공연이 빠진다 — 전부 비공연이면 빈 페이지를 막으려고 원래 목록을 쓴다.
   const x = { ...V('x', '우리 세븐틴 사랑합니다 가사 문맥 너무 찰떡이다 #highlight#놀라운토요일 | amazingsaturday EP.261', 'variety'), content_formats: ['variety'] };
-  const rows = [V('p', "세븐틴 'Highlight' 직캠 4K (SEVENTEEN FanCam)"), x];
-  const ids = songVids('세븐틴', rows, /highlight/i); assert(ids.has('p') && !ids.has('x'), '무대는 남고 예능 클립은 빠져야 함: ' + [...ids].join(','));
+  // 곡 페이지는 근거 강한 영상 2개↑부터(2026-11-18 8daa685) — 무대 2개
+  const rows = [V('p', "세븐틴 'Highlight' 직캠 4K (SEVENTEEN FanCam)"), V('p2', "SEVENTEEN (세븐틴) - 'Highlight' @ Show! MusicCore"), x];
+  const ids = songVids('세븐틴', rows, /highlight/i); assert(ids.has('p') && ids.has('p2') && !ids.has('x'), '무대는 남고 예능 클립은 빠져야 함: ' + [...ids].join(','));
 });
 check('어포스트로피만 있는 영어 제목은 따옴표로 오인하지 않는다(QUOTED_RE)', () => {
   const src = fs.readFileSync(path.join(ROOT, 'tools', 'seo_extra.js'), 'utf8'); const m = /const QUOTED_RE = (\/.*\/g);/.exec(src); assert(m, 'QUOTED_RE 없음');

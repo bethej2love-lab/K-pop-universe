@@ -424,7 +424,12 @@ function buildSongs({ ROOT, groups, artists, EX, vids, minVids = 4 }) {
       const epi = /\b(ep|episode)\.?\s*\d|#\d+\b|vlog|브이로그|\d+화\b/i.test(String(v.title || ''));
       const strongCat = songStrongCategory(v);
       const qb = (epi ? [] : [...String(v.title || '').matchAll(QUOTED_RE)]).flatMap(m => { const core = m[1].split(/\s*[([]/)[0]; return (S.f('"' + core + '"', songs, names) || []).filter(x => S.N(core).length <= (songMaxLen.get(x) || 0) * 1.3 + 1); });
-      for (const b of bs) { const s = bucket.get(b); if (!s) continue; const own = soloOnly.get(b); if (own && !(v.members || []).some(m => own.has(m))) continue; s.vids.push(v); if ((strongCat && !(fanName && b === fanName)) || qb.includes(b)) (s.strong || (s.strong = new Set())).add(v); }
+      // 음방 제목 머리(2026-11-18): '곡 - 가수 | SBS 260816 방송'·'가수 - 곡 | Show! MusicCore'처럼 첫 '|' 앞이 ' - '로 나뉘고 한쪽이 곡명 그대로면
+      // 따옴표와 같은 근거. 분류가 other로 잘못 저장된 실제 무대(스트레이키즈 This & That SBS 인기가요)가 곡 페이지에서 빠지던 것. 그룹 이름 쪽은 곡으로 안 본다.
+      const hb = epi ? [] : (() => { const head = String(v.title || '').split(/[|｜]/)[0]; if (!/\s[-–]\s/.test(head)) return [];
+        return head.split(/\s+[-–]\s+/).flatMap(part => { const core = part.split(/\s*[([]/)[0].trim(); const n = S.N(core); if (!n || names.some(x => x && S.N(x) === n)) return [];
+          return (S.f('"' + core + '"', songs, names) || []).filter(x => n.length <= (songMaxLen.get(x) || 0) * 1.3 + 1); }); })();
+      for (const b of bs) { const s = bucket.get(b); if (!s) continue; const own = soloOnly.get(b); if (own && !(v.members || []).some(m => own.has(m))) continue; s.vids.push(v); if ((strongCat && !(fanName && b === fanName)) || qb.includes(b) || hb.includes(b)) (s.strong || (s.strong = new Set())).add(v); }
     }
     // 1위 기록은 곡 제목이 영어로 저장된 경우가 있다('HEYA'·'God of Music') — 별칭으로도 기본형을 찾는다
     const toBase = new Map(); songs.forEach(s => { toBase.set(s.b, s.b); (s.alias || []).forEach(al => { if (!toBase.has(al.n)) toBase.set(al.n, s.b); }); });

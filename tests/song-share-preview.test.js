@@ -39,6 +39,7 @@ const ctx={SITE:'https://example.test',SONG_CSS_V:4,coverChipsHtml:()=>'',FANCAM
 vm.createContext(ctx);
 vm.runInContext(builder.match(/^const SEO_GA_TAG = [\s\S]*?^<script async[^\n]+\x60;/m)[0],ctx);
 vm.runInContext(block('function bilingualLabel(', '// 앱의 _hashEsc'),ctx);
+vm.runInContext(block('function heroCapHtml(','function fancamPageHtml('),ctx); // 대표 영상 정보 줄(2026-11-18 새 함수)
 vm.runInContext(block('function songShareVideo(vids)','// ── 직캠 조회수 순위 페이지'),ctx);
 const vids=[{id:'mv',title:'Snowy Summer MV',category:'mv'},
   {id:'teaser',title:'Snowy Summer Teaser',category:'live'},
@@ -47,7 +48,7 @@ const s={b:'snowysummer',title:'Snowy Summer',vids};
 const html=ctx.songLikePageHtml({gko:'Alpha',info:{en:'Alpha'},s,lang:'ko',others:[]});
 assert.match(html,/og:title" content="Alpha - Snowy Summer 직캠·무대 모음/,'naming style: 아티스트 - 곡 (docs/NAMING.md, 11-17 곡 페이지도 같은 순서)');
 assert.match(html,/og:image" content="https:\/\/i.ytimg.com\/vi\/stage\/mqdefault.jpg/,'share preview is 16:9 (no 4:3 black bars)');
-assert.match(html,/class="hero" href="https:\/\/www.youtube.com\/watch\?v=mv"[^>]*><img src="https:\/\/i.ytimg.com\/vi\/mv\/hqdefault.jpg/);
+assert.match(html,/class="hero" href="https:\/\/www.youtube.com\/watch\?v=mv"[^>]*><img src="https:\/\/i.ytimg.com\/vi\/mv\/mqdefault.jpg/,'hero stays the MV, 16:9 image (2026-11-18 네이버 검은 띠 — wideThumb)');
 assert.match(html,/FORWARD_LIST_HASH/);
 assert.equal(ctx.songShareVideo([{id:'cam',title:'Snowy Summer fancam'}]).id,'cam');
 assert.equal(ctx.songShareVideo([vids[0]]).id,'mv','no stage: stay within the selected song');

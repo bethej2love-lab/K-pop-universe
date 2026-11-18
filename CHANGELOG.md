@@ -9,6 +9,8 @@
 - [완료][app.js] **추천순 첫 화면에서 모음 영상은 맨 뒤로**(사용자 "모음 영상은 중요도 높지 않음, 최신이어도 추천순 상위에 둘 필요 없음"): `_isCompilationVid`(개별출연 또는 제목 모음·모아보기·몰아보기·총집합·총정리·compilation·.zip) → `_recOrder`에서 맨 뒤, 같은 날 흩기 뒤에도 한 번 더 뒤로. 목록에서 빠지진 않고, 모음뿐이면 그대로. 최신순·인기순은 안 바뀜. 테스트 `rec-compilation` 22건, `rec-order`에 새 함수 등록.
 - ⏳ **이미 DB에 있는 수능·명절 모음 영상 개별출연 처리**(집/회사 컴퓨터, DB 토큰 필요): 새 규칙을 기존 행에 돌려 볼 대상만 뽑기 → **500건 넘으면 표본 20건 + 건수 사용자 확인 후** `flag_source='auto'`로. `tags_manual=true`·이미 플래그 있는 행은 제외(규칙이 이미 그렇게 함). 같이 확인: 실제 '수능 응원곡 모음' 제목이 이 규칙에 걸리는지(특히 그룹이 1팀만 태깅돼 있으면 안 걸림 — 그런 영상이 많으면 판정 기준 다시 논의).
 - [이슈] 로컬에서 원래부터 실패하는 테스트(이번 변경 전에도 실패): award-news-e2e·rls(네트워크)·song-quote-match·song-share-preview·song-video-nonperf·seo-play(gtag 템플릿 10 vs 11). CI에서 어떻게 나오는지 푸시 뒤 확인.
+- [완료][build_group_pages.js·tools/seo_extra.js·tests] **CI verify 빨간불 4개 수정**(main 11-18 오후부터): ①`seo-play` — 모아보기(`/all/`) 템플릿이 GA 스크립트만 불러오고 `gtag('config')`가 없어 **그 페이지 방문이 GA에 안 잡히고 있었다** → 다른 템플릿과 같은 줄 + `seo_land`(page_type 'all'). `seo-ga-bot-filter` 템플릿 수 10→11. ②`song-share-preview` — 새 `heroCapHtml`을 테스트가 떼어 쓰는 목록에 등록, 대표 이미지 기대값 hqdefault→mqdefault(482d151 16:9 변경과 맞춤). ③`song-video-nonperf` — 8daa685 '근거 강한 영상' 규칙이 분류 other로 잘못 저장된 실제 음방 무대(`This & That - Stray Kids | SBS 260816 방송`)를 빼던 **진짜 버그** → 제목 첫 '|' 앞이 ' - '로 나뉘고 한쪽이 곡명 그대로면(그룹 이름 쪽 제외, 따옴표와 같은 길이 기준) 강한 근거로(`hb`). ④`song-quote-match` — 새 규칙(강한 근거 2개↑)에 맞게 테스트 무대 1→2개. ⚠️ ③은 강한 근거를 **늘리는** 방향이라 곡 페이지가 일부 돌아올 수 있음 — DB 없이 실측 못 함, 다음 재생성 뒤 `node tools/static_pages_status.mjs`로 곡 페이지 수 확인(8daa685 실측 14그룹 693→648에서 조금 늘면 정상, 크게 늘면 ' - ' 머리 규칙 재검토).
+- [이슈] Browser smoke `desktop-close-layers`·`phone-landscape`는 main에서도 계속 빨간불(11-16~, ESC·iframe 포커스) — 이번에 못 고침, 브라우저 실기 확인 필요.
 
 ## 2026-11-18 오후 (Claude Code/Opus — 카드 영상 칸·곡 페이지 근거 기준·검수 초안 처리)
 

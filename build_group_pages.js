@@ -2501,6 +2501,7 @@ ${topCams[0] ? `<meta property="og:image" content="${wideThumb(topCams[0].v.id)}
   @media(max-width:700px){.all-nav{position:static;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:6px 0 10px;}.all-nav li{flex:0 0 auto;}.all-groups{grid-template-columns:repeat(auto-fill,minmax(76px,1fr));}.all-groups .face-img{width:64px;height:64px;}}
 </style>
 ${SEO_GA_TAG}
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){gtag('event','seo_land',{entity_name:${JSON.stringify(h1)},page_type:'all'});});</script>
 <script src="/seo_play.js" defer></script>
 </head>
 <body>
