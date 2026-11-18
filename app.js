@@ -6057,8 +6057,9 @@ function _lbUpdateMemberInfo(){
   const memberKo=_mems.length===1?_mems[0]:null;
   let artist=null;
   if(memberKo)artist=_resolveMem(memberKo);
-  // 솔로 본인 채널(group_ko=본인 이름, 멤버 태그 없음) — 그 사람이 주인
-  if(!artist&&!_mems.length&&groupKo&&!GROUPS[groupKo])artist=ARTISTS.find(a=>_ytGroupKoFor(a)===groupKo)||null;
+  // 솔로 본인 채널(group_ko=본인 이름, 멤버 태그 없음) — 그 사람이 주인. _resolveMem이 _ytGroupKoFor 일치(아이유처럼 group.ko='솔로')와
+  // 밴드 멤버 솔로(츄·태민 — _ytGroupKoFor가 밴드명이라 이름으로) 둘 다 처리한다.
+  if(!artist&&!_mems.length&&groupKo&&!GROUPS[groupKo])artist=_resolveMem(groupKo);
   // 여러 명 태깅 — 앵커는 그룹명, 태깅된 멤버는 **전부** 칩으로(첫 명만 뜨던 것). 한 그룹 전원이면 그룹명만.
   const _multi=_mems.length>1?_mems.map(_resolveMem).filter(Boolean):[];
   const _multiChips=_multi.length>1&&!(GROUPS[groupKo]&&_withIsFullGroup(groupKo,_multi));
