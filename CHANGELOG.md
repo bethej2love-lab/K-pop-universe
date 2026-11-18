@@ -4,6 +4,9 @@
 
 
 ## 2026-11-19 아침 (Claude Code/Opus 집 — CI 빨간불 근본 수정 + For You + cover_of 검수)
+- **✅ [app.js·tests] 재생화면 '이 영상에 나온 아티스트' 표시 버그 2종(사용자 제보, #33)**:
+  - **밴드 멤버 솔로가 통째로 안 뜨던 것** — group_ko가 본인 이름인 솔로 영상(태양·민니·형원·연준처럼 _ytGroupKoFor가 밴드명을 돌려주는 멤버)은 `_inG`가 안 맞아 artist·gName이 둘 다 비어 줄이 사라짐. `_resolveMem`(그룹 맥락 아니면 이름으로, 동명이인 이름키 주인 우선)으로 6050·6054·6052줄 수정. **전수 706 이름키·25,725 영상 영향**(츄·태민·슬기·효연·키·카이 등). `tests/lb-people-resolve`(app.js 실제 코드 추출 회귀).
+  - **콜라보/클립인데 홈 그룹 전체 멤버가 다 뜨던 것** — 멤버 태그 비면 현재 멤버 전원으로 펴는 블록(2026-10-27 MV용)이 게스트 낀 콜라보·비공연 클립에도 전원을 그림. 기본 펴되 일부 증거(게스트 OR category other/variety/show)면 억제. ⏳ 그리드 경로는 members를 다 싣고 열어 정상이라, 특정 영상이 계속 전원 뜨면 그 video id로 open 맥락 재현 필요.
 - **✅ [CI] Data validation 빨간불 3종 근본 수정(24b15db, CI 초록 확인)** — 11-18부터 방치되던 것:
   - `seo-ga-bot-filter`: 내가 `/all/` 템플릿에 빠졌던 gtag를 채워 템플릿 10→11이 돼 기대값 불일치 → 11로 갱신(루프가 11번째도 봇필터 검증, 110케이스 통과). 누락 애널리틱스 채운 게 맞음.
   - `song-video-nonperf`: **[tools/seo_extra.js] `songStrongCategory`가 category만 봐서 실제 음방 무대가 'other'로 오면 곡 페이지에서 빠졌음** → 제목 서명(`{방송사}{6자리}방송`·Music Bank 등)이면 무대 인정(`MUSIC_SHOW_STAGE`, `&& !isNonPerformance`로 예능 '모아보기…방송'은 제외). sbs1 유지.
