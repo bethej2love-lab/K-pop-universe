@@ -257,27 +257,60 @@
   // 숫자가 작으면 아예 안 보인다(빈 식당처럼 보이지 않게). 그룹·멤버·직캠 모음·곡 페이지의 제목 아래 한 줄.
   function viewers(){
     if(!/^(group|member|fancams|song)$/.test(PTYPE))return;
-    var g=GRP;if(!g||document.querySelector('.kpu-vw'))return;
-    var KEY='kpu_vw_v1',data=null;
+    if(document.querySelector('.kpu-vw'))return;
+    var g=GRP,KEY='kpu_vw_v1',data=null;
+    var facts=[];try{var fe=document.getElementById('kpu-facts');if(fe)facts=JSON.parse(fe.textContent)||[];}catch(e){}
     try{var c=JSON.parse(sessionStorage.getItem(KEY)||'null');if(c&&Date.now()-c.t<30*60e3)data=c.d;}catch(e){}
-    function draw(d){
-      var n=d&&d.g&&d.g[g];if(!n||n<30)return;
-      var h1=document.querySelector('h1');if(!h1)return;
-      var st=document.createElement('style');st.textContent='.kpu-vw{display:flex;align-items:center;gap:7px;margin:6px 0 10px;font-size:12.5px;color:rgba(200,212,245,.72)}'
-        +'.kpu-vw i{width:7px;height:7px;border-radius:50%;background:#5be0a0;box-shadow:0 0 0 0 rgba(91,224,160,.5);animation:kpu-vw 2.4s infinite}'
-        +'@keyframes kpu-vw{0%{box-shadow:0 0 0 0 rgba(91,224,160,.45)}70%{box-shadow:0 0 0 7px rgba(91,224,160,0)}100%{box-shadow:0 0 0 0 rgba(91,224,160,0)}}';
+    var p=null,span=null,items=[],idx=0,timer=null;
+    function ensure(){
+      if(p)return true;
+      var h1=document.querySelector('h1');if(!h1)return false;
+      var st=document.createElement('style');
+      // 반짝이는 별(2026-11-18 사용자 "유니버스처럼 빛났다 말았다 하는 아이콘 모션") — 우주 별빛과 같은 분홍·흰빛 4각 별이 숨쉬듯 밝아졌다 잦아든다.
+      st.textContent='.kpu-vw{display:flex;align-items:center;gap:8px;margin:6px 0 10px;font-size:12.5px;color:rgba(200,212,245,.74);min-height:18px}'
+        +'.kpu-vw .kpu-star{flex:0 0 auto;width:11px;height:11px;color:#ffd6ea;filter:drop-shadow(0 0 3px rgba(255,176,208,.85));animation:kpu-tw 2.8s ease-in-out infinite}'
+        +'@keyframes kpu-tw{0%,100%{opacity:.35;transform:scale(.72) rotate(0deg)}45%{opacity:1;transform:scale(1.08) rotate(20deg)}60%{opacity:.9;transform:scale(1) rotate(24deg)}}'
+        +'.kpu-vw .kpu-vw-t{transition:opacity .45s ease;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}'
+        +'.kpu-vw .kpu-vw-t.out{opacity:0}'
+        +'@media (prefers-reduced-motion:reduce){.kpu-vw .kpu-star{animation:none;opacity:.9}.kpu-vw .kpu-vw-t{transition:none}}';
       document.head.appendChild(st);
-      var p=document.createElement('p');p.className='kpu-vw';var dot=document.createElement('i');p.appendChild(dot);
-      var gn=EN?(PTYPE==='group'?((h1.textContent||'').replace(/\s*\(.*$/,'').trim()):''):g;
-      p.appendChild(document.createTextNode(EN?(n.toLocaleString()+' '+(gn?gn+' ':'')+'fans visited this week'):('이번 주 '+gn+' 팬 '+n.toLocaleString()+'명이 다녀갔어요')));
+      p=document.createElement('p');p.className='kpu-vw';
+      p.innerHTML='<svg class="kpu-star" viewBox="0 0 22 22" aria-hidden="true"><path d="M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z" fill="currentColor"/></svg>';
+      span=document.createElement('span');span.className='kpu-vw-t';p.appendChild(span);
       var top=document.querySelector('.kpu-top');
       if(top&&top.contains(h1)){var side=document.querySelector('.kpu-side-h');(side||h1).insertAdjacentElement('afterend',p);}
-      else h1.insertAdjacentElement('afterend',p);
+      else{var meta=document.querySelector('.top2 .meta');(meta||h1).insertAdjacentElement(meta?'beforebegin':'afterend',p);}
+      return true;
     }
-    if(data){draw(data);return;}
+    function render(){
+      if(!items.length||!ensure())return;
+      if(idx>=items.length)idx=0;
+      span.textContent=items[idx];
+      if(timer||items.length<2)return;
+      timer=setInterval(function(){
+        if(document.hidden)return;
+        span.classList.add('out');
+        setTimeout(function(){idx=(idx+1)%items.length;span.textContent=items[idx];span.classList.remove('out');},450);
+      },4200);
+    }
+    function withViewers(d){
+      var n=g&&d&&d.g&&d.g[g];
+      if(n&&n>=30){
+        var h1=document.querySelector('h1');
+        var gn=EN?(PTYPE==='group'&&h1?((h1.textContent||'').replace(/\s*\(.*$/,'').trim()):''):g;
+        var line=EN?(n.toLocaleString()+' '+(gn?gn+' ':'')+'fans visited this week'):('이번 주 '+gn+' 팬 '+n.toLocaleString()+'명이 다녀갔어요');
+        if(items.indexOf(line)<0)items.unshift(line);
+        idx=0;
+      }
+      render();
+    }
+    items=facts.slice();
+    render(); // 사실 줄은 바로 — 방문자 수는 받아 오면 맨 앞에 끼운다
+    if(data){withViewers(data);return;}
+    if(!g)return;
     try{fetch('https://dukgguehegnembimqvkm.supabase.co/rest/v1/rpc/get_week_viewers',{method:'POST',
       headers:{'Content-Type':'application/json',apikey:'sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0',Authorization:'Bearer sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0'},body:'{}'})
-      .then(function(r){return r.ok?r.json():null;}).then(function(d){if(!d)return;try{sessionStorage.setItem(KEY,JSON.stringify({t:Date.now(),d:d}));}catch(e){}draw(d);}).catch(function(){});}catch(e){}
+      .then(function(r){return r.ok?r.json():null;}).then(function(d){if(!d)return;try{sessionStorage.setItem(KEY,JSON.stringify({t:Date.now(),d:d}));}catch(e){}withViewers(d);}).catch(function(){});}catch(e){}
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',viewers);else viewers();
 

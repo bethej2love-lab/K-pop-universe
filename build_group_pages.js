@@ -636,6 +636,7 @@ ${SEO_GA_TAG}
       ${info.fandom && info.fandom.ko ? `<span><b>${fandomLabel}</b> ${escHtml(isEn ? (info.fandom.en || info.fandom.ko) : info.fandom.ko)}</span>` : ''}
     </div>
     ${snsRowHtml(info.links, isEn)}
+    ${factsTag(pageFacts({ vids: VIDS[ko], wins: EX.wins[ko], isEn }))}
   </div>
   ${(() => { const e2 = lang === 'en'; const parts = [[memberListHtml(lang), 'members', e2 ? 'Members' : '멤버'], [songLinksHtml(ko, lang), 'songs', e2 ? 'Songs' : '곡별 직캠'], [albumLinksHtml(ko, lang), 'albums', e2 ? 'Albums' : '앨범']].filter(x => x[0]); return parts.length ? `<ul class="member-list jump" style="margin:4px 0 16px">${parts.map(x => `<li><a href="#${x[1]}">${x[2]}</a></li>`).join('')}</ul>` : ''; })()}
   ${hasStage ? `
@@ -897,6 +898,7 @@ ${SEO_GA_TAG}
       ${agency ? `<span><b>${agencyLabel}</b> ${escHtml(agency)}</span>` : ''}
     </div>
     ${snsRowHtml(a.links, isEn)}
+    ${factsTag(pageFacts({ vids: (VIDS[primaryGko] || []).filter(v => (v.members || []).includes(a.name.ko)).concat(VIDS[soloKoOf(a)] || []), wins: (EX.wins[primaryGko] || []).filter(w => w.member_ko === a.name.ko), fancams, isEn }))}
   </div>
   ${hasFancams ? `
   <h2>${isEn ? `${escHtml(en)} fancams` : `${escHtml(ko)} 직캠`}</h2>
@@ -1932,6 +1934,31 @@ const FANCAM_REST_MAX = 48;
 
 // 프로필 맨 위 SNS 링크 줄(2026-11-18 사용자 "링크는 기본적으로 넣어줘야지 — 정적 페이지에서도 기본 정보 안내는 가능해야"). 그룹은 groups.json links,
 // 멤버는 artists.json links(인스타는 개인 계정만 — 메모리 규칙, 데이터에 있는 것만). 작은 알약 한 줄, 새 창.
+
+// 제목 아래 '살아 있는 줄'(2026-11-18 사용자 "정적 페이지가 너무 정적이라 딱딱하다 — n명이 다녀갔어요 줄이 비지 않게 데이터를 만들자,
+// 지금까지 n명·이번 주 새 직캠 n개 같은 것"). 빌드할 때 그 페이지 영상·1위 기록으로 사실 몇 줄을 계산해 심어 두고(#kpu-facts),
+// seo_play.js가 '이번 주 팬 n명'(30명↑일 때)과 함께 카드 상태 줄처럼 번갈아 보여 준다. 0인 항목은 안 넣는다(빈 식당처럼 보이지 않게).
+function pageFacts({ vids, wins, fancams, isEn }) {
+  const out = [];
+  const fmt = n => Number(n).toLocaleString(isEn ? 'en-US' : 'ko-KR');
+  const wk = new Date(Date.parse(TODAY_ISO) - 7 * 864e5).toISOString().slice(0, 10);
+  const list = (vids || []).filter(v => v && v.id);
+  const newWk = list.filter(v => String(v.published_at || '').slice(0, 10) >= wk).length;
+  if (newWk) out.push(isEn ? `${fmt(newWk)} new video${newWk > 1 ? 's' : ''} this week` : `이번 주 새 영상 ${fmt(newWk)}개`);
+  const ws = (wins || []).filter(w => w && w.win_date).sort((x, y) => String(y.win_date).localeCompare(String(x.win_date)));
+  if (ws.length) { const w = ws[0], d = String(w.win_date).slice(0, 10).replace(/-/g, '.'); out.push(isEn ? `Latest music show win · ${w.song_title || ''} (${d})` : `최근 음방 1위 · ${w.song_title || ''} (${d})`); }
+  if (ws.length > 1) out.push(isEn ? `${fmt(ws.length)} music show wins` : `음방 1위 ${fmt(ws.length)}회`);
+  const fc = (fancams || []).length;
+  if (fc) out.push(isEn ? `${fmt(fc)} fancams collected` : `모아둔 직캠 ${fmt(fc)}개`);
+  else if (list.length >= 10) out.push(isEn ? `${fmt(list.length)} stages & videos collected` : `모아둔 무대·영상 ${fmt(list.length)}개`);
+  const top = list.reduce((m, v) => (v.view_count || 0) > (m ? m.view_count || 0 : 0) ? v : m, null);
+  if (top && top.view_count >= 1e5) out.push(isEn ? `Most viewed · ${SEO.fmtViews(top.view_count, true)} views` : `가장 많이 본 영상 · 조회수 ${SEO.fmtViews(top.view_count, false)}`);
+  return out.slice(0, 5);
+}
+function factsTag(arr) {
+  if (!arr || !arr.length) return '';
+  return `<script type="application/json" id="kpu-facts">${JSON.stringify(arr).replace(/</g, '\\u003c')}</script>`;
+}
 function snsRowHtml(links, isEn) {
   if (!links) return '';
   const L = [['youtube', 'YouTube'], ['instagram', 'Instagram'], ['x', 'X'], ['tiktok', 'TikTok'], ['weverse', 'Weverse'], ['namu', isEn ? 'Namuwiki' : '나무위키']];
@@ -2068,6 +2095,7 @@ ${LIST_FWD}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
   <a class="hero" href="https://www.youtube.com/watch?v=${hero.id}" target="_blank" rel="noopener"><img src="${wideThumb(hero.id)}" alt="${escHtml(hero.title)}"><span class="play"></span><span class="hero-txt"><h1>${escHtml(h1)}</h1><span class="sub">${escHtml(sub)}</span></span></a>
   ${heroCapHtml(hero, isEn)}
+  ${factsTag(pageFacts({ vids: fancams, fancams, isEn }))}
   <div class="crumbs">${info ? `<a href="${SITE}/${groupPagePath(gko, lang)}">${escHtml(gName)}</a> › ` : ''}<a href="${profileUrl}">${escHtml(mName)}</a> › ${isEn ? 'Fancams' : '직캠'}</div>
   <p class="lead">${escHtml(isEn ? `Every individual fancam and face cam of ${gName} ${mName}, grouped by song. Most viewed first.` : `${gko} ${mName}의 개인 직캠·페이스캠을 곡별로 모두 모았어요. 조회수 많은 순.`)}</p>
   ${songNav}
