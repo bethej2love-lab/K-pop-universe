@@ -12287,7 +12287,10 @@ const _ADM_LS={fbSeen:'kpu_adm_fb_seen',lastRun:'kpu_adm_last_routine',stepMs:'k
 // 다만 "로스터가 늘어나서 예전엔 안 잡히던 이름이 이제 잡힌다"는 회수 경로가 증분만으로는 죽으므로,
 // 7일에 한 번은 루틴에서도 전량을 돈다. 패널 버튼으로 직접 누르면 항상 전량(_admRoutineRunning=false).
 const _ADM_FULL_EVERY_MS=7*24*3600*1000;
+// ⭐ 매시간 동기화의 '신규 영상 멤버 태깅'(2026-11-18)이 켜는 플래그 — 이때만 autotag 범위를 "최근 3시간 유입분"으로 못박는다. 7일 전량 기록(fullAutotag)은 건드리지 않는다.
+let _atmHourlyScope=false;
 function _admRoutineScopeSince(kind){
+  if(_atmHourlyScope&&(kind==='autotag'||kind==null))return new Date(Date.now()-3*3600*1000).toISOString();
   if(!_admRoutineRunning)return null; // 사람이 버튼으로 부른 것 = 전량
   const key=kind==='cover'?_ADM_LS.fullCover:kind==='format'?_ADM_LS.fullFormat:kind==='song'?_ADM_LS.fullSong:_ADM_LS.fullAutotag;
   let lastFull=0,lastRun=0;
@@ -12894,6 +12897,10 @@ async function _admRunRoutine(withSync,opts){
     // 매시간 동기화에선 **방금 들어온 영상의 조회수만** 채운다(1~2유닛) — 안 그러면 새 영상은 다음 전체
     // 루틴까지 조회수가 null이라 차트에서 빠진다(_ytRefreshViewCounts onlyMissing 주석).
     else steps.push({name:'1-3. 신규 영상 조회수 (조회수 없는 것만)',fn:()=>_ytRefreshViewCounts({onlyMissing:true})});
+    // ⭐ 수집 직후 멤버 태깅(2026-11-18, 사용자 "투어스 영재 하트 눌렀는데 멤버 개별 출연 영상이 그룹으로만 잡혀 For You에 안 뜬다").
+    //    멤버 태깅(2번)은 6시간마다 도는 전체 루틴에만 있어서, 새 영상이 최대 6시간(+루틴 소요) 동안 members가 빈 채 그룹으로만 보였다.
+    //    매시간 동기화에서도 최근 3시간 유입분만 같은 자동 태깅을 돌린다(수동 태그 행은 그대로 안 건드림, 쿼터 0 — DB만).
+    if(_syncOnly)steps.push({name:'1-4. 신규 영상 멤버 태깅 (최근 3시간 유입분)',fn:async()=>{_atmHourlyScope=true;try{await _ytAutoTagMembers();}finally{_atmHourlyScope=false;}}});
   }
   if(!_syncOnly){
   steps.push({name:'2. 멤버+콜라보 자동 태깅',fn:_ytAutoTagMembers});
