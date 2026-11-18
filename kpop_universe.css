@@ -5991,3 +5991,20 @@
    새 플레이어(전체화면 버튼이 재생바 위 오른쪽, 영상 오른쪽 끝 약 48px·아래 약 100px)로 바뀌어 PC에서도 2배속 탭존이 버튼을 덮었다.
    헤드리스에서 버튼 좌표의 맨 위 요소가 #yt-lb-speed-zone인 걸 확인. 기기 구분 없이 탭존을 오른쪽 끝 80px 안쪽으로. */
 #yt-lb-video-box:not(.is-shorts) #yt-lb-speed-zone{right:80px;width:18%;}
+
+/* 폰 쇼츠 재생 화면 = 가로 꽉(2026-11-18 사용자 "쇼츠를 클릭하면 재생모드 겸 피드 — 그때 모바일에서 가로 너비 꽉 차면 좋겠다").
+   예전 높이 min(68vh,530px)라 390px 폰에서 영상 폭 298px. 이제 높이 = min(폭×16/9, 화면 − 위 고정바 52px − 제목·반응 자리 96px) →
+   390×844 폰 378px(97%), 430×932 폰 430px 꽉. 오른쪽 세로 버튼(영상이 넓어져 유튜브 전체화면 버튼 자리와 겹쳐서 아래 여유 90→150px)·제목 폭·'다음' 버튼이 같은 변수를 따른다. 처음 피드(쇼츠 2열)는 그대로. */
+@media (pointer:coarse) and (orientation:portrait){
+  #yt-lightbox.lb-shorts:not(.lb-browse){--sh-h:min(calc(100vw * 16 / 9), calc(100svh - 52px - env(safe-area-inset-top, 0px) - 96px));}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-wrap{padding-left:0;padding-right:0;width:100vw;max-width:100vw;}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-video-box.is-shorts{height:var(--sh-h);width:calc(var(--sh-h) * 9 / 16);max-width:100vw;}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-video-box.is-shorts~#yt-lb-info{width:calc(var(--sh-h) * 9 / 16);max-width:calc(100vw - 24px);}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-shorts-next:not([hidden]){width:calc(var(--sh-h) * 9 / 16);}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-rotate{top:calc(52px + env(safe-area-inset-top, 0px) + var(--sh-h) - 150px - 0*52px);}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-mute{top:calc(52px + env(safe-area-inset-top, 0px) + var(--sh-h) - 150px - 1*52px);}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-col{top:calc(52px + env(safe-area-inset-top, 0px) + var(--sh-h) - 150px - 2*52px);}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-flag{top:calc(52px + env(safe-area-inset-top, 0px) + var(--sh-h) - 150px - 3*52px);}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-scrap{top:calc(52px + env(safe-area-inset-top, 0px) + var(--sh-h) - 150px - 4*52px);}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-edit{top:calc(52px + env(safe-area-inset-top, 0px) + var(--sh-h) - 150px - 5*52px);}
+}
