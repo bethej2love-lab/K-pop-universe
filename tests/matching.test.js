@@ -14,6 +14,14 @@ const cases = [];
 // publishedAt: 탈퇴 게이트(_atmLeftBefore) 검증용 4번째 인자. 안 주면 기존처럼 날짜 없이 파싱.
 function test(name, title, selfGko, check, publishedAt) { cases.push({ name, title, selfGko, check, publishedAt }); }
 
+// 그룹명 '신화'가 일상어(성취·전설)로 쓰인 제목은 신화 그룹이 아니다(2026-11-18 Codex 검수 — 양궁·박세리·2002 축구 라디오).
+// 진짜 신화 콘텐츠(곡·컴백·영문 SHINHWA·멤버 이름)는 그대로 신화.
+test('신화 일상어 — 10연패 신화', "[예고] ‘10연패 신화’ 전설×현역 선수들의 숨 막히는 양궁 전쟁★", undefined, r => !r || r.primaryGroup !== '신화');
+test('신화 일상어 — 맨발 신화', "[FULL] 맨발 신화🏆 리치 언니 ✨박세리 선수✨의 인생 이야기와 플레이리스트 추천까지! 📻 | 청춘의 노래들 | MBC 240819 방송", undefined, r => !r || r.primaryGroup !== '신화');
+test('신화 일상어 — 2002 신화', "[FULL] ⚽️2002 신화 어게인 제발🙏 레전드 축구선수 최진철, 이운재, 정경호 보는 라디오 | 두시탈출 컬투쇼 | 221124", undefined, r => !r || r.primaryGroup !== '신화');
+test('신화 곡 무대는 그대로', "신화 - TOUCH (Music Bank) | KBS WORLD TV", undefined, r => !!r && r.primaryGroup === '신화');
+test('신화 영문 표기는 그대로', "SHINHWA 신화 WDJ 직캠", undefined, r => !!r && r.primaryGroup === '신화');
+
 // 공식 영문명으로 올린 개인 커버는 다른 멤버에게 단체 영상처럼 노출하지 않는다.
 // 원본 NEXZ 업로드 3건 + 후이/HUI 동명이인 회귀 (JYP 공식 프로필 대조, 2026-10-27).
 test('NEXZ YU 개인 커버 → 유우', 'yours (데이먼스 이어) Covered by NEXZ YU | #YU', undefined,
