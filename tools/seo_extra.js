@@ -321,6 +321,7 @@ const TOUR_SUFFIX_RE = /([A-Za-z][A-Za-z0-9 '’:!?.&\-]{2,40}?)\s+(?:world\s+)?
 // 앨범 이름과 같은 곡이면 앨범 홍보 영상 제목에 곡명이 그대로 들어 있어 곡 영상으로 잡힌다. 분류가 live·mv인 영상(음방·직캠·안무·MV)은 항상 둔다 — 실제 무대가
 // other로 분류된 경우(SBS 인기가요·가요대전)가 있어 other를 통째로 빼지 않고, **other 중 제목·형식이 비공연인 것만** 뺀다.
 const NON_PERF_RE = /\b(trailer|teaser|reaction|mashup|guide video|lyrics? (video|visualizer)|visualizer|making( film)?|behind|unveil|spoiler|preview|highlight medley|track ?list|jacket|interview|unboxing|album (film|talk)|compilations?|intro)\b|트레일러|티저|리액션|메이킹|비하인드|가이드 영상|가사 영상|스포일러|프리뷰|하이라이트 메들리|인터뷰|언박싱|모아보기/i;
+function songStrongCategory(v) { return !!v && (v.category === 'live' || v.category === 'mv' || (v.content_formats || []).some(f => /^EV:/.test(f))); }
 function isNonPerformance(v) {
   if (!v) return false;
   if (v.category === 'live' || v.category === 'mv') return false;
@@ -375,6 +376,8 @@ function buildSongs({ ROOT, groups, artists, EX, vids, minVids = 4 }) {
     // 에이티즈 성화 /s/intro/ 등 6그룹 12주소×한·영). 앨범 수록 목록(디스코)에는 그대로 있고, 곡 페이지·영상 곡 연결 후보에서만 뺀다.
     const songs = S.K(S.L(albums, persons), g).filter(s => !STRUCTURAL_TRACKS.has(s.b));
     if (!songs.length) continue;
+    const fanName = S.B(((groups[g] || {}).fandom || {}).ko || '') || null;
+    const songMaxLen = new Map(songs.map(x => [x.b, Math.max(S.N(x.title || '').length, x.b.length, ...((x.alias || []).map(a => (a && a.n || '').length)))]));
     // 곡 → 처음 실린 앨범(가장 이른 발매)·타이틀곡 여부·크레딧
     const meta = {};
     // 첫 수록 앨범은 본판 우선(2026-11-13 Codex — B1A4 '이게 무슨 일이야'가 앞 앨범의 반주 트랙 때문에 'In the Wind'로, 일본반·라이브·베스트가
@@ -415,15 +418,24 @@ function buildSongs({ ROOT, groups, artists, EX, vids, minVids = 4 }) {
       if (bs.length > 1) { const tn = [...String(v.title || '').matchAll(TOUR_NAME_RE)].map(m => S.N(m[2])).filter(Boolean);
         if (tn.length) { const keep = bs.filter(x => !tn.some(n => n.includes(x))); if (keep.length) bs = keep; } }
       bs = refineSongsByTitle(v.title || '', bs, txt => S.f(txt, songs, names)); // 따옴표 안 곡 우선·따옴표 밖 행사명 제외(2026-11-16)
-      for (const b of bs) { const s = bucket.get(b); if (!s) continue; const own = soloOnly.get(b); if (own && !(v.members || []).some(m => own.has(m))) continue; s.vids.push(v); }
+      // 근거 강한 영상 = 무대(live·mv)·시상식이거나 곡명이 따옴표 안(2026-11-18). 곡명이 제목 어딘가에 들어 있기만 한 공항·브이로그·예능은 약한 근거.
+      // 따옴표 근거는 따옴표 안이 거의 곡명 그대로일 때만(괄호 부제 떼고 곡명·별칭 중 가장 긴 것 ×1.3+1자 이내) — '골차의 휴일 시즌3' 안의 '골차'는 곡 Gol-Cha!가 아니다.
+      // 회차물(Ep.3·EPISODE·#5·브이로그)은 따옴표 안이 곡명이어도 채널·코너 이름이다(골든차일드 “CH.GOL-CHA!” Ep.14). 팬덤 이름과 같은 곡(르세라핌 '피어나')은 무대 영상도 따옴표가 있어야.
+      const epi = /\b(ep|episode)\.?\s*\d|#\d+\b|vlog|브이로그|\d+화\b/i.test(String(v.title || ''));
+      const strongCat = songStrongCategory(v);
+      const qb = (epi ? [] : [...String(v.title || '').matchAll(QUOTED_RE)]).flatMap(m => { const core = m[1].split(/\s*[([]/)[0]; return (S.f('"' + core + '"', songs, names) || []).filter(x => S.N(core).length <= (songMaxLen.get(x) || 0) * 1.3 + 1); });
+      for (const b of bs) { const s = bucket.get(b); if (!s) continue; const own = soloOnly.get(b); if (own && !(v.members || []).some(m => own.has(m))) continue; s.vids.push(v); if ((strongCat && !(fanName && b === fanName)) || qb.includes(b)) (s.strong || (s.strong = new Set())).add(v); }
     }
     // 1위 기록은 곡 제목이 영어로 저장된 경우가 있다('HEYA'·'God of Music') — 별칭으로도 기본형을 찾는다
     const toBase = new Map(); songs.forEach(s => { toBase.set(s.b, s.b); (s.alias || []).forEach(al => { if (!toBase.has(al.n)) toBase.set(al.n, s.b); }); });
     const winBy = {};
     (EX.wins[g] || []).forEach(w => { const b = toBase.get(S.B(w.song_title || '')) || toBase.get(S.N(w.song_title || '')); if (b) winBy[b] = (winBy[b] || 0) + 1; });
-    // 비공연 영상 거르기 — 거른 뒤 하나도 안 남으면 원래대로(빈 페이지 방지). 페이지를 만들지 말지(minVids)는 거르기 전 개수로 — 기존 곡 페이지가 사라지지 않게.
-    bucket.forEach(s => { s.vidsAll = s.vids.length; const perf = s.vids.filter(v => !isNonPerformance(v)); if (perf.length) s.vids = perf; });
-    const list = [...bucket.values()].filter(s => s.vidsAll >= minVids).map(s => { const m = meta[s.b] || {}; return Object.assign(s, m, { title: m.name || s.title, wins: winBy[s.b] || 0 }); });
+    // 곡 페이지는 근거 강한 영상이 4개 이상, 또는 2~3개이면서 묶인 영상의 절반 이상일 때만(2026-11-18 사용자 '정국 seoul 직캠 페이지 뭐임 — seoul은 노래가 아니잖아').
+    // 곡명이 제목 어딘가에 있기만 해도 묶여 골든차일드 'Gol-Cha!'←예능 '골차의 휴일', 세븐틴 'HEALING'←공항 기사, 아이브 'Fashion'←공항패션, 갓세븐 'PAGE'←GOT7_PAGE_01,
+    // 트와이스 'Talk'←토크쇼, 르세라핌 '피어나'←팬덤 이름 같은 페이지가 생겼다(정적 곡 페이지 중 무대 영상 비율 50% 미만 481개).
+    // 화면엔 근거 강한 영상만(그중 비공연 제목은 다시 뺌). 빠진 페이지는 retireStaleDirs가 부모 페이지로 넘긴다.
+    bucket.forEach(s => { s.vidsAll = s.vids.length; const st = s.vids.filter(v => s.strong && s.strong.has(v)); s.nStrong = st.length; const perf = st.filter(v => !isNonPerformance(v)); s.vids = perf.length ? perf : st; });
+    const list = [...bucket.values()].filter(s => s.vidsAll >= minVids && s.nStrong >= 2 && (s.nStrong >= 4 || s.nStrong * 2 >= s.vidsAll)).map(s => { const m = meta[s.b] || {}; return Object.assign(s, m, { title: m.name || s.title, wins: winBy[s.b] || 0 }); });
     list.forEach(s => s.vids.sort((a, b) => (b.view_count || 0) - (a.view_count || 0)));
     if (list.length) {
       out[g] = list.sort((a, b) => b.vids.length - a.vids.length);
