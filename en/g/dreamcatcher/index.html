@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,14 +91,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/드림캐쳐/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>Dreamcatcher(드림캐쳐)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/2iF9xPRWbhQ/maxresdefault.jpg" alt="Dreamcatcher" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/5503c9b7-d0ef-4479-98a8-71aca3861e53.jpg" alt="Dreamcatcher" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>Debut</b> 2017.01.13</span>
       <span><b>Agency</b> Dreamcatcher Company</span>
       <span><b>Fandom</b> InSomnia</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/@Dreamcatcherofficial" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://www.instagram.com/hf_dreamcatcher" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/hf_dreamcatcher" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://www.tiktok.com/@official_dreamcatcher" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-weverse" href="https://www.weverse.io/dreamcatcher" target="_blank" rel="noopener noreferrer">Weverse</a><a class="sns-namu" href="https://namu.wiki/w/드림캐쳐(아이돌)" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
   
@@ -135,25 +144,25 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/boca/">BOCA</a></li>
       <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/scream/">Scream</a></li>
       <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/piri/">PIRI</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/chaseme/">Chase Me</a></li>
       <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/youandi/">YOU AND I</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/바람아/">바람아 (Wind Blows)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/chaseme/">Chase Me</a></li>
       <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/goodnight/">GOOD NIGHT</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/바람아/">바람아 (Wind Blows)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/2months/">2 Months</a></li>
       <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/2rings/">2 Rings</a></li>
       <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/redsun/">Red Sun</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/날아올라/">날아올라 (Fly high)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/blackorwhite/">Black Or White</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/날아올라/">날아올라 (Fly high)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/attitude/">Attitude</a></li>
       <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/alldaylong/">Alldaylong</a></li>
       <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/paradise/">Paradise</a></li>
       <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/gene/">GENE</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/daydream/">Daydream (백일몽)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/dear/">Dear</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/하늘을넘어/">하늘을 넘어</a></li>
       <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/sacrifice/">Sacrifice</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/하늘을넘어/">하늘을 넘어</a></li>
       <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/what/">What</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/daydream/">Daydream (백일몽)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/mychristmassweetlove/">My Christmas Sweet Love</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/dear/">Dear</a></li>
       <li><a href="https://kpop-universe.kr/en/g/dreamcatcher/s/roseblue/">R.o.S.E BLUE</a></li>
     </ul>
   
@@ -219,7 +228,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/드림캐쳐/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=드림캐쳐">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"BONVOYAGE","s":"118 videos","img":"RPNaYj6etb8","m":"BONVOYAGE","h":"https://kpop-universe.kr/en/g/dreamcatcher/s/bonvoyage/"},{"k":"Member fancams","t":"Jiu","s":"92 fancams","img":"i1rEIHgKqoA","h":"https://kpop-universe.kr/en/g/dreamcatcher/jiu/fancams/"},{"k":"Album","t":"[VirtuouS]","s":"5 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/115/35/866/11535866_20240709162327_500.jpg","h":"https://kpop-universe.kr/en/g/dreamcatcher/a/virtuous/"},{"k":"Song fancams","t":"MAISON","s":"89 videos","img":"z4t9LLq1Nk0","m":"MAISON","h":"https://kpop-universe.kr/en/g/dreamcatcher/s/maison/"},{"k":"Member fancams","t":"SuA","s":"83 fancams","img":"HxNMUYm1Es0","h":"https://kpop-universe.kr/en/g/dreamcatcher/sua/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"BONVOYAGE","s":"111 videos","img":"RPNaYj6etb8","m":"BONVOYAGE","h":"https://kpop-universe.kr/en/g/dreamcatcher/s/bonvoyage/"},{"k":"Member fancams","t":"Jiu","s":"92 fancams","img":"i1rEIHgKqoA","h":"https://kpop-universe.kr/en/g/dreamcatcher/jiu/fancams/"},{"k":"Album","t":"[VirtuouS]","s":"5 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/115/35/866/11535866_20240709162327_500.jpg","h":"https://kpop-universe.kr/en/g/dreamcatcher/a/virtuous/"},{"k":"Song fancams","t":"MAISON","s":"83 videos","img":"z4t9LLq1Nk0","m":"MAISON","h":"https://kpop-universe.kr/en/g/dreamcatcher/s/maison/"},{"k":"Member fancams","t":"SuA","s":"83 fancams","img":"HxNMUYm1Es0","h":"https://kpop-universe.kr/en/g/dreamcatcher/sua/fancams/"}]</script>
 </div>
 </body>
 </html>

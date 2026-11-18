@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,14 +91,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/엑소/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>EXO(엑소)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/cQeeTansp8U/maxresdefault.jpg" alt="EXO" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/e1634f48-13a8-48f1-bfd9-62c7331bddcc.jpg" alt="EXO" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>Debut</b> 2012.04.08</span>
       <span><b>Agency</b> SM Entertainment</span>
       <span><b>Fandom</b> EXO-L</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/channel/UCzCedBCSSltI1TFd3bKyN6g" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://www.instagram.com/weareone.exo" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/weareoneEXO" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://www.tiktok.com/@weareone.exo_official" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-weverse" href="https://weverse.io/exo/feed" target="_blank" rel="noopener noreferrer">Weverse</a><a class="sns-namu" href="https://namu.wiki/w/EXO" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
   
@@ -177,85 +186,64 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <h2 id="songs">Fancams & stages by song</h2>
     <ul class="member-list rel">
       <li><a href="https://kpop-universe.kr/en/g/exo/s/crown/">Crown</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/으르렁/">으르렁 (Growl)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/exo/s/creamsoda/">Cream Soda</a></li>
       <li><a href="https://kpop-universe.kr/en/g/exo/s/monster/">Monster</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/mama/">MAMA</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/으르렁/">으르렁 (Growl)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/exo/s/lovemeright/">LOVE ME RIGHT</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/loveshot/">Love Shot</a></li>
       <li><a href="https://kpop-universe.kr/en/g/exo/s/brandnew/">Brand New</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/kokobop/">Ko Ko Bop</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/callmebaby/">CALL ME BABY</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/power/">Power</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/중독/">중독 (Overdose)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/loveshot/">Love Shot</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/mama/">MAMA</a></li>
       <li><a href="https://kpop-universe.kr/en/g/exo/s/tempo/">Tempo</a></li>
       <li><a href="https://kpop-universe.kr/en/g/exo/s/candy/">Candy</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/exploration/">EXplOration</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/늑대와미녀/">늑대와 미녀 (Wolf)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/exo/s/psychic/">Psychic</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/늑대와미녀/">늑대와 미녀 (Wolf)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/callmebaby/">CALL ME BABY</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/power/">Power</a></li>
       <li><a href="https://kpop-universe.kr/en/g/exo/s/unvillage/">UN Village</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/전야/">전야</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/exodus/">EXODUS</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/나비소녀/">나비소녀 (Don&#39;t Go)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/중독/">중독 (Overdose)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/kokobop/">Ko Ko Bop</a></li>
       <li><a href="https://kpop-universe.kr/en/g/exo/s/花요일/">花요일 (Blooming Day)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/heymama/">Hey Mama!</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/chocolate/">Chocolate</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/exploration/">EXplOration</a></li>
       <li><a href="https://kpop-universe.kr/en/g/exo/s/pineappleslice/">Pineapple Slice</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/obsession/">Obsession</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/universe/">Universe</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/history/">History</a></li>
       <li><a href="https://kpop-universe.kr/en/g/exo/s/닿은순간/">닿은 순간 (Ooh La La La)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/elevator/">Elevator</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/crazy/">Crazy</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/dontfightthefeeling/">Don&#39;t fight the feeling</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/lotto/">Lotto</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/beyond/">Beyond</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/lucky/">Lucky</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/obsession/">Obsession</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/전야/">전야</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/history/">History</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/chocolate/">Chocolate</a></li>
       <li><a href="https://kpop-universe.kr/en/g/exo/s/사라지고있어/">사라지고 있어 (Last Scene)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/eldorado/">EL DORADO</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/transformer/">TRANSFORMER</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/crazy/">Crazy</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/beyond/">Beyond</a></li>
       <li><a href="https://kpop-universe.kr/en/g/exo/s/delight/">Delight</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/babydontcry/">Baby, Don&#39;t Cry (인어의 눈물)</a></li>
-    </ul>
-    <details class="more-songs"><summary>37 more songs</summary>
-    <ul class="member-list rel">
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/elevator/">Elevator</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/heymama/">Hey Mama!</a></li>
       <li><a href="https://kpop-universe.kr/en/g/exo/s/사랑하자/">사랑, 하자</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/rendezvous/">Rendez-Vous</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/backitup/">Back It Up</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/whatalife/">What a life</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/오늘도/">오늘도 (Day After Day)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/singforyou/">Sing For You</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/playboy/">PLAYBOY</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/runthis/">Run This</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/lightsaber/">LIGHTSABER</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/hurt/">HURT</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/12월의기적/">12월의 기적 (Miracles In December)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/greysuit/">Grey Suit</a></li>
       <li><a href="https://kpop-universe.kr/en/g/exo/s/bambi/">Bambi</a></li>
       <li><a href="https://kpop-universe.kr/en/g/exo/s/loveagain/">Love Again</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/gravity/">Gravity</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/wait/">Wait</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/forlife/">For Life</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/내가미쳐/">내가 미쳐 (Going Crazy)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/psycho/">Psycho</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/artificiallove/">Artificial Love</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/같이해/">같이해 (Together)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/다이아몬드/">다이아몬드 (Diamond)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/유리어항/">유리어항 (One and Only)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/backitup/">Back It Up</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/whatalife/">What a life</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/runthis/">Run This</a></li>
       <li><a href="https://kpop-universe.kr/en/g/exo/s/blackpearl/">Black Pearl</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/theone/">The One</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/점선면/">점선면 (1 to 3)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/lemonade/">Lemonade</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/hello/">Hello</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/12월의기적/">12월의 기적 (Miracles In December)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/나비소녀/">나비소녀 (Don&#39;t Go)</a></li>
+    </ul>
+    <details class="more-songs"><summary>16 more songs</summary>
+    <ul class="member-list rel">
       <li><a href="https://kpop-universe.kr/en/g/exo/s/bungee/">Bungee</a></li>
       <li><a href="https://kpop-universe.kr/en/g/exo/s/바래다줄게/">바래다줄게 (Take You Home)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/infinity/">Infinity</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/gravity/">Gravity</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/내가미쳐/">내가 미쳐 (Going Crazy)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/점선면/">점선면 (1 to 3)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/exo/s/10억뷰/">10억뷰</a></li>
       <li><a href="https://kpop-universe.kr/en/g/exo/s/waitonme/">Wait On Me</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/rover/">Rover</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/imhome/">I&#39;m Home</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/exo/s/jopping/">Jopping</a></li>
       <li><a href="https://kpop-universe.kr/en/g/exo/s/hearmeout/">Hear Me Out</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/wait/">Wait</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/psycho/">Psycho</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/다이아몬드/">다이아몬드 (Diamond)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/theone/">The One</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/greysuit/">Grey Suit</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/rover/">Rover</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/lemonade/">Lemonade</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/exo/s/jopping/">Jopping</a></li>
     </ul></details>
   
     <h2 id="albums">Albums & tracklists</h2>
@@ -326,7 +314,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/엑소/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=엑소">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"Crown","s":"53 videos","img":"BWfKkqo1Mk8","m":"Crown","h":"https://kpop-universe.kr/en/g/exo/s/crown/"},{"k":"Member fancams","t":"Baekhyun","s":"217 fancams","img":"4owpEFKevVM","h":"https://kpop-universe.kr/en/g/exo/baekhyun/fancams/"},{"k":"Album","t":"REVERXE","s":"9 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/124/38/632/12438632_20260119095249_500.jpg","h":"https://kpop-universe.kr/en/g/exo/a/reverxe/"},{"k":"Song fancams","t":"으르렁 (Growl)","s":"52 videos","img":"I3dezFzsNss","m":"으르렁","h":"https://kpop-universe.kr/en/g/exo/s/으르렁/"},{"k":"Member fancams","t":"Xiumin","s":"174 fancams","img":"2kROZyt8gi0","h":"https://kpop-universe.kr/en/g/exo/xiumin/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"Crown","s":"48 videos","img":"BWfKkqo1Mk8","m":"Crown","h":"https://kpop-universe.kr/en/g/exo/s/crown/"},{"k":"Member fancams","t":"Baekhyun","s":"217 fancams","img":"4owpEFKevVM","h":"https://kpop-universe.kr/en/g/exo/baekhyun/fancams/"},{"k":"Album","t":"REVERXE","s":"9 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/124/38/632/12438632_20260119095249_500.jpg","h":"https://kpop-universe.kr/en/g/exo/a/reverxe/"},{"k":"Song fancams","t":"Cream Soda","s":"48 videos","img":"zomvO2Ii-kA","m":"Cream Soda","h":"https://kpop-universe.kr/en/g/exo/s/creamsoda/"},{"k":"Member fancams","t":"Xiumin","s":"174 fancams","img":"2kROZyt8gi0","h":"https://kpop-universe.kr/en/g/exo/xiumin/fancams/"}]</script>
 </div>
 </body>
 </html>

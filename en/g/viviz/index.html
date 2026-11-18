@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,14 +91,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/비비지/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>VIVIZ(비비지)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/a-kYsZkY6oU/maxresdefault.jpg" alt="VIVIZ" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/92feb2ea-ecc9-43a9-8252-042587f94c05.jpg" alt="VIVIZ" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>Debut</b> 2022.02.09</span>
       <span><b>Agency</b> BPM Entertainment</span>
       <span><b>Fandom</b> Na.V</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/@viviz.official" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://instagram.com/viviz_official" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/VIVIZ_official" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://tiktok.com/@viviz_bpm" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-namu" href="https://namu.wiki/w/VIVIZ" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
   
@@ -116,14 +125,14 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <ul class="member-list rel">
       <li><a href="https://kpop-universe.kr/en/g/viviz/s/bopbop/">BOP BOP!</a></li>
       <li><a href="https://kpop-universe.kr/en/g/viviz/s/pullup/">PULL UP</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/viviz/s/maniac/">MANIAC</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/viviz/s/lalaloveme/">La La Love Me</a></li>
       <li><a href="https://kpop-universe.kr/en/g/viviz/s/loveade/">LOVEADE</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/viviz/s/maniac/">MANIAC</a></li>
       <li><a href="https://kpop-universe.kr/en/g/viviz/s/shhh/">Shhh!</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/viviz/s/lalaloveme/">La La Love Me</a></li>
       <li><a href="https://kpop-universe.kr/en/g/viviz/s/untie/">Untie</a></li>
       <li><a href="https://kpop-universe.kr/en/g/viviz/s/lovelovelove/">Love Love Love</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/viviz/s/unnatural/">UNNATURAL</a></li>
       <li><a href="https://kpop-universe.kr/en/g/viviz/s/환상/">환상 (Red Sun!)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/viviz/s/unnatural/">UNNATURAL</a></li>
       <li><a href="https://kpop-universe.kr/en/g/viviz/s/밤시간을달려서/">밤 + 시간을 달려서 (Time for the glory)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/viviz/s/늘지금처럼/">늘 지금처럼 Come on baby tonight (Ditto)</a></li>
     </ul>
@@ -162,7 +171,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/비비지/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=비비지">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"BOP BOP!","s":"99 videos","img":"KLF85_qHujQ","m":"BOP BOP!","h":"https://kpop-universe.kr/en/g/viviz/s/bopbop/"},{"k":"Member fancams","t":"Eunha","s":"71 fancams","img":"Gn8eN1OEh74","h":"https://kpop-universe.kr/en/g/viviz/eunha/fancams/"},{"k":"Album","t":"The 1st Album 'A Montage of ( )'","s":"9 tracks","im":"https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/cf/13/01/cf13012e-b84e-84af-7385-f31f91e9646f/8800320199888_cover.jpg/600x600bb.jpg","h":"https://kpop-universe.kr/en/g/viviz/a/the1stalbumamontageof/"},{"k":"Song fancams","t":"PULL UP","s":"90 videos","img":"96ET8jN_LkQ","m":"PULL UP","h":"https://kpop-universe.kr/en/g/viviz/s/pullup/"},{"k":"Member fancams","t":"Umji","s":"62 fancams","img":"SNYZ7XHxN8o","h":"https://kpop-universe.kr/en/g/viviz/umji/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"BOP BOP!","s":"83 videos","img":"KLF85_qHujQ","m":"BOP BOP!","h":"https://kpop-universe.kr/en/g/viviz/s/bopbop/"},{"k":"Member fancams","t":"Eunha","s":"71 fancams","img":"Gn8eN1OEh74","h":"https://kpop-universe.kr/en/g/viviz/eunha/fancams/"},{"k":"Album","t":"The 1st Album 'A Montage of ( )'","s":"9 tracks","im":"https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/cf/13/01/cf13012e-b84e-84af-7385-f31f91e9646f/8800320199888_cover.jpg/600x600bb.jpg","h":"https://kpop-universe.kr/en/g/viviz/a/the1stalbumamontageof/"},{"k":"Song fancams","t":"PULL UP","s":"80 videos","img":"6meUjjlhUEU","m":"PULL UP","h":"https://kpop-universe.kr/en/g/viviz/s/pullup/"},{"k":"Member fancams","t":"Umji","s":"62 fancams","img":"SNYZ7XHxN8o","h":"https://kpop-universe.kr/en/g/viviz/umji/fancams/"}]</script>
 </div>
 </body>
 </html>

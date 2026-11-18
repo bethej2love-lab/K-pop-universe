@@ -5,7 +5,7 @@
 <script>(function(){var h=location.hash;if(/(^#|&)vf=/.test(h))location.replace('https://kpop-universe.kr/'+h);})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SEVENUS Heejae(세븐어스 희재) Fancams &amp; Profile | K-POP UNIVERSE</title>
-<meta name="description" content="3 Heejae (SEVENUS) fancams, most viewed first. Heejae of SEVENUS: born 1994.02.22, debuted 2023.07.31. Fancams, stages and connections on K-POP UNIVERSE.">
+<meta name="description" content="5 Heejae (SEVENUS) fancams, most viewed first. Heejae of SEVENUS: born 1994.02.22, debuted 2023.07.31. Fancams, stages and connections on K-POP UNIVERSE.">
 <link rel="canonical" href="https://kpop-universe.kr/en/g/sevenus/heejae/">
 <link rel="alternate" hreflang="ko" href="https://kpop-universe.kr/g/세븐어스/희재/">
 <link rel="alternate" hreflang="en" href="https://kpop-universe.kr/en/g/sevenus/heejae/">
@@ -13,7 +13,7 @@
 <meta property="og:type" content="profile">
 <meta property="og:site_name" content="K-POP UNIVERSE">
 <meta property="og:title" content="Heejae">
-<meta property="og:description" content="3 Heejae (SEVENUS) fancams, most viewed first. Heejae of SEVENUS: born 1994.02.22, debuted 2023.07.31. Fancams, stages and connections on K-POP UNIVERSE.">
+<meta property="og:description" content="5 Heejae (SEVENUS) fancams, most viewed first. Heejae of SEVENUS: born 1994.02.22, debuted 2023.07.31. Fancams, stages and connections on K-POP UNIVERSE.">
 <meta property="og:url" content="https://kpop-universe.kr/en/g/sevenus/heejae/">
 <meta property="og:image" content="https://img.youtube.com/vi/48LfJk460V0/maxresdefault.jpg">
 <meta property="og:image:width" content="1280">
@@ -21,7 +21,7 @@
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Heejae">
-<meta name="twitter:description" content="3 Heejae (SEVENUS) fancams, most viewed first. Heejae of SEVENUS: born 1994.02.22, debuted 2023.07.31. Fancams, stages and connections on K-POP UNIVERSE.">
+<meta name="twitter:description" content="5 Heejae (SEVENUS) fancams, most viewed first. Heejae of SEVENUS: born 1994.02.22, debuted 2023.07.31. Fancams, stages and connections on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/48LfJk460V0/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Heejae","alternateName":"희재","birthDate":"1994-02-22","nationality":"KR","url":"https://kpop-universe.kr/en/g/sevenus/heejae/","image":"https://img.youtube.com/vi/48LfJk460V0/maxresdefault.jpg","memberOf":[{"@type":"MusicGroup","name":"SEVENUS"}],"sameAs":["https://www.instagram.com/heeeeeejae","https://namu.wiki/w/희재(SEVENUS)"]}</script>
@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,6 +91,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/세븐어스/희재/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>Heejae(희재)</h1>
     <img class="cover" src="https://img.youtube.com/vi/48LfJk460V0/maxresdefault.jpg" alt="Heejae" loading="lazy">
@@ -93,14 +101,17 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>Debut</b> 2023.07.31</span>
       <span><b>Agency</b> PCS Ent.</span>
     </div>
+    <div class="sns"><a class="sns-instagram" href="https://www.instagram.com/heeeeeejae" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-namu" href="https://namu.wiki/w/희재(SEVENUS)" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   
   <h2>Heejae fancams</h2>
   
   <div class="mf-grid">
     <a class="mf-card" href="https://www.youtube.com/watch?v=ayIymfpxJyE" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/ayIymfpxJyE/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[플리캠 4K] SEVENUS HEEJAE &#39;사랑해도 될까요&#39; (세븐어스 희재 직캠) l Simply K-Pop GateWayToKorea</span><span class="mf-y">2025.05.30 · 1K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=bW4n2f5fo_I" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/bW4n2f5fo_I/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 세븐어스 희재 &#39;차갑고, 반짝이는&#39; (SEVENUS HEEJAE &#39;Cold And Shiny&#39; FanCam) @SBS Inkigayo 250105</span><span class="mf-y">2025.01.07 · 1K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=eZX5l3dr41Q" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/eZX5l3dr41Q/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[플리캠 4K] SEVENUS HEEJAE &#39;사랑해도 될까요&#39; (세븐어스 희재 직캠) l Simply K-Pop GateWayToKorea</span><span class="mf-y">2025.06.06 · 1K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=At8cCPNLhPM" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/At8cCPNLhPM/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[K-Choreo Tower Cam 4K] 희재(SEVENUS)직캠 &#39;어느 째즈바(Memories)&#39;(HEEJAE Choreography)l @MusicBank KBS 260213</span><span class="mf-y">2026.02.23 · 900+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=NuiyqzwQP9Y" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/NuiyqzwQP9Y/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 세븐어스 희재 &#39;사랑해도 될까요&#39; (SEVENUS HEEJAE &#39;Can I Love You&#39; FanCam) @SBS Inkigayo 250608</span><span class="mf-y">2025.06.11 · 800+</span></a>
   </div>
   <p class="intro">Heejae is a K-pop idol of South Korean nationality, born in 1994. Member of SEVENUS.</p>
   
@@ -114,9 +125,9 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   
     <h2>Fancams by song</h2>
     <div class="sp-tiles">
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/sevenus/heejae/s/이상기류/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/146/69/228/14669228_20261013143752_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">이상기류</span><span class="sp-tile-n">8 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/sevenus/heejae/s/이상기류/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/146/69/228/14669228_20261013143752_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">이상기류</span><span class="sp-tile-n">7 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/sevenus/heejae/s/어느째즈바/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/128/43/824/12843824_20260205172550_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">어느 째즈바 (Memories)</span><span class="sp-tile-n">4 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/sevenus/heejae/s/wonderland/"><img src="https://i.scdn.co/image/ab67616d0000b273fb9dbc31f27cb5e47b522cfa" alt="" loading="lazy"><span class="sp-tile-t">Wonder Land</span><span class="sp-tile-n">3 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/sevenus/heejae/s/사랑해도될까요/"><img src="https://i.scdn.co/image/ab67616d0000b2735afdbc29d83a4e94b2a22abc" alt="" loading="lazy"><span class="sp-tile-t">사랑해도 될까요 Can I Love You</span><span class="sp-tile-n">3 fancams</span></a>
     </div>
   
     <h2>Solo Discography</h2>
@@ -148,7 +159,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/astro/mj/">MJ</a> <span class="tag">ASTRO</span></li>
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/세븐어스/희재/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"이상기류","s":"8 fancams of Heejae","img":"-8v0mRmighM","m":"이상기류","h":"https://kpop-universe.kr/en/g/sevenus/heejae/s/이상기류/"},{"k":"Group","t":"SEVENUS","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/6co4F1IFRTU/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/sevenus/"},{"k":"Chemistry","t":"Heejae × Ireah","s":"170 videos together","img":"QYC5zCwYEF8","h":"https://kpop-universe.kr/en/chem/sevenus/ireah-heejae/"},{"k":"Every stage","t":"어느 째즈바","s":"4 fancams of Heejae","img":"dGDe09Pll0U","m":"어느 째즈바","h":"https://kpop-universe.kr/en/g/sevenus/heejae/s/어느째즈바/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"이상기류","s":"7 fancams of Heejae","img":"-8v0mRmighM","m":"이상기류","h":"https://kpop-universe.kr/en/g/sevenus/heejae/s/이상기류/"},{"k":"Group","t":"SEVENUS","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/6co4F1IFRTU/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/sevenus/"},{"k":"Chemistry","t":"Heejae × Ireah","s":"170 videos together","img":"QYC5zCwYEF8","h":"https://kpop-universe.kr/en/chem/sevenus/ireah-heejae/"},{"k":"Every stage","t":"어느 째즈바","s":"4 fancams of Heejae","img":"dGDe09Pll0U","m":"어느 째즈바","h":"https://kpop-universe.kr/en/g/sevenus/heejae/s/어느째즈바/"}]</script>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=세븐어스&m=희재">View profile, fancams & stages →</a></div>
 </div>
 </body>

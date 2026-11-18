@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,14 +91,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="언어 선택" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/en/g/g-i-dle/" lang="en" hreflang="en" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">View in English</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
+  <a class="brand" href="https://kpop-universe.kr/all/" style="margin-left:10px;">모아보기</a>
   <div class="top2">
     <h1>아이들((G)I-DLE)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/O4nHCU0h-E4/maxresdefault.jpg" alt="아이들" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/556d2d80-9e5a-4e07-95d7-aae239034149.jpg" alt="아이들" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>데뷔</b> 2018.05.02</span>
       <span><b>소속사</b> Cube</span>
       <span><b>팬덤명</b> 네버랜드</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://youtube.com/@official_i_dle" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://instagram.com/i_dle_official" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/official_i_dle" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://tiktok.com/@official_i_dle" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-weverse" href="https://weverse.io/idle" target="_blank" rel="noopener noreferrer">Weverse</a><a class="sns-namu" href="https://namu.wiki/w/(여자)아이들" target="_blank" rel="noopener noreferrer">나무위키</a></div>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
   
@@ -149,50 +158,45 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/아이들/s/mono/">Mono</a></li>
       <li><a href="https://kpop-universe.kr/g/아이들/s/goodthing/">Good Thing</a></li>
       <li><a href="https://kpop-universe.kr/g/아이들/s/superlady/">Super Lady</a></li>
-      <li><a href="https://kpop-universe.kr/g/아이들/s/nxde/">Nxde</a></li>
-      <li><a href="https://kpop-universe.kr/g/아이들/s/hwaa/">HWAA</a></li>
       <li><a href="https://kpop-universe.kr/g/아이들/s/ohmygod/">Oh my god</a></li>
+      <li><a href="https://kpop-universe.kr/g/아이들/s/nxde/">Nxde</a></li>
       <li><a href="https://kpop-universe.kr/g/아이들/s/화/">화(火花) HWAA (i-dle ver.)</a></li>
+      <li><a href="https://kpop-universe.kr/g/아이들/s/hwaa/">HWAA</a></li>
       <li><a href="https://kpop-universe.kr/g/아이들/s/latata/">LATATA</a></li>
-      <li><a href="https://kpop-universe.kr/g/아이들/s/나는아픈건딱질색이니까/">나는 아픈 건 딱 질색이니까 Fate</a></li>
       <li><a href="https://kpop-universe.kr/g/아이들/s/gimmedatlove/">Gimme Dat Love</a></li>
       <li><a href="https://kpop-universe.kr/g/아이들/s/uhoh/">Uh-Oh</a></li>
-      <li><a href="https://kpop-universe.kr/g/아이들/s/덤디덤디/">덤디덤디 (DUMDi DUMDi)</a></li>
+      <li><a href="https://kpop-universe.kr/g/아이들/s/나는아픈건딱질색이니까/">나는 아픈 건 딱 질색이니까 Fate</a></li>
       <li><a href="https://kpop-universe.kr/g/아이들/s/삠삠/">삠삠 (BEAM BEAM)</a></li>
+      <li><a href="https://kpop-universe.kr/g/아이들/s/덤디덤디/">덤디덤디 (DUMDi DUMDi)</a></li>
       <li><a href="https://kpop-universe.kr/g/아이들/s/girlfriend/">Girlfriend</a></li>
-      <li><a href="https://kpop-universe.kr/g/아이들/s/neverland/">Neverland</a></li>
       <li><a href="https://kpop-universe.kr/g/아이들/s/mybag/">MY BAG</a></li>
       <li><a href="https://kpop-universe.kr/g/아이들/s/senorita/">Senorita</a></li>
-      <li><a href="https://kpop-universe.kr/g/아이들/s/drive/">Drive</a></li>
       <li><a href="https://kpop-universe.kr/g/아이들/s/lion/">LION</a></li>
+      <li><a href="https://kpop-universe.kr/g/아이들/s/drive/">Drive</a></li>
       <li><a href="https://kpop-universe.kr/g/아이들/s/allergy/">Allergy</a></li>
+      <li><a href="https://kpop-universe.kr/g/아이들/s/neverland/">Neverland</a></li>
       <li><a href="https://kpop-universe.kr/g/아이들/s/wife/">Wife</a></li>
       <li><a href="https://kpop-universe.kr/g/아이들/s/freak/">FREAK</a></li>
       <li><a href="https://kpop-universe.kr/g/아이들/s/villaindies/">VILLAIN DIES</a></li>
-      <li><a href="https://kpop-universe.kr/g/아이들/s/사랑해/">사랑해</a></li>
       <li><a href="https://kpop-universe.kr/g/아이들/s/crow/">Crow</a></li>
+      <li><a href="https://kpop-universe.kr/g/아이들/s/사랑해/">사랑해</a></li>
       <li><a href="https://kpop-universe.kr/g/아이들/s/baditude/">BADITUDE</a></li>
-      <li><a href="https://kpop-universe.kr/g/아이들/s/popstars/">POP/STARS</a></li>
-      <li><a href="https://kpop-universe.kr/g/아이들/s/퇴사할게여/">퇴사할게여</a></li>
       <li><a href="https://kpop-universe.kr/g/아이들/s/monalisa/">MONA LISA</a></li>
-      <li><a href="https://kpop-universe.kr/g/아이들/s/말리지마/">말리지 마</a></li>
+      <li><a href="https://kpop-universe.kr/g/아이들/s/퇴사할게여/">퇴사할게여</a></li>
       <li><a href="https://kpop-universe.kr/g/아이들/s/revenge/">Revenge</a></li>
+      <li><a href="https://kpop-universe.kr/g/아이들/s/말리지마/">말리지 마</a></li>
       <li><a href="https://kpop-universe.kr/g/아이들/s/saymyname/">Say My Name</a></li>
       <li><a href="https://kpop-universe.kr/g/아이들/s/teamo/">TE AMO</a></li>
-      <li><a href="https://kpop-universe.kr/g/아이들/s/her/">HER</a></li>
-      <li><a href="https://kpop-universe.kr/g/아이들/s/내이름맑음/">내 이름 맑음</a></li>
-      <li><a href="https://kpop-universe.kr/g/아이들/s/radio/">Radio</a></li>
       <li><a href="https://kpop-universe.kr/g/아이들/s/giant/">Giant</a></li>
-    </ul>
-    <details class="more-songs"><summary>나머지 7곡 더 보기</summary>
-    <ul class="member-list rel">
       <li><a href="https://kpop-universe.kr/g/아이들/s/bonnieclyde/">Bonnie &amp; Clyde</a></li>
-      <li><a href="https://kpop-universe.kr/g/아이들/s/bloom/">Bloom</a></li>
-      <li><a href="https://kpop-universe.kr/g/아이들/s/iwantthat/">I Want That</a></li>
-      <li><a href="https://kpop-universe.kr/g/아이들/s/꿈결같아서/">꿈결같아서</a></li>
+      <li><a href="https://kpop-universe.kr/g/아이들/s/her/">HER</a></li>
       <li><a href="https://kpop-universe.kr/g/아이들/s/どうしよっかな/">どうしよっかな</a></li>
-      <li><a href="https://kpop-universe.kr/g/아이들/s/everytimeidle/">Everytime</a></li>
-      <li><a href="https://kpop-universe.kr/g/아이들/s/imthetrend/">i&#39;M THE TREND</a></li>
+      <li><a href="https://kpop-universe.kr/g/아이들/s/bloom/">Bloom</a></li>
+    </ul>
+    <details class="more-songs"><summary>나머지 2곡 더 보기</summary>
+    <ul class="member-list rel">
+      <li><a href="https://kpop-universe.kr/g/아이들/s/iwantthat/">I Want That</a></li>
+      <li><a href="https://kpop-universe.kr/g/아이들/s/내이름맑음/">내 이름 맑음</a></li>
     </ul></details>
   
     <h2 id="albums">앨범·수록곡</h2>
@@ -260,7 +264,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/g-i-dle/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=아이들">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"TOMBOY","s":"영상 195개","img":"Jh4QFaPmdss","m":"TOMBOY","h":"https://kpop-universe.kr/g/아이들/s/tomboy/"},{"k":"멤버 직캠","t":"미연","s":"직캠 180개","img":"R3SQbvZGNbA","h":"https://kpop-universe.kr/g/아이들/미연/fancams/"},{"k":"앨범","t":"We made","s":"수록곡 5곡","im":"https://i.scdn.co/image/ab67616d0000b273202bb4751ace19e7a44778a5","h":"https://kpop-universe.kr/g/아이들/a/wemade/"},{"k":"곡별 직캠·무대","t":"퀸카 (Queencard)","s":"영상 192개","img":"7HDeem-JaSY","m":"퀸카","h":"https://kpop-universe.kr/g/아이들/s/퀸카/"},{"k":"멤버 직캠","t":"우기","s":"직캠 165개","img":"LR6lwDtPTtc","h":"https://kpop-universe.kr/g/아이들/우기/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"TOMBOY","s":"영상 170개","img":"Jh4QFaPmdss","m":"TOMBOY","h":"https://kpop-universe.kr/g/아이들/s/tomboy/"},{"k":"멤버 직캠","t":"미연","s":"직캠 180개","img":"R3SQbvZGNbA","h":"https://kpop-universe.kr/g/아이들/미연/fancams/"},{"k":"앨범","t":"We made","s":"수록곡 5곡","im":"https://i.scdn.co/image/ab67616d0000b273202bb4751ace19e7a44778a5","h":"https://kpop-universe.kr/g/아이들/a/wemade/"},{"k":"곡별 직캠·무대","t":"퀸카 (Queencard)","s":"영상 168개","img":"7HDeem-JaSY","m":"퀸카","h":"https://kpop-universe.kr/g/아이들/s/퀸카/"},{"k":"멤버 직캠","t":"우기","s":"직캠 165개","img":"LR6lwDtPTtc","h":"https://kpop-universe.kr/g/아이들/우기/fancams/"}]</script>
 </div>
 </body>
 </html>

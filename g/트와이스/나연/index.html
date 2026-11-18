@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,6 +91,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="언어 선택" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/en/g/twice/nayeon/" lang="en" hreflang="en" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">View in English</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
+  <a class="brand" href="https://kpop-universe.kr/all/" style="margin-left:10px;">모아보기</a>
   <div class="top2">
     <h1>나연(Nayeon)</h1>
     <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/d07f958e-ec0d-42c8-93c0-e297432f3ac6.jpg" alt="나연" loading="eager" width="240" height="240">
@@ -93,6 +101,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>데뷔</b> 2015.10.20</span>
       <span><b>소속사</b> JYP엔터테인먼트</span>
     </div>
+    <div class="sns"><a class="sns-instagram" href="https://www.instagram.com/nayeonyny" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-namu" href="https://namu.wiki/w/나연" target="_blank" rel="noopener noreferrer">나무위키</a></div>
   </div>
   
   <h2>나연 직캠</h2>
@@ -155,20 +164,20 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   
     <h2>곡별 직캠</h2>
     <div class="sp-tiles">
-      <a class="sp-tile" href="https://kpop-universe.kr/g/트와이스/나연/s/abcd/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/12/703/11512703_20240613174744_500.jpg?3a61cfdb5abde4128af89468a1d2695d" alt="" loading="lazy"><span class="sp-tile-t">ABCD</span><span class="sp-tile-n">직캠 47</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/트와이스/나연/s/pop/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/109/90/161/10990161_20220623203136_500.jpg?cd2d08ed70469d69c028a06b93b3718e" alt="" loading="lazy"><span class="sp-tile-t">POP!</span><span class="sp-tile-n">직캠 21</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/트와이스/나연/s/cheerup/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/81/333/2681333_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">CHEER UP</span><span class="sp-tile-n">직캠 13</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/트와이스/나연/s/setmefree/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/111/53/086/11153086_20230310101001_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SET ME FREE</span><span class="sp-tile-n">직캠 12</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/트와이스/나연/s/dancethenightaway/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/83/127/10183127_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Dance The Night Away</span><span class="sp-tile-n">직캠 12</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/트와이스/나연/s/abcd/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/12/703/11512703_20240613174744_500.jpg?3a61cfdb5abde4128af89468a1d2695d" alt="" loading="lazy"><span class="sp-tile-t">ABCD</span><span class="sp-tile-n">직캠 42</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/트와이스/나연/s/pop/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/109/90/161/10990161_20220623203136_500.jpg?cd2d08ed70469d69c028a06b93b3718e" alt="" loading="lazy"><span class="sp-tile-t">POP!</span><span class="sp-tile-n">직캠 20</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/트와이스/나연/s/talkthattalk/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/38/172/11038172_20220825154457_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Talk that Talk</span><span class="sp-tile-n">직캠 11</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/트와이스/나연/s/setmefree/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/111/53/086/11153086_20230310101001_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SET ME FREE</span><span class="sp-tile-n">직캠 11</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/트와이스/나연/s/whatislove/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/56/195/10156195_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">What is Love?</span><span class="sp-tile-n">직캠 11</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/트와이스/나연/s/alcoholfree/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/23/687/10623687_20210611104446_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Alcohol-Free</span><span class="sp-tile-n">직캠 9</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/트와이스/나연/s/dancethenightaway/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/83/127/10183127_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Dance The Night Away</span><span class="sp-tile-n">직캠 11</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/트와이스/나연/s/icantstopme/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/08/930/10508930_20201026160407_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">I CAN&#39;T STOP ME</span><span class="sp-tile-n">직캠 9</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/트와이스/나연/s/fancy/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/76/861/10276861_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">FANCY</span><span class="sp-tile-n">직캠 9</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/트와이스/나연/s/yesoryes/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/19/298/10219298_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">YES or YES</span><span class="sp-tile-n">직캠 9</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/트와이스/나연/s/likey/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/07/114/10107114_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">LIKEY</span><span class="sp-tile-n">직캠 9</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/트와이스/나연/s/thisisfor/"><img src="https://i.scdn.co/image/ab67616d0000b273debed127294db62c16d5b292" alt="" loading="lazy"><span class="sp-tile-t">THIS IS FOR</span><span class="sp-tile-n">직캠 8</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/트와이스/나연/s/alcoholfree/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/23/687/10623687_20210611104446_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Alcohol-Free</span><span class="sp-tile-n">직캠 8</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/트와이스/나연/s/feelspecial/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/31/167/10331167_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Feel Special</span><span class="sp-tile-n">직캠 8</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/트와이스/나연/s/cheerup/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/81/333/2681333_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">CHEER UP</span><span class="sp-tile-n">직캠 8</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/트와이스/나연/s/likey/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/07/114/10107114_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">LIKEY</span><span class="sp-tile-n">직캠 8</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/트와이스/나연/s/heartshaker/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/101/18/955/10118955_20260306153044_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Heart Shaker</span><span class="sp-tile-n">직캠 7</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/트와이스/나연/s/thefeels/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/107/29/258/10729258_20210930202351_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">The Feels</span><span class="sp-tile-n">직캠 6</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/트와이스/나연/s/strategy/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/59/498/11659498_20241205124638_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Strategy</span><span class="sp-tile-n">직캠 5</span></a>
@@ -211,7 +220,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/온앤오프/승준/">승준</a> <span class="tag">온앤오프</span></li>
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/twice/nayeon/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"모든 무대","t":"ABCD","s":"나연 직캠 47개","img":"uglrQCWtLUg","m":"ABCD","h":"https://kpop-universe.kr/g/트와이스/나연/s/abcd/"},{"k":"그룹","t":"트와이스","s":"무대 · 뮤비 · 멤버","im":"https://img.youtube.com/vi/904UMBcnaC4/mqdefault.jpg","h":"https://kpop-universe.kr/g/트와이스/"},{"k":"케미","t":"나연 × 지효","s":"함께 나온 영상 60개","img":"Sia2Oisd9ew","h":"https://kpop-universe.kr/chem/트와이스/나연-지효/"},{"k":"모든 무대","t":"POP!","s":"나연 직캠 21개","img":"y09NxUvG2x0","m":"POP!","h":"https://kpop-universe.kr/g/트와이스/나연/s/pop/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"모든 무대","t":"ABCD","s":"나연 직캠 42개","img":"uglrQCWtLUg","m":"ABCD","h":"https://kpop-universe.kr/g/트와이스/나연/s/abcd/"},{"k":"그룹","t":"트와이스","s":"무대 · 뮤비 · 멤버","im":"https://img.youtube.com/vi/904UMBcnaC4/mqdefault.jpg","h":"https://kpop-universe.kr/g/트와이스/"},{"k":"케미","t":"나연 × 지효","s":"함께 나온 영상 60개","img":"Sia2Oisd9ew","h":"https://kpop-universe.kr/chem/트와이스/나연-지효/"},{"k":"모든 무대","t":"POP!","s":"나연 직캠 20개","img":"y09NxUvG2x0","m":"POP!","h":"https://kpop-universe.kr/g/트와이스/나연/s/pop/"}]</script>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=트와이스&m=나연">프로필·직캠·무대 영상 보기 →</a></div>
 </div>
 </body>

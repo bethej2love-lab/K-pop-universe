@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,6 +91,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/갓세븐/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>GOT7(갓세븐)</h1>
     <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/d1431d67-e9ca-46f3-822d-3a2f90915e8a.jpg" alt="GOT7" loading="eager" width="240" height="240">
@@ -92,6 +100,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>Agency</b> Independent</span>
       <span><b>Fandom</b> I GOT7</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/channel/UC8HEl74jL3bLLwfDP1OALxw" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://www.instagram.com/got7_isourname" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/GOT7Official" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://www.tiktok.com/@got7_isourname" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-namu" href="https://namu.wiki/w/GOT7" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
   
@@ -135,58 +144,54 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <h2 id="songs">Fancams & stages by song</h2>
     <ul class="member-list rel">
       <li><a href="https://kpop-universe.kr/en/g/got7/s/친한친구/">친한 친구</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/got7/s/하드캐리/">하드캐리 Hard Carry</a></li>
       <li><a href="https://kpop-universe.kr/en/g/got7/s/python/">PYTHON</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/got7/s/딱좋아/">딱 좋아 (Just right)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/got7/s/하드캐리/">하드캐리 Hard Carry</a></li>
       <li><a href="https://kpop-universe.kr/en/g/got7/s/lullaby/">Lullaby</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/got7/s/딱좋아/">딱 좋아 (Just right)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/got7/s/notbythemoon/">NOT BY THE MOON</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/got7/s/lastpiece/">LAST PIECE</a></li>
       <li><a href="https://kpop-universe.kr/en/g/got7/s/하지하지마/">하지하지마 (Stop stop it)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/got7/s/니가하면/">니가 하면 If You Do</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/got7/s/lastpiece/">LAST PIECE</a></li>
       <li><a href="https://kpop-universe.kr/en/g/got7/s/eclipse/">ECLIPSE</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/got7/s/neverever/">Never Ever</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/got7/s/breath/">Breath (넌 날 숨 쉬게 해)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/got7/s/look/">Look</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/got7/s/a/">A</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/got7/s/sugar/">SUGAR</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/got7/s/page/">PAGE</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/got7/s/vibin/">Vibin</a></li>
       <li><a href="https://kpop-universe.kr/en/g/got7/s/miracle/">Miracle</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/got7/s/look/">Look</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/got7/s/neverever/">Never Ever</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/got7/s/vibin/">Vibin</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/got7/s/breath/">Breath (넌 날 숨 쉬게 해)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/got7/s/sugar/">SUGAR</a></li>
       <li><a href="https://kpop-universe.kr/en/g/got7/s/girlsgirlsgirls/">Girls Girls Girls</a></li>
       <li><a href="https://kpop-universe.kr/en/g/got7/s/poison/">POISON</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/got7/s/a/">A</a></li>
       <li><a href="https://kpop-universe.kr/en/g/got7/s/니가부르는나의이름/">니가 부르는 나의 이름 You Calling My Name</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/got7/s/youare/">You Are</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/got7/s/fly/">Fly</a></li>
       <li><a href="https://kpop-universe.kr/en/g/got7/s/내일오늘/">내일, 오늘</a></li>
       <li><a href="https://kpop-universe.kr/en/g/got7/s/iamme/">I Am Me</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/got7/s/fly/">Fly</a></li>
       <li><a href="https://kpop-universe.kr/en/g/got7/s/aura/">AURA</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/got7/s/letme/">Let Me</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/got7/s/jacksonwang/">Jackson Wang</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/got7/s/youare/">You Are</a></li>
       <li><a href="https://kpop-universe.kr/en/g/got7/s/doit/">Do It</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/got7/s/focusonme/">FOCUS ON ME</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/got7/s/1/">1°</a></li>
       <li><a href="https://kpop-universe.kr/en/g/got7/s/teenager/">Teenager</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/got7/s/letme/">Let Me</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/got7/s/focusonme/">FOCUS ON ME</a></li>
       <li><a href="https://kpop-universe.kr/en/g/got7/s/ribbon/">riBBon</a></li>
       <li><a href="https://kpop-universe.kr/en/g/got7/s/lolo/">LOLO</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/got7/s/takeyoudown/">Take You Down</a></li>
       <li><a href="https://kpop-universe.kr/en/g/got7/s/crashburn/">Crash &amp; Burn</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/got7/s/homerun/">HOME RUN</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/got7/s/everlove/">EVERLOVE</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/got7/s/jacksonwang/">Jackson Wang</a></li>
       <li><a href="https://kpop-universe.kr/en/g/got7/s/cottoncandy/">Cotton Candy</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/got7/s/tasty/">Tasty</a></li>
-    </ul>
-    <details class="more-songs"><summary>10 more songs</summary>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/got7/s/11/">1+1</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/got7/s/fine/">Fine</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/got7/s/빛이나/">빛이나</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/got7/s/homerun/">HOME RUN</a></li>
       <li><a href="https://kpop-universe.kr/en/g/got7/s/고백송/">고백송</a></li>
       <li><a href="https://kpop-universe.kr/en/g/got7/s/goodtonight/">Good Tonight</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/got7/s/따라와/">따라와 Follow Me</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/got7/s/tasty/">Tasty</a></li>
       <li><a href="https://kpop-universe.kr/en/g/got7/s/lastparade/">LAST PARADE</a></li>
       <li><a href="https://kpop-universe.kr/en/g/got7/s/slowmo/">Slow Mo</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/got7/s/네잘못이야/">네 잘못이야</a></li>
+    </ul>
+    <details class="more-songs"><summary>6 more songs</summary>
+    <ul class="member-list rel">
+      <li><a href="https://kpop-universe.kr/en/g/got7/s/takeyoudown/">Take You Down</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/got7/s/fine/">Fine</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/got7/s/빛이나/">빛이나</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/got7/s/따라와/">따라와 Follow Me</a></li>
       <li><a href="https://kpop-universe.kr/en/g/got7/s/colors/">Colors</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/got7/s/네잘못이야/">네 잘못이야</a></li>
     </ul></details>
   
     <h2 id="albums">Albums & tracklists</h2>
@@ -255,7 +260,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/갓세븐/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=갓세븐">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"친한 친구","s":"622 videos","img":"qFT_rvjqaik","m":"친한 친구","h":"https://kpop-universe.kr/en/g/got7/s/친한친구/"},{"k":"Member fancams","t":"Jinyoung","s":"152 fancams","img":"3LA7zVEExQQ","h":"https://kpop-universe.kr/en/g/got7/jinyoung/fancams/"},{"k":"Album","t":"WINTER HEPTAGON","s":"9 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/116/95/430/11695430_20250120091211_500.jpg","h":"https://kpop-universe.kr/en/g/got7/a/winterheptagon/"},{"k":"Song fancams","t":"하드캐리 Hard Carry","s":"61 videos","img":"O57jr1oZDIw","m":"하드캐리","h":"https://kpop-universe.kr/en/g/got7/s/하드캐리/"},{"k":"Member fancams","t":"BamBam","s":"81 fancams","img":"7jQ_ZqyT2T0","h":"https://kpop-universe.kr/en/g/got7/bambam/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"친한 친구","s":"174 videos","img":"qFT_rvjqaik","m":"친한 친구","h":"https://kpop-universe.kr/en/g/got7/s/친한친구/"},{"k":"Member fancams","t":"Jinyoung","s":"152 fancams","img":"3LA7zVEExQQ","h":"https://kpop-universe.kr/en/g/got7/jinyoung/fancams/"},{"k":"Album","t":"WINTER HEPTAGON","s":"9 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/116/95/430/11695430_20250120091211_500.jpg","h":"https://kpop-universe.kr/en/g/got7/a/winterheptagon/"},{"k":"Song fancams","t":"PYTHON","s":"50 videos","img":"_K1k5zksXAk","m":"PYTHON","h":"https://kpop-universe.kr/en/g/got7/s/python/"},{"k":"Member fancams","t":"BamBam","s":"81 fancams","img":"7jQ_ZqyT2T0","h":"https://kpop-universe.kr/en/g/got7/bambam/fancams/"}]</script>
 </div>
 </body>
 </html>

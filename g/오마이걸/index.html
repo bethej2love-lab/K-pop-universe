@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,14 +91,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="언어 선택" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/en/g/oh-my-girl/" lang="en" hreflang="en" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">View in English</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
+  <a class="brand" href="https://kpop-universe.kr/all/" style="margin-left:10px;">모아보기</a>
   <div class="top2">
     <h1>오마이걸(OH MY GIRL)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/TujA0T6rg_M/maxresdefault.jpg" alt="오마이걸" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/2e5c7b31-837a-4d76-a02b-401cb2ee3ba3.jpg" alt="오마이걸" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>데뷔</b> 2015.04.21</span>
       <span><b>소속사</b> WM엔터테인먼트</span>
       <span><b>팬덤명</b> 미라클</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/@OHMYGIRL" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://www.instagram.com/WM_OHMYGIRL" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/WM_OHMYGIRL" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://www.tiktok.com/@wm_ohmygirl" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-weverse" href="https://weverse.io/ohmygirl" target="_blank" rel="noopener noreferrer">Weverse</a><a class="sns-namu" href="https://namu.wiki/w/오마이걸" target="_blank" rel="noopener noreferrer">나무위키</a></div>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
   
@@ -127,52 +136,49 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <h2 id="songs">곡별 직캠·무대</h2>
     <ul class="member-list rel">
       <li><a href="https://kpop-universe.kr/g/오마이걸/s/살짝설렜어/">살짝 설렜어 (Nonstop)</a></li>
-      <li><a href="https://kpop-universe.kr/g/오마이걸/s/비밀정원/">비밀정원 Secret Garden</a></li>
       <li><a href="https://kpop-universe.kr/g/오마이걸/s/dundundance/">Dun Dun Dance</a></li>
       <li><a href="https://kpop-universe.kr/g/오마이걸/s/reallove/">Real Love</a></li>
       <li><a href="https://kpop-universe.kr/g/오마이걸/s/다섯번째계절/">다섯 번째 계절 (SSFWL)</a></li>
       <li><a href="https://kpop-universe.kr/g/오마이걸/s/여름이들려/">여름이 들려 (Summer Comes)</a></li>
       <li><a href="https://kpop-universe.kr/g/오마이걸/s/classified/">Classified</a></li>
-      <li><a href="https://kpop-universe.kr/g/오마이걸/s/dolphin/">Dolphin</a></li>
       <li><a href="https://kpop-universe.kr/g/오마이걸/s/bungee/">BUNGEE</a></li>
+      <li><a href="https://kpop-universe.kr/g/오마이걸/s/dolphin/">Dolphin</a></li>
       <li><a href="https://kpop-universe.kr/g/오마이걸/s/불꽃놀이/">불꽃놀이 (Remember Me)</a></li>
+      <li><a href="https://kpop-universe.kr/g/오마이걸/s/비밀정원/">비밀정원 Secret Garden</a></li>
       <li><a href="https://kpop-universe.kr/g/오마이걸/s/컬러링북/">컬러링북 (Coloring Book)</a></li>
-      <li><a href="https://kpop-universe.kr/g/오마이걸/s/미라클/">미라클 (Miracle)</a></li>
-      <li><a href="https://kpop-universe.kr/g/오마이걸/s/celebrate/">Celebrate</a></li>
       <li><a href="https://kpop-universe.kr/g/오마이걸/s/내얘길들어봐/">내 얘길 들어봐 Listen to my word (A-ing) [feat. Skull &amp; HaHa]</a></li>
+      <li><a href="https://kpop-universe.kr/g/오마이걸/s/celebrate/">Celebrate</a></li>
       <li><a href="https://kpop-universe.kr/g/오마이걸/s/dearyou/">Dear You</a></li>
       <li><a href="https://kpop-universe.kr/g/오마이걸/s/drip/">Drip</a></li>
-      <li><a href="https://kpop-universe.kr/g/오마이걸/s/liarliar/">LIAR LIAR</a></li>
-      <li><a href="https://kpop-universe.kr/g/오마이걸/s/windyday/">WINDY DAY</a></li>
       <li><a href="https://kpop-universe.kr/g/오마이걸/s/startup/">Start Up</a></li>
-      <li><a href="https://kpop-universe.kr/g/오마이걸/s/cupid/">CUPID</a></li>
+      <li><a href="https://kpop-universe.kr/g/오마이걸/s/windyday/">WINDY DAY</a></li>
+      <li><a href="https://kpop-universe.kr/g/오마이걸/s/liarliar/">LIAR LIAR</a></li>
       <li><a href="https://kpop-universe.kr/g/오마이걸/s/숲의아이/">숲의 아이 (Bon voyage)</a></li>
+      <li><a href="https://kpop-universe.kr/g/오마이걸/s/cupid/">CUPID</a></li>
       <li><a href="https://kpop-universe.kr/g/오마이걸/s/bishbashbosh/">Bish Bash Bosh</a></li>
-      <li><a href="https://kpop-universe.kr/g/오마이걸/s/ohmy/">Oh My</a></li>
-      <li><a href="https://kpop-universe.kr/g/오마이걸/s/closer/">CLOSER</a></li>
       <li><a href="https://kpop-universe.kr/g/오마이걸/s/바나나알러지원숭이/">바나나 알러지 원숭이</a></li>
+      <li><a href="https://kpop-universe.kr/g/오마이걸/s/closer/">CLOSER</a></li>
       <li><a href="https://kpop-universe.kr/g/오마이걸/s/loveoclock/">Love O&#39;clock</a></li>
-      <li><a href="https://kpop-universe.kr/g/오마이걸/s/selfish/">Selfish</a></li>
       <li><a href="https://kpop-universe.kr/g/오마이걸/s/소나기/">소나기 Shower</a></li>
       <li><a href="https://kpop-universe.kr/g/오마이걸/s/ohmygirl/">Oh My Girl!</a></li>
-      <li><a href="https://kpop-universe.kr/g/오마이걸/s/rooftop/">Rooftop</a></li>
-      <li><a href="https://kpop-universe.kr/g/오마이걸/s/tictoc/">Tic Toc</a></li>
-      <li><a href="https://kpop-universe.kr/g/오마이걸/s/자각몽/">자각몽 (Abracadabra)</a></li>
+      <li><a href="https://kpop-universe.kr/g/오마이걸/s/미라클/">미라클 (Miracle)</a></li>
       <li><a href="https://kpop-universe.kr/g/오마이걸/s/초대장/">초대장 Who Comes Who Knows</a></li>
-      <li><a href="https://kpop-universe.kr/g/오마이걸/s/한발짝두발짝/">한 발짝 두 발짝 STEP BY STEP</a></li>
-      <li><a href="https://kpop-universe.kr/g/오마이걸/s/paradise/">Paradise</a></li>
-      <li><a href="https://kpop-universe.kr/g/오마이걸/s/twilight/">Twilight</a></li>
+      <li><a href="https://kpop-universe.kr/g/오마이걸/s/tictoc/">Tic Toc</a></li>
+      <li><a href="https://kpop-universe.kr/g/오마이걸/s/rooftop/">Rooftop</a></li>
+      <li><a href="https://kpop-universe.kr/g/오마이걸/s/자각몽/">자각몽 (Abracadabra)</a></li>
+      <li><a href="https://kpop-universe.kr/g/오마이걸/s/selfish/">Selfish</a></li>
       <li><a href="https://kpop-universe.kr/g/오마이걸/s/미완성일지도/">미완성일지도</a></li>
+      <li><a href="https://kpop-universe.kr/g/오마이걸/s/ohmy/">Oh My</a></li>
+      <li><a href="https://kpop-universe.kr/g/오마이걸/s/한발짝두발짝/">한 발짝 두 발짝 STEP BY STEP</a></li>
       <li><a href="https://kpop-universe.kr/g/오마이걸/s/나의작은청춘에게/">나의 작은 청춘에게</a></li>
-      <li><a href="https://kpop-universe.kr/g/오마이걸/s/게릴라/">게릴라 (Guerilla)</a></li>
       <li><a href="https://kpop-universe.kr/g/오마이걸/s/perfectday/">Perfect Day</a></li>
-    </ul>
-    <details class="more-songs"><summary>나머지 4곡 더 보기</summary>
-    <ul class="member-list rel">
       <li><a href="https://kpop-universe.kr/g/오마이걸/s/laylow/">Lay Low</a></li>
-      <li><a href="https://kpop-universe.kr/g/오마이걸/s/supadupa/">SUPADUPA (천천히 해봐)</a></li>
-      <li><a href="https://kpop-universe.kr/g/오마이걸/s/krystal/">Krystal</a></li>
+      <li><a href="https://kpop-universe.kr/g/오마이걸/s/twilight/">Twilight</a></li>
       <li><a href="https://kpop-universe.kr/g/오마이걸/s/destiny/">Destiny (나의 지구)</a></li>
+    </ul>
+    <details class="more-songs"><summary>나머지 1곡 더 보기</summary>
+    <ul class="member-list rel">
+      <li><a href="https://kpop-universe.kr/g/오마이걸/s/krystal/">Krystal</a></li>
     </ul></details>
   
     <h2 id="albums">앨범·수록곡</h2>
@@ -244,7 +250,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/oh-my-girl/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=오마이걸">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"살짝 설렜어 (Nonstop)","s":"영상 201개","img":"iDjQSdN_ig8","m":"살짝 설렜어","h":"https://kpop-universe.kr/g/오마이걸/s/살짝설렜어/"},{"k":"멤버 직캠","t":"유아","s":"직캠 174개","img":"g2Zuj50eRyI","h":"https://kpop-universe.kr/g/오마이걸/유아/fancams/"},{"k":"앨범","t":"Dreamy Resonance","s":"수록곡 6곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/115/75/274/11575274_20240826105914_500.jpg","h":"https://kpop-universe.kr/g/오마이걸/a/dreamyresonance/"},{"k":"곡별 직캠·무대","t":"비밀정원 Secret Garden","s":"영상 196개","img":"H8VFoeJPd9g","m":"비밀정원","h":"https://kpop-universe.kr/g/오마이걸/s/비밀정원/"},{"k":"멤버 직캠","t":"아린","s":"직캠 136개","img":"FOEWs9CVLb4","h":"https://kpop-universe.kr/g/오마이걸/아린/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"살짝 설렜어 (Nonstop)","s":"영상 186개","img":"iDjQSdN_ig8","m":"살짝 설렜어","h":"https://kpop-universe.kr/g/오마이걸/s/살짝설렜어/"},{"k":"멤버 직캠","t":"유아","s":"직캠 174개","img":"g2Zuj50eRyI","h":"https://kpop-universe.kr/g/오마이걸/유아/fancams/"},{"k":"앨범","t":"Dreamy Resonance","s":"수록곡 6곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/115/75/274/11575274_20240826105914_500.jpg","h":"https://kpop-universe.kr/g/오마이걸/a/dreamyresonance/"},{"k":"곡별 직캠·무대","t":"Dun Dun Dance","s":"영상 172개","img":"HzOjwL7IP_o","m":"Dun Dun Dance","h":"https://kpop-universe.kr/g/오마이걸/s/dundundance/"},{"k":"멤버 직캠","t":"아린","s":"직캠 136개","img":"FOEWs9CVLb4","h":"https://kpop-universe.kr/g/오마이걸/아린/fancams/"}]</script>
 </div>
 </body>
 </html>

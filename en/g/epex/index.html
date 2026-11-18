@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,14 +91,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/이펙스/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>EPEX(이펙스)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/J73MFdbBQRw/maxresdefault.jpg" alt="EPEX" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/489f71cc-d7ba-4a60-9787-914b58c24037.jpg" alt="EPEX" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>Debut</b> 2021.06.08</span>
       <span><b>Agency</b> C9 Entertainment</span>
       <span><b>Fandom</b> ZENITH</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/@EPEXofficial" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://www.instagram.com/epex.official" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/the_epex" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://www.tiktok.com/@epex.official" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-namu" href="https://namu.wiki/w/EPEX" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
   
@@ -121,23 +130,23 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/epex/s/universe/">UNIVERSE</a></li>
       <li><a href="https://kpop-universe.kr/en/g/epex/s/do4me/">Do 4 Me</a></li>
       <li><a href="https://kpop-universe.kr/en/g/epex/s/학원歌/">학원歌 Anthem of Teen Spirit</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/epex/s/echo/">ECHO</a></li>
       <li><a href="https://kpop-universe.kr/en/g/epex/s/fullmetaljacket/">FULL METAL JACKET</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/epex/s/echo/">ECHO</a></li>
       <li><a href="https://kpop-universe.kr/en/g/epex/s/fool/">FOOL</a></li>
       <li><a href="https://kpop-universe.kr/en/g/epex/s/눈물나게고마워/">눈물나게 고마워 Grateful to Tears</a></li>
       <li><a href="https://kpop-universe.kr/en/g/epex/s/안녕나의첫사랑/">안녕, 나의 첫사랑 Goodbye, My First Love</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/epex/s/졸업식/">졸업식 Graduation Day</a></li>
       <li><a href="https://kpop-universe.kr/en/g/epex/s/surrender/">Surrender</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/epex/s/breatheinlove/">Breathe in Love</a></li>
       <li><a href="https://kpop-universe.kr/en/g/epex/s/noquestions/">No Questions</a></li>
       <li><a href="https://kpop-universe.kr/en/g/epex/s/mygirl/">My Girl</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/epex/s/잃어버린것들에대하여/">잃어버린 것들에 대하여 Closer</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/epex/s/breatheinlove/">Breathe in Love</a></li>
       <li><a href="https://kpop-universe.kr/en/g/epex/s/매일의내일/">매일의 내일 BETTER DAYS</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/epex/s/graduationday/">Graduation Day</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/epex/s/고래낙하/">고래낙하 Whale fall</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/epex/s/졸업식/">졸업식 Graduation Day</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/epex/s/잃어버린것들에대하여/">잃어버린 것들에 대하여 Closer</a></li>
       <li><a href="https://kpop-universe.kr/en/g/epex/s/attosecond/">Attosecond</a></li>
       <li><a href="https://kpop-universe.kr/en/g/epex/s/painkiller/">Painkiller</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/epex/s/graduationday/">Graduation Day</a></li>
       <li><a href="https://kpop-universe.kr/en/g/epex/s/사랑하는내님아/">사랑하는 내 님아 My Darling</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/epex/s/고래낙하/">고래낙하 Whale fall</a></li>
       <li><a href="https://kpop-universe.kr/en/g/epex/s/첫사랑의법칙/">첫사랑의 법칙 First Love′s Law</a></li>
       <li><a href="https://kpop-universe.kr/en/g/epex/s/gobig/">Go Big</a></li>
       <li><a href="https://kpop-universe.kr/en/g/epex/s/아무일도없었다/">아무 일도 없었다 Waffle</a></li>
@@ -193,7 +202,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/이펙스/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=이펙스">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"여우가 시집가는 날 Sunshower","s":"143 videos","img":"3KE-vyBaQJ4","m":"여우가 시집가는 날","h":"https://kpop-universe.kr/en/g/epex/s/여우가시집가는날/"},{"k":"Member fancams","t":"Keum Donghyun","s":"83 fancams","img":"XqCiLZPRdUg","h":"https://kpop-universe.kr/en/g/epex/keum-donghyun/fancams/"},{"k":"Album","t":"Youth : Epilogue","s":"4 tracks","im":"https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/ea/6b/02/ea6b02d7-c7e9-ce76-536a-f4a56b494412/cover_KM0024727_1.jpg/600x600bb.jpg","h":"https://kpop-universe.kr/en/g/epex/a/youthepilogue/"},{"k":"Song fancams","t":"청춘에게 Youth2Youth","s":"106 videos","img":"Er-IH6txYhI","m":"청춘에게","h":"https://kpop-universe.kr/en/g/epex/s/청춘에게/"},{"k":"Member fancams","t":"Baekseung","s":"76 fancams","img":"0HymkzhGSy4","h":"https://kpop-universe.kr/en/g/epex/baekseung/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"여우가 시집가는 날 Sunshower","s":"131 videos","img":"3KE-vyBaQJ4","m":"여우가 시집가는 날","h":"https://kpop-universe.kr/en/g/epex/s/여우가시집가는날/"},{"k":"Member fancams","t":"Keum Donghyun","s":"83 fancams","img":"XqCiLZPRdUg","h":"https://kpop-universe.kr/en/g/epex/keum-donghyun/fancams/"},{"k":"Album","t":"Youth : Epilogue","s":"4 tracks","im":"https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/ea/6b/02/ea6b02d7-c7e9-ce76-536a-f4a56b494412/cover_KM0024727_1.jpg/600x600bb.jpg","h":"https://kpop-universe.kr/en/g/epex/a/youthepilogue/"},{"k":"Song fancams","t":"청춘에게 Youth2Youth","s":"95 videos","img":"Er-IH6txYhI","m":"청춘에게","h":"https://kpop-universe.kr/en/g/epex/s/청춘에게/"},{"k":"Member fancams","t":"Baekseung","s":"76 fancams","img":"0HymkzhGSy4","h":"https://kpop-universe.kr/en/g/epex/baekseung/fancams/"}]</script>
 </div>
 </body>
 </html>

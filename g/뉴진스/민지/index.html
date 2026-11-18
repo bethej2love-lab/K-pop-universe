@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,6 +91,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="언어 선택" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/en/g/newjeans/minji/" lang="en" hreflang="en" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">View in English</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
+  <a class="brand" href="https://kpop-universe.kr/all/" style="margin-left:10px;">모아보기</a>
   <div class="top2">
     <h1>민지(Minji)</h1>
     <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/bb53973e-41f9-4db6-a367-5557f7659303.jpg" alt="민지" loading="eager" width="240" height="240">
@@ -93,6 +101,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>데뷔</b> 2022.07.22</span>
       <span><b>소속사</b> ADOR / HYBE</span>
     </div>
+    <div class="sns"><a class="sns-namu" href="https://namu.wiki/w/민지(NewJeans)" target="_blank" rel="noopener noreferrer">나무위키</a></div>
   </div>
   
   <h2>민지 직캠</h2>
@@ -140,8 +149,8 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <h2>곡별 직캠</h2>
     <div class="sp-tiles">
       <a class="sp-tile" href="https://kpop-universe.kr/g/뉴진스/민지/s/howsweet/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/75/749/11475749_20240524105642_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">How Sweet</span><span class="sp-tile-n">직캠 11</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/뉴진스/민지/s/hypeboy/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/11/565/11011565_20220801102637_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Hype Boy</span><span class="sp-tile-n">직캠 10</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/뉴진스/민지/s/attention/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/11/565/11011565_20220801102637_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Attention</span><span class="sp-tile-n">직캠 10</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/뉴진스/민지/s/hypeboy/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/11/565/11011565_20220801102637_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Hype Boy</span><span class="sp-tile-n">직캠 10</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/뉴진스/민지/s/ditto/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/111/27/145/11127145_20231213133532_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Ditto</span><span class="sp-tile-n">직캠 10</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/뉴진스/민지/s/supershy/"><img src="https://i.scdn.co/image/ab67616d0000b2733d98a0ae7c78a3a9babaf8af" alt="" loading="lazy"><span class="sp-tile-t">Super Shy</span><span class="sp-tile-n">직캠 9</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/뉴진스/민지/s/omg/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/111/27/145/11127145_20231213133532_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">OMG</span><span class="sp-tile-n">직캠 9</span></a>
@@ -174,7 +183,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/라이즈/앤톤/">앤톤</a> <span class="tag">라이즈</span></li>
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/newjeans/minji/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"모든 무대","t":"How Sweet","s":"민지 직캠 11개","img":"hbGEIUfjEMA","m":"How Sweet","h":"https://kpop-universe.kr/g/뉴진스/민지/s/howsweet/"},{"k":"같은 곡","t":"하니 · How Sweet","s":"직캠 16개","img":"HpMV15FL2UA","m":"How Sweet","h":"https://kpop-universe.kr/g/뉴진스/하니/s/howsweet/"},{"k":"그룹","t":"뉴진스","s":"무대 · 뮤비 · 멤버","im":"https://img.youtube.com/vi/7fg_klS-2kw/mqdefault.jpg","h":"https://kpop-universe.kr/g/뉴진스/"},{"k":"케미","t":"민지 × 다니엘","s":"함께 나온 영상 22개","img":"kHlHrTbnB7w","h":"https://kpop-universe.kr/chem/뉴진스/다니엘-민지/"},{"k":"모든 무대","t":"Hype Boy","s":"민지 직캠 10개","img":"Rrf8uQFvICE","m":"Hype Boy","h":"https://kpop-universe.kr/g/뉴진스/민지/s/hypeboy/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"모든 무대","t":"How Sweet","s":"민지 직캠 11개","img":"hbGEIUfjEMA","m":"How Sweet","h":"https://kpop-universe.kr/g/뉴진스/민지/s/howsweet/"},{"k":"같은 곡","t":"하니 · How Sweet","s":"직캠 16개","img":"HpMV15FL2UA","m":"How Sweet","h":"https://kpop-universe.kr/g/뉴진스/하니/s/howsweet/"},{"k":"그룹","t":"뉴진스","s":"무대 · 뮤비 · 멤버","im":"https://img.youtube.com/vi/7fg_klS-2kw/mqdefault.jpg","h":"https://kpop-universe.kr/g/뉴진스/"},{"k":"케미","t":"민지 × 다니엘","s":"함께 나온 영상 22개","img":"kHlHrTbnB7w","h":"https://kpop-universe.kr/chem/뉴진스/다니엘-민지/"},{"k":"모든 무대","t":"Attention","s":"민지 직캠 10개","img":"ZzU1TNHWWhM","m":"Attention","h":"https://kpop-universe.kr/g/뉴진스/민지/s/attention/"}]</script>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=뉴진스&m=민지">프로필·직캠·무대 영상 보기 →</a></div>
 </div>
 </body>

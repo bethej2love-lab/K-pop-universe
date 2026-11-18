@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,14 +91,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/있지/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>ITZY(있지)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/GurCqi7Rtys/maxresdefault.jpg" alt="ITZY" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/4f1abab3-ffd7-47e1-bfa3-277610cabaa0.jpg" alt="ITZY" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>Debut</b> 2019.02.12</span>
       <span><b>Agency</b> JYP Entertainment</span>
       <span><b>Fandom</b> MIDZY</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://youtube.com/@ITZY" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://instagram.com/itzy.all.in.us" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/ITZYofficial" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://tiktok.com/@itzyofficial" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-namu" href="https://namu.wiki/w/있지" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
   
@@ -141,55 +150,51 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/sneakers/">SNEAKERS</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/마피아inthemorning/">마.피.아. In the morning In the morning (English Version)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/loco/">LOCO</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/itzy/s/motto/">Motto</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/itzy/s/gold/">GOLD</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/imaginaryfriend/">Imaginary Friend</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/untouchable/">UNTOUCHABLE</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/itzy/s/gold/">GOLD</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/itzy/s/notshy/">Not Shy</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/itzy/s/motto/">Motto</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/wannabe/">WANNABE</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/달라달라/">달라달라 (Dalla Dalla)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/itzy/s/notshy/">Not Shy</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/itzy/s/borntobe/">BORN TO BE</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/cheshire/">Cheshire</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/itzy/s/믿지/">믿지 (MIDZY)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/kisstell/">Kiss &amp; Tell</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/icy/">ICY</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/itzy/s/borntobe/">BORN TO BE</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/icecream/">Ice Cream</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/mrvampire/">Mr. Vampire</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/sorrynotsorry/">Sorry Not Sorry</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/swipe/">SWIPE</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/itzy/s/믿지/">믿지 (MIDZY)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/air/">Air</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/thatsanono/">THAT&#39;S A NO NO</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/itzy/s/lovesick/">Lovesick</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/noneofmybusiness/">None of My Business</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/killshot/">Kill Shot</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/itzy/s/shoot/">SHOOT!</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/itzy/s/lovesick/">Lovesick</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/betonme/">BET ON ME</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/whatiwant/">WHAT I WANT</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/itzy/s/inthemorning/">In the morning</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/boyslikeyou/">Boys Like You</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/itzy/s/look/">LOOK</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/itzy/s/runaway/">Run Away (류진)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/itzy/s/inthemorning/">In the morning</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/tennis/">TENNIS</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/crownonmyhead/">Crown On My Head (예지)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/itzy/s/runaway/">Run Away (류진)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/itzy/s/beinlove/">Be In Love</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/itzy/s/24hrs/">24HRS</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/itzy/s/look/">LOOK</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/rockroll/">ROCK &amp; ROLL</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/yetbut/">Yet, but (유나)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/itzy/s/playlist/">Playlist</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/itzy/s/domino/">DOMINO</a></li>
-    </ul>
-    <details class="more-songs"><summary>13 more songs</summary>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/itzy/s/beinlove/">Be In Love</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/itzy/s/nobodylikeyou/">NOBODY LIKE YOU</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/itzy/s/24hrs/">24HRS</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/dyt/">DYT</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/itzy/s/walk/">Walk</a></li>
+    </ul>
+    <details class="more-songs"><summary>9 more songs</summary>
+    <ul class="member-list rel">
+      <li><a href="https://kpop-universe.kr/en/g/itzy/s/domino/">DOMINO</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/itzy/s/sooolucky/">Sooo LUCKY</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/pocket/">Pocket</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/focus/">Focus</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/promise/">Promise</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/itzy/s/walk/">Walk</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/dynamite/">Dynamite</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/mine/">Mine (채령)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/itzy/s/sooolucky/">Sooo LUCKY</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/itzy/s/undefined/">Undefined</a></li>
       <li><a href="https://kpop-universe.kr/en/g/itzy/s/twenty/">#Twenty</a></li>
     </ul></details>
   
@@ -253,7 +258,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/있지/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=있지">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"TUNNEL VISION","s":"176 videos","img":"piSq8IioghU","m":"TUNNEL VISION","h":"https://kpop-universe.kr/en/g/itzy/s/tunnelvision/"},{"k":"Member fancams","t":"Ryujin","s":"263 fancams","img":"L1f8K9sYAgk","h":"https://kpop-universe.kr/en/g/itzy/ryujin/fancams/"},{"k":"Album","t":"Motto","s":"8 tracks","im":"https://i.scdn.co/image/ab67616d0000b273959e27c83f78e9bf5c44caa0","h":"https://kpop-universe.kr/en/g/itzy/a/motto/"},{"k":"Song fancams","t":"CAKE","s":"136 videos","img":"0bIRwBpBcZQ","m":"CAKE","h":"https://kpop-universe.kr/en/g/itzy/s/cake/"},{"k":"Member fancams","t":"Yeji","s":"256 fancams","img":"GWKeGq427TE","h":"https://kpop-universe.kr/en/g/itzy/yeji/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"TUNNEL VISION","s":"149 videos","img":"piSq8IioghU","m":"TUNNEL VISION","h":"https://kpop-universe.kr/en/g/itzy/s/tunnelvision/"},{"k":"Member fancams","t":"Ryujin","s":"263 fancams","img":"L1f8K9sYAgk","h":"https://kpop-universe.kr/en/g/itzy/ryujin/fancams/"},{"k":"Album","t":"Motto","s":"8 tracks","im":"https://i.scdn.co/image/ab67616d0000b273959e27c83f78e9bf5c44caa0","h":"https://kpop-universe.kr/en/g/itzy/a/motto/"},{"k":"Song fancams","t":"CAKE","s":"129 videos","img":"0bIRwBpBcZQ","m":"CAKE","h":"https://kpop-universe.kr/en/g/itzy/s/cake/"},{"k":"Member fancams","t":"Yeji","s":"256 fancams","img":"GWKeGq427TE","h":"https://kpop-universe.kr/en/g/itzy/yeji/fancams/"}]</script>
 </div>
 </body>
 </html>

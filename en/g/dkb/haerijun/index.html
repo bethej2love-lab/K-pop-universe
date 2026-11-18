@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,6 +91,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/다크비/해리준/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>Haerijun(해리준)</h1>
     <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/22c18ccc-ffbd-48ed-8e9a-e7c2d959a57d.jpg" alt="Haerijun" loading="eager" width="240" height="240">
@@ -93,6 +101,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>Debut</b> 2020.02.03</span>
       <span><b>Agency</b> Brave Entertainment</span>
     </div>
+    <div class="sns"><a class="sns-instagram" href="https://www.instagram.com/harryjune__________" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-namu" href="https://namu.wiki/w/해리준" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   
   <h2>Haerijun fancams</h2>
@@ -127,7 +136,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   
     <h2>Fancams by song</h2>
     <div class="sp-tiles">
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/dkb/haerijun/s/ineedlove/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/5c/c0/88/5cc0889a-7318-aa4e-5bf5-2006633d1350/83854269.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">I Need Love</span><span class="sp-tile-n">7 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/dkb/haerijun/s/ineedlove/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/5c/c0/88/5cc0889a-7318-aa4e-5bf5-2006633d1350/83854269.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">I Need Love</span><span class="sp-tile-n">4 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/dkb/haerijun/s/넌매일/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/b2/c7/7a/b2c77acb-cb4d-9546-8743-739e2f4b87e3/82871290.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">넌 매일 24/7</span><span class="sp-tile-n">3 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/dkb/haerijun/s/whatthehell/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/e4/5d/d6/e45dd699-34e6-9aac-1e55-40c2e0350312/8809960962593.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">What The Hell</span><span class="sp-tile-n">3 fancams</span></a>
     </div>
@@ -153,7 +162,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/kiss-of-life/belle/">Belle</a> <span class="tag">KISS OF LIFE</span></li>
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/다크비/해리준/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"I Need Love","s":"7 fancams of Haerijun","img":"B4_FetIhGQA","m":"I Need Love","h":"https://kpop-universe.kr/en/g/dkb/haerijun/s/ineedlove/"},{"k":"Same song","t":"D1 · I Need Love","s":"6 fancams","img":"FBvPR3wEavk","m":"I Need Love","h":"https://kpop-universe.kr/en/g/dkb/d1/s/ineedlove/"},{"k":"Group","t":"DKB","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/H3el3GxYYIs/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/dkb/"},{"k":"Chemistry","t":"Haerijun × D1","s":"47 videos together","img":"unSGXY9vjic","h":"https://kpop-universe.kr/en/chem/dkb/haerijun-d1/"},{"k":"Every stage","t":"넌 매일","s":"3 fancams of Haerijun","img":"Jv17axSSKJg","m":"넌 매일","h":"https://kpop-universe.kr/en/g/dkb/haerijun/s/넌매일/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"I Need Love","s":"4 fancams of Haerijun","img":"hmXUgdZaGfM","m":"I Need Love","h":"https://kpop-universe.kr/en/g/dkb/haerijun/s/ineedlove/"},{"k":"Same song","t":"D1 · I Need Love","s":"4 fancams","img":"w3DOn_KWqpI","m":"I Need Love","h":"https://kpop-universe.kr/en/g/dkb/d1/s/ineedlove/"},{"k":"Group","t":"DKB","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/H3el3GxYYIs/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/dkb/"},{"k":"Chemistry","t":"Haerijun × D1","s":"47 videos together","img":"unSGXY9vjic","h":"https://kpop-universe.kr/en/chem/dkb/haerijun-d1/"},{"k":"Every stage","t":"넌 매일","s":"3 fancams of Haerijun","img":"Jv17axSSKJg","m":"넌 매일","h":"https://kpop-universe.kr/en/g/dkb/haerijun/s/넌매일/"}]</script>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=다크비&m=해리준">View profile, fancams & stages →</a></div>
 </div>
 </body>

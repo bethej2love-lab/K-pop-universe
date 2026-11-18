@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,14 +91,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="언어 선택" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/en/g/day6/" lang="en" hreflang="en" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">View in English</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
+  <a class="brand" href="https://kpop-universe.kr/all/" style="margin-left:10px;">모아보기</a>
   <div class="top2">
     <h1>데이식스(DAY6)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/Z3ji8GrPSik/maxresdefault.jpg" alt="데이식스" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/3a235849-e2a9-48a0-8fbf-6384de5e6f73.jpg" alt="데이식스" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>데뷔</b> 2015.09.07</span>
       <span><b>소속사</b> JYP엔터테인먼트</span>
       <span><b>팬덤명</b> 마이데이</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/channel/UCp-pqXsizklX3ZHvLxXyhxw" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://www.instagram.com/day6official/" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/day6official" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://www.tiktok.com/@day6_official" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-namu" href="https://namu.wiki/w/DAY6" target="_blank" rel="noopener noreferrer">나무위키</a></div>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
   
@@ -128,54 +137,52 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/데이식스/s/녹아내려요/">녹아내려요</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/뚫고지나가요/">뚫고 지나가요 (Right Through Me)</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/한페이지가될수있게/">한 페이지가 될 수 있게 (Time of Our Life)</a></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/s/myday/">My Day</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/행복했던날들이었다/">행복했던 날들이었다 (Days Gone By)</a></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/s/congratulations/">Congratulations</a></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/s/youwerebeautiful/">You Were Beautiful (예뻤어)</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/역대급/">역대급 (WALK)</a></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/s/shootme/">Shoot Me</a></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/s/예뻤어/">예뻤어</a></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/s/shutthedoor/">Shut The Door</a></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/s/이것밖에는없다/">이것밖에는 없다</a></li>
+      <li><a href="https://kpop-universe.kr/g/데이식스/s/youwerebeautiful/">You Were Beautiful (예뻤어)</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/zombie/">Zombie</a></li>
+      <li><a href="https://kpop-universe.kr/g/데이식스/s/shootme/">Shoot Me</a></li>
+      <li><a href="https://kpop-universe.kr/g/데이식스/s/congratulations/">Congratulations</a></li>
+      <li><a href="https://kpop-universe.kr/g/데이식스/s/이것밖에는없다/">이것밖에는 없다</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/끝까지안아줄게/">끝까지 안아 줄게</a></li>
+      <li><a href="https://kpop-universe.kr/g/데이식스/s/shutthedoor/">Shut The Door</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/파도가끝나는곳까지/">파도가 끝나는 곳까지</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/ismile/">I Smile (반드시 웃는다)</a></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/s/놓아놓아놓아/">놓아 놓아 놓아 (Letting Go)</a></li>
+      <li><a href="https://kpop-universe.kr/g/데이식스/s/예뻤어/">예뻤어</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/안녕잘가/">안녕, 잘 가</a></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/s/imserious/">I&#39;m Serious (장난 아닌데)</a></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/s/꿈의버스/">꿈의 버스</a></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/s/sweetchaos/">Sweet Chaos</a></li>
+      <li><a href="https://kpop-universe.kr/g/데이식스/s/myday/">My Day</a></li>
+      <li><a href="https://kpop-universe.kr/g/데이식스/s/놓아놓아놓아/">놓아 놓아 놓아 (Letting Go)</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/좋아합니다/">좋아합니다</a></li>
+      <li><a href="https://kpop-universe.kr/g/데이식스/s/imserious/">I&#39;m Serious (장난 아닌데)</a></li>
+      <li><a href="https://kpop-universe.kr/g/데이식스/s/sweetchaos/">Sweet Chaos</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/그렇더라고요/">그렇더라고요 When you love someone</a></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/s/장난아닌데/">장난 아닌데</a></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/s/happy/">HAPPY</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/howcanisay/">How Can I Say (어떻게 말해)</a></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/s/행운을빌어줘/">행운을 빌어 줘</a></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/s/bestpart/">Best Part</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/free하게/">Free하게 Freely</a></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/s/iwait/">I Wait (아 왜)</a></li>
+      <li><a href="https://kpop-universe.kr/g/데이식스/s/장난아닌데/">장난 아닌데</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/아왜/">아 왜 (I Wait)</a></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/s/letitbesummer/">let it be summer</a></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/s/maninamovie/">Man in a movie</a></li>
+      <li><a href="https://kpop-universe.kr/g/데이식스/s/꿈의버스/">꿈의 버스</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/goodbyewinter/">Goodbye Winter (겨울이 간다)</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/겨울이간다/">겨울이 간다</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/insideout/">INSIDE OUT</a></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/s/우리의계절/">우리의 계절</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/youmakeme/">You Make Me</a></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/s/forme/">For Me</a></li>
-    </ul>
-    <details class="more-songs"><summary>나머지 12곡 더 보기</summary>
-    <ul class="member-list rel">
+      <li><a href="https://kpop-universe.kr/g/데이식스/s/bestpart/">Best Part</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/아픈길/">아픈 길 (Hurt Road)</a></li>
+      <li><a href="https://kpop-universe.kr/g/데이식스/s/maninamovie/">Man in a movie</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/dancedance/">DANCE DANCE</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/어떻게말해/">어떻게 말해</a></li>
+      <li><a href="https://kpop-universe.kr/g/데이식스/s/happy/">HAPPY</a></li>
+      <li><a href="https://kpop-universe.kr/g/데이식스/s/forme/">For Me</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/beautifulfeeling/">Beautiful Feeling</a></li>
+    </ul>
+    <details class="more-songs"><summary>나머지 10곡 더 보기</summary>
+    <ul class="member-list rel">
       <li><a href="https://kpop-universe.kr/g/데이식스/s/hihello/">Hi Hello</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/ilovedyou/">I Loved You</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/혼자야/">혼자야 All Alone</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/누군가필요해/">누군가 필요해 I Need Somebody</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/오늘만을너만을이날을/">오늘만을 너만을 이날을</a></li>
+      <li><a href="https://kpop-universe.kr/g/데이식스/s/letitbesummer/">let it be summer</a></li>
+      <li><a href="https://kpop-universe.kr/g/데이식스/s/우리의계절/">우리의 계절</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/maybetomorrow/">Maybe Tomorrow</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/좋은걸뭐어떡해/">좋은걸 뭐 어떡해 What Can I Do</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/사랑병동/">사랑병동</a></li>
@@ -241,7 +248,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/day6/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=데이식스">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"Welcome to the Show","s":"영상 58개","img":"RowlrvmyFEk","m":"Welcome to the Show","h":"https://kpop-universe.kr/g/데이식스/s/welcometotheshow/"},{"k":"멤버 직캠","t":"Young K","s":"직캠 71개","img":"Hd-V-71Rhi0","h":"https://kpop-universe.kr/g/데이식스/Young K/fancams/"},{"k":"앨범","t":"The DECADE","s":"수록곡 10곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/121/00/029/12100029_20250905101446_500.jpg","h":"https://kpop-universe.kr/g/데이식스/a/thedecade/"},{"k":"곡별 직캠·무대","t":"녹아내려요","s":"영상 46개","img":"yss4rIrHl6o","m":"녹아내려요","h":"https://kpop-universe.kr/g/데이식스/s/녹아내려요/"},{"k":"멤버 직캠","t":"원필","s":"직캠 50개","img":"U-MIeULMn6k","h":"https://kpop-universe.kr/g/데이식스/원필/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"Welcome to the Show","s":"영상 58개","img":"RowlrvmyFEk","m":"Welcome to the Show","h":"https://kpop-universe.kr/g/데이식스/s/welcometotheshow/"},{"k":"멤버 직캠","t":"Young K","s":"직캠 71개","img":"Hd-V-71Rhi0","h":"https://kpop-universe.kr/g/데이식스/Young K/fancams/"},{"k":"앨범","t":"The DECADE","s":"수록곡 10곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/121/00/029/12100029_20250905101446_500.jpg","h":"https://kpop-universe.kr/g/데이식스/a/thedecade/"},{"k":"곡별 직캠·무대","t":"녹아내려요","s":"영상 45개","img":"yss4rIrHl6o","m":"녹아내려요","h":"https://kpop-universe.kr/g/데이식스/s/녹아내려요/"},{"k":"멤버 직캠","t":"원필","s":"직캠 50개","img":"U-MIeULMn6k","h":"https://kpop-universe.kr/g/데이식스/원필/fancams/"}]</script>
 </div>
 </body>
 </html>

@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,14 +91,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/소디엑/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>XODIAC(소디엑)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/O_U-T-dCmy0/maxresdefault.jpg" alt="XODIAC" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/12fe1be1-e198-4a79-b410-9eb79f5d907b.jpg" alt="XODIAC" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>Debut</b> 2023.04.25</span>
       <span><b>Agency</b> Jacso Entertainment</span>
       <span><b>Fandom</b> X-BLISS</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://youtube.com/@xodiac.official" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://instagram.com/xodiacofficial" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/XODIACOfficial" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://tiktok.com/@official.xodiac" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-namu" href="https://namu.wiki/w/XODIAC" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
   
@@ -118,11 +127,11 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/xodiac/s/ourdays/">OUR DAYS</a></li>
       <li><a href="https://kpop-universe.kr/en/g/xodiac/s/time2shine/">TIME 2 SHINE</a></li>
       <li><a href="https://kpop-universe.kr/en/g/xodiac/s/phantomfire/">Phantom Fire</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/xodiac/s/alibi/">Alibi</a></li>
       <li><a href="https://kpop-universe.kr/en/g/xodiac/s/throwadice/">THROW A DICE</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/xodiac/s/alibi/">Alibi</a></li>
       <li><a href="https://kpop-universe.kr/en/g/xodiac/s/heyday/">HEYDAY</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/xodiac/s/onlyfun/">ONLY FUN</a></li>
       <li><a href="https://kpop-universe.kr/en/g/xodiac/s/speciallove/">SPECIAL LOVE</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/xodiac/s/onlyfun/">ONLY FUN</a></li>
       <li><a href="https://kpop-universe.kr/en/g/xodiac/s/lemonade/">LEMONADE</a></li>
       <li><a href="https://kpop-universe.kr/en/g/xodiac/s/foreveryoung/">FOREVER YOUNG</a></li>
       <li><a href="https://kpop-universe.kr/en/g/xodiac/s/betterwithyou/">BETTER WITH YOU</a></li>
@@ -173,7 +182,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/소디엑/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=소디엑">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"OUR DAYS","s":"78 videos","img":"wNMnJt__3x8","m":"OUR DAYS","h":"https://kpop-universe.kr/en/g/xodiac/s/ourdays/"},{"k":"Member fancams","t":"Zayyan","s":"37 fancams","img":"VO1fi2OKigM","h":"https://kpop-universe.kr/en/g/xodiac/zayyan/fancams/"},{"k":"Album","t":"PHANTOM FIRE","s":"5 tracks","im":"https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/06/ad/91/06ad91c7-21cf-e217-730b-ae9115d4e660/196874428351.jpg/600x600bb.jpg","h":"https://kpop-universe.kr/en/g/xodiac/a/phantomfire/"},{"k":"Song fancams","t":"TIME 2 SHINE","s":"72 videos","img":"nPoL3GwHrEQ","m":"TIME 2 SHINE","h":"https://kpop-universe.kr/en/g/xodiac/s/time2shine/"},{"k":"Member fancams","t":"Sing","s":"26 fancams","img":"ZghnpePzr1M","h":"https://kpop-universe.kr/en/g/xodiac/sing/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"OUR DAYS","s":"71 videos","img":"wNMnJt__3x8","m":"OUR DAYS","h":"https://kpop-universe.kr/en/g/xodiac/s/ourdays/"},{"k":"Member fancams","t":"Zayyan","s":"37 fancams","img":"VO1fi2OKigM","h":"https://kpop-universe.kr/en/g/xodiac/zayyan/fancams/"},{"k":"Album","t":"PHANTOM FIRE","s":"5 tracks","im":"https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/06/ad/91/06ad91c7-21cf-e217-730b-ae9115d4e660/196874428351.jpg/600x600bb.jpg","h":"https://kpop-universe.kr/en/g/xodiac/a/phantomfire/"},{"k":"Song fancams","t":"TIME 2 SHINE","s":"66 videos","img":"nPoL3GwHrEQ","m":"TIME 2 SHINE","h":"https://kpop-universe.kr/en/g/xodiac/s/time2shine/"},{"k":"Member fancams","t":"Sing","s":"26 fancams","img":"ZghnpePzr1M","h":"https://kpop-universe.kr/en/g/xodiac/sing/fancams/"}]</script>
 </div>
 </body>
 </html>

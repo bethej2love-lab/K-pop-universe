@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,6 +91,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/하이라이트/이기광/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>Lee Gikwang(이기광)</h1>
     <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/a4dbb1f3-ddc1-4b21-b522-6a0c4c773d61.jpg" alt="Lee Gikwang" loading="eager" width="240" height="240">
@@ -93,6 +101,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>Debut</b> 2009.10.16</span>
       <span><b>Agency</b> Around Us Entertainment</span>
     </div>
+    <div class="sns"><a class="sns-instagram" href="https://www.instagram.com/gttk0000" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-namu" href="https://namu.wiki/w/이기광" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   
   <h2>Lee Gikwang fancams</h2>
@@ -156,13 +165,12 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   
     <h2>Fancams by song</h2>
     <div class="sp-tiles">
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/highlight/lee-gikwang/s/predator/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/24/494/11224494_20230414154245_500.jpg?c37157a31513aa8ab676b0b057ce4e12" alt="" loading="lazy"><span class="sp-tile-t">Predator</span><span class="sp-tile-n">20 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/highlight/lee-gikwang/s/alone/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/109/14/852/10914852_20220408140734_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Alone</span><span class="sp-tile-n">9 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/highlight/lee-gikwang/s/chains/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/72/903/11772903_20250428154703_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Chains</span><span class="sp-tile-n">9 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/highlight/lee-gikwang/s/predator/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/24/494/11224494_20230414154245_500.jpg?c37157a31513aa8ab676b0b057ce4e12" alt="" loading="lazy"><span class="sp-tile-t">Predator</span><span class="sp-tile-n">9 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/highlight/lee-gikwang/s/daydream/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/108/94/694/10894694_20220321112209_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">DAYDREAM</span><span class="sp-tile-n">8 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/highlight/lee-gikwang/s/body/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/37/485/11437485_20240308145759_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BODY</span><span class="sp-tile-n">7 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/highlight/lee-gikwang/s/불어온다/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/01/599/10601599_20210503143025_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">불어온다 (Not The End)</span><span class="sp-tile-n">7 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/highlight/lee-gikwang/s/whatyoulike/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/93/255/10093255_500.jpg?d0303064405d94ab8be1308ba60dc981" alt="" loading="lazy"><span class="sp-tile-t">What You Like</span><span class="sp-tile-n">6 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/highlight/lee-gikwang/s/dontcloseyoureyes/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/62/428/10262428_500.jpg?169fd71efda8fbc60f64bb2f52a5034a" alt="" loading="lazy"><span class="sp-tile-t">Don&#39;t Close Your Eyes</span><span class="sp-tile-n">4 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/highlight/lee-gikwang/s/disconnected/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/01/599/10601599_20210503143025_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Disconnected</span><span class="sp-tile-n">3 fancams</span></a>
     </div>
@@ -198,7 +206,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/block-b/taeil/">Taeil</a> <span class="tag">Block B</span></li>
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/하이라이트/이기광/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"Predator","s":"20 fancams of Lee Gikwang","img":"EPHqzmKQLBU","m":"Predator","h":"https://kpop-universe.kr/en/g/highlight/lee-gikwang/s/predator/"},{"k":"Group","t":"Highlight","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/vU5tBGRJTPQ/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/highlight/"},{"k":"Chemistry","t":"Lee Gikwang × Son Dongwoon","s":"44 videos together","img":"Bk5xkTh5evc","h":"https://kpop-universe.kr/en/chem/highlight/son-dongwoon-lee-gikwang/"},{"k":"Every stage","t":"Alone","s":"9 fancams of Lee Gikwang","img":"Sdgfm1GxYK4","m":"Alone","h":"https://kpop-universe.kr/en/g/highlight/lee-gikwang/s/alone/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"Alone","s":"9 fancams of Lee Gikwang","img":"Sdgfm1GxYK4","m":"Alone","h":"https://kpop-universe.kr/en/g/highlight/lee-gikwang/s/alone/"},{"k":"Same song","t":"Yang Yoseob · Alone","s":"11 fancams","img":"gai5vUuGGZQ","m":"Alone","h":"https://kpop-universe.kr/en/g/highlight/yang-yoseob/s/alone/"},{"k":"Group","t":"Highlight","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/vU5tBGRJTPQ/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/highlight/"},{"k":"Chemistry","t":"Lee Gikwang × Son Dongwoon","s":"44 videos together","img":"Bk5xkTh5evc","h":"https://kpop-universe.kr/en/chem/highlight/son-dongwoon-lee-gikwang/"},{"k":"Every stage","t":"Chains","s":"9 fancams of Lee Gikwang","img":"kDNV8zJ6BuA","m":"Chains","h":"https://kpop-universe.kr/en/g/highlight/lee-gikwang/s/chains/"}]</script>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=하이라이트&m=이기광">View profile, fancams & stages →</a></div>
 </div>
 </body>

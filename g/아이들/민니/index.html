@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,6 +91,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="언어 선택" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/en/g/g-i-dle/minnie/" lang="en" hreflang="en" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">View in English</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
+  <a class="brand" href="https://kpop-universe.kr/all/" style="margin-left:10px;">모아보기</a>
   <div class="top2">
     <h1>민니(Minnie)</h1>
     <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/71f47591-248b-4c11-9be8-9bab5a1a824e.jpg" alt="민니" loading="eager" width="240" height="240">
@@ -93,6 +101,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>데뷔</b> 2018.05.02</span>
       <span><b>소속사</b> Cube</span>
     </div>
+    <div class="sns"><a class="sns-instagram" href="https://www.instagram.com/min.nicha" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-namu" href="https://namu.wiki/w/민니" target="_blank" rel="noopener noreferrer">나무위키</a></div>
   </div>
   
   <h2>민니 직캠</h2>
@@ -162,18 +171,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <a class="sp-tile" href="https://kpop-universe.kr/g/아이들/민니/s/mono/"><img src="https://i.scdn.co/image/ab67616d0000b27335a4dd28e0ea81117a21f545" alt="" loading="lazy"><span class="sp-tile-t">Mono</span><span class="sp-tile-n">직캠 11</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/아이들/민니/s/goodthing/"><img src="https://i.scdn.co/image/ab67616d0000b273528f2c7966222380e8533486" alt="" loading="lazy"><span class="sp-tile-t">Good Thing</span><span class="sp-tile-n">직캠 10</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/아이들/민니/s/superlady/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/02/655/11402655_20240129121016_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Super Lady</span><span class="sp-tile-n">직캠 8</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/아이들/민니/s/nxde/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/78/852/11078852_20221017102947_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Nxde</span><span class="sp-tile-n">직캠 8</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/아이들/민니/s/hwaa/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/54/203/10554203_20210127145251_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">HWAA</span><span class="sp-tile-n">직캠 8</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/아이들/민니/s/nxde/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/78/852/11078852_20221017102947_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Nxde</span><span class="sp-tile-n">직캠 7</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/아이들/민니/s/화/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/45/281/10545281_20210111122651_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">화(火花) HWAA (i-dle ver.)</span><span class="sp-tile-n">직캠 7</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/아이들/민니/s/hwaa/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/54/203/10554203_20210127145251_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">HWAA</span><span class="sp-tile-n">직캠 6</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/아이들/민니/s/ohmygod/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/13/088/10413088_20200406151024_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Oh my god</span><span class="sp-tile-n">직캠 5</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/아이들/민니/s/나는아픈건딱질색이니까/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/02/655/11402655_20240129121016_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">나는 아픈 건 딱 질색이니까 Fate</span><span class="sp-tile-n">직캠 5</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/아이들/민니/s/gimmedatlove/"><img src="https://i.scdn.co/image/ab67616d0000b273202bb4751ace19e7a44778a5" alt="" loading="lazy"><span class="sp-tile-t">Gimme Dat Love</span><span class="sp-tile-n">직캠 5</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/아이들/민니/s/uhoh/"><img src="https://cdnimg.melon.co.kr/cm/album/images/103/00/342/10300342_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Uh-Oh</span><span class="sp-tile-n">직캠 5</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/아이들/민니/s/her/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/85/273/11685273_20250121180401_500.jpg?eecd8354811239b19bd269695cb17eaf" alt="" loading="lazy"><span class="sp-tile-t">HER</span><span class="sp-tile-n">직캠 5</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/아이들/민니/s/나는아픈건딱질색이니까/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/02/655/11402655_20240129121016_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">나는 아픈 건 딱 질색이니까 Fate</span><span class="sp-tile-n">직캠 5</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/아이들/민니/s/latata/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/63/578/10163578_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">LATATA</span><span class="sp-tile-n">직캠 3</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/아이들/민니/s/girlfriend/"><img src="https://i.scdn.co/image/ab67616d0000b273528f2c7966222380e8533486" alt="" loading="lazy"><span class="sp-tile-t">Girlfriend</span><span class="sp-tile-n">직캠 3</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/아이들/민니/s/senorita/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/55/272/10255272_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Senorita</span><span class="sp-tile-n">직캠 3</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/아이들/민니/s/꿈결같아서/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/65/323/11465323_20240415144958_500.jpg?35607c408d2397b4744edcf919c7856a" alt="" loading="lazy"><span class="sp-tile-t">꿈결같아서</span><span class="sp-tile-n">직캠 3</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/아이들/민니/s/her/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/85/273/11685273_20250121180401_500.jpg?eecd8354811239b19bd269695cb17eaf" alt="" loading="lazy"><span class="sp-tile-t">HER</span><span class="sp-tile-n">직캠 3</span></a>
     </div>
   
     <h2>개인 디스코그래피</h2>

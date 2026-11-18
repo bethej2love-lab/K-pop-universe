@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,15 +91,17 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="언어 선택" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/en/g/rescene/woni/" lang="en" hreflang="en" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">View in English</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
+  <a class="brand" href="https://kpop-universe.kr/all/" style="margin-left:10px;">모아보기</a>
   <div class="top2">
     <h1>원이(Woni)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/3vsqVnAzK-Q/maxresdefault.jpg" alt="원이" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/567288b4-4e85-4cab-bddd-0a273a316b10.webp" alt="원이" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>소속</b> 리센느(RESCENE)</span>
       <span><b>생일</b> 2004.05.25 (만 22세)</span>
       <span><b>데뷔</b> 2024.03.27</span>
       <span><b>소속사</b> 더뮤즈</span>
     </div>
+    <div class="sns"><a class="sns-instagram" href="https://www.instagram.com/helloiamwoninicetomeetyou" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-namu" href="https://namu.wiki/w/원이" target="_blank" rel="noopener noreferrer">나무위키</a></div>
   </div>
   
   <h2>원이 직캠</h2>
@@ -150,10 +159,10 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <a class="sp-tile" href="https://kpop-universe.kr/g/리센느/원이/s/백화요란/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/150/82/293/15082293_20261026170443_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">백화요란 (Inside Out)</span><span class="sp-tile-n">직캠 9</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/리센느/원이/s/yoyo/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/30/883/11430883_20240228160647_500.jpg?74668a6f1aef2bb4c67a674108b7bbfd/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">YoYo</span><span class="sp-tile-n">직캠 7</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/리센느/원이/s/busyboy/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/128/83/155/12883155_20260225151920_500.jpg?e8f14cab4f1bbe6e698d883fcac3c9d5/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Busy Boy</span><span class="sp-tile-n">직캠 7</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/리센느/원이/s/newworld/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/75/849/11575849_20240826152240_500.jpg?da43be78cb2cc67e9ee423c739bc09b6/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">New World</span><span class="sp-tile-n">직캠 5</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/리센느/원이/s/inmylotion/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/07/015/11707015_20250204161952_500.jpg?0182a19eaabcf2081a0744212b9f09f1/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">In my lotion</span><span class="sp-tile-n">직캠 5</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/리센느/원이/s/mvp/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/121/96/394/12196394_20251125142736_500.jpg?5bae99da5dfd7a705e81148b272a1001/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">MVP</span><span class="sp-tile-n">직캠 5</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/리센느/원이/s/loveecho/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/121/96/394/12196394_20251125142736_500.jpg?5bae99da5dfd7a705e81148b272a1001/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Love Echo</span><span class="sp-tile-n">직캠 4</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/리센느/원이/s/newworld/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/75/849/11575849_20240826152240_500.jpg?da43be78cb2cc67e9ee423c739bc09b6/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">New World</span><span class="sp-tile-n">직캠 3</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/리센느/원이/s/mood/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/118/75/116/11875116_20250701165641_500.jpg?86da3088c776a346e926b1b4052f227c/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Mood</span><span class="sp-tile-n">직캠 3</span></a>
     </div>
   
@@ -178,7 +187,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/라이즈/앤톤/">앤톤</a> <span class="tag">라이즈</span></li>
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/rescene/woni/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"모든 무대","t":"LOVE ATTACK","s":"원이 직캠 102개","img":"VINDNiicjb4","m":"LOVE ATTACK","h":"https://kpop-universe.kr/g/리센느/원이/s/loveattack/"},{"k":"같은 곡","t":"제나 · LOVE ATTACK","s":"직캠 22개","img":"Af4OJgJ55z8","m":"LOVE ATTACK","h":"https://kpop-universe.kr/g/리센느/제나/s/loveattack/"},{"k":"그룹","t":"리센느","s":"무대 · 뮤비 · 멤버","im":"https://img.youtube.com/vi/L7OsQMbzmfU/mqdefault.jpg","h":"https://kpop-universe.kr/g/리센느/"},{"k":"케미","t":"원이 × 미나미","s":"함께 나온 영상 83개","img":"Yy58f1A6F-c","h":"https://kpop-universe.kr/chem/리센느/미나미-원이/"},{"k":"모든 무대","t":"Deja Vu","s":"원이 직캠 81개","img":"HybP5zANnlY","m":"Deja Vu","h":"https://kpop-universe.kr/g/리센느/원이/s/dejavu/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"모든 무대","t":"LOVE ATTACK","s":"원이 직캠 102개","img":"VINDNiicjb4","m":"LOVE ATTACK","h":"https://kpop-universe.kr/g/리센느/원이/s/loveattack/"},{"k":"같은 곡","t":"리브 · LOVE ATTACK","s":"직캠 14개","img":"9XW3CBZqfME","m":"LOVE ATTACK","h":"https://kpop-universe.kr/g/리센느/리브/s/loveattack/"},{"k":"그룹","t":"리센느","s":"무대 · 뮤비 · 멤버","im":"https://img.youtube.com/vi/L7OsQMbzmfU/mqdefault.jpg","h":"https://kpop-universe.kr/g/리센느/"},{"k":"케미","t":"원이 × 미나미","s":"함께 나온 영상 83개","img":"Yy58f1A6F-c","h":"https://kpop-universe.kr/chem/리센느/미나미-원이/"},{"k":"모든 무대","t":"Deja Vu","s":"원이 직캠 81개","img":"HybP5zANnlY","m":"Deja Vu","h":"https://kpop-universe.kr/g/리센느/원이/s/dejavu/"}]</script>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=리센느&m=원이">프로필·직캠·무대 영상 보기 →</a></div>
 </div>
 </body>

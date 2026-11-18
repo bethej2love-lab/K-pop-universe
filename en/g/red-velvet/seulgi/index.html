@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,6 +91,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/레드벨벳/슬기/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>Seulgi(슬기)</h1>
     <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/454afb8c-224c-4d1c-9abd-132d1ff0d19d.jpg" alt="Seulgi" loading="eager" width="240" height="240">
@@ -93,6 +101,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>Debut</b> 2014.08.01</span>
       <span><b>Agency</b> SM Entertainment</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/@hi_sseulgi_" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://www.instagram.com/hi_sseulgi" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-namu" href="https://namu.wiki/w/슬기(Red Velvet)" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   
   <h2>Seulgi fancams</h2>
@@ -138,29 +147,29 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <h2>Fancams by song</h2>
     <div class="sp-tiles">
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/cosmic/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/18/724/11518724_20240625163044_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Cosmic</span><span class="sp-tile-n">13 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/tilt/"><img src="https://cdnimg.melon.co.kr/cm/album/images/118/24/721/11824721_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">TILT</span><span class="sp-tile-n">10 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/tilt/"><img src="https://cdnimg.melon.co.kr/cm/album/images/118/24/721/11824721_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">TILT</span><span class="sp-tile-n">9 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/powerup/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/91/694/10191694_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Power Up</span><span class="sp-tile-n">8 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/피카부/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/12/486/10112486_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">피카부 (Peek-A-Boo)</span><span class="sp-tile-n">8 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/queendom/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/80/450/10680450_20210813124748_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Queendom</span><span class="sp-tile-n">7 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/빨간맛/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/77/879/10077879_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">빨간 맛 (Red Flavor)</span><span class="sp-tile-n">7 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/dumbdumb/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/39/273/2639273_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Dumb Dumb</span><span class="sp-tile-n">6 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/chillkill/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/63/599/11363599_20231228161244_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Chill Kill</span><span class="sp-tile-n">5 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/monster/"><img src="https://cdnimg.melon.co.kr/cm/album/images/104/56/112/10456112_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Monster</span><span class="sp-tile-n">5 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/음파음파/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/19/561/10319561_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">음파음파 (Umpah Umpah)</span><span class="sp-tile-n">5 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/badboy/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/34/032/10134032_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Bad Boy</span><span class="sp-tile-n">5 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/larouge/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/68/053/10368053_20191223155246_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">La Rouge</span><span class="sp-tile-n">5 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/feelmyrhythm/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/108/94/554/10894554_20220321100622_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Feel My Rhythm</span><span class="sp-tile-n">4 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/monster/"><img src="https://cdnimg.melon.co.kr/cm/album/images/104/56/112/10456112_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Monster</span><span class="sp-tile-n">4 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/러시안룰렛/"><img src="https://cdnimg.melon.co.kr/cm/album/images/027/09/585/2709585_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">러시안 룰렛 (Russian Roulette)</span><span class="sp-tile-n">4 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/짐살라빔/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/97/980/10297980_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">짐살라빔 (Zimzalabim)</span><span class="sp-tile-n">4 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/psycho/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/68/053/10368053_20191223155246_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Psycho</span><span class="sp-tile-n">4 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/badboy/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/34/032/10134032_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Bad Boy</span><span class="sp-tile-n">4 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/babynotbaby/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/32/450/11732450_20250310102852_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Baby, Not Baby</span><span class="sp-tile-n">4 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/birthday/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/111/10/911/11110911_20221125150312_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Birthday</span><span class="sp-tile-n">3 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/행복/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/70/252/2270252_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">행복 (Happiness)</span><span class="sp-tile-n">3 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/icecreamcake/"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/09/156/2309156_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Ice Cream Cake</span><span class="sp-tile-n">3 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/rbb/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/28/030/10228030_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">RBB</span><span class="sp-tile-n">3 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/icecreamcake/"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/09/156/2309156_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Ice Cream Cake</span><span class="sp-tile-n">3 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/psycho/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/68/053/10368053_20191223155246_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Psycho</span><span class="sp-tile-n">3 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/rookie/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/35/026/10035026_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Rookie</span><span class="sp-tile-n">3 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/놀이/"><img src="https://cdnimg.melon.co.kr/cm/album/images/104/56/112/10456112_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">놀이 (Naughty)</span><span class="sp-tile-n">3 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/littlelittle/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/35/026/10035026_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Little Little</span><span class="sp-tile-n">3 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/red-velvet/seulgi/s/huffnpuff/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/39/273/2639273_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Huff n Puff</span><span class="sp-tile-n">3 fancams</span></a>
     </div>
   
     <h2>Solo Discography</h2>
@@ -193,7 +202,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/monsta-x/hyungwon/">Hyungwon</a> <span class="tag">MONSTA X</span></li>
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/레드벨벳/슬기/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"Cosmic","s":"13 fancams of Seulgi","img":"sSIoKjxd0VE","m":"Cosmic","h":"https://kpop-universe.kr/en/g/red-velvet/seulgi/s/cosmic/"},{"k":"Same song","t":"Irene · Cosmic","s":"14 fancams","img":"Xalx3U6iYlU","m":"Cosmic","h":"https://kpop-universe.kr/en/g/red-velvet/irene/s/cosmic/"},{"k":"Group","t":"Red Velvet","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/J2n1HJjLFQA/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/red-velvet/"},{"k":"Chemistry","t":"Seulgi × Irene","s":"244 videos together","img":"wCWoUUWwdqg","h":"https://kpop-universe.kr/en/chem/red-velvet/seulgi-irene/"},{"k":"Every stage","t":"TILT","s":"10 fancams of Seulgi","img":"XeKYswRqmCI","m":"TILT","h":"https://kpop-universe.kr/en/g/red-velvet/seulgi/s/tilt/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"Cosmic","s":"13 fancams of Seulgi","img":"sSIoKjxd0VE","m":"Cosmic","h":"https://kpop-universe.kr/en/g/red-velvet/seulgi/s/cosmic/"},{"k":"Same song","t":"Irene · Cosmic","s":"14 fancams","img":"Xalx3U6iYlU","m":"Cosmic","h":"https://kpop-universe.kr/en/g/red-velvet/irene/s/cosmic/"},{"k":"Group","t":"Red Velvet","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/J2n1HJjLFQA/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/red-velvet/"},{"k":"Chemistry","t":"Seulgi × Irene","s":"244 videos together","img":"wCWoUUWwdqg","h":"https://kpop-universe.kr/en/chem/red-velvet/seulgi-irene/"},{"k":"Every stage","t":"TILT","s":"9 fancams of Seulgi","img":"3HNXbKFazc4","m":"TILT","h":"https://kpop-universe.kr/en/g/red-velvet/seulgi/s/tilt/"}]</script>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=레드벨벳&m=슬기">View profile, fancams & stages →</a></div>
 </div>
 </body>

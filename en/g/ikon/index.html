@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,14 +91,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/아이콘/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>iKON(아이콘)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/0Cj6dMYIgqA/maxresdefault.jpg" alt="iKON" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/22f70e63-b386-4353-9dc3-db96424d1384.jpg" alt="iKON" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>Debut</b> 2015.09.15</span>
       <span><b>Agency</b> 143 Entertainment</span>
       <span><b>Fandom</b> iKONIC</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/@iKON" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://www.instagram.com/withikonic" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/iKONIC_143" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://www.tiktok.com/@ikon_tiktok" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-namu" href="https://namu.wiki/w/iKON" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
   
@@ -136,43 +145,39 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   
     <h2 id="songs">Fancams & stages by song</h2>
     <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/ikon/s/사랑을했다/">사랑을 했다 (LOVE SCENARIO)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ikon/s/왜왜왜/">왜왜왜 (Why Why Why)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ikon/s/사랑을했다/">사랑을 했다 (LOVE SCENARIO)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ikon/s/dive/">DIVE</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ikon/s/죽겠다/">죽겠다 (KILLING ME)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ikon/s/너라는이유/">너라는 이유 (BUT YOU)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ikon/s/blingbling/">BLING BLING</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ikon/s/이별길/">이별길 (GOODBYE ROAD)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ikon/s/killingme/">KILLING ME</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ikon/s/리듬타/">리듬 타 (RHYTHM TA)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ikon/s/이별길/">이별길 (GOODBYE ROAD)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ikon/s/butyou/">BUT YOU</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ikon/s/야우냐/">야 우냐 (U MAD)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ikon/s/리듬타/">리듬 타 (RHYTHM TA)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ikon/s/덤앤더머/">덤앤더머 (DUMB &amp; DUMBER)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ikon/s/고무줄다리기/">고무줄다리기 (Rubber Band)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ikon/s/취향저격/">취향저격</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ikon/s/지못미/">지못미 (Sorry Not Sorry)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ikon/s/벌떼/">벌떼 (B-DAY)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ikon/s/drowning/">Drowning</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ikon/s/취향저격/">취향저격</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ikon/s/그대이름/">그대 이름 (NAME)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ikon/s/obey/">OBEY</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ikon/s/바람/">바람 (FREEDOM)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ikon/s/좋아해요/">좋아해요 (ADORE YOU)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ikon/s/obey/">OBEY</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ikon/s/drowning/">Drowning</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ikon/s/바람/">바람 (FREEDOM)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ikon/s/devil/">DeViL</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ikon/s/panorama/">PANORAMA</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ikon/s/takeoff/">TAKE OFF</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ikon/s/열중쉬어/">열중쉬어 (AT EASE)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ikon/s/wecantexplain/">We Can′t Explain</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ikon/s/무중력/">무중력</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ikon/s/freedom/">FREEDOM</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ikon/s/이리오너라/">이리오너라 (B.I&amp;BOBBY)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ikon/s/wecantexplain/">We Can′t Explain</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ikon/s/열중쉬어/">열중쉬어 (AT EASE)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ikon/s/사랑해/">사랑해 (I Love You)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ikon/s/imok/">I&#39;M OK</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ikon/s/시노시작/">시노시작 (SINOSIJAK)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ikon/s/이리오너라/">이리오너라 (B.I&amp;BOBBY)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ikon/s/왜또/">왜 또</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ikon/s/airplane/">AIRPLANE</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ikon/s/bluemoon/">BLUE MOON</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ikon/s/f/">f</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ikon/s/사랑해/">사랑해 (I Love You)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ikon/s/꼴좋다/">꼴좋다 (PERFECT)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ikon/s/왜또/">왜 또</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ikon/s/runaway/">RUNAWAY</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ikon/s/꽐라/">꽐라</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ikon/s/나홀로/">나 홀로</a></li>
@@ -222,7 +227,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/아이콘/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=아이콘">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"사랑을 했다 (LOVE SCENARIO)","s":"100 videos","img":"vecSVX1QYbQ","m":"사랑을 했다","h":"https://kpop-universe.kr/en/g/ikon/s/사랑을했다/"},{"k":"Member fancams","t":"BOBBY","s":"63 fancams","img":"DivSN3jzkv0","h":"https://kpop-universe.kr/en/g/ikon/bobby/fancams/"},{"k":"Album","t":"FLASHBACK","s":"6 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/109/40/660/10940660_20220503112810_500.jpg","h":"https://kpop-universe.kr/en/g/ikon/a/flashback/"},{"k":"Song fancams","t":"왜왜왜 (Why Why Why)","s":"97 videos","img":"DslHQto2V7I","m":"왜왜왜","h":"https://kpop-universe.kr/en/g/ikon/s/왜왜왜/"},{"k":"Member fancams","t":"Kim Jinhwan","s":"38 fancams","img":"uTX8C_QK7F4","h":"https://kpop-universe.kr/en/g/ikon/kim-jinhwan/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"왜왜왜 (Why Why Why)","s":"89 videos","img":"DslHQto2V7I","m":"왜왜왜","h":"https://kpop-universe.kr/en/g/ikon/s/왜왜왜/"},{"k":"Member fancams","t":"BOBBY","s":"63 fancams","img":"DivSN3jzkv0","h":"https://kpop-universe.kr/en/g/ikon/bobby/fancams/"},{"k":"Album","t":"FLASHBACK","s":"6 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/109/40/660/10940660_20220503112810_500.jpg","h":"https://kpop-universe.kr/en/g/ikon/a/flashback/"},{"k":"Song fancams","t":"사랑을 했다 (LOVE SCENARIO)","s":"79 videos","img":"vecSVX1QYbQ","m":"사랑을 했다","h":"https://kpop-universe.kr/en/g/ikon/s/사랑을했다/"},{"k":"Member fancams","t":"Kim Jinhwan","s":"38 fancams","img":"uTX8C_QK7F4","h":"https://kpop-universe.kr/en/g/ikon/kim-jinhwan/fancams/"}]</script>
 </div>
 </body>
 </html>

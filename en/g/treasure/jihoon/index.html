@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,6 +91,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/트레저/지훈/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>Jihoon(지훈)</h1>
     <img class="cover" src="https://img.youtube.com/vi/9fgoxpVcQhw/maxresdefault.jpg" alt="Jihoon" loading="lazy">
@@ -93,6 +101,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>Debut</b> 2020.08.07</span>
       <span><b>Agency</b> YG Entertainment</span>
     </div>
+    <div class="sns"><a class="sns-namu" href="https://namu.wiki/w/지훈(TREASURE)" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   
   <h2>Jihoon fancams</h2>
@@ -135,15 +144,15 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   
     <h2>Fancams by song</h2>
     <div class="sp-tiles">
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/treasure/jihoon/s/move/"><img src="https://i.scdn.co/image/ab67616d0000b27387e313c1bbfb8ac54ed3201a" alt="" loading="lazy"><span class="sp-tile-t">MOVE</span><span class="sp-tile-n">14 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/treasure/jihoon/s/move/"><img src="https://i.scdn.co/image/ab67616d0000b27387e313c1bbfb8ac54ed3201a" alt="" loading="lazy"><span class="sp-tile-t">MOVE</span><span class="sp-tile-n">13 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/treasure/jihoon/s/직진/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/108/68/472/10868472_20220215111825_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">직진 (JIKJIN)</span><span class="sp-tile-n">11 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/treasure/jihoon/s/mytreasure/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/45/109/10545109_20210111102137_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">MY TREASURE</span><span class="sp-tile-n">10 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/treasure/jihoon/s/mytreasure/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/45/109/10545109_20210111102137_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">MY TREASURE</span><span class="sp-tile-n">9 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/treasure/jihoon/s/bonabona/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/74/805/11274805_20230728170651_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BONA BONA</span><span class="sp-tile-n">9 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/treasure/jihoon/s/paradise/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/120/90/567/12090567_20250901120926_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">PARADISE</span><span class="sp-tile-n">8 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/treasure/jihoon/s/yellow/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/31/871/11731871_20250307112301_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">YELLOW</span><span class="sp-tile-n">5 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/treasure/jihoon/s/lastnight/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/59/304/11659304_20241205112853_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">LAST NIGHT</span><span class="sp-tile-n">4 fancams</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/en/g/treasure/jihoon/s/mmm/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/45/109/10545109_20210111102137_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">MMM</span><span class="sp-tile-n">4 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/treasure/jihoon/s/ifi/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/136/98/725/13698725_20260601093749_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">IF I</span><span class="sp-tile-n">4 fancams</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/treasure/jihoon/s/mmm/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/45/109/10545109_20210111102137_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">MMM</span><span class="sp-tile-n">4 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/treasure/jihoon/s/음/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/14/924/10514924_20201106140626_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">음 (MMM)</span><span class="sp-tile-n">4 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/treasure/jihoon/s/u/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/108/68/472/10868472_20220215111825_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">U</span><span class="sp-tile-n">4 fancams</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/en/g/treasure/jihoon/s/shock/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/151/13/956/15113956_20261102094928_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SHOCK</span><span class="sp-tile-n">3 fancams</span></a>
@@ -169,7 +178,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/stray-kids/felix/">Felix</a> <span class="tag">Stray Kids</span></li>
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/트레저/지훈/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"MOVE","s":"14 fancams of Jihoon","img":"0XlOTzF8mIk","m":"MOVE","h":"https://kpop-universe.kr/en/g/treasure/jihoon/s/move/"},{"k":"Same song","t":"Junkyu · MOVE","s":"14 fancams","img":"lV5spdh8AYA","m":"MOVE","h":"https://kpop-universe.kr/en/g/treasure/junkyu/s/move/"},{"k":"Group","t":"TREASURE","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/tZCO_0nSu4o/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/treasure/"},{"k":"Chemistry","t":"Jihoon × Doyoung","s":"36 videos together","img":"tsgp9bskRJI","h":"https://kpop-universe.kr/en/chem/treasure/doyoung-jihoon/"},{"k":"Every stage","t":"직진","s":"11 fancams of Jihoon","img":"gZFcCCeF0l8","m":"직진","h":"https://kpop-universe.kr/en/g/treasure/jihoon/s/직진/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"MOVE","s":"13 fancams of Jihoon","img":"0XlOTzF8mIk","m":"MOVE","h":"https://kpop-universe.kr/en/g/treasure/jihoon/s/move/"},{"k":"Same song","t":"Junkyu · MOVE","s":"14 fancams","img":"lV5spdh8AYA","m":"MOVE","h":"https://kpop-universe.kr/en/g/treasure/junkyu/s/move/"},{"k":"Group","t":"TREASURE","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/tZCO_0nSu4o/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/treasure/"},{"k":"Chemistry","t":"Jihoon × Doyoung","s":"36 videos together","img":"tsgp9bskRJI","h":"https://kpop-universe.kr/en/chem/treasure/doyoung-jihoon/"},{"k":"Every stage","t":"직진","s":"11 fancams of Jihoon","img":"gZFcCCeF0l8","m":"직진","h":"https://kpop-universe.kr/en/g/treasure/jihoon/s/직진/"}]</script>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=트레저&m=지훈">View profile, fancams & stages →</a></div>
 </div>
 </body>

@@ -5,7 +5,7 @@
 <script>(function(){var h=location.hash;if(/(^#|&)vf=/.test(h))location.replace('https://kpop-universe.kr/'+h);})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FANTASY BOYS Minseo(판타지보이즈 강민서) Profile, Age, Fancams, Birthday | K-POP UNIVERSE</title>
-<meta name="description" content="18 Minseo (FANTASY BOYS) fancams, most viewed first. Minseo of FANTASY BOYS: born 2001.07.22, debuted 2023.09.21. Fancams, stages and connections on K-POP UNIVERSE.">
+<meta name="description" content="22 Minseo (FANTASY BOYS) fancams, most viewed first. Minseo of FANTASY BOYS: born 2001.07.22, debuted 2023.09.21. Fancams, stages and connections on K-POP UNIVERSE.">
 <link rel="canonical" href="https://kpop-universe.kr/en/g/fantasy-boys/minseo/">
 <link rel="alternate" hreflang="ko" href="https://kpop-universe.kr/g/판타지보이즈/강민서/">
 <link rel="alternate" hreflang="en" href="https://kpop-universe.kr/en/g/fantasy-boys/minseo/">
@@ -13,7 +13,7 @@
 <meta property="og:type" content="profile">
 <meta property="og:site_name" content="K-POP UNIVERSE">
 <meta property="og:title" content="Minseo">
-<meta property="og:description" content="18 Minseo (FANTASY BOYS) fancams, most viewed first. Minseo of FANTASY BOYS: born 2001.07.22, debuted 2023.09.21. Fancams, stages and connections on K-POP UNIVERSE.">
+<meta property="og:description" content="22 Minseo (FANTASY BOYS) fancams, most viewed first. Minseo of FANTASY BOYS: born 2001.07.22, debuted 2023.09.21. Fancams, stages and connections on K-POP UNIVERSE.">
 <meta property="og:url" content="https://kpop-universe.kr/en/g/fantasy-boys/minseo/">
 <meta property="og:image" content="https://img.youtube.com/vi/f4DsLXGkHig/maxresdefault.jpg">
 <meta property="og:image:width" content="1280">
@@ -21,7 +21,7 @@
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Minseo">
-<meta name="twitter:description" content="18 Minseo (FANTASY BOYS) fancams, most viewed first. Minseo of FANTASY BOYS: born 2001.07.22, debuted 2023.09.21. Fancams, stages and connections on K-POP UNIVERSE.">
+<meta name="twitter:description" content="22 Minseo (FANTASY BOYS) fancams, most viewed first. Minseo of FANTASY BOYS: born 2001.07.22, debuted 2023.09.21. Fancams, stages and connections on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/f4DsLXGkHig/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Minseo","alternateName":"강민서","birthDate":"2001-07-22","nationality":"KR","url":"https://kpop-universe.kr/en/g/fantasy-boys/minseo/","image":"https://img.youtube.com/vi/f4DsLXGkHig/maxresdefault.jpg","memberOf":[{"@type":"MusicGroup","name":"FANTASY BOYS"}],"sameAs":["https://www.instagram.com/kangminseo30","https://namu.wiki/w/%EA%B0%95%EB%AF%BC%EC%84%9C%28FANTASY%20BOYS%29"]}</script>
@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,6 +91,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/판타지보이즈/강민서/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>Minseo(강민서)</h1>
     <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/e187199d-d934-4a15-a592-365b9466f71f.jpg" alt="Minseo" loading="eager" width="240" height="240">
@@ -93,14 +101,18 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>Debut</b> 2023.09.21</span>
       <span><b>Agency</b> MEO / Pocketdol Studio</span>
     </div>
+    <div class="sns"><a class="sns-instagram" href="https://www.instagram.com/kangminseo30" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-namu" href="https://namu.wiki/w/%EA%B0%95%EB%AF%BC%EC%84%9C%28FANTASY%20BOYS%29" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   
   <h2>Minseo fancams</h2>
-  <p class="hub-more hub-top"><a href="https://kpop-universe.kr/en/g/fantasy-boys/minseo/fancams/">All 18 fancams by song →</a></p>
+  <p class="hub-more hub-top"><a href="https://kpop-universe.kr/en/g/fantasy-boys/minseo/fancams/">All 22 fancams by song →</a></p>
   <div class="mf-grid">
     <a class="mf-card" href="https://www.youtube.com/watch?v=AiGg8cAvoJM" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/AiGg8cAvoJM/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[PROJECT 7] #강민서 #KANGMINSEO ♪ Breaking News | 3R 오리지널 매치 Fan Cam</span><span class="mf-y">2024.12.13 · 101K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=sv2z5pzvwuM" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/sv2z5pzvwuM/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[예능연구소] FANTASY BOYS KANG MINSEO – Hold tight(소년판타지 강민서 - 꽉 잡아) FanCam | Show! MusicCore|MBC230527방송</span><span class="mf-y">2023.05.27 · 47K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=CguwBV9Q-jw" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/CguwBV9Q-jw/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[예능연구소] FANTASY BOYS KANG MINSEO – Shut Off(소년판타지 강민서 - 셧 오프) FanCam | Show! MusicCore | MBC230603방송</span><span class="mf-y">2023.06.03 · 13K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=2WIUwhNndM4" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/2WIUwhNndM4/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[#소년판타지 4K] KANG MINSEO - Hold tight(강민서 - 꽉 잡아) #FanCam l MBC230525방송</span><span class="mf-y">2023.05.25 · 11K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=XMboV-gd7vw" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/XMboV-gd7vw/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[#소년판타지 4K] KANG MINSEO - Monster(강민서 - 몬스터) #FanCam l MBC230504방송</span><span class="mf-y">2023.05.04 · 10K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=OYRjooIGxDg" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/OYRjooIGxDg/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[#소년판타지 4K] KANG MINSEO - Not Today(강민서 - 낫 투데이) #FanCam l MBC230518방송</span><span class="mf-y">2023.05.18 · 9K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=-ISlnmM2r48" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/-ISlnmM2r48/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[예능연구소] FANTASY BOYS KANG MINSEO – Monster(소년판타지 강민서 - 몬스터) FanCam | Show! MusicCore | MBC230506방송</span><span class="mf-y">2023.05.06 · 7K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=9pq4aMJUZwg" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/9pq4aMJUZwg/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[예능연구소] FANTASY BOYS KANG MINSEO – One Shot(판타지 보이즈 강민서 - 원샷) FanCam | Show! MusicCore | MBC230916방송</span><span class="mf-y">2023.09.18 · 6K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=-PKxSVKKsSg" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/-PKxSVKKsSg/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[예능연구소] FANTASY BOYS KANG MINSEO – Gesture(판타지 보이즈 강민서 - 제스처) FanCam | Show! MusicCore | MBC230617방송</span><span class="mf-y">2023.06.19 · 6K+</span></a>
@@ -110,6 +122,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <a class="mf-card" href="https://www.youtube.com/watch?v=CcOQ5BF6B4s" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/CcOQ5BF6B4s/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[예능연구소] FANTASY BOYS KANG MINSEO – Potential(판타지 보이즈 강민서 - 포텐셜) FanCam | Show! MusicCore|MBC231209방송</span><span class="mf-y">2023.12.09 · 4K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=JeFjUhM0qcU" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/JeFjUhM0qcU/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 판타지보이즈 강민서 &#39;One Shot&#39; (FANTASY BOYS KANG MINSEO FanCam) @SBS Inkigayo 230917</span><span class="mf-y">2023.09.19 · 3K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=xwKVwZ4cg-Q" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/xwKVwZ4cg-Q/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 판타지보이즈 강민서 &#39;Potential&#39; (FANTASY BOYS KANG MINSEO FanCam) @SBS Inkigayo 231210</span><span class="mf-y">2023.12.12 · 3K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=h6fID8JxzAE" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/h6fID8JxzAE/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[#소년판타지 4K] KANG MINSEO - Shut Off(강민서 - 셧 오프) #FanCam l MBC230608방송</span><span class="mf-y">2023.06.09 · 3K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=Jj7F1P7vZpU" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/Jj7F1P7vZpU/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[예능연구소] FANTASY BOYS KANG MINSEO – One Shot(판타지 보이즈 강민서 - 원샷) FanCam | Show! MusicCore | MBC230923방송</span><span class="mf-y">2023.09.26 · 2K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=0pofFMVAkK8" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/0pofFMVAkK8/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[주간아 직캠 4K] FANTASY BOYS KANG MINSEO (판타지보이즈 강민서) - 분명 그녀가 나를 보고 웃잖아) l EP.663</span><span class="mf-y">2024.05.15 · 2K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=KXBpihrnmhw" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/KXBpihrnmhw/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[주간아 직캠 4K] FANTASY BOYS KANG MINSEO - New Tomorrow (판타지보이즈 강민서 - 뉴 투모로우) l EP.632</span><span class="mf-y">2023.09.27 · 2K+</span></a>

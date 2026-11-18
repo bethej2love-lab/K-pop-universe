@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <script>(function(){var h=location.hash;if(/(^#|&)vf=/.test(h))location.replace('https://kpop-universe.kr/'+h);})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BLANK2Y Donghyuk(블랭키 동혁) Profile, Age, Fancams, Birthday | K-POP UNIVERSE</title>
-<meta name="description" content="Donghyuk of BLANK2Y: born 1999.12.18, debuted 2022.05.24. Fancams, stages and connections on K-POP UNIVERSE.">
+<title>BLANK2Y Donghyuk(블랭키 동혁) Fancams &amp; Profile | K-POP UNIVERSE</title>
+<meta name="description" content="5 Donghyuk (BLANK2Y) fancams, most viewed first. Donghyuk of BLANK2Y: born 1999.12.18, debuted 2022.05.24. Fancams, stages and connections on K-POP UNIVERSE.">
 <link rel="canonical" href="https://kpop-universe.kr/en/g/blank2y/donghyuk/">
 <link rel="alternate" hreflang="ko" href="https://kpop-universe.kr/g/블랭키/동혁/">
 <link rel="alternate" hreflang="en" href="https://kpop-universe.kr/en/g/blank2y/donghyuk/">
@@ -13,7 +13,7 @@
 <meta property="og:type" content="profile">
 <meta property="og:site_name" content="K-POP UNIVERSE">
 <meta property="og:title" content="Donghyuk">
-<meta property="og:description" content="Donghyuk of BLANK2Y: born 1999.12.18, debuted 2022.05.24. Fancams, stages and connections on K-POP UNIVERSE.">
+<meta property="og:description" content="5 Donghyuk (BLANK2Y) fancams, most viewed first. Donghyuk of BLANK2Y: born 1999.12.18, debuted 2022.05.24. Fancams, stages and connections on K-POP UNIVERSE.">
 <meta property="og:url" content="https://kpop-universe.kr/en/g/blank2y/donghyuk/">
 <meta property="og:image" content="https://img.youtube.com/vi/2RxXnBS_5_4/maxresdefault.jpg">
 <meta property="og:image:width" content="1280">
@@ -21,7 +21,7 @@
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Donghyuk">
-<meta name="twitter:description" content="Donghyuk of BLANK2Y: born 1999.12.18, debuted 2022.05.24. Fancams, stages and connections on K-POP UNIVERSE.">
+<meta name="twitter:description" content="5 Donghyuk (BLANK2Y) fancams, most viewed first. Donghyuk of BLANK2Y: born 1999.12.18, debuted 2022.05.24. Fancams, stages and connections on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/2RxXnBS_5_4/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Donghyuk","alternateName":"동혁","birthDate":"1999-12-18","nationality":"KR","url":"https://kpop-universe.kr/en/g/blank2y/donghyuk/","image":"https://img.youtube.com/vi/2RxXnBS_5_4/maxresdefault.jpg","memberOf":[{"@type":"MusicGroup","name":"BLANK2Y"}],"sameAs":["https://www.instagram.com/6uopark","https://namu.wiki/w/동혁(블랭키)"]}</script>
@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,6 +91,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/블랭키/동혁/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>Donghyuk(동혁)</h1>
     <img class="cover" src="https://img.youtube.com/vi/2RxXnBS_5_4/maxresdefault.jpg" alt="Donghyuk" loading="lazy">
@@ -93,8 +101,18 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>Debut</b> 2022.05.24</span>
       <span><b>Agency</b> 키스톤 Ent.</span>
     </div>
+    <div class="sns"><a class="sns-instagram" href="https://www.instagram.com/6uopark" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-namu" href="https://namu.wiki/w/동혁(블랭키)" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   
+  <h2>Donghyuk fancams</h2>
+  
+  <div class="mf-grid">
+    <a class="mf-card" href="https://www.youtube.com/watch?v=uH_fIo4Coc8" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/uH_fIo4Coc8/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 블랭키 동혁 &#39;Thumbs Up&#39; (BLANK2Y Donghyuk FaceCam)│@SBS Inkigayo_2022.06.12.</span><span class="mf-y">2022.06.15 · 4K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=WcVOKz26q6s" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/WcVOKz26q6s/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 블랭키 동혁 &#39;FUEGO(Burn it up)&#39; (BLANK2Y Donghyuk FaceCam) @SBS Inkigayo 220828</span><span class="mf-y">2022.08.31 · 3K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=N1bHGSifKSE" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/N1bHGSifKSE/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 블랭키 동혁 &#39;FUEGO(Fearless)&#39; (BLANK2Y Donghyuk FaceCam) @SBS Inkigayo 220918</span><span class="mf-y">2022.09.21 · 2K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=yAqJtmMjxGA" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/yAqJtmMjxGA/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[플리캠 4K] BLANK2Y Donghyuk &#39;Thumbs Up&#39; (블랭키 동혁 직캠)  l  Simply K -Pop CON-TOUR Ep.523</span><span class="mf-y">2022.06.10 · 1K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=2RxXnBS_5_4" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/2RxXnBS_5_4/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[플리캠 4K] BLANK2Y DONGHYUK &#39;FUEGO(Burn it up)&#39; (블랭키 동혁 직캠) l Simply K -Pop CON-TOUR Ep.534</span><span class="mf-y">2022.08.26 · 800+</span></a>
+  </div>
   <p class="intro">Donghyuk is a K-pop idol of South Korean nationality, born in 1999. Member of BLANK2Y.</p>
   
   
@@ -103,10 +121,12 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/blank2y/">BLANK2Y</a></li>
     </ul>
   
-    <h2>Most viewed fancams & stages</h2>
-    <div class="mf-grid"><a class="mf-card" href="https://www.youtube.com/watch?v=yAqJtmMjxGA" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/yAqJtmMjxGA/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[플리캠 4K] BLANK2Y Donghyuk &#39;Thumbs Up&#39; (블랭키 동혁 직캠)  l  Simply K -Pop CON-TOUR Ep.523</span><span class="mf-y">2022.06.10 · 1K+</span></a><a class="mf-card" href="https://www.youtube.com/watch?v=2RxXnBS_5_4" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/2RxXnBS_5_4/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[플리캠 4K] BLANK2Y DONGHYUK &#39;FUEGO(Burn it up)&#39; (블랭키 동혁 직캠) l Simply K -Pop CON-TOUR Ep.534</span><span class="mf-y">2022.08.26 · 800+</span></a></div>
   
   
+    <h2>Fancams by song</h2>
+    <div class="sp-tiles">
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/blank2y/donghyuk/s/fuego/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/35/473/11035473_20220823113551_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">FUEGO(Burn it up)</span><span class="sp-tile-n">3 fancams</span></a>
+    </div>
   
   
     <h2>Links</h2>
@@ -129,7 +149,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/g-i-dle/yuqi/">Yuqi</a> <span class="tag">(G)I-DLE</span></li>
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/블랭키/동혁/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Group","t":"BLANK2Y","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/Vl6Nt4dcJB8/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/blank2y/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Every stage","t":"FUEGO(Burn it up)","s":"3 fancams of Donghyuk","img":"WcVOKz26q6s","m":"FUEGO(Burn it up)","h":"https://kpop-universe.kr/en/g/blank2y/donghyuk/s/fuego/"},{"k":"Group","t":"BLANK2Y","s":"Stages · MVs · members","im":"https://img.youtube.com/vi/Vl6Nt4dcJB8/mqdefault.jpg","h":"https://kpop-universe.kr/en/g/blank2y/"}]</script>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=블랭키&m=동혁">View profile, fancams & stages →</a></div>
 </div>
 </body>

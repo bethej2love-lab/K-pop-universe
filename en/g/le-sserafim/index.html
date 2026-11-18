@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,14 +91,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/르세라핌/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>LE SSERAFIM(르세라핌)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/u7vLV0zcdiE/maxresdefault.jpg" alt="LE SSERAFIM" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/dc5233d0-a3a5-443a-97ce-ed78a988177c.jpg" alt="LE SSERAFIM" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>Debut</b> 2022.05.02</span>
       <span><b>Agency</b> SOURCE MUSIC / HYBE</span>
       <span><b>Fandom</b> FEARNOT</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/@LESSERAFIM_official" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://instagram.com/le_sserafim" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/IM_LESSERAFIM" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://tiktok.com/@le_sserafim" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-weverse" href="https://weverse.io/lesserafim" target="_blank" rel="noopener noreferrer">Weverse</a><a class="sns-namu" href="https://namu.wiki/w/르세라핌" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
   
@@ -149,39 +158,39 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/unforgiven/">UNFORGIVEN</a></li>
       <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/antifragile/">ANTIFRAGILE</a></li>
       <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/hot/">HOT</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/boompala/">BOOMPALA</a></li>
       <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/celebration/">CELEBRATION</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/이브프시케그리고푸른수염의아내/">이브, 프시케 그리고 푸른 수염의 아내 Eve, Psyche &amp; the Bluebeard&#39;s Wife</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/boompala/">BOOMPALA</a></li>
       <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/smart/">Smart</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/이브프시케그리고푸른수염의아내/">이브, 프시케 그리고 푸른 수염의 아내 Eve, Psyche &amp; the Bluebeard&#39;s Wife</a></li>
       <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/perfectnight/">Perfect Night</a></li>
       <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/comeover/">Come Over</a></li>
       <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/different/">DIFFERENT</a></li>
       <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/swansong/">Swan Song</a></li>
       <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/blueflame/">Blue Flame</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/mademynight/">Made My Night</a></li>
       <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/noreturn/">No-Return</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/mademynight/">Made My Night</a></li>
       <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/impurities/">Impurities</a></li>
       <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/1800hotnfun/">1-800-hot-n-fun</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/피어나/">피어나 (Between you, me and the lamppost)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/nocelestial/">No Celestial</a></li>
       <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/iconicbymistake/">ICONIC BY MISTAKE</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/jewelry/">Jewelry</a></li>
       <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/pureflow/">Pureflow</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/fireinthebelly/">Fire in the belly</a></li>
       <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/sourgrapes/">Sour Grapes</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/kawaii/">Kawaii</a></li>
       <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/ash/">Ash</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/goodparts/">Good Parts</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/pierrot/">Pierrot</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/fireinthebelly/">Fire in the belly</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/kawaii/">Kawaii</a></li>
       <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/thegreatmermaid/">The Great Mermaid</a></li>
       <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/irony/">Irony</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/pierrot/">Pierrot</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/goodbones/">Good Bones</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/jewelry/">Jewelry</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/theworldismyoyster/">The World Is My Oyster</a></li>
       <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/flashforward/">Flash Forward</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/saki/">Saki</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/goodparts/">Good Parts</a></li>
       <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/bornfire/">Born Fire</a></li>
       <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/socynical/">So Cynical</a></li>
       <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/chasinglightning/">Chasing Lightning</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/goodbones/">Good Bones</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/theworldismyoyster/">The World Is My Oyster</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/피어나/">피어나 (Between you, me and the lamppost)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/le-sserafim/s/saki/">Saki</a></li>
     </ul>
     <details class="more-songs"><summary>2 more songs</summary>
     <ul class="member-list rel">
@@ -246,7 +255,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/르세라핌/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=르세라핌">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"FEARLESS","s":"178 videos","img":"4vbDFu0PUew","m":"FEARLESS","h":"https://kpop-universe.kr/en/g/le-sserafim/s/fearless/"},{"k":"Member fancams","t":"Sakura","s":"290 fancams","img":"5Sm68912ANE","h":"https://kpop-universe.kr/en/g/le-sserafim/sakura/fancams/"},{"k":"Album","t":"BOOMPALA (LE SSERAFIM Packages)","s":"6 tracks","im":"https://i.scdn.co/image/ab67616d0000b273f2161be573b19d8c58ced7ec","h":"https://kpop-universe.kr/en/g/le-sserafim/a/boompala/"},{"k":"Song fancams","t":"CRAZY","s":"173 videos","img":"n6B5gQXlB-0","m":"CRAZY","h":"https://kpop-universe.kr/en/g/le-sserafim/s/crazy/"},{"k":"Member fancams","t":"Kazuha","s":"205 fancams","img":"ZSrike90S_Q","h":"https://kpop-universe.kr/en/g/le-sserafim/kazuha/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"FEARLESS","s":"164 videos","img":"4vbDFu0PUew","m":"FEARLESS","h":"https://kpop-universe.kr/en/g/le-sserafim/s/fearless/"},{"k":"Member fancams","t":"Sakura","s":"290 fancams","img":"5Sm68912ANE","h":"https://kpop-universe.kr/en/g/le-sserafim/sakura/fancams/"},{"k":"Album","t":"BOOMPALA (LE SSERAFIM Packages)","s":"6 tracks","im":"https://i.scdn.co/image/ab67616d0000b273f2161be573b19d8c58ced7ec","h":"https://kpop-universe.kr/en/g/le-sserafim/a/boompala/"},{"k":"Song fancams","t":"CRAZY","s":"154 videos","img":"n6B5gQXlB-0","m":"CRAZY","h":"https://kpop-universe.kr/en/g/le-sserafim/s/crazy/"},{"k":"Member fancams","t":"Kazuha","s":"205 fancams","img":"ZSrike90S_Q","h":"https://kpop-universe.kr/en/g/le-sserafim/kazuha/fancams/"}]</script>
 </div>
 </body>
 </html>

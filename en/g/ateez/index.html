@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,14 +91,16 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/에이티즈/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
+  <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>ATEEZ(에이티즈)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/dTK1EU3nUf4/maxresdefault.jpg" alt="ATEEZ" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/3cfe609c-16b4-4bb5-b0f1-4f3160389b05.jpg" alt="ATEEZ" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>Debut</b> 2018.10.24</span>
       <span><b>Agency</b> KQ Entertainment</span>
       <span><b>Fandom</b> ATINY</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://youtube.com/@ATEEZofficial" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://instagram.com/ateez_official_" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/ATEEZofficial" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://tiktok.com/@ateez_official_" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-namu" href="https://namu.wiki/w/에이티즈" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
   
@@ -144,92 +153,86 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <h2 id="songs">Fancams & stages by song</h2>
     <ul class="member-list rel">
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/bouncy/">BOUNCY</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/guerrilla/">Guerrilla</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/iceonmyteeth/">Ice On My Teeth</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/guerrilla/">Guerrilla</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/adrenaline/">Adrenaline</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/work/">WORK</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/불놀이야/">불놀이야 (I&#39;m The One)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/lemondrop/">Lemon Drop</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/dejavu/">Deja Vu</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/wonderland/">WONDERLAND</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/bad/">BAD</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/미친폼/">미친 폼 (Crazy Form)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/bad/">BAD</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/wonderland/">WONDERLAND</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/멋/">멋 (The Real)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/drip/">Drip</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/halazia/">HALAZIA</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/wave/">WAVE</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/answer/">Answer</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/inception/">INCEPTION</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/eternalsunshine/">Eternal Sunshine</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/nasa/">NASA</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/saymyname/">Say My Name</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/inyourfantasy/">In Your Fantasy</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/nasa/">NASA</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/inception/">INCEPTION</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/up/">UP</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/saymyname/">Say My Name</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/thanxx/">THANXX</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/fever/">FEVER</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/해적왕/">해적왕 Pirate King</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/halahala/">HALA HALA</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/from/">From</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/arriba/">ARRIBA</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/밤하늘/">밤하늘 (Not Too Late)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/야간비행/">야간비행 (Turbulence)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/emptybox/">Empty Box</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/야간비행/">야간비행 (Turbulence)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/밤하늘/">밤하늘 (Not Too Late)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/춤을춰/">춤을 춰 (TO THE BEAT)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/꿈날/">꿈날 (Dreamy Day)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/夜間飛行야간비행/">夜間飛行 야간비행</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/django/">DJANGO</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/aurora/">AURORA</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/shaboom/">Shaboom</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/illusion/">ILLUSION</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/outlaw/">Outlaw</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/夜間飛行야간비행/">夜間飛行 야간비행</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/newworld/">New World</a></li>
-    </ul>
-    <details class="more-songs"><summary>44 more songs</summary>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/manonfire/">Man on Fire</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/illusion/">ILLUSION</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/blind/">Blind</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/outlaw/">Outlaw</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/manonfire/">Man on Fire</a></li>
+    </ul>
+    <details class="more-songs"><summary>38 more songs</summary>
+    <ul class="member-list rel">
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/utopia/">UTOPIA</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/birthday/">Birthday</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/fever/">FEVER</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/skin/">Skin</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/최면/">최면 (Wake Up)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/feelinglikeido/">Feeling Like I Do</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/skin/">Skin</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/sector1/">Sector 1</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/goodlilboy/">Good Lil Boy</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/sunrise/">Sunrise</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/creep/">Creep</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/sagittarius/">Sagittarius</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/sector1/">Sector 1</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/celebrate/">Celebrate</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/mamacita/">MAMACITA</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/matz/">MATZ (홍중, 성화)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/star1117/">Star 1117</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/dancinglikebutterflywings/">Dancing Like Butterfly Wings</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/enough/">Enough</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/cyberpunk/">Cyberpunk</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/선도부/">선도부 (The Leaders)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/aday/">A Day</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/choose/">Choose</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/from/">From</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/goodlilboy/">Good Lil Boy</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/slidetome/">Slide to me</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/weknow/">WE KNOW</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/cyberpunk/">Cyberpunk</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/star1117/">Star 1117</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/heartsawakenedlivealive/">Hearts Awakened, Live Alive</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/promise/">Promise</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/autobahn/">AUTOBAHN</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/dancinglikebutterflywings/">Dancing Like Butterfly Wings</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/ghost/">Ghost</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/notokay/">NOT OKAY</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/roar/">ROAR (민기)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/enough/">Enough</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/silverlight/">Silver Light</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/matz/">MATZ (홍중, 성화)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/thisworld/">This World</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/beginningoftheend/">Beginning of the End</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/선도부/">선도부 (The Leaders)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/promise/">Promise</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/desire/">Desire</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/dinero/">Dinero</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/legacy/">Legacy</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/roar/">ROAR (민기)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/우리의마음이닿는곳이라면/">우리의 마음이 닿는 곳이라면 To be your light (JONGHO)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/rocky/">ROCKY</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/autobahn/">AUTOBAHN</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ateez/s/choose/">Choose</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/itsyou/">IT&#39;s You (여상, 산, 우영)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/youth/">Youth (윤호, 민기)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/rocky/">ROCKY</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ateez/s/친구/">친구 (THANK U)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/finwill/">FIN : WILL</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/treasure/">Treasure</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ateez/s/goldenhour/">Golden Hour</a></li>
     </ul></details>
   
     <h2 id="albums">Albums & tracklists</h2>
@@ -308,7 +311,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/에이티즈/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=에이티즈">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"BOUNCY","s":"220 videos","img":"6w7dtJLkXXE","m":"BOUNCY","h":"https://kpop-universe.kr/en/g/ateez/s/bouncy/"},{"k":"Member fancams","t":"Seonghwa","s":"265 fancams","img":"3MIkK4ujCTo","h":"https://kpop-universe.kr/en/g/ateez/seonghwa/fancams/"},{"k":"Album","t":"GOLDEN HOUR : Part.6","s":"5 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/151/35/469/15135469_20261106183141_500.jpg","h":"https://kpop-universe.kr/en/g/ateez/a/goldenhourpart6/"},{"k":"Song fancams","t":"Guerrilla","s":"176 videos","img":"b7-Mq6i9H0k","m":"Guerrilla","h":"https://kpop-universe.kr/en/g/ateez/s/guerrilla/"},{"k":"Member fancams","t":"San","s":"264 fancams","img":"Uf8ria8ZzSY","h":"https://kpop-universe.kr/en/g/ateez/san/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"BOUNCY","s":"201 videos","img":"6w7dtJLkXXE","m":"BOUNCY","h":"https://kpop-universe.kr/en/g/ateez/s/bouncy/"},{"k":"Member fancams","t":"Seonghwa","s":"265 fancams","img":"3MIkK4ujCTo","h":"https://kpop-universe.kr/en/g/ateez/seonghwa/fancams/"},{"k":"Album","t":"GOLDEN HOUR : Part.6","s":"5 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/151/35/469/15135469_20261106183141_500.jpg","h":"https://kpop-universe.kr/en/g/ateez/a/goldenhourpart6/"},{"k":"Song fancams","t":"Ice On My Teeth","s":"151 videos","img":"c-n92OgbbwA","m":"Ice On My Teeth","h":"https://kpop-universe.kr/en/g/ateez/s/iceonmyteeth/"},{"k":"Member fancams","t":"San","s":"264 fancams","img":"Uf8ria8ZzSY","h":"https://kpop-universe.kr/en/g/ateez/san/fancams/"}]</script>
 </div>
 </body>
 </html>

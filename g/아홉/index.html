@@ -66,11 +66,18 @@
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
   /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
-  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
-  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+  /* 프로필 원은 X·인스타 프로필 크기(2026-11-18 사용자 "프로필 사진 너무 커" — 240px였다) → 120px, 이름·정보·링크는 원 옆 가운데 */
+  .top2:has(.avatar){grid-template-columns:120px minmax(0,1fr);grid-template-rows:none;column-gap:28px;align-content:center;align-items:center;}
+  .top2:has(.avatar)::before{display:none;}
+  .top2 .cover.avatar{grid-row:1 / span 4;width:120px;height:120px;aspect-ratio:1;margin:0;align-self:center;}
+  .top2:has(.avatar) h1{font-size:28px;}
+  .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
-.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+.sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+.sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
+.sns a:hover{background:rgba(150,175,255,0.16);}
+.cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -84,6 +91,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="언어 선택" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/en/g/ahof/" lang="en" hreflang="en" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">View in English</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
+  <a class="brand" href="https://kpop-universe.kr/all/" style="margin-left:10px;">모아보기</a>
   <div class="top2">
     <h1>아홉(AHOF)</h1>
     <img class="cover" src="https://img.youtube.com/vi/Xxm78q7SDrM/maxresdefault.jpg" alt="아홉" loading="lazy">
@@ -92,6 +100,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>소속사</b> F&amp;F엔터테인먼트</span>
       <span><b>팬덤명</b> 포하</span>
     </div>
+    <div class="sns"><a class="sns-youtube" href="https://youtube.com/channel/UCwoSFXX8kraikB-WClx2pVQ" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://www.instagram.com/ahof_official/" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/AHOF_official" target="_blank" rel="noopener noreferrer">X</a><a class="sns-namu" href="https://namu.wiki/w/AHOF" target="_blank" rel="noopener noreferrer">나무위키</a></div>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
   
@@ -125,10 +134,10 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/아홉/s/그곳에서다시만나기로해/">그곳에서 다시 만나기로 해 (Rendezvous)</a></li>
       <li><a href="https://kpop-universe.kr/g/아홉/s/피노키오는거짓말을싫어해/">피노키오는 거짓말을 싫어해 Pinocchio</a></li>
       <li><a href="https://kpop-universe.kr/g/아홉/s/runtoyou/">RUN TO YOU</a></li>
-      <li><a href="https://kpop-universe.kr/g/아홉/s/sugarhigh/">Sugar High</a></li>
       <li><a href="https://kpop-universe.kr/g/아홉/s/파랑학교초록잔디빨간운동화/">파랑 학교, 초록 잔디, 빨간 운동화 The Universe</a></li>
-      <li><a href="https://kpop-universe.kr/g/아홉/s/아홉우리가빛나는숫자/">아홉, 우리가 빛나는 숫자 (Outro)</a></li>
+      <li><a href="https://kpop-universe.kr/g/아홉/s/sugarhigh/">Sugar High</a></li>
       <li><a href="https://kpop-universe.kr/g/아홉/s/15x의속도로달려줘/">1.5x의 속도로 달려줘 Run at 1.5x Speed</a></li>
+      <li><a href="https://kpop-universe.kr/g/아홉/s/아홉우리가빛나는숫자/">아홉, 우리가 빛나는 숫자 (Outro)</a></li>
       <li><a href="https://kpop-universe.kr/g/아홉/s/mammamia/">Mamma Mia</a></li>
     </ul>
   
@@ -161,7 +170,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/ahof/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=아홉">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"그곳에서 다시 만나기로 해 (Rendezvous)","s":"영상 160개","img":"D2-G60fuW_4","m":"그곳에서 다시 만나기로 해","h":"https://kpop-universe.kr/g/아홉/s/그곳에서다시만나기로해/"},{"k":"멤버 직캠","t":"제이엘","s":"직캠 44개","img":"Ued38qLTQGE","h":"https://kpop-universe.kr/g/아홉/제이엘/fancams/"},{"k":"앨범","t":"RUN TO YOU","s":"수록곡 5곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/137/28/275/13728275_20260708115359_500.jpg","h":"https://kpop-universe.kr/g/아홉/a/runtoyou/"},{"k":"곡별 직캠·무대","t":"피노키오는 거짓말을 싫어해 Pinocchio","s":"영상 130개","img":"2RKf0dEOWNk","m":"피노키오는 거짓말을 싫어해","h":"https://kpop-universe.kr/g/아홉/s/피노키오는거짓말을싫어해/"},{"k":"멤버 직캠","t":"차웅기","s":"직캠 34개","img":"v6fROiJi9Ws","h":"https://kpop-universe.kr/g/아홉/차웅기/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"그곳에서 다시 만나기로 해 (Rendezvous)","s":"영상 136개","img":"D2-G60fuW_4","m":"그곳에서 다시 만나기로 해","h":"https://kpop-universe.kr/g/아홉/s/그곳에서다시만나기로해/"},{"k":"멤버 직캠","t":"제이엘","s":"직캠 44개","img":"Ued38qLTQGE","h":"https://kpop-universe.kr/g/아홉/제이엘/fancams/"},{"k":"앨범","t":"RUN TO YOU","s":"수록곡 5곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/137/28/275/13728275_20260708115359_500.jpg","h":"https://kpop-universe.kr/g/아홉/a/runtoyou/"},{"k":"곡별 직캠·무대","t":"피노키오는 거짓말을 싫어해 Pinocchio","s":"영상 118개","img":"2RKf0dEOWNk","m":"피노키오는 거짓말을 싫어해","h":"https://kpop-universe.kr/g/아홉/s/피노키오는거짓말을싫어해/"},{"k":"멤버 직캠","t":"차웅기","s":"직캠 34개","img":"v6fROiJi9Ws","h":"https://kpop-universe.kr/g/아홉/차웅기/fancams/"}]</script>
 </div>
 </body>
 </html>
