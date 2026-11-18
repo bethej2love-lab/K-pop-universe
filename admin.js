@@ -79,14 +79,22 @@ const _YT_VARIETY_SHOW_RE=/주간아이돌|WEEKLY\s*IDOL|아이돌등판|문명�
 // "직캠" 같은 단어가 따로 없어도 사실상 100% 방송 무대 영상이다 — 기존 정규식은 이 프로그램명들을 전혀
 // 몰라서 이런 영상이 대량으로 other에 방치돼있었음(2026-08-06, 실측 확인 — 'other'인데 제목에 이 방송명이
 // 있는 영상이 최소 1만7천여 건).
-const _YT_LIVE_SHOW_RE=/엠카운트다운|뮤직뱅크|인기가요|음악중심|쇼챔피언|M\s*COUNTDOWN|MUSIC\s*BANK|INKIGAYO|MUSIC\s*CORE|SHOW\s*CHAMPION|\bTHE\s+SHOW\b/;
+const _YT_LIVE_SHOW_RE=/엠카운트다운|뮤직뱅크|인기가요|음악중심|쇼챔피언|M\s*COUNTDOWN|MUSIC\s*BANK|INKIGAYO|MUSIC\s*CORE|SHOW\s*CHAMPION|\bTHE\s+SHOW\b|SHOW\s*K-?POP\b/; // SHOW K-POP(2026-11-18 추가 — 'A2O SOUL – Dancing in the Dark l SHOW K-POP l EP.5'가 기타)
 // 시상식·연말 무대(2026-11-16 사용자 "KGMA 무대가 퍼포먼스로 분류 안 됨") — 공식 무대 제목이
 // "[#KGMA2025] 아이브 - XOXZ + …"꼴로 LIVE·직캠 단어가 없어 전부 other로 샜다(실측: KGMA 공식 채널 무대 115/123이 other).
 // 행사명만으론 축전·인사·수상 소감·레드카펫도 걸리므로 ① 행사명 ② '아티스트 - 곡' 대시 ③ 무대 아님 신호 없음 셋 다 요구.
 // MMA·MAMA·AAA는 일반 단어(마마무·EXO 곡 MAMA 등)와 겹쳐 연도가 붙은 꼴만 인정(shared.js _EVENT_SERIES re와 같은 원칙).
 const _YT_AWARD_STAGE_RE=/KGMA|KOREA\s*GRAND\s*MUSIC|MELON\s*MUSIC\s*AWARDS?|#?MMA\s*(?:19|20)\d\d|(?:19|20)\d\d\s*MMA\b|\bMAMA\s*AWARDS|\bMAMA\s*(?:19|20)\d\d|(?:19|20)\d\d\s*MAMA\b|MNET\s*ASIAN\s*MUSIC|ASIA\s*ARTIST\s*AWARDS?|#?AAA\s*(?:19|20)\d\d|(?:19|20)\d\d\s*AAA\b|GOLDEN\s*DISC|골든\s*디스크|서울\s*가요\s*대상|SEOUL\s*MUSIC\s*AWARDS?|한터\s*뮤직|HANTEO\s*MUSIC|THE\s*FACT\s*MUSIC|더팩트\s*뮤직|\bTMA\s*(?:19|20)\d\d|가요\s*대전|가요\s*대제전|가요\s*대축제|써클\s*차트|CIRCLE\s*CHART\s*(?:MUSIC\s*)?AWARDS?/;
 // 팬 공연 직캠 판정(_ytClassify 끝, 2026-11-18)용 — 공연 이름과 '무대 아님' 신호
-const _YT_FAN_STAGE_VENUE_RE=/축제|페스타|페스티벌|FESTIVAL|콘서트|CONCERT|\bTOUR\b|투어|팬콘|FAN\s*CON|쇼케이스|SHOWCASE|SUMMER\s*SONIC|KCON|드림\s*콘서트|DREAM\s*CONCERT|가요제|워터밤|WATER\s*BOMB|팬미팅|FAN\s*MEETING/i;
+// 예능 시리즈(제목 앞 머리말·고정 꼭지) — 최근 30일 기타에서 실측(2026-11-18): MBC [C.C.] 667 · [Real WG] 111 · [⏱10초 10답] 89 · Hidden Trip 58 · [주간 예능연구소] 48
+const _YT_VARIETY_SERIES_RE=/^\s*\[C\.C\.?\]|\[REAL\s*WG\]|HIDDEN\s*TRIP|\[주간\s*예능연구소\]|⏱\s*\d+\s*초\s*\d+\s*답|\[몬채널\]\s*\[B\]/i;
+// 음악 토크쇼(무대와 토크가 한 프로그램) — '가수 - 곡'이면 무대(live), 아니면 예능
+const _YT_MUSIC_TALK_RE=/더\s*시즌즈|THE\s*SEASONS|고막남친|리무진\s*서비스|LIMOUSINE\s*SERVICE|비긴\s*어게인|BEGIN\s*AGAIN|불후의\s*명곡|IMMORTAL\s*SONGS|유희열의\s*스케치북|SKETCHBOOK/i;
+// 방송사 클립 꼬리('| SBS 261108 방송'·'| KBS 방송'·'| Mnet 250828 방송')
+const _YT_BROADCAST_TAIL_RE=/[|｜]\s*(?:KBS|SBS|MBC|MNET|JTBC|TVN|ENA|EBS)\b[^|｜]*방송\s*$/i;
+// 회차 표시('EP.3'·'Ep 12'·'[69회]'·'4화') — 무대 신호가 없을 때만 예능
+const _YT_EPISODE_RE=/(?:^|[\s\[\(|｜])EP\.?\s*\d{1,3}(?=[\s\]\)|｜:]|$)|\[\s*\d{1,3}\s*[회화]\s*\]|(?:^|\s)\d{1,3}\s*[회화](?=[\s\]/]|$)/i;
+const _YT_FAN_STAGE_VENUE_RE=/무대|\bSTAGE\b|축제|페스타|페스티벌|FESTIVAL|콘서트|CONCERT|\bTOUR\b|투어|팬콘|FAN\s*CON|쇼케이스|SHOWCASE|SUMMER\s*SONIC|KCON|드림\s*콘서트|DREAM\s*CONCERT|가요제|워터밤|WATER\s*BOMB|팬미팅|FAN\s*MEETING/i;
 const _YT_FAN_NOT_STAGE_RE=/등장|소리\s*질러|시구|시타|토크|게임|\bGAME\b|엔딩|ENDING|자기\s*소개|VCR|팬\s*싸|팬사인|FANSIGN|사인회|출근|퇴근|공항|AIRPORT|VLOG|브이로그|인터뷰|INTERVIEW|비하인드|BEHIND|MAKING|메이킹|리액션|REACTION|멘트|\bMENT\b|인사|소감|SPOILER|스포일러|예고|PREVIEW|TEASER|티저|RECAP|리캡|언박싱|UNBOXING|하이터치|HI-?TOUCH|M\s*&\s*G|MEET\s*(?:&|AND)\s*GREET|생일|BIRTHDAY|먹방|MUKBANG|Q\s*&\s*A|QNA|PLAYLIST|플레이리스트|모음|COMPILATION/i;
 const _YT_AWARD_NOT_STAGE_RE=/소감|SPEECH|축전|인사|GREETING|레드\s*카펫|RED\s*CARPET|비하인드|BEHIND|메이킹|MAKING|리허설|REHEARSAL|라인업|LINE\s*-?\s*UP|포토|PHOTO|백스테이지|BACKSTAGE|스케치|SKETCH|리액션|REACTION|도착|출근|퇴근|예고|PREVIEW|모먼트|MOMENT|브이로그|VLOG|\bCUT\b|컷|기자\s*회견|PRESS|화이팅|응원|틱톡|TIKTOK|인터뷰|INTERVIEW|후보|NOMINEE|부문|본상|신인상|인기상|공로상|베스트|올해의/;
 // 브이라이브/유튜브 라이브/위버스 라이브 등 "실시간 방송"(잡담·인스타 라이브·아프리카TV·트위치 다시보기 등)은
@@ -160,6 +168,7 @@ function _ytClassify(title,{isShort=false}={}){
     return /\bLIVE\b|올라이브|라이브/.test(t)||/올라이브|라이브/.test(title||'')?'live':'variety';
   }
   if(_YT_VARIETY_SHOW_RE.test(t)||_YT_VARIETY_SHOW_RE.test(title||''))return'variety';
+  if(_YT_VARIETY_SERIES_RE.test(title||''))return'variety'; // 예능 시리즈 머리말(2026-11-18)
   // 안무영상/댄스프랙티스/퍼포먼스비디오/릴레이댄스 — 2026-08-06엔 "무대가 아니다"라며 other로 보냈지만
   // 2026-09-14 사용자 결정으로 live로 온다(_YT_PRERECORDED_RE 주석에 되돌리는 법까지 적어둠).
   if(_YT_PRERECORDED_RE.test(t)||_YT_PRERECORDED_RE.test(title||''))return'live';
@@ -176,11 +185,17 @@ function _ytClassify(title,{isShort=false}={}){
   // 세 갈래(표본 3,153건 → 퍼포먼스): ①FOCUS·DANCE BREAK ②6자리 날짜 + 따옴표 곡명 ③공연 이름(축제·페스타·콘서트·투어·쇼케이스·팬미팅·KCON…) + 곡명(따옴표 또는 '가수 - 곡').
   // 공연 이름만 있는 건 안 받는다 — 멘트·등장·시구·게임 클립이 섞였다. 퍼포먼스 탭·차트가 이 값을 쓰므로 무대 아님 신호가 있으면 기타 그대로.
   if(!_YT_FAN_NOT_STAGE_RE.test(title||'')){
-    if(/\bFOCUS\b|포커스|DANCE\s*BREAK|댄스\s*브레이크/.test(t))return'live';
+    if(/\bFOCUS\b|포커스|DANCE\s*BREAK|댄스\s*브레이크|MULTI\s*-?\s*CAM|멀티캠/.test(t))return'live';
     const _q=/['‘’"“”「」『』][^'‘’"“”「」『』]{1,40}['‘’"“”「」『』]/.test(title||'');
     if(_q&&/(?:^|[\s\[\(])[12]\d[01]\d[0-3]\d(?=[\s\]\)\-~]|$)/.test(title||''))return'live';
     if(_YT_FAN_STAGE_VENUE_RE.test(title||'')&&(_q||/ [-–—] /.test(title||'')))return'live';
   }
+  // 음악 토크쇼·방송사 클립(2026-11-18): 같은 프로그램에 무대와 토크가 섞인다 — '가수 - 곡'(대시)이면 무대, 아니면 예능.
+  //   'Insomnia - RIIZE | SBS 261108 방송'·'[더 시즌즈] TWS - 널 따라가' → live / '투어스 첫 만남 댄스 사실 성시경한테 영감받음 [더 시즌즈]' → variety
+  const _dash=/ [-–—] /.test(title||'');
+  if(_YT_MUSIC_TALK_RE.test(title||'')||_YT_BROADCAST_TAIL_RE.test(title||''))return _dash&&!_YT_FAN_NOT_STAGE_RE.test(title||'')?'live':'variety';
+  // 회차 표시 + 무대 신호 없음 → 예능(자체 콘텐츠·여행·리얼리티 회차)
+  if(_YT_EPISODE_RE.test(title||'')&&!_dash)return'variety';
   return'other';
 }
 
