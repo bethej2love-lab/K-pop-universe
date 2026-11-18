@@ -6047,3 +6047,8 @@
 #vid-stage .gc-ch-thumb{border-radius:10px;}
 #vid-stage .tv-sm-title{font-size:13px;}
 #vid-stage .gc-ch-meta{font-size:12px;}
+
+/* 다녀간 사람 점(2026-11-18) — 좋아해요(분홍)·흔적(민트)·보는 중(코랄)과 구분되는 연보라. 같은 맥박. 글자는 흔적과 같은 차분한 본문톤. */
+.visit-dot{width:6px;height:6px;border-radius:50%;background:rgb(170,160,255);box-shadow:0 0 5px rgba(170,160,255,0.8);animation:presence-pulse 1.6s ease-in-out infinite;flex:none;}
+.gc-status-inner.type-visits{color:#ccd8ee;}
+@media (hover:hover) and (pointer:fine){.gc-status-inner.type-visits{color:rgba(216,228,246,0.85);}}

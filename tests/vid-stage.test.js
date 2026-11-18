@@ -38,7 +38,8 @@ async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,ret
       const v=document.getElementById('vid-stage').getBoundingClientRect(),sp=document.getElementById('side-panel').getBoundingClientRect();
       res.flush=Math.abs(v.right-sp.left)<=2;
       res.wide=sz('.gc-ch-grid > .gc-ch-item:not(.is-short) .gc-ch-thumb');res.short=sz('.gc-ch-grid > .gc-ch-item.is-short .gc-ch-thumb');
-      await S(4000);
+      // 쇼츠 그림은 큰 세로 원본을 2장씩 줄여 붙이는 대기열이라 늦을 수 있다 — 최대 12초까지 기다린다
+      for(let i=0;i<24;i++){const si=cont().querySelector('.gc-ch-grid > .gc-ch-item.is-short img.gc-ch-thumb');if(si&&si.getAttribute('src'))break;await S(500);}
       const si=cont().querySelector('.gc-ch-grid > .gc-ch-item.is-short img.gc-ch-thumb');res.shortSrc=!!(si&&si.getAttribute('src'));
       const before=n();document.getElementById('vid-stage').scrollTo(0,1e6);for(let i=0;i<16&&n()<=before;i++)await S(500);res.more=n()>before;
       res.pref=localStorage.getItem('kpu_vid_stage');

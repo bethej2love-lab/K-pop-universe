@@ -10439,6 +10439,7 @@ function closeCards(){
   _leavePresence();
   _gcStatusState.group.favcount='';_gcStatusState.member.favcount='';
   _gcStatusState.group.traces='';_gcStatusState.member.traces='';
+  _gcStatusState.group.visits='';_gcStatusState.member.visits='';_gcStatusState.group.fallback='';
   _renderGcStatusLine('group');_renderGcStatusLine('member');
   _syncUrl('replace');
   _fpUpdateVis(); // 카드 닫혀 우주로 돌아오면 발자국 트레일 노출
@@ -12008,6 +12009,7 @@ function showT(a,cx,cy,keepNavStack,urlMode,_unusedPushMobNav,noFly){
   _joinPresence('member',a.group.ko+':'+a.name.ko);
   _showFavCount('member',a.group.ko+':'+a.name.ko,'get_member_fav_count');
   _showTraceCount('member',a.group.ko+':'+a.name.ko,'get_member_trace_week');
+  _showVisitCount('member',a.group.ko);
   _showMemberFallback(a);
   _syncUrl(urlMode||'push');
 }
@@ -16148,6 +16150,7 @@ function showGC(ko,cx,cy,keepMemberPanel,skipRipple,urlMode,_unusedPushMobNav){
   _joinPresence('group',ko);
   _showFavCount('group',ko,'get_group_fav_count');
   _showTraceCount('group',ko,'get_group_trace_week');
+  _showVisitCount('group',ko);_showGroupFallback(ko);
   _syncUrl(urlMode||'push');
 }
 
@@ -22518,7 +22521,7 @@ async function _handleLogout(){
 document.getElementById('pp-logout-btn').addEventListener('click',e=>{e.stopPropagation();_handleLogout();});
 
 // ── 그룹/멤버 카드 상태 한 줄: 실시간 시청자 수 + 즐겨찾기 인기 지표를 한 자리에서 번갈아 표시 ──
-const _gcStatusState={group:{presence:'',favcount:'',traces:'',fallback:''},member:{presence:'',favcount:'',traces:'',fallback:''}};
+const _gcStatusState={group:{presence:'',favcount:'',traces:'',visits:'',fallback:''},member:{presence:'',favcount:'',traces:'',visits:'',fallback:''}};
 const _gcStatusTimers={group:null,member:null};
 const _gcStatusAnimTimers={group:null,member:null}; // 교차 애니 setTimeout — 재렌더 시 취소해 조각 겹침 방지
 const _gcStatusIdx={group:0,member:0};
@@ -22532,8 +22535,9 @@ function _renderGcStatusLine(kind){
   if(_gcStatusState[kind].presence)entries.push({type:'presence',html:_gcStatusState[kind].presence});
   if(_gcStatusState[kind].favcount)entries.push({type:'favcount',html:_gcStatusState[kind].favcount});
   if(_gcStatusState[kind].traces)entries.push({type:'traces',html:_gcStatusState[kind].traces});
-  // 위 셋이 다 없을 때만 — 사실 정보 한 줄(멤버 카드, _showMemberFallback)
-  if(!entries.length&&_gcStatusState[kind].fallback)entries.push({type:'info',html:_gcStatusState[kind].fallback});
+  if(_gcStatusState[kind].visits)entries.push({type:'visits',html:_gcStatusState[kind].visits});
+  // 사실 정보 한 줄(새 영상·생일·데뷔 년차) — 지표 뒤에 항상(2026-11-18 정리 — 정적 페이지와 같은 규칙. 예전엔 지표가 다 없을 때만)
+  if(_gcStatusState[kind].fallback)entries.push({type:'info',html:_gcStatusState[kind].fallback});
   if(!entries.length){el.classList.remove('show');el.innerHTML='';return;}
   const paint=(i,animate)=>{
     const entry=entries[i];
@@ -22675,6 +22679,45 @@ async function _showTraceCount(kind,key,rpcFn){
     _gcStatusState[kind].traces='<span class="trace-dot"></span>'+(currentLang==='ko'?`이번 주 ${n}명이 흔적 ${m}개를 남겼어요`:`${n} left ${m} traces this week`);
     _renderGcStatusLine(kind);
   }
+}
+
+// 다녀간 사람(2026-11-18) — 정적 페이지와 같은 숫자·같은 문장. 서버 get_live_stats(1시간 저장, 그룹별 이번 주·지금까지 다녀간 사람, 30명↑만)를
+// 정적 페이지 seo_play.js와 같은 저장 키(kpu_ls_v1, 30분)로 나눠 쓴다 — 같은 주소라 한쪽에서 받으면 다른 쪽은 안 부른다.
+let _visitReq=0;
+function _liveStats(){
+  try{const c=JSON.parse(sessionStorage.getItem('kpu_ls_v1')||'null');if(c&&Date.now()-c.t<30*60e3)return Promise.resolve(c.d);}catch(e){}
+  if(!sb)return Promise.resolve(null);
+  return sb.rpc('get_live_stats').then(({data,error})=>{if(error||!data)return null;try{sessionStorage.setItem('kpu_ls_v1',JSON.stringify({t:Date.now(),d:data}));}catch(e){}return data;},()=>null);
+}
+function _visitLine(d,grp,ko){
+  const w=d&&d.vw&&d.vw[grp],t=d&&d.vt&&d.vt[grp];
+  if(!t&&!w)return '';
+  const f=n=>Number(n).toLocaleString(ko?'ko-KR':'en-US');
+  if(ko)return (w?'이번 주 '+f(w)+'명 · ':'')+(t?'지금까지 '+f(t)+'명이 다녀갔어요':'다녀갔어요');
+  return (w?f(w)+' this week · ':'')+(t?f(t)+' visited so far':'visited');
+}
+async function _showVisitCount(kind,grp){
+  _gcStatusState[kind].visits='';
+  const req=++_visitReq;
+  const d=await _liveStats();
+  if(req!==_visitReq)return;
+  const line=_visitLine(d,grp,currentLang==='ko');
+  _gcStatusState[kind].visits=line?'<span class="visit-dot"></span>'+line:'';
+  _renderGcStatusLine(kind);
+}
+// 그룹 카드 정보 줄 — 이번 주 새 영상(멤버 카드 _showMemberFallback과 같은 기준, 그룹 키 하나)
+let _groupFallbackReq=0;
+async function _showGroupFallback(ko){
+  _gcStatusState.group.fallback='';
+  const req=++_groupFallbackReq;
+  if(!sb)return;
+  try{
+    const since=new Date(Date.now()-7*864e5).toISOString().slice(0,10);
+    const {data}=await sb.from(_YT_TABLE).select('id,title,content_flag').eq('group_ko',ko).gte('published_at',since).limit(300);
+    if(req!==_groupFallbackReq||_openGCko!==ko)return;
+    const n=_filterBannedVideos(data||[]).filter(v=>v.content_flag!=='기타').length;
+    if(n>0){_gcStatusState.group.fallback='<span class="info-dot"></span>'+(currentLang==='ko'?`이번 주 새 영상 ${n}개`:`${n} new video${n>1?'s':''} this week`);_renderGcStatusLine('group');}
+  }catch(e){}
 }
 
 buildUniverse().catch(err=>{

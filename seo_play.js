@@ -255,62 +255,71 @@
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',hot);else hot();
   // ── 이번 주 n명(2026-11-12) — 서버 get_week_viewers(1시간 캐시): 그룹별 7일 본 사람(정적 페이지 사람 + 앱 카드 연 계정), 30명 이상만.
   // 숫자가 작으면 아예 안 보인다(빈 식당처럼 보이지 않게). 그룹·멤버·직캠 모음·곡 페이지의 제목 아래 한 줄.
+  // ── 제목 아래 상태 줄(2026-11-18 정리) — 앱 카드 상태 줄(_renderGcStatusLine)과 **같은 구조·같은 디자인**: 6px 맥박 점 + 문장, 4초마다
+  // 아래에서 밀려 올라오며 교체. 지표(좋아해요 분홍·이번 주 흔적 민트·다녀간 사람 연보라) 뒤에 정보(조용한 점: 빌드 때 심은 #kpu-facts).
+  // 숫자는 서버 get_live_stats 하나(1시간 저장)로 — 카드용 RPC를 페이지마다 부르면 DB 부담. 앱과 같은 저장 키(kpu_ls_v1)라 서로 나눠 쓴다.
   function viewers(){
     if(!/^(group|member|fancams|song)$/.test(PTYPE))return;
     if(document.querySelector('.kpu-vw'))return;
-    var g=GRP,KEY='kpu_vw_v1',data=null;
+    var g=GRP,m=null;
+    try{var cta=document.querySelector('a.cta[href*="#g="]');if(cta){var hp=new URLSearchParams(new URL(cta.href).hash.slice(1));g=hp.get('g')||g;m=hp.get('m');}}catch(e){}
     var facts=[];try{var fe=document.getElementById('kpu-facts');if(fe)facts=JSON.parse(fe.textContent)||[];}catch(e){}
-    try{var c=JSON.parse(sessionStorage.getItem(KEY)||'null');if(c&&Date.now()-c.t<30*60e3)data=c.d;}catch(e){}
-    var p=null,span=null,items=[],idx=0,timer=null;
+    var line=null,items=[],idx=0,timer=null;
     function ensure(){
-      if(p)return true;
+      if(line)return true;
       var h1=document.querySelector('h1');if(!h1)return false;
       var st=document.createElement('style');
-      // 반짝이는 별(2026-11-18 사용자 "유니버스처럼 빛났다 말았다 하는 아이콘 모션") — 우주 별빛과 같은 분홍·흰빛 4각 별이 숨쉬듯 밝아졌다 잦아든다.
-      st.textContent='.kpu-vw{display:flex;align-items:center;gap:8px;margin:6px 0 10px;font-size:12.5px;color:rgba(200,212,245,.74);min-height:18px}'
-        +'.kpu-vw .kpu-star{flex:0 0 auto;width:11px;height:11px;color:#ffd6ea;filter:drop-shadow(0 0 3px rgba(255,176,208,.85));animation:kpu-tw 2.8s ease-in-out infinite}'
-        +'@keyframes kpu-tw{0%,100%{opacity:.35;transform:scale(.72) rotate(0deg)}45%{opacity:1;transform:scale(1.08) rotate(20deg)}60%{opacity:.9;transform:scale(1) rotate(24deg)}}'
-        +'.kpu-vw .kpu-vw-t{transition:opacity .45s ease;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}'
-        +'.kpu-vw .kpu-vw-t.out{opacity:0}'
-        +'@media (prefers-reduced-motion:reduce){.kpu-vw .kpu-star{animation:none;opacity:.9}.kpu-vw .kpu-vw-t{transition:none}}';
+      st.textContent='.kpu-vw{position:relative;overflow:hidden;height:18px;margin:6px 0 10px;font-size:12.5px;letter-spacing:.01em}'
+        +'.kpu-vw .in{position:absolute;inset:0;display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
+        +'.kpu-vw .in.a-in{animation:kpu-si .42s cubic-bezier(.22,.8,.36,1) forwards}.kpu-vw .in.a-out{animation:kpu-so .38s cubic-bezier(.64,0,.78,.2) forwards}'
+        +'@keyframes kpu-si{from{transform:translateY(110%);opacity:0}to{transform:translateY(0);opacity:1}}@keyframes kpu-so{from{transform:translateY(0);opacity:1}to{transform:translateY(-110%);opacity:0}}'
+        +'.kpu-vw i{width:6px;height:6px;border-radius:50%;flex:none;animation:kpu-pl 1.6s ease-in-out infinite}'
+        +'@keyframes kpu-pl{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.72)}}'
+        +'.kpu-vw .t-fav{color:rgba(255,150,190,.85);text-shadow:0 0 6px rgba(255,120,170,.3)}.kpu-vw .t-fav i{background:rgb(255,110,165);box-shadow:0 0 5px rgba(255,110,165,.8)}'
+        +'.kpu-vw .t-tr{color:#ccd8ee}.kpu-vw .t-tr i{background:rgb(110,225,195);box-shadow:0 0 5px rgba(110,225,195,.75)}'
+        +'.kpu-vw .t-vis{color:#ccd8ee}.kpu-vw .t-vis i{background:rgb(170,160,255);box-shadow:0 0 5px rgba(170,160,255,.8)}'
+        +'.kpu-vw .t-info{color:rgba(190,205,235,.72)}.kpu-vw .t-info i{width:5px;height:5px;background:rgba(150,175,225,.6);animation:none}'
+        +'@media (prefers-reduced-motion:reduce){.kpu-vw i{animation:none}.kpu-vw .in.a-in,.kpu-vw .in.a-out{animation:none}}';
       document.head.appendChild(st);
-      p=document.createElement('p');p.className='kpu-vw';
-      p.innerHTML='<svg class="kpu-star" viewBox="0 0 22 22" aria-hidden="true"><path d="M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z" fill="currentColor"/></svg>';
-      span=document.createElement('span');span.className='kpu-vw-t';p.appendChild(span);
+      line=document.createElement('div');line.className='kpu-vw';
       var top=document.querySelector('.kpu-top');
-      if(top&&top.contains(h1)){var side=document.querySelector('.kpu-side-h');(side||h1).insertAdjacentElement('afterend',p);}
-      else{var meta=document.querySelector('.top2 .meta');(meta||h1).insertAdjacentElement(meta?'beforebegin':'afterend',p);}
+      if(top&&top.contains(h1)){var side=document.querySelector('.kpu-side-h');(side||h1).insertAdjacentElement('afterend',line);}
+      else{var meta=document.querySelector('.top2 .meta');(meta||h1).insertAdjacentElement(meta?'beforebegin':'afterend',line);}
       return true;
     }
+    function piece(it,anim){var d=document.createElement('div');d.className='in t-'+it.t+(anim?' a-in':'');var i=document.createElement('i');d.appendChild(i);d.appendChild(document.createTextNode(it.s));return d;}
     function render(){
       if(!items.length||!ensure())return;
-      if(idx>=items.length)idx=0;
-      span.textContent=items[idx];
-      if(timer||items.length<2)return;
+      clearInterval(timer);timer=null;idx=0;
+      line.innerHTML='';line.appendChild(piece(items[0],false));
+      if(items.length<2)return;
       timer=setInterval(function(){
         if(document.hidden)return;
-        span.classList.add('out');
-        setTimeout(function(){idx=(idx+1)%items.length;span.textContent=items[idx];span.classList.remove('out');},450);
-      },4200);
+        idx=(idx+1)%items.length;
+        var old=line.querySelector('.in');if(old)old.classList.add('a-out');
+        setTimeout(function(){line.innerHTML='';line.appendChild(piece(items[idx],true));},420);
+      },4000);
     }
-    function withViewers(d){
-      var n=g&&d&&d.g&&d.g[g];
-      if(n&&n>=30){
-        var h1=document.querySelector('h1');
-        var gn=EN?(PTYPE==='group'&&h1?((h1.textContent||'').replace(/\s*\(.*$/,'').trim()):''):g;
-        var line=EN?(n.toLocaleString()+' '+(gn?gn+' ':'')+'fans visited this week'):('이번 주 '+gn+' 팬 '+n.toLocaleString()+'명이 다녀갔어요');
-        if(items.indexOf(line)<0)items.unshift(line);
-        idx=0;
-      }
-      render();
+    var info=facts.map(function(x){return{t:'info',s:x};});
+    items=info.slice();render(); // 정보 줄은 바로, 지표는 받아 오면 앞에 붙여 다시
+    function withStats(d){
+      if(!d)return;
+      var f=function(n){return Number(n).toLocaleString(EN?'en-US':'ko-KR');},met=[];
+      var fav=m?(d.favm&&d.favm[g+':'+m]):(d.fav&&d.fav[g]);
+      if(fav>0)met.push({t:'fav',s:EN?(f(fav)+' like this'):(f(fav)+'명이 좋아해요')});
+      var tr=!m&&d.tr&&d.tr[g];
+      if(tr&&tr[0]>0&&tr[1]>0)met.push({t:'tr',s:EN?(f(tr[0])+' left '+f(tr[1])+' traces this week'):('이번 주 '+f(tr[0])+'명이 흔적 '+f(tr[1])+'개를 남겼어요')});
+      var w=d.vw&&d.vw[g],t=d.vt&&d.vt[g];
+      if(w||t)met.push({t:'vis',s:EN?((w?f(w)+' this week · ':'')+(t?f(t)+' visited so far':'visited')):((w?'이번 주 '+f(w)+'명 · ':'')+(t?'지금까지 '+f(t)+'명이 다녀갔어요':'다녀갔어요'))});
+      if(!met.length)return;
+      items=met.concat(info);render();
     }
-    items=facts.slice();
-    render(); // 사실 줄은 바로 — 방문자 수는 받아 오면 맨 앞에 끼운다
-    if(data){withViewers(data);return;}
+    var KEY='kpu_ls_v1';
+    try{var c=JSON.parse(sessionStorage.getItem(KEY)||'null');if(c&&Date.now()-c.t<30*60e3){withStats(c.d);return;}}catch(e){}
     if(!g)return;
-    try{fetch('https://dukgguehegnembimqvkm.supabase.co/rest/v1/rpc/get_week_viewers',{method:'POST',
+    try{fetch('https://dukgguehegnembimqvkm.supabase.co/rest/v1/rpc/get_live_stats',{method:'POST',
       headers:{'Content-Type':'application/json',apikey:'sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0',Authorization:'Bearer sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0'},body:'{}'})
-      .then(function(r){return r.ok?r.json():null;}).then(function(d){if(!d)return;try{sessionStorage.setItem(KEY,JSON.stringify({t:Date.now(),d:d}));}catch(e){}withViewers(d);}).catch(function(){});}catch(e){}
+      .then(function(r){return r.ok?r.json():null;}).then(function(d){if(!d)return;try{sessionStorage.setItem(KEY,JSON.stringify({t:Date.now(),d:d}));}catch(e){}withStats(d);}).catch(function(){});}catch(e){}
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',viewers);else viewers();
 
