@@ -6008,3 +6008,10 @@
   #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-scrap{top:calc(52px + env(safe-area-inset-top, 0px) + var(--sh-h) - 150px - 4*52px);}
   #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-edit{top:calc(52px + env(safe-area-inset-top, 0px) + var(--sh-h) - 150px - 5*52px);}
 }
+
+/* 카드 5차(2026-11-18 사용자): 그룹 한글명 14.5→15.5 · 대표 영상(맨 위 넓은 칸) 제목 14→13 · 날짜·조회수 13→12 */
+@media (hover:hover) and (pointer:fine){
+  #gc-name,#tn{font-size:15.5px;}
+  #side-panel .gc-ch-wide .tv-sm-title{font-size:13px;}
+  #side-panel .gc-ch-wide .gc-ch-meta{font-size:12px;}
+}

@@ -5363,6 +5363,11 @@ function _isJunkVideoTitle(t){
 //    동기화 북마크를 지우고 재동기화해서 source_tier를 채워야 한다.
 function _shouldJunkFlag(title,sourceTier){
   if(sourceTier==='official'||sourceTier==='grpsub')return false; // 그룹 공식 서브채널도 공식 취급(junk 면제)
+  // 팬채널(멤버 중심 직캠만 등록 — 팬채널 기준)과 OST 영상도 면제(2026-11-18 검수 세션 — 자동 무관 오처리 18건 중: '최강야구' 키워드에 나우즈 진혁
+  // 팬채널 BLAZE-JH의 최강야구 응원단 직캠 11건, 드라마 키워드 '스프링피버'에 성한빈 '너란 봄' OST 무대·FIFTY FIFTY 스프링피버 OST). 키워드는 그 예능·드라마
+  // 자체 클립을 거르려는 것이라, 아이돌이 부른 OST·팬이 찍은 직캠은 걸러낼 이유가 없다.
+  if(sourceTier==='fans')return false;
+  if(/(^|[^A-Za-z])OST([^A-Za-z]|$)|O\.S\.T/i.test(String(title||''))&&_isJunkVideoTitle(title))return false;
   return _isJunkVideoTitle(title);
 }
 // ── Cover 탭 제외 키워드 ─────────────────────────────────────────────────────
