@@ -7331,7 +7331,7 @@ window.addEventListener('message',e=>{
     const d=JSON.parse(e.data);
     if(d.event==='onError'&&e.source===document.getElementById('yt-lb-iframe')?.contentWindow){_lbEmbedBlocked(+d.info);return;}
     // 유튜브가 자막 등 모듈을 붙였다고 알릴 때(onApiChange) — 첫 60초 안이면 그 즉시 자막을 다시 끈다(위 _lbCaptionsOffOnce 주석)
-    if(d.event==='onApiChange'&&Date.now()<_lbCcWatchUntil&&e.source===document.getElementById('yt-lb-iframe')?.contentWindow){_lbCcSendNow(_lbActiveVid);return;}
+    if(d.event==='onApiChange'&&Date.now()<_lbCcWatchUntil&&e.source===document.getElementById('yt-lb-iframe')?.contentWindow){_lbCcSendNow(_lbActiveVid,false);return;}
     if((d.event!=='infoDelivery'&&d.event!=='initialDelivery')||!d.info)return;
     _lbYtHeard=true; // 핸드셰이크 성공 — 더 안 보내도 된다
     if(d.info.duration>0)_lbYtDur=d.info.duration;
@@ -7368,18 +7368,30 @@ window.addEventListener('message',e=>{
 // 같은 영상을 다시 열거나 모드 전환으로 틀이 새로 생기면 끄기 신호가 아예 안 갔다 → 틀이 바뀌면 기록을 비운다 ② 시각 타이머만으로는 유튜브가 모듈을
 // 늦게 붙이는 순간을 못 맞춘다 → 유튜브가 모듈이 붙을 때 보내는 onApiChange를 받아 그 즉시 끈다(첫 60초 동안만 — 그 뒤 사용자가 켠 CC는 유지)
 // ③ 모듈 이름이 captions/cc 두 가지로 쓰인다 → 둘 다 내린다.
-let _lbCcOffVid=null,_lbCcWatchUntil=0;
-function _lbCcSendNow(vid){
+// 2026-11-18 다시 점검(사용자 "자막이 꺼졌다 켜졌다 해, 전체화면 할 때도"): 위 방식은 unloadModule(자막 모듈 통째로 내리기)을 0·1.5·5·15·40초와
+// onApiChange마다 보냈는데, 모듈을 내리면 유튜브가 다시 붙이고(onApiChange) → 또 내리고… 가 반복돼 화면에선 자막이 깜빡였다. 전체화면 전환도
+// 모듈을 다시 붙이게 해 같은 일이 생겼고, 40초 안에 사용자가 켠 CC도 꺼버렸다. 바꾼 것:
+//  ① unloadModule은 첫 재생 때 한 번만. 그 뒤엔 setOption('captions','track',{}) — 자막 줄만 숨기고 모듈은 안 건드려 다시 붙이는 반복이 없다.
+//  ② 사용자가 플레이어를 직접 만지면(창 포커스가 영상 틀로 넘어감 = 재생·CC·전체화면 버튼 클릭) 그 틀에선 더 이상 자막 명령을 안 보낸다.
+//  ③ 우리 전체화면 버튼(yt-lb-fs)으로 바꿀 땐 숨기기 한 번만(만진 적 없을 때).
+let _lbCcOffVid=null,_lbCcWatchUntil=0,_lbCcUserTouched=false;
+function _lbCcPost(f,func,args){try{f.contentWindow.postMessage(JSON.stringify({event:'command',func,args}),'*');}catch(_){}}
+function _lbCcSendNow(vid,unload){
   const f=document.getElementById('yt-lb-iframe');
-  if(!f||!f.contentWindow||(vid&&_lbActiveVid!==vid))return;
-  ['captions','cc'].forEach(m=>{try{f.contentWindow.postMessage(JSON.stringify({event:'command',func:'unloadModule',args:[m]}),'*');}catch(_){}});
+  if(!f||!f.contentWindow||(vid&&_lbActiveVid!==vid)||_lbCcUserTouched)return;
+  _lbCcPost(f,'setOption',['captions','track',{}]);
+  if(unload)['captions','cc'].forEach(m=>_lbCcPost(f,'unloadModule',[m]));
 }
 function _lbCaptionsOffOnce(){
   if(!_lbActiveVid||_lbCcOffVid===_lbActiveVid)return;
   const vid=_lbActiveVid;_lbCcOffVid=vid;_lbCcWatchUntil=Date.now()+60000;
-  const send=()=>_lbCcSendNow(vid);
-  send();[1500,5000,15000,40000].forEach(ms=>setTimeout(send,ms));
+  _lbCcSendNow(vid,true);
+  setTimeout(()=>_lbCcSendNow(vid,false),1500);
 }
+// 플레이어를 직접 만짐 — 영상 틀(iframe)로 포커스가 넘어가면 창이 blur된다(교차 출처 iframe 안의 클릭은 직접 못 받으므로 이걸로 판단)
+// 폰은 열 때 앱이 직접 틀에 포커스를 주므로(iOS 첫 탭) 이 판단을 쓰지 않는다 — 데스크톱만
+window.addEventListener('blur',()=>{if(isMob())return;setTimeout(()=>{const f=document.getElementById('yt-lb-iframe');if(f&&document.activeElement===f)_lbCcUserTouched=true;},0);});
+document.addEventListener('fullscreenchange',()=>{if(document.getElementById('yt-lb-iframe')&&Date.now()<_lbCcWatchUntil)setTimeout(()=>_lbCcSendNow(_lbActiveVid,false),700);});
 // 회전 버튼(세로/가로 전환)은 지금 보는 영상에만 적용한다 — 예전엔 영상 ID를 폰에 영구 저장해서, 가로 영상에서
 // 한 번 잘못 눌리면 그 뒤로 열 때마다 세로 틀(9:16)에 갇혀 크게 잘려 보였고 되돌릴 단서도 없었다(2026-10-20 사용자 제보,
 // 코르티스 성현 가요대제전 직캠). 세로/가로 판정은 서버(tools/shorts_promote.mjs)가 정본. 남아 있던 저장분은 지운다.
@@ -7510,7 +7522,7 @@ function _lbSetIframeSrc(url){
   const fr=old.cloneNode(false);
   if(url)fr.src=url;else fr.removeAttribute('src');
   old.replaceWith(fr);
-  _lbCcOffVid=null; // 새 틀 = 새 재생 — 같은 영상을 다시 열어도 자막 끄기 신호를 다시 보낸다(_lbCaptionsOffOnce 주석)
+  _lbCcOffVid=null;_lbCcUserTouched=false; // 새 틀 = 새 재생 — 같은 영상을 다시 열어도 자막 끄기 신호를 다시 보낸다(_lbCaptionsOffOnce 주석)
   // 데스크톱: iframe이 로드되면 YouTube 플레이어가 포커스를 가져가 ESC가 부모 window에 안 옴 — 부모로 돌려줌
   // 모바일은 무대 옆 패널 아닌 전체화면이라 포커스 반환 불필요
   if(!isMob())fr.addEventListener('load',()=>{fr.blur();window.focus();},{once:true});
