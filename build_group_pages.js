@@ -2501,6 +2501,7 @@ ${topCams[0] ? `<meta property="og:image" content="${wideThumb(topCams[0].v.id)}
   @media(max-width:700px){.all-nav{position:static;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:6px 0 10px;}.all-nav li{flex:0 0 auto;}.all-groups{grid-template-columns:repeat(auto-fill,minmax(76px,1fr));}.all-groups .face-img{width:64px;height:64px;}}
 </style>
 ${SEO_GA_TAG}
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
 <script src="/seo_play.js" defer></script>
 </head>
 <body>
