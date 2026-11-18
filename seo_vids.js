@@ -16,6 +16,8 @@
   function f1(x){var v=Math.floor(x*10+1e-9)/10;return v%1===0?String(v):v.toFixed(1);}
   function views(n){n=+n||0;if(!n)return '';if(n>=1e6)return Math.floor(n/1e6)+'M+';if(n>=1e3)return Math.floor(n/1e3)+'K+';if(n>=100)return Math.floor(n/100)*100+'+';return '<100';} // 앱 _fmtVC와 같게
   function dot(d){return d?String(d).slice(0,10).split('-').join('.'):'';}
+  // 영상 제목 끝 유튜브 채널 꼬리 " | @핸들_날짜" 제거(SSR seo_extra.js cleanVidTitle과 같은 규칙) — @ 있는 꼬리만
+  function cleanT(t){t=String(t==null?'':t);return t.replace(/\s*[|｜ㅣ]\s*@\S+\s*$/,'').trim()||t;}
   function sorted(){
     var a=data.slice();
     if(sort==='nw')a.sort(function(x,y){return String(y[2]||'').localeCompare(String(x[2]||''))||(y[3]||0)-(x[3]||0);});
@@ -26,7 +28,7 @@
   function card(v){
     var a=document.createElement('a');a.className='card';a.href='https://www.youtube.com/watch?v='+v[0];a.target='_blank';a.rel='noopener';
     var th=document.createElement('span');th.className='card-th';var im=document.createElement('img');im.src='https://i.ytimg.com/vi/'+v[0]+'/mqdefault.jpg';im.alt='';im.loading='lazy';th.appendChild(im);
-    var t=document.createElement('span');t.className='card-t';t.textContent=v[1]||'';
+    var t=document.createElement('span');t.className='card-t';t.textContent=cleanT(v[1]||'');
     var y=document.createElement('span');y.className='card-y';y.textContent=[dot(v[2]),views(v[3])].filter(Boolean).join(' · ');
     a.appendChild(th);a.appendChild(t);a.appendChild(y);return a;
   }

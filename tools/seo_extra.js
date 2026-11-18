@@ -7,6 +7,9 @@ const fs = require('fs');
 const path = require('path');
 
 const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+// 영상 제목 끝의 유튜브 채널 꼬리 " | @핸들_날짜" 제거 — 네이버가 본문 영상 제목을 snippet으로 긁을 때 우리 날짜·조회수 줄과
+// 겹쳐 보이던 것(2026-11-18 사용자: '…@MCOUNTDOWN_2026.4.232026.04.23 · 356K'). @가 붙은 꼬리만 떼서 'A | B' 같은 정상 제목은 유지.
+const cleanVidTitle = t => String(t == null ? '' : t).replace(/\s*[|｜ㅣ]\s*@\S+\s*$/, '').trim() || String(t == null ? '' : t);
 const readJson = p => { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch (e) { return null; } };
 
 function packCredits(list,base) {
@@ -189,7 +192,7 @@ function groupExtra(ko, lang, EX, ST, opts) {
 function vidCards(list, en) {
   return list.filter(v => v && v.id).map(v => {
     const y = v.sub != null && v.sub !== '' ? v.sub : [v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? fmtVC(v.view_count) : ''].filter(Boolean).join(' · ');
-    return `<a class="mf-card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">${esc(v.title)}</span>${y ? `<span class="mf-y">${esc(y)}</span>` : ''}</a>`;
+    return `<a class="mf-card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">${esc(cleanVidTitle(v.title))}</span>${y ? `<span class="mf-y">${esc(y)}</span>` : ''}</a>`;
   }).join('');
 }
 

@@ -3,6 +3,10 @@
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
 
+## 2026-11-18 밤 (Claude Code/Sonnet 집 자율 — 수집 조사 + 네이버 F 코드, DB 느림 속)
+- **수집 조사(사용자 "더케이팝 e84FIWj4pOk 왜 수집 안 됨, 더쇼·쇼케이팝 1위 시의성")**: e84F = **THE K-POP(@thekpop=더쇼) 11-17 'THE SHOW CHOICE' A2O SOUL 'Dancing in the Dark'(데뷔 첫 1위 앵콜)**. DB엔 없음. 조사 결과 ①채널 등록 OK(ext_channels: thekpop·showkpop.official·엠카·뮤뱅·음중·인기가요·쇼챔 등 다 있음) ②A2O SOUL 등록 그룹 OK ③**더쇼 11-17 영상 27개 수집됨**(FAN PICK CAM·THE SHOW CHOICE ZAI·1위 쇼츠 포함) — 깊이 문제 아님 ④e84F만 누락 = **업로드 타이밍 지연**(수집 사이에 올라와 다음 차례 대기) 추정, 구조적 결함 아님. **수집은 정상 작동**(thekpop 11-18까지·엠카 11-18까지 수집, 워크플로우 RUN/success). 시의성(당일 1위 즉시)을 더 높이려면 음방 채널 수집 **빈도↑**가 필요한데 유튜브 쿼터·DB 부하 영향이라 운영/회사 판단 — 집에서 수집 로직 변경 안 함. DB 상태: `select 1` 1.0s(치명적 다운 아님, 수집 동기화 겹침으로 간헐 느림).
+- **[tools/seo_extra.js·seo_vids.js] 네이버 F 코드 작성(제목 꼬리 제거)**: `cleanVidTitle(t)`=끝의 " | @핸들" 꼬리 제거(`/\s*[|｜ㅣ]\s*@\S+\s*$/`, @ 있을 때만 — 'A | B 라이브'·'…SOULㅣ261117 방송'은 유지). SSR `vidCards`(네이버가 긁는 본문)와 클라이언트 `seo_vids.js card()` 둘 다 적용. node 단위검증 7/7, 문법 OK. ⚠️ **커밋만·push 보류** — seo_extra.js 변경은 정적 재생성(35분 DB 점유)을 트리거하는데 지금 DB 느림이라, **DB 여유 있을 때(복귀/밤) push**. G(정사각 og:image)는 og:image 생성 위치가 복잡 + 정사각 전환이 카톡·트위터 공유에도 영향이라 "전면 vs 선별" 설계 확인 필요 → 보류.
+
 ## 2026-11-18 저녁 (Claude Code/Sonnet 집 — 웹 CSS 미세조정 3건, DB 안 건드림)
 - **[kpop_universe.css] 웹 투데이 애니버서리 프로필 원 축소(사용자 "너무 커, 줄이고 양옆 여백 살짝")**: 데스크톱은 애니버서리 아이템이 25%(4개 꽉)라 원(thumb-wrap)이 아이템 폭 100%로 커져 있었음 → `width:80%;margin:0 auto`로 줄이고 가운데 정렬(양옆 여백). 모바일(68px 고정)은 그대로.
 - **[kpop_universe.css] 웹 앨범·컬렉션 커버 살짝 키움**: `--card-thumb` 웹 값 111→122px(앨범 gc-discog·컬렉션 gc-collection 공유 변수, 영상 썸네일은 이 변수 안 씀). 모바일 110 유지.
