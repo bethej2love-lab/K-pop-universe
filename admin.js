@@ -9191,7 +9191,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // 쓰이는 "이름으로 그룹 역추론"(아래 루프)에만 작용하고, 이미 제목에 그룹명이 확정된 그룹의 멤버 추출
   // (다른 경로)은 평문 매칭 그대로라, 진짜 콜라보(그룹명 함께 표기)나 자체 채널 태깅 손실은 작다. 한글 이름
   // 변형은 대상 아님 — name.en만 짧고 name.ko가 멀쩡하면 한글 변형은 평문 매칭 유지되고 영문 변형만 게이트됨.
-  const _ATM_COMMON_EN_WORDS=new Set(['love','rise','sun','star','baby','angel','king','queen','prince','princess','fire','rain','moon','light','dream','gold','golden','hero','lucky','summer','winter','spring','jay','leo','max','ace','boy','girl','only','wave','luna','soul','good','high','sky','blue','cherry','honey','crown','magic','forever','tonight','crazy','kevin','thunder','shine','glow']);
+  const _ATM_COMMON_EN_WORDS=new Set(['sunshine','chris','soyoung', /* 2026-11-18 검수: 콜라보 태그 오인 — You're my Sunshine→네이처 선샤인 12, Chris Brown→배틀 크리스 6, so young→스텔라 소영 2 */ 'love','rise','sun','star','baby','angel','king','queen','prince','princess','fire','rain','moon','light','dream','gold','golden','hero','lucky','summer','winter','spring','jay','leo','max','ace','boy','girl','only','wave','luna','soul','good','high','sky','blue','cherry','honey','crown','magic','forever','tonight','crazy','kevin','thunder','shine','glow']);
   function _atmNameNeedsCtx(t){
     if(!t)return false;
     if(!/^[A-Za-z0-9][A-Za-z0-9.\-'’ ]*$/.test(t))return false; // 라틴(영문) 계열 변형만 — 한글 이름은 단일음절/보호목록 규칙이 커버
@@ -9223,7 +9223,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // 2026-09-28: 성 뗀 이름 변형(실명의 이름만)이 일상어인 경우 — 우리(고우리)·한국(조한국)·아이(유아이)·미주(이미주)·
   // 정신(이정신)·학년(주학년) 등. 이름 변형은 자동으로 만들어지므로 사람이 등록한 이름보다 더 위험하다(제이미→"이미"
   // 사고, _atmStripSurname 주석). 조사가 붙으면 토큰 경계에서 이미 걸러지지만 이 단어들은 단독으로도 흔하다.
-  const _ATM_COMMON_KO_WORDS=new Set(['베이비','하루','하늘','바다','봄','여름','겨울','별','사랑','달','천사','하트','메이','가을','노을','소원','하나','루비','미소','마이','렉스',
+  const _ATM_COMMON_KO_WORDS=new Set(['도시', /* 2026-11-18 검수: 퍼플키스 장은성 별칭 '도시'가 '첫 도시 보고타' 같은 제목에 콜라보로 8건 */ '베이비','하루','하늘','바다','봄','여름','겨울','별','사랑','달','천사','하트','메이','가을','노을','소원','하나','루비','미소','마이','렉스',
     '우리','한국','아이','정신','학년','형식','성원','나은','수원','수정','준수',
     // 2026-10-12 티오원 전수(사용자: "티오원 오태깅 엄청 많다"): 여정(전여여정 별칭 — "특별한 여정"·"다이어트 여정"·
     // 포레스텔라 '사랑의 여정' 등 수십 건)·민수(가수 민수·최민수)·경호(슬기로운의사생활 캐릭터·"경호원"). 티오원 확정
