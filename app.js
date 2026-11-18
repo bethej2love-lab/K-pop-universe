@@ -3455,8 +3455,8 @@ function _trendingSearchHits(){
     .filter(ko=>(GROUPS[ko].pri||0)>=1.5&&bubbleMeshes.some(b=>b.ko===ko))
     .sort((a,b)=>(GROUPS[b].pri||0)-(GROUPS[a].pri||0));
   if(pool.length<3)return[];
-  // 상위 12개에서 랜덤 6개 → 항상 유명 그룹 위주지만 매번 다르게
-  const picked=_shuffle(pool.filter(ko=>!GROUPS[ko].disbanded).slice(0,14)).slice(0,6);
+  // 상위 14개에서 랜덤 추림 → 항상 유명 그룹 위주지만 매번 다르게. 데스크톱은 한 줄 5개(2026-11-18 사용자 "두 줄 필요 없다"), 모바일은 6개(3열 2줄)
+  const picked=_shuffle(pool.filter(ko=>!GROUPS[ko].disbanded).slice(0,14)).slice(0,isMob()?6:5);
   return picked.map(ko=>{
     const bm=bubbleMeshes.find(b=>b.ko===ko);
     const en=GROUPS[ko].en||'';
