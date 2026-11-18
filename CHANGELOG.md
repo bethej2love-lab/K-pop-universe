@@ -12,6 +12,10 @@
   - ⏳ `song-quote-match`·`song-video-nonperf`: 오늘 회사/Opus 세션 비공연 거르기 테스트 미통과 — 회사 몫(buildSongs 로직).
   - 임시로 메일만 끄려면 github.com/settings/notifications의 Actions 실패 알림 해제(사용자).
 
+## 2026-11-19 새벽 (Claude Code/Sonnet 집 — 네이버 정사각 og + 밤새 검수 42건)
+- **[build_group_pages.js] G: 네이버 정사각 og:image(사용자 결정 wsrv.nl)** — 네이버가 16:9 썸네일을 정사각 칸에 넣어 위아래 검은띠 생기던 것. `sqOg(url)`로 유튜브 썸네일 og:image를 `wsrv.nl/?url=i.ytimg.com/vi/{id}/maxresdefault.jpg&w=720&h=720&fit=cover&a=attention` 정사각 720으로 감쌈(그 외 og-image.png 등은 그대로). og:image 10곳·width/height 6곳 적용, ogSizeFor에 wsrv→720 케이스. ⚠️ og:image 하나라 선별 불가 → **전면 정사각**(카톡·네이버 정사각, 트위터만 16:9 손해 — 네이버 검은띠 해결 우선). song-share-preview 테스트 og 기대값 정사각 갱신, og-image·og-coverage 통과. #21 F(제목 꼬리, 배포됨)+G 완료.
+- **밤새 검수: 멤버 개인채널 오배정 42건 정정(DB)** — 효율 로직(ext_channels.owner_mko ≠ group_ko + 채널주인 소속 아닌 다른 그룹 게스트, 같은 그룹·직캠 제외). 효연 밥사효·효린 쳌·슬기·문별·츄·전소미 등 채널주인이 members에서 빠지고 게스트가 주인됐던 것 → group_ko=채널주인·members=[채널주인]·게스트는 with. 되돌리기 SQL /tmp/undo_hyo·undo_ch·undo_full.sql. 보류: cover_of 22건(#32, 원곡 민감)·재친구(owner 오등록 추정)·동명이인(콜라보 오탐). ⚠️ /tmp는 재부팅 소실.
+
 ## 2026-11-18 밤 (Claude Code/Sonnet 집 — 사용자 실시간 요청 다수 쳐냄)
 사용자가 웹 보며 요청을 연속으로 줌 — 전부 태스크화(#12~#25)해서 처리. "숲을 봐(기존 패턴 복사)"·"요청 흘리지 말고 멈추지 말기"를 PRINCIPLES.md·메모리에 박음.
 - **[seo_play.js] 정적 상단 줄 개편**: 통계·소식 교체 멘트·'우주 열기' 버튼 전부 제거 → 고정 `Find your place in K-pop.` 한 줄, 줄 전체 클릭=유니버스. 높이 34→68px·폰트 +1pt. 별가루 유지. (#22)

@@ -216,6 +216,7 @@ try {
 }
 // maxresdefault는 1280×720, hqdefault는 480×360 — 크롤러가 큰 카드로 렌더하려면 크기 메타가 필요하다
 function ogSizeFor(url) {
+  if (/wsrv\.nl/.test(url)) return { w: 720, h: 720 };
   if (/maxresdefault|hq720/.test(url)) return { w: 1280, h: 720 };
   if (/mqdefault/.test(url)) return { w: 320, h: 180 };
   if (/hqdefault/.test(url)) return { w: 480, h: 360 };
@@ -253,6 +254,7 @@ const WIDE_Q = { x: 'maxresdefault', 7: 'hq720', m: 'mqdefault' };
 // 11-17 네이버에서 위아래 검은 띠 — 확인 대상이 곡·멤버×곡·직캠 허브 영상뿐이라 케미(2,607)·프로그램(761)·음방·커버 등 ~3,600쪽의 대표 영상은
 // 한 번도 확인이 안 돼 320×180(mqdefault)로 나갔다. 확인 안 된 영상을 여기 모아 두었다가 빌드 끝에 확인하고 og_wide.json에 쌓는다(다음 빌드부터 반영).
 const WIDE_MISS = new Set();
+function sqOg(url){const m=/i\.ytimg\.com\/vi\/([^/?]+)\//.exec(url||"");return m?`https://wsrv.nl/?url=i.ytimg.com/vi/${m[1]}/maxresdefault.jpg&w=720&h=720&fit=cover&a=attention&output=jpg&q=80`:url;}
 function wideThumb(id) { if (id && !WIDE[id]) WIDE_MISS.add(id); return `https://i.ytimg.com/vi/${id}/${WIDE_Q[WIDE[id]] || 'mqdefault'}.jpg`; }
 async function probeWide(ids) {
   const max = +(process.env.OG_WIDE_MAX || 8000);
@@ -580,9 +582,9 @@ ${LIST_FWD}
 <meta property="og:title" content="${escHtml(displayName)}">
 <meta property="og:description" content="${escHtml(desc)}">
 <meta property="og:url" content="${selfUrl}">
-<meta property="og:image" content="${ogImage}">
-<meta property="og:image:width" content="${ogSizeFor(ogImage).w}">
-<meta property="og:image:height" content="${ogSizeFor(ogImage).h}">
+<meta property="og:image" content="${sqOg(ogImage)}">
+<meta property="og:image:width" content="${ogSizeFor(sqOg(ogImage)).w}">
+<meta property="og:image:height" content="${ogSizeFor(sqOg(ogImage)).h}">
 <meta property="og:locale" content="${isEn ? 'en_US' : 'ko_KR'}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${escHtml(displayName)}">
@@ -841,9 +843,9 @@ ${LIST_FWD}
 <meta property="og:title" content="${escHtml(displayName)}">
 <meta property="og:description" content="${escHtml(desc)}">
 <meta property="og:url" content="${selfUrl}">
-<meta property="og:image" content="${ogImage}">
-<meta property="og:image:width" content="${ogSizeFor(ogImage).w}">
-<meta property="og:image:height" content="${ogSizeFor(ogImage).h}">
+<meta property="og:image" content="${sqOg(ogImage)}">
+<meta property="og:image:width" content="${ogSizeFor(sqOg(ogImage)).w}">
+<meta property="og:image:height" content="${ogSizeFor(sqOg(ogImage)).h}">
 <meta property="og:locale" content="${isEn ? 'en_US' : 'ko_KR'}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${escHtml(displayName)}">
@@ -974,7 +976,7 @@ function writeSoloDisambigPages() {
 <title>${escHtml(name)} — K-POP UNIVERSE</title>
 <meta name="robots" content="noindex,follow">
 <meta property="og:title" content="${escHtml(name)} — K-POP UNIVERSE">
-<meta property="og:image" content="${ogImageForMember(list[0].a)}">
+<meta property="og:image" content="${sqOg(ogImageForMember(list[0].a))}">
 <style>body{font-family:system-ui,sans-serif;background:#101013;color:#dfe7ff;padding:40px 20px;max-width:560px;margin:auto}a{color:#9fb8ff}li{margin:10px 0}</style>
 </head><body><h1>${escHtml(name)}</h1><p>${en ? 'Several artists share this name:' : '같은 이름의 아티스트가 여러 명이에요:'}</p><ul>
 ${items}
@@ -1029,7 +1031,7 @@ function redirectStaleMemberPages() {
 <meta name="robots" content="noindex">
 <meta property="og:title" content="${escHtml(nm)} — K-POP UNIVERSE">
 <meta property="og:url" content="${url}">
-<meta property="og:image" content="${img}">
+<meta property="og:image" content="${sqOg(img)}">
 <meta property="og:image:width" content="${sz.w}">
 <meta property="og:image:height" content="${sz.h}">
 <meta http-equiv="refresh" content="0; url=${url}">
@@ -2085,7 +2087,7 @@ function fancamPageHtml(a, lang) {
 <meta property="og:title" content="${escHtml(title.replace(' | K-POP UNIVERSE', ''))}">
 <meta property="og:description" content="${escHtml(desc)}">
 <meta property="og:url" content="${selfUrl}">
-<meta property="og:image" content="${ogImage}">
+<meta property="og:image" content="${sqOg(ogImage)}">
 <meta property="og:image:width" content="${ogSz.w}">
 <meta property="og:image:height" content="${ogSz.h}">
 <meta property="og:locale" content="${isEn ? 'en_US' : 'ko_KR'}">
@@ -2369,7 +2371,7 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
 <meta property="og:title" content="${escHtml(title.replace(' | K-POP UNIVERSE', ''))}">
 <meta property="og:description" content="${escHtml(desc)}">
 <meta property="og:url" content="${selfUrl}">
-<meta property="og:image" content="${ogImage}">
+<meta property="og:image" content="${sqOg(ogImage)}">
 <meta property="og:image:width" content="${ogSz.w}">
 <meta property="og:image:height" content="${ogSz.h}">
 <meta property="og:locale" content="${isEn ? 'en_US' : 'ko_KR'}">
@@ -2474,7 +2476,7 @@ function buildAllIndexPages(relPages) {
 <link rel="alternate" hreflang="x-default" href="${SITE}/all/">
 <meta property="og:type" content="website"><meta property="og:site_name" content="K-POP UNIVERSE">
 <meta property="og:title" content="${escHtml(h1)}"><meta property="og:description" content="${escHtml(desc)}"><meta property="og:url" content="${selfUrl}">
-${topCams[0] ? `<meta property="og:image" content="${wideThumb(topCams[0].v.id)}">` : ''}
+${topCams[0] ? `<meta property="og:image" content="${sqOg(wideThumb(topCams[0].v.id))}">` : ''}
 <link rel="icon" href="${SITE}/icons/icon-192.png" type="image/png">
 <link rel="preconnect" href="https://i.ytimg.com">
 <link rel="stylesheet" href="${SITE}/song-page.css?v=${SONG_CSS_V}">
@@ -2598,7 +2600,7 @@ function buildRankPages() {
 <meta property="og:title" content="${escHtml(h1)}">
 <meta property="og:description" content="${escHtml(desc)}">
 <meta property="og:url" content="${selfUrl}">
-<meta property="og:image" content="${wideThumb(top.v.id)}">
+<meta property="og:image" content="${sqOg(wideThumb(top.v.id))}">
 <meta property="og:image:width" content="${ogSizeFor(wideThumb(top.v.id)).w}">
 <meta property="og:image:height" content="${ogSizeFor(wideThumb(top.v.id)).h}">
 <meta name="twitter:card" content="summary_large_image">
@@ -2723,7 +2725,7 @@ function buildProgramPages() {
 <meta property="og:title" content="${escHtml(h1)}">
 <meta property="og:description" content="${escHtml(desc)}">
 <meta property="og:url" content="${selfUrl}">
-<meta property="og:image" content="${wideThumb(list[0].v.id)}">
+<meta property="og:image" content="${sqOg(wideThumb(list[0].v.id))}">
 <meta property="og:image:width" content="${ogSizeFor(wideThumb(list[0].v.id)).w}">
 <meta property="og:image:height" content="${ogSizeFor(wideThumb(list[0].v.id)).h}">
 <meta name="twitter:card" content="summary_large_image">
@@ -2905,7 +2907,7 @@ function simplePageHtml({ lang, selfUrl, altUrl, koUrl, title, h1, desc, body, k
 <meta property="og:title" content="${escHtml(h1)}">
 <meta property="og:description" content="${escHtml(desc)}">
 <meta property="og:url" content="${selfUrl}">
-${ogImage ? `<meta property="og:image" content="${ogImage}">\n<meta property="og:image:width" content="${ogSizeFor(ogImage).w}">\n<meta property="og:image:height" content="${ogSizeFor(ogImage).h}">\n<meta name="twitter:card" content="summary_large_image">` : '<meta name="twitter:card" content="summary">'}
+${ogImage ? `<meta property="og:image" content="${sqOg(ogImage)}">\n<meta property="og:image:width" content="${ogSizeFor(sqOg(ogImage)).w}">\n<meta property="og:image:height" content="${ogSizeFor(sqOg(ogImage)).h}">\n<meta name="twitter:card" content="summary_large_image">` : '<meta name="twitter:card" content="summary">'}
 <link rel="icon" href="${SITE}/icons/icon-192.png" type="image/png">
 <link rel="preconnect" href="https://i.ytimg.com">
 <link rel="stylesheet" href="${SITE}/song-page.css?v=${SONG_CSS_V}">
