@@ -261699,6 +261699,29 @@
     },
     "discography": [
       {
+        "title": "LUCKSMITH VOL.6",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/66/204/15166204_20261116112919_500.jpg",
+        "releaseDate": "2026.11.18",
+        "trackCount": 2,
+        "titleTrack": "Eternity, Love, Trust",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Eternity, Love, Trust",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Eternity, Love, Trust (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15166204"
+      },
+      {
         "title": "By your side",
         "type": "싱글",
         "releaseDate": "2023.11.23",
