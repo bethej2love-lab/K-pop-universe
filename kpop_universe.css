@@ -5944,3 +5944,25 @@
   #gc-discog-row .seg-btn{font-size:11.5px;}
   .gc-discog-item-title{font-size:12.5px;}
 }
+
+/* ── 웹 카드 3차 조정(2026-11-18 사용자 지정) ────────────────────────────────────────
+   한글명 13.5→14.5·영문명 12.5→13.5 · 구독자 수 11.5→10.5 · '좋아해요' 줄 13→12 ·
+   흰색 통일: 제목(그룹 한글명)만 불투명 #d8e4f6, 보조 글(앨범명·'이번 주 흔적' 줄)은 같은 색 85%(흔적 줄이 불투명 #ccd8ee라 튀었다) ·
+   싱글·연도 줄과 커버 사이 5→7 · DISCOGRAPHY 머리줄과 커버 사이(벙 뜸) 줄임 · 팬덤 줄과 아래 구분선 사이 24→14 */
+@media (hover:hover) and (pointer:fine){
+  #gc-name,#tn{font-size:14.5px;}
+  .gc-en-inline{font-size:13.5px;}
+  .gc-link-count{font-size:10.5px;}
+  #side-panel .gc-status-inner{font-size:12px;}
+  .gc-status-inner.type-traces{color:rgba(216,228,246,0.85);}
+  .gc-discog-item-title{color:rgba(216,228,246,0.85);}
+  .gc-discog-type{margin-top:7px;}
+  .gc-discog-hd{margin-bottom:6px;}
+  #side-panel #gc-discog-row{margin-top:14px!important;}
+  /* 머리줄~커버 사이가 벙 떴던 건 활동기 묶음(뒷장 커버가 오른쪽 위로 부채꼴) 몫의 위 여백 22px 때문 — 부채꼴을 조금 눕혀(4·8°→3·5°, 호버 6·10°→4·5.5°) 여백 16px로 */
+  .gc-discog-strip.has-stacks{padding-top:16px;}
+  .gc-discog-deck-back.d1{transform:translate(11px,-3px) rotate(3deg);}
+  .gc-discog-deck-back.d2{transform:translate(19px,-4px) rotate(5deg);}
+  .gc-discog-stack:hover .gc-discog-deck-back.d1{transform:translate(13px,-4px) rotate(4deg);}
+  .gc-discog-stack:hover .gc-discog-deck-back.d2{transform:translate(22px,-5px) rotate(5.5deg);}
+}
