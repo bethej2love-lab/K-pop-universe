@@ -23967,19 +23967,26 @@ function _openFeedListOverlay(title,sub,songs,ctx){
     // px로 못박는다 — 이러면 썸네일에 박힌 이름/자막도 안 잘리고 겹침도 없음(2026-08-03 확인). 제목을
     // 다시 보이게 하면서(2026-08-06) 썸네일 비율분만 못박으면 제목 줄이 들어갈 자리가 없어 잘리거나
     // 다음 행이랑 겹치므로, 실제 렌더된 제목 높이도 같이 재서 더해준다.
-    newItems.forEach(it=>{
+    const _applyItemH=it=>{
       const w=it.getBoundingClientRect().width;
+      if(!w)return false; // 아직 레이아웃 전(width 0) — 아래에서 다음 프레임에 재시도
       const titleH=it.querySelector('.tv-sm-title')?.getBoundingClientRect().height||0;
       const metaEl=it.querySelector('.gc-ch-meta');
       const metaH=metaEl?Math.max(metaEl.getBoundingClientRect().height,20):0;
       // 태깅 줄(_songWhoLine, 2026-10-01)도 높이에 넣는다 — 안 넣으면 고정 높이에 잘려 안 보인다
       const whoEl=it.querySelector('.tv-with-line');
       const whoH=whoEl?Math.ceil(whoEl.getBoundingClientRect().height)+4:0;
-      if(!w)return;
       const thumbH=it.classList.contains('is-short')?w*16/9:w*9/16;
       it.style.height=Math.ceil(thumbH+titleH+metaH+whoH)+'px';
       _placeDurBadge(it,thumbH); // 재생시간 배지를 썸네일 밑변에 맞춤
       _placeProgBar(it,thumbH);
+      return true;
+    };
+    // ⚠️ 첫 렌더 때 패널이 아직 레이아웃 전(모바일 슬라이드업 중·display 전환 직후)이면 width=0이라 높이가 안 박혀
+    //    썸네일 비율이 깨진다(2026-11-18 사용자 "MMA 처음 열면 2026 무대 아래 썸네일 비율 안 맞고, 탭 다시 누르면 정상").
+    //    0이면 건너뛰지 말고 다음 프레임(레이아웃 확정 후)에 다시 박는다.
+    newItems.forEach(it=>{
+      if(!_applyItemH(it))requestAnimationFrame(()=>requestAnimationFrame(()=>_applyItemH(it)));
     });
     if(rendered<orderedSongs.length){grid.appendChild(sentinel);observer.observe(sentinel);}
     else observer.disconnect();
