@@ -5835,3 +5835,18 @@
   #adm-undo-list .aul-info{font-size:12.5px;}
   #adm-undo-list .aul-btn{font-size:12.5px;}
 }
+
+/* ── 웹 무대 창 공용(2026-11-18) — app.js _STAGE_WINS가 열린 콘텐츠 창에 .stage-win을 붙인다(웹 ≥1024에서만).
+   가운데 작은 창 + 어두운 배경 → 카드 왼쪽 무대에 붙는 패널. 자리(left/right)는 _swPlace, 차례는 _stageOrder(뒤로 간 창은 .stage-back).
+   각 창의 id 규칙(가운데 정렬·배경)보다 이겨야 해서 !important. 창 안 패널(첫 자식)은 그대로 쓰되 무대 높이에 맞춘다. */
+@media(min-width:1024px){
+  .stage-win{top:64px!important;bottom:0!important;padding:44px 28px 20px!important;background:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+    align-items:flex-start!important;justify-content:flex-end!important;pointer-events:none;transition:opacity .2s ease,transform .22s ease;}
+  .stage-win>*:first-child{pointer-events:auto;max-height:100%!important;box-sizing:border-box;box-shadow:0 12px 44px rgba(0,0,0,0.5);margin:0!important;}
+  .stage-win.stage-back{opacity:0;transform:translateX(24px);visibility:hidden;}
+  /* 곡 영상 목록은 무대 높이를 다 쓴다(예전 가운데 창 min(85vh,780)) */
+  #gc-track-videos-overlay.stage-win #gc-track-videos-sheet{height:100%;width:100%;max-width:960px;} /* 무대가 넓으면 빈칸 대신 창이 채운다(1920에서 640 고정이면 왼쪽 370px가 비었다) */
+  /* 공용 무대 창이 앞이면 다른 무대 창은 비킨다(재생 화면은 소리 그대로) */
+  body.stage-front-win #yt-lightbox.open{opacity:0;visibility:hidden;pointer-events:none;}
+  body.stage-front-win :is(#gc-discog-detail,#feed-list-overlay,#venue-overlay,#trophy-overlay,#igv-overlay).open{opacity:0;transform:translateX(24px);visibility:hidden;}
+}

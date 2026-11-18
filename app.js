@@ -13658,6 +13658,7 @@ function _stageWide(){return window.innerWidth>=1024;}
 function _setStageFront(w){
   if(!_stageWide()){delete document.body.dataset.stageFront;return;}
   document.body.dataset.stageFront=w;
+  try{_stageWinBackSync();}catch(e){}
 }
 // 무대에 올라간 창의 차례(2026-10-28 목록 창도 무대로) — 'alb'(앨범)·'list'(목록 창)·'venue'(공연·공연장)·'trophy'(트로피)·'igv'(인스타 사진) — 아래 _swOpen. 재생 화면('lb')은 늘 맨 앞 후보라 따로 둔다.
 // 창 하나를 닫으면 남은 것 중 가장 나중에 연 창이 다시 앞으로 온다(재생 화면이 열려 있으면 재생 화면).
@@ -13670,6 +13671,44 @@ function _stageClose(w){
 }
 // 재생 화면을 닫을 때 — 뒤에 비켜 있던 창 중 가장 나중 것을 앞으로
 function _stageAfterLb(){_setStageFront(_stageOrder[_stageOrder.length-1]||'alb');}
+// ── 무대 창 자동 등록(2026-11-18 사용자 "웹은 화면이 넓으니 특수한 경우 아니면 팝업·창 없이 다 패널로") ─────────────────────
+// 가운데 작은 창 + 어두운 배경으로 뜨던 콘텐츠 창을 **여닫는 코드는 그대로 두고**, .open 클래스 변화를 한 곳에서 지켜봐 웹(≥1024)이면
+// 무대(카드 왼쪽 ~ 나침반 오른쪽)에 붙인다. 차례는 다른 무대 창(재생·앨범·목록·공연·트로피·인스타)과 같은 _stageOrder, 뒤로 간 창은
+// .stage-back(숨김, 닫지 않음). 새 콘텐츠 창은 여기 목록에 한 줄 + index.html에 그 overlay 하나면 된다. 확인 창(confirm·prompt·로그인)은
+// 가운데가 맞으니 넣지 않는다. 폰·태블릿(<1024)은 예전 그대로(바텀시트·가운데 창).
+const _STAGE_WINS={'gc-track-videos-overlay':'song','col-card-overlay':'col','uc-card-overlay':'uccol','debut-card-overlay':'debut','profile-overlay':'profile'};
+const _STAGE_WIN_KEYS=new Set(Object.values(_STAGE_WINS));
+function _stageWinBackSync(){
+  const front=document.body.dataset.stageFront||'';
+  document.body.classList.toggle('stage-front-win',_STAGE_WIN_KEYS.has(front));
+  for(const id in _STAGE_WINS){
+    const ov=document.getElementById(id);if(!ov||!ov.dataset.onStage)continue;
+    ov.classList.toggle('stage-back',front!==_STAGE_WINS[id]);
+  }
+}
+function _stageWinSync(ov){
+  const key=_STAGE_WINS[ov.id];if(!key)return;
+  const on=ov.classList.contains('open')&&_stageWide();
+  if(on&&!ov.dataset.onStage){
+    ov.dataset.onStage='1';ov.classList.add('stage-win');
+    _stageOpen(key);_swPlace(ov);
+    if(!_swT[key])_swT[key]=setInterval(()=>_swPlace(ov),400);
+  }else if(!on&&ov.dataset.onStage){
+    delete ov.dataset.onStage;ov.classList.remove('stage-win','stage-back');
+    clearInterval(_swT[key]);_swT[key]=null;ov.style.left='';ov.style.right='';
+    _stageClose(key);
+  }
+}
+{
+  const _swinObserve=()=>{
+    const mo=new MutationObserver(muts=>muts.forEach(m=>_stageWinSync(m.target)));
+    for(const id in _STAGE_WINS){const el=document.getElementById(id);if(el){mo.observe(el,{attributes:true,attributeFilter:['class']});_stageWinSync(el);}}
+    // 창이 열린 채 폭이 1024를 넘나들면 무대에 붙이거나 떼기
+    window.addEventListener('resize',()=>{for(const id in _STAGE_WINS){const el=document.getElementById(id);if(el)_stageWinSync(el);}},{passive:true});
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',_swinObserve,{once:true});
+  else _swinObserve();
+}
 // 무대 자리 — 카드 패널(오른쪽) 왼쪽 ~ 왼쪽에 붙은 탐험 패널 오른쪽
 function _stageRegion(){
   let right=window.innerWidth;
@@ -13719,7 +13758,7 @@ function _flStageClose(){
 // 하나라도 열리면 440px로 줄어 무대 자리를 내주고, 닫히면 다시 넓어진다. 여는 길이 많아서(카드 클릭·검색·딥링크·재생목록 넘김·
 // 뒤로가기…) 호출부마다 부르지 않고 **이 창들의 class 변화를 한 곳에서 지켜본다**(MutationObserver). 폰·태블릿(<1024)은 그대로.
 // ⚠️ 폭이 바뀌면 칸 수가 바뀌어 글이 다시 흐르므로, 보고 있던 자리(위쪽에 걸친 요소)를 기억했다가 같은 높이로 되돌린다.
-const _FW_BLOCKERS=['side-panel','member-panel','conn-panel','yt-lightbox','feed-list-overlay','gc-discog-detail','venue-overlay','trophy-overlay','igv-overlay',
+const _FW_BLOCKERS=['gc-track-videos-overlay','col-card-overlay','debut-card-overlay','profile-overlay','side-panel','member-panel','conn-panel','yt-lightbox','feed-list-overlay','gc-discog-detail','venue-overlay','trophy-overlay','igv-overlay',
   'uc-card-overlay','adm-home-overlay','hnn-overlay','vm-overlay','gp-overlay'];
 // 좁은 웹 화면의 재생 배치(2026-11-04 Codex 검수122차 — 약 844px에서 카드+재생이면 영상 138×78, Up Next가 덮음).
 //  ① 남는 자리가 너무 좁으면(나침반+카드를 빼고 480px 미만) 영상이 나침반 위를 덮는다(body.lb-cover-feed) — 1024에서 셋 다 열면 144px였다.
@@ -13759,7 +13798,7 @@ function _fwWidth(){
   if(!_FW_BLOCKERS.some(open))return mode==='wide'?Math.min(1440,W-120):Math.min(960,W-360);
   if(mode==='normal')return 440;
   const cards=['side-panel','member-panel','conn-panel'].filter(open).length*(document.body.classList.contains('card-wide')?640:440);
-  const stage=['yt-lightbox','feed-list-overlay','gc-discog-detail','venue-overlay','trophy-overlay','igv-overlay','uc-card-overlay'].some(open);
+  const stage=['yt-lightbox','feed-list-overlay','gc-discog-detail','venue-overlay','trophy-overlay','igv-overlay','uc-card-overlay',...Object.keys(_STAGE_WINS)].some(open); // 공용 무대 창(_STAGE_WINS)도 가운데 자리가 필요하다(2026-11-18)
   return Math.max(440,Math.min(1200,W-cards-(stage?560:0)));
 }
 function _fwBtnSync(){
