@@ -5930,7 +5930,7 @@ async function _lbUpdateChartChips(s,pa){
 // 가로 재생(브라우즈) 화면에서 출연자를 텍스트 칩 대신 동그란 프로필 + 이름 줄로 보여준다. 누르면 예전 칩과 같은 하프카드.
 // 쇼츠(스와이프) 화면은 상단 바의 앵커 텍스트를 그대로 쓴다(그쪽은 CSS로 이 줄을 숨김). 데이터는 _lbUpdateMemberInfo가 이미 정리한 것.
 // 배경: 그룹 고유색을 화면 위쪽에 은은하게(--lb-tint) — 스포티파이가 앨범 색을 까는 것처럼 "누구 영상인지"가 색으로 먼저 읽힌다.
-function _lbRenderPeople({artist,groupKo,gName,multi,withList,anchorG,fullTagged}){
+function _lbRenderPeople({artist,groupKo,gName,multi,withList,anchorG,fullTagged,cat}){
   const box=document.getElementById('yt-lb-people');if(!box)return;
   const isKo=currentLang==='ko';
   const items=[],seen=new Set();
@@ -5942,8 +5942,14 @@ function _lbRenderPeople({artist,groupKo,gName,multi,withList,anchorG,fullTagged
   // "뮤비에 출연자 정보가 왜 없어? 그룹이면 멤버도 같이"). 태그가 있으면(전원 태깅) 태그 그대로, 없으면 현재 멤버.
   if(!artist&&gName&&GROUPS[groupKo]&&!(multi||[]).length){
     const tagged=(fullTagged||[]).filter(Boolean);
-    const _dis=!!GROUPS[groupKo].disbanded; // 해체 그룹은 전원이 '전 멤버'라 개인 탈퇴자만 뺀다
-    (tagged.length?tagged:ARTISTS.filter(a=>{const gi=(a.groups||[]).find(g=>g.ko===groupKo);if(a.group.ko!==groupKo&&!gi)return false;return _dis?!(gi&&gi.left)&&!(a.group.ko===groupKo&&a.left):!_isFormerOf(a,groupKo);})).forEach(addM);
+    // 태그가 있으면(전원 태깅) 그대로. 태그가 없을 때 현재 멤버 전원으로 펴는 건 그룹 MV·무대엔 맞지만(2026-10-27), **일부만 나온
+    // 콜라보/클립엔 틀리다**(2026-11-19 사용자 "일부만 태깅인데 전체 멤버가 한 명씩 다 뜬다"). 그래서 기본은 펴되(category가 없을 때도
+    // MV 기능 유지), **일부만 나온 증거(게스트가 있음 OR 비공연 분류 other/variety/show)가 있으면 억제** — 그땐 그룹 칩 하나만 둔다.
+    const partial=(withList||[]).length>0||cat==='other'||cat==='variety'||cat==='show';
+    if(tagged.length||!partial){
+      const _dis=!!GROUPS[groupKo].disbanded; // 해체 그룹은 전원이 '전 멤버'라 개인 탈퇴자만 뺀다
+      (tagged.length?tagged:ARTISTS.filter(a=>{const gi=(a.groups||[]).find(g=>g.ko===groupKo);if(a.group.ko!==groupKo&&!gi)return false;return _dis?!(gi&&gi.left)&&!(a.group.ko===groupKo&&a.left):!_isFormerOf(a,groupKo);})).forEach(addM);
+    }
   }
   (withList||[]).forEach(it=>{if(it.group)addG(it.group);else addM(_findArtistByConnName(it.n,artist?artist.group.ko:groupKo));});
   box.replaceChildren();
@@ -6141,7 +6147,7 @@ function _lbUpdateMemberInfo(){
     chip.textContent=label;
     withEl.appendChild(chip);
   });
-  _lbRenderPeople({artist,groupKo,gName,multi:_multiChips?_multi:[],withList:_withList,anchorG:_anchorG,fullTagged:_multiChips?[]:_multi});
+  _lbRenderPeople({artist,groupKo,gName,multi:_multiChips?_multi:[],withList:_withList,anchorG:_anchorG,fullTagged:_multiChips?[]:_multi,cat:s&&(s.category||s.type)||null});
   _lbAmbientTint(s);
   const hasCollab=!!(artist&&_getCollabMembers(artist).length>0);
   connBtn.style.display=hasCollab?'':'none';
