@@ -25,6 +25,16 @@ check('보존: 따옴표 안에서 곡이 잡히면 그대로(단일 무대)', (
 check('보존: 투어명과 같은 이름의 곡을 실제로 부른 무대(따옴표 안)', () => {
   assert.deepEqual(run("[직캠] ATEEZ 'IN YOUR FANTASY' 성화 직캠 @MCOUNTDOWN", { infantasy: 'in your fantasy' }), ['infantasy']);
 });
+check('지명 곡(seoul): in·from·@ 뒤나 Music Awards 앞은 장소 — 곡 아님(2026-11-18 방탄 RM seoul)', () => {
+  assert.deepEqual(run("[BANGTAN BOMB] RM's Visit to 2022 BTS EXHIBITION : Proof in Seoul - BTS (방탄소년단)", { seoul: 'seoul' }), []);
+  assert.deepEqual(run("[EPISODE] RM 'Live in Seoul' Concert Sketch - BTS (방탄소년단)", { seoul: 'seoul' }), []);
+  assert.deepEqual(run('One Bus Ride from Seoul: BTS Spots & K-Drama Sets | Hidden Trip 2 EP.6', { seoul: 'seoul' }), []);
+  assert.deepEqual(run('2024 Seoul Music Awards 하이키', { seoul: 'seoul' }), []);
+});
+check('보존: 지명 곡을 실제로 부른 무대(따옴표·괄호 부제)', () => {
+  assert.deepEqual(run("[직캠] 하이키 'Seoul' 휘서 직캠 @MCOUNTDOWN", { seoul: 'seoul' }), ['seoul']);
+  assert.deepEqual(run('H1-KEY Seoul (Such a Beautiful) fancam', { seoul: 'seoul' }), ['seoul']);
+});
 check('따옴표 없는 제목·곡 없음은 건드리지 않는다', () => {
   assert.deepEqual(run('250716 ATEEZ SEONGHWA Shaboom fancam', { shaboom: 'shaboom' }), ['shaboom']);
   assert.deepEqual(refineSongsByTitle('아무 제목', [], () => []), []);

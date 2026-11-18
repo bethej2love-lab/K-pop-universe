@@ -328,9 +328,26 @@ function isNonPerformance(v) {
   if ((v.content_formats || []).some(f => /비하인드|variety|예능/.test(f))) return true;
   return NON_PERF_RE.test(String(v.title || ''));
 }
+// 지명 곡(2026-11-18 사용자 "정국 seoul 직캠 페이지 뭐임 — seoul은 노래가 아니잖아"): 방탄 디스코의 RM 'seoul' 때문에 'Live in Seoul'·'Proof in Seoul'·
+// 'One Bus Ride from Seoul' 영상이 곡 'seoul'로 묶여 그룹·멤버 곡 페이지가 생겼다. 지명은 영상 제목에 장소로 훨씬 자주 나온다 —
+// 앞에 in·from·at·@ 등이 붙거나 뒤에 Music Awards·Festival·Concert 등이 붙으면 장소로 보고 곡에서 뺀다(따옴표 안 'Seoul'·"서울"은 곡).
+const PLACE_SONG_RE = { seoul: 'seoul|서울', '서울': 'seoul|서울', tokyo: 'tokyo|도쿄|東京', '도쿄': 'tokyo|도쿄|東京', paris: 'paris|파리', '파리': 'paris|파리',
+  london: 'london|런던', '런던': 'london|런던', busan: 'busan|부산', '부산': 'busan|부산', newyork: 'new\\s*york|뉴욕', '뉴욕': 'new\\s*york|뉴욕',
+  hongkong: 'hong\\s*kong|홍콩', jeju: 'jeju|제주', '제주': 'jeju|제주', bangkok: 'bangkok|방콕', berlin: 'berlin|베를린', miami: 'miami|마이애미',
+  lasvegas: 'las\\s*vegas|라스베가스', seoulcity: 'seoul\\s*city', osaka: 'osaka|오사카', manila: 'manila|마닐라', jakarta: 'jakarta|자카르타' };
+const PLACE_PRE = '(?:\\b(?:in|from|at|to|of|across|around|near|live|encore|tour|day|night)\\s+|@\\s*|에서\\s*|in\\s+the\\s+)';
+const PLACE_POST = '(?:\\s+(?:music\\s+awards?|awards?|festival|fest|fashion|concert|tour|forest|jazz|world|olympic|station|global|international|k-?pop|countdown|tower|land|trip|vlog|edition|stage|dome|arena|stadium|공연|콘서트|투어|가요|여행|브이로그))';
+function placeSongIsPlace(t, b) {
+  const nm = PLACE_SONG_RE[b]; if (!nm) return false;
+  const bare = t.replace(QUOTED_RE, m => new RegExp('^.(?:' + nm + ').$', 'i').test(m) ? ' ' : m); // 따옴표로 감싼 지명 하나는 곡 표기 — 빼고 본다
+  if (bare !== t && !new RegExp(nm, 'i').test(bare)) return false; // 지명이 따옴표 안에만 있으면 곡
+  return new RegExp(PLACE_PRE + '(?:' + nm + ')', 'i').test(bare) || new RegExp('(?:' + nm + ')' + PLACE_POST, 'i').test(bare);
+}
 function refineSongsByTitle(title, bs, f) {
   if (!bs || !bs.length) return bs;
   const t = String(title || '');
+  bs = bs.filter(x => !placeSongIsPlace(t, x));
+  if (!bs.length) return bs;
   const quoted = [...t.matchAll(QUOTED_RE)].map(m => m[1]);
   if (!quoted.length) return bs; // 따옴표 없는 제목은 근거가 약해 그대로
   // 따옴표 안 글자만 떼어 다시 곡을 찾을 땐 **따옴표를 다시 씌운다** — 따옴표 없는 글에선 4글자 미만 곡명(神메뉴·락·특)을 믿지 않는 규칙 때문에 qbs가 비어,
@@ -440,4 +457,4 @@ const EXTRA_CSS =`.vid-list{padding-left:20px;margin:0;}.vid-list li{font-size:1
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
 .cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}`;
 
-module.exports = { STRUCTURAL_TRACKS, isNonPerformance, refineSongsByTitle, vidCards, loadStatic, packCredits, bilingualSongTitle, prefetch, groupExtra, memberExtra, ages, EXTRA_CSS, fmtViews, fmtVC, prefetchGroupVideos, buildSongs, roundViews, esc };
+module.exports = { placeSongIsPlace, STRUCTURAL_TRACKS, isNonPerformance, refineSongsByTitle, vidCards, loadStatic, packCredits, bilingualSongTitle, prefetch, groupExtra, memberExtra, ages, EXTRA_CSS, fmtViews, fmtVC, prefetchGroupVideos, buildSongs, roundViews, esc };
