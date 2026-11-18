@@ -1,0 +1,17 @@
+-- [실행됨 2026-11-18 Opus, 제목 전수 검토 후] 2026-11-18 Claude 검수 — 동명이인 조회(성 뗀 이름 겹침 298쌍) 결과. DB 쓰기 안 함. 각 update에 현재값 조건 포함.
+-- ① 가수 이승환 키 ← ATBO 정승환 직캠 14건 → ATBO/정승환
+-- ② 히스토리 장이정 ← 휘브(WHIB) 이정·김준민 MC 7건 → 휘브/김준민·이정
+-- ③ 성한빈 키 ← 판타지보이즈 이한빈 소년판타지 5건 → 판타지보이즈/이한빈
+-- ④ 워너원 박우진 ← KIM WOOJIN FULLCAM 1건 → 스트레이키즈/김우진(앞서 같은 유형 2건 처리와 동일)
+-- ⑤ 무관 10건: 아이오아이 임나영←가수 김나영 4 / 베이비복스 심은진←안은진 X 성시경(더 시즌즈) 2 / 러블리즈 정예인←"역적 예인 장녹수(이하늬)" 1 / 다이아 유니스←"니스 해변" 1 / 아이브 안유진←에이트 유진(eite YUJIN) 1·고유진 MV 1
+create table if not exists public.bak_20261118_collide1 as select id, group_ko, members, with_members, content_flag, flag_source, flagged_at from yt_channel_videos where id in ('OIsgHBHR3BI','O8Mg4xBZ2wI','NOKt7bwJNSs','LeQb2d5kAkI','AkDY4AsyELY','5Qm7tA7XQzo','oWEUBHUrwKI','9HgnktipPb0','9Wxa3lKPuqc','_Aepgj4BaF8','bxdUuKkRAFo','cdXqjRdTv0I','JZBWIaS7zEs','y3LVIUGpZZ4','1kAq1Ee2RS4','c27Y6rwnxzQ','RJwTUPGCC1Y','VCKarLccGPo','8hKxD85jWTI','Q-haEgoNua8','e5V2oiv1KQ8','RanYSrbjgr4','BjAMaDgxLz0','7kSnSQ3wUkQ','DBLmOZJPueQ','SCF8kiPOoZs','oYcB89xfoX8','bfg03di0-ks','jMtICYJ6Sw0','3KMIZAWn92k','8H3ofgH7eys','cx-gAFQpd0Q','CD0EyvYcP88','32a5EtzIoOE','3k8hsp-brvI','1-74ADjBtkM','4k9ZlO8dVyE');
+alter table public.bak_20261118_collide1 enable row level security;
+revoke all on public.bak_20261118_collide1 from anon, authenticated;
+update yt_channel_videos set group_ko='ATBO', members=array['정승환'] where id in ('OIsgHBHR3BI','O8Mg4xBZ2wI','NOKt7bwJNSs','LeQb2d5kAkI','AkDY4AsyELY','5Qm7tA7XQzo','oWEUBHUrwKI','9HgnktipPb0','9Wxa3lKPuqc','_Aepgj4BaF8','bxdUuKkRAFo','cdXqjRdTv0I','JZBWIaS7zEs','y3LVIUGpZZ4') and group_ko='이승환' and content_flag is null and tags_manual=false;
+update yt_channel_videos set group_ko='휘브', members=array['김준민','이정'] where id in ('1kAq1Ee2RS4','c27Y6rwnxzQ','RJwTUPGCC1Y','VCKarLccGPo','8hKxD85jWTI','Q-haEgoNua8','e5V2oiv1KQ8') and group_ko='히스토리' and members=array['장이정'] and content_flag is null and tags_manual=false;
+update yt_channel_videos set group_ko='판타지보이즈', members=array['이한빈'] where id in ('RanYSrbjgr4','BjAMaDgxLz0','7kSnSQ3wUkQ','DBLmOZJPueQ','SCF8kiPOoZs') and group_ko='성한빈' and content_flag is null and tags_manual=false;
+update yt_channel_videos set group_ko='스트레이키즈', members=array['김우진'] where id='oYcB89xfoX8' and group_ko='워너원' and content_flag is null and tags_manual=false;
+update yt_channel_videos set content_flag='무관', flag_source='manual', flagged_at=now() where id in ('bfg03di0-ks','jMtICYJ6Sw0','3KMIZAWn92k','8H3ofgH7eys','cx-gAFQpd0Q','CD0EyvYcP88','32a5EtzIoOE','3k8hsp-brvI','1-74ADjBtkM','4k9ZlO8dVyE') and content_flag is null and tags_manual=false;
+select group_ko, content_flag, count(*) from yt_channel_videos where id in ('OIsgHBHR3BI','O8Mg4xBZ2wI','NOKt7bwJNSs','LeQb2d5kAkI','AkDY4AsyELY','5Qm7tA7XQzo','oWEUBHUrwKI','9HgnktipPb0','9Wxa3lKPuqc','_Aepgj4BaF8','bxdUuKkRAFo','cdXqjRdTv0I','JZBWIaS7zEs','y3LVIUGpZZ4','1kAq1Ee2RS4','c27Y6rwnxzQ','RJwTUPGCC1Y','VCKarLccGPo','8hKxD85jWTI','Q-haEgoNua8','e5V2oiv1KQ8','RanYSrbjgr4','BjAMaDgxLz0','7kSnSQ3wUkQ','DBLmOZJPueQ','SCF8kiPOoZs','oYcB89xfoX8','bfg03di0-ks','jMtICYJ6Sw0','3KMIZAWn92k','8H3ofgH7eys','cx-gAFQpd0Q','CD0EyvYcP88','32a5EtzIoOE','3k8hsp-brvI','1-74ADjBtkM','4k9ZlO8dVyE') group by 1,2;
+-- 되돌리기: update yt_channel_videos v set group_ko=b.group_ko, members=b.members, with_members=b.with_members, content_flag=b.content_flag, flag_source=b.flag_source, flagged_at=b.flagged_at from public.bak_20261118_collide1 b where v.id=b.id;
+-- 키 철자 확인됨(2026-11-18 조회): ATBO/정승환 303행·휘브/이정 93행·판타지보이즈/이한빈 61행이 기존 정상 키.

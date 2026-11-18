@@ -1,0 +1,9 @@
+-- [실행됨 2026-11-18 Opus, 제목 전수 검토 후] 2026-11-18 Claude 검수 — 자동 규칙이 '무관'으로 잘못 숨긴 정상 영상 복구 18건 (flag_source='auto' 행만)
+-- 근거: 제목에 그룹명·멤버명이 있는 본인 콘텐츠. ZB1 성한빈 '너란 봄' 스프링피버 OST 3(2026-10) / NOWZ 진혁 BLAZE 최강야구 응원단 11(2026-10-22, 자체 팬채널 BLAZE-JH) / 에이프릴 이나은 퀴즈 위의 아이돌·TMI NEWS 2(2026-09-28, 가드 도입 당일 자동 처리) / 키스오브라이프 쥴리 '현생님들3' 1 / FIFTY FIFTY MIC& 스프링피버 OST 1
+-- 되돌리기용 백업: 변경 전 값 보존
+create table if not exists public.bak_20261118_unflag1 as select id, group_ko, members, content_flag, flag_source, flagged_at from yt_channel_videos where id in ('PkU4_7xDEAo','cdaUlGMZEOw','CBOH7xhgMCg','CKx0cCtewbA','jDVQ6so3bgs','8BkJ2QclL7M','-RJuBnrcDQk','vAmOvVdlVa0','9cSNW8X58_c','iE-qGeyShvM','1dJyQyiUIzs','KuzB0sGAXhc','qgXIhv6ezbY','fFBlGri41-8','cspIrzwAKPA','REf0BmV-7GM','RLO1il-CWrk','PJwYiK8Kr-g');
+alter table public.bak_20261118_unflag1 enable row level security;
+revoke all on public.bak_20261118_unflag1 from anon, authenticated;
+update yt_channel_videos set content_flag=null, flag_source=null, flagged_at=null where id in ('PkU4_7xDEAo','cdaUlGMZEOw','CBOH7xhgMCg','CKx0cCtewbA','jDVQ6so3bgs','8BkJ2QclL7M','-RJuBnrcDQk','vAmOvVdlVa0','9cSNW8X58_c','iE-qGeyShvM','1dJyQyiUIzs','KuzB0sGAXhc','qgXIhv6ezbY','fFBlGri41-8','cspIrzwAKPA','REf0BmV-7GM','RLO1il-CWrk','PJwYiK8Kr-g') and content_flag='무관' and flag_source='auto' and tags_manual=false;
+select content_flag, count(*) from yt_channel_videos where id in ('PkU4_7xDEAo','cdaUlGMZEOw','CBOH7xhgMCg','CKx0cCtewbA','jDVQ6so3bgs','8BkJ2QclL7M','-RJuBnrcDQk','vAmOvVdlVa0','9cSNW8X58_c','iE-qGeyShvM','1dJyQyiUIzs','KuzB0sGAXhc','qgXIhv6ezbY','fFBlGri41-8','cspIrzwAKPA','REf0BmV-7GM','RLO1il-CWrk','PJwYiK8Kr-g') group by 1;
+-- 되돌리기: update yt_channel_videos v set content_flag=b.content_flag, flag_source=b.flag_source, flagged_at=b.flagged_at from public.bak_20261118_unflag1 b where v.id=b.id;

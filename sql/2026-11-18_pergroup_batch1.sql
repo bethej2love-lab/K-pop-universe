@@ -1,0 +1,10 @@
+-- [실행됨 2026-11-18 Opus, 제목 전수 검토 후] 2026-11-18 Claude 검수 — 그룹별 "제목에 그룹명도 태그 멤버 이름도 없는" 외부 출처 영상 점검(274개 그룹 조회, 9,618행 → 공식채널·영문명·별칭 제외 후 사람이 읽음) 결과 15건
+-- 무관 14건: 티아라 지연←드라마 얄미운사랑 임지연(2) / 티오원 제이유←브로콜리너마저 "Broccoli, you too?" 라이브(2) / 아홉 박한←"Han River" 워크샵(Alex) / 블랙핑크 로제←제인 로즈(JAIN ROS) / 빅스 엔←THE FIRST TAKE #N.E.O. / 아스트로 MJ·진진←주니지니 성대모사 / 에버글로우 이유←차노을&차성진 라디오 / 포미닛 허가윤·전지윤←골때리는그녀들 노윤주×윤태진 / 엑소 찬열·세훈←에픽하이·다비치 가사영상, 세나X세찬 먹방 / 우당탕탕소녀단 우정←성시경 더 시즌즈 / 더보이즈 케빈←영화 "영영" 배우 주연&시아
+-- 재배정 1건: 피프틴앤드 백예린 ← 에이프릴 채경이 백예린 곡을 부른 애창곡 라이브(rmDyUnoJpJM) → 에이프릴/윤채경
+create table if not exists public.bak_20261118_pergroup1 as select id, group_ko, members, with_members, content_flag, flag_source, flagged_at from yt_channel_videos where id in ('1GLaoGlTP8c','C0_9RNMVZ2U','29z3e6_UQMc','65H6KIYjW_k','5RJeiF2BoXY','cM1cc5Ss-XA','igsJZGtMCTg','kc1G00Z1SyY','KuoFDAbiIeQ','mLBN4pxYcyI','oGyYodnmcsY','olQH-N-pUDI','TJVB_Vy7sOE','tm0z9Nta5s8','rmDyUnoJpJM');
+alter table public.bak_20261118_pergroup1 enable row level security;
+revoke all on public.bak_20261118_pergroup1 from anon, authenticated;
+update yt_channel_videos set content_flag='무관', flag_source='manual', flagged_at=now() where id in ('1GLaoGlTP8c','C0_9RNMVZ2U','29z3e6_UQMc','65H6KIYjW_k','5RJeiF2BoXY','cM1cc5Ss-XA','igsJZGtMCTg','kc1G00Z1SyY','KuoFDAbiIeQ','mLBN4pxYcyI','oGyYodnmcsY','olQH-N-pUDI','TJVB_Vy7sOE','tm0z9Nta5s8') and content_flag is null and tags_manual=false;
+update yt_channel_videos set group_ko='에이프릴', members=array['윤채경'] where id='rmDyUnoJpJM' and group_ko='피프틴앤드' and members=array['백예린'] and content_flag is null and tags_manual=false;
+select group_ko, content_flag, count(*) from yt_channel_videos where id in ('1GLaoGlTP8c','C0_9RNMVZ2U','29z3e6_UQMc','65H6KIYjW_k','5RJeiF2BoXY','cM1cc5Ss-XA','igsJZGtMCTg','kc1G00Z1SyY','KuoFDAbiIeQ','mLBN4pxYcyI','oGyYodnmcsY','olQH-N-pUDI','TJVB_Vy7sOE','tm0z9Nta5s8','rmDyUnoJpJM') group by 1,2;
+-- 되돌리기: update yt_channel_videos v set group_ko=b.group_ko, members=b.members, content_flag=b.content_flag, flag_source=b.flag_source, flagged_at=b.flagged_at from public.bak_20261118_pergroup1 b where v.id=b.id;
