@@ -34,7 +34,7 @@ async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,ret
       document.querySelector('#gc-discog-strip .gc-discog-item')?.click();await S(1500);res.albOpen=on('gc-discog-detail');
       esc();await S(600);res.albAfter=on('gc-discog-detail');res.cardAfterAlb=on('side-panel');
       // ② 업데이트 소식 위에 링크 모음 — ESC는 맨 앞부터 하나씩, 카드는 남는다
-      _openUpdates();for(let i=0;i<20&&!(on('upd-overlay')&&document.body.dataset.stageFront==='upd');i++)await S(250);_openKpopLinks();for(let i=0;i<20&&!(on('kpop-links-overlay')&&document.body.dataset.stageFront==='links');i++)await S(250);await S(300);
+      _openUpdates();for(let i=0;i<20&&!on('upd-overlay');i++)await S(250);_openKpopLinks();for(let i=0;i<20&&!(on('kpop-links-overlay')&&document.body.dataset.stageFront==='links');i++)await S(250);await S(300);
       esc();await S(500);res.e1={links:on('kpop-links-overlay'),upd:on('upd-overlay'),card:on('side-panel')};
       esc();await S(500);res.e2={upd:on('upd-overlay'),card:on('side-panel')};
       // ③ 영상 칸은 카드보다 먼저 접힌다

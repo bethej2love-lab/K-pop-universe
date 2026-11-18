@@ -13831,7 +13831,7 @@ function _stageAfterLb(){_setStageFront(_stageOrder[_stageOrder.length-1]||'alb'
 // 2026-11-18 점검(사용자 "웹 기준 모든 패널이 창이 아니라 패널식인지"): 멤버 탐색·K-pop 링크 모음·Chemistry 고르기가 아직 가운데 창이었다 → 추가
 const _STAGE_WINS={'gc-track-videos-overlay':'song','col-card-overlay':'col','uc-card-overlay':'uccol','debut-card-overlay':'debut','profile-overlay':'profile','mx-overlay':'mx','kpop-links-overlay':'links','combo-overlay':'combo',
   // 누를 때 새로 만들어지는 창(2026-11-18 사용자 "인스타 전체 보기가 창으로 뜬다 — 다 다 다 패널로") — 아래 body 감시가 생기는 즉시 붙인다
-  'iga-overlay':'iga','ige-overlay':'ige','ecx-overlay':'ecx','upd-overlay':'upd'};
+  'iga-overlay':'iga','ige-overlay':'ige','ecx-overlay':'ecx'}; // 업데이트 소식(upd)은 공지라 가운데 창 그대로(2026-11-18 사용자)
 const _STAGE_WIN_KEYS=new Set(Object.values(_STAGE_WINS));
 function _stageWinBackSync(){
   const front=document.body.dataset.stageFront||'';
