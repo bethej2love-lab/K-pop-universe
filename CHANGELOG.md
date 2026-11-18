@@ -3,6 +3,18 @@
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
 
+## 2026-11-19 아침 (Claude Code/Opus 집 — CI 빨간불 근본 수정 + For You + cover_of 검수)
+- **✅ [CI] Data validation 빨간불 3종 근본 수정(24b15db, CI 초록 확인)** — 11-18부터 방치되던 것:
+  - `seo-ga-bot-filter`: 내가 `/all/` 템플릿에 빠졌던 gtag를 채워 템플릿 10→11이 돼 기대값 불일치 → 11로 갱신(루프가 11번째도 봇필터 검증, 110케이스 통과). 누락 애널리틱스 채운 게 맞음.
+  - `song-video-nonperf`: **[tools/seo_extra.js] `songStrongCategory`가 category만 봐서 실제 음방 무대가 'other'로 오면 곡 페이지에서 빠졌음** → 제목 서명(`{방송사}{6자리}방송`·Music Bank 등)이면 무대 인정(`MUSIC_SHOW_STAGE`, `&& !isNonPerformance`로 예능 '모아보기…방송'은 제외). sbs1 유지.
+  - `song-quote-match`: 11-18 '근거 강한 무대 2개 이상' 게이트와 11-17 테스트('무대 하나라도')가 충돌(CI 11-18부터 빨강) → 게이트(약한 곡 페이지 방지, 사용자 '정국 seoul')가 더 최신·의도된 것이라 테스트를 무대 2개+예능 1개로 갱신(예능 거르기 검증 보존).
+- **[app.js·css] #12 검색 쇼츠 세로 썸네일** — 검색 영상 항목(`.sr-vt`)이 쇼츠도 16:9 가로 틀에 cover라 좌우 검은 띠만 크게 보였음 → 쇼츠는 세로 틀(`.sr-vt.is-short` 34×60)+`_mountShortThumb` 하나로 통일(다른 화면과 같은 패턴).
+- **[app.js·css] #29 For You 같이 나온 사람 표기 + #26 즐찾 2+ 우선순위↑**(b4417e5) — `_feedWhoSub`에 `with_members`(함께 게스트, 메인 중복·솔로본인 제외, 최대 2명+외 n, 영어 화면 영문 이름). `_feedBiasMatchers.favCount`로 한 영상의 내 즐겨찾기 수를 세어 favNew 최애 묶음을 그 수로 정렬(같으면 최신순).
+- **#20 모아보기/시상식 패널화 = 이미 완료(코드 확인)** — `_openFeedListOverlay`(모아보기·컬렉션·차트)·`_swOpen('trophy'/'venue')` 전부 웹 ≥1024px에서 무대 패널. 그 아래 폭은 설계상 가운데 창/바텀시트. 추가 구현 불필요.
+- **✅ #32 cover_of 오태깅 22건 중 13건 정정(DB)** — `group_ko = any(cover_of_groups)`(자기가 자길 커버하는 논리 오류). **Type B 11건**(group_ko 맞음, cover_of에서 자기그룹 제거 → 진짜 원곡 남음): 드림노트·싸이커스·우주소녀·하이키·원어스(핑클)·비디씨(아이들)·CIX 배진영(비투비)·체리블렛(2PM)·CIX LME(엑소)·원위 KTL(→블랙핑크)·원위 DALLA(→있지). **Type A 2건**(group_ko 자체 틀림, 실연자 등록됨): 방탄→**티엔엑스**(TNX FIRE 커버)·엔시티드림→**엘라스트**(E'LAST Hot Sauce). 백업표 `coverof_fix_bak_20261119`·`coverof_gko_bak_20261119`(RLS 잠금), 되돌리기 `update yt_channel_videos v set cover_of_groups=b.cover_of_groups from coverof_fix_bak_20261119 b where v.id=b.id`(group_ko도 동일 패턴).
+  - ⏳ **HOLD 9건(정책 판단 필요)**: 실연자 미등록(TPST=엑소 나비소녀·RUBY=하츠투하츠 THE CHASE) → group_ko 못 바꿈, '외부인의 우리 곡 커버를 우리 그룹 페이지에 둘지' 정책 결정 필요 / 개인 커버(방탄 친구=건희·환웅, 투애니원=이도) → 무관 처리? / 멀티그룹 릴레이(레드벨벳 Feel My Rhythm·세븐틴 MAESTRO) group_ko 애매 / 애매(소녀시대 Kissing You Special Stage·효연 Girls·원위 Paris In The Rain 원곡 불명).
+- **[메모리] 집 작업 금지 기준 삭제(사용자 "집에서도 작업해도 돼")** — `project_kpop_home_laptop_quality`에 정정: 위치가 아니라 안전장치(백업·되돌리기·테스트·CI)가 문제였음. '집이라 멈춤' 금지.
+
 ## 2026-11-18 밤 (Claude Code/Sonnet 집 자율 — 인스타 로딩·크레딧 자동화·메일 폭탄 조사)
 - **[app.js] For You 인스타 선반 첫 두 장 즉시 로딩(사용자 "재방문 첫 화면 인스타 늦게 떠, 첫 사진이라도 빨리")**: `_igRenderRail`의 앞 2장 이미지를 `loading=eager`+`fetchpriority=high`로(나머지는 lazy 유지). 인스타 사진이 전부 lazy라 뷰포트 들어와야 로드되던 것. ⏳ 근본(인스타 fbcdn 직링크 ~160KB·만료, DB 조회 지연)은 측정·설계 필요 — 1차 체감 개선만.
 - **[.github/workflows/credits-daily.yml 신설] 작사작곡 크레딧 자동 수집(사용자 "수집기 없으면 만들어야지")**: 원인은 `melon_song_credits.mjs`(크레딧 수집기)를 부르는 워크플로가 없어 수동으로만 돈 것. 멱등 스크립트(이미 cr 채운 곡 건너뜀)라 매일 `--limit 2500 --apply`로 신보 크레딧만 처리 → groups/artists.json tracks[].cr 저장 → disco-daily와 같은 파생(slim·tracks_index) 한 커밋. KST 01:11(disco 00:11 뒤), 멜론 러너 차단은 continue-on-error(멱등이라 다음날 이어받음). ⏳ **확인 필요**: ①build_slim_data가 cr를 slim에 싣는지(앱 For You 반영 경로) ②For You '내 최애 소식'에 '최애 참여 신보 크레딧' 항목 ③신보 songId 채워지는 타이밍. 수동(workflow_dispatch) 1회 돌려 멜론 러너 차단 여부·수집량 검증 예정.
