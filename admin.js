@@ -85,6 +85,9 @@ const _YT_LIVE_SHOW_RE=/엠카운트다운|뮤직뱅크|인기가요|음악중�
 // 행사명만으론 축전·인사·수상 소감·레드카펫도 걸리므로 ① 행사명 ② '아티스트 - 곡' 대시 ③ 무대 아님 신호 없음 셋 다 요구.
 // MMA·MAMA·AAA는 일반 단어(마마무·EXO 곡 MAMA 등)와 겹쳐 연도가 붙은 꼴만 인정(shared.js _EVENT_SERIES re와 같은 원칙).
 const _YT_AWARD_STAGE_RE=/KGMA|KOREA\s*GRAND\s*MUSIC|MELON\s*MUSIC\s*AWARDS?|#?MMA\s*(?:19|20)\d\d|(?:19|20)\d\d\s*MMA\b|\bMAMA\s*AWARDS|\bMAMA\s*(?:19|20)\d\d|(?:19|20)\d\d\s*MAMA\b|MNET\s*ASIAN\s*MUSIC|ASIA\s*ARTIST\s*AWARDS?|#?AAA\s*(?:19|20)\d\d|(?:19|20)\d\d\s*AAA\b|GOLDEN\s*DISC|골든\s*디스크|서울\s*가요\s*대상|SEOUL\s*MUSIC\s*AWARDS?|한터\s*뮤직|HANTEO\s*MUSIC|THE\s*FACT\s*MUSIC|더팩트\s*뮤직|\bTMA\s*(?:19|20)\d\d|가요\s*대전|가요\s*대제전|가요\s*대축제|써클\s*차트|CIRCLE\s*CHART\s*(?:MUSIC\s*)?AWARDS?/;
+// 팬 공연 직캠 판정(_ytClassify 끝, 2026-11-18)용 — 공연 이름과 '무대 아님' 신호
+const _YT_FAN_STAGE_VENUE_RE=/축제|페스타|페스티벌|FESTIVAL|콘서트|CONCERT|\bTOUR\b|투어|팬콘|FAN\s*CON|쇼케이스|SHOWCASE|SUMMER\s*SONIC|KCON|드림\s*콘서트|DREAM\s*CONCERT|가요제|워터밤|WATER\s*BOMB|팬미팅|FAN\s*MEETING/i;
+const _YT_FAN_NOT_STAGE_RE=/등장|소리\s*질러|시구|시타|토크|게임|\bGAME\b|엔딩|ENDING|자기\s*소개|VCR|팬\s*싸|팬사인|FANSIGN|사인회|출근|퇴근|공항|AIRPORT|VLOG|브이로그|인터뷰|INTERVIEW|비하인드|BEHIND|MAKING|메이킹|리액션|REACTION|멘트|\bMENT\b|인사|소감|SPOILER|스포일러|예고|PREVIEW|TEASER|티저|RECAP|리캡|언박싱|UNBOXING|하이터치|HI-?TOUCH|M\s*&\s*G|MEET\s*(?:&|AND)\s*GREET|생일|BIRTHDAY|먹방|MUKBANG|Q\s*&\s*A|QNA|PLAYLIST|플레이리스트|모음|COMPILATION/i;
 const _YT_AWARD_NOT_STAGE_RE=/소감|SPEECH|축전|인사|GREETING|레드\s*카펫|RED\s*CARPET|비하인드|BEHIND|메이킹|MAKING|리허설|REHEARSAL|라인업|LINE\s*-?\s*UP|포토|PHOTO|백스테이지|BACKSTAGE|스케치|SKETCH|리액션|REACTION|도착|출근|퇴근|예고|PREVIEW|모먼트|MOMENT|브이로그|VLOG|\bCUT\b|컷|기자\s*회견|PRESS|화이팅|응원|틱톡|TIKTOK|인터뷰|INTERVIEW|후보|NOMINEE|부문|본상|신인상|인기상|공로상|베스트|올해의/;
 // 브이라이브/유튜브 라이브/위버스 라이브 등 "실시간 방송"(잡담·인스타 라이브·아프리카TV·트위치 다시보기 등)은
 // 제목에 "라이브"가 들어있어서 무대 직캠과 똑같이 라이브 탭으로 잡히는데, 실제로는 전혀 다른 콘텐츠라
@@ -167,6 +170,17 @@ function _ytClassify(title,{isShort=false}={}){
   if(_YT_LIVE_SHOW_RE.test(t))return'live';
   // 시상식·연말 무대: 행사명 + '아티스트 - 곡' 대시 + 무대 아님 신호 없음(위 상수 주석 참고)
   if(_YT_AWARD_STAGE_RE.test(t)&&!_YT_AWARD_NOT_STAGE_RE.test(t)&&/ - | – | — /.test(title||''))return'live';
+  // 팬이 찍은 공연·행사 무대(2026-11-18 사용자 "퍼포먼스로 잡혀야 하는데 기타가 너무 많다") — 최근 30일 기타 34,540건 중
+  // '직캠' 같은 낱말 없이 날짜·따옴표 곡명·공연 이름만 적은 팬 직캠이 많았다("[4K] 260802 'Runaway' 원이 리센느 | 영주 시원나잇 페스타",
+  // "BTS WORLD TOUR ARIRANG IN GOYANG NOT TODAY Jin Focus", "Deadlock 쇼케이스 Xdinary Heroes - Happy Death Day [가온 Focus]").
+  // 세 갈래(표본 3,153건 → 퍼포먼스): ①FOCUS·DANCE BREAK ②6자리 날짜 + 따옴표 곡명 ③공연 이름(축제·페스타·콘서트·투어·쇼케이스·팬미팅·KCON…) + 곡명(따옴표 또는 '가수 - 곡').
+  // 공연 이름만 있는 건 안 받는다 — 멘트·등장·시구·게임 클립이 섞였다. 퍼포먼스 탭·차트가 이 값을 쓰므로 무대 아님 신호가 있으면 기타 그대로.
+  if(!_YT_FAN_NOT_STAGE_RE.test(title||'')){
+    if(/\bFOCUS\b|포커스|DANCE\s*BREAK|댄스\s*브레이크/.test(t))return'live';
+    const _q=/['‘’"“”「」『』][^'‘’"“”「」『』]{1,40}['‘’"“”「」『』]/.test(title||'');
+    if(_q&&/(?:^|[\s\[\(])[12]\d[01]\d[0-3]\d(?=[\s\]\)\-~]|$)/.test(title||''))return'live';
+    if(_YT_FAN_STAGE_VENUE_RE.test(title||'')&&(_q||/ [-–—] /.test(title||'')))return'live';
+  }
   return'other';
 }
 
