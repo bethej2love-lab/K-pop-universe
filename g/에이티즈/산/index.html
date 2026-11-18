@@ -52,6 +52,20 @@
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
   .vid-list{padding-left:20px;margin:0;}.vid-list li{font-size:13.5px;margin-bottom:7px;}.vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}.note{font-size:11px;color:rgba(150,170,210,0.55);margin:14px 0 0;}.note a{color:rgba(150,175,255,0.65);text-decoration:none;}.rel a{color:rgba(210,225,255,0.95);text-decoration:none;}.sp-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 10px;}@media(min-width:620px){.sp-tiles{grid-template-columns:repeat(5,minmax(0,1fr));}}.sp-tile{display:block;text-decoration:none;min-width:0;}.sp-tile img,.sp-tile-ph{display:block;width:100%;aspect-ratio:1;border-radius:10px;object-fit:cover;background:#1e1e21;}.sp-tile-t{display:block;font-size:12.5px;margin-top:6px;color:rgba(228,236,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.sp-tile-n{display:block;font-size:11px;color:rgba(160,180,230,0.6);}.mf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;margin-bottom:6px;}@media(min-width:620px){.mf-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}.mf-card{display:block;min-width:0;text-decoration:none;}.mf-th{display:block;position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#17171a;}.mf-th img{width:100%;height:100%;object-fit:cover;display:block;}.mf-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.38;margin-top:7px;color:rgba(228,236,255,0.94);}.mf-y{display:block;font-size:11.5px;color:rgba(160,180,230,0.6);margin-top:2px;}
+/* 넓은 화면(PC) 2단 — 그룹·멤버 페이지가 폰 화면을 늘린 640px 기둥이던 것(2026-11-18 사용자 "웹인데 모바일 화면 보는 것 같다").
+   곡·앨범 페이지(song-page.css)와 같은 1120px·왼쪽 큰 이미지 + 오른쪽 정보·영상 4열. 폰(1000px 미만)은 그대로.
+   .top2 안의 h1·'이번 주 팬 N명'(seo_play.js가 h1 뒤에 끼움)·메타는 전부 오른쪽 칸 아래쪽 정렬. */
+@media(min-width:1000px){
+  .wrap{max-width:1120px;padding:22px 32px 40px;}
+  .top2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);grid-template-rows:1fr;grid-auto-rows:min-content;column-gap:32px;margin:14px 0 8px;}
+  .top2::before{content:'';grid-column:2;grid-row:1;}
+  .top2 .cover{grid-column:1;grid-row:1 / span 30;width:100%;max-width:none;aspect-ratio:16/9;object-fit:cover;margin:0;}
+  .top2>*:not(.cover){grid-column:2;min-width:0;}
+  .top2 h1{font-size:34px;line-height:1.15;margin:0 0 6px;word-break:keep-all;}
+  .top2 .meta{font-size:14.5px;margin-bottom:0;}
+  .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
+  h2{font-size:20px;margin:36px 0 14px;}
+}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -65,13 +79,15 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="언어 선택" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/en/g/ateez/san/" lang="en" hreflang="en" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">View in English</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
-  <h1>산(San)</h1>
-  <img class="cover" src="https://img.youtube.com/vi/llF3QDpDM7c/maxresdefault.jpg" alt="산" loading="lazy">
-  <div class="meta">
-    <span><b>소속</b> 에이티즈(ATEEZ)</span>
-    <span><b>생일</b> 1999.07.10 (만 27세)</span>
-    <span><b>데뷔</b> 2018.10.24</span>
-    <span><b>소속사</b> KQ엔터테인먼트</span>
+  <div class="top2">
+    <h1>산(San)</h1>
+    <img class="cover" src="https://img.youtube.com/vi/llF3QDpDM7c/maxresdefault.jpg" alt="산" loading="lazy">
+    <div class="meta">
+      <span><b>소속</b> 에이티즈(ATEEZ)</span>
+      <span><b>생일</b> 1999.07.10 (만 27세)</span>
+      <span><b>데뷔</b> 2018.10.24</span>
+      <span><b>소속사</b> KQ엔터테인먼트</span>
+    </div>
   </div>
   
   <h2>산 직캠</h2>
@@ -100,7 +116,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <a class="mf-card" href="https://www.youtube.com/watch?v=ckXgfmDdXjE" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/ckXgfmDdXjE/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[얼빡직캠 4K] 에이티즈 산 &#39;Ice On My Teeth&#39; (ATEEZ SAN Facecam) @뮤직뱅크(Music Bank) 241122</span><span class="mf-y">2024.11.22 · 278K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=JF9hQfbi5iA" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/JF9hQfbi5iA/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[예능연구소] 에이티즈 최산 직캠 &#39;불놀이야 (I&#39;m The One)&#39; (ATEEZ CHOI SAN FanCam) @Show!MusicCore MBC210306방송</span><span class="mf-y">2021.03.06 · 271K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=-sdSSpPl01I" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/-sdSSpPl01I/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 에이티즈 산 &#39;불놀이야&#39; (ATEEZ SAN &#39;I&#39;m The One&#39;  FaceCam)│@SBS Inkigayo_2021.03.14.</span><span class="mf-y">2021.03.15 · 262K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=GYHhjv_dekQ" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/GYHhjv_dekQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[#최애직캠] ATEEZ SAN (에이티즈 산) – Adrenaline | 쇼! 음악중심 | MBC260207</span><span class="mf-y">2026.02.09 · 248K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=kITF8v6AGh0" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/kITF8v6AGh0/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 에이티즈 산 &#39;Deja Vu&#39; (ATEEZ SAN FaceCam)│@SBS Inkigayo_2021.09.19.</span><span class="mf-y">2021.09.20 · 249K+</span></a>
   </div>
   <p class="intro">에이티즈 멤버. 한국 출신. 1999년생.</p>
   
@@ -131,11 +147,11 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <a class="sp-tile" href="https://kpop-universe.kr/g/에이티즈/산/s/drip/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/148/06/281/14806281_20261016140546_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Drip</span><span class="sp-tile-n">직캠 10</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/에이티즈/산/s/halazia/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/111/31/103/11131103_20221226135559_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">HALAZIA</span><span class="sp-tile-n">직캠 10</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/에이티즈/산/s/wonderland/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/36/251/10336251_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">WONDERLAND</span><span class="sp-tile-n">직캠 8</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/에이티즈/산/s/inyourfantasy/"><img src="https://i.scdn.co/image/ab67616d0000b2733ffbde24ff08907da69adbc3" alt="" loading="lazy"><span class="sp-tile-t">In Your Fantasy</span><span class="sp-tile-n">직캠 8</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/에이티즈/산/s/멋/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/108/02/943/10802943_20211210112047_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">멋 (The Real)</span><span class="sp-tile-n">직캠 7</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/에이티즈/산/s/up/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/151/35/469/15135469_20261106183141_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">UP</span><span class="sp-tile-n">직캠 7</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/에이티즈/산/s/answer/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/71/984/10371984_20200106135411_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Answer</span><span class="sp-tile-n">직캠 6</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/에이티즈/산/s/nasa/"><img src="https://i.scdn.co/image/ab67616d0000b273086a75a16dcda8d0b64f022a" alt="" loading="lazy"><span class="sp-tile-t">NASA</span><span class="sp-tile-n">직캠 6</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에이티즈/산/s/inyourfantasy/"><img src="https://i.scdn.co/image/ab67616d0000b2733ffbde24ff08907da69adbc3" alt="" loading="lazy"><span class="sp-tile-t">In Your Fantasy</span><span class="sp-tile-n">직캠 6</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/에이티즈/산/s/creep/"><img src="https://i.scdn.co/image/ab67616d0000b2733ffbde24ff08907da69adbc3" alt="" loading="lazy"><span class="sp-tile-t">Creep</span><span class="sp-tile-n">직캠 6</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/에이티즈/산/s/eternalsunshine/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/107/12/487/10712487_20210913150455_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Eternal Sunshine</span><span class="sp-tile-n">직캠 5</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/에이티즈/산/s/arriba/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/75/896/11375896_20231129181043_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ARRIBA</span><span class="sp-tile-n">직캠 4</span></a>
@@ -165,7 +181,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/투모로우바이투게더/연준/">연준</a> <span class="tag">투모로우바이투게더</span></li>
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/ateez/san/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"모든 무대","t":"BOUNCY","s":"산 직캠 21개","img":"MZ-wYe5EC24","m":"BOUNCY","h":"https://kpop-universe.kr/g/에이티즈/산/s/bouncy/"},{"k":"같은 곡","t":"성화 · BOUNCY","s":"직캠 22개","img":"xjP9uZpzQBY","m":"BOUNCY","h":"https://kpop-universe.kr/g/에이티즈/성화/s/bouncy/"},{"k":"그룹","t":"에이티즈","s":"무대 · 뮤비 · 멤버","im":"https://img.youtube.com/vi/dTK1EU3nUf4/mqdefault.jpg","h":"https://kpop-universe.kr/g/에이티즈/"},{"k":"케미","t":"산 × 우영","s":"함께 나온 영상 59개","img":"XovjeWs_HOs","h":"https://kpop-universe.kr/chem/에이티즈/산-우영/"},{"k":"모든 무대","t":"Ice On My Teeth","s":"산 직캠 18개","img":"qljoDIbsImY","m":"Ice On My Teeth","h":"https://kpop-universe.kr/g/에이티즈/산/s/iceonmyteeth/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"모든 무대","t":"BOUNCY","s":"산 직캠 21개","img":"MZ-wYe5EC24","m":"BOUNCY","h":"https://kpop-universe.kr/g/에이티즈/산/s/bouncy/"},{"k":"같은 곡","t":"성화 · BOUNCY","s":"직캠 22개","img":"xjP9uZpzQBY","m":"BOUNCY","h":"https://kpop-universe.kr/g/에이티즈/성화/s/bouncy/"},{"k":"그룹","t":"에이티즈","s":"무대 · 뮤비 · 멤버","im":"https://img.youtube.com/vi/dTK1EU3nUf4/mqdefault.jpg","h":"https://kpop-universe.kr/g/에이티즈/"},{"k":"케미","t":"산 × 우영","s":"함께 나온 영상 60개","img":"XovjeWs_HOs","h":"https://kpop-universe.kr/chem/에이티즈/산-우영/"},{"k":"모든 무대","t":"Ice On My Teeth","s":"산 직캠 18개","img":"qljoDIbsImY","m":"Ice On My Teeth","h":"https://kpop-universe.kr/g/에이티즈/산/s/iceonmyteeth/"}]</script>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=에이티즈&m=산">프로필·직캠·무대 영상 보기 →</a></div>
 </div>
 </body>

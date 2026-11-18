@@ -52,6 +52,20 @@
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
   .vid-list{padding-left:20px;margin:0;}.vid-list li{font-size:13.5px;margin-bottom:7px;}.vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}.note{font-size:11px;color:rgba(150,170,210,0.55);margin:14px 0 0;}.note a{color:rgba(150,175,255,0.65);text-decoration:none;}.rel a{color:rgba(210,225,255,0.95);text-decoration:none;}.sp-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 10px;}@media(min-width:620px){.sp-tiles{grid-template-columns:repeat(5,minmax(0,1fr));}}.sp-tile{display:block;text-decoration:none;min-width:0;}.sp-tile img,.sp-tile-ph{display:block;width:100%;aspect-ratio:1;border-radius:10px;object-fit:cover;background:#1e1e21;}.sp-tile-t{display:block;font-size:12.5px;margin-top:6px;color:rgba(228,236,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.sp-tile-n{display:block;font-size:11px;color:rgba(160,180,230,0.6);}.mf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;margin-bottom:6px;}@media(min-width:620px){.mf-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}.mf-card{display:block;min-width:0;text-decoration:none;}.mf-th{display:block;position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#17171a;}.mf-th img{width:100%;height:100%;object-fit:cover;display:block;}.mf-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.38;margin-top:7px;color:rgba(228,236,255,0.94);}.mf-y{display:block;font-size:11.5px;color:rgba(160,180,230,0.6);margin-top:2px;}
+/* 넓은 화면(PC) 2단 — 그룹·멤버 페이지가 폰 화면을 늘린 640px 기둥이던 것(2026-11-18 사용자 "웹인데 모바일 화면 보는 것 같다").
+   곡·앨범 페이지(song-page.css)와 같은 1120px·왼쪽 큰 이미지 + 오른쪽 정보·영상 4열. 폰(1000px 미만)은 그대로.
+   .top2 안의 h1·'이번 주 팬 N명'(seo_play.js가 h1 뒤에 끼움)·메타는 전부 오른쪽 칸 아래쪽 정렬. */
+@media(min-width:1000px){
+  .wrap{max-width:1120px;padding:22px 32px 40px;}
+  .top2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);grid-template-rows:1fr;grid-auto-rows:min-content;column-gap:32px;margin:14px 0 8px;}
+  .top2::before{content:'';grid-column:2;grid-row:1;}
+  .top2 .cover{grid-column:1;grid-row:1 / span 30;width:100%;max-width:none;aspect-ratio:16/9;object-fit:cover;margin:0;}
+  .top2>*:not(.cover){grid-column:2;min-width:0;}
+  .top2 h1{font-size:34px;line-height:1.15;margin:0 0 6px;word-break:keep-all;}
+  .top2 .meta{font-size:14.5px;margin-bottom:0;}
+  .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
+  h2{font-size:20px;margin:36px 0 14px;}
+}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -65,13 +79,15 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="언어 선택" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/en/g/g-i-dle/yuqi/" lang="en" hreflang="en" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">View in English</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
-  <h1>우기(Yuqi)</h1>
-  <img class="cover" src="https://img.youtube.com/vi/Fpu3FOE-kFs/maxresdefault.jpg" alt="우기" loading="lazy">
-  <div class="meta">
-    <span><b>소속</b> 아이들((G)I-DLE)</span>
-    <span><b>생일</b> 1999.09.23 (만 27세)</span>
-    <span><b>데뷔</b> 2018.05.02</span>
-    <span><b>소속사</b> Cube</span>
+  <div class="top2">
+    <h1>우기(Yuqi)</h1>
+    <img class="cover" src="https://img.youtube.com/vi/Fpu3FOE-kFs/maxresdefault.jpg" alt="우기" loading="lazy">
+    <div class="meta">
+      <span><b>소속</b> 아이들((G)I-DLE)</span>
+      <span><b>생일</b> 1999.09.23 (만 27세)</span>
+      <span><b>데뷔</b> 2018.05.02</span>
+      <span><b>소속사</b> Cube</span>
+    </div>
   </div>
   
   <h2>우기 직캠</h2>
@@ -85,7 +101,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <a class="mf-card" href="https://www.youtube.com/watch?v=43xdxrAYijY" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/43xdxrAYijY/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[예능연구소 4K] (여자)아이들 우기 직캠 ‘TOMBOY’ ((G)I-DLE YUQI FanCam) @Show!MusicCore 220319</span><span class="mf-y">2022.03.19 · 606K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=4XVWgVugyJU" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/4XVWgVugyJU/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] (여자)아이들 우기 &#39;화(火花)&#39; ((G)I-DLE Yuqi &#39;HWAA&#39; FaceCam)│@SBS Inkigayo_2021.01.24.</span><span class="mf-y">2021.01.25 · 537K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=qLzu5oMyS68" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/qLzu5oMyS68/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[예능연구소 직캠] (여자)아이들 우기 리듬체조 @아육대_20180925 (G)I-DLE YUQI ISAC in 4K</span><span class="mf-y">2018.09.25 · 532K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=kd5SFdXXJCk" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/kd5SFdXXJCk/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] (여자)아이들 우기 &#39;퀸카&#39; ((G)I-DLE YUQI &#39;Queencard&#39; FanCam) @SBS Inkigayo 230521</span><span class="mf-y">2023.05.21 · 500K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=kd5SFdXXJCk" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/kd5SFdXXJCk/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] (여자)아이들 우기 &#39;퀸카&#39; ((G)I-DLE YUQI &#39;Queencard&#39; FanCam) @SBS Inkigayo 230521</span><span class="mf-y">2023.05.21 · 502K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=Bu-xMA4UJws" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/Bu-xMA4UJws/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] (여자)아이들 우기 &#39;나는 아픈 건 딱 질색이니까&#39; ((G)I-DLE YUQI &#39;Fate&#39; FaceCam) @SBS Inkigayo 240324</span><span class="mf-y">2024.03.25 · 474K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=ZbZDaP5zDXg" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/ZbZDaP5zDXg/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[K-Fancam] (여자)아이들 우기 직캠 &#39;클락션 (Klaxon)&#39; ((G)I-DLE YUQI Fancam) @MusicBank 240719</span><span class="mf-y">2024.07.19 · 453K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=pBzZvIiBvA4" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/pBzZvIiBvA4/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">(여자)아이들((G)I-DLE) - &#39;TOMBOY&#39; (우기 Focus) : ONLINE MEDIA SHOWCASE Ver.</span><span class="mf-y">2022.03.16 · 450K+</span></a>
@@ -93,14 +109,14 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <a class="mf-card" href="https://www.youtube.com/watch?v=Qyq2JKZVxNU" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/Qyq2JKZVxNU/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[가요대제전] YUQI  - STEP(우기 - 스텝) FanCam | MBC Music Festival | MBC221231방송</span><span class="mf-y">2023.01.02 · 373K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=e-XJEDPzafg" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/e-XJEDPzafg/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[쇼챔직캠 4K] (G)I-DLE YUQI((여자)아이들 우기) - Giant+Bonnie&amp;Clyde l Show Champion l EP.433</span><span class="mf-y">2022.05.11 · 362K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=TnqUM95I2mE" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/TnqUM95I2mE/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[예능연구소 4K] (여자)아이들 우기 직캠 ‘TOMBOY’ ((G)I-DLE YUQI FanCam) @Show!MusicCore 220326</span><span class="mf-y">2022.03.26 · 267K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=Jd_Yh2caQEE" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/Jd_Yh2caQEE/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] (여자)아이들 우기 직캠 4K &#39;Nxde&#39; ((G)I-DLE YUQI FanCam) | @MCOUNTDOWN_2022.10.20</span><span class="mf-y">2022.10.20 · 255K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=Jd_Yh2caQEE" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/Jd_Yh2caQEE/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] (여자)아이들 우기 직캠 4K &#39;Nxde&#39; ((G)I-DLE YUQI FanCam) | @MCOUNTDOWN_2022.10.20</span><span class="mf-y">2022.10.20 · 256K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=9aFEKNUdtyU" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/9aFEKNUdtyU/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[UNFILTERED CAM] (G)I-DLE YUQI(우기) &#39;TOMBOY&#39; 4K | BE ORIGINAL</span><span class="mf-y">2022.03.21 · 253K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=rEYKUapNu0M" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/rEYKUapNu0M/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] (여자)아이들 우기 직캠 4K &#39;TOMBOY&#39; ((G)I-DLE YUQI FanCam) | @MCOUNTDOWN_2022.3.17</span><span class="mf-y">2022.03.17 · 252K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=LlPS_LYhnTE" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/LlPS_LYhnTE/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">(여자)아이들((G)I-DLE) - &#39;화(火花)(HWAA)&#39; (우기 Focus) : ONLINE MEDIA SHOWCASE Ver.</span><span class="mf-y">2021.01.13 · 247K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=YWDEuOJRIHQ" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/YWDEuOJRIHQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[예능연구소 직캠] (여자)아이들 유고 걸 우기 Focused @쇼!음악중심_20180811 U-Go-Girl (G)I-DLE YUQI</span><span class="mf-y">2018.08.13 · 224K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=zWM53MWH7VI" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/zWM53MWH7VI/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[얼빡직캠 4K] (여자)아이들 우기 &#39;클락션 (Klaxon)&#39; ((G)I-DLE YUQI Facecam) @뮤직뱅크(Music Bank) 240719</span><span class="mf-y">2024.07.19 · 219K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=jmvWsqFT8oo" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/jmvWsqFT8oo/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[입덕직캠] (여자)아이들 우기 직캠 4K &#39;화(火花)(HWAA)&#39; ((G)I-DLE YUQI  FanCam) | @MCOUNTDOWN_2021.1.14</span><span class="mf-y">2021.01.17 · 189K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=HOwxLMIiZIQ" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/HOwxLMIiZIQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] (여자)아이들 우기 직캠 4K &#39;다시 만난 세계(Into The New World)&#39; ((G)I-DLE YUQI FanCam) | @MCOUNTDOWN</span><span class="mf-y">2021.02.25 · 189K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=jmvWsqFT8oo" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/jmvWsqFT8oo/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[입덕직캠] (여자)아이들 우기 직캠 4K &#39;화(火花)(HWAA)&#39; ((G)I-DLE YUQI  FanCam) | @MCOUNTDOWN_2021.1.14</span><span class="mf-y">2021.01.17 · 188K+</span></a>
   </div>
   <p class="intro">아이들 멤버. 중국 출신. 1999년생.</p>
   

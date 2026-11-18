@@ -52,6 +52,20 @@
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
   .vid-list{padding-left:20px;margin:0;}.vid-list li{font-size:13.5px;margin-bottom:7px;}.vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}.note{font-size:11px;color:rgba(150,170,210,0.55);margin:14px 0 0;}.note a{color:rgba(150,175,255,0.65);text-decoration:none;}.rel a{color:rgba(210,225,255,0.95);text-decoration:none;}.sp-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 10px;}@media(min-width:620px){.sp-tiles{grid-template-columns:repeat(5,minmax(0,1fr));}}.sp-tile{display:block;text-decoration:none;min-width:0;}.sp-tile img,.sp-tile-ph{display:block;width:100%;aspect-ratio:1;border-radius:10px;object-fit:cover;background:#1e1e21;}.sp-tile-t{display:block;font-size:12.5px;margin-top:6px;color:rgba(228,236,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.sp-tile-n{display:block;font-size:11px;color:rgba(160,180,230,0.6);}.mf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;margin-bottom:6px;}@media(min-width:620px){.mf-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}.mf-card{display:block;min-width:0;text-decoration:none;}.mf-th{display:block;position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#17171a;}.mf-th img{width:100%;height:100%;object-fit:cover;display:block;}.mf-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.38;margin-top:7px;color:rgba(228,236,255,0.94);}.mf-y{display:block;font-size:11.5px;color:rgba(160,180,230,0.6);margin-top:2px;}
+/* 넓은 화면(PC) 2단 — 그룹·멤버 페이지가 폰 화면을 늘린 640px 기둥이던 것(2026-11-18 사용자 "웹인데 모바일 화면 보는 것 같다").
+   곡·앨범 페이지(song-page.css)와 같은 1120px·왼쪽 큰 이미지 + 오른쪽 정보·영상 4열. 폰(1000px 미만)은 그대로.
+   .top2 안의 h1·'이번 주 팬 N명'(seo_play.js가 h1 뒤에 끼움)·메타는 전부 오른쪽 칸 아래쪽 정렬. */
+@media(min-width:1000px){
+  .wrap{max-width:1120px;padding:22px 32px 40px;}
+  .top2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);grid-template-rows:1fr;grid-auto-rows:min-content;column-gap:32px;margin:14px 0 8px;}
+  .top2::before{content:'';grid-column:2;grid-row:1;}
+  .top2 .cover{grid-column:1;grid-row:1 / span 30;width:100%;max-width:none;aspect-ratio:16/9;object-fit:cover;margin:0;}
+  .top2>*:not(.cover){grid-column:2;min-width:0;}
+  .top2 h1{font-size:34px;line-height:1.15;margin:0 0 6px;word-break:keep-all;}
+  .top2 .meta{font-size:14.5px;margin-bottom:0;}
+  .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
+  h2{font-size:20px;margin:36px 0 14px;}
+}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -65,21 +79,23 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="언어 선택" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/en/g/rescene/woni/" lang="en" hreflang="en" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">View in English</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
-  <h1>원이(Woni)</h1>
-  <img class="cover" src="https://img.youtube.com/vi/3vsqVnAzK-Q/maxresdefault.jpg" alt="원이" loading="lazy">
-  <div class="meta">
-    <span><b>소속</b> 리센느(RESCENE)</span>
-    <span><b>생일</b> 2004.05.25 (만 22세)</span>
-    <span><b>데뷔</b> 2024.03.27</span>
-    <span><b>소속사</b> 더뮤즈</span>
+  <div class="top2">
+    <h1>원이(Woni)</h1>
+    <img class="cover" src="https://img.youtube.com/vi/3vsqVnAzK-Q/maxresdefault.jpg" alt="원이" loading="lazy">
+    <div class="meta">
+      <span><b>소속</b> 리센느(RESCENE)</span>
+      <span><b>생일</b> 2004.05.25 (만 22세)</span>
+      <span><b>데뷔</b> 2024.03.27</span>
+      <span><b>소속사</b> 더뮤즈</span>
+    </div>
   </div>
   
   <h2>원이 직캠</h2>
   <p class="hub-more hub-top"><a href="https://kpop-universe.kr/g/리센느/원이/fancams/">직캠 전체 278개 곡별로 보기 →</a></p>
   <div class="mf-grid">
     <a class="mf-card" href="https://www.youtube.com/watch?v=VINDNiicjb4" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/VINDNiicjb4/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[입덕직캠] 리센느 원이 직캠 4K &#39;LOVE ATTACK&#39; (RESCENE WONI FanCam) | @MCOUNTDOWN_2026.6.18</span><span class="mf-y">2026.06.20 · 1M+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=Su4QXPOVozo" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/Su4QXPOVozo/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[4K] 261107 &#39;아틀란티스 소녀 Atlantis Princess (BoA)&#39; 원이 리센느 WONI RESCENE | 2026 KGMA (직캠 Fancam)</span><span class="mf-y">2026.11.07 · 624K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=iSGzUwk9DiA" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/iSGzUwk9DiA/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 리센느 원이 &#39;백화요란&#39; (RESCENE WONI &#39;Inside Out&#39; FaceCam) @SBS Inkigayo 261108</span><span class="mf-y">2026.11.10 · 320K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=Su4QXPOVozo" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/Su4QXPOVozo/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[4K] 261107 &#39;아틀란티스 소녀 Atlantis Princess (BoA)&#39; 원이 리센느 WONI RESCENE | 2026 KGMA (직캠 Fancam)</span><span class="mf-y">2026.11.07 · 634K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=iSGzUwk9DiA" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/iSGzUwk9DiA/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 리센느 원이 &#39;백화요란&#39; (RESCENE WONI &#39;Inside Out&#39; FaceCam) @SBS Inkigayo 261108</span><span class="mf-y">2026.11.10 · 326K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=HybP5zANnlY" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/HybP5zANnlY/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[4K] 260827 &#39;Deja Vu&#39; 원이 리센느 WONI RESCENE | K-WORLD DREAM AWARDS (직캠 Fancam)</span><span class="mf-y">2026.08.27 · 241K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=Cu3BEyx4X0I" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/Cu3BEyx4X0I/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[4K] 260905 &#39;Deja Vu&#39; 원이 리센느 WONI RESCENE | 원 썸머 나잇 (직캠 Fancam)</span><span class="mf-y">2026.09.05 · 179K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=XhxWQtKZwXo" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/XhxWQtKZwXo/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 리센느 원이 &#39;LOVE ATTACK&#39; (RESCENE WONI FanCam)│@SBS Inkigayo 240901</span><span class="mf-y">2024.09.05 · 134K+</span></a>
@@ -91,12 +107,12 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <a class="mf-card" href="https://www.youtube.com/watch?v=qtoCl3_dlQw" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/qtoCl3_dlQw/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[얼빡직캠 4K] 리센느 원이 &#39;Pretty Girl&#39; (RESCENE WONI Facecam) @뮤직뱅크(Music Bank) 260710</span><span class="mf-y">2026.07.12 · 64K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=YAmTgcLa-80" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/YAmTgcLa-80/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 리센느 원이 &#39;Pinball&#39; (RESCENE WONI FanCam) @SBS Inkigayo 240922</span><span class="mf-y">2024.09.24 · 60K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=kLXySP0iTPk" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/kLXySP0iTPk/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[4K] 260919 &#39;Runaway + LOVE ATTACK (Orchestra ver)&#39; 원이 리센느 WONI RESCENE | TMA 더팩트 뮤직 어워즈 (직캠 Fancam)</span><span class="mf-y">2026.09.19 · 56K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=TdXEi3nsuao" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/TdXEi3nsuao/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[얼빡직캠 4K] 리센느 원이 &#39;With&#39; (RESCENE WONI Facecam) @뮤직뱅크(Music Bank) 261106</span><span class="mf-y">2026.11.06 · 55K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=TdXEi3nsuao" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/TdXEi3nsuao/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[얼빡직캠 4K] 리센느 원이 &#39;With&#39; (RESCENE WONI Facecam) @뮤직뱅크(Music Bank) 261106</span><span class="mf-y">2026.11.06 · 56K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=bJ7Ni0Skdyk" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/bJ7Ni0Skdyk/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[#최애직캠] RESCENE WONI (리센느 원이) – Pretty Girl | 쇼! 음악중심 | MBC260718</span><span class="mf-y">2026.07.20 · 55K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=RITumkEGw8Q" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/RITumkEGw8Q/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">261017 리센느 원이 &#39;LOVE ATTACK&#39; 직캠 RESCENE WONI | 2026 놀페스티벌</span><span class="mf-y">2026.10.17 · 53K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=z1FuJ-kN35w" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/z1FuJ-kN35w/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[4K] 261024 &#39;Deja Vu&#39; 원이 리센느 WONI RESCENE | 한화오션 오션하모니 (직캠 Fancam)</span><span class="mf-y">2026.10.25 · 51K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=T9Wb8fZLYT8" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/T9Wb8fZLYT8/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[입덕직캠] 리센느 원이 직캠 4K &#39;다시 만난 세계 (Into The New World)&#39; (RESCENE WONI FanCam) | @MCOUNTDOWN_2025.2.6</span><span class="mf-y">2025.02.08 · 48K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=QstbDPuHVRw" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/QstbDPuHVRw/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[UNFILTERED CAM] RESCENE WONI(원이) &#39;With&#39; 4K | STUDIO CHOOM ORIGINAL</span><span class="mf-y">2026.11.05 · 47K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=QstbDPuHVRw" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/QstbDPuHVRw/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[UNFILTERED CAM] RESCENE WONI(원이) &#39;With&#39; 4K | STUDIO CHOOM ORIGINAL</span><span class="mf-y">2026.11.05 · 48K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=x20wksVbdjU" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/x20wksVbdjU/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">260922 리센느 원이 &#39;Pinball&#39; 직캠 RESCENE WONI | 명지대 마제스티 축제</span><span class="mf-y">2026.09.22 · 47K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=7GYOdDerfCM" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/7GYOdDerfCM/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[4K] 261024 &#39;Pretty Girl&#39; 원이 리센느 WONI RESCENE | 한화오션 오션하모니 (직캠 Fancam)</span><span class="mf-y">2026.10.24 · 47K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=eMpATuM7_Po" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/eMpATuM7_Po/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[쇼챔 원픽캠 4K] RESCENE WONI (리센느 원이) - Pretty Girl | Show Champion | EP.603 | 260715</span><span class="mf-y">2026.07.16 · 43K+</span></a>

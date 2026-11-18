@@ -52,6 +52,20 @@
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
   .vid-list{padding-left:20px;margin:0;}.vid-list li{font-size:13.5px;margin-bottom:7px;}.vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}.note{font-size:11px;color:rgba(150,170,210,0.55);margin:14px 0 0;}.note a{color:rgba(150,175,255,0.65);text-decoration:none;}.rel a{color:rgba(210,225,255,0.95);text-decoration:none;}.sp-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 10px;}@media(min-width:620px){.sp-tiles{grid-template-columns:repeat(5,minmax(0,1fr));}}.sp-tile{display:block;text-decoration:none;min-width:0;}.sp-tile img,.sp-tile-ph{display:block;width:100%;aspect-ratio:1;border-radius:10px;object-fit:cover;background:#1e1e21;}.sp-tile-t{display:block;font-size:12.5px;margin-top:6px;color:rgba(228,236,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.sp-tile-n{display:block;font-size:11px;color:rgba(160,180,230,0.6);}.mf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;margin-bottom:6px;}@media(min-width:620px){.mf-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}.mf-card{display:block;min-width:0;text-decoration:none;}.mf-th{display:block;position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#17171a;}.mf-th img{width:100%;height:100%;object-fit:cover;display:block;}.mf-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.38;margin-top:7px;color:rgba(228,236,255,0.94);}.mf-y{display:block;font-size:11.5px;color:rgba(160,180,230,0.6);margin-top:2px;}
+/* 넓은 화면(PC) 2단 — 그룹·멤버 페이지가 폰 화면을 늘린 640px 기둥이던 것(2026-11-18 사용자 "웹인데 모바일 화면 보는 것 같다").
+   곡·앨범 페이지(song-page.css)와 같은 1120px·왼쪽 큰 이미지 + 오른쪽 정보·영상 4열. 폰(1000px 미만)은 그대로.
+   .top2 안의 h1·'이번 주 팬 N명'(seo_play.js가 h1 뒤에 끼움)·메타는 전부 오른쪽 칸 아래쪽 정렬. */
+@media(min-width:1000px){
+  .wrap{max-width:1120px;padding:22px 32px 40px;}
+  .top2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);grid-template-rows:1fr;grid-auto-rows:min-content;column-gap:32px;margin:14px 0 8px;}
+  .top2::before{content:'';grid-column:2;grid-row:1;}
+  .top2 .cover{grid-column:1;grid-row:1 / span 30;width:100%;max-width:none;aspect-ratio:16/9;object-fit:cover;margin:0;}
+  .top2>*:not(.cover){grid-column:2;min-width:0;}
+  .top2 h1{font-size:34px;line-height:1.15;margin:0 0 6px;word-break:keep-all;}
+  .top2 .meta{font-size:14.5px;margin-bottom:0;}
+  .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
+  h2{font-size:20px;margin:36px 0 14px;}
+}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -65,13 +79,15 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="언어 선택" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/en/g/boynextdoor/riwoo/" lang="en" hreflang="en" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">View in English</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
-  <h1>리우(Riwoo)</h1>
-  <img class="cover" src="https://img.youtube.com/vi/ZzXt9JvKKj8/maxresdefault.jpg" alt="리우" loading="lazy">
-  <div class="meta">
-    <span><b>소속</b> 보이넥스트도어(BOYNEXTDOOR)</span>
-    <span><b>생일</b> 2003.10.22 (만 23세)</span>
-    <span><b>데뷔</b> 2023.05.30</span>
-    <span><b>소속사</b> KOZ / HYBE</span>
+  <div class="top2">
+    <h1>리우(Riwoo)</h1>
+    <img class="cover" src="https://img.youtube.com/vi/ZzXt9JvKKj8/maxresdefault.jpg" alt="리우" loading="lazy">
+    <div class="meta">
+      <span><b>소속</b> 보이넥스트도어(BOYNEXTDOOR)</span>
+      <span><b>생일</b> 2003.10.22 (만 23세)</span>
+      <span><b>데뷔</b> 2023.05.30</span>
+      <span><b>소속사</b> KOZ / HYBE</span>
+    </div>
   </div>
   
   <h2>리우 직캠</h2>
@@ -97,7 +113,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <a class="mf-card" href="https://www.youtube.com/watch?v=t8fFxfilyiw" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/t8fFxfilyiw/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[입덕직캠] 보이넥스트도어 리우 직캠 4K &#39;ABCDLOVE&#39; (BOYNEXTDOOR RIWOO FanCam) | BOYNEXTDOOR 2NIGHT</span><span class="mf-y">2023.09.06 · 42K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=QwCY7-4sUUQ" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/QwCY7-4sUUQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[얼빡직캠 4K] 보이넥스트도어 리우 &#39;오늘만 I LOVE YOU&#39; (BOYNEXTDOOR RIWOO Facecam) @뮤직뱅크(Music Bank) 250110</span><span class="mf-y">2025.01.10 · 42K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=OeZZR3EwOm4" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/OeZZR3EwOm4/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[#음중직캠] BOYNEXTDOOR RIWOO (보이넥스트도어 리우) – 부모님 관람불가 | 쇼! 음악중심 | MBC240907방송</span><span class="mf-y">2024.09.07 · 41K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=jkOr9hbqfQw" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/jkOr9hbqfQw/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[얼빡직캠 4K] 보이넥스트도어 리우 &#39;Hollywood Action&#39; (BOYNEXTDOOR RIWOO Facecam) @뮤직뱅크(Music Bank) 251024</span><span class="mf-y">2025.10.24 · 39K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=jkOr9hbqfQw" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/jkOr9hbqfQw/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[얼빡직캠 4K] 보이넥스트도어 리우 &#39;Hollywood Action&#39; (BOYNEXTDOOR RIWOO Facecam) @뮤직뱅크(Music Bank) 251024</span><span class="mf-y">2025.10.24 · 41K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=rx-axp_gjlM" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/rx-axp_gjlM/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[UNFILTERED CAM] BOYNEXTDOOR RIWOO(리우) &#39;Hollywood Action&#39; 4K | STUDIO CHOOM ORIGINAL</span><span class="mf-y">2025.10.23 · 37K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=JJ90Z5PPBWU" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/JJ90Z5PPBWU/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 보이넥스트도어 리우 &#39;돌아버리겠다&#39; (BOYNEXTDOOR RIWOO &#39;But I Like You&#39; FanCam) @SBS Inkigayo 230604</span><span class="mf-y">2023.06.06 · 36K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=ef_s5EwqRkc" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/ef_s5EwqRkc/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[입덕직캠] 보이넥스트도어 리우 직캠 4K &#39;돌아버리겠다&#39; (BOYNEXTDOOR RIWOO FanCam) | BOYNEXTDOOR TONIGHT</span><span class="mf-y">2023.06.02 · 35K+</span></a>
@@ -119,17 +135,17 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <a class="sp-tile" href="https://kpop-universe.kr/g/보이넥스트도어/리우/s/earthwindfire/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/65/011/11465011_20240415102247_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Earth, Wind &amp; Fire</span><span class="sp-tile-n">직캠 18</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/보이넥스트도어/리우/s/뭣같아/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/19/182/11319182_20230904102829_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">뭣 같아 But Sometimes</span><span class="sp-tile-n">직캠 13</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/보이넥스트도어/리우/s/hollywoodaction/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/121/67/414/12167414_20251020102249_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Hollywood Action</span><span class="sp-tile-n">직캠 13</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/보이넥스트도어/리우/s/oneandonly/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/49/469/11249469_20230530180844_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">One and Only</span><span class="sp-tile-n">직캠 13</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/보이넥스트도어/리우/s/ifeelgood/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/118/05/155/11805155_20250513094426_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">I Feel Good</span><span class="sp-tile-n">직캠 12</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/보이넥스트도어/리우/s/oneandonly/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/49/469/11249469_20230530180844_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">One and Only</span><span class="sp-tile-n">직캠 12</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/보이넥스트도어/리우/s/niceguy/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/80/910/11580910_20240909111737_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Nice Guy</span><span class="sp-tile-n">직캠 9</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/보이넥스트도어/리우/s/viral/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/133/82/909/13382909_20260608105930_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">VIRAL</span><span class="sp-tile-n">직캠 9</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/보이넥스트도어/리우/s/오늘만iloveyou/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/85/070/11685070_20250106111631_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">오늘만 I LOVE YOU IF I SAY, I LOVE YOU</span><span class="sp-tile-n">직캠 8</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/보이넥스트도어/리우/s/부모님관람불가/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/80/910/11580910_20240909111737_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">부모님 관람불가 Dangerous</span><span class="sp-tile-n">직캠 8</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/보이넥스트도어/리우/s/animal/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/145/93/412/14593412_20260928093719_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ANIMAL</span><span class="sp-tile-n">직캠 7</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/보이넥스트도어/리우/s/똑똑똑/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/133/82/909/13382909_20260608105930_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">똑똑똑</span><span class="sp-tile-n">직캠 6</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/보이넥스트도어/리우/s/soletsgoseethestars/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/65/011/11465011_20240415102247_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">So let&#39;s go see the stars</span><span class="sp-tile-n">직캠 6</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/보이넥스트도어/리우/s/crying/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/19/182/11319182_20230904102829_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Crying</span><span class="sp-tile-n">직캠 6</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/보이넥스트도어/리우/s/돌아버리겠다/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/49/469/11249469_20230530180844_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">돌아버리겠다 But I Like You</span><span class="sp-tile-n">직캠 5</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/보이넥스트도어/리우/s/soletsgoseethestars/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/65/011/11465011_20240415102247_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">So let&#39;s go see the stars</span><span class="sp-tile-n">직캠 5</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/보이넥스트도어/리우/s/12378/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/118/05/155/11805155_20250513094426_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">123-78</span><span class="sp-tile-n">직캠 4</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/보이넥스트도어/리우/s/adios/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/133/82/909/13382909_20260608105930_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ADIOS!</span><span class="sp-tile-n">직캠 4</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/보이넥스트도어/리우/s/counttolove/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/120/51/296/12051296_20250814145553_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Count To Love</span><span class="sp-tile-n">직캠 4</span></a>

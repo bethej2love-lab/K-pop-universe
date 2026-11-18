@@ -52,6 +52,20 @@
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
   .vid-list{padding-left:20px;margin:0;}.vid-list li{font-size:13.5px;margin-bottom:7px;}.vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}.note{font-size:11px;color:rgba(150,170,210,0.55);margin:14px 0 0;}.note a{color:rgba(150,175,255,0.65);text-decoration:none;}.rel a{color:rgba(210,225,255,0.95);text-decoration:none;}.sp-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 10px;}@media(min-width:620px){.sp-tiles{grid-template-columns:repeat(5,minmax(0,1fr));}}.sp-tile{display:block;text-decoration:none;min-width:0;}.sp-tile img,.sp-tile-ph{display:block;width:100%;aspect-ratio:1;border-radius:10px;object-fit:cover;background:#1e1e21;}.sp-tile-t{display:block;font-size:12.5px;margin-top:6px;color:rgba(228,236,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.sp-tile-n{display:block;font-size:11px;color:rgba(160,180,230,0.6);}.mf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;margin-bottom:6px;}@media(min-width:620px){.mf-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}.mf-card{display:block;min-width:0;text-decoration:none;}.mf-th{display:block;position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#17171a;}.mf-th img{width:100%;height:100%;object-fit:cover;display:block;}.mf-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.38;margin-top:7px;color:rgba(228,236,255,0.94);}.mf-y{display:block;font-size:11.5px;color:rgba(160,180,230,0.6);margin-top:2px;}
+/* 넓은 화면(PC) 2단 — 그룹·멤버 페이지가 폰 화면을 늘린 640px 기둥이던 것(2026-11-18 사용자 "웹인데 모바일 화면 보는 것 같다").
+   곡·앨범 페이지(song-page.css)와 같은 1120px·왼쪽 큰 이미지 + 오른쪽 정보·영상 4열. 폰(1000px 미만)은 그대로.
+   .top2 안의 h1·'이번 주 팬 N명'(seo_play.js가 h1 뒤에 끼움)·메타는 전부 오른쪽 칸 아래쪽 정렬. */
+@media(min-width:1000px){
+  .wrap{max-width:1120px;padding:22px 32px 40px;}
+  .top2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);grid-template-rows:1fr;grid-auto-rows:min-content;column-gap:32px;margin:14px 0 8px;}
+  .top2::before{content:'';grid-column:2;grid-row:1;}
+  .top2 .cover{grid-column:1;grid-row:1 / span 30;width:100%;max-width:none;aspect-ratio:16/9;object-fit:cover;margin:0;}
+  .top2>*:not(.cover){grid-column:2;min-width:0;}
+  .top2 h1{font-size:34px;line-height:1.15;margin:0 0 6px;word-break:keep-all;}
+  .top2 .meta{font-size:14.5px;margin-bottom:0;}
+  .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
+  h2{font-size:20px;margin:36px 0 14px;}
+}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -65,26 +79,28 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="언어 선택" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/en/g/stayc/seeun/" lang="en" hreflang="en" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">View in English</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
-  <h1>세은(Seeun)</h1>
-  <img class="cover" src="https://img.youtube.com/vi/nGdC9pODyYY/maxresdefault.jpg" alt="세은" loading="lazy">
-  <div class="meta">
-    <span><b>소속</b> 스테이씨(STAYC)</span>
-    <span><b>생일</b> 2003.06.14 (만 23세)</span>
-    <span><b>데뷔</b> 2020.11.12</span>
-    <span><b>소속사</b> High Up</span>
+  <div class="top2">
+    <h1>세은(Seeun)</h1>
+    <img class="cover" src="https://img.youtube.com/vi/nGdC9pODyYY/maxresdefault.jpg" alt="세은" loading="lazy">
+    <div class="meta">
+      <span><b>소속</b> 스테이씨(STAYC)</span>
+      <span><b>생일</b> 2003.06.14 (만 23세)</span>
+      <span><b>데뷔</b> 2020.11.12</span>
+      <span><b>소속사</b> High Up</span>
+    </div>
   </div>
   
   <h2>세은 직캠</h2>
   <p class="hub-more hub-top"><a href="https://kpop-universe.kr/g/스테이씨/세은/fancams/">직캠 전체 148개 곡별로 보기 →</a></p>
   <div class="mf-grid">
     <a class="mf-card" href="https://www.youtube.com/watch?v=eQjHl_PBobE" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/eQjHl_PBobE/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 스테이씨 세은 &#39;SO BAD&#39; (STAYC SEEUN FaceCam)</span><span class="mf-y">2020.11.20 · 488K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=J8rckcJn_4M" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/J8rckcJn_4M/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 스테이씨 세은 &#39;SO BAD&#39; (STAYC SEEUN FaceCam)│@SBS Inkigayo_2020.11.22.</span><span class="mf-y">2020.11.26 · 207K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=J8rckcJn_4M" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/J8rckcJn_4M/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 스테이씨 세은 &#39;SO BAD&#39; (STAYC SEEUN FaceCam)│@SBS Inkigayo_2020.11.22.</span><span class="mf-y">2020.11.26 · 208K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=l_yQiIy1e6U" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/l_yQiIy1e6U/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 스테이씨 세은 &#39;ASAP&#39; (STAYC SEEUN FanCam)│@SBS Inkigayo_2021.04.11.</span><span class="mf-y">2021.04.12 · 170K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=rGvJEkOXQd0" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/rGvJEkOXQd0/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 스테이씨 세은 &#39;SO BAD&#39; (STAYC SEEUN FanCam)│@SBS Inkigayo_2020.11.22.</span><span class="mf-y">2020.11.25 · 166K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=Ki-99ett_tU" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/Ki-99ett_tU/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 스테이씨 세은 &#39;SO BAD&#39; (STAYC SEEUN FanCam)│@SBS Inkigayo_2020.11.15.</span><span class="mf-y">2020.11.16 · 134K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=LKbl7ypuzKQ" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/LKbl7ypuzKQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[가요대제전]STAYC Seeun–My Dream Patissiere(스테이씨 세은-내 꿈은 파티시엘)FanCam| MBCMusic Festival|MBC231231방송</span><span class="mf-y">2024.01.03 · 124K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=hW6F0NMB2sI" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/hW6F0NMB2sI/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 스테이씨 세은 &#39;Bubble&#39; (STAYC SEEUN FanCam) @SBS Inkigayo 230820</span><span class="mf-y">2023.08.20 · 113K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=Kn4PX-dVYiI" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/Kn4PX-dVYiI/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[가요대제전 #최애직캠]STAYC SEEUN-My Dream Patissiere(스테이씨 세은-내 꿈은 파티시엘)Close-upCam|MusicFestival|MBC231231방송</span><span class="mf-y">2024.01.11 · 93K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=Kn4PX-dVYiI" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/Kn4PX-dVYiI/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[가요대제전 #최애직캠]STAYC SEEUN-My Dream Patissiere(스테이씨 세은-내 꿈은 파티시엘)Close-upCam|MusicFestival|MBC231231방송</span><span class="mf-y">2024.01.11 · 94K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=S-yPH1R1fjw" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/S-yPH1R1fjw/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 스테이씨 세은 &#39;SO BAD&#39; (STAYC SEEUN FaceCam)│@SBS Inkigayo_2020.12.06.</span><span class="mf-y">2020.12.08 · 90K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=B5OV_EsqkEc" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/B5OV_EsqkEc/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] 스테이씨 세은 직캠 4K &#39;RUN2U&#39; (STAYC Seeun FanCam) | @MCOUNTDOWN_2022.2.24</span><span class="mf-y">2022.02.24 · 87K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=vPCtaSFBOOg" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/vPCtaSFBOOg/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 스테이씨 세은 &#39;색안경&#39; (STAYC SEEUN &#39;STEREOTYPE&#39; FaceCam)│@SBS Inkigayo_2021.10.03.</span><span class="mf-y">2021.10.05 · 86K+</span></a>
@@ -94,8 +110,8 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <a class="mf-card" href="https://www.youtube.com/watch?v=nwF5s9TYrCQ" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/nwF5s9TYrCQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[예능연구소] STAYC SEEUN – DDU-DU DDU-DU(스테이씨 세은 - 뚜두뚜두) FanCam | Show! MusicCore | MBC230311방송</span><span class="mf-y">2023.03.11 · 66K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=F2fyHdB8RaY" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/F2fyHdB8RaY/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] 스테이씨 세은 직캠 4K &#39;Poppy&#39; (STAYC Seeun FanCam) | @MCOUNTDOWN_2023.2.16</span><span class="mf-y">2023.02.16 · 66K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=zxWr1tWqL2E" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/zxWr1tWqL2E/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[입덕직캠] 스테이씨 세은 직캠 4K &#39;RUN2U&#39; (STAYC Seeun FanCam) | @MCOUNTDOWN_2022.2.24</span><span class="mf-y">2022.02.26 · 61K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=kBobJdOQ3Zs" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/kBobJdOQ3Zs/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] 스테이씨 세은 직캠 4K &#39;BEBE&#39; (STAYC Seeun FanCam) | @MCOUNTDOWN_2025.3.20</span><span class="mf-y">2025.03.20 · 61K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=V3sF6cn75jI" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/V3sF6cn75jI/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[#최애직캠] STAYC SEEUN - Teddy Bear(스테이씨 세은 - 테디베어) Close-up Cam | Show! MusicCore | MBC230218방송</span><span class="mf-y">2023.02.20 · 61K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=kBobJdOQ3Zs" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/kBobJdOQ3Zs/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] 스테이씨 세은 직캠 4K &#39;BEBE&#39; (STAYC Seeun FanCam) | @MCOUNTDOWN_2025.3.20</span><span class="mf-y">2025.03.20 · 60K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=VDkaYuWfkvI" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/VDkaYuWfkvI/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 스테이씨 세은 &#39;Teddy Bear&#39; (STAYC SEEUN FaceCam) @SBS Inkigayo 230219</span><span class="mf-y">2023.02.20 · 58K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=uS47yOafaaM" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/uS47yOafaaM/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[주간아 미방] 스테이씨(STAYC) 세은 &#39;색안경(STEREOTYPE)&#39; 직캠 l EP.528</span><span class="mf-y">2021.09.08 · 57K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=tUc_qKTJTiw" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/tUc_qKTJTiw/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 스테이씨 세은 &#39;색안경&#39; (STAYC SEEUN &#39;STEREOTYPE&#39; FanCam)│@SBS Inkigayo_2021.09.12.</span><span class="mf-y">2021.09.12 · 56K+</span></a>

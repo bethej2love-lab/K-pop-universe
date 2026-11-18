@@ -52,6 +52,20 @@
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
   .vid-list{padding-left:20px;margin:0;}.vid-list li{font-size:13.5px;margin-bottom:7px;}.vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}.note{font-size:11px;color:rgba(150,170,210,0.55);margin:14px 0 0;}.note a{color:rgba(150,175,255,0.65);text-decoration:none;}.rel a{color:rgba(210,225,255,0.95);text-decoration:none;}.sp-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 10px;}@media(min-width:620px){.sp-tiles{grid-template-columns:repeat(5,minmax(0,1fr));}}.sp-tile{display:block;text-decoration:none;min-width:0;}.sp-tile img,.sp-tile-ph{display:block;width:100%;aspect-ratio:1;border-radius:10px;object-fit:cover;background:#1e1e21;}.sp-tile-t{display:block;font-size:12.5px;margin-top:6px;color:rgba(228,236,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.sp-tile-n{display:block;font-size:11px;color:rgba(160,180,230,0.6);}.mf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;margin-bottom:6px;}@media(min-width:620px){.mf-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}.mf-card{display:block;min-width:0;text-decoration:none;}.mf-th{display:block;position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#17171a;}.mf-th img{width:100%;height:100%;object-fit:cover;display:block;}.mf-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.38;margin-top:7px;color:rgba(228,236,255,0.94);}.mf-y{display:block;font-size:11.5px;color:rgba(160,180,230,0.6);margin-top:2px;}
+/* 넓은 화면(PC) 2단 — 그룹·멤버 페이지가 폰 화면을 늘린 640px 기둥이던 것(2026-11-18 사용자 "웹인데 모바일 화면 보는 것 같다").
+   곡·앨범 페이지(song-page.css)와 같은 1120px·왼쪽 큰 이미지 + 오른쪽 정보·영상 4열. 폰(1000px 미만)은 그대로.
+   .top2 안의 h1·'이번 주 팬 N명'(seo_play.js가 h1 뒤에 끼움)·메타는 전부 오른쪽 칸 아래쪽 정렬. */
+@media(min-width:1000px){
+  .wrap{max-width:1120px;padding:22px 32px 40px;}
+  .top2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);grid-template-rows:1fr;grid-auto-rows:min-content;column-gap:32px;margin:14px 0 8px;}
+  .top2::before{content:'';grid-column:2;grid-row:1;}
+  .top2 .cover{grid-column:1;grid-row:1 / span 30;width:100%;max-width:none;aspect-ratio:16/9;object-fit:cover;margin:0;}
+  .top2>*:not(.cover){grid-column:2;min-width:0;}
+  .top2 h1{font-size:34px;line-height:1.15;margin:0 0 6px;word-break:keep-all;}
+  .top2 .meta{font-size:14.5px;margin-bottom:0;}
+  .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
+  h2{font-size:20px;margin:36px 0 14px;}
+}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -65,13 +79,15 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="언어 선택" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/en/g/cnblue/jung-yonghwa/" lang="en" hreflang="en" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">View in English</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
-  <h1>정용화(Jung Yonghwa)</h1>
-  <img class="cover" src="https://img.youtube.com/vi/gOIoBnl9Lwc/mqdefault.jpg" alt="정용화" loading="lazy">
-  <div class="meta">
-    <span><b>소속</b> 씨엔블루(CNBLUE)</span>
-    <span><b>생일</b> 1989.06.22 (만 37세)</span>
-    <span><b>데뷔</b> 2010.01.14</span>
-    <span><b>소속사</b> FNC엔터테인먼트</span>
+  <div class="top2">
+    <h1>정용화(Jung Yonghwa)</h1>
+    <img class="cover" src="https://img.youtube.com/vi/gOIoBnl9Lwc/mqdefault.jpg" alt="정용화" loading="lazy">
+    <div class="meta">
+      <span><b>소속</b> 씨엔블루(CNBLUE)</span>
+      <span><b>생일</b> 1989.06.22 (만 37세)</span>
+      <span><b>데뷔</b> 2010.01.14</span>
+      <span><b>소속사</b> FNC엔터테인먼트</span>
+    </div>
   </div>
   
   <h2>정용화 직캠</h2>
@@ -95,9 +111,9 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <a class="mf-card" href="https://www.youtube.com/watch?v=1E0i7F7KpDA" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/1E0i7F7KpDA/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] 씨엔블루 정용화 직캠 신데렐라 Cinderella JUNG YONG HWA Fancam @엠카운트다운_150917</span><span class="mf-y">2015.09.17 · 9K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=ZFkD0mpkDsc" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/ZFkD0mpkDsc/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD/직캠] 150122 Jung Yong Hwa(정용화) - One Fine Day(어느 멋진 날)</span><span class="mf-y">2015.01.22 · 9K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=7-xOwb6XuQ0" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/7-xOwb6XuQ0/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] 정용화 직캠 어느 멋진 날 One Fine Day Jung Yong Hwa Fancam Mnet MCOUNTDOWN 150205</span><span class="mf-y">2015.02.05 · 8K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=JpGKb_yS-tQ" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/JpGKb_yS-tQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[#음중직캠] CNBLUE JUNG YONGHWA (씨엔블루 정용화) – 그리운건 그대일까 그때일까 FanCam | 쇼! 음악중심 | MBC241019방송</span><span class="mf-y">2024.10.19 · 7K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=E9Cr0jU6G64" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/E9Cr0jU6G64/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[예능연구소 직캠] 씨엔블루 헷갈리게 정용화 Focused @쇼!음악중심_20170415 Between Us CNBLUE JUNG YONG HWA</span><span class="mf-y">2017.04.19 · 7K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=rOWeCUvbDQ4" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/rOWeCUvbDQ4/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[#송스틸러직캠] CNBLUE JUNG YONG HWA-Love Love Love (씨앤블루 정용화-사랑사랑사랑) FanCam | Song Stealer | MBC240209방송</span><span class="mf-y">2024.02.09 · 7K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=JpGKb_yS-tQ" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/JpGKb_yS-tQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[#음중직캠] CNBLUE JUNG YONGHWA (씨엔블루 정용화) – 그리운건 그대일까 그때일까 FanCam | 쇼! 음악중심 | MBC241019방송</span><span class="mf-y">2024.10.19 · 7K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=g1L1bVJogxE" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/g1L1bVJogxE/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">240521 민족의 아리아 - 정용화(JUNG YONG HWA)_4K 직캠 | 고려대학교 대동제</span><span class="mf-y">2024.05.21 · 7K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=bWnULsdmAik" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/bWnULsdmAik/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD/직캠] 150129 Jung Yong Hwa(정용화) - One Fine Day(어느 멋진 날)</span><span class="mf-y">2015.01.29 · 6K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=Sl9oo7CYVpk" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/Sl9oo7CYVpk/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[예능연구소 직캠] 정용화 여자여자해 @쇼!음악중심_20170805 That Girl JUNG YONG HWA</span><span class="mf-y">2017.08.07 · 6K+</span></a>

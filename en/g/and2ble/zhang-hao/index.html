@@ -52,6 +52,20 @@
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
   .vid-list{padding-left:20px;margin:0;}.vid-list li{font-size:13.5px;margin-bottom:7px;}.vid-list a{color:rgba(210,225,255,0.95);text-decoration:none;}.note{font-size:11px;color:rgba(150,170,210,0.55);margin:14px 0 0;}.note a{color:rgba(150,175,255,0.65);text-decoration:none;}.rel a{color:rgba(210,225,255,0.95);text-decoration:none;}.sp-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 10px;}@media(min-width:620px){.sp-tiles{grid-template-columns:repeat(5,minmax(0,1fr));}}.sp-tile{display:block;text-decoration:none;min-width:0;}.sp-tile img,.sp-tile-ph{display:block;width:100%;aspect-ratio:1;border-radius:10px;object-fit:cover;background:#1e1e21;}.sp-tile-t{display:block;font-size:12.5px;margin-top:6px;color:rgba(228,236,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.sp-tile-n{display:block;font-size:11px;color:rgba(160,180,230,0.6);}.mf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;margin-bottom:6px;}@media(min-width:620px){.mf-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}.mf-card{display:block;min-width:0;text-decoration:none;}.mf-th{display:block;position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#17171a;}.mf-th img{width:100%;height:100%;object-fit:cover;display:block;}.mf-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.38;margin-top:7px;color:rgba(228,236,255,0.94);}.mf-y{display:block;font-size:11.5px;color:rgba(160,180,230,0.6);margin-top:2px;}
+/* 넓은 화면(PC) 2단 — 그룹·멤버 페이지가 폰 화면을 늘린 640px 기둥이던 것(2026-11-18 사용자 "웹인데 모바일 화면 보는 것 같다").
+   곡·앨범 페이지(song-page.css)와 같은 1120px·왼쪽 큰 이미지 + 오른쪽 정보·영상 4열. 폰(1000px 미만)은 그대로.
+   .top2 안의 h1·'이번 주 팬 N명'(seo_play.js가 h1 뒤에 끼움)·메타는 전부 오른쪽 칸 아래쪽 정렬. */
+@media(min-width:1000px){
+  .wrap{max-width:1120px;padding:22px 32px 40px;}
+  .top2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);grid-template-rows:1fr;grid-auto-rows:min-content;column-gap:32px;margin:14px 0 8px;}
+  .top2::before{content:'';grid-column:2;grid-row:1;}
+  .top2 .cover{grid-column:1;grid-row:1 / span 30;width:100%;max-width:none;aspect-ratio:16/9;object-fit:cover;margin:0;}
+  .top2>*:not(.cover){grid-column:2;min-width:0;}
+  .top2 h1{font-size:34px;line-height:1.15;margin:0 0 6px;word-break:keep-all;}
+  .top2 .meta{font-size:14.5px;margin-bottom:0;}
+  .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
+  h2{font-size:20px;margin:36px 0 14px;}
+}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -65,19 +79,21 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <nav class="language-nav" aria-label="Language" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="https://kpop-universe.kr/g/앤더블/장하오/" lang="ko" hreflang="ko" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">한국어로 보기</a></nav>
   <a class="brand" href="https://kpop-universe.kr/">K-POP UNIVERSE</a>
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
-  <h1>Zhang Hao(장하오)</h1>
-  <img class="cover" src="https://img.youtube.com/vi/pTbFYET577s/maxresdefault.jpg" alt="Zhang Hao" loading="lazy">
-  <div class="meta">
-    <span><b>Group</b> AND2BLE(앤더블)</span>
-    <span><b>Birthday</b> 2000.07.25 (age 26)</span>
-    <span><b>Debut</b> 2023.07.10</span>
-    <span><b>Agency</b> YH Entertainment</span>
+  <div class="top2">
+    <h1>Zhang Hao(장하오)</h1>
+    <img class="cover" src="https://img.youtube.com/vi/pTbFYET577s/maxresdefault.jpg" alt="Zhang Hao" loading="lazy">
+    <div class="meta">
+      <span><b>Group</b> AND2BLE(앤더블)</span>
+      <span><b>Birthday</b> 2000.07.25 (age 26)</span>
+      <span><b>Debut</b> 2023.07.10</span>
+      <span><b>Agency</b> YH Entertainment</span>
+    </div>
   </div>
   
   <h2>Zhang Hao fancams</h2>
   <p class="hub-more hub-top"><a href="https://kpop-universe.kr/en/g/and2ble/zhang-hao/fancams/">All 114 fancams by song →</a></p>
   <div class="mf-grid">
-    <a class="mf-card" href="https://www.youtube.com/watch?v=jh9gQv5FQgc" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/jh9gQv5FQgc/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[BOYS PLANET] 장하오 ZHANG HAO I G그룹 @시그널송 &#39;난 빛나 (Here I Am)&#39; 개인 직캠 평가</span><span class="mf-y">2022.12.30 · 846K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=jh9gQv5FQgc" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/jh9gQv5FQgc/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[BOYS PLANET] 장하오 ZHANG HAO I G그룹 @시그널송 &#39;난 빛나 (Here I Am)&#39; 개인 직캠 평가</span><span class="mf-y">2022.12.30 · 847K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=DZDWZsy50TU" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/DZDWZsy50TU/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[4K FanCam] ZHANG HAO - 내일은 없어 (Original: Trouble Maker) | KCON LA 2025</span><span class="mf-y">2025.08.04 · 417K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=41lHzACoMZo" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/41lHzACoMZo/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[BOYS PLANET] 장하오 ZHANG HAO｜미션별 직캠 모음 (feat. 스타 크리에이터님의 응원 댓글)</span><span class="mf-y">2023.04.19 · 272K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=FbcykD_BEV8" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/FbcykD_BEV8/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] 보이즈 플래닛 장하오 직캠 4K &#39;TOMBOY&#39; (BOYS PLANET ZHANG HAO FanCam) | @MCOUNTDOWN_2023.3.23</span><span class="mf-y">2023.03.23 · 192K+</span></a>
@@ -94,8 +110,8 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <a class="mf-card" href="https://www.youtube.com/watch?v=sQSz48rvb5Y" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/sQSz48rvb5Y/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 앤더블 장하오 &#39;Curious&#39; (AND2BLE ZHANG HAO FanCam) @SBS Inkigayo 260531</span><span class="mf-y">2026.06.02 · 28K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=bxWNfS-i5CY" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/bxWNfS-i5CY/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[#최애직캠] AND2BLE ZHANG HAO (앤더블 장하오) – Aura | 쇼! 음악중심 | MBC260613</span><span class="mf-y">2026.06.15 · 28K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=xoK31UM8Mc8" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/xoK31UM8Mc8/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[입덕직캠] 앤더블 장하오 직캠 4K &#39;Curious&#39; (AND2BLE ZHANG HAO FanCam) | @MCOUNTDOWN_2026.5.28</span><span class="mf-y">2026.05.30 · 28K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=8V6PzSeESbg" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/8V6PzSeESbg/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[얼빡직캠 4K] 앤더블 장하오 &#39;Curious&#39; (AND2BLE ZHANGHAO Facecam) @뮤직뱅크(Music Bank) 260529</span><span class="mf-y">2026.05.30 · 24K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=RQZ0tUvgtCA" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/RQZ0tUvgtCA/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K]  앤더블 장하오 &#39;French Kissing&#39; (AND2BLE ZHANG HAO FaceCam) @SBS Inkigayo 261101</span><span class="mf-y">2026.11.03 · 24K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=8V6PzSeESbg" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/8V6PzSeESbg/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[얼빡직캠 4K] 앤더블 장하오 &#39;Curious&#39; (AND2BLE ZHANGHAO Facecam) @뮤직뱅크(Music Bank) 260529</span><span class="mf-y">2026.05.30 · 24K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=Zpg_hDIA5Bc" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/Zpg_hDIA5Bc/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 앤더블 장하오 &#39;Aura&#39; (AND2BLE ZHANG HAO FaceCam) @SBS Inkigayo 260614</span><span class="mf-y">2026.06.18 · 24K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=wNdCbhkp4mU" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/wNdCbhkp4mU/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[K-Fancam] 앤더블 장하오 직캠 &#39;Curious&#39; (AND2BLE ZHANGHAO Fancam) @뮤직뱅크(Music Bank) 260529</span><span class="mf-y">2026.05.30 · 23K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=pTbFYET577s" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/pTbFYET577s/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[#최애직캠] AND2BLE ZHANG HAO (앤더블 장하오) – Curious | 쇼! 음악중심 | MBC260530</span><span class="mf-y">2026.06.01 · 23K+</span></a>
