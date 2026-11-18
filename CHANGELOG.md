@@ -12,6 +12,17 @@
   - ⏳ `song-quote-match`·`song-video-nonperf`: 오늘 회사/Opus 세션 비공연 거르기 테스트 미통과 — 회사 몫(buildSongs 로직).
   - 임시로 메일만 끄려면 github.com/settings/notifications의 Actions 실패 알림 해제(사용자).
 
+## 2026-11-18 밤 (Claude Code/Sonnet 집 — 사용자 실시간 요청 다수 쳐냄)
+사용자가 웹 보며 요청을 연속으로 줌 — 전부 태스크화(#12~#25)해서 처리. "숲을 봐(기존 패턴 복사)"·"요청 흘리지 말고 멈추지 말기"를 PRINCIPLES.md·메모리에 박음.
+- **[seo_play.js] 정적 상단 줄 개편**: 통계·소식 교체 멘트·'우주 열기' 버튼 전부 제거 → 고정 `Find your place in K-pop.` 한 줄, 줄 전체 클릭=유니버스. 높이 34→68px·폰트 +1pt. 별가루 유지. (#22)
+- **[seo_play.js] 정적 하트 버튼** 바깥 테두리 원 제거(border·기본배경 없이 아이콘만, hover/on만 배경, 아이콘 18→20px). (#24)
+- **[build_group_pages.js] 그룹 페이지 멤버를 프로필 사진 그리드(face)로 + 소개 다음·직캠 위로**: 텍스트 목록이었고 직캠·소개 아래 묻혔음. **곡 페이지 '영상에 나온 멤버' face 패턴(`.faces`/`.face`/`.face-img`/`.face-nm`/`memberFaceUrl(a,ko)`)을 그대로 복사** — 추측했다 `.face-nm`↔`.face-n` 불일치로 깨질 뻔한 걸 기존 작동 패턴 복사로 해결. (#25, 재생성 반영 대기)
+- **[app.js·css] For You NEW 뱃지**: 기준이 `_kpuPrevSeen`(지난 방문)만이라 자주 오면 거의 안 떠 "2시간처럼 타이트"했음 → **최근 48h OR 지난 방문 이후**로. sub 텍스트 NEW → 채운 핑크 배지 `.feed-new-hot`(글로우, 앨범 선반의 약한 테두리 칩과 구분). (#13)
+- **[app.js] For You 인스타 선반 첫 2장 즉시 로딩**(eager+fetchpriority high) — 재방문 첫 화면 인스타 늦게 뜨던 것. (R)
+- **[build_group_pages.js] seo-play 메일 폭탄**: `/all/` 템플릿(2504)이 gtag 분석 스크립트 누락 → 621 복사 추가(seo-play 테스트 11/11 균형). song-share-preview 낡은 테스트도 수리(heroCapHtml stub·hqdefault→mqdefault). ⏳ song-quote-match·song-video-nonperf는 회사 비공연 거르기 미완성 — 회사 몫(Data validation 계속 빨강).
+- ✅ **[.github/workflows/credits-daily.yml 신설+수정] #14 작동 확인**: 크레딧 수집기를 부르는 워크플로가 없던 공백을 메움(매일 KST 01:11). **첫 실행서 멜론 러너에서 303곡 실제 수집 성공**(멜론 러너 가능, 부분 차단 8번은 멱등이라 다음날). git add 누락(albums_recent·disco/)으로 push만 실패했던 것 수정·재트리거. ⏳ build_slim이 cr를 slim에 싣는지·For You 소식 항목은 확인 필요.
+- ⏳ **재현 필요(사용자 화면 지정 대기)**: #12 쇼츠/가로 비율(탐험 선반 쇼츠가 가로 틀에 갇힘 — 숲보기로 보니 오리지널 선반 25367은 `short` 옵션 안 주고 For You 28177은 줌, 레이아웃 섞임이라 스크린샷 필요)·#16 콘서트 포스터 치우침(코드상 flex 첫 자식이라 정상, 실화면 재현 필요).
+
 ## 2026-11-18 밤 (Claude Code/Sonnet 집 자율 — 수집 조사 + 네이버 F 코드, DB 느림 속)
 - **수집 조사(사용자 "더케이팝 e84FIWj4pOk 왜 수집 안 됨, 더쇼·쇼케이팝 1위 시의성")**: e84F = **THE K-POP(@thekpop=더쇼) 11-17 'THE SHOW CHOICE' A2O SOUL 'Dancing in the Dark'(데뷔 첫 1위 앵콜)**. DB엔 없음. 조사 결과 ①채널 등록 OK(ext_channels: thekpop·showkpop.official·엠카·뮤뱅·음중·인기가요·쇼챔 등 다 있음) ②A2O SOUL 등록 그룹 OK ③**더쇼 11-17 영상 27개 수집됨**(FAN PICK CAM·THE SHOW CHOICE ZAI·1위 쇼츠 포함) — 깊이 문제 아님 ④e84F만 누락 = **업로드 타이밍 지연**(수집 사이에 올라와 다음 차례 대기) 추정, 구조적 결함 아님. **수집은 정상 작동**(thekpop 11-18까지·엠카 11-18까지 수집, 워크플로우 RUN/success). 시의성(당일 1위 즉시)을 더 높이려면 음방 채널 수집 **빈도↑**가 필요한데 유튜브 쿼터·DB 부하 영향이라 운영/회사 판단 — 집에서 수집 로직 변경 안 함. DB 상태: `select 1` 1.0s(치명적 다운 아님, 수집 동기화 겹침으로 간헐 느림).
 - **[tools/seo_extra.js·seo_vids.js] 네이버 F 코드 작성(제목 꼬리 제거)**: `cleanVidTitle(t)`=끝의 " | @핸들" 꼬리 제거(`/\s*[|｜ㅣ]\s*@\S+\s*$/`, @ 있을 때만 — 'A | B 라이브'·'…SOULㅣ261117 방송'은 유지). SSR `vidCards`(네이버가 긁는 본문)와 클라이언트 `seo_vids.js card()` 둘 다 적용. node 단위검증 7/7, 문법 OK. ⚠️ **커밋만·push 보류** — seo_extra.js 변경은 정적 재생성(35분 DB 점유)을 트리거하는데 지금 DB 느림이라, **DB 여유 있을 때(복귀/밤) push**. G(정사각 og:image)는 og:image 생성 위치가 복잡 + 정사각 전환이 카톡·트위터 공유에도 영향이라 "전면 vs 선별" 설계 확인 필요 → 보류.
