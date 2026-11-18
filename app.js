@@ -28167,11 +28167,13 @@ async function _buildFeedFavNew(opts){
     const flat=rows.flatMap(r=>r.items); // 라이트박스 재생목록 순서를 화면 순서와 일치
     // 지난 방문 이후 올라온 영상엔 날짜 앞에 NEW(2026-11-04 — "새로 뭐 올라왔지?"가 바로 보이게). 썸네일 위엔 안 얹는다.
     const _prevSeen=window._kpuPrevSeen||0;
-    const _isNewSince=s=>{if(!_prevSeen)return false;const t=Date.parse(s.paFull||'');return isFinite(t)&&String(s.paFull).length>10&&t>_prevSeen;};
+    // NEW 기준: 지난 방문 이후 OR 최근 48h(둘 중 하나). 지난 방문만 보면 자주 올수록 NEW가 거의 안 떠 "2시간 이내처럼" 타이트했다(2026-11-18 사용자).
+    const _NEW_WIN=48*3600e3;
+    const _isNewSince=s=>{const t=Date.parse(s.paFull||'');if(!isFinite(t)||String(s.paFull).length<=10)return false;return (Date.now()-t<_NEW_WIN)||(!!_prevSeen&&t>_prevSeen);};
     const drawItem=({song,row})=>{
       const isShort=_songIsShort(song);
       const _emo=_isFav(song)?String(_bias.favEmoji(song)).replace(/[<>&"']/g,''):''; // 이모지는 사용자가 친 글자 — 태그 문자 제거
-      const sub=(_emo?`<span class="feed-fav-emo">${_emo}</span>`:'')+[_feedWhoSub(song),_isNewSince(song)?'NEW':null,song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
+      const sub=(_emo?`<span class="feed-fav-emo">${_emo}</span>`:'')+(_isNewSince(song)?'<span class="feed-new-hot">NEW</span>':'')+[_feedWhoSub(song),song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
       _appendFeedCard(strip,'💖',song.t,sub,
         ()=>openLightbox(song.u,isShort,flat,flat.indexOf(song),{groupKo:song.groupKo,memberKo:(song.memberKos||[])[0]},false,true),
         song.thumb,null, Object.assign({dur:song.dur}, row.wide?{wide:true,short:!!row.short}:(isShort?{short:true}:{}),
