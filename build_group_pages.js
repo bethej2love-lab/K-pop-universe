@@ -635,6 +635,7 @@ ${SEO_GA_TAG}
       ${agency ? `<span><b>${agencyLabel}</b> ${escHtml(agency)}</span>` : ''}
       ${info.fandom && info.fandom.ko ? `<span><b>${fandomLabel}</b> ${escHtml(isEn ? (info.fandom.en || info.fandom.ko) : info.fandom.ko)}</span>` : ''}
     </div>
+    ${snsRowHtml(info.links, isEn)}
   </div>
   ${(() => { const e2 = lang === 'en'; const parts = [[memberListHtml(lang), 'members', e2 ? 'Members' : '멤버'], [songLinksHtml(ko, lang), 'songs', e2 ? 'Songs' : '곡별 직캠'], [albumLinksHtml(ko, lang), 'albums', e2 ? 'Albums' : '앨범']].filter(x => x[0]); return parts.length ? `<ul class="member-list jump" style="margin:4px 0 16px">${parts.map(x => `<li><a href="#${x[1]}">${x[2]}</a></li>`).join('')}</ul>` : ''; })()}
   ${hasStage ? `
@@ -895,6 +896,7 @@ ${SEO_GA_TAG}
       ${ag.debutDate ? `<span><b>${isEn ? 'Debut' : '데뷔'}</b> ${ag.debutDate}</span>` : ''}
       ${agency ? `<span><b>${agencyLabel}</b> ${escHtml(agency)}</span>` : ''}
     </div>
+    ${snsRowHtml(a.links, isEn)}
   </div>
   ${hasFancams ? `
   <h2>${isEn ? `${escHtml(en)} fancams` : `${escHtml(ko)} 직캠`}</h2>
@@ -1927,6 +1929,22 @@ const FANCAM_PER_SONG = 12;  // 멤버×곡 페이지가 있는 곡은 상위 12
 const FANCAM_TOP = 12;
 const FANCAM_RANK_N = 10; // 직캠 전체 페이지 맨 위 TOP 순위 개수
 const FANCAM_REST_MAX = 48;
+
+// 프로필 맨 위 SNS 링크 줄(2026-11-18 사용자 "링크는 기본적으로 넣어줘야지 — 정적 페이지에서도 기본 정보 안내는 가능해야"). 그룹은 groups.json links,
+// 멤버는 artists.json links(인스타는 개인 계정만 — 메모리 규칙, 데이터에 있는 것만). 작은 알약 한 줄, 새 창.
+function snsRowHtml(links, isEn) {
+  if (!links) return '';
+  const L = [['youtube', 'YouTube'], ['instagram', 'Instagram'], ['x', 'X'], ['tiktok', 'TikTok'], ['weverse', 'Weverse'], ['namu', isEn ? 'Namuwiki' : '나무위키']];
+  const items = L.filter(([k]) => typeof links[k] === 'string' && /^https?:\/\//.test(links[k])).map(([k, t]) => `<a class="sns-${k}" href="${escHtml(links[k])}" target="_blank" rel="noopener noreferrer">${t}</a>`);
+  return items.length ? `<div class="sns">${items.join('')}</div>` : '';
+}
+// 대표 영상(맨 위 큰 썸네일) 정보 줄(2026-11-18 사용자 "직캠 페이지 썸네일 겁나 큰 대표 영상 — 제목·날짜·조회수 전혀 표기 안 됨"). 영상 카드와 같은 형식.
+function heroCapHtml(v, isEn) {
+  if (!v || !v.id) return '';
+  const d = v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '';
+  const vc = v.view_count ? SEO.fmtViews(v.view_count, isEn) : '';
+  return `<p class="hero-cap"><a href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener">${escHtml(v.title || '')}</a>${(d || vc) ? `<span>${[d, vc].filter(Boolean).join(' · ')}</span>` : ''}</p>`;
+}
 function fancamPageHtml(a, lang) {
   const isEn = lang === 'en';
   const gko = a.group.ko, info = groups[gko] || null; // 솔로 아티스트(그룹 미등록)도 허브 생성(2026-11-15) — 그룹 표기는 '솔로'로
@@ -2049,6 +2067,7 @@ ${LIST_FWD}
   ${languageNav(isEn, altUrl)}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
   <a class="hero" href="https://www.youtube.com/watch?v=${hero.id}" target="_blank" rel="noopener"><img src="${wideThumb(hero.id)}" alt="${escHtml(hero.title)}"><span class="play"></span><span class="hero-txt"><h1>${escHtml(h1)}</h1><span class="sub">${escHtml(sub)}</span></span></a>
+  ${heroCapHtml(hero, isEn)}
   <div class="crumbs">${info ? `<a href="${SITE}/${groupPagePath(gko, lang)}">${escHtml(gName)}</a> › ` : ''}<a href="${profileUrl}">${escHtml(mName)}</a> › ${isEn ? 'Fancams' : '직캠'}</div>
   <p class="lead">${escHtml(isEn ? `Every individual fancam and face cam of ${gName} ${mName}, grouped by song. Most viewed first.` : `${gko} ${mName}의 개인 직캠·페이스캠을 곡별로 모두 모았어요. 조회수 많은 순.`)}</p>
   ${songNav}
@@ -2326,7 +2345,7 @@ ${LIST_FWD}
 <div class="wrap">
   ${languageNav(isEn, altUrl)}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
-  ${top[0] ? `<a class="hero" href="https://www.youtube.com/watch?v=${top[0].id}" target="_blank" rel="noopener"><img src="${heroImage}" alt="${escHtml(top[0].title)}"><span class="play"></span><span class="hero-txt"><h1>${escHtml(h1)}</h1><span class="sub">${escHtml(sub)}</span></span></a>`
+  ${top[0] ? `<a class="hero" href="https://www.youtube.com/watch?v=${top[0].id}" target="_blank" rel="noopener"><img src="${heroImage}" alt="${escHtml(top[0].title)}"><span class="play"></span><span class="hero-txt"><h1>${escHtml(h1)}</h1><span class="sub">${escHtml(sub)}</span></span></a>${heroCapHtml(top[0], isEn)}`
            : `<h1>${escHtml(h1)}</h1>`}
   ${crumbs}
   ${lead ? `<p class="lead">${escHtml(lead)}</p>` : ''}

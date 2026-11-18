@@ -145,7 +145,7 @@
     var hero=document.querySelector('.wrap>.hero');
     if(hero&&/song-page\.css/.test((document.querySelector('link[href*="song-page.css"]')||{}).href||'')&&!document.querySelector('.kpu-top')){
       document.body.classList.add('kpu-song');
-      var top=document.createElement('div');top.className='kpu-top';hero.parentNode.insertBefore(top,hero);top.appendChild(hero);
+      var top=document.createElement('div');top.className='kpu-top';hero.parentNode.insertBefore(top,hero);var cap=hero.nextElementSibling&&hero.nextElementSibling.matches('.hero-cap')?hero.nextElementSibling:null;if(cap){var hc=document.createElement('div');hc.className='kpu-hero';top.appendChild(hc);hc.appendChild(hero);hc.appendChild(cap);}else top.appendChild(hero);
       var side=document.createElement('div');side.className='kpu-side';top.appendChild(side);
       var h1=hero.querySelector('h1'),sb=hero.querySelector('.sub');if(h1){var sh=document.createElement('div');sh.className='kpu-side-h';sh.setAttribute('aria-hidden','true');var st1=document.createElement('div');st1.className='h'+(h1.textContent.length>22?' long':'');st1.textContent=h1.textContent;sh.appendChild(st1);if(sb){var st2=document.createElement('div');st2.className='sb';st2.textContent=sb.textContent;sh.appendChild(st2);}side.appendChild(sh);}
       var n=top.nextElementSibling;while(n&&n.matches&&n.matches('.crumbs,.hub-back,.lead,.chips')&&!(n.matches('.chips')&&n.children.length>5)){var nx=n.nextElementSibling;side.appendChild(n);n=nx;}
