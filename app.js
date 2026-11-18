@@ -27673,8 +27673,19 @@ function _feedWhoSub(song){
   const ms=arts.map(x=>x.a?_dispName(x.a,song.groupKo):x.mko).filter(Boolean);
   const more=ms.length>3?ms.length-3:0;
   const who=ms.slice(0,3).join(', ')+(more?(currentLang==='ko'?` 외 ${more}`:` +${more}`):'');
+  // 같이 나온 사람(게스트) — with_members "이름(그룹)" (2026-11-19 #29, 사용자 "For you에 같이 나온 사람도 표기"). 메인에 이미
+  // 뜬 사람은 빼고 최대 2명 + 외 n. 영어 화면은 영문 이름(_dispName). 솔로 "이름(솔로)"·본인 중복은 아래에서 걸러진다.
+  const shown=new Set(ms),anchorG=song.groupKo||'',guests=[];
+  (song.withMembers||[]).forEach(n=>{
+    const m=/^(.*)\((.*)\)$/.exec(String(n));const nm=m?m[1]:String(n);
+    if(!nm||m&&m[2]==='솔로'&&nm===anchorG||shown.has(nm)||guests.some(x=>x.nm===nm))return;
+    const a=_findArtistByConnName(n,anchorG);const disp=a?_dispName(a,anchorG):nm;
+    if(shown.has(disp))return;guests.push({nm,disp});
+  });
+  const gMore=guests.length>2?guests.length-2:0;
+  const withTxt=guests.length?((currentLang==='ko'?'함께 ':'with ')+guests.slice(0,2).map(x=>x.disp).join(', ')+(gMore?(currentLang==='ko'?` 외 ${gMore}`:` +${gMore}`):'')):'';
   // 솔로(그룹명=본인)면 이름 한 번만
-  return who+(g&&g!==who?` <span class="feed-sub-grp">${g}</span>`:'');
+  return who+(g&&g!==who?` <span class="feed-sub-grp">${g}</span>`:'')+(withTxt?` <span class="feed-sub-with">${withTxt}</span>`:'');
 }
 const _isPubTsMissing=err=>!!err&&/published_ts/.test(err.message||'');
 function _fmtVidAgo(iso){
@@ -28015,11 +28026,21 @@ function _feedBiasMatchers(){
       ||bias.find(b=>b&&(b.type||'member')==='group'&&b.ko===song.groupKo);
     return(hit&&hit.emoji)||'🤍';
   };
+  // 이 영상에 걸린 내 즐겨찾기 수(#26, 2026-11-19 사용자 "즐겨찾기 둘 이상 나오면 우선순위 높아야지") — 최애 그룹 + 태깅/게스트
+  // 멤버 중 내 최애를 중복 없이 센다. 2명↑이면 For You 최애 묶음에서 앞으로 올린다.
+  const favCount=song=>{
+    const hits=new Set();
+    if(gset.has(song.groupKo))hits.add('g:'+song.groupKo);
+    (song.memberKos||[]).forEach(m=>{if(mKeys.has(m+'|'+(song.groupKo||''))||mLoose.has(m))hits.add('m:'+m);});
+    (song.withMembers||[]).forEach(n=>{const mm=/^(.*)\((.*)\)$/.exec(String(n));const nm=mm?mm[1]:String(n),gg=mm?mm[2]:'';if(mKeys.has(nm+'|'+gg)||mLoose.has(nm))hits.add('m:'+nm);});
+    return hits.size;
+  };
   return{
     favEmoji,
     wide:song=>gset.has(song.groupKo)||mGroups.has(song.groupKo)||memberHit(song),
     short:memberHit,
     fav:song=>gset.has(song.groupKo)||memberHit(song),
+    favCount,
     favRgb,
   };
 }
@@ -28166,7 +28187,9 @@ async function _buildFeedFavNew(opts){
     // (_feedBiasMatchers().fav). 예전 가로 판정(최애 멤버의 그룹 전체)은 빛까지 주기엔 너무 넓다.
     const _bias=_feedBiasMatchers();
     const _isFav=_bias?_bias.fav:()=>false;
-    const _favFirst=songs.filter(_isFav),_rest=songs.filter(s=>!_isFav(s)); // 각자 최신순 유지
+    const _favN=_bias?_bias.favCount:()=>0;
+    // 최애 묶음은 내 즐겨찾기가 많이 겹친 영상 먼저(#26), 같은 수면 최신순 유지(sort는 안정 정렬). 나머지는 최신순 그대로.
+    const _favFirst=songs.filter(_isFav).sort((a,b)=>_favN(b)-_favN(a)),_rest=songs.filter(s=>!_isFav(s));
     const rows=_packRows(_favFirst.concat(_rest),_songIsShort,{landscapeFull:true});
     if(rows.length&&!rows[rows.length-1].wide&&rows[rows.length-1].items.length===1)rows.pop(); // 끝에 홀로 남은 반폭 제거
     const flat=rows.flatMap(r=>r.items); // 라이트박스 재생목록 순서를 화면 순서와 일치
