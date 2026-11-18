@@ -433,6 +433,11 @@ const EXTRA_CSS =`.vid-list{padding-left:20px;margin:0;}.vid-list li{font-size:1
   .top2 .meta{font-size:14.5px;margin-bottom:0;}
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
-}`;
+  /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
+  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
+  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
+}
+/* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
+.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}`;
 
 module.exports = { STRUCTURAL_TRACKS, isNonPerformance, refineSongsByTitle, vidCards, loadStatic, packCredits, bilingualSongTitle, prefetch, groupExtra, memberExtra, ages, EXTRA_CSS, fmtViews, fmtVC, prefetchGroupVideos, buildSongs, roundViews, esc };

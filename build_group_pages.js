@@ -628,7 +628,7 @@ ${SEO_GA_TAG}
   <a class="brand" href="${SITE}/${isEn ? 'en/g/' : 'g/'}" style="margin-left:10px;">${isEn ? 'All groups' : '그룹 전체'}</a>
   <div class="top2">
     <h1>${escHtml(bilingualLabel(displayName,subName))}</h1>
-    <img class="cover" src="${ogImage}" alt="${escHtml(displayName)}" loading="lazy">
+    ${(() => { const pic = groupPicUrl(ko); return pic ? `<img class="cover avatar" src="${pic}" alt="${escHtml(displayName)}" loading="eager" width="240" height="240">` : `<img class="cover" src="${ogImage}" alt="${escHtml(displayName)}" loading="lazy">`; })()}
     <div class="meta">
       ${debutIso ? `<span><b>${debutLabel}</b> ${escHtml(info.debut)}</span>` : ''}
       ${agency ? `<span><b>${agencyLabel}</b> ${escHtml(agency)}</span>` : ''}
@@ -886,7 +886,7 @@ ${SEO_GA_TAG}
   <a class="brand" href="${SITE}/${isEn ? 'en/g/' : 'g/'}" style="margin-left:10px;">${isEn ? 'All groups' : '그룹 전체'}</a>
   <div class="top2">
     <h1>${escHtml(bilingualLabel(displayName,subName))}</h1>
-    <img class="cover" src="${ogImage}" alt="${escHtml(displayName)}" loading="lazy">
+    ${(() => { const pic = memberPicUrl(a); return pic ? `<img class="cover avatar" src="${pic}" alt="${escHtml(displayName)}" loading="eager" width="240" height="240">` : `<img class="cover" src="${ogImage}" alt="${escHtml(displayName)}" loading="lazy">`; })()}
     <div class="meta">
       ${groupDisplay ? `<span><b>${groupLabel}</b> ${escHtml(bilingualLabel(groupDisplay,isEn?primaryGko:groupInfo.en))}</span>` : ''}
       ${bdayIso ? `<span><b>${debutLabel}</b> ${escHtml(a.bday)}${ag.age && a.active !== false ? (isEn ? ` (age ${ag.age})` : ` (만 ${ag.age}세)`) : ''}</span>` : ''}
@@ -1213,6 +1213,24 @@ pages.push({ loc: `${SITE}/g/`, priority: '0.9' }, { loc: `${SITE}/en/g/`, prior
 //    둔다** — 빈 페이지를 덮어쓰거나 sitemap에서 통째로 빠지는 게 더 나쁘다.
 const SB_URL = 'https://dukgguehegnembimqvkm.supabase.co';
 const SB_KEY = 'sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0'; // 앱(index.html)에 이미 공개된 anon 키
+// ── 그룹·멤버 프로필 사진(2026-11-18 사용자 "그룹·아티스트 페이지는 프로필 사진 원, 앨범은 앨범 커버, 곡은 앨범 커버나 영상 썸네일") ──
+// 앱 카드와 같은 원본: Supabase artist_pics(그룹은 ko_name='') — 스토리지 주소(고정)만 쓴다(인스타 fbcdn은 며칠 뒤 만료돼 정적 페이지에 못 박는다).
+// 키는 그룹|이름(동명이인 125쌍 — 이름만 키로 쓰면 서로 사진을 나눠 가진다). 없으면 예전처럼 16:9 대표 영상 표지.
+let PROFILE_PICS = new Map();
+const picKey = (g, n) => (g || '') + '|' + (n || '');
+async function fetchProfilePics() {
+  const res = await fetch(`${SB_URL}/rest/v1/artist_pics?select=ko_name,group_ko,pic_url&pic_url=like.*supabase.co/storage*`, { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const rows = await res.json();
+  PROFILE_PICS = new Map(rows.filter(r => r.pic_url).map(r => [picKey(r.group_ko, r.ko_name), r.pic_url]));
+  console.log(`프로필 사진 ${PROFILE_PICS.size}장(그룹 ${rows.filter(r => !r.ko_name).length})`);
+}
+function groupPicUrl(gko) { return PROFILE_PICS.get(picKey(gko, '')) || null; }
+function memberPicUrl(a) {
+  const gs = [a.group, ...(a.groups || [])].map(g => g && g.ko).filter(Boolean);
+  for (const g of gs) { const u = PROFILE_PICS.get(picKey(g, a.name.ko)); if (u) return u; }
+  return null;
+}
 // 영상 이 수 이상인 관계만 페이지로. 3이면 264쌍이지만 노이즈가 섞인다 — 실측에서 `라이즈 × 방탄소년단`이
 // 3건 남았는데 전부 `Fame MV bts 1`처럼 **bts=behind the scenes** 오탐이었다. 5로 올리면 그런 잔여 노이즈가
 // 빠지고(콜라보 86쌍) 페이지도 두꺼워진다 — 얇은 페이지는 그 자체로 SEO에 마이너스라 둘 다 이득.
@@ -3204,6 +3222,7 @@ else (async () => {
     FANCAM_HUB.forEach(f => ids.push(f[0].id));
     await probeWide(ids);
   } catch (e) { console.warn('⚠️ 16:9 썸네일 확인 건너뜀:', e.message); }
+  try { await fetchProfilePics(); } catch (e) { console.warn(`⚠️ 프로필 사진 미리 받기 실패 — 그룹·멤버 페이지는 예전 표지로: ${e.message}`); }
   try { CHEM_RAW = await fetchChemPairs(); } catch (e) { console.warn(`⚠️ 케미 쌍 미리 받기 실패 — 재생 화면 케미 카드 없이: ${e.message}`); }
   buildGroupPages();
   buildMemberPages();
