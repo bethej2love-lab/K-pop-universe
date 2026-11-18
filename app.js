@@ -10467,7 +10467,8 @@ async function _appEvFlush(){
   if(!_appEvQ.length||_appEvDead)return;
   // 익명 세션이 붙기 전(부팅 직후)엔 기다렸다 보낸다 — 모든 방문자는 익명 계정이 있다
   if(typeof sb==='undefined'||!sb||!window._sbSession){_appEvT=setTimeout(_appEvFlush,5000);return;}
-  if(typeof _isAdmin==='function'&&_isAdmin()){_appEvQ=[];return;}
+  // 관리자 이벤트는 지표에서 빼되, 웹앱 재시작 계측(restart_*)은 남긴다 — 재시작을 실제로 겪고 제보한 사람이 관리자 본인이라 그동안 0건이었다(2026-11-18)
+  if(typeof _isAdmin==='function'&&_isAdmin()){_appEvQ=_appEvQ.filter(r=>/^restart_/.test(r.ev));if(!_appEvQ.length)return;}
   const uid=window._sbSession.user.id;
   const rows=_appEvQ.splice(0).map(r=>({user_id:uid,ev:r.ev,k:r.k}));
   try{
