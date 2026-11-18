@@ -24893,7 +24893,7 @@ function _igBiasOf(owner){
   return{emoji:String((hit&&hit.emoji)||'🤍').replace(/[<>&"']/g,''),isBias:!!hit}; // 이모지는 사용자가 친 글자 — 태그 문자 제거
 }
 function _igRenderRail(list,photos){
-  photos.forEach(m=>{
+  photos.forEach((m,i)=>{
     const cap1=String(m.cap||'').split('\n').map(x=>x.trim()).find(Boolean)||''; // 본문 첫 줄
     const card=_appendFeedCard(list,'📷',(m._emoji?m._emoji+' ':'')+m.owner.name,'',()=>_openIgViewer(m,m.h,0),m.u,null,{meta:_igAgo(m.t)});
     // 이름 옆 흐린 @계정 — 카드 인스타 줄(_igCaption)과 같은 표기(2026-11-05 사용자 "카드엔 있는데 발견 탭엔 없다, 발견 탭이 더 필요")
@@ -24901,7 +24901,11 @@ function _igRenderRail(list,photos){
     if(tt&&m.h){const hs=document.createElement('span');hs.className='ig-cap-h';hs.textContent='@'+m.h;tt.appendChild(hs);}
     if(cap1&&card){const c=document.createElement('div');c.className='feed-card-sub ig-cap1';c.textContent=cap1;card.querySelector('.feed-card-title')?.after(c);}
     const img=card&&card.querySelector('img');
-    if(img)img.addEventListener('error',()=>card.remove()); // 만료된 인스타 주소면 그 카드만 뺀다
+    if(img){
+      img.addEventListener('error',()=>card.remove()); // 만료된 인스타 주소면 그 카드만 뺀다
+      // 앞 두 장은 즉시·우선 로딩 — 재방문 For You 첫 화면에서 인스타 사진이 늦게 뜨던 것(2026-11-18 사용자 "최소 첫 사진이라도 빨리")
+      if(i<2){img.loading='eager';try{img.fetchPriority='high';}catch(_){}img.setAttribute('fetchpriority','high');}
+    }
     _igFeedDeck(card,m);
   });
   list.scrollLeft=0;_enableDragScroll(list);
