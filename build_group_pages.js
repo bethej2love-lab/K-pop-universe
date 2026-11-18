@@ -494,14 +494,15 @@ groupKos.forEach(ko => {
       const former = status === 'former';
       const name = lang === 'en' ? (a.name.en || a.name.ko) : ((ge && ge.name) || a.name.ko);
       const mPath = memberPagePath(a, lang); // 해시 딥링크가 아니라 그 멤버의 정적 페이지로
+      const img = memberFaceUrl(a, ko); // 프로필 사진(2026-11-18 사용자 "멤버 위로·사진 포함")
       const activeTag = former ? (lang === 'en' ? ' <span class="tag">former</span>' : ' <span class="tag">전멤버</span>') : status === 'paused' ? (lang === 'en' ? ' <span class="tag">on hiatus</span>' : ' <span class="tag">활동 중단</span>') : '';
-      return `<li><a href="${SITE}/${mPath}">${escHtml(name)}</a>${activeTag}</li>`;
+      return `<a class="face" href="${SITE}/${mPath}"><span class="face-img">${img ? `<img${/#pf$/.test(img) ? ` class="pf"` : ``} src="${img}" alt="${escHtml(name)}" loading="lazy">` : ``}</span><span class="face-nm">${escHtml(name)}${activeTag}</span></a>`;
     }).join('\n      ');
     return `
     <h2 id="members">${lang === 'en' ? 'Members' : '멤버'}</h2>
-    <ul class="member-list">
+    <div class="faces">
       ${items}
-    </ul>`;
+    </div>`;
   }
 
   function discogHtml(lang) {
@@ -639,11 +640,11 @@ ${SEO_GA_TAG}
     ${factsTag(pageFacts({ vids: VIDS[ko], wins: EX.wins[ko], isEn }))}
   </div>
   ${(() => { const e2 = lang === 'en'; const parts = [[memberListHtml(lang), 'members', e2 ? 'Members' : '멤버'], [songLinksHtml(ko, lang), 'songs', e2 ? 'Songs' : '곡별 직캠'], [albumLinksHtml(ko, lang), 'albums', e2 ? 'Albums' : '앨범']].filter(x => x[0]); return parts.length ? `<ul class="member-list jump" style="margin:4px 0 16px">${parts.map(x => `<li><a href="#${x[1]}">${x[2]}</a></li>`).join('')}</ul>` : ''; })()}
+  ${groupIntroHtml(ko, info, members, discogItems, lang)}
+  ${memberListHtml(lang)}
   ${hasStage ? `
   <h2>${isEn ? `${escHtml(en)} fancams & stages` : `${escHtml(ko)} 직캠·무대`}</h2>
   <div class="mf-grid">${vidCardsHtml(stageVids.slice(0, 24), isEn)}</div>${stageVids.length > 24 ? `<p class="note">${isEn ? `Top 24 of ${stageVids.length} videos` : `영상 ${stageVids.length}개 중 상위 24개`}</p>` : ''}` : ''}
-  ${groupIntroHtml(ko, info, members, discogItems, lang)}
-  ${memberListHtml(lang)}
   ${xg.html}
   ${songLinksHtml(ko, lang)}
   ${albumLinksHtml(ko, lang)}
