@@ -67,7 +67,8 @@ async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,ret
         res.anchorBack=a?Math.round(a.getBoundingClientRect().top-sc.getBoundingClientRect().top-off0):null;}
       _closeFeedOverlay();await S(900);res.feedClosed={wide:document.body.classList.contains('fw-home'),open:fo.classList.contains('open')};
       return JSON.stringify(res);})()`));
-    const chk=(name,v,wide)=>{if(v&&v.wide===wide&&(wide?v.w>440:v.w===440))ok(name+' → '+(wide?'넓게 '+v.w:'440'));else bad(name+' '+JSON.stringify(v));};
+    // 함께 열리면 440, 가운데 창(재생 등)이 열려 자리가 모자라면 360까지 양보(가운데 우선, 2026-11-18)
+    const chk=(name,v,wide)=>{if(v&&v.wide===wide&&(wide?v.w>440:(v.w>=360&&v.w<=440)))ok(name+' → '+(wide?'넓게 '+v.w:v.w));else bad(name+' '+JSON.stringify(v));};
     for(const [label,opened] of [['영상 재생',r.lb?.lbOpen],['목록 창',r.list?.listOpen],['카드 위 영상',r.cardLb?.lbOpen]]){
       if(opened)ok(label+' 실제 열림 확인');else bad(label+' 열리지 않음');
     }

@@ -11283,8 +11283,13 @@ document.getElementById('ttx').addEventListener('click',e=>{
 (()=>{
   const btn=document.getElementById('sp-wide-btn');
   if(!btn)return;
+  // ⭐ 가운데 우선(2026-11-18 사용자 "웹은 콘텐츠가 중요") — '넓게'는 선호(_cardWidePref)일 뿐, 가운데(재생·곡·앨범·목록 등 무대 창)가
+  //    열려 있어 자리가 모자라면 _cardYieldSync가 잠시 보통 폭으로 물러난다(가운데를 닫으면 다시 넓게). 1440에서 카드 넓게+곡 창이면
+  //    가운데가 304px(1280은 144px)로 못 쓰게 됐던 것. body.card-wide는 '실제로 넓게 그려지는 중'이라 기존 계산(그리드·재생 위치)은 그대로 이걸 본다.
   const apply=wide=>{
-    document.body.classList.toggle('card-wide',wide);
+    _cardWidePref=wide;
+    const eff=wide&&!_cardYieldNeeded();
+    document.body.classList.toggle('card-wide',eff);
     btn.textContent=wide?'⇥':'⇤';
     btn.title=wide?(currentLang==='ko'?'카드 원래 크기로':'Normal width'):(currentLang==='ko'?'카드 넓게 보기':'Wider card');
   };
@@ -11292,8 +11297,9 @@ document.getElementById('ttx').addEventListener('click',e=>{
   apply(saved);
   btn.addEventListener('click',e=>{
     e.stopPropagation();
-    const next=!document.body.classList.contains('card-wide');
+    const next=!_cardWidePref;
     apply(next);
+    if(next&&!document.body.classList.contains('card-wide'))_showShareToast(currentLang==='ko'?'가운데 화면을 닫으면 카드가 넓어져요':'The card widens when the center view closes');
     try{localStorage.setItem('kpu_card_wide',next?'1':'0');}catch(e){}
     // 이미 그려진 영상 그리드는 넓이 전환만으로 재배치되지 않으므로, 지금 열린 카드의 영상 그리드를 새로고침
     if(_openGCko&&typeof _gcChVidCtl!=='undefined')_gcChVidCtl.reloadIfShowing(_openGCko);
@@ -13792,14 +13798,39 @@ function _feedWideScroller(){
 // 폭은 --fw-w 하나로 나가고 CSS(#feed-overlay·재생 화면 left·줌)와 _stageRegion(목록·앨범 자리)이 그걸 따른다. 640px↑면 안쪽 칸도 넓은 배치(body.fw-home).
 const _FW_MODES=['narrow','normal','wide'];
 function _fwMode(){try{const m=localStorage.getItem('kpu_fw_mode');return _FW_MODES.indexOf(m)>=0?m:'normal';}catch(e){return 'normal';}}
+// 가운데(무대) 창이 열려 있나 — 재생 화면·목록·앨범·공연·트로피·인스타·컬렉션 + 공용 무대 창
+var _cardWidePref=false; // var: 카드 넓게 버튼 IIFE(앞쪽)가 먼저 쓴다
+function _stageCenterOpen(){
+  const open=id=>!!document.getElementById(id)?.classList.contains('open');
+  let extra=[];try{extra=Object.keys(_STAGE_WINS);}catch(e){} // 시작 직후(_STAGE_WINS 정의 전)엔 빈 목록
+  return ['yt-lightbox','feed-list-overlay','gc-discog-detail','venue-overlay','trophy-overlay','igv-overlay','uc-card-overlay',...extra].some(open);
+}
+// 카드를 넓게(640) 그리면 가운데가 560px(+여백 56)도 안 남는가
+function _cardYieldNeeded(){
+  if(!_stageWide()||!_stageCenterOpen())return false;
+  const open=id=>!!document.getElementById(id)?.classList.contains('open');
+  const n=['side-panel','member-panel','conn-panel'].filter(open).length;if(!n)return false;
+  const comp=open('feed-overlay')?(_fwMode()==='narrow'?360:Math.min(440,Math.max(360,window.innerWidth-n*640-616))):0;
+  return window.innerWidth-comp-n*640<616;
+}
+function _cardYieldSync(){
+  const btn=document.getElementById('sp-wide-btn');if(!btn)return;
+  const eff=_cardWidePref&&!_cardYieldNeeded();
+  if(document.body.classList.contains('card-wide')===eff)return;
+  document.body.classList.toggle('card-wide',eff);
+  // 폭이 바뀌면 열린 카드의 영상 그리드를 다시 짠다(넓게 버튼과 같은 처리)
+  try{if(_openGCko&&typeof _gcChVidCtl!=='undefined')_gcChVidCtl.reloadIfShowing(_openGCko);
+      if(_openTArtist&&typeof _ttChVidCtl!=='undefined')_ttChVidCtl.reloadIfShowing(_openTArtist.group.ko);}catch(e){}
+}
 function _fwWidth(){
   const W=window.innerWidth,mode=_fwMode(),open=id=>!!document.getElementById(id)?.classList.contains('open');
   if(mode==='narrow')return 360;
   if(!_FW_BLOCKERS.some(open))return mode==='wide'?Math.min(1440,W-120):Math.min(960,W-360);
-  if(mode==='normal')return 440;
   const cards=['side-panel','member-panel','conn-panel'].filter(open).length*(document.body.classList.contains('card-wide')?640:440);
+  // 보통: 평소 440, 가운데 창이 열려 자리가 모자라면 360까지 양보(가운데 우선, 2026-11-18)
+  if(mode==='normal')return _stageCenterOpen()?Math.max(360,Math.min(440,W-cards-616)):440;
   const stage=['yt-lightbox','feed-list-overlay','gc-discog-detail','venue-overlay','trophy-overlay','igv-overlay','uc-card-overlay',...Object.keys(_STAGE_WINS)].some(open); // 공용 무대 창(_STAGE_WINS)도 가운데 자리가 필요하다(2026-11-18)
-  return Math.max(440,Math.min(1200,W-cards-(stage?560:0)));
+  return stage?Math.max(360,Math.min(1200,W-cards-616)):Math.max(440,Math.min(1200,W-cards)); // 가운데 창이 있으면 그 몫(560+여백 56)을 먼저 남긴다(2026-11-18)
 }
 function _fwBtnSync(){
   const b=document.getElementById('feed-width-btn');if(!b)return;
@@ -13814,6 +13845,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   b.addEventListener('click',e=>{e.stopPropagation();const nx=_FW_MODES[(_FW_MODES.indexOf(_fwMode())+1)%3];try{localStorage.setItem('kpu_fw_mode',nx);}catch(_){}_fwBtnSync();_feedWideSync();try{_gaEvent('fw_mode',{mode:nx});}catch(_){}});
 });
 function _feedWideSync(){
+  try{_cardYieldSync();}catch(e){}
   _lbFitSync();if(typeof requestAnimationFrame==='function')requestAnimationFrame(_lbNarrowSync);
   const fo=document.getElementById('feed-overlay');if(!fo)return;
   const _w=_stageWide()&&fo.classList.contains('open')?_fwWidth():440;
