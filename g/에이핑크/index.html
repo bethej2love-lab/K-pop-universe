@@ -65,7 +65,12 @@
   .top2 .meta{font-size:14.5px;margin-bottom:0;}
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
+  /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
+  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
+  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
 }
+/* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
+.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -272,7 +277,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/apink/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=에이핑크">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"NoNoNo","s":"영상 146개","img":"hspqQuuuGIw","m":"NoNoNo","h":"https://kpop-universe.kr/g/에이핑크/s/nonono/"},{"k":"멤버 직캠","t":"정은지","s":"직캠 892개","img":"qjv6V4YUz1I","h":"https://kpop-universe.kr/g/에이핑크/정은지/fancams/"},{"k":"앨범","t":"RE : LOVE","s":"수록곡 5곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/124/64/999/12464999_20260102175448_500.jpg","h":"https://kpop-universe.kr/g/에이핑크/a/relove/"},{"k":"곡별 직캠·무대","t":"1도 없어 I'm So Sick","s":"영상 103개","img":"F4oHuML9U2A","m":"1도 없어","h":"https://kpop-universe.kr/g/에이핑크/s/1도없어/"},{"k":"멤버 직캠","t":"윤보미","s":"직캠 289개","img":"2ivWqlXYDhE","h":"https://kpop-universe.kr/g/에이핑크/윤보미/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"NoNoNo","s":"영상 146개","img":"hspqQuuuGIw","m":"NoNoNo","h":"https://kpop-universe.kr/g/에이핑크/s/nonono/"},{"k":"멤버 직캠","t":"정은지","s":"직캠 892개","img":"qjv6V4YUz1I","h":"https://kpop-universe.kr/g/에이핑크/정은지/fancams/"},{"k":"앨범","t":"RE : LOVE","s":"수록곡 5곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/124/64/999/12464999_20260102175448_500.jpg","h":"https://kpop-universe.kr/g/에이핑크/a/relove/"},{"k":"곡별 직캠·무대","t":"1도 없어 I'm So Sick","s":"영상 103개","img":"F4oHuML9U2A","m":"1도 없어","h":"https://kpop-universe.kr/g/에이핑크/s/1도없어/"},{"k":"멤버 직캠","t":"윤보미","s":"직캠 280개","img":"2ivWqlXYDhE","h":"https://kpop-universe.kr/g/에이핑크/윤보미/fancams/"}]</script>
 </div>
 </body>
 </html>

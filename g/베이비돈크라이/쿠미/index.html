@@ -65,7 +65,12 @@
   .top2 .meta{font-size:14.5px;margin-bottom:0;}
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
+  /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
+  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
+  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
 }
+/* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
+.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -110,8 +115,8 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <a class="mf-card" href="https://www.youtube.com/watch?v=OIBwuIYQjAg" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/OIBwuIYQjAg/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 베이비돈크라이 쿠미 &#39;F Girl&#39; (Baby DONT Cry Kumi FanCam) @SBS Inkigayo 250706</span><span class="mf-y">2025.07.09 · 3K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=rFfZOgE9fbU" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/rFfZOgE9fbU/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 베이비돈크라이 쿠미 &#39;Bittersweet&#39; (Baby DONT Cry Kumi FanCam) @SBS Inkigayo 260412</span><span class="mf-y">2026.04.15 · 3K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=EqK4Yy5YASk" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/EqK4Yy5YASk/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 베이비돈크라이 쿠미 &#39;F Girl&#39; (Baby DONT Cry Kumi FanCam) @SBS Inkigayo 250713</span><span class="mf-y">2025.07.17 · 3K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=_6hXNT3p63o" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/_6hXNT3p63o/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 베이비돈크라이 쿠미 &#39;Shapeshifter&#39; (Baby DONT Cry Kumi FanCam) @SBS Inkigayo 260315</span><span class="mf-y">2026.03.17 · 3K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=s0dl7KEJY9k" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/s0dl7KEJY9k/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 베이비돈크라이 쿠미 &#39;Replay&#39; (Baby DONT Cry Kumi FanCam) @SBS Inkigayo 261108</span><span class="mf-y">2026.11.10 · 3K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=_6hXNT3p63o" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/_6hXNT3p63o/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 베이비돈크라이 쿠미 &#39;Shapeshifter&#39; (Baby DONT Cry Kumi FanCam) @SBS Inkigayo 260315</span><span class="mf-y">2026.03.17 · 3K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=m3iLRk7g454" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/m3iLRk7g454/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 베이비돈크라이 쿠미 &#39;I DONT CARE&#39; (Baby DONT Cry Kumi FanCam) @SBS Inkigayo 251130</span><span class="mf-y">2025.12.02 · 3K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=OcSSRkx7p0Q" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/OcSSRkx7p0Q/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 베이비돈크라이 쿠미 &#39;지금을 놓치면 분명 너 후회할 거야&#39; (Baby DONT Cry Kumi &#39;Bet You’ll Regret It&#39; FanCam)</span><span class="mf-y">2025.07.02 · 3K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=CV0fPTs6di4" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/CV0fPTs6di4/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[얼빡직캠 4K] 베이비돈크라이 쿠미 &#39;지금을 놓치면 분명 너 후회할 거야&#39; (Baby DONT Cry Kumi Facecam) @뮤직뱅크(Music Bank) 250627</span><span class="mf-y">2025.06.27 · 3K+</span></a>

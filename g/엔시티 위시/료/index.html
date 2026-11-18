@@ -65,7 +65,12 @@
   .top2 .meta{font-size:14.5px;margin-bottom:0;}
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
+  /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
+  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
+  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
 }
+/* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
+.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -105,7 +110,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <a class="mf-card" href="https://www.youtube.com/watch?v=m_GRXjsBceo" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/m_GRXjsBceo/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[4K] 251101 NCT WISH - Videohood 료 RYO FOCUS FANCAM 콘서트 INTO THE WISH : Our WISH 서울</span><span class="mf-y">2025.11.03 · 29K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=MoVtli1_grY" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/MoVtli1_grY/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[4K] 240630 NCT WISH - Smoothie cover. 료 직캠 RYO FOCUS FANCAM music core in TOKYO 음중 도쿄 엔시티드림 커버</span><span class="mf-y">2024.07.02 · 29K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=noKS6ECLJMo" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/noKS6ECLJMo/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[얼빡직캠 4K] 엔시티 위시 료 &#39;Ode to love&#39; (NCT WISH RYO Facecam) @뮤직뱅크(Music Bank) 260424</span><span class="mf-y">2026.04.25 · 28K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=JBzIV05yzGQ" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/JBzIV05yzGQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[입덕직캠] 엔시티 위시 료 직캠 4K &#39;I SPY&#39; (NCT WISH RYO FanCam) | @MCOUNTDOWN_2026.10.15</span><span class="mf-y">2026.10.17 · 27K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=JBzIV05yzGQ" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/JBzIV05yzGQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[입덕직캠] 엔시티 위시 료 직캠 4K &#39;I SPY&#39; (NCT WISH RYO FanCam) | @MCOUNTDOWN_2026.10.15</span><span class="mf-y">2026.10.17 · 28K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=rYISEDkcF2I" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/rYISEDkcF2I/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[입덕직캠] 엔시티 위시 료 직캠 4K &#39;Miracle&#39; (NCT WISH RYO FanCam) | @MCOUNTDOWN_2025.1.23</span><span class="mf-y">2025.01.25 · 27K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=0hTOlZVU2gc" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/0hTOlZVU2gc/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 엔시티 위시 료 &#39;Miracle&#39; (NCT WISH RYO FanCam) @SBS Inkigayo 250126</span><span class="mf-y">2025.01.26 · 23K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=ordT8tD0nbc" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/ordT8tD0nbc/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] 엔시티 위시 료 직캠 4K &#39;I SPY&#39; (NCT WISH RYO FanCam) | @MCOUNTDOWN_2026.10.15</span><span class="mf-y">2026.10.15 · 22K+</span></a>

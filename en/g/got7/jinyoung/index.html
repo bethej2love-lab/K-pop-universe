@@ -65,7 +65,12 @@
   .top2 .meta{font-size:14.5px;margin-bottom:0;}
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
+  /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
+  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
+  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
 }
+/* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
+.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -81,7 +86,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
   <div class="top2">
     <h1>Jinyoung(진영)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/tgKXrgTRpJw/maxresdefault.jpg" alt="Jinyoung" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/73ea63d2-f159-477d-9f38-c774cbd10d45.jpg" alt="Jinyoung" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>Group</b> GOT7(갓세븐)</span>
       <span><b>Birthday</b> 1994.09.22 (age 32)</span>
@@ -94,7 +99,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <p class="hub-more hub-top"><a href="https://kpop-universe.kr/en/g/got7/jinyoung/fancams/">All 152 fancams by song →</a></p>
   <div class="mf-grid">
     <a class="mf-card" href="https://www.youtube.com/watch?v=3LA7zVEExQQ" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/3LA7zVEExQQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[FANCAM] BOUNCE_FANMEETING IN KL - GOT7 Jinyoung (Jinyoung focus)</span><span class="mf-y">2015.03.26 · 480K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=tjTIdrHHTKs" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/tjTIdrHHTKs/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[FANCAM] 261108 PARK JINYOUNG 1ST CONCERT [CODE#] IN SEOUL 박진영 - 하지하지마 @장충체육관 #갓세븐 #GOT7</span><span class="mf-y">2026.11.09 · 463K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=tjTIdrHHTKs" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/tjTIdrHHTKs/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[FANCAM] 261108 PARK JINYOUNG 1ST CONCERT [CODE#] IN SEOUL 박진영 - 하지하지마 @장충체육관 #갓세븐 #GOT7</span><span class="mf-y">2026.11.09 · 473K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=p_sA9oFFivs" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/p_sA9oFFivs/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] 갓세븐 진영 직캠 &#39;Lullaby&#39; (GOT7 JINYOUNG FanCam) @GOT7COMEBACKSHOW_2018.09.17</span><span class="mf-y">2018.09.17 · 433K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=f3-gj6uzQmg" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/f3-gj6uzQmg/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[2020 가요대전] 갓세븐 진영 &#39;딱 좋아&#39; 페이스캠 (GOT7 JINYOUNG &#39;Just right&#39; FaceCam)│@2020 SBS Music Awards</span><span class="mf-y">2021.01.04 · 403K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=1mClabbcpdk" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/1mClabbcpdk/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[FANCAM] 190105 5TH FANMEETING - MY HOUSE 우리집( GOT7 JINYOUNG FOCUS)</span><span class="mf-y">2019.01.09 · 354K+</span></a>
@@ -104,7 +109,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <a class="mf-card" href="https://www.youtube.com/watch?v=kPljdrQQOXs" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/kPljdrQQOXs/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[2020 가요대전] 갓세븐 진영 &#39;POISON+Breath(넌 날 숨 쉬게 해)&#39; 페이스캠 (GOT7 JINYOUNG FaceCam)│@2020 SBS Music Awards</span><span class="mf-y">2021.01.05 · 169K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=Xx6DYDffwDU" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/Xx6DYDffwDU/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 갓세븐 진영 &#39;LAST PIECE&#39; (GOT7 JINYOUNG FaceCam)│@SBS Inkigayo_2020.12.06.</span><span class="mf-y">2020.12.07 · 149K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=zhUc8CEppH0" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/zhUc8CEppH0/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[FANCAM] 190105 5TH FANMEETING - RANDOM DANCE (GOT7 JINYOUNG FOCUS)</span><span class="mf-y">2019.01.13 · 148K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=QROE9M40zZo" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/QROE9M40zZo/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[FANCAM] 261107 PARK JINYOUNG 1ST CONCERT [CODE#] IN SEOUL 박진영 -  생각을멈추다 보면 생멈보 @장충체육관</span><span class="mf-y">2026.11.09 · 137K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=QROE9M40zZo" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/QROE9M40zZo/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[FANCAM] 261107 PARK JINYOUNG 1ST CONCERT [CODE#] IN SEOUL 박진영 -  생각을멈추다 보면 생멈보 @장충체육관</span><span class="mf-y">2026.11.09 · 141K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=tr1JfdQmErs" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/tr1JfdQmErs/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] 갓세븐 진영 직캠 4K &#39;PYTHON&#39; (GOT7 JINYOUNG FanCam) | @MCOUNTDOWN_2025.1.23</span><span class="mf-y">2025.01.23 · 132K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=1S4EtcSYfZI" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/1S4EtcSYfZI/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[FANCAM] GOT7 EYES ON YOU TOUR IN SEOUL - I AM THE KING (Jinyoung focus)</span><span class="mf-y">2018.05.07 · 131K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=79xxwCYgawc" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/79xxwCYgawc/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[Junior Fancam(직캠)] GOT7 &quot;Fly&quot; Stage @ MBC Show! Music Core</span><span class="mf-y">2016.03.29 · 114K+</span></a>
