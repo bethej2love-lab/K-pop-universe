@@ -6015,3 +6015,12 @@
   #side-panel .gc-ch-wide .tv-sm-title{font-size:13px;}
   #side-panel .gc-ch-wide .gc-ch-meta{font-size:12px;}
 }
+
+/* 카드 여백 통일(2026-11-18 사용자 "여백도 다 너무 다른 듯 — 비슷하게 맞추자"). 실측 전: 구분선 위 10·14·24·18, 아래 12~19, 제목→내용 2~10.
+   → 모든 구분선 위 16·아래 14, 섹션 제목→내용 10(컬렉션은 더 띄움), 맨 위 색 줄→머리 16→10. */
+@media (hover:hover) and (pointer:fine){
+  #side-panel #gc-grid,#side-panel #gc-discog-row,#side-panel #gc-ig-section,#side-panel #gc-timeline-section,
+  #side-panel #gc-concert-row,#side-panel #gc-collection-row,#side-panel #gc-ch-vid{margin-top:16px!important;padding-top:14px!important;}
+  #side-panel .gc-discog-hd,#side-panel .tt-timeline-hd,#side-panel .gc-ch-hd,#side-panel .gc-collection-hd{margin-bottom:10px!important;}
+  #side-panel #gc-header{margin-top:-6px;}
+}
