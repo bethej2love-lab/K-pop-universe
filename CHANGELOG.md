@@ -3,6 +3,12 @@
 > 최근 7일 세션만 여기 있다. 그 전은 [docs/changelog/](docs/changelog/)에 월별로(내용 그대로), 남은 ⏳는 맨 아래 '⏳ 열린 일(보관분)'. 정리: `node tools/archive_changelog.cjs`. 사용 규칙·DECISIONS도 맨 아래.
 
 
+## 2026-11-18 저녁 (Claude Code/Sonnet 집 — 웹 CSS 미세조정 3건, DB 안 건드림)
+- **[kpop_universe.css] 웹 투데이 애니버서리 프로필 원 축소(사용자 "너무 커, 줄이고 양옆 여백 살짝")**: 데스크톱은 애니버서리 아이템이 25%(4개 꽉)라 원(thumb-wrap)이 아이템 폭 100%로 커져 있었음 → `width:80%;margin:0 auto`로 줄이고 가운데 정렬(양옆 여백). 모바일(68px 고정)은 그대로.
+- **[kpop_universe.css] 웹 앨범·컬렉션 커버 살짝 키움**: `--card-thumb` 웹 값 111→122px(앨범 gc-discog·컬렉션 gc-collection 공유 변수, 영상 썸네일은 이 변수 안 씀). 모바일 110 유지.
+- **[kpop_universe.css] 검색 결과 항목 높이 통일**: `.sr-item{min-height:36px;box-sizing:border-box}` — 그룹/멤버(아바타 26px) 높이에 곡·모아보기 등 맞춤. 영상 항목(sr-vid)은 썸네일이라 예외.
+- ⚠️ DB 느린 시간대라 스크린샷 검증 자제, 보수적 수치 — 실기기 미세조정 여지. ⏳ 콘서트 포스터 치우침(#16)은 콘서트 데이터 있는 카드 재현 필요.
+
 ## 2026-11-18 저녁 (Claude Code/Sonnet 집 — 모아보기/시상식 첫 렌더 썸네일 비율 깨짐)
 - **[app.js _openFeedListOverlay] 첫 렌더 때 썸네일 비율·높이 안 박힘(사용자 "MMA 처음 열면 2026 무대 아래 썸네일 비율 안 맞고, 탭 다시 누르면 정상")**: 영상 칸 높이를 `it.getBoundingClientRect().width`로 재서 px로 못박는데(크로미움 aspect-ratio 겹침 버그 회피), 첫 렌더 때 패널이 레이아웃 전(모바일 슬라이드업 중·display 전환 직후)이면 width=0이라 `if(!w)return`으로 **높이 설정을 통째로 건너뜀** → 비율 깨짐. 탭 전환 시 이미 떠 있어 w>0이라 정상이던 것. → `_applyItemH(it)`로 빼고 w=0이면 건너뛰지 말고 **다음 프레임(더블 rAF)에 재시도**. 모아보기·차트·시상식·컬렉션 공용이라 전부 적용. 문법 통과, vid-stage 7/8(실패 1은 쇼츠 썸네일 네트워크 로딩 플레이크 — DB/네트워크 느린 시간대, 내 변경 무관). ⚠️ 작업 중 DB 느림(사용자 제보) — 브라우저 테스트가 실제 DB 조회로 부하 기여, 이후 테스트 자제. 수집 크론은 정상 작동 중(워크플로우 RUN/success 확인).
 
