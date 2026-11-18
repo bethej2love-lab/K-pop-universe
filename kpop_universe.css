@@ -5930,3 +5930,17 @@
   /* SNS 아이콘이 커지며 줄 끝 소속 그룹('아이브 · 아이즈원')이 밀려 잘렸다 — 넘치면 다음 줄로(그룹 카드 #gc-links와 같은 처리) */
   #tg-row{flex-wrap:wrap;row-gap:8px;overflow:visible!important;}
 }
+
+/* ── 웹 카드 2차 조정(2026-11-18 사용자 지정 값) ─────────────────────────────────────────────
+   그룹 한글명 = 영문명(12.5)보다 한 단계(13.5) · 정보 줄 30→24 균등 · 구독자 수 12.5→11.5(아이콘은 그대로) · 프로필 원 62→78(멤버 카드와 같게)
+   · 디스코 세그먼트 12.5→11.5 · 앨범명 = 인스타 사진 아래 이름(.ig-cap-who 12.5). 멤버 카드 이름도 그룹 카드와 같은 크기로. */
+@media (hover:hover) and (pointer:fine){
+  #gc-name,#tn{font-size:13.5px;}
+  #gc-grid .row,#tt-info-grid .row{min-height:24px;}
+  #gc-grid,#tt-info-grid{gap:0;}
+  .gc-link-count{font-size:11.5px;}
+  #gc-pic-wrap{width:78px;height:78px;}
+  #gc-header{gap:16px;}
+  #gc-discog-row .seg-btn{font-size:11.5px;}
+  .gc-discog-item-title{font-size:12.5px;}
+}
