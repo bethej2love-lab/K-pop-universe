@@ -5986,3 +5986,8 @@
   #yt-lightbox.lb-browse:not(.lb-narrow):not(.lb-uplist-off) #yt-lb-uplist-tog{position:absolute;top:0;right:0;z-index:2;margin:0;}
   #yt-lightbox.lb-browse.lb-uplist-off:not(.lb-narrow) #yt-lb-uplist-tog{margin:0 auto;}
 }
+
+/* 웹 유튜브 전체화면 버튼(2026-11-18, 사용자 여러 번 지적) — 11-10엔 휴대폰(pointer:coarse)만 고쳤는데, 유튜브 임베드가 PC에서도
+   새 플레이어(전체화면 버튼이 재생바 위 오른쪽, 영상 오른쪽 끝 약 48px·아래 약 100px)로 바뀌어 PC에서도 2배속 탭존이 버튼을 덮었다.
+   헤드리스에서 버튼 좌표의 맨 위 요소가 #yt-lb-speed-zone인 걸 확인. 기기 구분 없이 탭존을 오른쪽 끝 80px 안쪽으로. */
+#yt-lb-video-box:not(.is-shorts) #yt-lb-speed-zone{right:80px;width:18%;}
