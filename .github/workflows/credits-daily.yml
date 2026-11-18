@@ -56,7 +56,9 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           node tools/build_slim_data.mjs
-          git add groups.json artists.json groups.slim.json artists.slim.json tracks_index.json
+          # ⚠️ build_slim_data가 만드는 파생물을 전부 add해야 한다 — 빠뜨리면 unstaged로 남아 git pull --rebase가 거부된다
+          #    (2026-11-18 첫 실행: 303곡 수집·커밋했는데 albums_recent·disco/ 누락으로 push 실패). disco-daily와 같은 목록.
+          git add groups.json artists.json spotify_artist_map.json spotify_sync_state.json melon_artist_map.json groups.slim.json artists.slim.json tracks_index.json albums_recent.json disco/
           if git diff --cached --quiet; then
             echo "새 크레딧 없음 — 커밋할 것이 없습니다"
             exit 0
