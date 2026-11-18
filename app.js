@@ -13869,8 +13869,8 @@ function _vsPanel(){
   window.addEventListener('resize',_vsPlace);
   if(window.ResizeObserver){_VS.ro=new ResizeObserver(()=>_vsPlace());['side-panel','feed-overlay'].forEach(id=>{const x=document.getElementById(id);if(x)_VS.ro.observe(x);});}
   // 카드가 닫히면 영상 영역을 카드로 돌려놓고 칸을 닫는다(펼침 기억은 유지)
-  const sp=document.getElementById('side-panel');
-  if(sp)new MutationObserver(()=>{if(_vsOn()&&!sp.classList.contains('open'))_vsClose(false);}).observe(sp,{attributes:true,attributeFilter:['class']});
+  // 영상 영역의 원래 카드(그룹 #side-panel·멤버 #member-panel)가 닫히면 돌려놓고 칸을 닫는다(펼침 기억은 유지)
+  ['side-panel','member-panel'].forEach(id=>{const p=document.getElementById(id);if(p)new MutationObserver(()=>{if(!_vsOn()||!_VS.home)return;const own=_VS.home.closest('#side-panel,#member-panel');if(own===p&&!p.classList.contains('open'))_vsClose(false);}).observe(p,{attributes:true,attributeFilter:['class']});});
   return el;
 }
 function _vsPlace(){
@@ -13882,9 +13882,10 @@ function _vsPlace(){
 }
 function _vsHead(){
   if(!_VS.el)return;
-  const bar=document.getElementById('gc-bar');
+  const mem=_VS.cont&&_VS.cont.id==='tv'; // 멤버 카드 영상(2026-11-18 사용자 "멤버 영상 섹션도 그렇게 가능해야지")
+  const bar=document.getElementById(mem?'tt-bar':'gc-bar');
   _VS.el.querySelector('.vs-bar').style.background=bar?getComputedStyle(bar).background:'';
-  _VS.el.querySelector('.vs-title b').textContent=(document.getElementById('gc-name')||{}).textContent||'';
+  _VS.el.querySelector('.vs-title b').textContent=(document.getElementById(mem?'tn':'gc-name')||{}).textContent||'';
   _VS.el.querySelector('.vs-title span').textContent=currentLang==='ko'?'영상':'Videos';
 }
 // 썸네일 높이 다시 못박기 — 카드 그리드는 렌더 직후 px로 높이를 고정한다(크로미움 행 높이 버그 회피). 칸 폭이 바뀌면 다시 재야 한다.
@@ -13918,7 +13919,8 @@ function _vsRearm(cont){
 function _vsOpen(cont){
   if(!cont||!_stageWide())return;
   const el=_vsPanel();
-  if(_VS.cont!==cont){_VS.cont=cont;_VS.home=cont.parentNode;_VS.next=cont.nextSibling;}
+  if(_VS.cont&&_VS.cont!==cont&&_VS.home){const o=_VS.cont;if(_VS.next&&_VS.next.parentNode===_VS.home)_VS.home.insertBefore(o,_VS.next);else _VS.home.appendChild(o);requestAnimationFrame(()=>{_vsReflow(o);_vsRearm(o);});}
+  if(_VS.cont!==cont||!_VS.el.contains(cont)){_VS.cont=cont;_VS.home=cont.parentNode;_VS.next=cont.nextSibling;}
   el.querySelector('.vs-slot').appendChild(cont);
   el.classList.add('vs-on');document.body.classList.add('vid-stage-on');
   _vsHead();_vsPlace();el.scrollTop=0;
@@ -29712,12 +29714,12 @@ function _makeChVidController(contId){
     cont.querySelector('.gc-ch-hd').appendChild(selBtn);
     // 넓게 보기(2026-11-12 사용자 "정적 페이지처럼 시원하게 한눈에 — 카드 옆에 붙여서 카드랑 같이") — 웹만. 카드 옆 무대(목록 창)에
     // 조회수 많은 영상 + 곡별 묶음을 4칸으로 펼친다. 지금 고른 탭·곡·검색·단독만을 그대로 이어받는다. 폰은 카드가 곧 전체 화면이라 없음.
-    if(contId==='gc-ch-vid'&&!state.unitKey&&!isMob()){
+    if((contId==='gc-ch-vid'||contId==='tv')&&!state.unitKey&&!isMob()){
       const vsBtn=document.createElement('button');vsBtn.type='button';vsBtn.className='gc-ch-search-toggle gc-ch-wide-btn gc-ch-vs-btn';
       const _vt=currentLang==='ko'?'영상 넓게 보기':'Expand videos';vsBtn.title=_vt;vsBtn.setAttribute('aria-label',_vt);vsBtn.innerHTML=_VS_ICON_OPEN;
       vsBtn.addEventListener('click',e=>{e.stopPropagation();_vsPref(true);_vsOpen(cont);});
       const _st0=cont.querySelector('.gc-ch-search-toggle:not(.gc-ch-vs-btn)');if(_st0)_st0.before(vsBtn);else cont.querySelector('.gc-ch-hd').appendChild(vsBtn);
-      if(_vsOn())_vsHead();else if(_vsPref()&&_stageWide())_vsOpen(cont); // 펼친 채 다른 카드로 넘어가면 그대로
+      if(_vsOn()&&_VS.cont===cont)_vsHead();else if(_vsPref()&&_stageWide())_vsOpen(cont); // 펼친 채 다른 카드로 넘어가면 그대로(그룹↔멤버 카드도 같은 칸)
     }else if(!state.unitKey&&!isMob()){
       const wideBtn=document.createElement('button');wideBtn.type='button';wideBtn.className='gc-ch-search-toggle gc-ch-wide-btn';
       const _wt=currentLang==='ko'?'넓게 보기':'Wide view';wideBtn.title=_wt;wideBtn.setAttribute('aria-label',_wt);
