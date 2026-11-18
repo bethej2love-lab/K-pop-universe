@@ -65,7 +65,12 @@
   .top2 .meta{font-size:14.5px;margin-bottom:0;}
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
+  /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
+  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
+  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
 }
+/* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
+.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -81,7 +86,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
   <div class="top2">
     <h1>영서(Youngseo)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/6uWVA5gE24s/maxresdefault.jpg" alt="영서" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/996b7001-e9d1-4694-a580-34a293dcc09e.jpg" alt="영서" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>소속</b> 올데이프로젝트(ALLDAY PROJECT)</span>
       <span><b>생일</b> 2005.11.13 (만 21세)</span>
@@ -98,12 +103,12 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <a class="mf-card" href="https://www.youtube.com/watch?v=0bdVwTSvKkw" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/0bdVwTSvKkw/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[UNFILTERED CAM] ALLDAY PROJECT YOUNGSEO(영서) &#39;WICKED&#39; 4K | STUDIO CHOOM ORIGINAL</span><span class="mf-y">2025.06.26 · 188K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=6uWVA5gE24s" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/6uWVA5gE24s/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] 올데이 프로젝트 영서 직캠 4K &#39;FAMOUS&#39; (ALLDAY PROJECT YOUNGSEO FanCam) | @MCOUNTDOWN_2025.7.3</span><span class="mf-y">2025.07.03 · 177K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=3xGw5ZluIUQ" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/3xGw5ZluIUQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 올데이 프로젝트 영서 &#39;ONE MORE TIME&#39; (ALLDAY PROJECT YOUNGSEO FanCam) @SBS Inkigayo 251123</span><span class="mf-y">2025.11.23 · 154K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=WbbjZeJyLyU" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/WbbjZeJyLyU/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 올데이 프로젝트 영서 &#39;CRASH&#39; (ALLDAY PROJECT YOUNGSEO FaceCam) @SBS Inkigayo 261004</span><span class="mf-y">2026.10.05 · 129K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=WbbjZeJyLyU" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/WbbjZeJyLyU/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 올데이 프로젝트 영서 &#39;CRASH&#39; (ALLDAY PROJECT YOUNGSEO FaceCam) @SBS Inkigayo 261004</span><span class="mf-y">2026.10.05 · 134K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=h9_T8MWTcXI" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/h9_T8MWTcXI/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 올데이 프로젝트 영서 &#39;FAMOUS&#39; (ALLDAY PROJECT YOUNGSEO FaceCam) @SBS Inkigayo 250629</span><span class="mf-y">2025.06.30 · 121K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=eVdcon9f8NE" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/eVdcon9f8NE/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[#음중직캠] ALLDAY PROJECT YOUNGSEO (올데이 프로젝트 영서) – FAMOUS FanCam | 쇼! 음악중심 | MBC250628</span><span class="mf-y">2025.06.28 · 120K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=z7mc38-zGOc" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/z7mc38-zGOc/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] 올데이 프로젝트 영서 직캠 4K &#39;WICKED&#39; (ALLDAY PROJECT YOUNGSEO FanCam) | @MCOUNTDOWN_2025.6.26</span><span class="mf-y">2025.06.26 · 101K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=isgjB_Qhp-Y" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/isgjB_Qhp-Y/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[입덕직캠] 올데이 프로젝트 영서 직캠 4K &#39;CRASH&#39; (ALLDAY PROJECT YOUNGSEO FanCam) | @MCOUNTDOWN_2026.10.1</span><span class="mf-y">2026.10.03 · 95K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=F2hQe3mm2yA" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/F2hQe3mm2yA/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[입덕직캠] 올데이 프로젝트 영서 직캠 4K &#39;FAMOUS&#39; (ALLDAY PROJECT YOUNGSEO FanCam) | @MCOUNTDOWN_2025.6.26</span><span class="mf-y">2025.06.27 · 95K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=isgjB_Qhp-Y" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/isgjB_Qhp-Y/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[입덕직캠] 올데이 프로젝트 영서 직캠 4K &#39;CRASH&#39; (ALLDAY PROJECT YOUNGSEO FanCam) | @MCOUNTDOWN_2026.10.1</span><span class="mf-y">2026.10.03 · 94K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=xvwUpRd9ciY" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/xvwUpRd9ciY/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[#음중직캠] ALLDAY PROJECT YOUNGSEO (올데이 프로젝트 영서) – FAMOUS FanCam | 쇼! 음악중심 | MBC250712</span><span class="mf-y">2025.07.12 · 88K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=vIj7ruN-DOU" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/vIj7ruN-DOU/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[#최애직캠] ALLDAY PROJECT YOUNGSEO (올데이 프로젝트 영서) – FAMOUS | 쇼! 음악중심 | MBC250628</span><span class="mf-y">2025.06.30 · 87K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=CZlgM1ddkFk" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/CZlgM1ddkFk/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 올데이 프로젝트 영서 &#39;CRASH&#39; (ALLDAY PROJECT YOUNGSEO FaceCam) @SBS Inkigayo 261011</span><span class="mf-y">2026.10.13 · 85K+</span></a>

@@ -65,7 +65,12 @@
   .top2 .meta{font-size:14.5px;margin-bottom:0;}
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
+  /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
+  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
+  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
 }
+/* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
+.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -189,7 +194,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/iz-one/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=아이즈원">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"환상동화 (Secret Story of the Swan)","s":"영상 215개","img":"nnVjsos40qk","m":"환상동화","h":"https://kpop-universe.kr/g/아이즈원/s/환상동화/"},{"k":"멤버 직캠","t":"사쿠라","s":"직캠 290개","img":"5Sm68912ANE","h":"https://kpop-universe.kr/g/르세라핌/사쿠라/fancams/"},{"k":"앨범","t":"One-reeler / Act IV","s":"수록곡 6곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/105/30/160/10530160_20201207160115_500.jpg","h":"https://kpop-universe.kr/g/아이즈원/a/onereeleractiv/"},{"k":"곡별 직캠·무대","t":"Panorama","s":"영상 101개","img":"G8GaQdW2wHc","m":"Panorama","h":"https://kpop-universe.kr/g/아이즈원/s/panorama/"},{"k":"멤버 직캠","t":"장원영","s":"직캠 281개","img":"DqvMi7J_juM","h":"https://kpop-universe.kr/g/아이브/장원영/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"환상동화 (Secret Story of the Swan)","s":"영상 215개","img":"nnVjsos40qk","m":"환상동화","h":"https://kpop-universe.kr/g/아이즈원/s/환상동화/"},{"k":"멤버 직캠","t":"사쿠라","s":"직캠 290개","img":"5Sm68912ANE","h":"https://kpop-universe.kr/g/르세라핌/사쿠라/fancams/"},{"k":"앨범","t":"One-reeler / Act IV","s":"수록곡 6곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/105/30/160/10530160_20201207160115_500.jpg","h":"https://kpop-universe.kr/g/아이즈원/a/onereeleractiv/"},{"k":"곡별 직캠·무대","t":"Panorama","s":"영상 101개","img":"G8GaQdW2wHc","m":"Panorama","h":"https://kpop-universe.kr/g/아이즈원/s/panorama/"},{"k":"멤버 직캠","t":"장원영","s":"직캠 282개","img":"DqvMi7J_juM","h":"https://kpop-universe.kr/g/아이브/장원영/fancams/"}]</script>
 </div>
 </body>
 </html>

@@ -65,7 +65,12 @@
   .top2 .meta{font-size:14.5px;margin-bottom:0;}
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
+  /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
+  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
+  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
 }
+/* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
+.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -177,9 +182,9 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/noclue/">No Clue</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/사랑한다는말의뜻을알아가자/">사랑한다는 말의 뜻을 알아가자 (Meaning of Love)</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/다시만나는날/">다시 만나는 날 (Promise You)</a></li>
+      <li><a href="https://kpop-universe.kr/g/엔시티 127/s/sugar/">SUGAR</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/gas/">Gas</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/無限的我/">無限的我</a></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 127/s/sugar/">SUGAR</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/skyscraper/">Skyscraper (摩天樓; 마천루)</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/far/">Far</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/새봄의노래/">새봄의 노래 (Beginning)</a></li>
@@ -266,7 +271,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/nct-127/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=엔시티%20127">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"질주 (2 Baddies)","s":"영상 152개","img":"-JwH3Jgfyts","m":"질주","h":"https://kpop-universe.kr/g/엔시티 127/s/질주/"},{"k":"멤버 직캠","t":"재현","s":"직캠 230개","img":"PVa0zpoOVko","h":"https://kpop-universe.kr/g/엔시티 127/재현/fancams/"},{"k":"앨범","t":"BLINGY","s":"수록곡 9곡","im":"https://i.scdn.co/image/ab67616d0000b273e54a22c0f4de92384b2c3dbf","h":"https://kpop-universe.kr/g/엔시티 127/a/blingy/"},{"k":"곡별 직캠·무대","t":"Fact Check (불가사의; 不可思議)","s":"영상 135개","img":"IeUDEew2W6Q","m":"Fact Check","h":"https://kpop-universe.kr/g/엔시티 127/s/factcheck/"},{"k":"멤버 직캠","t":"마크","s":"직캠 229개","img":"9fRfVMTrszA","h":"https://kpop-universe.kr/g/엔시티 127/마크/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"질주 (2 Baddies)","s":"영상 152개","img":"-JwH3Jgfyts","m":"질주","h":"https://kpop-universe.kr/g/엔시티 127/s/질주/"},{"k":"멤버 직캠","t":"재현","s":"직캠 230개","img":"PVa0zpoOVko","h":"https://kpop-universe.kr/g/엔시티 127/재현/fancams/"},{"k":"앨범","t":"BLINGY","s":"수록곡 9곡","im":"https://i.scdn.co/image/ab67616d0000b273e54a22c0f4de92384b2c3dbf","h":"https://kpop-universe.kr/g/엔시티 127/a/blingy/"},{"k":"곡별 직캠·무대","t":"Fact Check (불가사의; 不可思議)","s":"영상 135개","img":"IeUDEew2W6Q","m":"Fact Check","h":"https://kpop-universe.kr/g/엔시티 127/s/factcheck/"},{"k":"멤버 직캠","t":"마크","s":"직캠 230개","img":"9fRfVMTrszA","h":"https://kpop-universe.kr/g/엔시티 127/마크/fancams/"}]</script>
 </div>
 </body>
 </html>

@@ -65,7 +65,12 @@
   .top2 .meta{font-size:14.5px;margin-bottom:0;}
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
+  /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
+  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
+  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
 }
+/* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
+.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -94,12 +99,12 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   
   <div class="mf-grid">
     <a class="mf-card" href="https://www.youtube.com/watch?v=md0-F2g9SvQ" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/md0-F2g9SvQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[입덕직캠] A2O LITE 아윤 직캠 4K &#39;NEON&#39; (A2O LITE AYUNE FanCam) | @MCOUNTDOWN_2026.10.22</span><span class="mf-y">2026.10.23 · 516K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=dyCTN4ZtpiM" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/dyCTN4ZtpiM/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] A2O LITE 아윤 직캠 4K &#39;NEON&#39; (A2O LITE AYUNE FanCam) | @MCOUNTDOWN_2026.10.22</span><span class="mf-y">2026.10.22 · 52K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=5E6sq1QHUWQ" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/5E6sq1QHUWQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[얼빡직캠 4K] A2O LITE 아윤 &#39;NEON&#39; (A2O LITE AYUNE Facecam) @뮤직뱅크(Music Bank) 261023</span><span class="mf-y">2026.10.24 · 50K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=dyCTN4ZtpiM" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/dyCTN4ZtpiM/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] A2O LITE 아윤 직캠 4K &#39;NEON&#39; (A2O LITE AYUNE FanCam) | @MCOUNTDOWN_2026.10.22</span><span class="mf-y">2026.10.22 · 50K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=RG9ZUdgTV2M" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/RG9ZUdgTV2M/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 에이투오 라이트 아윤 &#39;NEON&#39; (A2O LITE AYUNE FanCam) @SBS Inkigayo 261025</span><span class="mf-y">2026.10.27 · 42K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=R7hYO_QF_pI" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/R7hYO_QF_pI/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[K-Fancam] A2O LITE 아윤 직캠 &#39;NEON&#39; (A2O LITE AYUNE Fancam) @뮤직뱅크(Music Bank) 261023</span><span class="mf-y">2026.10.24 · 35K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=PBMoyujgyR4" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/PBMoyujgyR4/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[캐치캠 4K] A2O LITE AYUNE ‘NEON’ (A2O LITE 아윤 직캠) l SHOW K-POP l 261019</span><span class="mf-y">2026.10.20 · 28K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=qkHz37hwVps" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/qkHz37hwVps/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[쇼챔직캠 4K] A2O LITE AYUNE - NEON | Show Champion | EP.615 | 261021</span><span class="mf-y">2026.10.22 · 24K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=PBMoyujgyR4" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/PBMoyujgyR4/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[캐치캠 4K] A2O LITE AYUNE ‘NEON’ (A2O LITE 아윤 직캠) l SHOW K-POP l 261019</span><span class="mf-y">2026.10.20 · 31K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=qkHz37hwVps" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/qkHz37hwVps/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[쇼챔직캠 4K] A2O LITE AYUNE - NEON | Show Champion | EP.615 | 261021</span><span class="mf-y">2026.10.22 · 26K+</span></a>
   </div>
   <p class="intro">A2O LITE 멤버. 한국 출신. 2013년생.</p>
   

@@ -65,7 +65,12 @@
   .top2 .meta{font-size:14.5px;margin-bottom:0;}
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
+  /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
+  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
+  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
 }
+/* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
+.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -81,7 +86,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <a class="brand" href="https://kpop-universe.kr/en/g/" style="margin-left:10px;">All groups</a>
   <div class="top2">
     <h1>Tarzan(타잔)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/xgj2b70heIw/maxresdefault.jpg" alt="Tarzan" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/e6d30175-236e-4dfa-a2cd-a415b29dedc2.jpg" alt="Tarzan" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>Group</b> ALLDAY PROJECT(올데이프로젝트)</span>
       <span><b>Birthday</b> 2002.09.27 (age 24)</span>
@@ -106,7 +111,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <a class="mf-card" href="https://www.youtube.com/watch?v=GaRl1zSCgPg" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/GaRl1zSCgPg/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[#음중직캠] ALLDAY PROJECT TARZZAN (올데이 프로젝트 타잔) – WICKED FanCam | 쇼! 음악중심 | MBC250719</span><span class="mf-y">2025.07.19 · 44K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=1FN6NLICLMY" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/1FN6NLICLMY/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[#최애직캠] ALLDAY PROJECT TARZZAN (올데이 프로젝트 타잔) – FAMOUS | 쇼! 음악중심 | MBC250712</span><span class="mf-y">2025.07.14 · 36K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=xgj2b70heIw" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/xgj2b70heIw/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[#음중직캠] ALLDAY PROJECT TARZZAN (올데이 프로젝트 타잔) – ONE MORE TIME FanCam | 쇼! 음악중심 | MBC251122</span><span class="mf-y">2025.11.22 · 31K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=tZh2Gt-VWZc" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/tZh2Gt-VWZc/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[입덕직캠] 올데이 프로젝트 타잔 직캠 4K &#39;CRASH&#39; (ALLDAY PROJECT TARZZAN FanCam) | @MCOUNTDOWN_2026.10.1</span><span class="mf-y">2026.10.03 · 23K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=tZh2Gt-VWZc" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/tZh2Gt-VWZc/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[입덕직캠] 올데이 프로젝트 타잔 직캠 4K &#39;CRASH&#39; (ALLDAY PROJECT TARZZAN FanCam) | @MCOUNTDOWN_2026.10.1</span><span class="mf-y">2026.10.03 · 24K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=kxII1Xeargw" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/kxII1Xeargw/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[#최애직캠] ALLDAY PROJECT TARZZAN (올데이 프로젝트 타잔) – ONE MORE TIME | 쇼! 음악중심 | MBC251122</span><span class="mf-y">2025.11.24 · 21K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=snqyiivFSrQ" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/snqyiivFSrQ/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[#음중직캠] ALLDAY PROJECT TARZZAN (올데이 프로젝트 타잔) – FAMOUS FanCam | 쇼! 음악중심 | MBC250712</span><span class="mf-y">2025.07.12 · 19K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=1s9tHWHrVAY" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/1s9tHWHrVAY/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 올데이 프로젝트 타잔 &#39;FAMOUS&#39; (ALLDAY PROJECT TARZZAN FanCam) @SBS Inkigayo 250713</span><span class="mf-y">2025.07.15 · 18K+</span></a>
@@ -116,7 +121,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <a class="mf-card" href="https://www.youtube.com/watch?v=fI6jXgG6CUM" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/fI6jXgG6CUM/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[얼빡직캠 4K] 올데이 프로젝트 타잔 &#39;CRASH&#39; (ALLDAY PROJECT TARZZAN Facecam) @뮤직뱅크(Music Bank) 261009</span><span class="mf-y">2026.10.09 · 10K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=L42tVwISH3U" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/L42tVwISH3U/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[MPD직캠] 올데이 프로젝트 타잔 직캠 4K &#39;TALK&#39; (ALLDAY PROJECT TARZZAN FanCam) | @MCOUNTDOWN_2026.10.1</span><span class="mf-y">2026.10.01 · 9K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=UE8cU72iDUc" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/UE8cU72iDUc/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[얼빡직캠 4K] 올데이 프로젝트 타잔 &#39;TALK&#39; (ALLDAY PROJECT TARZZAN Facecam) @뮤직뱅크(Music Bank) 261009</span><span class="mf-y">2026.10.11 · 8K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=NUIRZrjRcog" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/NUIRZrjRcog/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 올데이 프로젝트 타잔 &#39;CRASH&#39; (ALLDAY PROJECT TARZZAN FanCam) @SBS Inkigayo 261004</span><span class="mf-y">2026.10.05 · 6K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=NUIRZrjRcog" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/NUIRZrjRcog/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 올데이 프로젝트 타잔 &#39;CRASH&#39; (ALLDAY PROJECT TARZZAN FanCam) @SBS Inkigayo 261004</span><span class="mf-y">2026.10.05 · 7K+</span></a>
   </div>
   <p class="intro">Tarzan is a K-pop idol of South Korean nationality, born in 2002. Member of ALLDAY PROJECT.</p>
   

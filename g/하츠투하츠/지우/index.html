@@ -65,7 +65,12 @@
   .top2 .meta{font-size:14.5px;margin-bottom:0;}
   .mf-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 14px;}
   h2{font-size:20px;margin:36px 0 14px;}
+  /* 프로필 사진(원형)일 때: 왼쪽은 원 하나 크기만, 이름·정보는 그 옆 가운데 높이 */
+  .top2:has(.avatar){grid-template-columns:auto minmax(0,1fr);column-gap:36px;} /* 이름·정보는 곡 페이지처럼 사진 아래쪽에 맞춤 */
+  .top2 .cover.avatar{grid-row:1 / span 30;width:240px;height:240px;aspect-ratio:1;margin:0;}
 }
+/* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
+.cover.avatar{width:132px;height:132px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -81,7 +86,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <a class="brand" href="https://kpop-universe.kr/g/" style="margin-left:10px;">그룹 전체</a>
   <div class="top2">
     <h1>지우(Jiwoo)</h1>
-    <img class="cover" src="https://img.youtube.com/vi/zRnNmK2TAZo/maxresdefault.jpg" alt="지우" loading="lazy">
+    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/b08fe573-5ae2-4fb0-a613-8492263f3a1e.jpg" alt="지우" loading="eager" width="240" height="240">
     <div class="meta">
       <span><b>소속</b> 하츠투하츠(Hearts2Hearts)</span>
       <span><b>생일</b> 2006.09.07 (만 20세)</span>
@@ -99,9 +104,9 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <a class="mf-card" href="https://www.youtube.com/watch?v=J_EcqYhJkCY" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/J_EcqYhJkCY/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 하츠투하츠 지우 &#39;FOCUS&#39; (Hearts2Hearts JIWOO FaceCam) @SBS Inkigayo 251026</span><span class="mf-y">2025.10.28 · 294K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=2wTpp-SL-iY" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/2wTpp-SL-iY/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[안방1열 직캠4K] 하츠투하츠 지우 &#39;RUDE!&#39; (Hearts2Hearts JIWOO FanCam) @SBS Inkigayo 260301</span><span class="mf-y">2026.03.02 · 230K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=J03Z1tsrmNs" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/J03Z1tsrmNs/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[입덕직캠] 하츠투하츠 지우 직캠 4K &#39;STYLE&#39; (Hearts2Hearts JIWOO FanCam) | @MCOUNTDOWN_2025.6.19</span><span class="mf-y">2025.06.21 · 211K+</span></a>
+    <a class="mf-card" href="https://www.youtube.com/watch?v=8GZEZILmu2c" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/8GZEZILmu2c/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[4K] 260911 경기대학교 하츠투하츠 Hearts2Hearts 지우 Jiwoo  - FOCUS 직캠 fancam</span><span class="mf-y">2026.09.12 · 209K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=pKLZ2bgc6MM" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/pKLZ2bgc6MM/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[얼빡직캠 4K] 하츠투하츠 지우 &#39;RUDE!&#39; (Hearts2Hearts JIWOO Facecam) @뮤직뱅크(Music Bank) 260227</span><span class="mf-y">2026.02.27 · 206K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=G7Ju2-RqNaE" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/G7Ju2-RqNaE/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[얼빡직캠 4K] 하츠투하츠 지우 &#39;STYLE&#39; (Hearts2Hearts JIWOO Facecam) @뮤직뱅크(Music Bank) 250620</span><span class="mf-y">2025.06.20 · 203K+</span></a>
-    <a class="mf-card" href="https://www.youtube.com/watch?v=8GZEZILmu2c" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/8GZEZILmu2c/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[4K] 260911 경기대학교 하츠투하츠 Hearts2Hearts 지우 Jiwoo  - FOCUS 직캠 fancam</span><span class="mf-y">2026.09.12 · 201K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=sCPDpSmsCdA" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/sCPDpSmsCdA/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[#최애직캠] Hearts2Hearts JIWOO (하츠투하츠 지우) – STYLE | 쇼! 음악중심 | MBC250628</span><span class="mf-y">2025.06.30 · 173K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=JMvjBA5ny2w" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/JMvjBA5ny2w/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[페이스캠4K] 하츠투하츠 지우 &#39;15-LOVE&#39; (Hearts2Hearts JIWOO FaceCam) @SBS Inkigayo 260830</span><span class="mf-y">2026.09.02 · 172K+</span></a>
     <a class="mf-card" href="https://www.youtube.com/watch?v=NAtHA-2ZacI" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/NAtHA-2ZacI/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">[얼빡직캠 4K] 하츠투하츠 지우 &#39;Lemon Tang&#39; (Hearts2Hearts JIWOO Facecam) @뮤직뱅크(Music Bank) 260703</span><span class="mf-y">2026.07.06 · 141K+</span></a>
