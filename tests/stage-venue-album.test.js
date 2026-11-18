@@ -87,7 +87,7 @@ const R=`(el)=>{const r=el.getBoundingClientRect();return{l:Math.round(r.left),r
       if(a.topHit)ok(`[${W}] 앨범 창이 나침반보다 위`);else bad(`[${W}] 앨범이 가려짐`);
       const c1=r1.c1;
       if(c1.open&&c1.front==='venue'&&c1.panel.r<=c1.card.l+1&&c1.panel.l>=c1.fo.r-1&&/rgba\(0, 0, 0, 0\)|transparent/.test(c1.bg))ok(`[${W}] 공연 창 = 무대(카드 왼쪽 ${c1.panel.l}~${c1.panel.r}, 배경 없음)`);else bad(`[${W}] 공연 창 `+JSON.stringify(c1));
-      if(c1.fo.r-c1.fo.l===440)ok(`[${W}] 공연 창 열면 나침반 440`);else bad(`[${W}] 나침반 폭 ${c1.fo.r-c1.fo.l}`);
+      {const fw=c1.fo.r-c1.fo.l;if(fw>=360&&fw<=440)ok(`[${W}] 공연 창 열면 나침반 좁힘(${fw}) — 11-18부터 가운데 616 우선이라 360~440(compass-width와 같은 기준)`);else bad(`[${W}] 나침반 폭 ${fw}`);}
       if(c1.back&&r1.c2.title!==c1.title&&!r1.c2.back&&r2.back.title===c1.title&&r2.back.back)ok(`[${W}] 공연 → 공연장('${r1.c2.title}', ${r1.c2.items}줄) → ‹ 뒤로 → 공연`);else bad(`[${W}] 뒤로 `+JSON.stringify([c1.title,c1.back,r1.c2,r2.back]));
       if(r2.lbFront.front==='lb'&&r2.lbFront.venueVis==='hidden')ok(`[${W}] 영상 재생 → 공연 창 뒤로 비킴`);else bad(`[${W}] 재생 차례 `+JSON.stringify([r2.lbOpened,r2.lbFront]));
       if(r2.venueFront.front==='venue'&&r2.venueFront.lbVis==='hidden'&&r2.venueFront.toLb!=='none')ok(`[${W}] 재생 중 공연 창 → 앞, '재생 화면으로' 보임`);else bad(`[${W}] 공연 앞 `+JSON.stringify(r2.venueFront));

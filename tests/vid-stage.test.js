@@ -39,8 +39,9 @@ async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,ret
       res.flush=Math.abs(v.right-sp.left)<=2;
       res.wide=sz('.gc-ch-grid > .gc-ch-item:not(.is-short) .gc-ch-thumb');res.short=sz('.gc-ch-grid > .gc-ch-item.is-short .gc-ch-thumb');
       // 쇼츠 그림은 큰 세로 원본을 2장씩 줄여 붙이는 대기열이라 늦을 수 있다 — 최대 12초까지 기다린다
-      for(let i=0;i<24;i++){const si=cont().querySelector('.gc-ch-grid > .gc-ch-item.is-short img.gc-ch-thumb');if(si&&si.getAttribute('src'))break;await S(500);}
-      const si=cont().querySelector('.gc-ch-grid > .gc-ch-item.is-short img.gc-ch-thumb');res.shortSrc=!!(si&&si.getAttribute('src'));
+      const vis=()=>[...cont().querySelectorAll('.gc-ch-grid > .gc-ch-item.is-short img.gc-ch-thumb')].filter(im=>{const b=im.getBoundingClientRect();return b.bottom>0&&b.top<innerHeight;});
+      for(let i=0;i<24;i++){const v=vis();if(v.length&&v.every(im=>im.getAttribute('src')))break;await S(500);}
+      {const v=vis();res.shortSrc=v.length>0&&v.every(im=>im.getAttribute('src'));res.visShorts=v.length;}
       const before=n();document.getElementById('vid-stage').scrollTo(0,1e6);for(let i=0;i<16&&n()<=before;i++)await S(500);res.more=n()>before;
       res.pref=localStorage.getItem('kpu_vid_stage');
       document.querySelector('#vid-stage .vs-close').click();await S(800);

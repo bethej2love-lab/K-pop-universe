@@ -6052,3 +6052,16 @@
 .visit-dot{width:6px;height:6px;border-radius:50%;background:rgb(170,160,255);box-shadow:0 0 5px rgba(170,160,255,0.8);animation:presence-pulse 1.6s ease-in-out infinite;flex:none;}
 .gc-status-inner.type-visits{color:#ccd8ee;}
 @media (hover:hover) and (pointer:fine){.gc-status-inner.type-visits{color:rgba(216,228,246,0.85);}}
+
+/* 무대 창 추가분(2026-11-18) — 멤버 탐색·K-pop 링크 모음·Chemistry 고르기. Chemistry는 첫 자식이 배경 막(#combo-bg)이라 공용 규칙(첫 자식=창)과 달라 따로 맞춘다. */
+@media (min-width:1024px){
+  #mx-overlay.stage-win #mx-panel,#kpop-links-overlay.stage-win #kpop-links-panel{width:100%!important;max-width:none!important;}
+  #combo-overlay.stage-win #combo-bg{display:none!important;}
+  #combo-overlay.stage-win{display:flex!important;align-items:stretch!important;justify-content:stretch!important;}
+  #combo-overlay.stage-win #combo-sheet{pointer-events:auto;width:100%!important;max-width:none!important;height:100%!important;max-height:none!important;margin:0!important;border-radius:0!important;box-shadow:none!important;}
+}
+
+/* 무대 창 추가분 2(2026-11-18) — 인스타 전체 보기·인스타 게시물·콜라보 외부 링크·업데이트 소식. 무대 칸 폭을 다 쓴다. */
+@media (min-width:1024px){
+  #iga-overlay.stage-win #iga-panel,#upd-overlay.stage-win #upd-panel,#ecx-overlay.stage-win #ecx-panel,#ige-overlay.stage-win #ige-panel{width:100%!important;max-width:none!important;}
+}
