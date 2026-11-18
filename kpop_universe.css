@@ -6024,3 +6024,26 @@
   #side-panel .gc-discog-hd,#side-panel .tt-timeline-hd,#side-panel .gc-ch-hd,#side-panel .gc-collection-hd{margin-bottom:10px!important;}
   #side-panel #gc-header{margin-top:-6px;}
 }
+
+/* 카드 영상 넓게 보기 = 영상 칸(2026-11-18, app.js _vsOpen). 위 줄 높이 44px·색 줄 3px을 카드(#side-panel 위 줄·#gc-bar)와 같게 —
+   두 칸이 한 면처럼 이어지고, 글자는 색 줄 아래부터. 6칸 격자: 가로 2칸(한 줄 3개)·쇼츠 1칸, 좁으면(<760) 4칸. */
+#vid-stage{display:none;position:fixed;top:64px;bottom:0;z-index:60;background:#0d0d11;border-right:0.5px solid rgba(255,255,255,0.07);overflow-y:auto;overscroll-behavior:contain;box-sizing:border-box;}
+#vid-stage.vs-on{display:block;}
+#vid-stage .vs-top{position:sticky;top:0;z-index:3;background:#0d0d11;height:44px;display:flex;align-items:center;padding:0 10px;}
+#vid-stage .vs-bar{height:3px;margin:0 4px;}
+#vid-stage .vs-body{padding:14px 28px 40px;}
+#vid-stage .vs-title{display:flex;align-items:baseline;gap:10px;margin:2px 0 12px;}
+#vid-stage .vs-title b{font-size:15.5px;font-weight:700;color:#d8e4f6;}
+#vid-stage .vs-title span{font-size:12px;color:rgba(160,180,230,0.6);}
+.vs-ico{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:rgba(180,200,240,0.62);cursor:pointer;}
+.vs-ico:hover{background:rgba(255,255,255,0.07);color:#dce6ff;}
+#vid-stage #gc-ch-vid{margin:0!important;padding:0!important;border:0!important;}
+#vid-stage .gc-ch-hd{margin-bottom:16px!important;}
+#vid-stage .gc-ch-vs-btn{display:none;}
+#vid-stage .gc-ch-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:22px 14px;}
+#vid-stage .gc-ch-grid>.gc-ch-item:not(.is-short){grid-column:span 2;}
+#vid-stage .gc-ch-grid>.gc-ch-item.is-short,#vid-stage .gc-ch-grid>.gc-ch-item.is-short.featured{grid-column:span 1;}
+#vid-stage.vs-narrow .gc-ch-grid{grid-template-columns:repeat(4,minmax(0,1fr));}
+#vid-stage .gc-ch-thumb{border-radius:10px;}
+#vid-stage .tv-sm-title{font-size:13px;}
+#vid-stage .gc-ch-meta{font-size:12px;}

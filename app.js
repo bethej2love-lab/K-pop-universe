@@ -13842,6 +13842,101 @@ function _stageWinSync(ov){
   else _swinObserve();
 }
 // 무대 자리 — 카드 패널(오른쪽) 왼쪽 ~ 왼쪽에 붙은 탐험 패널 오른쪽
+
+// ── 카드 영상 넓게 보기 = 영상 칸(2026-11-18 사용자 "웹에서 카드 하나만 열면 옆이 텅 비고, 영상 섹션까지 스크롤이 너무 많다 —
+//    영상 영역만 카드 옆 왼쪽으로. 원래 카드 영상 영역의 레이아웃·기능은 당연히 다 가지고"). 시안 2(아이콘만 있는 위 줄·색 줄 아래부터 글자·
+//    가로 3열) 그대로. 카드의 영상 영역(#gc-ch-vid) **노드를 통째로** 카드 왼쪽 무대 칸으로 옮긴다 — 탭·곡·검색·정렬·선택·무한 스크롤이 전부
+//    같은 코드로 그대로 돈다(무한 스크롤은 root:null 관찰+위치 폴링이라 담는 칸이 바뀌어도 동작). 다른 카드를 열면 그 카드 영상이 같은 칸에 그려진다.
+//    펼친 상태는 기억(kpu_vid_stage) — 다음 카드도 펼친 채. 재생·앨범·목록 창은 이 칸 위로 뜨고(z 60 < 67), 닫으면 다시 보인다.
+//    쇼츠는 가로 영상과 같은 줄 높이로 맞춘다(6칸 격자에서 가로 2칸·쇼츠 1칸, 쇼츠 썸네일 높이 = 가로 썸네일 높이 → 세로 영상은 가운데를 잘라 보여줌).
+const _VS={el:null,cont:null,home:null,next:null,mo:null,ro:null};
+const _VS_ICON_OPEN='<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M9 4v16"/><path d="M15.5 10l-2 2 2 2"/></svg>';
+const _VS_ICON_CLOSE='<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M15 4v16"/><path d="M8.5 10l2 2-2 2"/></svg>';
+function _vsOn(){return !!(_VS.el&&_VS.el.classList.contains('vs-on'));}
+function _vsPref(v){try{if(v===undefined)return localStorage.getItem('kpu_vid_stage')==='1';localStorage.setItem('kpu_vid_stage',v?'1':'');}catch(e){return false;}}
+function _vsPanel(){
+  if(_VS.el)return _VS.el;
+  const el=document.createElement('div');el.id='vid-stage';
+  const t=currentLang==='ko'?'카드로 접기':'Back to card';
+  el.innerHTML='<div class="vs-top"><button type="button" class="vs-ico vs-close" title="'+t+'" aria-label="'+t+'">'+_VS_ICON_CLOSE+'</button></div><div class="vs-bar"></div><div class="vs-body"><div class="vs-title"><b></b><span></span></div><div class="vs-slot"></div></div>';
+  el.querySelector('.vs-close').addEventListener('click',e=>{e.stopPropagation();_vsClose(true);});
+  el.addEventListener('pointerdown',e=>e.stopPropagation()); // 우주 드래그·카드 자동 닫힘으로 새지 않게
+  document.body.appendChild(el);
+  _VS.el=el;
+  window.addEventListener('resize',_vsPlace);
+  if(window.ResizeObserver){_VS.ro=new ResizeObserver(()=>_vsPlace());['side-panel','feed-overlay'].forEach(id=>{const x=document.getElementById(id);if(x)_VS.ro.observe(x);});}
+  // 카드가 닫히면 영상 영역을 카드로 돌려놓고 칸을 닫는다(펼침 기억은 유지)
+  const sp=document.getElementById('side-panel');
+  if(sp)new MutationObserver(()=>{if(_vsOn()&&!sp.classList.contains('open'))_vsClose(false);}).observe(sp,{attributes:true,attributeFilter:['class']});
+  return el;
+}
+function _vsPlace(){
+  if(!_vsOn())return;
+  if(!_stageWide()){_vsClose(false);return;}
+  const{left,right}=_stageRegion();
+  const L=Math.max(left,0);_VS.el.style.left=L+'px';_VS.el.style.width=Math.max(0,right-L)+'px';
+  _VS.el.classList.toggle('vs-narrow',right-L<760);
+}
+function _vsHead(){
+  if(!_VS.el)return;
+  const bar=document.getElementById('gc-bar');
+  _VS.el.querySelector('.vs-bar').style.background=bar?getComputedStyle(bar).background:'';
+  _VS.el.querySelector('.vs-title b').textContent=(document.getElementById('gc-name')||{}).textContent||'';
+  _VS.el.querySelector('.vs-title span').textContent=currentLang==='ko'?'영상':'Videos';
+}
+// 썸네일 높이 다시 못박기 — 카드 그리드는 렌더 직후 px로 높이를 고정한다(크로미움 행 높이 버그 회피). 칸 폭이 바뀌면 다시 재야 한다.
+function _vsReflow(cont,nodes){
+  if(!cont)return;
+  const wide=!!cont.closest('#vid-stage');
+  const items=nodes||[...cont.querySelectorAll('.gc-ch-grid > .gc-ch-item')];
+  let rowH=0;
+  if(wide){const t=cont.querySelector('.gc-ch-grid > .gc-ch-item:not(.is-short) .gc-ch-thumb');rowH=t?t.getBoundingClientRect().width*9/16:0;}
+  items.forEach(item=>{
+    const img=item.querySelector('.gc-ch-thumb');if(!img)return;
+    const w=img.getBoundingClientRect().width;if(!w)return;
+    const short=item.classList.contains('is-short');
+    const h=short?(wide&&rowH?rowH:w*16/9):w*9/16;
+    img.style.height=h+'px';_placeDurBadge(item,h);_placeProgBar(item,h);
+  });
+}
+// 쇼츠 썸네일 감시 다시 걸기 — 쇼츠 그림은 '화면 근처에 오면 받고, 멀어지면 떼는' 감시를 처음 붙은 스크롤 칸(카드) 기준으로 건다
+// (_shortThumbWhenNear·_shortThumbWatch). 칸을 옮기면 옛 기준으론 영영 '화면 밖'이라 회색으로 남았다(2026-11-18 헤드리스 확인) → 옮긴 직후 새 칸 기준으로.
+function _vsRearm(cont){
+  if(!cont)return;
+  cont.querySelectorAll('.gc-ch-item.is-short').forEach(item=>{
+    const img=item.querySelector('img.gc-ch-thumb');if(!img)return;
+    try{_shortThumbIOs.forEach(io=>io.unobserve(img));}catch(e){}
+    delete img.dataset.keepWatch;
+    if(!img.getAttribute('src')&&img.dataset.keepSrc)img.src=img.dataset.keepSrc;
+    if(img.dataset.thumbOk)_shortThumbWatch(img);
+    else _mountShortThumb(img,item.dataset.vidId,{bg:item.querySelector('.gc-ch-thumb-bg')});
+  });
+}
+function _vsOpen(cont){
+  if(!cont||!_stageWide())return;
+  const el=_vsPanel();
+  if(_VS.cont!==cont){_VS.cont=cont;_VS.home=cont.parentNode;_VS.next=cont.nextSibling;}
+  el.querySelector('.vs-slot').appendChild(cont);
+  el.classList.add('vs-on');document.body.classList.add('vid-stage-on');
+  _vsHead();_vsPlace();el.scrollTop=0;
+  if(_VS.mo)_VS.mo.disconnect();
+  _VS.mo=new MutationObserver(ms=>{const add=[];ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType===1&&n.classList.contains('gc-ch-item'))add.push(n);}));if(add.length)requestAnimationFrame(()=>_vsReflow(cont,add));});
+  _VS.mo.observe(cont,{childList:true,subtree:true});
+  requestAnimationFrame(()=>{_vsReflow(cont);_vsRearm(cont);});
+  try{_mmSync&&_mmSync();}catch(e){}
+  try{typeof _cardYieldSync==='function'&&_cardYieldSync();}catch(e){}
+}
+function _vsClose(byUser){
+  if(byUser)_vsPref(false);
+  if(!_VS.el)return;
+  const cont=_VS.cont;
+  if(_VS.mo){_VS.mo.disconnect();_VS.mo=null;}
+  if(cont&&_VS.home){if(_VS.next&&_VS.next.parentNode===_VS.home)_VS.home.insertBefore(cont,_VS.next);else _VS.home.appendChild(cont);}
+  _VS.el.classList.remove('vs-on');document.body.classList.remove('vid-stage-on');
+  if(cont)requestAnimationFrame(()=>{_vsReflow(cont);_vsRearm(cont);});
+  try{_mmSync&&_mmSync();}catch(e){}
+  try{typeof _cardYieldSync==='function'&&_cardYieldSync();}catch(e){}
+}
 function _stageRegion(){
   let right=window.innerWidth;
   for(const id of ['side-panel','member-panel','conn-panel']){
@@ -13929,6 +14024,7 @@ var _cardWidePref=false; // var: 카드 넓게 버튼 IIFE(앞쪽)가 먼저 쓴
 function _stageCenterOpen(){
   const open=id=>!!document.getElementById(id)?.classList.contains('open');
   let extra=[];try{extra=Object.keys(_STAGE_WINS);}catch(e){} // 시작 직후(_STAGE_WINS 정의 전)엔 빈 목록
+  if(typeof _vsOn==='function'&&_vsOn())return true; // 카드 영상 칸(2026-11-18)
   return ['yt-lightbox','feed-list-overlay','gc-discog-detail','venue-overlay','trophy-overlay','igv-overlay','uc-card-overlay',...extra].some(open);
 }
 // 카드를 넓게(640) 그리면 가운데가 560px(+여백 56)도 안 남는가
@@ -29563,7 +29659,13 @@ function _makeChVidController(contId){
     cont.querySelector('.gc-ch-hd').appendChild(selBtn);
     // 넓게 보기(2026-11-12 사용자 "정적 페이지처럼 시원하게 한눈에 — 카드 옆에 붙여서 카드랑 같이") — 웹만. 카드 옆 무대(목록 창)에
     // 조회수 많은 영상 + 곡별 묶음을 4칸으로 펼친다. 지금 고른 탭·곡·검색·단독만을 그대로 이어받는다. 폰은 카드가 곧 전체 화면이라 없음.
-    if(!state.unitKey&&!isMob()){
+    if(contId==='gc-ch-vid'&&!state.unitKey&&!isMob()){
+      const vsBtn=document.createElement('button');vsBtn.type='button';vsBtn.className='gc-ch-search-toggle gc-ch-wide-btn gc-ch-vs-btn';
+      const _vt=currentLang==='ko'?'영상 넓게 보기':'Expand videos';vsBtn.title=_vt;vsBtn.setAttribute('aria-label',_vt);vsBtn.innerHTML=_VS_ICON_OPEN;
+      vsBtn.addEventListener('click',e=>{e.stopPropagation();_vsPref(true);_vsOpen(cont);});
+      const _st0=cont.querySelector('.gc-ch-search-toggle:not(.gc-ch-vs-btn)');if(_st0)_st0.before(vsBtn);else cont.querySelector('.gc-ch-hd').appendChild(vsBtn);
+      if(_vsOn())_vsHead();else if(_vsPref()&&_stageWide())_vsOpen(cont); // 펼친 채 다른 카드로 넘어가면 그대로
+    }else if(!state.unitKey&&!isMob()){
       const wideBtn=document.createElement('button');wideBtn.type='button';wideBtn.className='gc-ch-search-toggle gc-ch-wide-btn';
       const _wt=currentLang==='ko'?'넓게 보기':'Wide view';wideBtn.title=_wt;wideBtn.setAttribute('aria-label',_wt);
       wideBtn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>';
