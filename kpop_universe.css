@@ -5910,3 +5910,23 @@
   body.uni-full #uni-back:hover{background:rgba(40,44,60,0.92);}
   body.uni-full #zoom-ctrl{left:20px!important;}
 }
+
+/* ── 웹 카드 섹션·멤버 카드 머리 통일(2026-11-18 사용자 "카드 텍스트 크기·여백 맞췄니") ─────────────────
+   섹션 제목이 DISCOGRAPHY·INSTAGRAM·HISTORY 12px / CONCERTS·COLLECTIONS 10px / 이어서 발견 11px로 제각각, 섹션 위 간격도 7~16px로 들쭉날쭉했다.
+   → 제목 12px·자간 .14em·굵게, 섹션마다 위 24px + 구분선 + 18px로 같게. 멤버 카드 머리(이름 15px·아이콘 14px)는 그룹 카드와 같은 19px·20px. */
+@media (hover:hover) and (pointer:fine){
+  #side-panel :is(.gc-discog-title,.tt-timeline-hd,.gc-collection-hd,.ttd-lbl){font-size:12px!important;letter-spacing:.14em!important;font-weight:700!important;}
+  #side-panel :is(#gc-discog-row,#gc-ig-section,#gc-timeline-section,#gc-concert-row,#gc-collection-row,#tt-ig-section,#tt-collection-row,#tt-discover,#tt-timeline-section,#tt-discog-row,#tt-concert-row){
+    margin-top:24px!important;padding-top:18px!important;border-top:0.5px solid rgba(255,255,255,0.08)!important;}
+  .gc-discog-type{font-size:11px;}
+  #side-panel :is(.ttd-note,.tt-tl-dot){font-size:12px;}
+  /* 멤버 카드 머리 — 그룹 카드(#gc-name 19px·아이콘 20px·SNS 아이콘 20px 높이)와 같게 */
+  #tn{font-size:19px;}
+  #tt-name-row{gap:10px;}
+  #tt-name-row button svg{width:20px!important;height:20px!important;}
+  #tt-links{gap:10px;}
+  #tt-links .gc-link-icon:not(.gc-link-icon-youtube){width:20px;height:20px;}
+  #tt-links .gc-link-msg svg{width:17px;height:17px;}
+  /* SNS 아이콘이 커지며 줄 끝 소속 그룹('아이브 · 아이즈원')이 밀려 잘렸다 — 넘치면 다음 줄로(그룹 카드 #gc-links와 같은 처리) */
+  #tg-row{flex-wrap:wrap;row-gap:8px;overflow:visible!important;}
+}
