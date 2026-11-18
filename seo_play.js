@@ -318,7 +318,9 @@
         var sum=function(o){return keys.reduce(function(a,k){return a+((o&&o[k])||0);},0);};
         w=sum(d.mw);t=sum(d.mt);
       }else{w=d.vw&&d.vw[g];t=d.vt&&d.vt[g];}
-      if(w||t)met.push({t:'vis',s:EN?((w?f(w)+' this week · ':'')+(t?f(t)+' visited so far':'visited')):((w?'이번 주 '+f(w)+'명 · ':'')+(t?'지금까지 '+f(t)+'명이 다녀갔어요':'다녀갔어요'))});
+      // 이번 주·지금까지를 한 문장에 합치지 않고 각각 별도 지표로(번갈아 표시) — 사이트 전체 줄(아래)과 같은 규칙. "이번 주 N명 · 지금까지 N명이 다녀갔어요"처럼 날짜가 겹쳐 보이던 것(2026-11-18 사용자)
+      if(w)met.push({t:'vis',s:EN?(f(w)+' visited this week'):('이번 주 '+f(w)+'명이 다녀갔어요')});
+      if(t&&t>w)met.push({t:'vis',s:EN?(f(t)+' visited so far'):('지금까지 '+f(t)+'명이 다녀갔어요')});
       if(!met.length)return;
       items=met.concat(info);render();
     }
