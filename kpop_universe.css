@@ -5879,3 +5879,14 @@
   #gc-glyph svg{width:21px;height:21px;}
   #gc-name-row button svg,#gc-name-row #gc-fav svg{width:20px!important;height:20px!important;}
 }
+
+/* ── 웹 세 칸 윗선·첫 줄 맞추기(2026-11-18 사용자 "카드랑 패널 제목 줄이 어색하지 않게") ─────────────────────
+   탐험(왼쪽)·가운데 창·카드(오른쪽)가 모두 64px에서 시작해 화면 아래까지 — 가운데 창도 떠 있는 둥근 창(위 44px 여백) 대신 칸처럼 경계선만.
+   첫 줄(아이콘·제목) 중심선을 86px(64+22)에 맞춘다: 탐험 머리줄 44px, 카드 ⇤ 버튼(이미 85), 곡 창 제목. */
+@media(min-width:1024px){
+  .stage-win,#feed-list-overlay{padding:0!important;}
+  .stage-win>*:first-child,#feed-list-panel{height:100%!important;max-height:none!important;border-radius:0!important;box-shadow:none!important;
+    border:none!important;border-left:0.5px solid rgba(255,255,255,0.08)!important;border-right:0.5px solid rgba(255,255,255,0.08)!important;}
+  #feed-hd{min-height:44px;box-sizing:border-box;padding-top:7px;padding-bottom:7px;}
+  #gc-track-videos-overlay.stage-win #gc-track-videos-sheet{padding-top:10px;}
+}
