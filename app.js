@@ -10449,7 +10449,8 @@ function closeCards(){
 function _gaEvent(name,params){
   if(window._kpuAutomated)return; // 자동 테스트·크롤러는 GA·app_events 둘 다 안 센다(index.html head에서 판정, 2026-11-02)
   if(typeof gtag==='function')gtag('event',name,params||{});
-  if(typeof _APP_EV!=='undefined'&&_APP_EV&&_APP_EV.has(name))_appEvent(name,(params&&(params.action||params.kind||params.target||params.group_name))||null);
+  // view_member는 '그룹:멤버'로 남긴다(2026-11-18 — 멤버 카드·멤버 정적 페이지의 '다녀간 사람'을 멤버 단위로). 그룹 단위 집계는 SQL에서 ':' 앞만 쓴다.
+  if(typeof _APP_EV!=='undefined'&&_APP_EV&&_APP_EV.has(name))_appEvent(name,(name==='view_member'&&params&&params.group_name&&params.member_name)?params.group_name+':'+params.member_name:(params&&(params.action||params.kind||params.target||params.group_name))||null);
 }
 // ── 사용자 지표(2026-10-13) — GA는 우리가 못 읽어서, 같은 이벤트를 Supabase app_events에도 쌓는다 ───
 // 진단 보고서가 매번 같은 일반론("첫 방문이 불명확할 수 있다")을 반복한 원인이 실측값 부재였다. 관리자 홈의
@@ -12009,7 +12010,7 @@ function showT(a,cx,cy,keepNavStack,urlMode,_unusedPushMobNav,noFly){
   _joinPresence('member',a.group.ko+':'+a.name.ko);
   _showFavCount('member',a.group.ko+':'+a.name.ko,'get_member_fav_count');
   _showTraceCount('member',a.group.ko+':'+a.name.ko,'get_member_trace_week');
-  _showVisitCount('member',a.group.ko);
+  _showVisitCount('member',a.group.ko,a);
   _showMemberFallback(a);
   _syncUrl(urlMode||'push');
 }
@@ -22689,19 +22690,28 @@ function _liveStats(){
   if(!sb)return Promise.resolve(null);
   return sb.rpc('get_live_stats').then(({data,error})=>{if(error||!data)return null;try{sessionStorage.setItem('kpu_ls_v1',JSON.stringify({t:Date.now(),d:data}));}catch(e){}return data;},()=>null);
 }
-function _visitLine(d,grp,ko){
-  const w=d&&d.vw&&d.vw[grp],t=d&&d.vt&&d.vt[grp];
+// 멤버 단위 키(2026-11-18 사용자 "멤버는 멤버 단위") — 서버 get_live_stats mw·mt는 정적 페이지 주소('g/그룹/멤버'·영문 'g/slug/slug'·솔로 'member/이름')와
+// 앱 카드('m:그룹:멤버')를 따로 센다. 이 멤버의 한글·영문 주소 키 + 앱 키를 더한다(정적 빌더와 같은 주소 규칙 _seoSlugify·_seoUrlSafeKo).
+function _memberVisitKeys(a){
+  const gko=a.group.ko,gInfo=GROUPS[gko],nameKo=a.name.ko,nameEn=a.name.en||nameKo,keys=['m:'+gko+':'+nameKo];
+  if(gInfo){keys.push('g/'+_seoUrlSafeKo(gko)+'/'+_seoUrlSafeKo(nameKo),'g/'+_seoSlugify(gInfo.en||gko,gko)+'/'+_seoSlugify(nameEn,nameKo));}
+  else{const sfx=_soloPageSuffix(a,ARTISTS,GROUPS);keys.push('member/'+_seoUrlSafeKo(nameKo)+sfx.ko,'member/'+_seoSlugify(nameEn,nameKo)+sfx.en);}
+  return keys;
+}
+function _visitLine(d,grp,ko,a){
+  const sum=(m,ks)=>ks.reduce((s,k)=>s+((m&&m[k])||0),0);
+  const w=a?sum(d&&d.mw,_memberVisitKeys(a)):(d&&d.vw&&d.vw[grp]),t=a?sum(d&&d.mt,_memberVisitKeys(a)):(d&&d.vt&&d.vt[grp]);
   if(!t&&!w)return '';
   const f=n=>Number(n).toLocaleString(ko?'ko-KR':'en-US');
   if(ko)return (w?'이번 주 '+f(w)+'명 · ':'')+(t?'지금까지 '+f(t)+'명이 다녀갔어요':'다녀갔어요');
   return (w?f(w)+' this week · ':'')+(t?f(t)+' visited so far':'visited');
 }
-async function _showVisitCount(kind,grp){
+async function _showVisitCount(kind,grp,a){
   _gcStatusState[kind].visits='';
   const req=++_visitReq;
   const d=await _liveStats();
   if(req!==_visitReq)return;
-  const line=_visitLine(d,grp,currentLang==='ko');
+  const line=_visitLine(d,grp,currentLang==='ko',a||null);
   _gcStatusState[kind].visits=line?'<span class="visit-dot"></span>'+line:'';
   _renderGcStatusLine(kind);
 }

@@ -309,7 +309,15 @@
       if(fav>0)met.push({t:'fav',s:EN?(f(fav)+' like this'):(f(fav)+'명이 좋아해요')});
       var tr=!m&&d.tr&&d.tr[g];
       if(tr&&tr[0]>0&&tr[1]>0)met.push({t:'tr',s:EN?(f(tr[0])+' left '+f(tr[1])+' traces this week'):('이번 주 '+f(tr[0])+'명이 흔적 '+f(tr[1])+'개를 남겼어요')});
-      var w=d.vw&&d.vw[g],t=d.vt&&d.vt[g];
+      // 멤버·직캠 모음 페이지는 멤버 단위(2026-11-18) — 이 페이지와 짝 언어 페이지 주소 키 + 앱 멤버 카드 키를 더한다(app.js _memberVisitKeys와 같은 키)
+      var w,t;
+      if(m){
+        var mk=function(p){p=decodeURIComponent(String(p||'')).replace(/^\/en(?=\/)/,'');var x=p.split('/');if(x[1]==='g'&&x[3]&&['s','a','credits'].indexOf(x[3])<0)return 'g/'+x[2]+'/'+x[3];if(x[1]==='member'&&x[2])return 'member/'+x[2];return null;};
+        var keys=['m:'+g+':'+m],k1=mk(location.pathname);if(k1)keys.push(k1);
+        var alt=document.querySelector('link[rel="alternate"][hreflang="'+(EN?'ko':'en')+'"]');if(alt){try{var k2=mk(new URL(alt.href).pathname);if(k2&&keys.indexOf(k2)<0)keys.push(k2);}catch(e){}}
+        var sum=function(o){return keys.reduce(function(a,k){return a+((o&&o[k])||0);},0);};
+        w=sum(d.mw);t=sum(d.mt);
+      }else{w=d.vw&&d.vw[g];t=d.vt&&d.vt[g];}
       if(w||t)met.push({t:'vis',s:EN?((w?f(w)+' this week · ':'')+(t?f(t)+' visited so far':'visited')):((w?'이번 주 '+f(w)+'명 · ':'')+(t?'지금까지 '+f(t)+'명이 다녀갔어요':'다녀갔어요'))});
       if(!met.length)return;
       items=met.concat(info);render();
