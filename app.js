@@ -15796,9 +15796,13 @@ function showGC(ko,cx,cy,keepMemberPanel,skipRipple,urlMode,_unusedPushMobNav){
   nameEl.style.color='';
   {
     const _enShow=currentLang==='ko'&&info.en&&info.en!==ko; // 키가 영문인 그룹(A2O MAY·SOUL 등)은 제목과 같은 글자가 두 번 보였다(2026-10-15)
+    // 웹 한국어는 한글명 오른쪽 인라인(11-17 결정) — 11-17엔 언어 전환 경로(_refreshOpenCardText)에만 넣어서 카드를 처음 열 땐 예전 아랫줄로 나왔다(11-18 사용자)
+    const _enInlineShow=_enShow&&!isMob();
     const _enEl=document.getElementById('gc-en');
-    _enEl.textContent=_enShow?info.en:'';
-    _enEl.style.display=_enShow?'':'none';
+    _enEl.textContent=_enShow&&!_enInlineShow?info.en:'';
+    _enEl.style.display=_enShow&&!_enInlineShow?'':'none';
+    const _enInlineEl=document.getElementById('gc-en-inline');
+    if(_enInlineEl){_enInlineEl.textContent=_enInlineShow?info.en:'';_enInlineEl.hidden=!_enInlineShow;}
   }
   _renderTagChip(document.getElementById('gc-co'),(info.co==='무소속'?'':_dispAgency(info.co))||'','agency',(info.co==='무소속'?'':info.co)||'',!!info.disbanded);
   if(info.co&&info.co!=='무소속'&&_CO_URL[info.co]){const coLink=document.createElement('a');coLink.href=_CO_URL[info.co];coLink.target='_blank';coLink.rel='noopener noreferrer';coLink.className='co-ext-link';coLink.textContent='↗';coLink.title=info.co+' 홈페이지';document.getElementById('gc-co').appendChild(coLink);}

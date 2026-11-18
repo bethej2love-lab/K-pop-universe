@@ -5770,9 +5770,10 @@
 @keyframes igaSpin{to{transform:rotate(360deg);}}
 
 /* ── PC 글자 키움 1차(2026-11-18, 사용자 "웹에선 뭐든 쥐똥만하게 말고 적당히 보기 좋게 크게") ──────────────────────────
-   앱 UI가 폰 글자 크기(10~11px)로 만들어져 1440px 화면에서 너무 작았다. 마우스 쓰는 넓은 화면(hover+fine+1100px↑)에서만 해당 클래스를 1.5~2px 키운다.
+   앱 UI가 폰 글자 크기(10~11px)로 만들어져 1440px 화면에서 너무 작았다. 마우스 쓰는 기기(hover+fine)에서 해당 클래스를 1.5~2px 키운다.
+   ⚠️ 창 폭 조건을 걸지 않는다(11-18 사용자 "X는 창을 줄여도 글자 크기는 그대로, 배치만 바뀐다") — 처음엔 1100px↑로 걸어서 창을 줄이면 글자가 확 작아졌다.
    폰·태블릿은 그대로. 레이아웃 폭 상수(패널 440px 등)는 안 건드린다 — 글자만. 안 맞는 칸은 min-width:0·말줄임이 이미 걸려 있다. */
-@media (hover:hover) and (pointer:fine) and (min-width:1100px){
+@media (hover:hover) and (pointer:fine){
   .feed-news-badge{font-size:12px;padding:3px 9px;}
   .feed-news-sub{font-size:13px;}
   .feed-news-ep{font-size:13px;}
@@ -5805,7 +5806,7 @@
 }
 
 /* ── PC 어드민 글자 키움(2026-11-18, 사용자 "어드민 계정 daily 창도 그렇고") — 어드민 패널 규칙 중 12.5px 이하를 +1.5px(최대 14px). 자동 생성(28개), 어드민만 보는 화면 ── */
-@media (hover:hover) and (pointer:fine) and (min-width:769px){
+@media (hover:hover) and (pointer:fine){
   #vm-totals .vm-totals-refresh{font-size:12.5px;}
   .vm-toggle-pill{font-size:12.5px;}
   #vm-search-2{font-size:12.5px;}
@@ -5849,4 +5850,29 @@
   /* 공용 무대 창이 앞이면 다른 무대 창은 비킨다(재생 화면은 소리 그대로) */
   body.stage-front-win #yt-lightbox.open{opacity:0;visibility:hidden;pointer-events:none;}
   body.stage-front-win :is(#gc-discog-detail,#feed-list-overlay,#venue-overlay,#trophy-overlay,#igv-overlay).open{opacity:0;transform:translateX(24px);visibility:hidden;}
+}
+
+/* ── 웹 카드 글자·간격 정리(2026-11-18 사용자 "멤버·데뷔·소속·팬덤 텍스트 크기랑 여백이 왜 다 제각각이냐, 멤버 이름만 살짝 크고 나머지는 균일하게",
+   "SNS 줄 커진 만큼 첫 줄 그룹명·하트·수상·공유 아이콘도 살짝 크게", "글씨가 커지며 여백이 촘촘") ──
+   예전: 값이 데뷔·소속 13.5px/500, 팬덤·리더 11px/600+왼쪽 4px 들여씀, 줄 높이 20·21·26px 제각각. 지금: 라벨 13px, 값 전부 14px/500, 같은 시작선(왼쪽 4px), 줄 높이 30px.
+   그룹 카드(#gc-grid)·멤버 카드(#tt-info-grid) 같은 규칙. 폰(터치)은 그대로. */
+@media (hover:hover) and (pointer:fine){
+  #gc-grid,#tt-info-grid{gap:2px;margin-top:10px;padding-top:12px;}
+  #gc-grid .row,#tt-info-grid .row{align-items:center;min-height:30px;}
+  #gc-grid .lbl,#tt-info-grid .lbl,#side-panel #gc-grid .lbl,#side-panel #tt-info-grid .lbl{font-size:13px;min-width:60px;}
+  #gc-grid .val,#tt-info-grid .val,#side-panel #gc-grid .val,#side-panel #tt-info-grid .val{font-size:14px;font-weight:500;line-height:22px;padding-left:4px;}
+  #gc-grid #gc-fandom,#gc-grid #gc-leader,#tt-info-grid #tt-fandom{font-size:14px;font-weight:500;letter-spacing:.02em;margin-left:0;}
+  #gc-grid #gc-mem-row,#gc-grid #gc-unit-row{align-items:center;}
+  #gc-mem-list,#gc-unit-list{margin-top:0;row-gap:2px;}
+  /* 데뷔·소속 값은 클릭 칩(.tag-chip) 안 4px가 한 번 더 들어가 다른 값보다 오른쪽에서 시작했다 — 칩 배경(호버)은 그대로, 글자 시작선만 맞춤 */
+  #gc-grid .val>.tag-chip,#tt-info-grid .val>.tag-chip{margin-left:-4px;}
+  /* SNS 줄 — 영문명이 이름 옆으로 가면서 아이콘만 남은 줄이 길어져 끝('bubble')이 패널 밖으로 잘렸다. 넘치면 다음 줄로 */
+  #gc-links{flex-wrap:wrap;flex-shrink:1;min-width:0;row-gap:8px;}
+  .gc-mem-name{font-size:15px;}
+  /* 첫 줄 — 이름·영문명·글리프·하트/수상/공유/+ */
+  #gc-name{font-size:19px;}
+  #gc-name-row{gap:10px;margin-bottom:8px;}
+  .gc-en-inline{font-size:12.5px;}
+  #gc-glyph svg{width:21px;height:21px;}
+  #gc-name-row button svg,#gc-name-row #gc-fav svg{width:20px!important;height:20px!important;}
 }
