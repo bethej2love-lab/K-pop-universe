@@ -28086,7 +28086,9 @@ async function _buildFeedFavCharts(){
       });
     });
     if(!items.length)return;
-    items.sort((a,b)=>a.rank-b.rank); // 높은 순위부터
+    // For You 차트 선반은 영상 최신순(#28, 2026-11-19 사용자 "포유탭 차트는 순위순 말고 영상 최신순") — For You는 시의성이 핵심이라
+    // 새로 차트에 든 최애 영상이 먼저 보이게. 순위('N위')는 캡션에 그대로 남는다. 날짜가 같으면 높은 순위부터. (차트 화면 _openChartList는 순위순 유지)
+    items.sort((a,b)=>String(b.v.published_at||'').localeCompare(String(a.v.published_at||''))||a.rank-b.rank);
     // ⚠️ 섹션을 **먼저** 보이게 한 뒤 카드를 붙인다 — display:none 안에서 만든 lazy 썸네일은 나중에 보여도 로딩이 시작되지 않아
     //    캡션(썸네일이 떠야 보임)까지 빈 카드로 남았다(2026-10-15 헤드리스 실측).
     section.style.display='';
