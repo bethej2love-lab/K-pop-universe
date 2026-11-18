@@ -2903,7 +2903,7 @@ function animate(){
   }
   if(!_reduceMotion)_nctRingGroups.forEach(({g})=>g.rotateZ(0.00028*_dtMs/16.67)); // 실경과 기준 회전(렌더 fps 달라도 속도 일정)
   // 위에서 이미 렌더 fps로 게이트했으므로(Tier 1) 여기선 그냥 그린다.
-  renderer.render(scene,(_MM&&_MM.on)?_mmCamera():camera); // 웹 미니맵이면 물러난 전용 카메라
+  renderer.render(scene,(_MM&&(_MM.on||_MM.anim))?_mmCamera():camera); // 웹 미니맵(·전환 중)이면 물러난 전용 카메라
   labelRenderer.render(scene,camera);
   if(window._syncZoomSlider)_syncZoomSlider();
 }
@@ -2958,7 +2958,7 @@ function _syncUniverseSize(){
 // 칸을 누르면 '우주 모드'(_MM.full) — 패널들이 잠깐 비키고 우주가 화면 가득. 행성을 눌러 카드가 열리거나 '콘텐츠로'·Esc면 돌아온다.
 // 판정은 _feedWideSync(패널 열림 감시·창 크기·1초 안전망)에서 _mmSync로. 폰·태블릿(<1024)은 그대로 전체 화면 우주.
 // var: showGC·showT·_feedWideSync가 시작 직후(이 줄 실행 전) 불려도 TDZ 예외가 안 나게
-var _MM={on:false,full:false,w:132,h:52,r:12}; // 탭바(37px)보다 조금 크게, 모서리는 덜 둥글게(11-18 사용자)
+var _MM={on:false,full:false,w:132,h:52,r:12,blend:0,anim:0}; // 탭바(37px)보다 조금 크게, 모서리는 덜 둥글게(11-18 사용자). blend: 미니맵 카메라로 물러난 정도(0~1, 줄어드는 동안 서서히)
 // 미니맵 전용 카메라 — 카드를 열면 본 카메라가 행성 바로 앞까지 날아가 작은 칸엔 빛 덩어리만 보였다. 같은 방향에서 뒤로 물러나
 // (우주 반경의 45%) 지금 행성(controls.target)을 가운데 두고 주변까지 보이게 한다. 본 카메라·조작은 그대로라 우주 모드로 펼치면 원래 시점.
 let _mmCam=null;
@@ -2966,16 +2966,17 @@ function _mmCamera(){
   if(!_mmCam)_mmCam=camera.clone();
   _mmCam.fov=camera.fov;_mmCam.aspect=camera.aspect;_mmCam.near=camera.near;_mmCam.far=camera.far;
   const t=controls.target,dir=camera.position.clone().sub(t);
-  const d=Math.max(dir.length(),UNIVERSE_MAX_DIST*0.45);
+  const d0=dir.length(),d=d0+(Math.max(d0,UNIVERSE_MAX_DIST*0.45)-d0)*(_MM.blend==null?1:_MM.blend); // 줄어드는 동안 서서히 물러남
   if(dir.lengthSq()<1e-6)dir.set(0,0.3,1);
   _mmCam.position.copy(t).add(dir.normalize().multiplyScalar(d));
   _mmCam.lookAt(t);_mmCam.updateProjectionMatrix();
   return _mmCam;
 }
+// ⭐ 미니맵이 되는 때 = 가운데 칸(무대)에 창이 들어올 때만(2026-11-18 사용자 "왼·가운데·오른 세 칸이면 가운데가 차기 전까진 우주 유지,
+//    가운데가 차면 그때 슉 미니맵"). 탐험 패널(왼쪽)·카드(오른쪽)만 열려 있으면 그 사이로 우주가 그대로 보인다.
 function _mmWanted(){
   if(!_stageWide()||_MM.full)return false;
-  const open=id=>!!document.getElementById(id)?.classList.contains('open');
-  return open('feed-overlay')||['side-panel','member-panel','conn-panel'].some(open)||(typeof _stageCenterOpen==='function'&&_stageCenterOpen());
+  return typeof _stageCenterOpen==='function'&&_stageCenterOpen();
 }
 function _mmRect(){
   const nav=document.getElementById('dh-right');
@@ -3002,9 +3003,42 @@ function _mmEls(){
   back.textContent=ko?'← 콘텐츠로':'← Back to content';
   return{hit,back};
 }
-function _mmApply(){
+// 전체 ↔ 미니맵을 순간이동 대신 0.45초 동안 칸 크기·위치·모서리·카메라 거리를 함께 보간한다(사용자 "자연스러운 모션").
+// 매 프레임 setSize라 실제 우주가 그대로 줄어들며 날아간다. 도중에 반대로 바뀌면 지금 위치에서 다시 출발.
+function _mmAnimate(toMini,done){
   const c=renderer.domElement,lab=labelRenderer.domElement;
+  const W=window.innerWidth,H=window.innerHeight,cur=c.getBoundingClientRect();
+  const from={x:cur.left,y:cur.top,w:cur.width||W,h:cur.height||H,r:parseFloat(c.style.borderRadius)||0,b:_MM.blend||0};
+  const m=_mmRect(),to=toMini?{x:m.x,y:m.y,w:m.w,h:m.h,r:_MM.r,b:1}:{x:0,y:0,w:W,h:H,r:0,b:0};
+  const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const dur=reduce?0:450,t0=performance.now(),id=++_MM.anim;
+  lab.style.display='none';
+  Object.assign(c.style,{position:'fixed',zIndex:'3'});
+  const step=now=>{
+    if(id!==_MM.anim)return; // 더 나중 애니메이션이 이어받음
+    const k=dur?Math.min(1,(now-t0)/dur):1,e=1-Math.pow(1-k,3); // ease-out
+    const L=(a,b)=>a+(b-a)*e,w=Math.max(2,L(from.w,to.w)),h=Math.max(2,L(from.h,to.h));
+    Object.assign(c.style,{left:L(from.x,to.x)+'px',top:L(from.y,to.y)+'px',borderRadius:L(from.r,to.r)+'px'});
+    _MM.blend=L(from.b,to.b);
+    renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();
+    if(k<1){requestAnimationFrame(step);return;}
+    _MM.anim=0;done&&done();
+  };
+  requestAnimationFrame(step);
+}
+function _mmApply(animate){
+  const c=renderer.domElement,lab=labelRenderer.domElement;
+  if(animate){
+    _mmAnimate(_MM.on,()=>{
+      if(!_MM.on){Object.assign(c.style,{position:'',left:'',top:'',borderRadius:'',zIndex:''});_MM.blend=0;
+        const w=window.innerWidth,h=window.innerHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();labelRenderer.setSize(w,h);lab.style.display='';
+        scene.background=_buildUniverseBg();}
+      else{const r=_mmRect(),{hit}=_mmEls();Object.assign(hit.style,{left:r.x+'px',top:r.y+'px',width:r.w+'px',height:r.h+'px',borderRadius:_MM.r+'px'});}
+    });
+    return;
+  }
   if(_MM.on){
+    _MM.blend=1;
     const r=_mmRect();
     Object.assign(c.style,{position:'fixed',left:r.x+'px',top:r.y+'px',borderRadius:_MM.r+'px',zIndex:'3'});
     renderer.setSize(r.w,r.h);camera.aspect=r.w/r.h;camera.updateProjectionMatrix();
@@ -3019,10 +3053,9 @@ function _mmApply(){
 }
 function _mmSync(){
   const want=_mmWanted();
-  if(want===_MM.on){if(want){const r=_mmRect(),c=renderer.domElement;if(c.style.left!==r.x+'px'||c.style.top!==r.y+'px')_mmApply();}return;}
+  if(want===_MM.on){if(want&&!_MM.anim){const r=_mmRect(),c=renderer.domElement;if(c.style.left!==r.x+'px'||c.style.top!==r.y+'px')_mmApply();}return;}
   _MM.on=want;document.body.classList.toggle('uni-mini',want);
-  _mmApply();
-  if(!want)scene.background=_buildUniverseBg();
+  _mmApply(true); // 줄어들고 커지는 움직임
 }
 function _mmEnterFull(){
   if(_MM.full)return;
