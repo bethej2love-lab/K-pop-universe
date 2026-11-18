@@ -6065,3 +6065,16 @@
 @media (min-width:1024px){
   #iga-overlay.stage-win #iga-panel,#upd-overlay.stage-win #upd-panel,#ecx-overlay.stage-win #ecx-panel,#ige-overlay.stage-win #ige-panel{width:100%!important;max-width:none!important;}
 }
+
+/* 카드 6차(2026-11-18 사용자): 그룹 카드 정보 줄 순서 멤버 → 팬덤 → 데뷔 → 소속(웹), 글자 라벨 13→12·값 14→13,
+   전체 위아래 여백 살짝 더(줄 높이 24→22, 구분선 위 16→13·아래 14→11) */
+@media (hover:hover) and (pointer:fine){
+  #gc-grid{display:flex!important;flex-direction:column;}
+  #gc-grid>#gc-mem-row{order:1;}#gc-grid>#gc-unit-row{order:2;}#gc-grid>#gc-fandom-row{order:3;}#gc-grid>.row{order:4;}#gc-grid>#gc-leader-row{order:5;}
+  #gc-grid .gc-mem-name{font-size:14px!important;} /* 멤버 이름 칩은 따로 15px였다 → 1pt 줄임 */
+  #gc-grid .row,#tt-info-grid .row{min-height:22px;}
+  #gc-grid .lbl,#tt-info-grid .lbl{font-size:12px!important;}
+  #gc-grid .val,#tt-info-grid .val,#gc-grid .val .tag-chip,#tt-info-grid .val .tag-chip{font-size:13px!important;}
+  #side-panel #gc-grid,#side-panel #gc-discog-row,#side-panel #gc-ig-section,#side-panel #gc-timeline-section,
+  #side-panel #gc-concert-row,#side-panel #gc-collection-row,#side-panel #gc-ch-vid{margin-top:13px!important;padding-top:11px!important;}
+}
