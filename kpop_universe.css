@@ -5768,3 +5768,70 @@
 .iga-busy{opacity:.55;pointer-events:none;}
 .iga-busy::after{content:'';position:absolute;left:50%;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:igaSpin .8s linear infinite;}
 @keyframes igaSpin{to{transform:rotate(360deg);}}
+
+/* ── PC 글자 키움 1차(2026-11-18, 사용자 "웹에선 뭐든 쥐똥만하게 말고 적당히 보기 좋게 크게") ──────────────────────────
+   앱 UI가 폰 글자 크기(10~11px)로 만들어져 1440px 화면에서 너무 작았다. 마우스 쓰는 넓은 화면(hover+fine+1100px↑)에서만 해당 클래스를 1.5~2px 키운다.
+   폰·태블릿은 그대로. 레이아웃 폭 상수(패널 440px 등)는 안 건드린다 — 글자만. 안 맞는 칸은 min-width:0·말줄임이 이미 걸려 있다. */
+@media (hover:hover) and (pointer:fine) and (min-width:1100px){
+  .feed-news-badge{font-size:12px;padding:3px 9px;}
+  .feed-news-sub{font-size:13px;}
+  .feed-news-ep{font-size:13px;}
+  .feed-section-ttl{font-size:12px;}
+  .feed-masonry .feed-card-title,.feed-grid .feed-card-title{font-size:13.5px;}
+  .feed-varied-feat>.feed-card .feed-card-title{font-size:15px;}
+  .feed-masonry .feed-card-sub,.feed-grid .feed-card-sub,.feed-varied-feat>.feed-card .feed-card-sub{font-size:12.5px;}
+  .feed-card-meta{font-size:12.5px;}
+  .vdur{font-size:12px;padding:1px 5px;}
+  .gc-discog-type{font-size:10px;}
+  .gc-discog-item-title{font-size:13px;}
+  .gc-link-count{font-size:12.5px;}
+  .dh-label{font-size:14px;}
+  .surf-seg .seg-btn,.seg-control-sm .seg-btn{font-size:12.5px;}
+  /* 2차: 앨범 격자·레일·차트/이벤트 선반 카드, 3D 그룹 이름표 */
+  .feed-album-grid>.feed-card .feed-card-title,.feed-album-rail>.feed-card .feed-card-title{font-size:13px;}
+  .feed-album-rail>.feed-card .feed-card-sub,.feed-album-rail>.feed-card .feed-card-meta{font-size:12px;}
+  #feed-chart>.feed-card .feed-card-title,#feed-jacon>.feed-card .feed-card-title,#feed-events>.feed-card .feed-card-title,#feed-favchart>.feed-card .feed-card-title,#feed-favnew>.feed-card .feed-card-title{font-size:13.5px;}
+  #feed-chart>.feed-card .feed-card-sub,#feed-jacon>.feed-card .feed-card-sub,#feed-events>.feed-card .feed-card-sub,#feed-favchart>.feed-card .feed-card-sub,#feed-favnew>.feed-card .feed-card-sub{font-size:12.5px;}
+  .feed-card-new{font-size:10px;line-height:15px;padding:0 4px;}
+  .group-label{font-size:13px;}
+  /* 3차: 카드(#side-panel) 안 정보 줄·칩·디스코·영상 목록 */
+  #side-panel .lbl,#side-panel .val{font-size:13.5px;}
+  #side-panel .tag-chip,#side-panel #gc-en,#side-panel .gc-status-inner,#side-panel .gc-ch-meta,#side-panel .co-ext-link{font-size:13px;}
+  #side-panel .gc-ch-dur{font-size:12px;}
+  #side-panel .gc-discog-title{font-size:12px;}
+  #side-panel .gc-discog-item-artists{font-size:11.5px;}
+  #side-panel .tt-timeline-hd{font-size:12px;}
+  #side-panel .tv-sm-title{font-size:14px;}
+}
+
+/* ── PC 어드민 글자 키움(2026-11-18, 사용자 "어드민 계정 daily 창도 그렇고") — 어드민 패널 규칙 중 12.5px 이하를 +1.5px(최대 14px). 자동 생성(28개), 어드민만 보는 화면 ── */
+@media (hover:hover) and (pointer:fine) and (min-width:769px){
+  #vm-totals .vm-totals-refresh{font-size:12.5px;}
+  .vm-toggle-pill{font-size:12.5px;}
+  #vm-search-2{font-size:12.5px;}
+  #vm-count{font-size:13.5px;}
+  #vm-edit-btn{font-size:13.5px;}
+  .vm-title{font-size:13.5px;}
+  .vm-parody-badge{font-size:11.5px;}
+  .adm-card-lbl{font-size:12.5px;}
+  .adm-card-sub{font-size:11.5px;}
+  #adm-routine-desc{font-size:12.5px;}
+  #adm-routine-btns>button{font-size:13.5px;}
+  #adm-cleanup-btns>button{font-size:13.5px;}
+  .hnn-tab{font-size:13.5px;}
+  .hnn-sec-lbl{font-size:11.5px;}
+  .hnn-wl-sublbl{font-size:11.5px;}
+  .hnn-atm-chip{font-size:12.5px;}
+  .hnn-dup-person{font-size:12.5px;}
+  #hnn-dup-empty{font-size:12.5px;}
+  #gp-count{font-size:12.5px;}
+  .gp-survival-tag{font-size:10.5px;}
+  #gp-empty{font-size:13.5px;}
+  .adm-back-home{font-size:13.5px;}
+  #adm-exec-bar.on{font-size:13.5px;}
+  #adm-exec-bar .aeb-stop{font-size:12.5px;}
+  #adm-exec-log{font-size:12.5px;}
+  #adm-exec-log .ael-h{font-size:11.5px;}
+  #adm-undo-list .aul-info{font-size:12.5px;}
+  #adm-undo-list .aul-btn{font-size:12.5px;}
+}
