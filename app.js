@@ -28161,7 +28161,8 @@ async function _buildFeedFavNew(opts){
     const drawItem=({song,row})=>{
       const isShort=_songIsShort(song);
       const _emo=_isFav(song)?String(_bias.favEmoji(song)).replace(/[<>&"']/g,''):''; // 이모지는 사용자가 친 글자 — 태그 문자 제거
-      const sub=(_emo?`<span class="feed-fav-emo">${_emo}</span>`:'')+[_feedWhoSub(song),_isNewSince(song)?'NEW':null,song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
+      // NEW는 맨 앞 뱃지(2026-11-18 사용자 "new 뱃지 최애 이모티콘 앞으로") — 신보 선반 NEW 칩(.feed-card-new)과 같은 모양
+      const sub=(_isNewSince(song)?'<span class="feed-card-new">NEW</span>':'')+(_emo?`<span class="feed-fav-emo">${_emo}</span>`:'')+[_feedWhoSub(song),song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
       _appendFeedCard(strip,'💖',song.t,sub,
         ()=>openLightbox(song.u,isShort,flat,flat.indexOf(song),{groupKo:song.groupKo,memberKo:(song.memberKos||[])[0]},false,true),
         song.thumb,null, Object.assign({dur:song.dur}, row.wide?{wide:true,short:!!row.short}:(isShort?{short:true}:{}),
