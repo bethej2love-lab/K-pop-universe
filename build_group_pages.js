@@ -890,7 +890,7 @@ ${SEO_GA_TAG}
   <a class="brand" href="${SITE}/${isEn ? 'en/all/' : 'all/'}" style="margin-left:10px;">${isEn ? 'Browse all' : '모아보기'}</a>
   <div class="top2">
     <h1>${escHtml(bilingualLabel(displayName,subName))}</h1>
-    ${(() => { const pic = memberPicUrl(a); return pic ? `<img class="cover avatar" src="${pic}" alt="${escHtml(displayName)}" loading="eager" width="240" height="240">` : `<img class="cover" src="${ogImage}" alt="${escHtml(displayName)}" loading="lazy">`; })()}
+    ${(() => { const pic = memberPicUrl(a), ig = memberPicInstagram(a); const img = pic ? `<img class="cover avatar" src="${pic}" alt="${escHtml(displayName)}" loading="eager" width="240" height="240">` : ''; return pic ? (ig ? `<a class="avatar-link" href="${escHtml(ig)}" target="_blank" rel="noopener noreferrer" title="Instagram">${img}</a>` : img) : `<img class="cover" src="${ogImage}" alt="${escHtml(displayName)}" loading="lazy">`; })()}
     <div class="meta">
       ${groupDisplay ? `<span><b>${groupLabel}</b> ${escHtml(bilingualLabel(groupDisplay,isEn?primaryGko:groupInfo.en))}</span>` : ''}
       ${bdayIso ? `<span><b>${debutLabel}</b> ${escHtml(a.bday)}${ag.age && a.active !== false ? (isEn ? ` (age ${ag.age})` : ` (만 ${ag.age}세)`) : ''}</span>` : ''}
@@ -1224,22 +1224,32 @@ const SB_KEY = 'sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0'; // 앱(index.ht
 // 앱 카드와 같은 원본: Supabase artist_pics(그룹은 ko_name='') — 스토리지 주소(고정)만 쓴다(인스타 fbcdn은 며칠 뒤 만료돼 정적 페이지에 못 박는다).
 // 키는 그룹|이름(동명이인 125쌍 — 이름만 키로 쓰면 서로 사진을 나눠 가진다). 없으면 예전처럼 16:9 대표 영상 표지.
 let PROFILE_PICS = new Map();
+let PROFILE_PIC_SRC = new Map(); // 사진 출처(위버스·유튜브 등). 비어 있으면 대개 관리자가 인스타 프로필로 지정한 사진
 const picKey = (g, n) => (g || '') + '|' + (n || '');
 async function fetchProfilePics() {
   // ⚠️ PostgREST는 한 번에 1000행까지만 준다 — 처음엔 한 번만 받아 1,386장 중 1,000장(그룹 사진 188개 중 7개)만 들어왔다(2026-11-18 미리보기에서 발견).
   //    정렬을 고정하고 1000개씩 나눠 받는다(정렬 없이 나누면 중복·누락).
   const rows = [];
   for (let off = 0; off < 20000; off += 1000) {
-    const res = await fetch(`${SB_URL}/rest/v1/artist_pics?select=ko_name,group_ko,pic_url&pic_url=like.*supabase.co/storage*&order=group_ko.asc,ko_name.asc&limit=1000&offset=${off}`, { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } });
+    const res = await fetch(`${SB_URL}/rest/v1/artist_pics?select=ko_name,group_ko,pic_url,source_url&pic_url=like.*supabase.co/storage*&order=group_ko.asc,ko_name.asc&limit=1000&offset=${off}`, { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const part = await res.json();
     rows.push(...part);
     if (part.length < 1000) break;
   }
   PROFILE_PICS = new Map(rows.filter(r => r.pic_url).map(r => [picKey(r.group_ko, r.ko_name), r.pic_url]));
+  PROFILE_PIC_SRC = new Map(rows.filter(r => r.pic_url).map(r => [picKey(r.group_ko, r.ko_name), r.source_url || '']));
   console.log(`프로필 사진 ${PROFILE_PICS.size}장(그룹 ${rows.filter(r => !r.ko_name).length})`);
 }
 function groupPicUrl(gko) { return PROFILE_PICS.get(picKey(gko, '')) || null; }
+// 멤버 큰 원을 눌렀을 때 갈 인스타(2026-11-18 사용자 "카드 프로필 사진이 인스타 프로필인 경우 클릭하면 인스타로") —
+// 개인 인스타 링크가 있고 사진 출처가 위버스·유튜브로 기록되지 않았을 때만(출처 빈칸 1,306장은 대개 인스타 프로필로 지정한 것).
+function memberPicInstagram(a) {
+  const ig = a.links && a.links.instagram; if (!ig || !memberPicUrl(a)) return null;
+  const gs = [a.group, ...(a.groups || [])].map(g => g && g.ko).filter(Boolean);
+  for (const g of gs) { if (PROFILE_PICS.has(picKey(g, a.name.ko))) { const s = PROFILE_PIC_SRC.get(picKey(g, a.name.ko)) || ''; return /weverse|youtube|ytimg/i.test(s) ? null : ig; } }
+  return null;
+}
 function memberPicUrl(a) {
   const gs = [a.group, ...(a.groups || [])].map(g => g && g.ko).filter(Boolean);
   for (const g of gs) { const u = PROFILE_PICS.get(picKey(g, a.name.ko)); if (u) return u; }
@@ -2056,7 +2066,7 @@ function fancamPageHtml(a, lang) {
   <h2>${isEn ? `Other ${gName} members' fancams` : `${gko} 다른 멤버 직캠`}</h2>
   <div class="faces">
     ${mates.map(m => { const mge = (m.groups || []).find(g => g && g.ko === gko); const mn = isEn ? ((mge && mge.nameEn) || m.name.en || m.name.ko) : ((mge && mge.name) || m.name.ko); const img = memberFaceUrl(m, gko);
-      return `<a class="face" href="${SITE}/${memberFancamPagePath(m, lang)}"><span class="face-img">${img ? `<img src="${img}" alt="${escHtml(mn)}" loading="lazy">` : ''}</span><span class="face-nm">${escHtml(mn)}</span><span class="face-n">${isEn ? `${FANCAM_HUB.get(m).length} fancams` : `직캠 ${FANCAM_HUB.get(m).length}`}</span></a>`; }).join('\n    ')}
+      return `<a class="face" href="${SITE}/${memberFancamPagePath(m, lang)}"><span class="face-img">${img ? `<img${/#pf$/.test(img) ? ' class="pf"' : ''} src="${img}" alt="${escHtml(mn)}" loading="lazy">` : ''}</span><span class="face-nm">${escHtml(mn)}</span><span class="face-n">${isEn ? `${FANCAM_HUB.get(m).length} fancams` : `직캠 ${FANCAM_HUB.get(m).length}`}</span></a>`; }).join('\n    ')}
   </div>` : '';
   return `<!DOCTYPE html>
 <html lang="${isEn ? 'en' : 'ko'}">
@@ -2158,13 +2168,16 @@ function buildFancamPages() {
 // 예전: 앨범 커버 1장 + 영상 제목 30줄 텍스트 목록. 지금: 대표 영상을 크게(제목을 그 위에), 정보는 칩 한 줄, 영상은 썸네일 카드 그리드,
 // 출연 멤버는 얼굴 동그라미(멤버 대표 영상 썸네일), 다른 곡은 앨범 커버 타일. 검색엔진이 읽는 제목·설명·글 내용은 그대로 유지한다.
 const ytThumb = (id, q) => `https://i.ytimg.com/vi/${id}/${q || 'hqdefault'}.jpg`;
+// 얼굴 원(2026-11-18 사용자 결정) — 카드 프로필 사진으로 통일(어디서든 같은 얼굴로 알아보게). 사진이 없을 때만 대표 직캠 썸네일을 원으로 잘라 쓴다.
+// 프로필 사진이면 '#pf' 꼬리표 → 아래 img에 class="pf"(직캠 썸네일용 1.5배 확대를 끈다)
 function memberFaceUrl(a, gko) {
+  const pf = memberPicUrl(a); if (pf) return pf + '#pf';
   const u = OG_THUMBS.members && (OG_THUMBS.members[`${gko}|${a.name.ko}`] || OG_THUMBS.members[`${a.group.ko}|${a.name.ko}`]);
   const id = u && (String(u).match(/\/vi\/([^/]+)\//) || [])[1];
   return id ? ytThumb(id, 'mqdefault') : null;
 }
 // 스타일은 저장소의 song-page.css 한 파일(페이지마다 넣으면 3만 쪽 × 5KB) — 바꾸면 SONG_CSS_V를 올릴 것
-const SONG_CSS_V = 11;
+const SONG_CSS_V = 12;
 function songShareVideo(vids) {
   return vids.find(v => (v.category === 'live' || FANCAM_RE.test(v.title || ''))
     && !/\bM\/?V\b|music\s*video|뮤직비디오|\bteaser\b|티저/i.test(v.title || '')) || vids[0];
@@ -2245,7 +2258,7 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
   const facesHtml = faces.length ? `
   <h2>${ms ? (isEn ? `Other members' "${songLabel}" fancams` : `다른 멤버 '${songLabel}' 직캠`) : (isEn ? 'Members in these videos' : '영상에 나온 멤버')}</h2>
   <div class="faces">
-    ${faces.map(f => { const img = memberFaceUrl(f.a, gko); return `<a class="face" href="${f.href}"><span class="face-img">${img ? `<img src="${img}" alt="${escHtml(f.nm)}" loading="lazy">` : ''}</span><span class="face-nm">${escHtml(f.nm)}</span>${f.n ? `<span class="face-n">${isEn ? `${f.n} fancams` : `직캠 ${f.n}`}</span>` : ''}</a>`; }).join('\n    ')}
+    ${faces.map(f => { const img = memberFaceUrl(f.a, gko); return `<a class="face" href="${f.href}"><span class="face-img">${img ? `<img${/#pf$/.test(img) ? ' class="pf"' : ''} src="${img}" alt="${escHtml(f.nm)}" loading="lazy">` : ''}</span><span class="face-nm">${escHtml(f.nm)}</span>${f.n ? `<span class="face-n">${isEn ? `${f.n} fancams` : `직캠 ${f.n}`}</span>` : ''}</a>`; }).join('\n    ')}
   </div>` : '';
   const chip = (k, v) => v ? `<li><b>${k}</b>${escHtml(v)}</li>` : '';
   const chipsHtml = `<ul class="chips">
@@ -2607,7 +2620,7 @@ ${SEO_GA_TAG}
   </div>
   <h2>${isEn ? 'Fancam collections of the ranked idols' : '순위에 오른 아이돌 직캠 모음'}</h2>
   <div class="faces">
-    ${who.map(x => { const img = memberFaceUrl(x.a, x.gko); return `<a class="face" href="${SITE}/${FANCAM_HUB.has(x.a) ? memberFancamPagePath(x.a, lang) : memberPagePath(x.a, lang)}"><span class="face-img">${img ? `<img src="${img}" alt="${escHtml(nm(x))}" loading="lazy">` : ''}</span><span class="face-nm">${escHtml(nm(x))}</span><span class="face-n">${escHtml(gn(x))}</span></a>`; }).join('\n    ')}
+    ${who.map(x => { const img = memberFaceUrl(x.a, x.gko); return `<a class="face" href="${SITE}/${FANCAM_HUB.has(x.a) ? memberFancamPagePath(x.a, lang) : memberPagePath(x.a, lang)}"><span class="face-img">${img ? `<img${/#pf$/.test(img) ? ' class="pf"' : ''} src="${img}" alt="${escHtml(nm(x))}" loading="lazy">` : ''}</span><span class="face-nm">${escHtml(nm(x))}</span><span class="face-n">${escHtml(gn(x))}</span></a>`; }).join('\n    ')}
   </div>
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a> · <a href="${SITE}/about.html">${isEn ? 'About · removal requests' : '사이트 소개 · 삭제 요청'}</a></div>
   <div class="cta-dock"><a class="cta" href="${SITE}/">${isEn ? 'Explore the K-POP UNIVERSE →' : 'K-POP UNIVERSE에서 더 보기 →'}</a></div>
@@ -2780,7 +2793,7 @@ function buildYearPages() {
       title = isEn ? `K-pop Idols Born in ${y} — ${n} idols incl. ${top.slice(0, 3).join(', ')} | K-POP UNIVERSE` : `${y}년생 아이돌 - ${top.slice(0, 3).join('·')} 등 ${n}명 | K-pop Idols Born in ${y} | K-POP UNIVERSE`;
       desc = isEn ? `${n} K-pop idols born in ${y}: ${top.join(', ')} and more. Birthdays, groups and fancams.` : `${y}년에 태어난 아이돌 ${n}명 — ${top.join(', ')} 등. 생일·소속 그룹·직캠 모음으로 바로 가요.`;
       cards = list.map(a => { const l = label(a); const gk = groups[a.group.ko] ? a.group.ko : null; const img = memberFaceUrl(a, gk || a.group.ko);
-        return `<a class="face" href="${SITE}/${memberPagePath(a, lang)}"><span class="face-img">${img ? `<img src="${img}" alt="${escHtml(l.nm)}" loading="lazy">` : ''}</span><span class="face-nm">${escHtml(l.nm)}</span><span class="face-n">${escHtml(l.gn)} · ${escHtml(String(a.bday).slice(5).replace('.', '/'))}</span></a>`; }).join('\n    ');
+        return `<a class="face" href="${SITE}/${memberPagePath(a, lang)}"><span class="face-img">${img ? `<img${/#pf$/.test(img) ? ' class="pf"' : ''} src="${img}" alt="${escHtml(l.nm)}" loading="lazy">` : ''}</span><span class="face-nm">${escHtml(l.nm)}</span><span class="face-n">${escHtml(l.gn)} · ${escHtml(String(a.bday).slice(5).replace('.', '/'))}</span></a>`; }).join('\n    ');
     } else {
       const list = debut[y].slice().sort((p, q) => gPri(q) - gPri(p) || String(groups[p].debut).localeCompare(String(groups[q].debut)));
       n = list.length;
@@ -2974,7 +2987,7 @@ async function buildChemPages() {
       const h1 = `${A} × ${B}`;
       const desc = isEn ? `${p.n} videos with ${G}'s ${A} and ${B} together (group videos excluded), ${p.only} with just the two — fancams, stages, shorts and variety.`
         : `${G} ${A}·${B} 함께 나온 영상 ${p.n}개(단체 영상 제외), 둘만 나온 영상 ${p.only}개 — 직캠·무대·쇼츠·예능을 조회수 순으로.`;
-      const face = a => { const img = memberFaceUrl(a, p.g); return `<a class="face" href="${SITE}/${memberPagePath(a, lang)}"><span class="face-img">${img ? `<img src="${img}" alt="${escHtml(nm(a, isEn))}" loading="lazy">` : ''}</span><span class="face-nm">${escHtml(nm(a, isEn))}</span></a>`; };
+      const face = a => { const img = memberFaceUrl(a, p.g); return `<a class="face" href="${SITE}/${memberPagePath(a, lang)}"><span class="face-img">${img ? `<img${/#pf$/.test(img) ? ' class="pf"' : ''} src="${img}" alt="${escHtml(nm(a, isEn))}" loading="lazy">` : ''}</span><span class="face-nm">${escHtml(nm(a, isEn))}</span></a>`; };
       const cards = p.v.map(v => `<a class="card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="card-t">${escHtml(v.t || '')}</span><span class="card-y">${[v.pa ? String(v.pa).replace(/-/g, '.') : '', v.vc ? SEO.fmtVC(v.vc) : ''].filter(Boolean).join(' · ')}</span></a>`).join('');
       const others = [...new Set([...(byMember.get(p.a) || []), ...(byMember.get(p.b) || [])])].filter(o => o !== p).sort((x, y) => y.n - x.n).slice(0, 8);
       const chemHash = `#chem=${encodeURIComponent(`${p.a.name.ko}~${p.g},${p.b.name.ko}~${p.g}`)}`;

@@ -330,6 +330,66 @@
       .then(function(r){return r.ok?r.json():null;}).then(function(d){if(!d)return;try{sessionStorage.setItem(KEY,JSON.stringify({t:Date.now(),d:d}));}catch(e){}withStats(d);}).catch(function(){});}catch(e){}
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',viewers);else viewers();
+  // ── 맨 위 한 줄 + 은은한 별가루(2026-11-18 사용자 "웹 기준 맨 윗줄에 한 줄 할애해서 활용"(The Pudding 공지 줄·무신사 앱 열기 줄 참고),
+  // "정적 페이지 배경에 진짜 은은하게 우주처럼"). 줄: 사이트 전체가 살아 있다는 신호를 상태 줄과 같은 방식(맥박 점·4초 교체)으로 —
+  // 이번 주 다녀간 사람·지금까지·이번 주 새로 모은 영상(get_live_stats.site, 봇 제외)·최근 업데이트 소식 제목(한국어만). 오른쪽 '우주 열기'.
+  // 별가루: 움직임 없는 아주 흐린 점 무늬를 맨 위 360px에만, 아래로 갈수록 사라지게(글·영상 격자 뒤엔 없음 — 읽기 방해 금지).
+  function topbar(){
+    if(document.querySelector('.kpu-topbar'))return;
+    var wrap=document.querySelector('.wrap');if(!wrap)return;
+    var st=document.createElement('style');
+    st.textContent='.kpu-topbar{position:relative;z-index:6;display:flex;align-items:center;justify-content:center;gap:14px;height:34px;padding:0 16px;'
+      +'background:rgba(16,16,24,.92);border-bottom:.5px solid rgba(150,175,255,.14);font-size:12.5px;color:#ccd8ee}'
+      +'.kpu-topbar .tb-line{position:relative;overflow:hidden;height:18px;flex:0 1 auto;min-width:0;max-width:min(720px,70vw)}'
+      +'.kpu-topbar .in{display:flex;align-items:center;gap:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;height:18px}'
+      +'.kpu-topbar .in.a-in{animation:kpu-si .42s cubic-bezier(.22,.8,.36,1) forwards}.kpu-topbar .in.a-out{animation:kpu-so .38s cubic-bezier(.64,0,.78,.2) forwards}'
+      +'@keyframes kpu-si{from{transform:translateY(110%);opacity:0}to{transform:translateY(0);opacity:1}}@keyframes kpu-so{from{transform:translateY(0);opacity:1}to{transform:translateY(-110%);opacity:0}}'
+      +'.kpu-topbar i{width:6px;height:6px;border-radius:50%;flex:none;background:rgb(170,160,255);box-shadow:0 0 5px rgba(170,160,255,.8);animation:kpu-pl 1.6s ease-in-out infinite}'
+      +'.kpu-topbar .t-upd i{background:rgba(150,175,225,.6);box-shadow:none;animation:none;width:5px;height:5px}'
+      +'@keyframes kpu-pl{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.72)}}'
+      +'.kpu-topbar a.tb-go{flex:none;color:#fff;text-decoration:none;font-weight:600;padding:3px 11px;border-radius:999px;background:rgba(140,165,255,.2);border:.5px solid rgba(150,175,255,.4)}'
+      +'.kpu-topbar a.tb-go:hover{background:rgba(140,165,255,.32)}'
+      +'body::before{content:"";position:absolute;left:0;right:0;top:0;height:380px;pointer-events:none;z-index:0;opacity:.55;'
+      +'background-image:radial-gradient(1px 1px at 12% 22%,rgba(255,255,255,.55),transparent 60%),radial-gradient(1px 1px at 31% 64%,rgba(200,215,255,.45),transparent 60%),'
+      +'radial-gradient(1.2px 1.2px at 47% 18%,rgba(255,200,230,.5),transparent 60%),radial-gradient(1px 1px at 63% 48%,rgba(255,255,255,.4),transparent 60%),'
+      +'radial-gradient(1px 1px at 78% 28%,rgba(200,215,255,.5),transparent 60%),radial-gradient(1.4px 1.4px at 88% 70%,rgba(255,255,255,.45),transparent 60%),'
+      +'radial-gradient(1px 1px at 22% 84%,rgba(255,220,240,.35),transparent 60%),radial-gradient(1px 1px at 55% 88%,rgba(200,215,255,.35),transparent 60%);'
+      +'background-size:420px 380px;-webkit-mask-image:linear-gradient(#000,transparent);mask-image:linear-gradient(#000,transparent)}'
+      +'body{position:relative}.wrap{position:relative;z-index:1}'
+      +'@media(max-width:700px){.kpu-topbar{font-size:12px;gap:10px;justify-content:space-between}.kpu-topbar .tb-line{max-width:none;flex:1}}'
+      +'@media (prefers-reduced-motion:reduce){.kpu-topbar i,.kpu-topbar .in.a-in,.kpu-topbar .in.a-out{animation:none}}';
+    document.head.appendChild(st);
+    var bar=document.createElement('div');bar.className='kpu-topbar';
+    var line=document.createElement('div');line.className='tb-line';bar.appendChild(line);
+    var go=document.createElement('a');go.className='tb-go';
+    var cta=document.querySelector('a.cta');go.href=cta?cta.href:'https://kpop-universe.kr/';
+    go.textContent=EN?'Open the Universe':'우주 열기';bar.appendChild(go);
+    document.body.insertBefore(bar,document.body.firstChild);
+    var items=[],idx=0,timer=null;
+    function piece(it,anim){var d=document.createElement('div');d.className='in t-'+it.t+(anim?' a-in':'');var i=document.createElement('i');d.appendChild(i);d.appendChild(document.createTextNode(it.s));return d;}
+    function render(){
+      if(!items.length)return;clearInterval(timer);timer=null;idx=0;line.innerHTML='';line.appendChild(piece(items[0],false));
+      if(items.length<2)return;
+      timer=setInterval(function(){if(document.hidden)return;idx=(idx+1)%items.length;var o=line.querySelector('.in');if(o)o.classList.add('a-out');setTimeout(function(){line.innerHTML='';line.appendChild(piece(items[idx],true));},420);},4500);
+    }
+    var f=function(n){return Number(n).toLocaleString(EN?'en-US':'ko-KR');};
+    function withSite(d){
+      var x=d&&d.site;if(!x)return;var out=[];
+      var nar=innerWidth<700; // 폰은 짧게(사이트 이름 빼고)
+      if(x.w)out.push({t:'vis',s:EN?(f(x.w)+(nar?' visited this week':' people visited K-POP UNIVERSE this week')):('이번 주 '+f(x.w)+(nar?'명이 다녀갔어요':'명이 K-POP UNIVERSE를 다녀갔어요'))});
+      if(x.t&&x.t>x.w)out.push({t:'vis',s:EN?(f(x.t)+' visitors so far'):('지금까지 '+f(x.t)+'명이 다녀갔어요')});
+      if(x.nv)out.push({t:'vis',s:EN?(f(x.nv)+' new videos collected this week'):('이번 주 새로 모은 영상 '+f(x.nv)+'개')});
+      items=out.concat(items.filter(function(i){return i.t==='upd';}));render();
+    }
+    if(!EN){try{fetch('/updates.json').then(function(r){return r.ok?r.json():null;}).then(function(u){var it=u&&u[0]&&u[0].items&&u[0].items[0];if(!it)return;items.push({t:'upd',s:'새 소식 · '+String(it).split(' — ')[0]});render();}).catch(function(){});}catch(e){}}
+    var KEY='kpu_ls_v1';
+    try{var c=JSON.parse(sessionStorage.getItem(KEY)||'null');if(c&&Date.now()-c.t<30*60e3&&c.d&&c.d.site){withSite(c.d);return;}}catch(e){}
+    try{fetch('https://dukgguehegnembimqvkm.supabase.co/rest/v1/rpc/get_live_stats',{method:'POST',
+      headers:{'Content-Type':'application/json',apikey:'sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0',Authorization:'Bearer sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0'},body:'{}'})
+      .then(function(r){return r.ok?r.json():null;}).then(function(d){if(!d)return;try{sessionStorage.setItem(KEY,JSON.stringify({t:Date.now(),d:d}));}catch(e){}withSite(d);}).catch(function(){});}catch(e){}
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',topbar);else topbar();
+
 
 
 
