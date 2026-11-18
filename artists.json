@@ -220878,6 +220878,24 @@
     },
     "discography": [
       {
+        "title": "Promises",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/59/053/15159053_20261113104040_500.jpg",
+        "releaseDate": "2026.11.18",
+        "trackCount": 1,
+        "titleTrack": "Promises",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Promises",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15159053"
+      },
+      {
         "title": "ROMANCE",
         "type": "싱글",
         "releaseDate": "2026.06.18",
