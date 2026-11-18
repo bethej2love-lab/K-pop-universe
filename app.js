@@ -6045,13 +6045,22 @@ function _lbUpdateMemberInfo(){
   const groupKo=_own?(s.groupKo||s._apiGroupKo):_lbCtx?.groupKo;
   const _mems=_own?[...new Set(s.memberKos.filter(Boolean))]:(_lbCtx?.memberKo?[_lbCtx.memberKo]:[]);
   const _inG=a=>a.group.ko===groupKo||(a.groups||[]).some(g=>g.ko===groupKo)||_ytGroupKoFor(a)===groupKo;
+  // 태깅된 멤버 이름 → 아티스트. _inG(그룹 일치)로 먼저, 안 풀리고 group_ko가 등록 그룹이 아니면(솔로·피처링 — 태양/민니/형원/연준처럼
+  // 밴드 소속이라 _ytGroupKoFor가 밴드명을 돌려줘 솔로 group_ko와 안 맞는 경우) 이름으로 풀어 준다(2026-11-19 사용자 "이 영상에 나온
+  // 아티스트가 태깅대로 안 뜬다" — 이들은 artist·gName이 둘 다 비어 줄이 통째로 사라졌다). 동명이인은 이름키 주인 우선.
+  const _resolveMem=mko=>{
+    let a=ARTISTS.find(x=>x.name.ko===mko&&_inG(x));
+    if(a||GROUPS[groupKo])return a||null; // 등록 그룹 맥락에선 기존대로(엉뚱한 동명이인 유입 방지)
+    const cs=ARTISTS.filter(x=>x.name.ko===mko);
+    return cs.find(x=>x.nameKeyOwner)||cs[0]||null;
+  };
   const memberKo=_mems.length===1?_mems[0]:null;
   let artist=null;
-  if(memberKo)artist=ARTISTS.find(a=>a.name.ko===memberKo&&_inG(a))||null;
+  if(memberKo)artist=_resolveMem(memberKo);
   // 솔로 본인 채널(group_ko=본인 이름, 멤버 태그 없음) — 그 사람이 주인
   if(!artist&&!_mems.length&&groupKo&&!GROUPS[groupKo])artist=ARTISTS.find(a=>_ytGroupKoFor(a)===groupKo)||null;
   // 여러 명 태깅 — 앵커는 그룹명, 태깅된 멤버는 **전부** 칩으로(첫 명만 뜨던 것). 한 그룹 전원이면 그룹명만.
-  const _multi=_mems.length>1?_mems.map(n=>ARTISTS.find(a=>a.name.ko===n&&_inG(a))).filter(Boolean):[];
+  const _multi=_mems.length>1?_mems.map(_resolveMem).filter(Boolean):[];
   const _multiChips=_multi.length>1&&!(GROUPS[groupKo]&&_withIsFullGroup(groupKo,_multi));
   const gName=groupKo&&GROUPS[groupKo]?(currentLang==='ko'?groupKo:(GROUPS[groupKo].en||groupKo)):'';
   const mName=artist?(_dispName(artist,groupKo)):'';
