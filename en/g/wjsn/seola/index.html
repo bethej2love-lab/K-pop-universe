@@ -74,6 +74,9 @@
   .top2 h1{font-size:28px;}
 }
 /* 프로필 사진 원형(폰 포함) — 앱 카드의 원 사진과 같은 모양 */
+.avatar-link{display:contents;}
+.top2 .avatar-link .cover.avatar{cursor:pointer;}
+.face-img img.pf{transform:none!important;object-position:center 30%;}
 .sns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
@@ -94,7 +97,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   <a class="brand" href="https://kpop-universe.kr/en/all/" style="margin-left:10px;">Browse all</a>
   <div class="top2">
     <h1>Seola(설아)</h1>
-    <img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/c77d68f4-9e3d-4ae9-9e00-1597c658e001.jpg" alt="Seola" loading="eager" width="240" height="240">
+    <a class="avatar-link" href="https://www.instagram.com/seola_s" target="_blank" rel="noopener noreferrer" title="Instagram"><img class="cover avatar" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/c77d68f4-9e3d-4ae9-9e00-1597c658e001.jpg" alt="Seola" loading="eager" width="240" height="240"></a>
     <div class="meta">
       <span><b>Group</b> WJSN(우주소녀)</span>
       <span><b>Birthday</b> 1994.12.26 (age 31)</span>
