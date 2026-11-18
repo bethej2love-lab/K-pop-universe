@@ -11574,13 +11574,26 @@ function _closeTopOverlay(){
   // 재생 화면에 붙여 연 앨범 창(곡 카드, 2026-10-20)이 영상보다 위 층
   {const _ad=document.getElementById('gc-discog-detail');if(_ad&&_ad.classList.contains('open')&&_ad.classList.contains('lb-dock')){_closeGcDiscogDetail();return true;}}
   // 웹 무대 — 재생 화면 앞에 나와 있는 창이 있으면 그것부터(뒤에 비켜 있는 재생 화면을 먼저 닫지 않게)
-  {const _sf=document.body.dataset.stageFront,_ov={venue:'venue-overlay',list:'feed-list-overlay',trophy:'trophy-overlay'}[_sf];
-   if(_ov&&document.getElementById(_ov)?.classList.contains('open')){_SW_CLOSERS[_sf]();return true;}}
+  // 2026-11-18 흐름 점검(사용자 "닫히면 안 되는 게 닫힌다든지") — 고정 목록(공연·목록·트로피)만 보던 것을 **지금 맨 앞에 나와 있는 무대 패널 전부**로.
+  // 앨범('alb')·업데이트 소식·멤버 탐색·인스타 전체 보기 등이 맨 앞인데 ESC가 그 밑의 카드를 닫았다. 새 무대 패널이 생겨도 _STAGE_WINS에만 넣으면 따라온다.
+  {const _sf=document.body.dataset.stageFront;
+   if(_sf&&_sf!=='lb'){
+     const id=_sf==='alb'?'gc-discog-detail':({venue:'venue-overlay',list:'feed-list-overlay',trophy:'trophy-overlay'}[_sf]||Object.keys(_STAGE_WINS).find(k=>_STAGE_WINS[k]===_sf));
+     const el=id&&document.getElementById(id);
+     if(el&&el.classList.contains('open')&&!el.classList.contains('stage-back')){
+       if(_SW_CLOSERS[_sf])_SW_CLOSERS[_sf]();
+       else if(_sf==='alb')_closeGcDiscogDetail();
+       else if(_sf==='combo')_closeComboPanel();
+       else if(_sf==='mx')_closeMemberExplorer();
+       else{const b=el.querySelector('[id$="-close"],[id$="-cancel"]');if(b)b.click();else el.classList.remove('open');}
+       return true;
+     }
+   }}
   if(lb&&lb.classList.contains('open')){closeLightbox();return true;}
   // 2026-09-05 UX감사 #4: 바깥클릭으론 닫히는데 Esc 목록엔 빠져 있던 오버레이들을 추가(데스크톱 일관성).
   //   welcome-*(온보딩 선택 게이트)는 일부러 제외 — 아무 선택 없이 Esc로 건너뛰면 안 되므로.
   for(const id of ['feedback-overlay','feed-list-overlay','profile-overlay','vm-overlay','hnn-overlay','gp-overlay','fbv-overlay',
-    'gc-track-videos-overlay','venue-overlay','trophy-overlay','uc-card-overlay','debut-card-overlay','col-card-overlay','pp-bias-emoji-overlay','date-edit-overlay','mx-overlay','kpop-links-overlay']){
+    'gc-track-videos-overlay','venue-overlay','trophy-overlay','uc-card-overlay','debut-card-overlay','col-card-overlay','pp-bias-emoji-overlay','date-edit-overlay','mx-overlay','kpop-links-overlay','upd-overlay']){
     const el=document.getElementById(id);
     if(el&&el.classList.contains('open')){
       const btn=el.querySelector('[id$="-close"],[id$="-cancel"]');
@@ -11588,11 +11601,15 @@ function _closeTopOverlay(){
       return true;
     }
   }
+  if(document.getElementById('combo-overlay')?.classList.contains('open')){_closeComboPanel();return true;}
+  if(document.getElementById('gc-discog-detail')?.classList.contains('open')){_closeGcDiscogDetail();return true;}
   const cp=document.getElementById('col-picker');
   if(cp&&cp.classList.contains('open')){if(typeof _closeColPicker==='function')_closeColPicker();else cp.classList.remove('open');return true;}
   if(typeof _connAnchor!=='undefined'&&_connAnchor){closeConnCard();return true;}
   if(document.getElementById('search-wrap').classList.contains('open')||document.getElementById('settings-panel').classList.contains('open')||document.getElementById('journal-sidebar')?.classList.contains('open')){closePanels();return true;}
   // 데스크톱에서 그룹 카드 위에 멤버 카드가 겹쳐 있으면 위의 멤버 카드만(멤버 카드 접기 ›와 같은 동작) — 예전엔 두 장이 한꺼번에 닫혔다(2026-10-20)
+  // 카드 왼쪽 영상 칸(2026-11-18)은 카드보다 먼저 접는다 — 카드째 닫히지 않게
+  if(typeof _vsOn==='function'&&_vsOn()){_vsClose(true);return true;}
   if(!isMob()&&memberPanelEl.classList.contains('open')&&sidePanelEl.classList.contains('open')){closeMemberPanel(true);return true;}
   if(_openTArtist||_openGCko){_maybeSuggestNext();closeCards();return true;}
   return false;
@@ -17500,6 +17517,8 @@ function _openMemberExplorer(preOpts){
   setTimeout(()=>document.getElementById('mx-search')?.focus(),120);
 }
 function _closeMemberExplorer(){document.getElementById('mx-overlay')?.classList.remove('open');}
+// 멤버를 골랐을 때(2026-11-18 흐름 점검) — 웹(무대)에선 탐색을 닫지 않는다: 가운데 탐색 + 오른쪽 카드로 이어 보기, 카드를 닫으면 탐색이 그대로 있다
+function _mxPickClose(){if(isMob()||!_stageWide())_closeMemberExplorer();}
 function _mxBirthYear(a){const m=String(a.bday||'').match(/(\d{4})/);return m?+m[1]:null;}
 function _mxYearOk(yr,lo,hi){return!!(yr&&yr>=lo&&yr<=hi);}
 function _mxParseFreeText(q){
@@ -17589,7 +17608,7 @@ function _mxFigBuild(){
   });
   tip.addEventListener('click',e=>{
     e.stopPropagation();const a=st.tipP&&st.tipP.a;if(!a)return;
-    _closeMemberExplorer();
+    _mxPickClose();
     const _t=(()=>{const gd=GROUPS[a.group.ko];if(gd)return a;return ARTISTS.find(x=>x.name.ko===a.name.ko&&!GROUPS[x.group.ko])||a;})();
     if(isMob())showT(_t,window.innerWidth/2,window.innerHeight*0.4,false,false,false);else showT(_t,window.innerWidth/2,window.innerHeight/2);
   });
@@ -17726,7 +17745,7 @@ function _mxUnitBuild(){
     _mxUnitTip(st,best===st.tipP?null:best);
   });
   tip.addEventListener('click',ev=>{
-    ev.stopPropagation();const a=st.tipP&&st.tipP.a;if(!a)return;_closeMemberExplorer();
+    ev.stopPropagation();const a=st.tipP&&st.tipP.a;if(!a)return;_mxPickClose();
     const _t=GROUPS[a.group.ko]?a:(ARTISTS.find(x=>x.name.ko===a.name.ko&&!GROUPS[x.group.ko])||a);
     if(isMob())showT(_t,window.innerWidth/2,window.innerHeight*0.4,false,false,false);else showT(_t,window.innerWidth/2,window.innerHeight/2);
   });
@@ -17868,7 +17887,7 @@ function _mxRender(){
     mtDiv.textContent=[(yr?yr+'년생':''),_mxFlagsFor(a.nat?.ko||'')].filter(Boolean).join(' · ');
     btn.appendChild(avDiv);btn.appendChild(nmDiv);btn.appendChild(gpDiv);btn.appendChild(mtDiv);
     btn.addEventListener('click',()=>{
-      _closeMemberExplorer();
+      _mxPickClose();
       const target=(()=>{const gd=GROUPS[a.group.ko];if(gd)return a;return ARTISTS.find(x=>x.name.ko===a.name.ko&&!GROUPS[x.group.ko])||a;})();
       if(isMob())showT(target,window.innerWidth/2,window.innerHeight*0.4,false,false,false);
       else showT(target,window.innerWidth/2,window.innerHeight/2);

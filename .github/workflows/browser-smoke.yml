@@ -21,6 +21,7 @@ on:
       - 'tests/mobile-first-visit.test.js'
       - 'tests/compass-width.test.js'
       - 'tests/vid-stage.test.js'
+      - 'tests/panel-flow.test.js'
       - 'tests/star-cursor.test.js'
       - 'tests/program-facets.test.js'
       - 'tests/fixtures/**'
@@ -46,6 +47,7 @@ on:
       - 'tests/mobile-first-visit.test.js'
       - 'tests/compass-width.test.js'
       - 'tests/vid-stage.test.js'
+      - 'tests/panel-flow.test.js'
       - 'tests/star-cursor.test.js'
       - 'tests/program-facets.test.js'
       - 'tests/fixtures/**'
@@ -95,6 +97,7 @@ jobs:
           - suite: mobile-first-visit
           - suite: compass-width
           - suite: vid-stage
+          - suite: panel-flow
           - suite: star-cursor
           - suite: program-facets
             lang: ko
