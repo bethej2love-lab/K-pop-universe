@@ -22726,13 +22726,16 @@ function _memberVisitKeys(a){
   else{const sfx=_soloPageSuffix(a,ARTISTS,GROUPS);keys.push('member/'+_seoUrlSafeKo(nameKo)+sfx.ko,'member/'+_seoSlugify(nameEn,nameKo)+sfx.en);}
   return keys;
 }
+const _VISIT_WEEK_MIN=10; // 이번 주 다녀간 사람이 이보다 적으면 '지금까지'로 — seo_play.js VW_MIN과 같은 값
 function _visitLine(d,grp,ko,a){
   const sum=(m,ks)=>ks.reduce((s,k)=>s+((m&&m[k])||0),0);
   const w=a?sum(d&&d.mw,_memberVisitKeys(a)):(d&&d.vw&&d.vw[grp]),t=a?sum(d&&d.mt,_memberVisitKeys(a)):(d&&d.vt&&d.vt[grp]);
   if(!t&&!w)return '';
   const f=n=>Number(n).toLocaleString(ko?'ko-KR':'en-US');
-  if(ko)return (w?'이번 주 '+f(w)+'명 · ':'')+(t?'지금까지 '+f(t)+'명이 다녀갔어요':'다녀갔어요');
-  return (w?f(w)+' this week · ':'')+(t?f(t)+' visited so far':'visited');
+  // 한 줄에 하나만(2026-11-18 사용자 "이번 주로, 그걸로 불충분하면 지금까지") — 이번 주가 _VISIT_WEEK_MIN명↑이면 이번 주, 아니면 지금까지.
+  // 정적 seo_play.js(상태 줄·맨 위 한 줄)와 같은 규칙.
+  if(w>=_VISIT_WEEK_MIN||!t)return ko?'이번 주 '+f(w)+'명이 다녀갔어요':f(w)+' visited this week';
+  return ko?'지금까지 '+f(t)+'명이 다녀갔어요':f(t)+' visited so far';
 }
 async function _showVisitCount(kind,grp,a){
   _gcStatusState[kind].visits='';

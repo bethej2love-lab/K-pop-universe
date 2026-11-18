@@ -7,6 +7,7 @@
   'use strict';
   if(window.__kpuPlay)return;window.__kpuPlay=1;
   var EN=/^\/en\//.test(location.pathname)||document.documentElement.lang==='en';
+  var VW_MIN=10; // 다녀간 사람: 이번 주가 이보다 적으면 '지금까지'로(app.js _VISIT_WEEK_MIN과 같은 값)
   var T=EN?{close:'Close',next:'Up next',app:'See more in the app',nxK:'Explore',nxS:'Profile · fancams · stages'}:{close:'닫기',next:'이어서 보기',app:'앱에서 더 보기',nxK:'더 둘러보기',nxS:'프로필 · 직캠 · 무대'};
   var RE=/(?:youtube\.com\/(?:watch\?(?:[^#]*&)?v=|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/;
   function vidOf(a){var m=RE.exec(a&&a.getAttribute('href')||'');return m?m[1]:null;}
@@ -318,7 +319,9 @@
         var sum=function(o){return keys.reduce(function(a,k){return a+((o&&o[k])||0);},0);};
         w=sum(d.mw);t=sum(d.mt);
       }else{w=d.vw&&d.vw[g];t=d.vt&&d.vt[g];}
-      if(w||t)met.push({t:'vis',s:EN?((w?f(w)+' this week · ':'')+(t?f(t)+' visited so far':'visited')):((w?'이번 주 '+f(w)+'명 · ':'')+(t?'지금까지 '+f(t)+'명이 다녀갔어요':'다녀갔어요'))});
+      // 한 줄에 하나만(2026-11-18 사용자) — 이번 주가 VW_MIN명↑이면 이번 주, 아니면 지금까지(app.js _visitLine과 같은 규칙)
+      if(w&&(w>=VW_MIN||!t))met.push({t:'vis',s:EN?(f(w)+' visited this week'):('이번 주 '+f(w)+'명이 다녀갔어요')});
+      else if(t)met.push({t:'vis',s:EN?(f(t)+' visited so far'):('지금까지 '+f(t)+'명이 다녀갔어요')});
       if(!met.length)return;
       items=met.concat(info);render();
     }
@@ -376,8 +379,9 @@
     function withSite(d){
       var x=d&&d.site;if(!x)return;var out=[];
       var nar=innerWidth<700; // 폰은 짧게(사이트 이름 빼고)
-      if(x.w)out.push({t:'vis',s:EN?(f(x.w)+(nar?' visited this week':' people visited K-POP UNIVERSE this week')):('이번 주 '+f(x.w)+(nar?'명이 다녀갔어요':'명이 K-POP UNIVERSE를 다녀갔어요'))});
-      if(x.t&&x.t>x.w)out.push({t:'vis',s:EN?(f(x.t)+' visitors so far'):('지금까지 '+f(x.t)+'명이 다녀갔어요')});
+      // 이번 주·지금까지 중 하나만(2026-11-18 사용자) — 이번 주가 VW_MIN명↑이면 이번 주, 아니면 지금까지
+      if(x.w&&(x.w>=VW_MIN||!x.t))out.push({t:'vis',s:EN?(f(x.w)+(nar?' visited this week':' people visited K-POP UNIVERSE this week')):('이번 주 '+f(x.w)+(nar?'명이 다녀갔어요':'명이 K-POP UNIVERSE를 다녀갔어요'))});
+      else if(x.t)out.push({t:'vis',s:EN?(f(x.t)+' visitors so far'):('지금까지 '+f(x.t)+'명이 다녀갔어요')});
       if(x.nv)out.push({t:'vis',s:EN?(f(x.nv)+' new videos collected this week'):('이번 주 새로 모은 영상 '+f(x.nv)+'개')});
       items=out.concat(items.filter(function(i){return i.t==='upd';}));render();
     }
