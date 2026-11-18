@@ -4326,6 +4326,9 @@
       transition:transform 0.32s cubic-bezier(0.4,0,0.2,1);
     }
     #feed-overlay.open{transform:translateX(0);}
+    /* 윗선을 카드(#side-panel top:64px)와 맞춘다(2026-11-18 사용자) — 상단 64px 띠는 모든 패널이 비워 왼쪽 로고·오른쪽 탭바가 늘 보이고,
+       위 가운데 빈자리는 우주 미니맵 자리(TASTE.md 결정 로그 11-18). */
+    #feed-overlay{top:64px;height:calc(100% - 64px);}
     #feed-hd{padding:16px 20px 14px;}
     /* 세로 스크롤바를 또렷하게(2026-09-23, 사용자 요청) — Discover 탭 상단 가로 선반들(기념일·신보·
        차트·오리지널 콘텐츠)은 마우스 휠을 가로채 자기 안에서만 옆으로 움직인다(의도적 유지 — 아래
