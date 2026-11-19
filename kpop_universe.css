@@ -3421,6 +3421,12 @@
   .melon-link-btn.ext-am{color:rgba(240,170,185,0.62);border-color:rgba(250,60,90,0.22);}
   .melon-link-btn.ext-am:hover{background:rgba(250,60,90,0.1);color:rgba(255,190,200,0.9);}
   .album-ext-links [hidden]{display:none;}
+  /* 앨범 창 음원 링크 = 로고 아이콘만, 가운데 정렬(2026-11-19 사용자 "텍스트 말고 아이콘으로, 가운데 맞춤, 멜론은 맨 앞에 두는 걸로 강조 대신") — 44px 터치 영역, 아이콘 26px */
+  #gc-discog-detail-links.album-ext-links{justify-content:center;gap:10px;margin-top:10px;}
+  .album-ext-links .ext-ico{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.08);transition:background .15s,transform .12s;-webkit-tap-highlight-color:transparent;}
+  .album-ext-links .ext-ico svg{width:26px;height:26px;display:block;}
+  .album-ext-links .ext-ico:hover{background:rgba(255,255,255,0.1);}
+  .album-ext-links .ext-ico:active{transform:scale(0.94);}
   /* 멜론이 주(主) — 곡 정보가 제일 정확하다(2026-11-18 사용자). 스포티파이·애플은 작은 보조 */
   .album-ext-links .melon-link-btn:not(.ext-sp):not(.ext-am){font-size:13px;font-weight:700;padding:6px 16px;color:rgba(200,245,215,0.98);background:rgba(0,205,60,0.16);border-color:rgba(0,205,60,0.5);}
   .album-ext-links .melon-link-btn:not(.ext-sp):not(.ext-am):hover{background:rgba(0,205,60,0.26);}
