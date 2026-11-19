@@ -12618,7 +12618,7 @@ function _igCell(item,cap){const c=document.createElement('div');c.className='ig
 function _igSecSync(sec){if(sec)sec.hidden=!sec.querySelector('.ig-item');}
 function _igMagTile(m){
   const a=document.createElement('a');a.className='ig-item ig-mag-item';a.href=m.p;a.target='_blank';a.rel='noopener noreferrer';
-  a.addEventListener('click',e=>{e.stopPropagation();e.preventDefault();if(m.ty==='VIDEO'){const k=_igPostKey(m.p);if(k)_openIgEmbed({post_key:k,v:m.v,u:m.u});else window.open(m.p,'_blank','noopener');return;}_openIgViewer(m,m.h,0);});
+  a.addEventListener('click',e=>{e.stopPropagation();e.preventDefault();if(m.ty==='VIDEO'){const k=_igPostKey(m.p);if(k)_openIgEmbed({post_key:k,v:m.v,u:m.u,m:m,h:m.h});else window.open(m.p,'_blank','noopener');return;}_openIgViewer(m,m.h,0);});
   const img=document.createElement('img');img.loading='lazy';img.alt='';img.src=m.u;
   img.addEventListener('error',()=>{const sec=a.closest('.ig-section'),cell=a.closest('.ig-cell')||a,st=cell.parentElement;cell.remove();if(st&&!st.children.length)st.hidden=true;_igSecSync(sec);});
   a.appendChild(img);
@@ -12654,7 +12654,7 @@ async function _renderIgStrip(prefix,url){
   const mk=(src,m,i)=>{
     const href=m.p,ty=i?'IMAGE':m.ty;
     const a=document.createElement('a');a.className='ig-item';a.href=href;a.target='_blank';a.rel='noopener noreferrer';
-    a.addEventListener('click',e=>{e.stopPropagation();e.preventDefault();if(ty==='VIDEO'){const k=_igPostKey(m.p);if(k)_openIgEmbed({post_key:k,v:m.v,u:m.u});else window.open(href,'_blank','noopener');return;}_openIgViewer(m,h,i||0);}); // 영상은 인스타 공식 임베드로 사이트 안에서 재생(2026-11-13)
+    a.addEventListener('click',e=>{e.stopPropagation();e.preventDefault();if(ty==='VIDEO'){const k=_igPostKey(m.p);if(k)_openIgEmbed({post_key:k,v:m.v,u:m.u,m:m,h:h});else window.open(href,'_blank','noopener');return;}_openIgViewer(m,h,i||0);}); // 영상은 인스타 공식 임베드로 사이트 안에서 재생(2026-11-13)
     const img=document.createElement('img');img.loading='lazy';img.alt='';img.src=_igSmall(src,400);
     _igImgFallback(img,src,()=>{(a.closest('.ig-cell')||a).remove();if(!strip.children.length)_igSecSync(sec);});
     a.appendChild(img);
@@ -12728,7 +12728,7 @@ function _igOpenRow0(r,h){
   // 영상 → 영상 파일이 살아 있으면 사이트 안 플레이어, 아니면 인스타 공식 임베드.
   // 여러 장인데 장별 주소가 만료된 지난 글 → 사이트 안 사진 창에 첫 장(중계 함수, 태그 가능) + 'n장 모두 보기'(임베드)
   // (2026-11-13 사용자 "전체 보기에서 사진 누르면 인스타 화면이 떠서 태깅을 못 해" — 인스타는 첫 장만 공개 주소로 준다)
-  if(r.ty==='VIDEO')return _openIgEmbed(r);
+  if(r.ty==='VIDEO'){const vm=_igRowToM(r);return _openIgEmbed((vm&&vm.p&&h)?Object.assign({},r,{m:vm,h:h}):r);}
   const m=_igRowToM(r);
   if((r.n||1)>1&&!_igRowFreshSet(r)){m.mi=Array.isArray(r.mi)&&r.mi[0]?[r.mi[0]]:null;m._more={post_key:r.post_key,n:r.n};}
   _openIgViewer(m,h,0);
@@ -12753,13 +12753,17 @@ function _openIgEmbed(r){
     ov.addEventListener('click',e=>{if(e.target===ov)_closeIgEmbed();});
     ov.querySelector('#ige-close').addEventListener('click',_closeIgEmbed);
   }
+  // 재생 파일이 없는 영상(인스타가 저작권 음원 릴스는 파일 주소를 안 준다 — 수집기는 media_url을 요청하지만 비어 온다)은 예전엔 인스타 임베드를 띄웠다.
+  // 그런데 임베드는 폰에서 재생을 누르면 어차피 인스타 앱으로 넘기고, 흰 카드가 창에 맞지 않아 위아래가 잘리고 닫기 버튼이 '프로필 보기'를 덮었다
+  // (2026-11-19 사용자 스크린샷). 그래서 그런 영상은 **우리 사진 창**에 썸네일·본문을 띄우고 가운데에 '▶ Instagram에서 재생'을 둔다(_openIgViewer).
+  if(!(r.v&&_igFresh(r.v))&&r.m&&r.h){ov.classList.remove('open','ige-vid');try{ov.querySelector('#ige-frame').src='about:blank';}catch(e){}_openIgViewer(r.m,r.h,0);return;}
   const fr=ov.querySelector('#ige-frame');ov.querySelector('#ige-video')?.remove();ov.classList.remove('ige-vid');
   if(r.v&&_igFresh(r.v)){
     // 영상 파일을 사이트 안에서 바로(2026-11-13 사용자 "웹앱에서 인스타 영상 재생 안 돼") — 임베드는 iOS 웹앱에서 인스타로 넘기려 해 막힌다
     fr.src='about:blank';ov.classList.add('ige-vid');
     const vd=document.createElement('video');vd.id='ige-video';vd.controls=true;vd.playsInline=true;vd.setAttribute('playsinline','');vd.preload='metadata';
     if(r.u)vd.poster=r.u;vd.src=r.v;
-    vd.addEventListener('error',()=>{if(!ov.classList.contains('open')||!ov.classList.contains('ige-vid'))return;vd.remove();ov.classList.remove('ige-vid');fr.src='https://www.instagram.com/p/'+encodeURIComponent(r.post_key)+'/embed/captioned/';},{once:true});
+    vd.addEventListener('error',()=>{if(!ov.classList.contains('open')||!ov.classList.contains('ige-vid'))return;vd.remove();ov.classList.remove('ige-vid');if(r.m&&r.h){_closeIgEmbed();_openIgViewer(r.m,r.h,0);return;}fr.src='https://www.instagram.com/p/'+encodeURIComponent(r.post_key)+'/embed/captioned/';},{once:true});
     fr.before(vd);
     ov.classList.add('open');_bringToFront(ov);
     vd.play().catch(()=>{});
@@ -25013,6 +25017,10 @@ function _openIgViewer(m,handle,idx){
   {let mb=ov.querySelector('#igv-more');if(!mb){mb=document.createElement('button');mb.id='igv-more';mb.type='button';mb.addEventListener('click',e=>{e.stopPropagation();const x=_igv&&_igv.m&&_igv.m._more;if(x)_openIgEmbed({post_key:x.post_key});});op.before(mb);}
    mb.hidden=!m._more;if(m._more)mb.textContent=ko?`${m._more.n}장 모두 보기 ›`:`See all ${m._more.n} ›`;}
   ov.querySelector('.sw-to-lb span').textContent=ko?'재생 화면으로':'Back to player';
+  // 영상 게시물(재생 파일 없음)을 이 창으로 띄웠을 때 — 썸네일 가운데 '▶ Instagram에서 재생'(_openIgEmbed 주석 참고)
+  {let vp=ov.querySelector('#igv-vplay');
+    if(!vp){vp=document.createElement('a');vp.id='igv-vplay';vp.target='_blank';vp.rel='noopener noreferrer';vp.addEventListener('click',e=>e.stopPropagation());ov.querySelector('#igv-media').appendChild(vp);}
+    const isV=m.ty==='VIDEO';vp.hidden=!isV;if(isV){vp.href=m.p;vp.textContent=ko?'▶ Instagram에서 재생':'▶ Play on Instagram';}}
   _igvShow();
   {const view=_igv;_igPhotoTagRows(_igPostKey(m.p)).then(rows=>{if(_igv!==view)return;view.tagRows=rows;view.tagLoad='ready';_igvRenderTags();}).catch(()=>{if(_igv===view){view.tagLoad='error';_igvRenderTags();}});}
   // 웹 무대 — 무대가 좁으면(카드+나침반 사이 520px 등) 사진 위·본문 아래로 쌓는다(igv-narrow)
@@ -25156,7 +25164,7 @@ function _igRenderRail(list,photos){
   photos.forEach((m,i)=>{
     const cap1=String(m.cap||'').split('\n').map(x=>x.trim()).find(Boolean)||''; // 본문 첫 줄
     // 영상(릴스)은 카드 인스타 줄과 같게: 누르면 인스타 재생 창(_openIgEmbed), 썸네일에 ▶
-    const _open=m.ty==='VIDEO'?()=>{const k=_igPostKey(m.p);if(k)_openIgEmbed({post_key:k,v:m.v,u:m.u});else window.open(m.p,'_blank','noopener');}:()=>_openIgViewer(m,m.h,0);
+    const _open=m.ty==='VIDEO'?()=>{const k=_igPostKey(m.p);if(k)_openIgEmbed({post_key:k,v:m.v,u:m.u,m:m,h:m.h});else window.open(m.p,'_blank','noopener');}:()=>_openIgViewer(m,m.h,0);
     const card=_appendFeedCard(list,'📷',(m._emoji?m._emoji+' ':'')+m.owner.name,'',_open,_igSmall(m.u),null,{meta:_igAgo(m.t)});
     if(m.ty==='VIDEO'&&card){const _tw=card.querySelector('.feed-card-thumb-wrap');if(_tw){const _pb=document.createElement('span');_pb.className='ig-play';_pb.textContent='▶';_tw.appendChild(_pb);}}
     // 이름 옆 흐린 @계정 — 카드 인스타 줄(_igCaption)과 같은 표기(2026-11-05 사용자 "카드엔 있는데 발견 탭엔 없다, 발견 탭이 더 필요")
