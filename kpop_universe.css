@@ -4444,7 +4444,7 @@
   @keyframes feed-pull-spin{to{transform:rotate(360deg);}}
   .feed-pane.feed-pulling{overflow-anchor:none;}
   /* 즐겨찾기 신작 온보딩 — 아직 하트 누른 게 없을 때 이 선반이 비지 않게 안내 카드로 채운다. */
-  .feed-onboard-card{flex:0 0 auto;max-width:min(300px,78vw);display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.10);}
+  .feed-onboard-card{flex:0 0 auto;max-width:min(340px,86vw);display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-radius:14px;background:rgba(255,255,255,0.05);}
   /* 빈/오류 상태 — Supabase 실패로 선반이 하나도 안 뜰 때(예전엔 제목만 남고 빈 화면). 다시 시도 버튼. */
   .feed-empty[hidden]{display:none;}
   .feed-empty{display:flex;flex-direction:column;align-items:center;gap:12px;padding:48px 24px;text-align:center;}
@@ -4453,6 +4453,12 @@
   .feed-empty-retry:active{background:rgba(140,175,255,0.22);}
   .feed-onboard-emoji{font-size:26px;line-height:1;flex-shrink:0;}
   .feed-onboard-txt{font-size:12px;line-height:1.5;color:rgba(210,222,250,0.82);font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  /* 온보딩 카드 행동 버튼(2026-11-19) — 테두리 없이: 주 버튼은 채움, 보조는 글자만(TASTE 8장) */
+  .feed-onboard-body{min-width:0;display:flex;flex-direction:column;gap:10px;}
+  .feed-onboard-acts{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .feed-onboard-btn{border:none;background:none;padding:0;white-space:nowrap;font:700 12.5px 'Pretendard','Apple SD Gothic Neo',sans-serif;color:rgba(190,212,255,0.92);cursor:pointer;-webkit-tap-highlight-color:transparent;}
+  .feed-onboard-btn.is-main{padding:8px 14px;border-radius:10px;background:rgba(150,180,255,0.22);color:#fff;}
+  .feed-onboard-btn:active{opacity:.7;}
   .feed-section-ttl{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(150,174,225,0.8); /* 0.51→0.8(2026-10-15, 사용자: 섹션 제목이 너무 흐려 안 보임) */padding:14px 20px 8px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   /* 기념일 스트립(인스타 스토리 스타일 가로 스크롤) */
   .feed-strip{display:flex;gap:10px;overflow-x:auto;padding:2px 20px 18px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}

@@ -28220,7 +28220,14 @@ function _appendFeedOnboardCard(strip){
   const em=document.createElement('div');em.className='feed-onboard-emoji';em.textContent='💖';
   const tx=document.createElement('div');tx.className='feed-onboard-txt';
   tx.innerHTML=currentLang==='ko'?'즐겨찾기한 그룹·멤버의 <b>새 영상</b>이 여기 떠요.<br>카드에서 하트(♡)를 눌러보세요.':'<b>New videos</b> from groups & members you favorite appear here.<br>Tap the heart (♡) on any card.';
-  d.appendChild(em);d.appendChild(tx);strip.appendChild(d);
+  // 다음 행동 두 개(2026-11-19, 신규 유저 For You 빈 화면 — 안내 문장만 있고 갈 곳이 없었다): 최애 찾기(검색) · 발견 탭(하트 없이도 볼 게 있는 곳)
+  const ac=document.createElement('div');ac.className='feed-onboard-acts';
+  const mk=(cls,ko,en,fn)=>{const b=document.createElement('button');b.type='button';b.className='feed-onboard-btn '+cls;b.textContent=currentLang==='ko'?ko:en;
+    b.addEventListener('click',e=>{e.stopPropagation();try{fn();}catch(_){}});ac.appendChild(b);};
+  mk('is-main','최애 찾기','Find your faves',()=>{if(isMob())openMobSearchSheet();else document.getElementById('dh-search-btn')?.click();});
+  mk('','인기 영상 보기 ›','See what\'s popular ›',()=>_feedSwitchTab('disc'));
+  const body=document.createElement('div');body.className='feed-onboard-body';body.appendChild(tx);body.appendChild(ac);
+  d.appendChild(em);d.appendChild(body);strip.appendChild(d);
 }
 // ── 내 최애 차트(2026-10-15, 사용자 "Charts 노출이 약하다") ──────────────────────────────────────────
 // 발견 탭 주간 직캠 TOP 20·월간 퍼포먼스 TOP 30에 든 최애 무대를 For You에 — 매일 열 이유가 되는 개인화 진입점.
