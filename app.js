@@ -17806,8 +17806,8 @@ function _mxFigUpdate(st,matchSet,filtered){
   const all=act.map(p=>p.age).sort((a,b)=>a-b);
   const m=all.length?all[all.length>>1]:null;
   st.cap.textContent=!all.length?(isKo?'그림에 찍을 생일·데뷔일 정보가 없어요':'No birthday/debut data for this filter')
-    :isKo?`${filtered?'이 조건 ':''}${all.length.toLocaleString()}명` // 중앙값 문구는 뺐다(2026-11-19 사용자 "아래 중앙값 노출도 빼버리고")
-    :`${all.length.toLocaleString()} members`;
+    :isKo?`${filtered?'이 조건 ':''}${all.length.toLocaleString()}명 · 데뷔 나이 중앙값 ${Math.floor(m)}세 ${Math.floor((m%1)*12)}개월` // 11-19: 뺐다가 되살림(사용자 "데뷔 나이 골라야 나오는 거면 괜찮다")
+    :`${all.length.toLocaleString()} members · median debut age ${m.toFixed(1)}`;
 }
 function _mxFigMount(grid,results,filtered){
   if(!_mxFig){

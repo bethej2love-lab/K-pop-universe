@@ -5206,6 +5206,9 @@
 /* ── 멤버 탐색 그림(2026-10-15) — 데뷔 연도 × 데뷔 나이. 점 1,500개가 은하처럼 깔리고 조건에 맞는 것만 밝아진다.
    여=분홍·남=하늘, 중앙값은 흰 실선, 주석은 기울임 — 차트 스토리(.cs-*)와 같은 문법. */
 #mx-grid>.mx-fig{grid-column:1/-1;margin:0 0 8px;}
+/* 2026-11-19 사용자 "밑에 프로필 스크롤 영역이 너무 작아 불편, 그래프는 고정 안 되게" — 결과 줄·그림·프로필 격자를 #mx-scroll 한 통으로 */
+#mx-scroll{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+#mx-scroll>#mx-grid{flex:none;overflow:visible;}
 .mx-svg-wrap{position:relative;width:fit-content;max-width:100%;margin:0 auto;}
 .mx-svg{display:block;max-width:100%;height:auto;overflow:visible;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;cursor:crosshair;}
 .mx-ax line{stroke:rgba(255,255,255,0.07);stroke-dasharray:1 3;}
@@ -5671,6 +5674,16 @@
 /* 폰도 같은 배치(2026-11-19 사용자 스크린샷 "1위 줄 텍스트랑 썸네일 사이 여백 너무 커서 어색") — 썸네일 왼쪽, 글자는 바로 옆(유튜브 목록 방식). 그림과 글 사이 12px. */
 .feed-news-row:not(.is-media):not(.is-break)>:is(.feed-news-thumb,.feed-news-tw){order:-1;}
 .feed-news-row:not(.is-media):not(.is-break){gap:12px;}
+/* 폰: 시상식·1위 줄 썸네일을 MV 카드 썸네일만큼(화면 절반) 키우고 남는 절반에 글(2026-11-19 사용자 "뮤비 뱃지 썸네일만큼 키우고 남는 반에 텍스트 — 그게 더 보기 좋지 않겠어?").
+   앨범(정사각) 줄은 그대로. 폭 계산은 .feed-news-mvs(좌우 16px·사이 8px)와 같게 맞춰 위아래 썸네일 세로줄이 맞는다. */
+@media (max-width:768px){
+  .feed-news-row:not(.is-media):not(.is-break):has(.feed-news-thumb:not(.is-square)){padding:5px 16px;gap:12px;border-top:none;}
+  .feed-news-row:not(.is-media):not(.is-break)>.feed-news-tw:has(.feed-news-thumb:not(.is-square)),
+  .feed-news-row:not(.is-media):not(.is-break)>.feed-news-thumb:not(.is-square){flex:0 0 calc((100% - 8px)/2);width:calc((100% - 8px)/2);height:auto;aspect-ratio:16/9;border-radius:12px;}
+  .feed-news-row:not(.is-media):not(.is-break)>.feed-news-tw .feed-news-thumb:not(.is-square){width:100%;height:100%;border-radius:12px;display:block;}
+  .feed-news-row:not(.is-media):not(.is-break):has(.feed-news-thumb:not(.is-square)) .feed-news-title{font-size:14px;-webkit-line-clamp:3;}
+  .feed-news-row:not(.is-media):not(.is-break):has(.feed-news-thumb:not(.is-square)) .feed-news-sub{font-size:11.5px;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;margin-top:3px;}
+}
 @media (min-width:769px) and (hover:hover){
   body.fw-home .feed-news-list>.feed-news-row:not(.is-media):not(.is-break){grid-column:span 4;margin:0;border-radius:10px;background:rgba(255,255,255,0.022);border-top:none;}
 }
