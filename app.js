@@ -3256,7 +3256,7 @@ function _recentEntryOf(h){
   }
   if(h.type==='event'&&h.id!=null)return{type:'event',id:h.id,title:h.name,date:h.alias||'',venue:h.sub||'',gko:h.data||''};
   if(h.type==='venue'&&h.data)return{type:'venue',data:h.data,name:h.name,sub:h.sub||''};
-  if(h.type==='program'&&h.data&&h.data.__festival)return{type:'program',fest:h.data.__festival,name:h.name,sub:h.sub||''}; // 프로그램 컬렉션은 객체가 커서 저장 안 함 — 행사만
+  if(h.type==='program'&&h.data&&h.data.__festival)return{type:'program',fest:h.data.__festival,name:h.name}; // 프로그램 컬렉션은 객체가 커서 저장 안 함 — 행사만. sub('행사')는 2026-11-18 라벨 제거 후 저장 안 함
   return null;
 }
 function _recordRecentSearch(h){
@@ -3285,7 +3285,7 @@ function _resolveRecentSearches(){
       return{type:'event',id:e.id,name:e.title,alias:e.date||'',sub:e.venue||e.gko||'',ownerType:'group',data:own,pos:bm?bm.mesh.position.clone():null,score:0};
     }
     if(e.type==='venue')return{type:'venue',name:e.name,data:e.data,sub:e.sub||'',score:0};
-    if(e.type==='program')return{type:'program',name:e.name,sub:e.sub||'',data:{__festival:e.fest},score:0};
+    if(e.type==='program')return{type:'program',name:e.name,data:{__festival:e.fest},score:0}; // 옛 저장분의 sub('행사'·'프로그램')는 버린다 — 라벨 제거(11-18) 후에도 최근 검색에 남아 보였다(2026-11-19 사용자)
     if(e.type==='group'){
       const info=GROUPS[e.ko];const bm=bubbleMeshes.find(b=>b.ko===e.ko);
       if(!info||!bm)return null;
