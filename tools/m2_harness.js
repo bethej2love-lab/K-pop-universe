@@ -161,6 +161,8 @@ function load(){
       if(/^function _coverOriginStrict\(/m.test(adminSrc))F(/^function _coverOriginStrict\(/m,'_coverOriginStrict'); // 2026-10-20 원곡자 표기 전체 일치
       F(/^function _coverCreditReassign\(/m,'_coverCreditReassign');
     }
+    // 공식 채널의 "남이 부른 우리 곡"(2026-11-19) — 있으면 싣는다
+    if(/^function _guestSingsOwnSong\(/m.test(adminSrc))F(/^function _guestSingsOwnSong\(/m,'_guestSingsOwnSong');
   }
   // 겸임 멤버 태그 정규화(2026-08-31) — 있으면 싣는다
   if(/^function _normalizeMemberTags\(/m.test(adminSrc)){
@@ -213,6 +215,7 @@ module.exports={_m2ParseTitle,_atmResolveMembers,_atmMatchesMember,_atmTokenize,
   _coverOriginFromText:(typeof _coverOriginFromText==='function')?_coverOriginFromText:null,
   _coverIsSelf:(typeof _coverIsSelf==='function')?_coverIsSelf:null,
   _coverCreditReassign:(typeof _coverCreditReassign==='function')?_coverCreditReassign:null,
+  _guestSingsOwnSong:(typeof _guestSingsOwnSong==='function')?_guestSingsOwnSong:null,
   _coverCreditExact:(typeof _coverCreditExact==='function')?_coverCreditExact:null,
   _coverConfidence:(typeof _coverConfidence==='function')?_coverConfidence:null,
   _fancamParseTitle:(typeof _fancamParseTitle==='function')?_fancamParseTitle:null,

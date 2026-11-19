@@ -25009,6 +25009,10 @@ function _igRenderMagRail(list,items){
   });
   list.hidden=!list.children.length;list.scrollLeft=0;_enableDragScroll(list);
 }
+// 선반을 불러오는 동안 자리 표시(2026-11-19 사용자 "섹션이 아예 안 보이면 안 되고 가짜 사각형에 불러오는 척이라도, 유튜브처럼").
+// 즐겨찾기가 있어 선반이 뜰 가능성이 높을 때만 먼저 보여 주고, 결과가 비면 다시 숨긴다. kinds: 'wide'(16:9 전체폭)·'short'(9:16)·'ig'(4:5)
+function _feedSkel(list,kinds){if(!list)return;list.innerHTML='';kinds.forEach(k=>{const d=document.createElement('div');d.className='feed-skel sk-'+k;d.setAttribute('aria-hidden','true');list.appendChild(d);});}
+function _feedSkelClear(list){if(list)list.querySelectorAll('.feed-skel').forEach(e=>e.remove());}
 // For You — 즐겨찾기 그룹·멤버의 최근 2주 사진
 async function _buildFeedFavIg(){
   const section=document.getElementById('feed-favig-section'),list=document.getElementById('feed-favig');
@@ -25021,12 +25025,15 @@ async function _buildFeedFavIg(){
     ARTISTS.forEach(a=>{if(a.group&&favMembers.has(_mFavKey(a))){const h=_igHandle(a.links?.instagram);if(h)hs.add(h);}});
     if(!hs.size)return;
     const mag=document.getElementById('feed-favigmag');if(mag){mag.innerHTML='';mag.hidden=true;}
+    _feedSkel(list,['ig','ig','ig','ig']);list.hidden=false;section.style.display=''; // 불러오는 동안 자리 표시
     const[{data,error},magItems]=await Promise.all([
       sb.from('ig_accounts').select('handle,media').in('handle',[...hs].slice(0,300)).eq('status','ok').limit(300),
       _igMagFor([...hs]).catch(()=>[])]);
     const photos=error?[]:_igPhotos(data,14,24); // 2행 레일(2026-10-27 사용자 "인스타 더 노출") — 15장이면 2줄에서 8칸 만에 끝나 24장
     const magRecent=magItems.filter(m=>m.ts>Date.now()-30*86400000).slice(0,15); // 매거진은 올리는 간격이 길어 30일
-    if(!photos.length&&!magRecent.length)return;
+    _feedSkelClear(list);
+    if(!photos.length&&!magRecent.length){section.style.display='none';return;}
+    list.hidden=!photos.length;
     const ttl=document.getElementById('feed-favig-ttl');if(ttl)ttl.textContent='📷 On Instagram';
     // 최애 표시(_igBiasOf) — 최애 계정 사진을 앞으로(안정 정렬이라 각자 최신순 유지) + 이름 앞 이모티콘
     photos.forEach(m=>{const b=_igBiasOf(m.owner);m._emoji=b.emoji;m._isBias=b.isBias;});
@@ -25034,7 +25041,7 @@ async function _buildFeedFavIg(){
     if(photos.length)_igRenderRail(list,photos);
     if(mag&&magRecent.length)_igRenderMagRail(mag,magRecent);
     section.style.display='';
-  }catch(e){console.warn('[feed] 즐겨찾기 인스타 선반 실패 — 이 선반만 빠집니다',e);}
+  }catch(e){_feedSkelClear(list);if(!list.children.length)section.style.display='none';console.warn('[feed] 즐겨찾기 인스타 선반 실패 — 이 선반만 빠집니다',e);}
 }
 // Discover — 전체 공식 계정의 최근 3일 사진, 게시 시각 최신순(팔로워 수 무관).
 async function _buildFeedIg(){
@@ -28271,22 +28278,26 @@ async function _buildFeedFavNew(opts){
     const _fetch=()=>Promise.all([_q(),_qGuest?_qGuest().then(r=>r,()=>({data:null})):Promise.resolve({data:null})]);
     const _preKey=JSON.stringify([[...queryGkos].sort(),_gMem.slice().sort(),_gGrp.slice().sort(),since,_hasPubTs]);
     if(pre){_favNewPre={key:_preKey,at:Date.now(),p:_fetch()};_favNewPre.p.catch(()=>{});return;}
+    // 불러오는 동안 자리 표시 — 결과가 없거나 실패하면 _skOff로 다시 숨긴다
+    _feedSkel(strip,['wide','short','short']);section.style.display='';
+    const _skOff=()=>{_feedSkelClear(strip);if(!strip.children.length)section.style.display='none';};
     const _hit=_favNewPre&&_favNewPre.key===_preKey&&Date.now()-_favNewPre.at<_FAVNEW_PRE_TTL?_favNewPre.p:null;
     _favNewPre=null; // 한 번만 쓴다(다음 열기는 새로 — 3분 캐시는 _feedRecBuiltAt가 따로 맡는다)
     let[{data,error},guest]=_hit?await _hit.catch(()=>_fetch()):await _fetch();
     if(_hit&&error){[{data,error},guest]=await _fetch();} // 미리 받은 게 실패였으면 새로
     if(_isPubTsMissing(error)){_hasPubTs=false;({data,error}=await _q());guest=_qGuest?await _qGuest().then(r=>r,()=>({data:null})):{data:null};} // 컬럼 추가 전이면 빼고 재조회
-    if(error)return;
+    if(error){_skOff();return;}
     const _guestIds=new Set();
     if(guest&&guest.data&&guest.data.length){const seen=new Set((data||[]).map(v=>v.id));guest.data.forEach(v=>{if(!seen.has(v.id)){seen.add(v.id);_guestIds.add(v.id);(data=data||[]).push(v);}});}
-    if(!data?.length)return;
+    if(!data?.length){_skOff();return;}
     // 최신순 유지(셔플 안 함), 쇼츠 포함(그리드라 9:16 그대로 렌더), 멤버필터 적용, 그룹당 캡 없음(즐겨찾기라 "싹 다").
     // ⚠️ published_at은 날짜만이라 같은 날 안에서 시간순 정렬이 안 됐다 — 어제 저녁(20시간 전)이 어제 오전
     //    영상 아래로 밀리는 역전이 생김(2026-09-13 제보). 정확한 시각(published_ts)으로 다시 내림차순 정렬한다.
     const vids=_filterBannedVideos(data).filter(v=>(_guestIds.has(v.id)||_favMatch(v))&&!_lessOnly(v)) // 덜 보기 멤버 단독 영상 제외(2026-11-11)
       .sort((a,b)=>String(b.published_ts||b.published_at||'').localeCompare(String(a.published_ts||a.published_at||'')))
       .slice(0,_FEED_FAVNEW_MAX);
-    if(!vids.length)return;
+    if(!vids.length){_skOff();return;}
+    _feedSkelClear(strip);
     const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
     // _apiId/_apiGroupKo: 어드민 편집(연필) 버튼이 어느 DB 행을 고칠지 아는 키 — 카드 그리드(_apiVidToSong)는
     // 붙이는데 이 선반만 빠져서 favnew 영상은 편집이 안 걸렸다(2026-08-31 사용자 제보, 모바일).
@@ -28378,7 +28389,7 @@ async function _buildFeedFavNew(opts){
       if(restItems.length&&typeof ResizeObserver==='function'){ro=new ResizeObserver(()=>{if(!more.isConnected){ro.disconnect();return;}topUp();});ro.observe(strip);}
     }
     section.style.display='';
-  }catch(e){console.warn('[feed] 즐겨찾기 신작 선반 실패 — 이 선반만 빠집니다',e);}
+  }catch(e){_feedSkelClear(strip);if(!strip.children.length)section.style.display='none';console.warn('[feed] 즐겨찾기 신작 선반 실패 — 이 선반만 빠집니다',e);}
 }
 // For You 선반 기본 순서(index.html과 같게) + '오늘 일어난 일' 끌어올림(2026-11-04).
 // 2026-11-15 사용자 "사진이 보기 편하니 인스타를 비디오보다 위에" — favig를 favnew 앞으로(index.html DOM 순서도 함께 변경).

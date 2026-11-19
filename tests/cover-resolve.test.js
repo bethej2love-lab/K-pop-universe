@@ -13,6 +13,7 @@ const chart=[
   {group_ko:'솔로',member_ko:'아이유',song_title:'좋은 날',year:2010},
   {group_ko:'솔로',member_ko:'성훈',song_title:'사랑합니다',year:2010}, // 외부크레딧 회귀용(Tim 케이스)
   {group_ko:'빅뱅',member_ko:null,song_title:'LOVE SONG',year:2011},     // 부분일치 회귀용
+  {group_ko:'H.O.T.',member_ko:'강타',song_title:'7월의 크리스마스',year:2005}, // 자기 곡 챌린지에 섞인 가사 회귀용(2026-11-19)
 ];
 M._coverBuildIndex(chart);
 
@@ -148,6 +149,13 @@ if(M._coverConfidence){
   tc('확신 — 커버 문맥 평문 스캔(bare)은 항상 MEDIUM','MEDIUM','천재아이돌 아이브 막내 이서의 파워풀한 댄스 커버  | IVE LEESEO | BTS FAKE LOVE | Role Model Cover VS','아이브',{members:['이서']});
 }
 
+// 자기 곡 챌린지 제목에 섞인 가사가 남의 곡명과 같을 때(2026-11-19 사용자 — 클로즈유어아이즈 Snowy Summer 가사 '상상해 봐 7월의 크리스마스'가 강타 원곡으로)
+t('자기 곡 챌린지 — 가사 "7월의 크리스마스"는 강타 커버 아님(Snowy Summer 챌린지)',R("[클로즈유어아이즈] 상상해 봐 7월의 크리스마스 ☃️ Snowy Summer 챌린지 아이돌 인간극장 ver.2",'클로즈유어아이즈'),r=>!r||!r.origin);
+// 같은 문구라도 자기 곡명이 제목에 없으면 예전처럼 남의 곡 챌린지로 잡힌다(규칙이 과하게 막지 않는지)
+t('남의 곡 챌린지 — 자기 곡명 없는 "7월의 크리스마스 챌린지"는 강타',R("7월의 크리스마스 챌린지 ☃️ #shorts",'클로즈유어아이즈'),r=>!!r&&!!r.origin&&r.origin.mko==='강타');
+// 따옴표로 남의 곡을 짚었으면 자기 곡명이 같이 있어도 커버
+t('남의 곡을 해시태그로 짚음 — #Dynamite_Challenge + 자기 곡명은 방탄 커버 유지',R("Snowy Summer 활동 중 #Dynamite_Challenge 💜 #BTS",'클로즈유어아이즈'),r=>covG(r,'방탄소년단'));
+t('원곡자 이름을 직접 부름 — "강타 7월의 크리스마스 챌린지" + 자기 곡명은 강타 커버 유지',R("강타 7월의 크리스마스 챌린지 ☃️ Snowy Summer 대기실",'클로즈유어아이즈'),r=>!!r&&!!r.origin&&r.origin.mko==='강타');
 let pass=0,fail=0;
 cases.forEach(({name,row,check})=>{
   let r,ok=false,err=null;

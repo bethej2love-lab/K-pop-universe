@@ -35,6 +35,8 @@ const path = require('path');
 
 const ROOT = __dirname;
 const SITE = 'https://kpop-universe.kr';
+// 화면 맨 위 안내 문장(<p class="lead">서술형 한 줄)은 전 템플릿에서 뺐다(2026-11-19 사용자 "정적페이지 서술형 안내 문장 아예 빼") — 같은 내용은
+// <meta name="description">에 남아 검색엔 그대로 쓰인다. '… 전체 보기 →' 같은 링크 줄(.lead 안의 a)은 이동 수단이라 유지.
 // Match index.html automation detection before the Google tag can execute.
 const SEO_GA_TAG = `<script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -2104,7 +2106,6 @@ ${LIST_FWD}
   ${heroCapHtml(hero, isEn)}
   ${factsTag(pageFacts({ vids: fancams, fancams, isEn }))}
   <div class="crumbs">${info ? `<a href="${SITE}/${groupPagePath(gko, lang)}">${escHtml(gName)}</a> › ` : ''}<a href="${profileUrl}">${escHtml(mName)}</a> › ${isEn ? 'Fancams' : '직캠'}</div>
-  <p class="lead">${escHtml(isEn ? `Every individual fancam and face cam of ${gName} ${mName}, grouped by song. Most viewed first.` : `${gko} ${mName}의 개인 직캠·페이스캠을 곡별로 모두 모았어요. 조회수 많은 순.`)}</p>
   ${songNav}
   ${topGrid ? `
   <h2>${isEn ? `${mName} fancam ranking · Top ${Math.min(FANCAM_RANK_N, fancams.length)}` : `${mName} 직캠 순위 TOP ${Math.min(FANCAM_RANK_N, fancams.length)}`}</h2>
@@ -2346,9 +2347,6 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
         return alb ? `<a href="${SITE}/${albumPagePath(gko, alb.slug, lang)}">${escHtml(alb.al.title)}</a> › ` : '';
       } catch (e) { return ''; }
     })()}${escHtml(s.title)}</div>`;
-  const lead = ms
-    ? (isEn ? `${gName} ${mName}'s individual fancams and face cams of "${songLabel}", most viewed first.` : `${gko} ${mName}의 '${songLabel}' 개인 직캠·페이스캠을 조회수 순으로 모았어요.`)
-    : '';
   return `<!DOCTYPE html>
 <html lang="${isEn ? 'en' : 'ko'}">
 <head>
@@ -2386,7 +2384,6 @@ ${LIST_FWD}
   ${top[0] ? `<a class="hero" href="https://www.youtube.com/watch?v=${top[0].id}" target="_blank" rel="noopener"><img src="${heroImage}" alt="${escHtml(top[0].title)}"><span class="play"></span><span class="hero-txt"><h1>${escHtml(h1)}</h1><span class="sub">${escHtml(sub)}</span></span></a>${heroCapHtml(top[0], isEn)}`
            : `<h1>${escHtml(h1)}</h1>`}
   ${crumbs}
-  ${lead ? `<p class="lead">${escHtml(lead)}</p>` : ''}
   ${chipsHtml}
   ${facesHtml}
   ${top.length > 1 ? `
@@ -2506,7 +2503,6 @@ ${SEO_GA_TAG}
   ${languageNav(isEn, altUrl)}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
   <h1 class="rank-h1">${escHtml(h1)}</h1>
-  <p class="lead">${escHtml(desc)}</p>
   <ul class="all-stats">${stats}</ul>
   <ul class="all-nav">${nav}</ul>
   ${camCards ? sec('top-cams', T('인기 직캠', 'Top fancams'), '', `<div class="grid">${camCards}</div>`, SITE + '/' + rankPagePath('', lang)) : ''}
@@ -2611,7 +2607,6 @@ ${SEO_GA_TAG}
   ${languageNav(isEn, altUrl)}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
   <h1 class="rank-h1">${escHtml(h1)}</h1>
-  <p class="lead">${escHtml(isEn ? 'Individual idol fancams on YouTube, ranked by views. Updated weekly from the K-POP UNIVERSE archive.' : '유튜브에 올라온 아이돌 개인 직캠을 조회수 순으로 모았어요. K-POP UNIVERSE 아카이브에서 매주 갱신.')}</p>
   <ul class="rank-tabs">${tabs}</ul>
   <div class="grid">
     ${cards}
@@ -2737,7 +2732,6 @@ ${SEO_GA_TAG}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
   <h1 class="rank-h1">${escHtml(h1)}</h1>
   ${back}
-  <p class="lead">${escHtml(desc)}</p>
   <div class="grid">
     ${cards}
   </div>
@@ -2848,7 +2842,6 @@ ${SEO_GA_TAG}
   ${languageNav(isEn, altUrl)}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
   <h1 class="rank-h1">${escHtml(h1)}</h1>
-  <p class="lead">${escHtml(desc)}</p>
   <ul class="rank-tabs">${tabs}</ul>
   <div class="${kind === 'born' ? 'people' : 'sp-tiles'}">
     ${cards}
@@ -2914,7 +2907,6 @@ ${SEO_GA_TAG}
   ${languageNav(isEn, altUrl)}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
   <h1 class="rank-h1">${escHtml(h1)}</h1>
-  <p class="lead">${escHtml(desc)}</p>
 ${body}
 ${next || ''}
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a> · <a href="${SITE}/about.html">${isEn ? 'About · removal requests' : '사이트 소개 · 삭제 요청'}</a></div>

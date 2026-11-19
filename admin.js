@@ -541,7 +541,9 @@ async function _ytSyncGroup(ko,key,onProg,youtubeUrl,syncKey){
     await _ytProbeShortsInline(vids,onProg); // 동기화 시점 세로 실측 — 승격 버튼 없이도 is_short 정확(2026-09-04)
     // 공식 채널 업로드분은 제외 키워드에 걸려도 무관 처리하지 않는다 — 판단은 _shouldJunkFlag
     // 한 곳에 있고(index.html), 여기선 source_tier를 그대로 넘겨 정책을 따른다(2026-08-27).
-    const rows=vids.map(v=>({...v,group_ko:ko,title_norm:_titleNorm(v.title),source_handle:skey,source_tier:'official',...(_shouldJunkFlag(v.title,'official')?_flagPatch('무관','auto'):{})}));
+    // 남이 부른 우리 곡("곡 by 타그룹 멤버")은 공연자를 그 사람으로, 원곡을 이 그룹으로(_guestSingsOwnSong — 조건이 전부 맞을 때만, 검수 표시)
+    const _guest=v=>{try{const g=typeof _guestSingsOwnSong==='function'&&GROUPS[ko]?_guestSingsOwnSong({title:v.title,group_ko:ko,published_at:v.published_at}):null;return g?{...g,needs_review:true}:{};}catch(e){return {};}};
+    const rows=vids.map(v=>({...v,group_ko:ko,title_norm:_titleNorm(v.title),source_handle:skey,source_tier:'official',...(_shouldJunkFlag(v.title,'official')?_flagPatch('무관','auto'):{}),..._guest(v)}));
     const _batches=[];
     for(let i=0;i<rows.length;i+=200)_batches.push(_ytUpsertVideos(rows.slice(i,i+200)));
     const _err=(await Promise.all(_batches)).find(r=>r&&r.error);
@@ -2157,6 +2159,41 @@ function _coverCreditReassign(v){
   else patch.cover_of_members=[`${origin.mko}(${origin.gko})`];
   return{patch,to:ng,origin};
 }
+// 공식 채널에 올라온 "남이 부른 우리 곡"(2026-11-19 사용자 — "Open Your Eyes by #XODIAC 규민님 🎼 #CLOSEYOUREYES": 클로즈유어아이즈 공식 채널 영상인데
+// 클로즈유어아이즈는 안 나오고 소디엑 규민이 그 곡을 부른다. "소디엑 규민만 태깅하고 원곡을 클로즈유어아이즈로 태깅하는 게 맞다").
+// 공식 채널 동기화는 group_ko를 채널 주인으로 고정하는데, 아래 조건이 **전부** 맞을 때만 공연자를 그 사람으로 바꾸고 원곡을 채널 주인으로 단다:
+//   ① 제목이 "… by <아티스트>" 꼴(by 뒤가 제목 끝·해시태그·이모지까지) ② by 뒤 표기가 **다른 그룹 하나**로 풀린다(그 그룹 멤버 이름이 있으면 그 멤버만)
+//   ③ by 앞에 채널 주인 그룹의 **자기 곡명**(4자+)이 있다 ④ 주인 그룹 멤버 이름이 제목에 없다 ⑤ 같이 나온 표시(with·feat·&·×·님과·함께·듀엣·합동)가 없다.
+// 하나라도 어긋나면 null — 공식 영상이 그 그룹 카드에서 빠지는 변경이라 좁게 잡는다. 반환: {group_ko,members,cover_of_groups,cover_of_song}
+function _guestSingsOwnSong(row){
+  const title=String((row&&row.title)||'').normalize('NFKC'),owner=row&&row.group_ko;
+  if(!title||!owner||!GROUPS[owner])return null;
+  const m=title.match(/^(.*?)\sby\s+(.+)$/i);
+  if(!m)return null;
+  if(/\bwith\b|\bw\/|\bfeat\.?\b|\bft\.?\b|\sx\s|×|[&＆]|듀엣|합동|함께|님과|さんと|\bvs\b|콜라보|collab/i.test(title))return null;
+  const head=m[1],tail=m[2];
+  let r=null,rt=null;
+  try{r=_m2ParseTitle(title,undefined,false,(row.published_at||'').slice(0,10));rt=_m2ParseTitle(tail,undefined,false,(row.published_at||'').slice(0,10));}catch(e){return null;}
+  if(!r||!rt)return null;
+  const mbg=r.membersByGroup||{};
+  if((mbg[owner]||[]).length)return null; // 주인 그룹 멤버가 이름으로 나오면 같이 나온 영상
+  const others=[...new Set([...Object.keys(mbg),...(r.withGroups||[]),r.primaryGroup].filter(g=>g&&g!==owner&&GROUPS[g]))];
+  if(others.length!==1)return null;
+  const g=others[0];
+  // by 뒤만 따로 읽어도 그 그룹이어야 한다(제목 다른 곳의 해시태그로 붙은 그룹이 아니라 by가 가리키는 아티스트)
+  const tg=[...new Set([rt.primaryGroup,...Object.keys(rt.membersByGroup||{}),...(rt.withGroups||[])].filter(x=>x&&GROUPS[x]&&x!==owner))];
+  if(tg.length!==1||tg[0]!==g)return null;
+  // by 앞에 주인 그룹 자기 곡명
+  const idx=_coverIndexEnsure();
+  const keys=_coverKeysByOrigin&&_coverKeysByOrigin.get('g:'+owner);
+  if(!keys||!keys.size)return null;
+  const hn=' '+head.toLowerCase().replace(/[@#]\S+/g,' ').replace(/[’'"“”‘`]/g,'').replace(/[^\p{L}\p{N}]+/gu,' ').replace(/\s+/g,' ')+' ';
+  let song=null,best=0;
+  keys.forEach(k=>{const kc=k.replace(/\s+/g,'');if(kc.length<4||kc.length<=best||!hn.includes(' '+k+' '))return;
+    const e=(idx.get(k)||[]).find(x=>x.origin&&x.origin.kind==='group'&&x.origin.gko===owner);if(e){song=e.title;best=kc.length;}});
+  if(!song)return null;
+  return {group_ko:g,members:(mbg[g]||[]).slice(),cover_of_groups:[owner],cover_of_song:song};
+}
 // 핵심 해석기. row:{title,group_ko,members,with_members,with_groups,published_at}, opts:{chartRows}
 // 반환: null(커버 아님/판정 불가) 또는 {isCover, origin|null, song|null, ambiguous, reason, patch}
 function _coverResolve(row,opts){
@@ -2264,6 +2301,20 @@ function _coverResolve(row,opts){
       if(!hits.some(e=>e.tier!=='C'))return;
       if(norm.includes(' '+k+' '))lookup(k,'bare');
     });
+  }
+  // 자기 곡 챌린지에 섞인 가사·문구(2026-11-19 사용자 — "[클로즈유어아이즈] 상상해 봐 7월의 크리스마스 ☃️ Snowy Summer 챌린지"가 강타 원곡으로 태깅:
+  // '7월의 크리스마스'는 자기 곡 Snowy Summer의 가사인데 평문 스캔이 강타 곡명으로 읽었다). 제목에 **공연자 자기 곡명**이 따로 들어 있고(4자+, 흔한 말 제외),
+  // 남의 곡 후보가 전부 평문(bare)뿐이며 크레딧·아티스트 표기 같은 더 강한 근거가 없으면 — 그 영상은 자기 곡 영상이고 평문 일치는 우연이다.
+  // 따옴표·해시태그·'원곡:'으로 남의 곡을 짚은 제목(진짜 커버·남의 곡 챌린지)은 그대로 둔다.
+  // '커버'라고 밝힌 제목(ctx.cover)은 제외 — 그룹이 잘못 저장된 커버 영상(원곡자가 group_ko에 들어간 옛 오저장)은 아래 재배정 경로가 다룬다.
+  // 제목이 그 원곡자 이름을 직접 부르면("방탄소년단 Dynamite 챌린지")도 제외 — 남의 곡 챌린지가 맞다.
+  if(!ctx.cover&&!creditOrigin&&!creditExternal&&!sideBoost.size&&scored.length&&scored.every(x=>x.strength==='bare')&&!scored.some(x=>_coverOriginNamedInTitle(x.e.origin,title))){
+    const tcAll=title.normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,'');
+    for(const sk of selfKeys){
+      const skc=sk.replace(/\s+/g,'');
+      if(skc.length<(/[가-힣]/.test(skc)?4:5)||_COVER_COMMON_KEYS.has(sk))continue; // 영문 자기 곡은 5자+(easy·wait 같은 일상어 4자 제외)
+      if(titleNorm.includes(' '+sk+' ')||(skc.length>=6&&tcAll.includes(skc)))return null;
+    }
   }
   // 2) 선택 — 같은 원곡자 항목은 최고점만
   const byOrigin=new Map();
