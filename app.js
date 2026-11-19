@@ -14108,7 +14108,8 @@ function _feedWideScroller(){
 // · 넓게=혼자면 화면 거의 전부(최대 1440, 우주가 조금은 보이게)·함께면 카드(440씩)와 가운데 창 최소 폭(560)만 남기고 나침반이 다 쓴다.
 // 폭은 --fw-w 하나로 나가고 CSS(#feed-overlay·재생 화면 left·줌)와 _stageRegion(목록·앨범 자리)이 그걸 따른다. 640px↑면 안쪽 칸도 넓은 배치(body.fw-home).
 const _FW_MODES=['narrow','normal','wide'];
-function _fwMode(){try{const m=localStorage.getItem('kpu_fw_mode');return _FW_MODES.indexOf(m)>=0?m:'normal';}catch(e){return 'normal';}}
+// 기본 '넓게'(2026-11-19 사용자 "웹 탐험이 카드 폭만큼 비우고 열리면 처음 보는 사람이 이상하게 생각할 듯 — 기본 전체 너비, 상황 따라 줄이기"). 직접 고른 값은 그대로.
+function _fwMode(){try{const m=localStorage.getItem('kpu_fw_mode');return _FW_MODES.indexOf(m)>=0?m:'wide';}catch(e){return 'wide';}}
 // 가운데(무대) 창이 열려 있나 — 재생 화면·목록·앨범·공연·트로피·인스타·컬렉션 + 공용 무대 창
 var _cardWidePref=false; // var: 카드 넓게 버튼 IIFE(앞쪽)가 먼저 쓴다
 function _stageCenterOpen(){
@@ -14137,12 +14138,11 @@ function _cardYieldSync(){
 function _fwWidth(){
   const W=window.innerWidth,mode=_fwMode(),open=id=>!!document.getElementById(id)?.classList.contains('open');
   if(mode==='narrow')return 360;
-  if(!_FW_BLOCKERS.some(open))return mode==='wide'?Math.min(1440,W-120):Math.min(960,W-360);
+  if(!_FW_BLOCKERS.some(open))return mode==='wide'?Math.min(1440,W-160):Math.min(960,W-360); // 넓게 여백 60→80px씩(11-19 "꽉 차면 부담, 여백 조금 더")
   const cards=['side-panel','member-panel','conn-panel'].filter(open).length*(document.body.classList.contains('card-wide')?640:440);
-  // 보통: 평소 440, 가운데 창이 열려 자리가 모자라면 360까지 양보(가운데 우선, 2026-11-18)
-  if(mode==='normal')return _stageCenterOpen()?Math.max(360,Math.min(440,W-cards-616)):440;
-  const stage=['yt-lightbox','feed-list-overlay','gc-discog-detail','venue-overlay','trophy-overlay','igv-overlay','uc-card-overlay',...Object.keys(_STAGE_WINS)].some(open); // 공용 무대 창(_STAGE_WINS)도 가운데 자리가 필요하다(2026-11-18)
-  return stage?Math.max(360,Math.min(1200,W-cards-616)):Math.max(440,Math.min(1200,W-cards)); // 가운데 창이 있으면 그 몫(560+여백 56)을 먼저 남긴다(2026-11-18)
+  // 카드·가운데 창이 열리면 '넓게'도 보통처럼 양보(2026-11-19 사용자 "기본 전체 너비로 열리고 상황에 따라 줄어드는 식") —
+  // 넓게는 홈(블로커 없음)에서만 전폭. 평소 440, 가운데 창이 열려 자리가 모자라면 360까지(가운데 우선, 11-18).
+  return _stageCenterOpen()?Math.max(360,Math.min(440,W-cards-616)):440;
 }
 function _fwBtnSync(){
   const b=document.getElementById('feed-width-btn');if(!b)return;
