@@ -23422,7 +23422,8 @@ function _appendFeedCard(container,icon,title,sub,onClick,thumbUrl,cat,opts){
         const w=document.createElement('span');w.className='fcr-who';const _who=_feedWho(s),_song=_feedSong(s.t);w.textContent=_who?(_song?_who+' · '+_song:_who):(_song||_cleanTitle(s.t||'')); // 이름만이면 '영서 | 영서'처럼 겹쳐 보였다 — 곡명을 붙인다
         r.appendChild(n);r.appendChild(w);
         const dl=s.rankDelta;
-        if(dl===null||dl>0||dl<0){const d=document.createElement('span');d.className='fcr-d '+(dl===null?'is-new':dl>0?'is-up':'is-down');d.textContent=dl===null?'NEW':dl>0?`↑${dl}`:`↓${-dl}`;r.appendChild(d);}
+        // 유지(0)는 '–'(2026-11-19 사용자 "동일이면 - 표기") — 세 줄뿐이라 줄마다 표시가 있어야 정돈돼 보인다(100줄 목록 배지는 여전히 유지 표시 없음)
+        if(dl===null||dl>0||dl<0||dl===0){const d=document.createElement('span');d.className='fcr-d '+(dl===null?'is-new':dl>0?'is-up':dl<0?'is-down':'is-same');d.textContent=dl===null?'NEW':dl>0?`▲${dl}`:dl<0?`▼${-dl}`:'–';r.appendChild(d);} // 기호는 목록 창 배지(▲▼)와 같게
         box.appendChild(r);
       });
     };
@@ -24064,7 +24065,8 @@ function _openFeedListOverlay(title,sub,songs,ctx){
     }
     // 태깅(누가 나왔나)도 항상(2026-10-01) — 차트·모아보기는 여러 그룹이 섞여서 카드 그리드보다 더 필요하다
     // Chemistry는 고른 사람이 화면 위에 이미 있으니 그 밖의 출연자만(없으면 줄 없음)
-    const whoLine=ctx&&ctx.chem?_chemOthersLine(s,ctx.chem):_songWhoLine(s);
+    // 개인 직캠 차트는 이 줄을 뺀다(ctx.noWho, 2026-11-19 사용자 "썸네일이랑 영상 제목에 아티스트가 둘 다 나와서 셋째 줄에 또 표기할 필요 없다 — 날짜·조회수 줄까지만")
+    const whoLine=ctx&&ctx.noWho?null:ctx&&ctx.chem?_chemOthersLine(s,ctx.chem):_songWhoLine(s);
     if(whoLine)item.appendChild(whoLine);
     item.addEventListener('click',e=>{
       e.stopPropagation();
@@ -26892,7 +26894,7 @@ async function _openChartList(id,sel,_view){
     facets.push({key:'cs',options:[{v:'all',ko:'전체',en:'All'},{v:'rise',ko:'급상승',en:'Rising'},{v:'new',ko:'신규',en:'New'},{v:'long',ko:'롱런',en:'Long-run'}],
       sel:tab,onPick:v=>{st.tab=v;return _openChartList(id,{},st);}});
   }
-  _openFeedListOverlay(label,sub,list,{facets});
+  _openFeedListOverlay(label,sub,list,{facets,noWho:id==='soloCam'});
   if(!hasPast)return;
   const grid=document.getElementById('feed-list-grid');if(!grid)return;
   const box=document.createElement('div');box.className='cs-story';
@@ -27194,6 +27196,14 @@ function _matchEventSeries(q){
   }
   return out;
 }
+// 차트 미리보기 Top 3에 순위 증감을 단다 — 기록이 없으면 null(증감 없이 그대로 둔다)
+function _chartPreviewDeltas(top,hist){
+  const today=new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
+  const past=hist&&hist.dates?hist.dates.filter(x=>x<today):[];
+  if(!past.length)return null;
+  const last=past[past.length-1];
+  return top.map((s,i)=>{const pr=((hist.by||{})[ytId(s.u)]||{})[last];return{...s,rank:i+1,rankDelta:pr!=null?pr-(i+1):null};});
+}
 // 차트 카드 한 장 — 직캠·무대·축제가 쓰던 빌더 3개를 합쳤다. 카드는 기본 조합을 미리 받아 썸네일과
 // 부제를 채우고, 그 결과를 캐시에 넣어 칩 첫 클릭에서 재조회가 없게 한다.
 async function _buildChartCard(list,id,selOv){
@@ -27207,7 +27217,17 @@ async function _buildChartCard(list,id,selOv){
     // 순위 목록은 1위 썸네일과 '1위 · N회' 부제를, 모아보기는 임의 썸네일에 부제 없이(순위가 없으니).
     const sub=d.ranked?_feedRankSub(label,songs[0].vc):'';
     const thumb=d.ranked?songs[0].thumb:songs[Math.floor(Math.random()*songs.length)].thumb;
-    _appendFeedCard(list,d.icon,label,sub,()=>_openChartList(id,selOv),thumb,d.kind,d.ranked&&list&&list.id==='feed-chart'?{preview:songs.slice(0,3).map((x,i)=>({...x,rank:i+1})),prio:({soloCam:4,stage:5,festYE:7})[id]??6}:undefined);
+    const _pv=d.ranked&&list&&list.id==='feed-chart';
+    const _card=_appendFeedCard(list,d.icon,label,sub,()=>_openChartList(id,selOv),thumb,d.kind,_pv?{preview:songs.slice(0,3).map((x,i)=>({...x,rank:i+1})),prio:({soloCam:4,stage:5,festYE:7})[id]??6}:undefined);
+    // 미리보기 Top 3 순위 증감(2026-11-19 사용자 "차트 미리보기 3위까지 나오는데 순위 증감 표시 넣어줘 — 클릭하면 증감 표시 있음").
+    // 목록 창(_openChartList)과 **같은 기록·같은 계산**(가장 최근 지난 기록 대비, 어제 없었으면 NEW) — 두 화면 숫자가 어긋나지 않게. 기록은 3분 캐시라 창을 열 때 재조회 없음.
+    if(_pv&&_card&&_card._setPreview){
+      const snapKey=_chartSnapKey(id,sel);
+      if(snapKey)_fetchRankHistory(snapKey,100).then(hist=>{
+        const pv=_chartPreviewDeltas(songs.slice(0,3),hist);
+        if(pv&&_card.isConnected)_card._setPreview(pv);
+      }).catch(()=>{});
+    }
   }catch(e){console.warn(`[feed] 차트 카드(${id}) 실패 — 이 카드만 빠집니다`,e);}
 }
 
