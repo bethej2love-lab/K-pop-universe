@@ -57,9 +57,9 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: browser-smoke-${{ github.ref }}
-  cancel-in-progress: true
+# concurrency 취소 제거(2026-11-19): 연속 푸시마다 이전 run이 cancelled로 끝나며 'Run failed' 메일이 하루 수십 통 왔다
+# (11-19 실측: 최근 100 run 중 진짜 실패 1, cancelled 31). 공개 저장소라 러너 분이 무료이므로 전부 끝까지 돌린다 —
+# 취소 메일 0, 각 커밋의 결과도 남는다. (pages-build-deployment의 취소는 GitHub 관리 워크플로라 여기선 못 바꾼다.)
 
 jobs:
   smoke:
