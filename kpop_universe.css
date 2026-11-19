@@ -6328,3 +6328,26 @@
   #tt-links .gc-link-msg{font-size:12.5px;gap:4px;}
   #tt-links .gc-link-count{font-size:12px;margin-left:-6px;}
 }
+/* 폰 쇼츠 재생 화면 — 오른쪽 세로 버튼 줄을 영상 아래(날짜·조회수 줄 오른쪽)로(2026-11-19 사용자 스크린샷 "어차피 릴스처럼 화면을 꽉 채우긴 힘드니 오른쪽 버튼들을 아래로 내리는 게").
+   예전: 영상 오른쪽 가장자리에 세로로 쌓여 영상 위(또는 좁은 옆 여백)에 걸쳤다. 이제 한 줄: [날짜 · 조회수] …… [✎ ♡ ⚑ 🔖 🔊 ↻] / 그 아래 이모지 줄.
+   버튼은 여전히 position:fixed(쇼츠 화면은 버튼을 id로 배치 — DOM을 옮기면 가로 재생 화면이 깨진다)라 좌표만 바꾼다:
+   세로 = 영상 아랫변(--sh-base) + 3px, 가로 = 영상 오른쪽 끝(--sh-m)에서 34px씩 왼쪽으로. 날짜 줄은 7px·이모지 줄은 11px 내려 버튼(38px)과 가운데를 맞추고 서로 안 겹치게 한다(실측). */
+@media (pointer:coarse) and (orientation:portrait){
+  /* 아래 자리 88→98px: 버튼 줄이 생겨 날짜·이모지 줄이 10px쯤 내려간 만큼 영상을 줄인다(주소창 있는 사파리에서 이모지 줄이 화면 끝에 닿았다) */
+  #yt-lightbox.lb-shorts:not(.lb-browse){--sh-h:min(calc(100vw * 16 / 9), calc(100svh - var(--sh-top) - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 98px));}
+  #yt-lightbox.lb-shorts:not(.lb-browse){--sh-m:calc((100vw - min(100vw, var(--sh-h) * 9 / 16)) / 2);--sh-base:calc(var(--sh-top) + env(safe-area-inset-top, 0px) + var(--sh-h));}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-rotate,
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-mute,
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-col,
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-flag,
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-scrap,
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-edit{top:calc(var(--sh-base) + 1px);filter:none;}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-rotate{right:calc(var(--sh-m) + 2px + 0*34px);}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-mute{right:calc(var(--sh-m) + 2px + 1*34px);}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-col{right:calc(var(--sh-m) + 2px + 2*34px);}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-flag{right:calc(var(--sh-m) + 2px + 3*34px);}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-scrap{right:calc(var(--sh-m) + 2px + 4*34px);}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-edit{right:calc(var(--sh-m) + 2px + 5*34px);}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-video-box.is-shorts~#yt-lb-info{position:relative;top:7px;}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-reactions{position:relative;top:11px;}
+}
