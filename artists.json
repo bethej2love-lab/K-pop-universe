@@ -22668,7 +22668,32 @@
     "links": {
       "namu": "https://namu.wiki/w/미나미(RESCENE)"
     },
-    "id": "a0099"
+    "id": "a0099",
+    "discography": [
+      {
+        "title": "메리 베리 러브 OST Part 2",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/66/808/15166808_20261116145219_500.jpg",
+        "releaseDate": "2026.11.18",
+        "trackCount": 2,
+        "titleTrack": "사랑해볼래, 나",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "사랑해볼래, 나",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "사랑해볼래, 나 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15166808"
+      }
+    ]
   },
   {
     "name": {
