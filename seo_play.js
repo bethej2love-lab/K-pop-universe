@@ -148,6 +148,8 @@
       var top=document.createElement('div');top.className='kpu-top';hero.parentNode.insertBefore(top,hero);var cap=hero.nextElementSibling&&hero.nextElementSibling.matches('.hero-cap')?hero.nextElementSibling:null;if(cap){var hc=document.createElement('div');hc.className='kpu-hero';top.appendChild(hc);hc.appendChild(hero);hc.appendChild(cap);}else top.appendChild(hero);
       var side=document.createElement('div');side.className='kpu-side';top.appendChild(side);
       var h1=hero.querySelector('h1'),sb=hero.querySelector('.sub');if(h1){var sh=document.createElement('div');sh.className='kpu-side-h';sh.setAttribute('aria-hidden','true');var st1=document.createElement('div');st1.className='h'+(h1.textContent.length>22?' long':'');st1.textContent=h1.textContent;sh.appendChild(st1);if(sb){var st2=document.createElement('div');st2.className='sb';st2.textContent=sb.textContent;sh.appendChild(st2);}side.appendChild(sh);}
+      // 경로 줄이 썸네일 위에 있는 새 배치(2026-11-19)면 넓은 화면에선 옆 칸으로 데려온다 — 웹 배치는 예전과 같게
+      var pv=top.previousElementSibling;if(pv&&pv.matches&&pv.matches('.crumbs')&&window.matchMedia&&matchMedia('(min-width:1000px)').matches)side.appendChild(pv);
       var n=top.nextElementSibling;while(n&&n.matches&&n.matches('.crumbs,.hub-back,.lead,.chips')&&!(n.matches('.chips')&&n.children.length>5)){var nx=n.nextElementSibling;side.appendChild(n);n=nx;}
       if(a){var sc=document.createElement('div');sc.className='kpu-side-cta';var cl=a.cloneNode(true);var ct=cl.querySelector('.t'),cs=cl.querySelector('.s');if(ct&&cs){ct.textContent=cs.textContent;cs.remove();}sc.appendChild(cl);side.appendChild(sc);}
     }
@@ -343,7 +345,7 @@
     var wrap=document.querySelector('.wrap');if(!wrap)return;
     var cta=document.querySelector('a.cta');var href=cta?cta.href:'https://kpop-universe.kr/';
     var st=document.createElement('style');
-    st.textContent='.kpu-topbar{position:relative;z-index:6;display:flex;align-items:center;justify-content:center;gap:9px;height:68px;padding:0 16px;'
+    st.textContent='.kpu-topbar{position:relative;z-index:6;display:flex;align-items:center;justify-content:center;gap:9px;height:45px;padding:0 16px;'
       +'background:rgba(16,16,24,.92);border-bottom:.5px solid rgba(150,175,255,.14);font-size:13.5px;font-weight:600;letter-spacing:.02em;color:#ccd8ee;text-decoration:none;cursor:pointer}'
       +'.kpu-topbar:hover{background:rgba(22,22,32,.96);color:#fff}'
       +'.kpu-topbar i{width:6px;height:6px;border-radius:50%;flex:none;background:rgb(170,160,255);box-shadow:0 0 5px rgba(170,160,255,.8);animation:kpu-pl 1.6s ease-in-out infinite}'
@@ -355,7 +357,7 @@
       +'radial-gradient(1px 1px at 22% 84%,rgba(255,220,240,.35),transparent 60%),radial-gradient(1px 1px at 55% 88%,rgba(200,215,255,.35),transparent 60%);'
       +'background-size:420px 380px;-webkit-mask-image:linear-gradient(#000,transparent);mask-image:linear-gradient(#000,transparent)}'
       +'body{position:relative}.wrap{position:relative;z-index:1}'
-      +'@media(max-width:700px){.kpu-topbar{font-size:13px;height:60px}}'
+      +'@media(max-width:700px){.kpu-topbar{font-size:13px;height:40px}}' // 높이를 3분의 2로(2026-11-19 사용자 — 68→45, 폰 60→40. 웹도 같이)
       +'@media (prefers-reduced-motion:reduce){.kpu-topbar i{animation:none}}';
     document.head.appendChild(st);
     var bar=document.createElement('a');bar.className='kpu-topbar';bar.href=href;

@@ -3,7 +3,7 @@
 :root{color-scheme:dark;}
 body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.5;}
 .wrap{max-width:760px;margin:0 auto;padding:18px 16px 20px;}
-.brand{font-size:12px;letter-spacing:.08em;color:rgba(150,175,255,0.6);text-decoration:none;}
+.brand{font-size:12px;letter-spacing:.08em;color:rgba(150,175,255,0.6);text-decoration:none;white-space:nowrap;}
 a{color:inherit;text-decoration:none;}
 .hero{position:relative;display:block;margin:12px 0 14px;border-radius:16px;overflow:hidden;aspect-ratio:16/9;background:#17171a;text-decoration:none;}
 .hero img{width:100%;height:100%;object-fit:cover;display:block;}
@@ -21,6 +21,11 @@ a{color:inherit;text-decoration:none;}
 .hero .play::before{content:'';position:absolute;left:25px;top:19px;border-left:18px solid #fff;border-top:12px solid transparent;border-bottom:12px solid transparent;}
 .crumbs{font-size:13px;color:rgba(180,200,255,0.65);margin:-4px 0 12px;}
 .crumbs a{text-decoration:none;color:rgba(200,215,255,0.85);}
+/* 곡·직캠 페이지: 경로 줄을 썸네일 **위**로, '직캠 전체' 링크를 같은 줄 오른쪽에(2026-11-19 사용자 폰 스크린샷 — 알약 버튼이 한 줄을 따로 먹고 썸네일 아래에 있었다) */
+.brand+.crumbs{margin:6px 0 10px;clear:both;}
+.crumbs-row{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:2px 14px;}
+.crumbs-path{min-width:0;}
+.crumbs .hub-all{white-space:nowrap;color:#dce6ff;}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 18px;padding:0;list-style:none;}
 .chips li{font-size:12.5px;padding:5px 10px;border-radius:999px;background:rgba(150,175,255,0.09);border:0.5px solid rgba(150,175,255,0.16);color:rgba(205,218,255,0.86);}
 .chips b{font-weight:600;color:#fff;margin-right:4px;}

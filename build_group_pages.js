@@ -50,7 +50,9 @@ const LIST_FWD = `<script>(function(){var h=location.hash;if(/(^#|&)vf=/.test(h)
 // 경로는 각 템플릿의 altUrl을 재사용해 동명이인·곡·프로그램 문맥을 보존한다.
 function languageNav(isEn, altUrl) {
   const target = isEn ? 'ko' : 'en';
-  return `<nav class="language-nav" aria-label="${isEn ? 'Language' : '언어 선택'}" style="display:flex;justify-content:flex-end;margin:0 0 12px"><a href="${escHtml(altUrl)}" lang="${target}" hreflang="${target}" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(150,175,255,.35);border-radius:22px;color:#dce6ff;background:rgba(150,175,255,.08);font-size:13px;text-decoration:none">${isEn ? '한국어로 보기' : 'View in English'}</a></nav>`;
+  // 2026-11-19 사용자(폰 스크린샷) "View in English 버튼 너무 크고 구림 — 테두리 없애고, 그 줄로 K-POP UNIVERSE 글자를 올려줘":
+  // 알약 버튼 → 테두리·바탕 없는 작은 글자. float:right라 바로 뒤의 브랜드 줄(.brand)이 같은 줄 왼쪽으로 올라온다(영상 썸네일도 그만큼 위로).
+  return `<nav class="language-nav" aria-label="${isEn ? 'Language' : '언어 선택'}" style="float:right;margin:0 0 0 12px"><a href="${escHtml(altUrl)}" lang="${target}" hreflang="${target}" style="display:inline-block;line-height:20px;padding:8px 2px;margin:-8px 0;color:rgba(170,190,240,.82);font-size:12.5px;text-decoration:none">${isEn ? '한국어' : 'English'}</a></nav>`; // 글자도 짧게 — 그룹 페이지는 윗줄에 링크가 셋(브랜드·그룹 전체·모아보기)이라 폰 폭에 'View in English'까지는 안 들어간다
 }
 
 const groups = JSON.parse(fs.readFileSync(path.join(ROOT, 'groups.json'), 'utf8'));
@@ -590,7 +592,7 @@ ${LIST_FWD}
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
   .wrap{max-width:640px;margin:0 auto;padding:32px 20px 20px;}
-  .brand{font-size:12px;letter-spacing:.08em;color:rgba(150,175,255,0.6);text-decoration:none;}
+  .brand{font-size:12px;letter-spacing:.08em;color:rgba(150,175,255,0.6);text-decoration:none;white-space:nowrap;}
   h1{font-size:28px;margin:14px 0 2px;color:#fff;}
   .sub{font-size:15px;color:rgba(180,200,255,0.6);margin-bottom:18px;}
   .meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:rgba(190,210,255,0.75);margin-bottom:24px;}
@@ -850,7 +852,7 @@ ${LIST_FWD}
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
   .wrap{max-width:640px;margin:0 auto;padding:32px 20px 20px;}
-  .brand{font-size:12px;letter-spacing:.08em;color:rgba(150,175,255,0.6);text-decoration:none;}
+  .brand{font-size:12px;letter-spacing:.08em;color:rgba(150,175,255,0.6);text-decoration:none;white-space:nowrap;}
   h1{font-size:28px;margin:14px 0 2px;color:#fff;}
   .sub{font-size:15px;color:rgba(180,200,255,0.6);margin-bottom:18px;}
   .meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:rgba(190,210,255,0.75);margin-bottom:24px;}
@@ -1142,7 +1144,7 @@ function hubPageHtml(lang, relLinks) {
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
   .wrap{max-width:760px;margin:0 auto;padding:32px 20px 80px;}
-  .brand{font-size:12px;letter-spacing:.08em;color:rgba(150,175,255,0.6);text-decoration:none;}
+  .brand{font-size:12px;letter-spacing:.08em;color:rgba(150,175,255,0.6);text-decoration:none;white-space:nowrap;}
   h1{font-size:26px;margin:14px 0 6px;color:#fff;}
   h2{font-size:15px;margin:30px 0 10px;color:rgba(200,220,255,0.9);}
   .sub{font-size:14px;color:rgba(180,200,255,0.6);margin-bottom:22px;}
@@ -1346,7 +1348,7 @@ function relPageHtml(o) {
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
   .wrap{max-width:720px;margin:0 auto;padding:32px 20px 20px;}
-  .brand{font-size:12px;letter-spacing:.08em;color:rgba(150,175,255,0.6);text-decoration:none;}
+  .brand{font-size:12px;letter-spacing:.08em;color:rgba(150,175,255,0.6);text-decoration:none;white-space:nowrap;}
   h1{font-size:24px;margin:14px 0 4px;color:#fff;}
   .sub{font-size:14px;color:rgba(180,200,255,0.6);margin-bottom:8px;}
   .sub a{color:rgba(190,210,255,0.9);}
@@ -2175,7 +2177,7 @@ function memberFaceUrl(a, gko) {
   return id ? ytThumb(id, 'mqdefault') : null;
 }
 // 스타일은 저장소의 song-page.css 한 파일(페이지마다 넣으면 3만 쪽 × 5KB) — 바꾸면 SONG_CSS_V를 올릴 것
-const SONG_CSS_V = 13;
+const SONG_CSS_V = 14;
 function songShareVideo(vids) {
   return vids.find(v => (v.category === 'live' || FANCAM_RE.test(v.title || ''))
     && !/\bM\/?V\b|music\s*video|뮤직비디오|\bteaser\b|티저/i.test(v.title || '')) || vids[0];
@@ -2336,8 +2338,7 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
     return `<script type="application/json" id="kpu-next">${JSON.stringify(items).replace(/</g, '\\u003c')}</script>`;
   })();
   const crumbs = ms
-    ? `<div class="crumbs"><a href="${SITE}/${groupPagePath(gko, lang)}">${escHtml(gName)}</a> › <a href="${SITE}/${memberPagePath(ms.a, lang)}">${escHtml(mName)}</a> › <a href="${songUrl}">${escHtml(s.bilingualTitle || s.title)}</a></div>${hubUrl ? `
-  <p class="hub-back"><a href="${hubUrl}" style="display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:20px;background:rgba(150,175,255,0.1);border:0.5px solid rgba(150,175,255,0.3);color:#dce6ff;text-decoration:none;font-size:13.5px">${isEn ? `← All ${mName} fancams (${hubTotal})` : `← ${mName} 직캠 전체 보기 (${hubTotal})`}</a></p>` : ''}`
+    ? `<div class="crumbs crumbs-row"><span class="crumbs-path"><a href="${SITE}/${groupPagePath(gko, lang)}">${escHtml(gName)}</a> › <a href="${SITE}/${memberPagePath(ms.a, lang)}">${escHtml(mName)}</a> › <a href="${songUrl}">${escHtml(s.bilingualTitle || s.title)}</a></span>${hubUrl ? `<a class="hub-all" href="${hubUrl}">${isEn ? `← All ${mName} fancams (${hubTotal})` : `← ${mName} 직캠 전체 (${hubTotal})`}</a>` : ''}</div>`
     : `<div class="crumbs"><a href="${SITE}/${groupPagePath(gko, lang)}">${escHtml(gName)}</a> › ${(() => {
       // 곡 → 앨범 링크(2026-11-17 링크 점검: 앨범 페이지는 곡을 링크하는데 곡 페이지는 앨범을 안 링크했다 — 일방통행).
       // 이 곡이 수록된 앨범(같은 앨범명 우선, 없으면 첫 번째)의 트랙리스트 페이지로. 앨범 페이지가 실제로 만들어지는 목록(albumsFor)에서만 찾는다.
@@ -2381,9 +2382,9 @@ ${LIST_FWD}
 <div class="wrap">
   ${languageNav(isEn, altUrl)}
   <a class="brand" href="${SITE}/">K-POP UNIVERSE</a>
+  ${crumbs}
   ${top[0] ? `<a class="hero" href="https://www.youtube.com/watch?v=${top[0].id}" target="_blank" rel="noopener"><img src="${heroImage}" alt="${escHtml(top[0].title)}"><span class="play"></span><span class="hero-txt"><h1>${escHtml(h1)}</h1><span class="sub">${escHtml(sub)}</span></span></a>${heroCapHtml(top[0], isEn)}`
            : `<h1>${escHtml(h1)}</h1>`}
-  ${crumbs}
   ${chipsHtml}
   ${facesHtml}
   ${top.length > 1 ? `
