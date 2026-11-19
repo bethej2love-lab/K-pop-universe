@@ -24994,6 +24994,31 @@ async function _buildFeedIg(){
     _igRenderRail(list,photos);section.style.display='';
   }catch(e){console.warn('[feed] 인스타 선반 실패 — 이 선반만 빠집니다',e);}
 }
+// 최애가 이 앨범에 작사/작곡/편곡 크레딧으로 참여했는지 — disco/ 파일의 tracks[].cr(melon_song_credits가 채운다)을 받아
+// 즐겨찾기 멤버 이름과 대조한다(2026-11-19, #14 'For You 시의성'). disco는 그룹 파일에 멤버 disco까지 들어오므로 그룹 하나만 받으면 된다.
+// 실패·미스는 전부 null(선반을 막지 않는다). cr은 {l:[[이름,aid]],c:[...],a:[...]}.
+async function _albumFavCreditNote(a){
+  try{
+    if(!favMembers.size)return null;
+    const gko=a.g||(a.k==='g'?a.o:null);
+    const discs=[];
+    if(gko&&GROUPS[gko]){await _ensureGroupDisco(gko);discs.push(...(GROUPS[gko].discography||[]));}
+    const owner=a.k!=='g'?_albumOwnerArt(a):null;
+    if(owner){await _ensureMemberDisco(owner);if(owner.discography)discs.push(...owner.discography);}
+    if(!discs.length)return null;
+    const tn=_titleNorm(a.t);
+    const al=discs.find(x=>x&&x.title&&_titleNorm(x.title)===tn);
+    if(!al||!Array.isArray(al.tracks))return null;
+    const favNames=new Set([...favMembers].map(k=>k.slice(k.indexOf(':')+1))); // 'group:name' → name
+    const roleKo={l:'작사',c:'작곡',a:'편곡'},roleEn={l:'lyrics',c:'music',a:'arr.'};
+    const hits=new Map();
+    for(const t of al.tracks){if(!t||!t.cr)continue;for(const r of ['l','c','a'])for(const pair of (t.cr[r]||[])){const nm=Array.isArray(pair)?pair[0]:pair;if(favNames.has(nm)){if(!hits.has(nm))hits.set(nm,new Set());hits.get(nm).add(r);}}}
+    if(!hits.size)return null;
+    const ko=currentLang==='ko',role=ko?roleKo:roleEn;
+    const parts=[...hits.entries()].slice(0,2).map(([nm,rs])=>nm+' '+['l','c','a'].filter(r=>rs.has(r)).map(r=>role[r]).join('·'));
+    return '✍️ '+parts.join(', ')+(ko?' 참여':'');
+  }catch(e){return null;}
+}
 async function _buildFeedFavAlbums(){
   const section=document.getElementById('feed-favalbum-section');
   const list=document.getElementById('feed-favalbum');
@@ -25026,7 +25051,9 @@ async function _buildFeedFavAlbums(){
       // 흘렀는데, 나누니 아티스트가 독립해 읽히고 발매일도 자리가 생겼다(2026-09-21).
       const ownerDisp=a.f&&Array.isArray(a.h)&&a.h.length?a.h.join(', '):Array.isArray(a.w)&&a.w.length>1?a.w.join(', '):a.k==='g'?_gLabelKo(a.o):a.o; // 공동 앨범은 멜론 표기 순서대로 쉼표(2026-10-19) · 참여 앨범은 앨범 주인(h — 제목에 'Feat. 아이유'가 이미 있다)
       const meta=_albumShelfMeta(a);
-      _appendFeedCard(list,'💿',a.t,ownerDisp,_albumCardNav(a),a.c,null,{meta,metaFresh:_albumIsFresh(a.d),metaNew:_albumIsNew(a.d)});
+      const _card=_appendFeedCard(list,'💿',a.t,ownerDisp,_albumCardNav(a),a.c,null,{meta,metaFresh:_albumIsFresh(a.d),metaNew:_albumIsNew(a.d)});
+      // 최애가 이 신보에 작사/작곡 참여했으면 캡션에 한 줄(#14 For You 시의성, 2026-11-19). disco/ cr을 받아 대조 — 실패해도 선반은 그대로.
+      _albumFavCreditNote(a).then(note=>{if(note&&_card&&!_card._creditDone){_card._creditDone=1;const cap=_card.querySelector('.feed-card-cap');if(cap){const d=document.createElement('div');d.className='feed-card-credit';d.textContent=note;cap.appendChild(d);}}}).catch(()=>{});
     });
     // 최애 본인 앨범이 발매 48시간 안이면 For You 맨 위로(2026-11-04). 참여(피처링) 앨범은 제외.
     _fyUrgent('feed-favalbum-section',picked.some(a=>{if(a.f)return false;const age=now-_albumDate(a.d);return age>=-864e5&&age<2*864e5;}));

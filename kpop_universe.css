@@ -4647,6 +4647,8 @@
   .feed-card-meta{margin-top:2px;font-size:10.5px;font-weight:500;line-height:1.35;color:rgba(150,175,235,0.66);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   /* 오늘·어제 발매만 강조 — 선반의 목적이 "따끈한 것 먼저"라서. 세 번째 색은 만들지 않는다. */
   .feed-card-meta.is-fresh{color:rgba(150,180,255,0.8);font-weight:500;} /* 2026-10-15: 0.95·700이 아티스트 이름보다 먼저 눈에 띄었다(사용자) — 색만 남기고 굵기는 뺀다 */
+  /* 최애가 이 신보에 작사/작곡 참여(#14) — 캡션 아래 한 줄, 하트 핑크 계열로 은은하게 */
+  .feed-card-credit{margin-top:2px;font-size:10.5px;font-weight:500;line-height:1.3;color:rgba(255,150,190,0.82);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   /* NEW 칩(2026-10-12) — 캡션 메타 줄 맨 앞. 강조 메타(is-fresh)와 같은 파랑 계열로, 색 종류를 늘리지 않는다. */
   .feed-card-new{display:inline-block;margin-right:5px;padding:0 3px;border-radius:3px;font-size:8px;font-weight:700;letter-spacing:.06em;line-height:12px;vertical-align:1px;color:rgba(160,188,255,0.85);background:none;box-shadow:inset 0 0 0 1px rgba(150,180,255,0.45);} /* 꽉 찬 칩 → 테두리만(2026-10-15) — 이번 주 선반은 거의 전부 NEW라 칩이 줄줄이 가장 튀었다 */
   /* For You 최애 새 영상 전용 강조 NEW(2026-11-18 사용자 "잘 안 띈다") — 앨범 선반과 달리 드물게 떠서 채운 핑크 배지로 또렷하게 */
