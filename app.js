@@ -18023,7 +18023,8 @@ function _mxRender(){
     const nmDiv=document.createElement('div');nmDiv.className='mx-card-name';nmDiv.textContent=a.name.ko;
     const gpDiv=document.createElement('div');gpDiv.className='mx-card-group';gpDiv.textContent=a.group.ko;
     const mtDiv=document.createElement('div');mtDiv.className='mx-card-meta';
-    mtDiv.textContent=[(yr?yr+'년생':''),_mxFlagsFor(a.nat?.ko||'')].filter(Boolean).join(' · ');
+    // 생년월일 그대로(2026-11-19 사용자 "년생이란 말 빼고 투데이 애니버서리처럼 생년월일 다 표시") — 예전: '2000년생'
+    mtDiv.textContent=[(a.bday||''),_mxFlagsFor(a.nat?.ko||'')].filter(Boolean).join(' · ');
     btn.appendChild(avDiv);btn.appendChild(nmDiv);btn.appendChild(gpDiv);btn.appendChild(mtDiv);
     btn.addEventListener('click',()=>{
       _mxPickClose();
