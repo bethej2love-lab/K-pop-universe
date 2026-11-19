@@ -4242,6 +4242,8 @@ async function _renderFullCreditsInto(el,tracks){
   const sorted=[...people.values()].sort((x,y)=>(y.songs.length-x.songs.length)||(Math.min(...[...x.roles].map(r=>order[r]))-Math.min(...[...y.roles].map(r=>order[r]))));
   const lbl=document.createElement('div');lbl.className='gcdc-lbl';lbl.textContent=currentLang==='ko'?'크레딧':'Credits';
   const list=document.createElement('div');list.className='gcdc-list';
+  // 기본은 유니버스 내 아티스트만, 외부(작곡가 등)는 '더 보기' 뒤로(2026-11-19 사용자 "정보가 너무 많으니 기본은 덜 보여주기")
+  const rowsExt=[];
   sorted.forEach(p=>{
     const row=document.createElement('div');row.className='gcdc-row';
     const idol=p.aid&&idolByAid.get(String(p.aid));
@@ -4253,9 +4255,17 @@ async function _renderFullCreditsInto(el,tracks){
     else if(p.aid){head.href='https://www.melon.com/artist/detail.htm?artistId='+encodeURIComponent(p.aid);head.target='_blank';head.rel='noopener noreferrer';head.addEventListener('click',e=>e.stopPropagation());}
     row.appendChild(head);
     if(tracks.length>1){const sg=document.createElement('div');sg.className='gcdc-song-list';sg.textContent=p.songs.slice(0,6).join(' · ')+(p.songs.length>6?` 외 ${p.songs.length-6}곡`:'');row.appendChild(sg);}
-    list.appendChild(row);
+    if(idol)list.appendChild(row);else rowsExt.push(row);
   });
-  el.appendChild(lbl);el.appendChild(list);el.style.display='';
+  el.appendChild(lbl);el.appendChild(list);
+  if(rowsExt.length){
+    const hasIdol=list.children.length>0,ko=currentLang==='ko';
+    const more=document.createElement('button');more.type='button';more.className='adv-more gcdc-more';
+    more.textContent=ko?(hasIdol?`크레딧 전체 보기 · 외 ${rowsExt.length}명`:`크레딧 ${rowsExt.length}명 보기`):(hasIdol?`Show all credits · ${rowsExt.length} more`:`Show ${rowsExt.length} credits`);
+    more.addEventListener('click',e=>{e.stopPropagation();rowsExt.forEach(r=>list.appendChild(r));more.remove();});
+    el.appendChild(more);
+  }
+  el.style.display='';
 }
 async function _renderCreditsInto(el,titles,showSongs=false,ownerName=null){
   el.innerHTML='';el.style.display='none';
@@ -15463,7 +15473,7 @@ function _chemOthersLine(s,people){
   return line;
 }
 // 사람 사이 표식 = 반짝임(네 갈래 별을 둥글게) — 가는 십자 별은 작게 그리면 '+'로 읽혔다(헤드리스 캡처)
-const _CHEM_STAR='<svg viewBox="0 0 22 22" aria-hidden="true"><path d="M11 0C11.9 6.4 15.6 10.1 22 11C15.6 11.9 11.9 15.6 11 22C10.1 15.6 6.4 11.9 0 11C6.4 10.1 10.1 6.4 11 0Z"/></svg>';
+const _CHEM_STAR='<svg viewBox="0 0 22 22" aria-hidden="true"><path d="M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z"/></svg>'; // 웹 마우스 커서 별과 같은 각진 4꼭지(2026-11-19 사용자 "커서 별처럼 각진 게 예쁘다")
 function _chemHead(people,facts,costars,onAdd){
   const ko=currentLang==='ko';
   const head=document.createElement('div');head.className='chem-head';
@@ -28240,16 +28250,16 @@ async function _buildFeedFavNew(opts){
     const _bias=_feedBiasMatchers();
     const _isFav=_bias?_bias.fav:()=>false;
     const _favN=_bias?_bias.favCount:()=>0;
-    // 최애 묶음은 내 즐겨찾기가 많이 겹친 영상 먼저(#26), 같은 수면 최신순 유지(sort는 안정 정렬). 나머지는 최신순 그대로.
-    const _favFirst=songs.filter(_isFav).sort((a,b)=>_favN(b)-_favN(a)),_rest=songs.filter(s=>!_isFav(s));
-    const rows=_packRows(_favFirst.concat(_rest),_songIsShort,{landscapeFull:true});
-    if(rows.length&&!rows[rows.length-1].wide&&rows[rows.length-1].items.length===1)rows.pop(); // 끝에 홀로 남은 반폭 제거
-    const flat=rows.flatMap(r=>r.items); // 라이트박스 재생목록 순서를 화면 순서와 일치
     // 지난 방문 이후 올라온 영상엔 날짜 앞에 NEW(2026-11-04 — "새로 뭐 올라왔지?"가 바로 보이게). 썸네일 위엔 안 얹는다.
     const _prevSeen=window._kpuPrevSeen||0;
     // NEW 기준: 지난 방문 이후 OR 최근 48h(둘 중 하나). 지난 방문만 보면 자주 올수록 NEW가 거의 안 떠 "2시간 이내처럼" 타이트했다(2026-11-18 사용자).
     const _NEW_WIN=48*3600e3;
     const _isNewSince=s=>{const t=Date.parse(s.paFull||'');if(!isFinite(t)||String(s.paFull).length<=10)return false;return (Date.now()-t<_NEW_WIN)||(!!_prevSeen&&t>_prevSeen);};
+    // 최애 묶음: NEW 뱃지(안 본 새 영상) 먼저(2026-11-19 사용자) → 즐겨찾기 겹친 수(#26) → 최신순(안정 정렬). 나머지는 최신순 그대로.
+    const _favFirst=songs.filter(_isFav).sort((a,b)=>((_isNewSince(b)?1:0)-(_isNewSince(a)?1:0))||(_favN(b)-_favN(a))),_rest=songs.filter(s=>!_isFav(s));
+    const rows=_packRows(_favFirst.concat(_rest),_songIsShort,{landscapeFull:true});
+    if(rows.length&&!rows[rows.length-1].wide&&rows[rows.length-1].items.length===1)rows.pop(); // 끝에 홀로 남은 반폭 제거
+    const flat=rows.flatMap(r=>r.items); // 라이트박스 재생목록 순서를 화면 순서와 일치
     const drawItem=({song,row})=>{
       const isShort=_songIsShort(song);
       const _emo=_isFav(song)?String(_bias.favEmoji(song)).replace(/[<>&"']/g,''):''; // 이모지는 사용자가 친 글자 — 태그 문자 제거
