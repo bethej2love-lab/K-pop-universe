@@ -24615,6 +24615,29 @@ function _buildFeedRecentlyViewed(){
     item.addEventListener('mousedown',e=>_lbRipple(item,e));
     list.appendChild(item);
   });
+  _recentPurgeFlagged(arr);
+}
+// 무관·보류·숨김 처리된 영상은 '최근 본 것'에서도 뺀다(2026-11-19 사용자 "영상 무관 처리하면 recently viewed든 어디서든 다 안 보여야지").
+// 이 줄은 기기에 저장된 기록이라 DB에서 무관 처리해도 그대로 남았다 — 기록의 영상 id(최대 20개)를 한 번 조회해 걸린 것을 기록에서 지우고(계정에도 반영) 다시 그린다.
+// 조회는 id 20개짜리 1건, 같은 목록은 60초에 한 번만. 삭제된(없는) 행은 건드리지 않는다 — 조회 실패와 구별이 안 된다.
+let _recentPurgeAt=0,_recentPurgeKey='';
+const _FLAG_HIDE=['무관','보류','hidden'];
+function _recentDropFlagged(arr,flaggedIds){const bad=new Set(flaggedIds||[]);return(arr||[]).filter(v=>{const id=ytId((v&&v.u)||'')||(v&&v.id);return !(id&&bad.has(id));});}
+function _recentPurgeFlagged(arr){
+  if(!sb||!arr||!arr.length)return;
+  const ids=[...new Set(arr.map(v=>ytId(v.u||'')).filter(Boolean))];if(!ids.length)return;
+  const key=ids.join(',');
+  if(key===_recentPurgeKey&&Date.now()-_recentPurgeAt<60e3)return;
+  _recentPurgeKey=key;_recentPurgeAt=Date.now();
+  _withTimeout(()=>sb.from(_YT_TABLE).select('id').in('id',ids).in('content_flag',_FLAG_HIDE),5000,undefined,0).then(({data,error})=>{
+    if(error||!data||!data.length)return;
+    let cur=[];try{cur=JSON.parse(localStorage.getItem(_RECENT_VIEW_KEY)||'[]');}catch(e){}
+    const next=_recentDropFlagged(cur,data.map(r=>r.id));
+    if(next.length===cur.length)return;
+    try{localStorage.setItem(_RECENT_VIEW_KEY,JSON.stringify(next));}catch(e){}
+    try{if(_recentViewsColumn)_sbPushColumn('recent_views',next);}catch(e){}
+    _recentPurgeKey='';_buildFeedRecentlyViewed();
+  },()=>{});
 }
 
 // 오리지널 콘텐츠 선반(2026-09-04) — 여러 아이돌의 **개인 채널**(source_tier='idol', 예: 가을의 온도·따라해볼레이)
