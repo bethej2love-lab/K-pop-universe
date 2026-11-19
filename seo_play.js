@@ -65,7 +65,20 @@
     +'html.kpu-pl-open,html.kpu-pl-open body{overflow:hidden}'
     // 폰 첫 화면 보정(2026-11-04 이탈 개선 2단계): 대표 이미지가 첫 화면의 절반(약 400px)을 차지해 직캠 목록이 거의 안 보였다 →
     // 가로로 긴 배너(최대 190px)로 줄여 첫 화면에 직캠이 두 줄 들어오게. 데스크톱은 그대로. 빌더 템플릿과 무관하게 모든 정적 페이지에 바로 적용된다.
-    +'.kpu-hd{display:flex;align-items:center;gap:14px;margin:8px 0 16px}.kpu-hd img.cover{width:84px;height:84px;border-radius:50%;object-fit:cover;object-position:50% 25%;margin:0;flex:none}.kpu-hd h1{margin:0}.kpu-hd .sub{margin-top:2px}';
+    +'.kpu-hd{display:flex;align-items:center;gap:14px;margin:8px 0 16px}.kpu-hd img.cover{width:84px;height:84px;border-radius:50%;object-fit:cover;object-position:50% 25%;margin:0;flex:none}.kpu-hd h1{margin:0}.kpu-hd .sub{margin-top:2px}'
+    // 폰 그룹·멤버 페이지 머리(2026-11-19 사용자 스크린샷 "원 사진 옆으로 이름 넣는 게 낫다 — 지금 참 보기 안 좋다, 쓸데없는 여백 ㄴㄴ"):
+    // 이름(h1)이 한 줄을 통째로 쓰고 그 아래 원 사진이 또 한 덩어리를 차지했다 → 사진 왼쪽(76px)·이름과 상태 줄 오른쪽, 메타·링크는 그 아래 전체 폭.
+    // 웹(.top2 격자, seo_extra.js)은 그대로. 이 파일이라 재생성 없이 전 페이지에 바로 적용.
+    +'@media(max-width:600px){.top2:has(.avatar){display:grid;grid-template-columns:76px minmax(0,1fr);column-gap:14px;align-items:center;margin:14px 0 6px}'
+    +'.top2:has(.avatar)>.cover.avatar{grid-column:1;grid-row:1/span 2;width:76px;height:76px;max-width:none;margin:0}'
+    +'.top2:has(.avatar)>h1{grid-column:2;grid-row:1;margin:0;font-size:22px;line-height:1.2;align-self:end;word-break:keep-all}'
+    +'.top2:has(.avatar)>.kpu-vw{grid-column:2;grid-row:2;align-self:start;margin:4px 0 0}'
+    +'.top2:has(.avatar)>h1:only-of-type{align-self:center}'
+    +'.top2:has(.avatar)>*:not(.cover):not(h1):not(.kpu-vw){grid-column:1/-1}'
+    +'.top2:has(.avatar)>.meta{margin-top:12px;margin-bottom:0}.top2:has(.avatar)>.sns{margin:10px 0 0}'
+    // 맨 윗줄(이전 ‹ · 브랜드 · 그룹 전체 · 모아보기 · 언어)이 한 줄에 들어가게 보조 링크만 한 단계 작게
+    +'.brand+.brand{font-size:11px;margin-left:8px!important}}'
+    +'@media(max-width:380px){.brand+.brand+.brand{display:none}}'; // 아주 좁은 폰(360)은 셋째 링크(모아보기)까지는 안 들어가 한 줄을 더 먹었다 — 그 폭에서만 뺀다
   // 폰(600px 이하): 이름 옆 원형 사진으로 — 이름 2줄 + 큰 대표 이미지(~200px)가 첫 화면을 나눠 써서 직캠이 아래로 밀렸다
   function compactHead(){
     if(innerWidth>600)return;
@@ -463,7 +476,7 @@
       if(_w){
         var _bk=document.createElement('a');
         _bk.href=document.referrer;_bk.textContent='‹';_bk.setAttribute('aria-label',EN?'Back':'이전 화면');
-        _bk.setAttribute('style','display:inline-block;margin:0 12px 8px -4px;padding:0 10px;font-size:19px;line-height:1.2;color:rgba(150,175,255,0.75);text-decoration:none;');
+        _bk.setAttribute('style','display:inline-block;vertical-align:middle;margin:-2px 4px 0 -6px;padding:0 6px;font-size:19px;line-height:20px;color:rgba(150,175,255,0.75);text-decoration:none;'); // 2026-11-19: 아래 여백 8px을 없애고 좁혀 브랜드·언어 링크와 같은 줄에 선다(예전엔 ‹ 혼자 한 줄 + 언어 버튼 한 줄 + 브랜드 한 줄 = 세 줄)
         _bk.addEventListener('click',function(ev){ev.preventDefault();history.back();});
         _w.insertBefore(_bk,_w.firstChild);
       }
