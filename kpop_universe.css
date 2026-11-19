@@ -5907,6 +5907,13 @@
   #gc-track-videos-overlay.stage-win #gc-track-videos-sheet{padding-top:10px;}
   /* 첫 줄(64~108)은 아이콘만, 제목은 둘째 줄 — 탐험 For You/발견 탭·카드 이름과 같은 높이(11-18 사용자) */
   #gc-track-videos-overlay.stage-win #gc-track-videos-header{margin-top:46px;}
+  /* 앨범 창도 같은 칸으로(2026-11-19 사용자 "불필요한 여백 없게, 자연스럽게") — 무대 배치(위 5382)는 돼 있었지만
+     떠 있는 창 흔적(컨테이너 패딩 44/28/20·둥근 모서리·그림자)이 남아 세 칸 정리에서 빠져 있었다. lb-dock(재생 옆 도킹)은 별도 배치라 제외. */
+  #gc-discog-detail:not(.lb-dock){padding:0!important;}
+  #gc-discog-detail:not(.lb-dock) #gc-discog-detail-sheet,#gc-discog-detail:not(.lb-dock) #gc-discog-video-panel{
+    border-radius:0!important;box-shadow:none!important;}
+  #gc-discog-detail:not(.lb-dock) #gc-discog-detail-sheet{padding-top:44px;border-left:0.5px solid rgba(255,255,255,0.08);}
+  #gc-discog-detail:not(.lb-dock) #gc-discog-video-panel{border-right:0.5px solid rgba(255,255,255,0.08);}
 }
 
 /* ── 우주 미니맵·우주 모드(2026-11-18) — app.js _MM ───────────────────────────────── */
