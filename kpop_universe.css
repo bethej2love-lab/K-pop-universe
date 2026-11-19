@@ -5624,8 +5624,10 @@
   }
 }
 /* 웹(넓은 패널) 1위·신보 줄 — 썸네일이 오른쪽 끝에 붙어 글자와 사이가 휑했다(2026-11-03 사용자 스크린샷). 썸네일을 왼쪽으로, 넓은 홈에선 두 줄씩 */
+/* 폰도 같은 배치(2026-11-19 사용자 스크린샷 "1위 줄 텍스트랑 썸네일 사이 여백 너무 커서 어색") — 썸네일 왼쪽, 글자는 바로 옆(유튜브 목록 방식). 그림과 글 사이 12px. */
+.feed-news-row:not(.is-media):not(.is-break)>:is(.feed-news-thumb,.feed-news-tw){order:-1;}
+.feed-news-row:not(.is-media):not(.is-break){gap:12px;}
 @media (min-width:769px) and (hover:hover){
-  .feed-news-row:not(.is-media):not(.is-break)>:is(.feed-news-thumb,.feed-news-tw){order:-1;}
   body.fw-home .feed-news-list>.feed-news-row:not(.is-media):not(.is-break){grid-column:span 4;margin:0;border-radius:10px;background:rgba(255,255,255,0.022);border-top:none;}
 }
 /* 나침반 폭 3단계 버튼(2026-11-03 사용자 "자유롭게 끄는 건 선택지가 너무 많다, 최대 3단계") — 웹 무대(≥1024)에서만. ‹ 닫기 왼쪽 */
