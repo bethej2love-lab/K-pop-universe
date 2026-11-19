@@ -10421,6 +10421,9 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat,handle){
     // 그룹명이 빗댐으로만 쓰인 제목('코르티스룩'·'트로트계 리센느', 2026-10-30)도 검수 큐로 — 멤버 이름이 잡혔으면 진짜 출연 근거가 있어 제외. 숨기지 않는다.
     const parodyCue=!owner&&!members.length&&typeof _parodyRefCueFor==='function'&&!!_parodyRefCueFor(v.title,match.primaryGroup);
     const needsReview=!owner&&(match.confidence==='weak'||ambiguous||parodyCue);
+    // 남이 그 그룹을 따라 해 본 영상(자기 선언 — shared.js _parodySelfCue, 2026-11-19)은 검수만으론 사용자 화면에 그대로 떠서 '보류'로 넣는다.
+    // 주인 채널·팬채널·멤버 이름이 잡힌 영상은 제외(진짜 출연 근거). 그룹 배정은 그대로 둬 검수 탭에서 그 그룹으로 찾을 수 있다.
+    const parodySelf=!owner&&!members.length&&tier!=='fans'&&tier!=='official'&&tier!=='grpsub'&&typeof _parodySelfCueFor==='function'&&!!_parodySelfCueFor(v.title,match.primaryGroup);
     // "] 뒤 미지 그룹" fancam(match.hold) → 그룹 배정 안 하고 content_flag='보류'+검수(2026-09-03 사용자 요청).
     // 크랙시 혜진·핫이슈 예원처럼 우리에 없는 그룹인데 동명이인 멤버로 엉뚱하게 끌려오던 것을 보류로.
     const held=!owner&&!!(match&&match.hold);
@@ -10480,7 +10483,7 @@ function _extBuildRows(vids,strict,tier,owner,defaultCat,handle){
       //    즉 그룹이 잘못 배정된 영상이 동시에 숨김까지 당해 "틀린 채로 안 보이는" 이중 피해였다.
       //    hidden의 의도된 용도는 **밴 인물 + 관리자 수동 판단**뿐이다(사용자 확인) — 자동으로 붙이지 말 것.
       //    ambiguous 행은 needs_review:true로 검수 큐에는 그대로 올라가고, members는 아래처럼 비워둔다.
-      ...(_shouldJunkFlag(v.title,tier)?_flagPatch('무관','auto'):held?_flagPatch('보류','auto',{needs_review:true}):needsReview?{needs_review:true}:{}),
+      ...(_shouldJunkFlag(v.title,tier)?_flagPatch('무관','auto'):(held||parodySelf)?_flagPatch('보류','auto',{needs_review:true}):needsReview?{needs_review:true}:{}),
       ...((tier==='variety'||tier==='show')?{content_formats:[tier]}:{})
     });
     // 최종 방어선 — group_ko는 NOT NULL이라 한 행만 비어도 **배치 전체**가 롤백되고 그 채널이 영구 정지한다.
