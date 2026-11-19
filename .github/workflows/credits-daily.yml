@@ -1,0 +1,71 @@
+name: 작사작곡 크레딧 수집 (매일)
+
+# 곡 전체 크레딧(작사·작곡·편곡) 멜론 수집 — tools/melon_song_credits.mjs.
+#
+# 왜 생겼나(2026-11-18): 신보(디스코)는 disco-daily.yml이 매일 자동 수집하는데, **작사작곡 크레딧만**
+#   자동 파이프라인에서 빠져 있어 수동으로만 돌았다. 그래서 신보가 떠도 "최애 멤버가 이 앨범 작사작곡에
+#   참여했다"를 For You에서 시의성 있게 못 봤다(사용자 제보). 이 워크플로가 그 공백을 메운다.
+#
+# 동작: melon_song_credits.mjs는 **이미 cr(크레딧)이 채워진 곡은 건너뛰는 멱등** 스크립트다(캐시+이어서).
+#   매일 --limit 만큼만 돌리면 신보 등 아직 안 채운 곡만 처리된다. groups.json/artists.json의 tracks[].cr에
+#   저장 → disco-daily와 **똑같은 파생물(slim·tracks_index)**을 재생성해 한 커밋에 담는다.
+#
+# ⚠️ 멜론은 러너(해외 IP)에서 자주 막힌다(HTTP 200 + 차단 페이지라 상태코드로 안 잡힘 — 도구가 내용으로
+#   판정해 접는다). disco-daily의 멜론 수집도 같은 이유로 continue-on-error다. 막혀도 **실패가 아니다** —
+#   멱등이라 다음 회차가 이어서 채운다. 요약 로그에 "차단"이 크게 찍히고 며칠째 크레딧이 안 느는지만 본다.
+#
+# 시각: KST 01:11 — disco-daily의 00:11(자정·해외 발매분) 수집 **뒤에** 돌려 방금 들어온 신보 곡의 크레딧을 집는다.
+#   (분이 :11인 건 정시 schedule 드랍 회피 — disco-daily 주석 참고)
+# ⏳ 확인 필요(만든 사람 메모): ① build_slim_data가 tracks[].cr를 slim에 싣는지(앱 For You 반영 경로) — 안 실으면
+#   앱 쪽 크레딧 읽기 경로를 slim에 cr 추가하도록 보강 ② For You '내 최애 소식'에 '최애가 참여한 신보 크레딧' 항목 추가(별도).
+#   ③ melon_song_credits가 songId(melon_link_backfill이 채움) 있는 곡만 처리하니, 신보에 songId가 붙는 타이밍 확인.
+
+on:
+  schedule:
+    - cron: '11 16 * * *'   # KST 01:11 — disco-daily(KST 00:11) 신보 수집 뒤
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: credits-daily
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # 멜론 곡 크레딧 수집 — 이미 채운 곡은 건너뛴다(멱등). 러너에서 막히면 스킵(다음 회차가 이어받음).
+      - name: 작사작곡 크레딧 수집(신규 곡만)
+        continue-on-error: true
+        timeout-minutes: 15
+        run: node tools/melon_song_credits.mjs --limit 2500 --apply
+
+      # 수집 결과 + 파생물을 한 커밋에(disco-daily와 같은 규칙 — GITHUB_TOKEN push는 다른 워크플로를
+      # 트리거하지 않으므로 파생 재생성을 같은 잡에서 직접 한다).
+      - name: 파생물 재생성 + 크레딧 커밋
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          node tools/build_slim_data.mjs
+          # ⚠️ build_slim_data가 만드는 파생물을 전부 add해야 한다 — 빠뜨리면 unstaged로 남아 git pull --rebase가 거부된다
+          #    (2026-11-18 첫 실행: 303곡 수집·커밋했는데 albums_recent·disco/ 누락으로 push 실패). disco-daily와 같은 목록.
+          git add groups.json artists.json spotify_artist_map.json spotify_sync_state.json melon_artist_map.json groups.slim.json artists.slim.json tracks_index.json albums_recent.json disco/
+          if git diff --cached --quiet; then
+            echo "새 크레딧 없음 — 커밋할 것이 없습니다"
+            exit 0
+          fi
+          git commit -m "data(credits): 작사작곡 크레딧 수집 (auto)"
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push && exit 0
+            echo "push 경합 — 재시도 ($i/3)"; sleep $((i * 5))
+          done
+          exit 1

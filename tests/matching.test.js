@@ -22,6 +22,12 @@ test('신화 일상어 — 2002 신화', "[FULL] ⚽️2002 신화 어게인 제
 test('신화 곡 무대는 그대로', "신화 - TOUCH (Music Bank) | KBS WORLD TV", undefined, r => !!r && r.primaryGroup === '신화');
 test('신화 영문 표기는 그대로', "SHINHWA 신화 WDJ 직캠", undefined, r => !!r && r.primaryGroup === '신화');
 
+// 그룹명 '우아'(woo!ah!)가 일상어(우아하다·우아 벗고)로 쓰인 제목은 우아 그룹이 아니다(2026-11-19 사용자 제보 — 배종옥 기사 영상).
+// 진짜 우아 콘텐츠(WOOAH·우아!·멤버·음방)는 그대로. 전수 차분: 우아 1,718행 중 새 규칙이 잃는 건 오태그 1건뿐.
+test('우아 일상어 — 우아 벗고', "배종옥, 42년 만에 첫 공포 도전...우아 벗고 섬뜩한 집주인 변신", undefined, r => !r || r.primaryGroup !== '우아');
+test('우아 일상어 — 우아한', "우아한 자태로 등장한 배우들의 레드카펫 순간들", undefined, r => !r || r.primaryGroup !== '우아');
+test('우아 음방 제목은 그대로', "비가 오는 날도 선명한.. 우아의 퇴근 폼 폼 폼💔❗️#ShowMusicCore #1# WOOAH #우아 #POMPOMPOM #폼폼폼", undefined, r => !!r && r.primaryGroup === '우아');
+
 // 공식 영문명으로 올린 개인 커버는 다른 멤버에게 단체 영상처럼 노출하지 않는다.
 // 원본 NEXZ 업로드 3건 + 후이/HUI 동명이인 회귀 (JYP 공식 프로필 대조, 2026-10-27).
 test('NEXZ YU 개인 커버 → 유우', 'yours (데이먼스 이어) Covered by NEXZ YU | #YU', undefined,

@@ -8021,6 +8021,13 @@ function _atmStripCommonNounCtx(title){
       .replace(/신화(?=(?:를|가)\s*(?:쓰|썼|쓴|이룬|이뤄|이루|창조|만들|만든|만드))/g,'  ')
       .replace(/신화\s*창조/g,'    ').replace(/신화(?=적)/g,'  ');
   }
+  // 그룹명 '우아'(woo!ah!)가 일상어(우아하다·우아함)로 쓰인 제목(2026-11-19 사용자 제보 — "배종옥 …우아 벗고 섬뜩한 집주인"이 우아 그룹으로 배정).
+  // 신화와 같은 방식: 서술형 꼴('우아하-/우아한/우아함/우아해/우아히/우아스럽-'·'우아 벗고')일 때만 지운다.
+  // 영문 WOOAH/woo!ah!·'우아!'(느낌표 정식 표기)·멤버 이름·그룹 콘텐츠 낱말(컴백·직캠…)이 있으면 그대로 둔다. 새 꼴이 나오면 목록에만 추가.
+  if(t.indexOf('우아')>=0&&!/WOOAH|woo!?ah|우아!|#우아|우아\s*(?:컴백|직캠|무대|챌린지|티저|콘서트|팬미팅|교차)|나나|우연|소라|루시|민서/i.test(t)){
+    t=t.replace(/우아(?=하[다고게지며네긴요]?|한|함|해|했|히|스럽|스런)/g,'  ')
+      .replace(/우아\s*(?=벗)/g,'  ');
+  }
   // 글자 사이에 이모지·기호가 낀 '라↗️디오'는 '라디오'로 붙인다(2026-10-30 Codex 검수27차 — 떨어진 '디오'가 엑소 디오로 잡혔다)
   t=t.replace(/라[^가-힣A-Za-z0-9 ]{1,4}디오/g,'라디오');
   // 한글 그룹명 + 소유격 "의"(2026-10-27 사용자 "원곡 크레딧 문제 진짜 많다"). STATION Z 노래방 "템페스트의 'Really Really' | 원곡:위너"·
@@ -13596,6 +13603,7 @@ function _admDigestRender(m,day,t,core){
   document.getElementById('adm-digest-x')?.click();document.getElementById('adm-digest')?.remove();
   const box=document.createElement('div');
   box.id='adm-digest';box.setAttribute('role','status');
+  box.setAttribute('data-modal',''); // 우주 window 핸들러(pointerdown closePanels·click 라이캐스트)가 [data-modal]만 건너뛴다 — 없으면 ×를 눌렀을 때 보던 패널이 닫히고 뒤 행성 카드가 열렸다(2026-11-19 사용자 제보)
   box.style.cssText='position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(320px,calc(100vw - 32px));box-sizing:border-box;padding:14px 16px 12px;border-radius:16px;background:rgba(19,19,22,0.94);border:1px solid rgba(150,175,225,0.25);box-shadow:0 10px 30px rgba(0,0,0,0.45);color:#e8edf8;font-size:13px;cursor:pointer;';
   const dim=t=>` <span style="font-weight:400;color:rgba(200,212,240,0.6)">${t}</span>`;
   const row=(lbl,val,tip)=>`<div style="display:flex;justify-content:space-between;gap:12px;padding:3px 0"${tip?` title="${tip}"`:''}><span style="color:rgba(200,212,240,0.75)">${lbl}</span><b>${val}</b></div>`;
@@ -13691,6 +13699,7 @@ async function _admFavSummary(){
   const sec=(t,arr,kind)=>`<div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(150,175,225,0.15)"><div style="font-size:11px;color:rgba(150,175,225,0.75);margin-bottom:2px">${t} ${arr.length}</div>`
     +(arr.length?arr.map(x=>row(x,kind)).join(''):`<div style="font-size:12px;color:rgba(200,212,240,0.5);padding:4px 0">아직 없음</div>`)+'</div>';
   const box=document.createElement('div');box.id='adm-favsum';box.setAttribute('role','dialog');
+  box.setAttribute('data-modal',''); // Daily 팝업과 같은 이유 — × 클릭이 뒤 우주로 새지 않게
   box.style.cssText='position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(340px,calc(100vw - 32px));max-height:min(70vh,560px);overflow-y:auto;box-sizing:border-box;padding:14px 16px 12px;border-radius:16px;background:rgba(19,19,22,0.96);border:1px solid rgba(150,175,225,0.25);box-shadow:0 10px 30px rgba(0,0,0,0.45);color:#e8edf8;font-size:13px;';
   box.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:baseline"><b style="font-size:15px">즐겨찾기</b><span style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;color:rgba(150,175,225,0.75)">봇·테스트·관리자 제외</span><button type="button" id="adm-favsum-x" aria-label="닫기" style="background:none;border:0;color:rgba(200,212,240,0.6);font-size:17px;line-height:1;padding:2px 2px 2px 6px;cursor:pointer">×</button></span></div>`
     +`<div style="margin-top:6px;color:rgba(200,212,240,0.8)">즐겨찾기한 사람 <b style="color:#fff">${d.users??0}명</b> · 그룹 <b style="color:#fff">${G.length}</b> · 멤버 <b style="color:#fff">${M.length}</b></div>`

@@ -7,6 +7,9 @@ const fs = require('fs');
 const path = require('path');
 
 const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+// 영상 제목 끝의 유튜브 채널 꼬리 " | @핸들_날짜" 제거 — 네이버가 본문 영상 제목을 snippet으로 긁을 때 우리 날짜·조회수 줄과
+// 겹쳐 보이던 것(2026-11-18 사용자: '…@MCOUNTDOWN_2026.4.232026.04.23 · 356K'). @가 붙은 꼬리만 떼서 'A | B' 같은 정상 제목은 유지.
+const cleanVidTitle = t => String(t == null ? '' : t).replace(/\s*[|｜ㅣ]\s*@\S+\s*$/, '').trim() || String(t == null ? '' : t);
 const readJson = p => { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch (e) { return null; } };
 
 function packCredits(list,base) {
@@ -189,7 +192,7 @@ function groupExtra(ko, lang, EX, ST, opts) {
 function vidCards(list, en) {
   return list.filter(v => v && v.id).map(v => {
     const y = v.sub != null && v.sub !== '' ? v.sub : [v.published_at ? String(v.published_at).slice(0, 10).replace(/-/g, '.') : '', v.view_count ? fmtVC(v.view_count) : ''].filter(Boolean).join(' · ');
-    return `<a class="mf-card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">${esc(v.title)}</span>${y ? `<span class="mf-y">${esc(y)}</span>` : ''}</a>`;
+    return `<a class="mf-card" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener"><span class="mf-th"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></span><span class="mf-t">${esc(cleanVidTitle(v.title))}</span>${y ? `<span class="mf-y">${esc(y)}</span>` : ''}</a>`;
   }).join('');
 }
 
@@ -321,7 +324,11 @@ const TOUR_SUFFIX_RE = /([A-Za-z][A-Za-z0-9 '’:!?.&\-]{2,40}?)\s+(?:world\s+)?
 // 앨범 이름과 같은 곡이면 앨범 홍보 영상 제목에 곡명이 그대로 들어 있어 곡 영상으로 잡힌다. 분류가 live·mv인 영상(음방·직캠·안무·MV)은 항상 둔다 — 실제 무대가
 // other로 분류된 경우(SBS 인기가요·가요대전)가 있어 other를 통째로 빼지 않고, **other 중 제목·형식이 비공연인 것만** 뺀다.
 const NON_PERF_RE = /\b(trailer|teaser|reaction|mashup|guide video|lyrics? (video|visualizer)|visualizer|making( film)?|behind|unveil|spoiler|preview|highlight medley|track ?list|jacket|interview|unboxing|album (film|talk)|compilations?|intro)\b|트레일러|티저|리액션|메이킹|비하인드|가이드 영상|가사 영상|스포일러|프리뷰|하이라이트 메들리|인터뷰|언박싱|모아보기/i;
-function songStrongCategory(v) { return !!v && (v.category === 'live' || v.category === 'mv' || (v.content_formats || []).some(f => /^EV:/.test(f))); }
+// 음방 무대인데 분류가 'other'로 온 것(2026-11-19) — 제목 서명으로 무대를 알아본다: {방송사}{6자리 날짜}방송(SBS 260816 방송),
+// 또는 알려진 음방 프로그램명(Music Bank·인기가요 등). 예능 '…모아보기｜K-909｜JTBC 230617 방송 외'는 isNonPerformance가 먼저
+// 걸러 여기 통과를 못 하므로(아래 && !isNonPerformance) 무대로 오인되지 않는다. category만 믿으면 실제 무대가 곡 페이지에서 빠졌다(sbs1).
+const MUSIC_SHOW_STAGE = /\b(?:music\s*core|music\s*bank|inkigayo|m\s*countdown|show\s*champion|the\s*show|simply\s*k-?pop)\b|뮤직뱅크|쇼!?\s*음악중심|인기가요|엠\s*카운트다운|쇼\s*챔피언|더\s*쇼|[A-Z]{2,4}\s*\d{6}\s*방송/i;
+function songStrongCategory(v) { return !!v && (v.category === 'live' || v.category === 'mv' || (v.content_formats || []).some(f => /^EV:/.test(f)) || (MUSIC_SHOW_STAGE.test(String(v.title || '')) && !isNonPerformance(v))); }
 function isNonPerformance(v) {
   if (!v) return false;
   if (v.category === 'live' || v.category === 'mv') return false;

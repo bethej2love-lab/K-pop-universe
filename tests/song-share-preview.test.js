@@ -25,7 +25,7 @@ assert.deepEqual(JSON.parse(writes.get('/fixture/share_routes/Empty.json')),{g:[
 assert.equal(pages.length,8,'both languages and member pages are still generated');
 
 // Render the real template: preview changes without moving the existing MV hero.
-const ctx={SITE:'https://example.test',SONG_CSS_V:4,coverChipsHtml:()=>'',FANCAM_RE:/직캠|fancam|facecam/i,
+const ctx={SITE:'https://example.test',SONG_CSS_V:4,coverChipsHtml:()=>'',heroCapHtml:()=>'',sqOg:url=>{const m=/i\.ytimg\.com\/vi\/([^/?]+)\//.exec(url||'');return m?`https://wsrv.nl/?url=i.ytimg.com/vi/${m[1]}/maxresdefault.jpg&w=720&h=720&fit=cover&a=attention&output=jpg&q=80`:url;},FANCAM_RE:/직캠|fancam|facecam/i,
   ytThumb:id=>`https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
   wideThumb:id=>`https://i.ytimg.com/vi/${id}/mqdefault.jpg`,ogSizeFor:()=>({w:320,h:180}),
   FANCAM_HUB:new Map(),MEMBER_SONGS_BY_ARTIST:new Map(),memberFancamPagePath:(a,l)=>`${l}/${a.id}/fancams/`,
@@ -47,8 +47,8 @@ const vids=[{id:'mv',title:'Snowy Summer MV',category:'mv'},
 const s={b:'snowysummer',title:'Snowy Summer',vids};
 const html=ctx.songLikePageHtml({gko:'Alpha',info:{en:'Alpha'},s,lang:'ko',others:[]});
 assert.match(html,/og:title" content="Alpha - Snowy Summer 직캠·무대 모음/,'naming style: 아티스트 - 곡 (docs/NAMING.md, 11-17 곡 페이지도 같은 순서)');
-assert.match(html,/og:image" content="https:\/\/i.ytimg.com\/vi\/stage\/mqdefault.jpg/,'share preview is 16:9 (no 4:3 black bars)');
-assert.match(html,/class="hero" href="https:\/\/www.youtube.com\/watch\?v=mv"[^>]*><img src="https:\/\/i.ytimg.com\/vi\/mv\/mqdefault.jpg/,'hero stays the MV, 16:9 image (2026-11-18 네이버 검은 띠 — wideThumb)');
+assert.match(html,/og:image" content="https:\/\/wsrv.nl\/\?url=i.ytimg.com\/vi\/stage\/maxresdefault.jpg&w=720&h=720/,'share preview 1:1 정사각(wsrv, 네이버 검은띠 제거)');
+assert.match(html,/class="hero" href="https:\/\/www.youtube.com\/watch\?v=mv"[^>]*><img src="https:\/\/i.ytimg.com\/vi\/mv\/mqdefault.jpg/,'hero 이미지도 16:9 wideThumb(mqdefault) — 4:3 검은띠 제거 방향 통일');
 assert.match(html,/FORWARD_LIST_HASH/);
 assert.equal(ctx.songShareVideo([{id:'cam',title:'Snowy Summer fancam'}]).id,'cam');
 assert.equal(ctx.songShareVideo([vids[0]]).id,'mv','no stage: stay within the selected song');
@@ -59,7 +59,7 @@ assert.match(memberHtml,/og:title" content="Alpha 멤버\(Alpha Member\) - Snowy
 const memberEn=ctx.songLikePageHtml({gko:'Alpha',info:{en:'Alpha'},s,lang:'en',others:[],
   member:{a:{id:'member',name:{ko:'멤버'}},nm:'멤버',nmEn:'Member',vids:[{id:'cam',title:'Snowy Summer fancam'}]}});
 assert.match(memberEn,/<title>Alpha Member\(Alpha 멤버\) - Snowy Summer Fancams/,'English page title also keeps the Korean name up front');
-assert.match(memberHtml,/og:image" content="https:\/\/i.ytimg.com\/vi\/cam\//);
+assert.match(memberHtml,/og:image" content="https:\/\/wsrv.nl\/\?url=i.ytimg.com\/vi\/cam\/maxresdefault.jpg&w=720&h=720/);
 
 console.log('✅ Published song routes, song/member OG and unchanged hero');
 

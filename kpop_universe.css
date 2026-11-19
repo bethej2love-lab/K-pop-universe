@@ -836,8 +836,9 @@
   /* 터치 기기는 유튜브 버튼이 직접 받는다. iframe 요소의 전체화면 API가 없는 환경에서
      투명 캡이 터치를 가로채면 플레이어의 네이티브 전체화면까지 막힌다(세로/가로 공통). */
   @media(pointer:coarse){#yt-lb-fs-cap{display:none;}}
-  /* 가로 영상에서 fs-cap이 유튜브 플레이어 전체화면 버튼 위를 덮어 클릭이 막혔다 — 쇼츠는 플레이어 UI가 달라 해당 없음 */
-  #yt-lb-video-box:not(.is-shorts) #yt-lb-fs-cap{pointer-events:none;cursor:default;}
+  /* ⚠️ fs-cap을 pointer-events:none으로 끄면 데스크톱 전체화면 우회(iframe이 requestFullscreen을 못 쓰는 환경에서
+     상위 페이지가 대신 호출)가 깨진다 — tests/fixtures/lb_fullscreen_touch.cjs '데스크톱 기존 전체화면 우회 유지'가 막는다.
+     가로 영상에서 유튜브 네이티브 전체화면 버튼이 안 눌리는 문제는 fs-cap을 죽이지 말고 별도로(실기기 검증 필요). */
   /* 모바일 첫 진입 시 1회: 상하로 스와이프해서 영상 넘길 수 있다는 걸 살짝 들썩임으로 암시 */
   @keyframes lb-swipe-hint{0%,100%{transform:translateY(0);}25%{transform:translateY(-16px);}60%{transform:translateY(0);}80%{transform:translateY(10px);}}
   #yt-lb-wrap.swipe-hint{animation:lb-swipe-hint 1s ease-in-out 2;}
@@ -1037,7 +1038,12 @@
     #yt-lightbox.lb-browse{padding:44px 28px 24px;box-sizing:border-box;align-items:safe center;overflow-y:auto;overscroll-behavior:contain;}
     #yt-lightbox.lb-browse #yt-lb-wrap{width:100%;max-width:calc((100vh - 330px) * 16 / 9 + 346px);display:flex;align-items:flex-start;gap:26px;}
     #yt-lightbox.lb-browse #yt-lb-main{flex:1;min-width:0;}
-    #yt-lightbox.lb-browse #yt-lb-uplist{width:320px;flex-shrink:0;max-height:min(80vh,720px);overflow-y:auto;padding-left:2px;overscroll-behavior:contain;will-change:transform;}
+    #yt-lightbox.lb-browse #yt-lb-uplist{width:340px;flex-shrink:0;max-height:min(80vh,720px);overflow-y:auto;padding-left:2px;overscroll-behavior:contain;will-change:transform;}
+    /* 이어서 보기 썸네일 더 크게 — 제목 영역을 줄이더라도(2026-11-19 사용자 "여전히 너무 작음, 더더 크게").
+       래퍼(.lb-uplist-tw)도 같이 키워야 한다 — 썸네일만 키우면 78px 래퍼를 넘쳐 제목을 덮는다. */
+    #yt-lightbox.lb-browse :is(.lb-uplist-thumb,.lb-uplist-tw){width:132px;height:74px;border-radius:8px;}
+    #yt-lightbox.lb-browse :is(.lb-uplist-thumb.is-shorts,.lb-uplist-tw.is-shorts){width:60px;height:107px;}
+    #yt-lightbox.lb-browse .lb-uplist-title{font-size:12.5px;line-height:1.35;}
     #yt-lightbox.lb-browse #yt-lb-uplist-scroll{padding-bottom:8px;}
     /* Up Next 패널 토글 버튼 — 데스크톱 비-narrow 모드 전용 */
     #yt-lightbox.lb-browse:not(.lb-narrow) #yt-lb-uplist-tog{display:flex;align-items:center;justify-content:center;width:20px;height:28px;border-radius:6px;border:none;background:rgba(255,255,255,0.05);color:rgba(180,200,240,0.5);font-size:11px;cursor:var(--kpu-cursor-pointer,pointer);flex-shrink:0;padding:0;transition:background .15s,color .15s;margin-right:4px;}
@@ -1092,9 +1098,24 @@
     /* ── 데스크톱 쇼츠: 세로 영상 + 우측 정보 패널 (YouTube Shorts 데스크톱 레이아웃 참고) ── */
     /* wrap을 컨텐츠 너비에 맞게(고정 1080px 아님), main을 auto-shrink, video를 높이 기준으로 키움 */
     #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-wrap{width:auto;max-width:92vw;}
-    #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-main{flex:0 0 auto;width:calc(min(82vh,680px) * 9/16);}/* 제목 길이 무관 너비 고정 */
+    #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-main{flex:0 0 auto;width:calc(min(86vh,760px) * 9/16);}/* 제목 길이 무관 너비 고정 */
     #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-video-box{
-      height:min(82vh,680px);width:auto;aspect-ratio:9/16;margin:0;}
+      height:min(86vh,760px);width:auto;aspect-ratio:9/16;margin:0;}
+    /* 넓은 화면: 정보(제목·이모지·출연 아티스트·곡)는 영상 '아래'가 아니라 '옆' 칼럼 — 유튜브 쇼츠 웹 참고(2026-11-19 사용자
+       "영상은 더 크게, 밑 정보는 옆 영역으로, 여백 없이"). 영상 왼쪽 큰 빈 공간이 정보 칼럼으로 채워진다. */
+    /* 카드가 열려 있으면 폭이 모자라 영상이 왼쪽으로 잘린다(1680 실측) — 카드 없을 땐 1360부터, 카드 열리면 1780부터만 옆 칼럼 */
+    @media(min-width:1360px){
+      body:not(:has(#side-panel.open)):not(:has(#member-panel.open)) #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-main{display:grid;width:auto;grid-template-columns:auto minmax(300px,380px);column-gap:22px;align-content:start;}
+      body:not(:has(#side-panel.open)):not(:has(#member-panel.open)) #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-main>#yt-lb-video-box{grid-column:1;grid-row:1/span 14;}
+      body:not(:has(#side-panel.open)):not(:has(#member-panel.open)) #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-main>*:not(#yt-lb-video-box){grid-column:2;min-width:0;width:auto;}
+      body:not(:has(#side-panel.open)):not(:has(#member-panel.open)) #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-toolbar{justify-content:flex-start;}
+    }
+    @media(min-width:1780px){
+      #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-main{display:grid;width:auto;grid-template-columns:auto minmax(300px,380px);column-gap:22px;align-content:start;}
+      #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-main>#yt-lb-video-box{grid-column:1;grid-row:1/span 14;}
+      #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-main>*:not(#yt-lb-video-box){grid-column:2;min-width:0;width:auto;}
+      #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-toolbar{justify-content:flex-start;}
+    }
     /* .is-shorts 기본 규칙(width:min(54vw,420px);margin:0 auto) 덮어씀 — 높이 기준이 우선 */
     #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-video-box.is-shorts{
       width:auto;margin:0;}
@@ -1413,6 +1434,16 @@
   }
   #side-panel>#gc{padding-top:44px;}
   #side-panel>#tt{padding-top:40px;}
+  /* 웹 카드 헤더 고정(2026-11-19 사용자 합의 — X·유튜브 채널 헤더 관례): 컬러 라인 + 이름 줄은 스크롤해도 위에 남는다.
+     이름 줄(#gc-name-row)은 부모(#gc-header-text)가 작아 sticky가 안 먹어 #gc-header째 고정하고,
+     스크롤이 내려가면(.hdr-stuck, app.js) 사진·SNS 줄을 숨겨 컴팩트하게. 폰(바텀시트)은 그대로. */
+  #side-panel>#gc{overflow:visible!important;} /* 기본 #gc의 overflow:hidden이 sticky를 죽인다 — 패널 안에선 각이 없어 불필요 */
+  #side-panel>#gc>#gc-bar{position:sticky;top:0;z-index:7;}
+  #side-panel #gc-header{position:sticky;top:3px;z-index:6;}
+  #side-panel.hdr-stuck #gc-header{background:rgba(13,13,16,0.94);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    margin:0 calc(-1*var(--card-pad));padding:6px var(--card-pad);}
+  #side-panel.hdr-stuck #gc-pic-wrap{display:none!important;}
+  #side-panel.hdr-stuck #gc-en-row{display:none;}
   @media(max-width:768px),(pointer:coarse) and (max-height:500px){#side-panel{display:none;}}
   /* 라이트박스 칩 클릭 시 이미 열린 카드 번쩍 */
   @keyframes panel-flash{0%,100%{box-shadow:-6px 0 32px rgba(0,0,0,0.45);}50%{box-shadow:-6px 0 0 0 rgba(200,218,255,0.35),0 0 28px 4px rgba(200,218,255,0.18);}}
@@ -1595,7 +1626,7 @@
   /* 카드 안 정사각 썸네일(디스코그래피·인스타·컬렉션) 공통 크기(2026-10-19, 사용자: "나침반 패널 앨범 커버 크기로 통일") —
      탐험 패널 이번 주 발매 커버 실측과 같게: 웹 111px · 모바일 98px(예전 80~84px). 크기를 바꿀 땐 여기 한 곳만. */
   :root{--card-thumb:110px;}
-  @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){:root{--card-thumb:111px;}}
+  @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){:root{--card-thumb:122px;}} /* 웹 앨범·컬렉션 커버 살짝 키움 111→122 (2026-11-18 사용자) */
   /* 카드 "Instagram" 줄 — 최근 게시물 썸네일 가로 스크롤 */
   .ig-section{margin-top:14px;}
   .ig-section[hidden]{display:none;}
@@ -2839,6 +2870,9 @@
     background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;
   }
   .sr-vt img{width:100%;height:100%;object-fit:cover;display:block;}
+  /* 쇼츠는 세로 틀 — 가로 틀에 넣으면 좌우 검은 띠만 보였다(2026-11-19). _mountShortThumb가 세로 원본을 그린다 */
+  .sr-vt.is-short{width:34px;height:60px;}
+  .sr-vt.is-short img.is-fallback{object-fit:cover;}
   /* 썸네일이 없는 행(구 데이터)엔 재생 아이콘만 남긴다 — 깨진 이미지가 뜨는 것보다 낫다 */
   .sr-vt .sr-vp{position:absolute;font-size:13px;color:rgba(255,255,255,0.5);text-shadow:0 1px 4px rgba(0,0,0,0.6);}
   .sr-vt img+.sr-vp{display:none;}
@@ -2853,6 +2887,7 @@
     padding:5px 13px;font-size:12px;color:#dce8f8;font-weight:500;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;
     border-bottom:0.5px solid rgba(255,255,255,0.07);letter-spacing:.02em;
     display:flex;justify-content:space-between;align-items:center;gap:8px;
+    min-height:36px;box-sizing:border-box; /* 그룹/멤버(아바타 26px) 높이로 곡·모아보기 등 항목 높이 통일 (2026-11-18 사용자) */
     transition:background .1s;
   }
   .sr-item:last-child{border-bottom:none;}
@@ -2934,6 +2969,11 @@
     body.is-admin:has(#settings-panel.open) #vm-overlay,
     body.is-admin:has(#settings-panel.open) #gp-overlay{padding-left:392px;} /* 설정 폭 380 + 여백 12 */
     #search-wrap{top:58px;bottom:auto;left:auto;right:16px;transform:none;width:320px;}
+    /* 웹 검색 첫 화면: '여기서 시작' 한 줄 5개(두 줄이면 Chemistry가 밀려 잘림) + 결과 패널 더 길게(2026-11-18 사용자) */
+    #search-results{max-height:74vh;}
+    .sr-orbs{grid-template-columns:repeat(5,1fr);gap:10px 7px;padding:9px 11px 8px;}
+    .sr-orb-disc{width:46px;height:46px;}
+    .sr-orb-name{font-size:10px;}
     /* ── 검색 '더보기' → 전체화면 결과(2026-09-23) ──────────────────────────────
        #msheet는 원래 모바일 전용 풀스크린 검색 시트였는데(하단 탭바 위에서 멈추는 구조), 데스크톱
        작은 드롭다운(#search-results)에서 '더보기'를 누르면 같은 시트를 그대로 재사용한다(JS는
@@ -4418,7 +4458,8 @@
   .feed-strip-date{font-size:9px;color:rgba(180,205,240,0.72);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:78px;margin-top:-5px;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){
     #feed-anniv .feed-strip-item,#feed-foryou-anniv .feed-strip-item{width:calc(25% - 2.5px);}
-    #feed-anniv .feed-strip-thumb-wrap,#feed-foryou-anniv .feed-strip-thumb-wrap{width:100%;height:auto;aspect-ratio:1;box-sizing:border-box;}
+    /* 웹: 원을 아이템 폭의 80%로 줄이고 가운데 정렬 → 양옆 여백 (2026-11-18 사용자 "웹 애니버서리 원 너무 커") */
+    #feed-anniv .feed-strip-thumb-wrap,#feed-foryou-anniv .feed-strip-thumb-wrap{width:80%;height:auto;aspect-ratio:1;margin:0 auto;box-sizing:border-box;}
     #feed-anniv .feed-strip-name,#feed-foryou-anniv .feed-strip-name{font-size:12px;max-width:100%;}
     #feed-anniv .feed-strip-sub,#feed-foryou-anniv .feed-strip-sub{font-size:11px;max-width:100%;}
     #feed-anniv .feed-strip-date,#feed-foryou-anniv .feed-strip-date{font-size:10px;max-width:100%;}
@@ -4492,6 +4533,7 @@
   #feed-chart>.feed-card .feed-card-sub,#feed-jacon>.feed-card .feed-card-sub,#feed-events>.feed-card .feed-card-sub,#feed-favchart>.feed-card .feed-card-sub,#feed-favnew>.feed-card .feed-card-sub{font-size:10.5px;}
   /* 오리지널 콘텐츠 캡션: 멤버 먼저, 소속 그룹은 작고 흐리게(2026-09-28) */
   .feed-sub-grp{font-size:.88em;opacity:.55;margin-left:2px;}
+  .feed-sub-with{font-size:.88em;opacity:.5;margin-left:4px;}
   /* 오늘의 케이팝 — 뉴스 리스트형(세로 스택). 가로 카드 선반이 아니라 한 줄 뉴스 행으로 타입을 먼저
      읽고 내용을 훑는 레이아웃. 배지(타입) + 제목·서브 + 우측 작은 썸네일(선택). */
   .feed-news-list{display:flex;flex-direction:column;}
@@ -4544,6 +4586,8 @@
   /* 투데이스 케이팝 1면(2026-09-28) — 헤드라인 1 + 요약 4 + 더보기 */
   /* 배지 썸네일 오버레이 — hero .fnh-media, row .fnr-media, shorts .feed-card-thumb-wrap 공용 */
   .fnh-media .feed-news-badge,.fnr-media .feed-news-badge,.feed-card-thumb-wrap .feed-news-badge{position:absolute;top:8px;left:8px;z-index:2;min-width:0;}
+  /* 작은 오른쪽 썸네일(시상식·1위·신보 줄)도 같은 자리 — 칸이 작아 뱃지는 한 단계 작게(2026-11-19 표기 통일) */
+  .feed-news-tw .feed-news-badge{position:absolute;top:4px;left:4px;z-index:2;min-width:0;font-size:9px;padding:2px 6px;background:rgba(14,14,17,0.8);}
   /* 썸네일 위 뱃지는 배경을 어둡게(2026-10-15, 사용자: 조회수 뱃지 글자가 안 보임) — 색 배경 0.13은 사진이 그대로 비쳐 글자가 묻혔다.
      종류 구분은 글자색으로 그대로 둔다. 목록 줄 안 뱃지(.fnr-row 등)는 바탕이 어두워 원래 값 유지. */
   .fnh-media .feed-news-badge,.fnr-media .feed-news-badge,.feed-card-thumb-wrap .feed-news-badge{background:rgba(14,14,17,0.8);}
@@ -4611,7 +4655,8 @@
   .feed-album-rail>.feed-card .feed-card-sub,.feed-album-rail>.feed-card .feed-card-meta{font-size:10px;}
   /* 공연 포스터는 세로 틀에 전체를 담는다. 양쪽 탭에서 같은 규칙을 쓴다. */
   #feed-concerts>.feed-card .feed-card-thumb-wrap,#feed-favconcert>.feed-card .feed-card-thumb-wrap,.card-concert-rail>.feed-card .feed-card-thumb-wrap{aspect-ratio:2/3;}
-  #feed-concerts>.feed-card .feed-card-thumb,#feed-favconcert>.feed-card .feed-card-thumb,.card-concert-rail>.feed-card .feed-card-thumb{object-fit:contain;}
+  /* contain은 포스터 비율이 2:3과 다르면 위아래 검은 여백 — 가장자리 크롭(cover)이 낫다(2026-11-19 사용자) */
+  #feed-concerts>.feed-card .feed-card-thumb,#feed-favconcert>.feed-card .feed-card-thumb,.card-concert-rail>.feed-card .feed-card-thumb{object-fit:cover;}
   /* 그룹/멤버 카드 공연 포스터 레일(2026-11-10) — 탐험 공연 선반과 같은 카드, 아래 '전체 공연' 줄과 간격 */
   .card-concert-rail{margin-bottom:8px;}
   @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){
@@ -4635,8 +4680,12 @@
   .feed-card-meta{margin-top:2px;font-size:10.5px;font-weight:500;line-height:1.35;color:rgba(150,175,235,0.66);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   /* 오늘·어제 발매만 강조 — 선반의 목적이 "따끈한 것 먼저"라서. 세 번째 색은 만들지 않는다. */
   .feed-card-meta.is-fresh{color:rgba(150,180,255,0.8);font-weight:500;} /* 2026-10-15: 0.95·700이 아티스트 이름보다 먼저 눈에 띄었다(사용자) — 색만 남기고 굵기는 뺀다 */
+  /* 최애가 이 신보에 작사/작곡 참여(#14) — 캡션 아래 한 줄, 하트 핑크 계열로 은은하게 */
+  .feed-card-credit{margin-top:2px;font-size:10.5px;font-weight:500;line-height:1.3;color:rgba(255,150,190,0.82);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   /* NEW 칩(2026-10-12) — 캡션 메타 줄 맨 앞. 강조 메타(is-fresh)와 같은 파랑 계열로, 색 종류를 늘리지 않는다. */
   .feed-card-new{display:inline-block;margin-right:5px;padding:0 3px;border-radius:3px;font-size:8px;font-weight:700;letter-spacing:.06em;line-height:12px;vertical-align:1px;color:rgba(160,188,255,0.85);background:none;box-shadow:inset 0 0 0 1px rgba(150,180,255,0.45);} /* 꽉 찬 칩 → 테두리만(2026-10-15) — 이번 주 선반은 거의 전부 NEW라 칩이 줄줄이 가장 튀었다 */
+  /* For You 최애 새 영상 전용 강조 NEW(2026-11-18 사용자 "잘 안 띈다") — 앨범 선반과 달리 드물게 떠서 채운 핑크 배지로 또렷하게 */
+  .feed-new-hot{display:inline-block;margin-right:5px;padding:1px 5px;border-radius:4px;font-size:9px;font-weight:800;letter-spacing:.04em;line-height:13px;vertical-align:1px;color:#fff;background:#ff4d7d;box-shadow:0 0 8px rgba(255,77,125,0.5);}
   .feed-card-thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .3s ease;}
   /* 재생시간 배지(2026-09-16) — 여기는 썸네일 전용 래퍼(.feed-card-thumb-wrap)가 있어서 그냥 밑변에
      붙이면 된다. 톤은 카드 그리드의 .gc-ch-dur와 동일하게 유지할 것(같은 정보, 같은 생김새). */
@@ -4679,7 +4728,9 @@
     #feed-anniv .feed-strip-sub,#feed-foryou-anniv .feed-strip-sub{font-size:11px;max-width:100%;}
     #feed-anniv .feed-strip-date,#feed-foryou-anniv .feed-strip-date{font-size:10px;max-width:100%;}
   }
-  .feed-recent-title{font-size:10px;color:rgba(200,215,245,0.75);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  /* 이어서 보기 제목 10px는 다른 선반(11.5px)보다 작았다 — 표기 통일(2026-11-19), 둘째 줄(그룹·날짜)도 다른 카드와 같게 */
+  .feed-recent-title{font-size:11.5px;color:rgba(200,215,245,0.75);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
+  .feed-recent-sub{font-size:10.5px;color:rgba(150,175,215,0.66);line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   .feed-card-title{font-size:13px;font-weight:600;color:rgba(220,232,255,0.92);line-height:1.4;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
   /* ⚠️ 한글은 같은 px·같은 알파에서 라틴보다 훨씬 빈약해 보인다(획이 많아 작은 크기에서 뭉갠다) —
      "작고 볼드 아닌 한글이 보잘것없다"는 제보(2026-09-21). 크기를 키우는 대신 **웨이트 400→500**과
@@ -5796,6 +5847,9 @@
   .feed-album-rail>.feed-card .feed-card-sub,.feed-album-rail>.feed-card .feed-card-meta{font-size:12px;}
   #feed-chart>.feed-card .feed-card-title,#feed-jacon>.feed-card .feed-card-title,#feed-events>.feed-card .feed-card-title,#feed-favchart>.feed-card .feed-card-title,#feed-favnew>.feed-card .feed-card-title{font-size:13.5px;}
   #feed-chart>.feed-card .feed-card-sub,#feed-jacon>.feed-card .feed-card-sub,#feed-events>.feed-card .feed-card-sub,#feed-favchart>.feed-card .feed-card-sub,#feed-favnew>.feed-card .feed-card-sub{font-size:12.5px;}
+  /* 이어서 보기도 같은 레일 크기(11-18 1차에서 빠져 10px로 남아 있었다 — 웹 280px 썸네일에 10px 제목) */
+  .feed-recent-title{font-size:13.5px;}
+  .feed-recent-sub{font-size:12.5px;}
   .feed-card-new{font-size:10px;line-height:15px;padding:0 4px;}
   .group-label{font-size:13px;}
   /* 3차: 카드(#side-panel) 안 정보 줄·칩·디스코·영상 목록 */
@@ -5891,6 +5945,13 @@
   #gc-track-videos-overlay.stage-win #gc-track-videos-sheet{padding-top:10px;}
   /* 첫 줄(64~108)은 아이콘만, 제목은 둘째 줄 — 탐험 For You/발견 탭·카드 이름과 같은 높이(11-18 사용자) */
   #gc-track-videos-overlay.stage-win #gc-track-videos-header{margin-top:46px;}
+  /* 앨범 창도 같은 칸으로(2026-11-19 사용자 "불필요한 여백 없게, 자연스럽게") — 무대 배치(위 5382)는 돼 있었지만
+     떠 있는 창 흔적(컨테이너 패딩 44/28/20·둥근 모서리·그림자)이 남아 세 칸 정리에서 빠져 있었다. lb-dock(재생 옆 도킹)은 별도 배치라 제외. */
+  #gc-discog-detail:not(.lb-dock){padding:0!important;}
+  #gc-discog-detail:not(.lb-dock) #gc-discog-detail-sheet,#gc-discog-detail:not(.lb-dock) #gc-discog-video-panel{
+    border-radius:0!important;box-shadow:none!important;}
+  #gc-discog-detail:not(.lb-dock) #gc-discog-detail-sheet{padding-top:44px;border-left:0.5px solid rgba(255,255,255,0.08);}
+  #gc-discog-detail:not(.lb-dock) #gc-discog-video-panel{border-right:0.5px solid rgba(255,255,255,0.08);}
 }
 
 /* ── 우주 미니맵·우주 모드(2026-11-18) — app.js _MM ───────────────────────────────── */
@@ -6077,4 +6138,28 @@
   #gc-grid .val,#tt-info-grid .val,#gc-grid .val .tag-chip,#tt-info-grid .val .tag-chip{font-size:13px!important;}
   #side-panel #gc-grid,#side-panel #gc-discog-row,#side-panel #gc-ig-section,#side-panel #gc-timeline-section,
   #side-panel #gc-concert-row,#side-panel #gc-collection-row,#side-panel #gc-ch-vid{margin-top:13px!important;padding-top:11px!important;}
+}
+
+/* ── 아이폰 웹앱 상단 흐림 덮개 회피(2026-11-19 사용자 "영상 볼 때 맨 위 출연 아티스트 글자 윗부분이 살짝 흐려진다") ──
+   iOS 홈화면 앱은 상태바 아래 ~10px를 스스로 흐리게 덮는다(#msheet·#mob-top-bar가 이미 같은 보정).
+   재생 화면 상단 줄(출연 아티스트 칩·닫기·메뉴)도 같은 폭(+10px)만큼 내리고, 영상 시작점(wrap 패딩)도 따라 내린다.
+   가로(상태바 숨김)는 제외. 파일 끝이라 위 64px 규칙을 확실히 덮는다. */
+@media (display-mode: standalone) and (max-width:768px) and (orientation:portrait){
+  #yt-lightbox.lb-browse #yt-lb-member-info,
+  #yt-lightbox.lb-browse #yt-lb-close,
+  #yt-lightbox.lb-browse .lb-menu-wrap{top:calc(24px + env(safe-area-inset-top,0px));}
+  #yt-lightbox.lb-browse #yt-lb-wrap,
+  #yt-lightbox.lb-browse.lb-has-chips #yt-lb-wrap{padding-top:calc(74px + env(safe-area-inset-top,0px));}
+  /* 쇼츠(스와이프) 모드 상단 출연자 줄도 같은 폭(14→24px) */
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-member-info{top:calc(24px + env(safe-area-inset-top,0px));}
+}
+
+/* ── 웹 재생 화면 닫기 버튼(2026-11-19 사용자 "탐험에서 영상 보다가 영상만 쏙 끄고 싶을 때 누를 버튼이 없다") ──
+   폰은 좌상단 원형 ∨가 있는데 웹(lb-browse)은 wrap 위 -30px 자리라 무대 배치에서 잘려 안 보였다.
+   폰과 같은 원형 버튼을 재생 영역 왼쪽 위에 — 영상만 닫히고 탐험·카드는 그대로(기존 close 동작). */
+@media(min-width:1024px){
+  #yt-lightbox.lb-browse #yt-lb-wrap{position:relative;}
+  #yt-lightbox.lb-browse #yt-lb-close{position:absolute;top:8px;left:8px;right:auto;bottom:auto;z-index:3;
+    width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;opacity:.85;}
+  #yt-lightbox.lb-browse #yt-lb-close:hover{opacity:1;background:rgba(40,44,60,0.7);}
 }

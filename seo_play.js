@@ -7,7 +7,6 @@
   'use strict';
   if(window.__kpuPlay)return;window.__kpuPlay=1;
   var EN=/^\/en\//.test(location.pathname)||document.documentElement.lang==='en';
-  var VW_MIN=10; // 다녀간 사람: 이번 주가 이보다 적으면 '지금까지'로(app.js _VISIT_WEEK_MIN과 같은 값)
   var T=EN?{close:'Close',next:'Up next',app:'See more in the app',nxK:'Explore',nxS:'Profile · fancams · stages'}:{close:'닫기',next:'이어서 보기',app:'앱에서 더 보기',nxK:'더 둘러보기',nxS:'프로필 · 직캠 · 무대'};
   var RE=/(?:youtube\.com\/(?:watch\?(?:[^#]*&)?v=|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/;
   function vidOf(a){var m=RE.exec(a&&a.getAttribute('href')||'');return m?m[1]:null;}
@@ -171,9 +170,9 @@
     var H=EN?{add:'Add to favorites',on:'In your favorites',t:'New fancams & stages of '+name+' will gather in your universe',go:'Open my universe',had:name+' is already in your universe'}
       :{add:'즐겨찾기',on:'즐겨찾기함',t:name+' 새 직캠·무대가 올라오면 내 우주에 모아둘게요',go:'내 우주 보기',had:name+' — 이미 내 우주에 있어요'};
     var st=document.createElement('style');st.textContent=
-      '.kpu-heart{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;width:36px;height:36px;margin:-4px 0 0 10px;padding:0;border-radius:50%;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:rgba(230,235,250,.82);cursor:pointer;transition:background .15s,border-color .15s,transform .15s}'
-      +'.kpu-heart:hover{background:rgba(255,255,255,.09)}.kpu-heart svg{width:18px;height:18px}'
-      +'.kpu-heart.on{color:#ff5c8a;border-color:rgba(255,92,138,.45);background:rgba(255,92,138,.1)}.kpu-heart.on path{fill:currentColor}'
+      '.kpu-heart{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;width:32px;height:32px;margin:-4px 0 0 8px;padding:0;border-radius:50%;border:none;background:none;color:rgba(230,235,250,.82);cursor:pointer;transition:background .15s,transform .15s}'
+      +'.kpu-heart:hover{background:rgba(255,255,255,.08)}.kpu-heart svg{width:20px;height:20px}'
+      +'.kpu-heart.on{color:#ff5c8a;background:none}.kpu-heart.on path{fill:currentColor}'
       +'.kpu-heart.pop{animation:kpu-hp .42s cubic-bezier(.2,1.6,.4,1)}@keyframes kpu-hp{0%{transform:scale(.7)}60%{transform:scale(1.18)}100%{transform:scale(1)}}'
       +'.kpu-ft{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));z-index:2147482000;transform:translate(-50%,12px);opacity:0;transition:opacity .22s,transform .22s;width:min(420px,calc(100vw - 24px));box-sizing:border-box;padding:12px 14px;border-radius:16px;background:rgba(19,19,22,.94);border:1px solid rgba(255,255,255,.1);box-shadow:0 10px 32px rgba(0,0,0,.45);color:#e8ecf6;font-size:13.5px;line-height:1.45;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}'
       +'.kpu-ft.in{opacity:1;transform:translate(-50%,0)}.kpu-ft b{color:#ff5c8a;font-weight:600;margin-right:6px}'
@@ -319,8 +318,8 @@
         var sum=function(o){return keys.reduce(function(a,k){return a+((o&&o[k])||0);},0);};
         w=sum(d.mw);t=sum(d.mt);
       }else{w=d.vw&&d.vw[g];t=d.vt&&d.vt[g];}
-      // 한 줄에 하나만(2026-11-18 사용자) — 이번 주가 VW_MIN명↑이면 이번 주, 아니면 지금까지(app.js _visitLine과 같은 규칙)
-      if(w&&(w>=VW_MIN||!t))met.push({t:'vis',s:EN?(f(w)+' visited this week'):('이번 주 '+f(w)+'명이 다녀갔어요')});
+      // 이번 주·지금까지 중 하나만(2026-11-19 사용자 "둘 다 뜰 필요 없이 하나만", app.js _visitLine과 같은 규칙) — 주간 숫자가 있으면 주간, 없으면 누적
+      if(w)met.push({t:'vis',s:EN?(f(w)+' visited this week'):('이번 주 '+f(w)+'명이 다녀갔어요')});
       else if(t)met.push({t:'vis',s:EN?(f(t)+' visited so far'):('지금까지 '+f(t)+'명이 다녀갔어요')});
       if(!met.length)return;
       items=met.concat(info);render();
@@ -337,21 +336,18 @@
   // "정적 페이지 배경에 진짜 은은하게 우주처럼"). 줄: 사이트 전체가 살아 있다는 신호를 상태 줄과 같은 방식(맥박 점·4초 교체)으로 —
   // 이번 주 다녀간 사람·지금까지·이번 주 새로 모은 영상(get_live_stats.site, 봇 제외)·최근 업데이트 소식 제목(한국어만). 오른쪽 '우주 열기'.
   // 별가루: 움직임 없는 아주 흐린 점 무늬를 맨 위 360px에만, 아래로 갈수록 사라지게(글·영상 격자 뒤엔 없음 — 읽기 방해 금지).
+  // 맨 위 한 줄(2026-11-18 사용자 재지정): 통계·소식 교체 멘트·'우주 열기' 버튼 다 빼고, 고정 멘트
+  // "Find your place in K-pop."(유니버스 인트로 문구)만. 줄 전체가 유니버스로 가는 링크. 높이 2배(68px)·폰트 +1pt. 별가루는 유지.
   function topbar(){
     if(document.querySelector('.kpu-topbar'))return;
     var wrap=document.querySelector('.wrap');if(!wrap)return;
+    var cta=document.querySelector('a.cta');var href=cta?cta.href:'https://kpop-universe.kr/';
     var st=document.createElement('style');
-    st.textContent='.kpu-topbar{position:relative;z-index:6;display:flex;align-items:center;justify-content:center;gap:14px;height:34px;padding:0 16px;'
-      +'background:rgba(16,16,24,.92);border-bottom:.5px solid rgba(150,175,255,.14);font-size:12.5px;color:#ccd8ee}'
-      +'.kpu-topbar .tb-line{position:relative;overflow:hidden;height:18px;flex:0 1 auto;min-width:0;max-width:min(720px,70vw)}'
-      +'.kpu-topbar .in{display:flex;align-items:center;gap:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;height:18px}'
-      +'.kpu-topbar .in.a-in{animation:kpu-si .42s cubic-bezier(.22,.8,.36,1) forwards}.kpu-topbar .in.a-out{animation:kpu-so .38s cubic-bezier(.64,0,.78,.2) forwards}'
-      +'@keyframes kpu-si{from{transform:translateY(110%);opacity:0}to{transform:translateY(0);opacity:1}}@keyframes kpu-so{from{transform:translateY(0);opacity:1}to{transform:translateY(-110%);opacity:0}}'
+    st.textContent='.kpu-topbar{position:relative;z-index:6;display:flex;align-items:center;justify-content:center;gap:9px;height:68px;padding:0 16px;'
+      +'background:rgba(16,16,24,.92);border-bottom:.5px solid rgba(150,175,255,.14);font-size:13.5px;font-weight:600;letter-spacing:.02em;color:#ccd8ee;text-decoration:none;cursor:pointer}'
+      +'.kpu-topbar:hover{background:rgba(22,22,32,.96);color:#fff}'
       +'.kpu-topbar i{width:6px;height:6px;border-radius:50%;flex:none;background:rgb(170,160,255);box-shadow:0 0 5px rgba(170,160,255,.8);animation:kpu-pl 1.6s ease-in-out infinite}'
-      +'.kpu-topbar .t-upd i{background:rgba(150,175,225,.6);box-shadow:none;animation:none;width:5px;height:5px}'
       +'@keyframes kpu-pl{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.72)}}'
-      +'.kpu-topbar a.tb-go{flex:none;color:#fff;text-decoration:none;font-weight:600;padding:3px 11px;border-radius:999px;background:rgba(140,165,255,.2);border:.5px solid rgba(150,175,255,.4)}'
-      +'.kpu-topbar a.tb-go:hover{background:rgba(140,165,255,.32)}'
       +'body::before{content:"";position:absolute;left:0;right:0;top:0;height:380px;pointer-events:none;z-index:0;opacity:.55;'
       +'background-image:radial-gradient(1px 1px at 12% 22%,rgba(255,255,255,.55),transparent 60%),radial-gradient(1px 1px at 31% 64%,rgba(200,215,255,.45),transparent 60%),'
       +'radial-gradient(1.2px 1.2px at 47% 18%,rgba(255,200,230,.5),transparent 60%),radial-gradient(1px 1px at 63% 48%,rgba(255,255,255,.4),transparent 60%),'
@@ -359,38 +355,13 @@
       +'radial-gradient(1px 1px at 22% 84%,rgba(255,220,240,.35),transparent 60%),radial-gradient(1px 1px at 55% 88%,rgba(200,215,255,.35),transparent 60%);'
       +'background-size:420px 380px;-webkit-mask-image:linear-gradient(#000,transparent);mask-image:linear-gradient(#000,transparent)}'
       +'body{position:relative}.wrap{position:relative;z-index:1}'
-      +'@media(max-width:700px){.kpu-topbar{font-size:12px;gap:10px;justify-content:space-between}.kpu-topbar .tb-line{max-width:none;flex:1}}'
-      +'@media (prefers-reduced-motion:reduce){.kpu-topbar i,.kpu-topbar .in.a-in,.kpu-topbar .in.a-out{animation:none}}';
+      +'@media(max-width:700px){.kpu-topbar{font-size:13px;height:60px}}'
+      +'@media (prefers-reduced-motion:reduce){.kpu-topbar i{animation:none}}';
     document.head.appendChild(st);
-    var bar=document.createElement('div');bar.className='kpu-topbar';
-    var line=document.createElement('div');line.className='tb-line';bar.appendChild(line);
-    var go=document.createElement('a');go.className='tb-go';
-    var cta=document.querySelector('a.cta');go.href=cta?cta.href:'https://kpop-universe.kr/';
-    go.textContent=EN?'Open the Universe':'우주 열기';bar.appendChild(go);
+    var bar=document.createElement('a');bar.className='kpu-topbar';bar.href=href;
+    var i=document.createElement('i');bar.appendChild(i);
+    bar.appendChild(document.createTextNode('Find your place in K-pop'));
     document.body.insertBefore(bar,document.body.firstChild);
-    var items=[],idx=0,timer=null;
-    function piece(it,anim){var d=document.createElement('div');d.className='in t-'+it.t+(anim?' a-in':'');var i=document.createElement('i');d.appendChild(i);d.appendChild(document.createTextNode(it.s));return d;}
-    function render(){
-      if(!items.length)return;clearInterval(timer);timer=null;idx=0;line.innerHTML='';line.appendChild(piece(items[0],false));
-      if(items.length<2)return;
-      timer=setInterval(function(){if(document.hidden)return;idx=(idx+1)%items.length;var o=line.querySelector('.in');if(o)o.classList.add('a-out');setTimeout(function(){line.innerHTML='';line.appendChild(piece(items[idx],true));},420);},4500);
-    }
-    var f=function(n){return Number(n).toLocaleString(EN?'en-US':'ko-KR');};
-    function withSite(d){
-      var x=d&&d.site;if(!x)return;var out=[];
-      var nar=innerWidth<700; // 폰은 짧게(사이트 이름 빼고)
-      // 이번 주·지금까지 중 하나만(2026-11-18 사용자) — 이번 주가 VW_MIN명↑이면 이번 주, 아니면 지금까지
-      if(x.w&&(x.w>=VW_MIN||!x.t))out.push({t:'vis',s:EN?(f(x.w)+(nar?' visited this week':' people visited K-POP UNIVERSE this week')):('이번 주 '+f(x.w)+(nar?'명이 다녀갔어요':'명이 K-POP UNIVERSE를 다녀갔어요'))});
-      else if(x.t)out.push({t:'vis',s:EN?(f(x.t)+' visitors so far'):('지금까지 '+f(x.t)+'명이 다녀갔어요')});
-      if(x.nv)out.push({t:'vis',s:EN?(f(x.nv)+' new videos collected this week'):('이번 주 새로 모은 영상 '+f(x.nv)+'개')});
-      items=out.concat(items.filter(function(i){return i.t==='upd';}));render();
-    }
-    if(!EN){try{fetch('/updates.json').then(function(r){return r.ok?r.json():null;}).then(function(u){var it=u&&u[0]&&u[0].items&&u[0].items[0];if(!it)return;items.push({t:'upd',s:'새 소식 · '+String(it).split(' — ')[0]});render();}).catch(function(){});}catch(e){}}
-    var KEY='kpu_ls_v1';
-    try{var c=JSON.parse(sessionStorage.getItem(KEY)||'null');if(c&&Date.now()-c.t<30*60e3&&c.d&&c.d.site){withSite(c.d);return;}}catch(e){}
-    try{fetch('https://dukgguehegnembimqvkm.supabase.co/rest/v1/rpc/get_live_stats',{method:'POST',
-      headers:{'Content-Type':'application/json',apikey:'sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0',Authorization:'Bearer sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0'},body:'{}'})
-      .then(function(r){return r.ok?r.json():null;}).then(function(d){if(!d)return;try{sessionStorage.setItem(KEY,JSON.stringify({t:Date.now(),d:d}));}catch(e){}withSite(d);}).catch(function(){});}catch(e){}
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',topbar);else topbar();
 

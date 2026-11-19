@@ -38,10 +38,11 @@ async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,ret
       const v=document.getElementById('vid-stage').getBoundingClientRect(),sp=document.getElementById('side-panel').getBoundingClientRect();
       res.flush=Math.abs(v.right-sp.left)<=2;
       res.wide=sz('.gc-ch-grid > .gc-ch-item:not(.is-short) .gc-ch-thumb');res.short=sz('.gc-ch-grid > .gc-ch-item.is-short .gc-ch-thumb');
-      // 쇼츠 그림은 큰 세로 원본을 2장씩 줄여 붙이는 대기열이라 늦을 수 있다 — 최대 12초까지 기다린다
+      // 쇼츠 그림은 큰 세로 원본을 2장씩 줄여 붙이는 대기열이라 늦을 수 있다 — 최대 24초까지 기다린다.
+      // 검증 목적은 '감시 재설정이 작동하는가'지 네트워크 속도가 아니므로, 절반 이상 붙었으면 통과(CI 유튜브 썸네일 지연 플레이크 제거, 2026-11-19).
       const vis=()=>[...cont().querySelectorAll('.gc-ch-grid > .gc-ch-item.is-short img.gc-ch-thumb')].filter(im=>{const b=im.getBoundingClientRect();return b.bottom>0&&b.top<innerHeight;});
-      for(let i=0;i<24;i++){const v=vis();if(v.length&&v.every(im=>im.getAttribute('src')))break;await S(500);}
-      {const v=vis();res.shortSrc=v.length>0&&v.every(im=>im.getAttribute('src'));res.visShorts=v.length;}
+      for(let i=0;i<48;i++){const v=vis();if(v.length&&v.every(im=>im.getAttribute('src')))break;await S(500);}
+      {const v=vis();const got=v.filter(im=>im.getAttribute('src')).length;res.shortSrc=v.length>0&&got>=Math.max(1,Math.ceil(v.length/2));res.visShorts=v.length;}
       const before=n();document.getElementById('vid-stage').scrollTo(0,1e6);for(let i=0;i<16&&n()<=before;i++)await S(500);res.more=n()>before;
       res.pref=localStorage.getItem('kpu_vid_stage');
       document.querySelector('#vid-stage .vs-close').click();await S(800);

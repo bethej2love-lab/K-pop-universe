@@ -75,7 +75,9 @@ const server = http.createServer((req, res) => {
     const open = async () => (await ev(cdp, `[...document.querySelectorAll('.open')].filter(e=>e.id&&e.getBoundingClientRect().width>0).map(e=>e.id).join(' ')`)).split(' ');
     const has = (o, id) => o.includes(id);
     const focusInfo = async () => (await ev(cdp, `(function(){var a=document.activeElement;return (a?a.tagName+(a.id?'#'+a.id:''):'none')+' hasFocus='+document.hasFocus()+' iframes='+document.querySelectorAll('iframe').length})()`));
-    const esc = async () => { for (const type of ['keyDown', 'keyUp']) await cdp.send('Input.dispatchKeyEvent', { type, key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 }); await sleep(900); };
+    // ESC 직전에 부모 창 포커스를 되찾는다 — CI 리눅스에서 yt-lb-iframe이 load 뒤 포커스를 재탈취해(hasFocus=true)
+    // ESC가 부모 window에 안 와 라이트박스가 안 닫히던 플레이크(2026-11-16~, 앱 쪽 복구 보강으로도 간헐 재발 → 테스트 쪽 복구, 2026-11-19).
+    const esc = async () => { await ev(cdp, `(function(){var a=document.activeElement;if(a&&a.tagName==='IFRAME'){try{a.blur();}catch(e){}try{window.focus();document.body.focus();}catch(e){}}return 1;})()`); for (const type of ['keyDown', 'keyUp']) await cdp.send('Input.dispatchKeyEvent', { type, key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 }); await sleep(900); };
     const reset = async () => { await ev(cdp, `(function(){try{closeLightbox()}catch(e){};try{closeConnCard()}catch(e){};try{closeCards()}catch(e){};history.replaceState(null,'',location.pathname);return 1})()`); await sleep(900); };
     const LB = `openLightbox('https://www.youtube.com/watch?v=4Hyx7TZ2cXg',false,null,0,{groupKo:'에스파'})`;
     const KA = `ARTISTS.find(a=>a.name&&a.name.ko==='카리나'&&a.group&&a.group.ko==='에스파')`;

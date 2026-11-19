@@ -22668,7 +22668,32 @@
     "links": {
       "namu": "https://namu.wiki/w/미나미(RESCENE)"
     },
-    "id": "a0099"
+    "id": "a0099",
+    "discography": [
+      {
+        "title": "메리 베리 러브 OST Part 2",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/66/808/15166808_20261116145219_500.jpg",
+        "releaseDate": "2026.11.18",
+        "trackCount": 2,
+        "titleTrack": "사랑해볼래, 나",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "사랑해볼래, 나",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "사랑해볼래, 나 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15166808"
+      }
+    ]
   },
   {
     "name": {
@@ -220878,6 +220903,24 @@
     },
     "discography": [
       {
+        "title": "Promises",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/59/053/15159053_20261113104040_500.jpg",
+        "releaseDate": "2026.11.18",
+        "trackCount": 1,
+        "titleTrack": "Promises",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Promises",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15159053"
+      },
+      {
         "title": "ROMANCE",
         "type": "싱글",
         "releaseDate": "2026.06.18",
@@ -261698,6 +261741,29 @@
       "namu": "https://namu.wiki/w/나고은"
     },
     "discography": [
+      {
+        "title": "LUCKSMITH VOL.6",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/66/204/15166204_20261116112919_500.jpg",
+        "releaseDate": "2026.11.18",
+        "trackCount": 2,
+        "titleTrack": "Eternity, Love, Trust",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Eternity, Love, Trust",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "Eternity, Love, Trust (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15166204"
+      },
       {
         "title": "By your side",
         "type": "싱글",

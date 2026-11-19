@@ -1162,7 +1162,7 @@ async function buildUniverse(){
   // 일관됨(검색·b-side 폴백 분기가 이 플래그를 봄).
   // 데이터 JSON 캐시버스터 — tools/bump_cache_version.mjs가 groups/artists/connections 내용 해시로 자동
   // 갱신한다(손으로 고치지 말 것, css/js의 ?v=와 같은 방식).
-  const _DATA_VER='20261118-e0e779cb';
+  const _DATA_VER='20261119-6b686eee';
   // ⚠️ 데이터 JSON에도 **캐시버스터를 붙인다**(_DATA_VER, 2026-09-03). `cache:'no-cache'`는 브라우저에게
   // "재검증하라"는 힌트일 뿐이라 **중간 프록시/CDN이 들고 있는 사본은 못 뚫는다.** 실제 사고:
   // artists.json을 고쳐 배포했는데(서버엔 반영 확인됨) 강력 새로고침을 두 번 해도 어드민 도구가 계속
@@ -2382,7 +2382,8 @@ function animate(){
   // 열려 있는 동안은 기기 종류와 무관하게 뒤의 3D 우주가 안 보임 — 그런데도 계속 풀 렌더링을 돌리면
   // 안 보이는 화면 그리는 데 GPU/CPU를 써서 정작 그 위에서 재생 중인 유튜브 영상이 끊기게 됨.
   const _lbEl=document.getElementById('yt-lightbox');
-  if(_lbEl.classList.contains('open')&&!(_MM&&_MM.full)){ // 우주 모드에선 재생 화면이 비켜 있다(소리만)
+  // _MM.on(웹 미니맵)도 제외 — 멈추면 탭바 옆 미니맵이 빈 칸으로 보였다(2026-11-19 사용자 스크린샷). 132×52라 렌더 비용 미미.
+  if(_lbEl.classList.contains('open')&&!(_MM&&(_MM.full||_MM.on))){ // 우주 모드에선 재생 화면이 비켜 있다(소리만)
     // 캔버스를 합성에서까지 빼는 건 라이트박스가 뒤를 **완전히** 가릴 때만 — 안 그러면 우주가
     // 사라진 게 눈에 보인다. 가리는 경우: 모바일(아래 CSS에서 .open 배경을 불투명으로 깔았다) 또는
     // 브라우즈 모드(#0a0a0d 불투명). 데스크톱 "카드 보며 재생"은 라이트박스가 우측을 비워 그
@@ -3188,6 +3189,16 @@ function _editDist1(a,b){
 // ⚠️ 인덱스는 **처음 검색할 때 한 번만** 만든다(2만여 건 순회라 로드 시점에 하면 첫 화면이 밀린다).
 let _songIndex=null;
 function _songKey(s){return String(s||'').toLowerCase().replace(/[\s'’".,\-()[\]]/g,'');}
+// 검색 매칭용 코어 제목 — feat./ft./featuring 뒤(괄호째)를 벗긴다. 피처링 인물명으로 곡이 잡히던 것 방지
+// (2026-11-18 사용자: '성현' 검색에 BOBBY '새 (Feat. 허성현 (Huh))'가 뜸 — 허성현은 유니버스 밖 인물).
+// 표시는 원래 제목 그대로 두고 매칭만 코어로. with는 'With YOU-th'처럼 제목에 흔해 벗기지 않는다.
+function _songMatchCore(t){
+  t=String(t||'');
+  // feat./prod.가 괄호 안에 있으면 그 여는 괄호부터 끝까지(중첩 괄호 포함) 벗긴다 — "eight (Prod.&Feat. …)" → "eight"
+  const m=t.match(/[\(\[][^\)\]]*?\b(?:feat|ft|featuring|prod)\b/i);
+  const core=m?t.slice(0,m.index):t.replace(/\s*\b(?:feat|ft|featuring)\.?\s.*$/i,''); // 괄호 없이 꼬리에 붙은 feat도 제거
+  return core.trim()||t;
+}
 function _buildSongIndex(){
   const byKey=new Map();
   // 반주/MR 트랙은 검색 결과에서 노이즈다 — "다시 만난 세계"를 치면 원곡 바로 밑에 (Inst.)가 따라붙는다
@@ -3212,6 +3223,8 @@ function _buildSongIndex(){
   // 해외 팬·음방 기록이 쓰는 영문 제목으로는 곡이 안 잡혔다. 그룹 → 곡 제목(디스코 표기 그대로) → 영문 제목들
   // 주인 = 그룹 이름 또는 솔로·멤버 개인곡이면 그 사람 이름(shared.js _songAliasesFor — 멜론 표기 꼬리 차이 흡수)
   out.forEach(s=>{const al=(typeof _songAliasesFor==='function')&&_songAliasesFor(s.ownerType==='group'?s.owner:(s.owner&&s.owner.name&&s.owner.name.ko),s.title);if(al){s.alt=al;s.altL=al.map(x=>x.toLowerCase());}});
+  // 매칭용 코어 제목(feat. 뒤 제거) — 표시는 s.title, 검색 비교는 s.mt(피처링 외부 인물명으로 안 잡히게)
+  out.forEach(s=>{s.mt=_songMatchCore(s.title);s.mtL=s.mt.toLowerCase();s.mtEn=(typeof _normEn==='function')?_normEn(s.mt):s.mtL;});
   return out;
 }
 // _SONG_ALIASES(곡 영문 제목 별칭)는 shared.js — 정적 페이지 곡 표기와 같은 표
@@ -3244,7 +3257,7 @@ function _recentEntryOf(h){
   }
   if(h.type==='event'&&h.id!=null)return{type:'event',id:h.id,title:h.name,date:h.alias||'',venue:h.sub||'',gko:h.data||''};
   if(h.type==='venue'&&h.data)return{type:'venue',data:h.data,name:h.name,sub:h.sub||''};
-  if(h.type==='program'&&h.data&&h.data.__festival)return{type:'program',fest:h.data.__festival,name:h.name,sub:h.sub||''}; // 프로그램 컬렉션은 객체가 커서 저장 안 함 — 행사만
+  if(h.type==='program'&&h.data&&h.data.__festival)return{type:'program',fest:h.data.__festival,name:h.name}; // 프로그램 컬렉션은 객체가 커서 저장 안 함 — 행사만. sub('행사')는 2026-11-18 라벨 제거 후 저장 안 함
   return null;
 }
 function _recordRecentSearch(h){
@@ -3273,7 +3286,7 @@ function _resolveRecentSearches(){
       return{type:'event',id:e.id,name:e.title,alias:e.date||'',sub:e.venue||e.gko||'',ownerType:'group',data:own,pos:bm?bm.mesh.position.clone():null,score:0};
     }
     if(e.type==='venue')return{type:'venue',name:e.name,data:e.data,sub:e.sub||'',score:0};
-    if(e.type==='program')return{type:'program',name:e.name,sub:e.sub||'',data:{__festival:e.fest},score:0};
+    if(e.type==='program')return{type:'program',name:e.name,data:{__festival:e.fest},score:0}; // 옛 저장분의 sub('행사'·'프로그램')는 버린다 — 라벨 제거(11-18) 후에도 최근 검색에 남아 보였다(2026-11-19 사용자)
     if(e.type==='group'){
       const info=GROUPS[e.ko];const bm=bubbleMeshes.find(b=>b.ko===e.ko);
       if(!info||!bm)return null;
@@ -3443,8 +3456,8 @@ function _trendingSearchHits(){
     .filter(ko=>(GROUPS[ko].pri||0)>=1.5&&bubbleMeshes.some(b=>b.ko===ko))
     .sort((a,b)=>(GROUPS[b].pri||0)-(GROUPS[a].pri||0));
   if(pool.length<3)return[];
-  // 상위 12개에서 랜덤 6개 → 항상 유명 그룹 위주지만 매번 다르게
-  const picked=_shuffle(pool.filter(ko=>!GROUPS[ko].disbanded).slice(0,14)).slice(0,6);
+  // 상위 14개에서 랜덤 추림 → 항상 유명 그룹 위주지만 매번 다르게. 데스크톱은 한 줄 5개(2026-11-18 사용자 "두 줄 필요 없다"), 모바일은 6개(3열 2줄)
+  const picked=_shuffle(pool.filter(ko=>!GROUPS[ko].disbanded).slice(0,14)).slice(0,isMob()?6:5);
   return picked.map(ko=>{
     const bm=bubbleMeshes.find(b=>b.ko===ko);
     const en=GROUPS[ko].en||'';
@@ -3726,7 +3739,7 @@ function _fetchSoloCamThumbs(a){
     const gkos=new Set(_artistGroups(a).map(g=>g.ko).filter(k=>GROUPS[k]));
     {const sk=_soloNameKeyOf(a);if(sk)gkos.add(sk);} // 이름 키는 유일하거나 주인일 때만, 동명이인 솔로는 이름#id(2026-10-19)
     try{
-      let q=sb.from(_YT_TABLE).select('id,title,thumb,view_count,is_short,published_at,group_ko,members,category,content_flag,embed_blocked_at'+_durCol())
+      let q=sb.from(_YT_TABLE).select('id,title,thumb,view_count,is_short,published_at,group_ko,members,category,content_flag,embed_blocked_at,cover_of_groups,cover_of_members'+_durCol())
         .in('group_ko',[...gkos]).filter('members','eq',`{${_pgFilterVal(mko)}}`).is('unavailable_at',null)
         .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
         .or('content_flag.is.null,content_flag.neq.hidden').or('content_flag.is.null,content_flag.neq.개별출연');
@@ -3742,7 +3755,10 @@ function _fetchSoloCamThumbs(a){
       const pool=(horiz.length?horiz:data.filter(v=>v.thumb));
       // 긴 방송 클립·예능·비하인드는 뒤로(2026-11-12 Codex 검수 — 태연 대표가 19분 놀라운 토요일 클립, 백현 대표가 20분 투어 비하인드)
       const okFmt=v=>!(v.duration_sec>600)&&v.category!=='variety'&&!/비하인드|behind/i.test(v.title||'');
-      return pool.sort((x,y)=>(_embBlk(x)-_embBlk(y))||(okFmt(y)-okFmt(x))||(nameHit(y)-nameHit(x))||(isCam(y)-isCam(x))||((y.category==='live')-(x.category==='live'))||((y.view_count||0)-(x.view_count||0)));
+      // 남의 곡 커버(cover_of)는 본인 곡 무대/직캠보다 뒤로 — 대표는 '본인 곡'이 맞다(2026-11-19 #15, 그룹 대표(_fetchGroupHeroCands tier)와 같은 기준).
+      // 커버만 있으면 그중 고르므로 회귀 없음. embed차단 > 포맷 OK > 본인 곡 > 이름 든 제목 > 직캠 > 라이브 > 조회수.
+      const isCover=v=>!!((v.cover_of_groups||[]).length||(v.cover_of_members||[]).length);
+      return pool.sort((x,y)=>(_embBlk(x)-_embBlk(y))||(okFmt(y)-okFmt(x))||(isCover(x)-isCover(y))||(nameHit(y)-nameHit(x))||(isCam(y)-isCam(x))||((y.category==='live')-(x.category==='live'))||((y.view_count||0)-(x.view_count||0)));
     }catch(e){return [];}
   })();
   _soloCamMemo.set(a,p);
@@ -3844,10 +3860,15 @@ function _makeSearchItem(h,res,mobSearch,obSearch){
     div._lbItem=h.item||null; // 클릭 시 같은 결과의 영상 전부를 재생목록으로 묶는다(아래 click)
     const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const meta=[h.sub,h.meta].filter(Boolean).join(' · ');
-    div.innerHTML=`<span class="sr-vt">${h.thumb?`<img src="${esc(h.thumb)}" loading="lazy" alt="" referrerpolicy="no-referrer">`:''}<span class="sr-vp">▶</span></span>`
+    const _vid=ytId(h.url||'');
+    // 쇼츠는 세로 틀 + 전용 마운트로 — 가로 썸네일(mqdefault)을 16:9 틀에 cover로 넣으면 좌우 검은 띠만
+    // 크게 잘려 거의 안 보였다(2026-11-19 사용자 제보, 검색창). ⭐ 쇼츠 썸네일은 _mountShortThumb 하나로만.
+    const _sh=(h.item&&_songIsShort(h.item))||isShorts(h.url);
+    div.innerHTML=`<span class="sr-vt${_sh?' is-short':''}">${_sh?'<img alt="" referrerpolicy="no-referrer">':(h.thumb?`<img src="${esc(h.thumb)}" loading="lazy" alt="" referrerpolicy="no-referrer">`:'')}<span class="sr-vp">▶</span></span>`
       +`<span class="sr-vb"><span class="sr-vtitle">${esc(h.name)}</span>${meta?`<span class="sr-vmeta">${esc(meta)}</span>`:''}</span>`;
-    _mkProgBar(div.querySelector('.sr-vt'),ytId(h.url||'')); // 시청 진행 바(유튜브 빨간 줄) — 카드 그리드와 같은 표시
-    _vdur(div.querySelector('.sr-vt'),ytId(h.url||''),h.item&&(h.item.dur||h.item.duration_sec));
+    if(_sh&&_vid)_mountShortThumb(div.querySelector('.sr-vt img'),_vid,{});
+    _mkProgBar(div.querySelector('.sr-vt'),_vid); // 시청 진행 바(유튜브 빨간 줄) — 카드 그리드와 같은 표시
+    _vdur(div.querySelector('.sr-vt'),_vid,h.item&&(h.item.dur||h.item.duration_sec));
   }else{
   div.innerHTML=`<span class="sr-nl"><span class="sr-item-name${h.type==='group'?' sr-group':''}">${_ico}${h.name}</span>${h.alias?`<span class="sr-alias">${h.alias}</span>`:''}</span>${h.sub?`<span class="sr-tag${h.type==='group'?' sr-group':''}${h.subFormer?' sr-tag-former':''}">${h.sub}</span>`:''}`;
   if(h.type==='member'||h.type==='group')div.insertBefore(_srAvatarEl(h),div.firstChild);
@@ -4222,6 +4243,8 @@ async function _renderFullCreditsInto(el,tracks){
   const sorted=[...people.values()].sort((x,y)=>(y.songs.length-x.songs.length)||(Math.min(...[...x.roles].map(r=>order[r]))-Math.min(...[...y.roles].map(r=>order[r]))));
   const lbl=document.createElement('div');lbl.className='gcdc-lbl';lbl.textContent=currentLang==='ko'?'크레딧':'Credits';
   const list=document.createElement('div');list.className='gcdc-list';
+  // 기본은 유니버스 내 아티스트만, 외부(작곡가 등)는 '더 보기' 뒤로(2026-11-19 사용자 "정보가 너무 많으니 기본은 덜 보여주기")
+  const rowsExt=[];
   sorted.forEach(p=>{
     const row=document.createElement('div');row.className='gcdc-row';
     const idol=p.aid&&idolByAid.get(String(p.aid));
@@ -4233,9 +4256,17 @@ async function _renderFullCreditsInto(el,tracks){
     else if(p.aid){head.href='https://www.melon.com/artist/detail.htm?artistId='+encodeURIComponent(p.aid);head.target='_blank';head.rel='noopener noreferrer';head.addEventListener('click',e=>e.stopPropagation());}
     row.appendChild(head);
     if(tracks.length>1){const sg=document.createElement('div');sg.className='gcdc-song-list';sg.textContent=p.songs.slice(0,6).join(' · ')+(p.songs.length>6?` 외 ${p.songs.length-6}곡`:'');row.appendChild(sg);}
-    list.appendChild(row);
+    if(idol)list.appendChild(row);else rowsExt.push(row);
   });
-  el.appendChild(lbl);el.appendChild(list);el.style.display='';
+  el.appendChild(lbl);el.appendChild(list);
+  if(rowsExt.length){
+    const hasIdol=list.children.length>0,ko=currentLang==='ko';
+    const more=document.createElement('button');more.type='button';more.className='adv-more gcdc-more';
+    more.textContent=ko?(hasIdol?`크레딧 전체 보기 · 외 ${rowsExt.length}명`:`크레딧 ${rowsExt.length}명 보기`):(hasIdol?`Show all credits · ${rowsExt.length} more`:`Show ${rowsExt.length} credits`);
+    more.addEventListener('click',e=>{e.stopPropagation();rowsExt.forEach(r=>list.appendChild(r));more.remove();});
+    el.appendChild(more);
+  }
+  el.style.display='';
 }
 async function _renderCreditsInto(el,titles,showSongs=false,ownerName=null){
   el.innerHTML='';el.style.display='none';
@@ -4612,10 +4643,11 @@ function doSearch(q){
     const songHits=[];
     const _songSeen=new Set();
     for(const s of (_songIndex||[])){
-      const t=s.title,tl=t.toLowerCase();
+      // 매칭은 코어 제목(feat. 벗김)으로 — 피처링 외부 인물명으로 곡이 잡히지 않게(s.mt). 표시·점수 라벨은 아래에서 s.title.
+      const t=s.mt,tl=s.mtL;
       // 영문 별칭(_SONG_ALIASES)으로 잡히면 결과 줄에 그 영문 제목을 같이 보여준다
       const altHit=s.altL?s.alt.find((x,i)=>s.altL[i].includes(ql)||(qln.length>=2&&_normEn(x).includes(qln))):null;
-      if(!altHit&&!(t.includes(q)||tl.includes(ql)||(qln.length>=2&&_normEn(t).includes(qln))||(s.koPho&&s.koPho.includes(q.replace(/ /g,'')))))continue;
+      if(!altHit&&!(t.includes(q)||tl.includes(ql)||(qln.length>=2&&s.mtEn.includes(qln))||(s.koPho&&s.koPho.includes(q.replace(/ /g,'')))))continue;
       songHits.push({s,sc:altHit?Math.min(_mScore(t,q,ql),_mScore(altHit,q,ql)):_mScore(t,q,ql),altHit});_songSeen.add(s);
       if(songHits.length>400)break; // 너무 흔한 단어에서 전체 순회를 계속하지 않게
     }
@@ -4747,7 +4779,7 @@ function doSearch(q){
   // 행사(시상식·페스티벌·해외 특집 음방) 모아보기 — '마마'·'케이콘'·'워터밤'(2026-10-15). 같은 '컬렉션' 탭, 누르면 행사 페이지.
   // 엑소 앨범 'Mama' 같은 곡·앨범 결과는 그대로 같이 뜬다(사용자).
   _matchEventSeries(q).forEach(({s,grade})=>{
-    hits.push({type:'program',name:currentLang==='ko'?`${s.ko} 모아보기`:`${s.ko} Stages`,sub:currentLang==='ko'?'행사':'Event',data:{__festival:s.id},score:grade});
+    hits.push({type:'program',name:currentLang==='ko'?`${s.ko} 모아보기`:`${s.ko} Stages`,data:{__festival:s.id},score:grade});
   });
   _matchPrograms(q,ql,qln).forEach(p=>{
     const qns=ql.replace(/\s+/g,'');
@@ -4763,7 +4795,7 @@ function doSearch(q){
     });
     hits.push({type:'program',
       name:(currentLang==='ko'?`${p.label} 모아보기`:`${p.en||p.label} Collection`),
-      sub:currentLang==='ko'?'프로그램':'Program',data:p,score:grade});
+      data:p,score:grade}); // 종류 라벨('프로그램'/'행사')은 이름에 이미 '모아보기'로 드러나 중복 — 안 붙임(2026-11-18 사용자)
   });
   // ── 두 사람 검색(둘 사이) 정문(2026-09-05, 킬러 6.1) ──────────────────────────
   // "카리나, 장원영" / "카리나 x 장원영" / "A & B"처럼 두 이름을 구분자로 치면, 둘의 연결 카드를 여는
@@ -5912,7 +5944,7 @@ async function _lbUpdateChartChips(s,pa){
 // 가로 재생(브라우즈) 화면에서 출연자를 텍스트 칩 대신 동그란 프로필 + 이름 줄로 보여준다. 누르면 예전 칩과 같은 하프카드.
 // 쇼츠(스와이프) 화면은 상단 바의 앵커 텍스트를 그대로 쓴다(그쪽은 CSS로 이 줄을 숨김). 데이터는 _lbUpdateMemberInfo가 이미 정리한 것.
 // 배경: 그룹 고유색을 화면 위쪽에 은은하게(--lb-tint) — 스포티파이가 앨범 색을 까는 것처럼 "누구 영상인지"가 색으로 먼저 읽힌다.
-function _lbRenderPeople({artist,groupKo,gName,multi,withList,anchorG,fullTagged}){
+function _lbRenderPeople({artist,groupKo,gName,multi,withList,anchorG,fullTagged,cat}){
   const box=document.getElementById('yt-lb-people');if(!box)return;
   const isKo=currentLang==='ko';
   const items=[],seen=new Set();
@@ -5924,8 +5956,14 @@ function _lbRenderPeople({artist,groupKo,gName,multi,withList,anchorG,fullTagged
   // "뮤비에 출연자 정보가 왜 없어? 그룹이면 멤버도 같이"). 태그가 있으면(전원 태깅) 태그 그대로, 없으면 현재 멤버.
   if(!artist&&gName&&GROUPS[groupKo]&&!(multi||[]).length){
     const tagged=(fullTagged||[]).filter(Boolean);
-    const _dis=!!GROUPS[groupKo].disbanded; // 해체 그룹은 전원이 '전 멤버'라 개인 탈퇴자만 뺀다
-    (tagged.length?tagged:ARTISTS.filter(a=>{const gi=(a.groups||[]).find(g=>g.ko===groupKo);if(a.group.ko!==groupKo&&!gi)return false;return _dis?!(gi&&gi.left)&&!(a.group.ko===groupKo&&a.left):!_isFormerOf(a,groupKo);})).forEach(addM);
+    // 태그가 있으면(전원 태깅) 그대로. 태그가 없을 때 현재 멤버 전원으로 펴는 건 그룹 MV·무대엔 맞지만(2026-10-27), **일부만 나온
+    // 콜라보/클립엔 틀리다**(2026-11-19 사용자 "일부만 태깅인데 전체 멤버가 한 명씩 다 뜬다"). 그래서 기본은 펴되(category가 없을 때도
+    // MV 기능 유지), **일부만 나온 증거(게스트가 있음 OR 비공연 분류 other/variety/show)가 있으면 억제** — 그땐 그룹 칩 하나만 둔다.
+    const partial=(withList||[]).length>0||cat==='other'||cat==='variety'||cat==='show';
+    if(tagged.length||!partial){
+      const _dis=!!GROUPS[groupKo].disbanded; // 해체 그룹은 전원이 '전 멤버'라 개인 탈퇴자만 뺀다
+      (tagged.length?tagged:ARTISTS.filter(a=>{const gi=(a.groups||[]).find(g=>g.ko===groupKo);if(a.group.ko!==groupKo&&!gi)return false;return _dis?!(gi&&gi.left)&&!(a.group.ko===groupKo&&a.left):!_isFormerOf(a,groupKo);})).forEach(addM);
+    }
   }
   (withList||[]).forEach(it=>{if(it.group)addG(it.group);else addM(_findArtistByConnName(it.n,artist?artist.group.ko:groupKo));});
   box.replaceChildren();
@@ -6027,13 +6065,23 @@ function _lbUpdateMemberInfo(){
   const groupKo=_own?(s.groupKo||s._apiGroupKo):_lbCtx?.groupKo;
   const _mems=_own?[...new Set(s.memberKos.filter(Boolean))]:(_lbCtx?.memberKo?[_lbCtx.memberKo]:[]);
   const _inG=a=>a.group.ko===groupKo||(a.groups||[]).some(g=>g.ko===groupKo)||_ytGroupKoFor(a)===groupKo;
+  // 태깅된 멤버 이름 → 아티스트. _inG(그룹 일치)로 먼저, 안 풀리고 group_ko가 등록 그룹이 아니면(솔로·피처링 — 태양/민니/형원/연준처럼
+  // 밴드 소속이라 _ytGroupKoFor가 밴드명을 돌려줘 솔로 group_ko와 안 맞는 경우) 이름으로 풀어 준다(2026-11-19 사용자 "이 영상에 나온
+  // 아티스트가 태깅대로 안 뜬다" — 이들은 artist·gName이 둘 다 비어 줄이 통째로 사라졌다). 동명이인은 이름키 주인 우선.
+  const _resolveMem=mko=>{
+    let a=ARTISTS.find(x=>x.name.ko===mko&&_inG(x));
+    if(a||GROUPS[groupKo])return a||null; // 등록 그룹 맥락에선 기존대로(엉뚱한 동명이인 유입 방지)
+    const cs=ARTISTS.filter(x=>x.name.ko===mko);
+    return cs.find(x=>x.nameKeyOwner)||cs[0]||null;
+  };
   const memberKo=_mems.length===1?_mems[0]:null;
   let artist=null;
-  if(memberKo)artist=ARTISTS.find(a=>a.name.ko===memberKo&&_inG(a))||null;
-  // 솔로 본인 채널(group_ko=본인 이름, 멤버 태그 없음) — 그 사람이 주인
-  if(!artist&&!_mems.length&&groupKo&&!GROUPS[groupKo])artist=ARTISTS.find(a=>_ytGroupKoFor(a)===groupKo)||null;
+  if(memberKo)artist=_resolveMem(memberKo);
+  // 솔로 본인 채널(group_ko=본인 이름, 멤버 태그 없음) — 그 사람이 주인. _resolveMem이 _ytGroupKoFor 일치(아이유처럼 group.ko='솔로')와
+  // 밴드 멤버 솔로(츄·태민 — _ytGroupKoFor가 밴드명이라 이름으로) 둘 다 처리한다.
+  if(!artist&&!_mems.length&&groupKo&&!GROUPS[groupKo])artist=_resolveMem(groupKo);
   // 여러 명 태깅 — 앵커는 그룹명, 태깅된 멤버는 **전부** 칩으로(첫 명만 뜨던 것). 한 그룹 전원이면 그룹명만.
-  const _multi=_mems.length>1?_mems.map(n=>ARTISTS.find(a=>a.name.ko===n&&_inG(a))).filter(Boolean):[];
+  const _multi=_mems.length>1?_mems.map(_resolveMem).filter(Boolean):[];
   const _multiChips=_multi.length>1&&!(GROUPS[groupKo]&&_withIsFullGroup(groupKo,_multi));
   const gName=groupKo&&GROUPS[groupKo]?(currentLang==='ko'?groupKo:(GROUPS[groupKo].en||groupKo)):'';
   const mName=artist?(_dispName(artist,groupKo)):'';
@@ -6113,7 +6161,7 @@ function _lbUpdateMemberInfo(){
     chip.textContent=label;
     withEl.appendChild(chip);
   });
-  _lbRenderPeople({artist,groupKo,gName,multi:_multiChips?_multi:[],withList:_withList,anchorG:_anchorG,fullTagged:_multiChips?[]:_multi});
+  _lbRenderPeople({artist,groupKo,gName,multi:_multiChips?_multi:[],withList:_withList,anchorG:_anchorG,fullTagged:_multiChips?[]:_multi,cat:s&&(s.category||s.type)||null});
   _lbAmbientTint(s);
   const hasCollab=!!(artist&&_getCollabMembers(artist).length>0);
   connBtn.style.display=hasCollab?'':'none';
@@ -7525,7 +7573,13 @@ function _lbSetIframeSrc(url){
   _lbCcOffVid=null;_lbCcUserTouched=false; // 새 틀 = 새 재생 — 같은 영상을 다시 열어도 자막 끄기 신호를 다시 보낸다(_lbCaptionsOffOnce 주석)
   // 데스크톱: iframe이 로드되면 YouTube 플레이어가 포커스를 가져가 ESC가 부모 window에 안 옴 — 부모로 돌려줌
   // 모바일은 무대 옆 패널 아닌 전체화면이라 포커스 반환 불필요
-  if(!isMob())fr.addEventListener('load',()=>{fr.blur();window.focus();},{once:true});
+  // ⚠️ load 이벤트 한 번(once)으론 부족 — 플레이어가 load 뒤 내부 초기화 중 포커스를 다시 가져간다(CI 리눅스
+  //    헤드리스에서 재현: ESC가 iframe으로 먹혀 라이트박스가 안 닫힘, 맥 로컬에선 재탈취 안 돼 안 보였음).
+  //    iframe이 실제로 포커스를 쥐고 있을 때만 load 직후~1초 동안 몇 차례 되돌린다(정상 상태면 아무것도 안 해 키 입력 방해 없음).
+  if(!isMob()){
+    const reclaim=()=>{try{if(document.activeElement===fr){fr.blur();window.focus();}}catch(_){}};
+    fr.addEventListener('load',()=>{reclaim();[150,450,1000].forEach(ms=>setTimeout(reclaim,ms));},{once:true});
+  }
   return fr;
 }
 function _lbPushHist(){
@@ -8629,6 +8683,8 @@ function _finalizeStackAnim(){
   }
 }
 const sidePanelEl=document.getElementById('side-panel');
+// 웹 카드 헤더 고정 보조(2026-11-19) — 스크롤이 내려가면 .hdr-stuck으로 헤더를 컴팩트하게(CSS가 사진·SNS 숨김)
+sidePanelEl&&sidePanelEl.addEventListener('scroll',()=>{sidePanelEl.classList.toggle('hdr-stuck',sidePanelEl.scrollTop>120);},{passive:true});
 const memberPanelEl=document.getElementById('member-panel');
 let _memberPanelShifted=false;
 
@@ -12375,6 +12431,11 @@ const _igMap=new Map();let _igWarmP=null;
 // 11-04 실측 1,159개 중 378개(33%)가 이미 만료(403) — 앱은 인스타 사진을 먼저 쓰니 그 그룹·멤버는 사진이 깨지거나
 // (검색 첫 화면 원은 대체가 없어) 색깔 원으로만 남았다. 만료된 주소는 처음부터 없는 셈 치고 등록 사진으로 바로 간다.
 function _igPicAlive(u){const m=/[?&]oe=([0-9A-Fa-f]{6,})/.exec(u||'');return !!u&&(!m||parseInt(m[1],16)*1000>Date.now()+600e3);}
+// 인스타 썸네일 축소 프록시(2026-11-19 사용자 "인스타 너무 느려 — 화질을 살짝 낮추든지"): fbcdn 원본(장당 ~160KB)을
+// wsrv.nl w=480 webp(~25KB)로 받아 선반·스트립이 5~6배 빨리 뜬다. og 정사각(11-19 네이버)과 같은 서비스라 새 의존성 아님.
+// 뷰어(크게 보기)는 원본 그대로. 프록시가 실패하면(만료 등) 호출부가 원본→제거 순서로 폴백(_igImgFallback).
+function _igSmall(u,w){u=String(u||'');if(!/^https:\/\/[^ ]*(?:fbcdn|cdninstagram)\.(?:net|com)\//i.test(u))return u;return 'https://wsrv.nl/?url='+encodeURIComponent(u)+'&w='+(w||480)+'&output=webp';}
+function _igImgFallback(img,orig,gone){img.addEventListener('error',()=>{if(orig&&img.src!==orig){img.src=orig;return;}gone&&gone();});}
 function _igHandle(url){const m=String(url||'').match(/instagram\.com\/([A-Za-z0-9._]+)/i);return m?m[1].toLowerCase():null;}
 function _igWarm(){
   if(_igWarmP)return _igWarmP;
@@ -12504,8 +12565,8 @@ async function _renderIgStrip(prefix,url){
     const href=m.p,ty=i?'IMAGE':m.ty;
     const a=document.createElement('a');a.className='ig-item';a.href=href;a.target='_blank';a.rel='noopener noreferrer';
     a.addEventListener('click',e=>{e.stopPropagation();e.preventDefault();if(ty==='VIDEO'){const k=_igPostKey(m.p);if(k)_openIgEmbed({post_key:k,v:m.v,u:m.u});else window.open(href,'_blank','noopener');return;}_openIgViewer(m,h,i||0);}); // 영상은 인스타 공식 임베드로 사이트 안에서 재생(2026-11-13)
-    const img=document.createElement('img');img.loading='lazy';img.alt='';img.src=src;
-    img.addEventListener('error',()=>{(a.closest('.ig-cell')||a).remove();if(!strip.children.length)_igSecSync(sec);});
+    const img=document.createElement('img');img.loading='lazy';img.alt='';img.src=_igSmall(src,400);
+    _igImgFallback(img,src,()=>{(a.closest('.ig-cell')||a).remove();if(!strip.children.length)_igSecSync(sec);});
     a.appendChild(img);
     if(ty==='VIDEO'){const b=document.createElement('span');b.className='ig-play';b.textContent='▶';a.appendChild(b);}
     return a;
@@ -12516,9 +12577,9 @@ async function _renderIgStrip(prefix,url){
     if(Array.isArray(m.c)&&m.c.length>1){
       const d=document.createElement('div');d.className='ig-item ig-deck';d.setAttribute('role','button');
       d.title=ko?`사진 ${m.c.length}장`:`${m.c.length} photos`;
-      m.c.slice(1,3).reverse().forEach((src,i,arr)=>{const b=document.createElement('img');b.className='ig-deck-back d'+(arr.length-i);b.src=src;b.alt='';b.loading='lazy';b.addEventListener('error',()=>b.remove());d.appendChild(b);});
-      const f=document.createElement('img');f.className='ig-deck-front';f.src=m.c[0]||m.u;f.alt='';f.loading='lazy';
-      f.addEventListener('error',()=>{(d.closest('.ig-cell')||d).remove();if(!strip.children.length)_igSecSync(sec);});
+      m.c.slice(1,3).reverse().forEach((src,i,arr)=>{const b=document.createElement('img');b.className='ig-deck-back d'+(arr.length-i);b.src=_igSmall(src,400);b.alt='';b.loading='lazy';_igImgFallback(b,src,()=>b.remove());d.appendChild(b);});
+      const f=document.createElement('img');f.className='ig-deck-front';f.src=_igSmall(m.c[0]||m.u,400);f.alt='';f.loading='lazy';
+      _igImgFallback(f,m.c[0]||m.u,()=>{(d.closest('.ig-cell')||d).remove();if(!strip.children.length)_igSecSync(sec);});
       d.appendChild(f);
       d.appendChild(_igBars(m.c.length));
       d.addEventListener('click',e=>{e.stopPropagation();_openIgViewer(m,h,0);});
@@ -14064,7 +14125,8 @@ function _feedWideScroller(){
 // · 넓게=혼자면 화면 거의 전부(최대 1440, 우주가 조금은 보이게)·함께면 카드(440씩)와 가운데 창 최소 폭(560)만 남기고 나침반이 다 쓴다.
 // 폭은 --fw-w 하나로 나가고 CSS(#feed-overlay·재생 화면 left·줌)와 _stageRegion(목록·앨범 자리)이 그걸 따른다. 640px↑면 안쪽 칸도 넓은 배치(body.fw-home).
 const _FW_MODES=['narrow','normal','wide'];
-function _fwMode(){try{const m=localStorage.getItem('kpu_fw_mode');return _FW_MODES.indexOf(m)>=0?m:'normal';}catch(e){return 'normal';}}
+// 기본 '넓게'(2026-11-19 사용자 "웹 탐험이 카드 폭만큼 비우고 열리면 처음 보는 사람이 이상하게 생각할 듯 — 기본 전체 너비, 상황 따라 줄이기"). 직접 고른 값은 그대로.
+function _fwMode(){try{const m=localStorage.getItem('kpu_fw_mode');return _FW_MODES.indexOf(m)>=0?m:'wide';}catch(e){return 'wide';}}
 // 가운데(무대) 창이 열려 있나 — 재생 화면·목록·앨범·공연·트로피·인스타·컬렉션 + 공용 무대 창
 var _cardWidePref=false; // var: 카드 넓게 버튼 IIFE(앞쪽)가 먼저 쓴다
 function _stageCenterOpen(){
@@ -14093,12 +14155,11 @@ function _cardYieldSync(){
 function _fwWidth(){
   const W=window.innerWidth,mode=_fwMode(),open=id=>!!document.getElementById(id)?.classList.contains('open');
   if(mode==='narrow')return 360;
-  if(!_FW_BLOCKERS.some(open))return mode==='wide'?Math.min(1440,W-120):Math.min(960,W-360);
+  if(!_FW_BLOCKERS.some(open))return mode==='wide'?Math.min(1440,W-160):Math.min(960,W-360); // 넓게 여백 60→80px씩(11-19 "꽉 차면 부담, 여백 조금 더")
   const cards=['side-panel','member-panel','conn-panel'].filter(open).length*(document.body.classList.contains('card-wide')?640:440);
-  // 보통: 평소 440, 가운데 창이 열려 자리가 모자라면 360까지 양보(가운데 우선, 2026-11-18)
-  if(mode==='normal')return _stageCenterOpen()?Math.max(360,Math.min(440,W-cards-616)):440;
-  const stage=['yt-lightbox','feed-list-overlay','gc-discog-detail','venue-overlay','trophy-overlay','igv-overlay','uc-card-overlay',...Object.keys(_STAGE_WINS)].some(open); // 공용 무대 창(_STAGE_WINS)도 가운데 자리가 필요하다(2026-11-18)
-  return stage?Math.max(360,Math.min(1200,W-cards-616)):Math.max(440,Math.min(1200,W-cards)); // 가운데 창이 있으면 그 몫(560+여백 56)을 먼저 남긴다(2026-11-18)
+  // 카드·가운데 창이 열리면 '넓게'도 보통처럼 양보(2026-11-19 사용자 "기본 전체 너비로 열리고 상황에 따라 줄어드는 식") —
+  // 넓게는 홈(블로커 없음)에서만 전폭. 평소 440, 가운데 창이 열려 자리가 모자라면 360까지(가운데 우선, 11-18).
+  return _stageCenterOpen()?Math.max(360,Math.min(440,W-cards-616)):440;
 }
 function _fwBtnSync(){
   const b=document.getElementById('feed-width-btn');if(!b)return;
@@ -14737,7 +14798,11 @@ function _renderSongVideoTabs(){
   const _memOf=v=>{const out=new Set();if(v.group_ko===st.gko)(v.members||[]).forEach(m=>out.add(m));(v.with_members||[]).forEach(x=>{const m=/^(.+)\((.+)\)$/.exec(x);if(m&&m[2]===st.gko)out.add(m[1]);});return out;};
   const _memCnt=new Map();st.orig.forEach(v=>_memOf(v).forEach(m=>_memCnt.set(m,(_memCnt.get(m)||0)+1)));
   if(st.member&&!_memCnt.has(st.member))st.member=null;
-  const _byMem=arr=>st.member?arr.filter(v=>_memOf(v).has(st.member)):arr;
+  // 멤버 선택 기본 = '포함된 모든 영상'(2026-11-19 사용자) — 멤버 태그가 비어 있는 자기 그룹 영상(단체 무대·MV)은
+  // 전원 출연으로 간주한다(재생화면 전원 펼침과 같은 근거 규칙: 게스트·비공연 형식이면 제외). '단독만' 칩이 좁힌다.
+  const _memAll=v=>_memOf(v).has(st.member)||(v.group_ko===st.gko&&!(v.members||[]).length&&!((v.with_members||[]).length||(v.with_groups||[]).length)&&!/^(?:other|variety|show)$/.test(v.category||''));
+  const _memSolo=v=>{const s=_memOf(v);return s.size===1&&s.has(st.member);};
+  const _byMem=arr=>st.member?arr.filter(st.memSolo?_memSolo:_memAll):arr;
   const base=_byMem(st.tab==='orig'?st.orig:st.tab==='cover'?st.cover:[...st.orig,...st.cover]);
   const fmtCnt={};base.forEach(v=>{const f=_tvfFmt(v);fmtCnt[f]=(fmtCnt[f]||0)+1;if(_isFanV(v))fmtCnt.fan=(fmtCnt.fan||0)+1;});
   const fmts=_TVF_FMTS.filter(([k])=>fmtCnt[k]);
@@ -14760,6 +14825,14 @@ function _renderSongVideoTabs(){
         _openPickSheet(_ko?'멤버로 보기':'Filter by member',_ko?'멤버가 태그된 영상이 아직 없어요':'No member-tagged videos yet',Promise.resolve(items),k=>{if(_songVid!==st)return;st.member=k;_renderSongVideoTabs();});
       });
       tabsEl.appendChild(mb);
+      // 멤버를 고르면 '단독만' 칩 — 기본은 포함 전체, 누르면 그 멤버만 태그된 영상(카드 Only와 같은 개념)
+      if(st.member){
+        const sb=document.createElement('button');sb.type='button';sb.className='gc-vid-pick'+(st.memSolo?' on':'');
+        sb.innerHTML='<span class="lbl"></span>';
+        sb.querySelector('.lbl').textContent=_ko?'단독만':'Solo only';
+        sb.addEventListener('click',e=>{e.stopPropagation();st.memSolo=!st.memSolo;_renderSongVideoTabs();});
+        tabsEl.appendChild(sb);
+      }
       const sp=document.createElement('span');sp.className='gc-vid-pick-sep';tabsEl.appendChild(sp);
     }
     const mk=(lbl,active,on)=>{
@@ -15437,7 +15510,7 @@ function _chemOthersLine(s,people){
   return line;
 }
 // 사람 사이 표식 = 반짝임(네 갈래 별을 둥글게) — 가는 십자 별은 작게 그리면 '+'로 읽혔다(헤드리스 캡처)
-const _CHEM_STAR='<svg viewBox="0 0 22 22" aria-hidden="true"><path d="M11 0C11.9 6.4 15.6 10.1 22 11C15.6 11.9 11.9 15.6 11 22C10.1 15.6 6.4 11.9 0 11C6.4 10.1 10.1 6.4 11 0Z"/></svg>';
+const _CHEM_STAR='<svg viewBox="0 0 22 22" aria-hidden="true"><path d="M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z"/></svg>'; // 웹 마우스 커서 별과 같은 각진 4꼭지(2026-11-19 사용자 "커서 별처럼 각진 게 예쁘다")
 function _chemHead(people,facts,costars,onAdd){
   const ko=currentLang==='ko';
   const head=document.createElement('div');head.className='chem-head';
@@ -20096,7 +20169,8 @@ function _tipsTick(){
   const el=document.getElementById('ob-tips');if(!el||el.hidden||!el.classList.contains('show'))return;
   // 안내 중에 사용자가 직접 움직였으면(카드·검색을 열었으면) 안내는 끝 — 가르치려던 걸 이미 하고 있다
   const open=id=>document.getElementById(id)?.classList.contains('open');
-  if(open('side-panel')||open('member-panel')||document.getElementById('mob-sheet')?.classList.contains('bs-open')||open('search-wrap')||(typeof _obSearchMode!=='undefined'&&_obSearchMode)||(typeof _msIsOpen==='function'&&_msIsOpen())){_dismissTips();return;}
+  // 나(journal-sidebar)·탐험(feed-overlay)도 포함 — 안내 중 '나' 탭을 누르면 안내 글이 프로필 패널 위에 겹쳐 보였다(2026-11-19 워크스루)
+  if(open('side-panel')||open('member-panel')||open('journal-sidebar')||open('feed-overlay')||document.getElementById('mob-sheet')?.classList.contains('bs-open')||open('search-wrap')||(typeof _obSearchMode!=='undefined'&&_obSearchMode)||(typeof _msIsOpen==='function'&&_msIsOpen())){_dismissTips();return;}
   _tipsLayout();
   _tipsRaf=requestAnimationFrame(_tipsTick);
 }
@@ -22743,16 +22817,14 @@ function _memberVisitKeys(a){
   else{const sfx=_soloPageSuffix(a,ARTISTS,GROUPS);keys.push('member/'+_seoUrlSafeKo(nameKo)+sfx.ko,'member/'+_seoSlugify(nameEn,nameKo)+sfx.en);}
   return keys;
 }
-const _VISIT_WEEK_MIN=10; // 이번 주 다녀간 사람이 이보다 적으면 '지금까지'로 — seo_play.js VW_MIN과 같은 값
 function _visitLine(d,grp,ko,a){
   const sum=(m,ks)=>ks.reduce((s,k)=>s+((m&&m[k])||0),0);
   const w=a?sum(d&&d.mw,_memberVisitKeys(a)):(d&&d.vw&&d.vw[grp]),t=a?sum(d&&d.mt,_memberVisitKeys(a)):(d&&d.vt&&d.vt[grp]);
   if(!t&&!w)return '';
   const f=n=>Number(n).toLocaleString(ko?'ko-KR':'en-US');
-  // 한 줄에 하나만(2026-11-18 사용자 "이번 주로, 그걸로 불충분하면 지금까지") — 이번 주가 _VISIT_WEEK_MIN명↑이면 이번 주, 아니면 지금까지.
-  // 정적 seo_play.js(상태 줄·맨 위 한 줄)와 같은 규칙.
-  if(w>=_VISIT_WEEK_MIN||!t)return ko?'이번 주 '+f(w)+'명이 다녀갔어요':f(w)+' visited this week';
-  return ko?'지금까지 '+f(t)+'명이 다녀갔어요':f(t)+' visited so far';
+  // 한 문장에 둘을 합치지 않는다(2026-11-19 사용자 "쪼개라" — 둘 다 뜰 필요 없이 하나만): 주간 숫자가 있으면 주간, 없으면 누적.
+  if(ko)return w?('이번 주 '+f(w)+'명이 다녀갔어요'):('지금까지 '+f(t)+'명이 다녀갔어요');
+  return w?(f(w)+' visited this week'):(f(t)+' visited so far');
 }
 async function _showVisitCount(kind,grp,a){
   _gcStatusState[kind].visits='';
@@ -23968,19 +24040,26 @@ function _openFeedListOverlay(title,sub,songs,ctx){
     // px로 못박는다 — 이러면 썸네일에 박힌 이름/자막도 안 잘리고 겹침도 없음(2026-08-03 확인). 제목을
     // 다시 보이게 하면서(2026-08-06) 썸네일 비율분만 못박으면 제목 줄이 들어갈 자리가 없어 잘리거나
     // 다음 행이랑 겹치므로, 실제 렌더된 제목 높이도 같이 재서 더해준다.
-    newItems.forEach(it=>{
+    const _applyItemH=it=>{
       const w=it.getBoundingClientRect().width;
+      if(!w)return false; // 아직 레이아웃 전(width 0) — 아래에서 다음 프레임에 재시도
       const titleH=it.querySelector('.tv-sm-title')?.getBoundingClientRect().height||0;
       const metaEl=it.querySelector('.gc-ch-meta');
       const metaH=metaEl?Math.max(metaEl.getBoundingClientRect().height,20):0;
       // 태깅 줄(_songWhoLine, 2026-10-01)도 높이에 넣는다 — 안 넣으면 고정 높이에 잘려 안 보인다
       const whoEl=it.querySelector('.tv-with-line');
       const whoH=whoEl?Math.ceil(whoEl.getBoundingClientRect().height)+4:0;
-      if(!w)return;
       const thumbH=it.classList.contains('is-short')?w*16/9:w*9/16;
       it.style.height=Math.ceil(thumbH+titleH+metaH+whoH)+'px';
       _placeDurBadge(it,thumbH); // 재생시간 배지를 썸네일 밑변에 맞춤
       _placeProgBar(it,thumbH);
+      return true;
+    };
+    // ⚠️ 첫 렌더 때 패널이 아직 레이아웃 전(모바일 슬라이드업 중·display 전환 직후)이면 width=0이라 높이가 안 박혀
+    //    썸네일 비율이 깨진다(2026-11-18 사용자 "MMA 처음 열면 2026 무대 아래 썸네일 비율 안 맞고, 탭 다시 누르면 정상").
+    //    0이면 건너뛰지 말고 다음 프레임(레이아웃 확정 후)에 다시 박는다.
+    newItems.forEach(it=>{
+      if(!_applyItemH(it))requestAnimationFrame(()=>requestAnimationFrame(()=>_applyItemH(it)));
     });
     if(rendered<orderedSongs.length){grid.appendChild(sentinel);observer.observe(sentinel);}
     else observer.disconnect();
@@ -24448,8 +24527,11 @@ function _buildFeedRecentlyViewed(){
   arr.forEach((v,i)=>{
     const item=document.createElement('div');
     item.className='feed-recent-item';
+    // 둘째 줄(그룹 · n일 전) — 영상 썸네일 표기는 어디서든 같게(제목 2줄 + 날짜 줄). 옛 기록엔 groupKo/pa가 없을 수 있어 있는 것만.
+    const _rsub=[v.groupKo?(currentLang==='ko'?v.groupKo:((GROUPS[v.groupKo]&&GROUPS[v.groupKo].en)||v.groupKo)):'',v.pa?_fmtVidAgo(String(v.pa).replace(/\./g,'-')):''].filter(Boolean).join(' · '); // 기록엔 2026.03.29/2026-03-29 두 표기가 섞여 있다
     item.innerHTML='<div class="feed-recent-thumb-wrap"><img class="feed-recent-thumb" loading="lazy" decoding="async" src="'+v.thumb+'" alt=""></div>'
-      +(v.t?'<div class="feed-recent-title">'+_cleanTitle(v.t)+'</div>':'');
+      +(v.t?'<div class="feed-recent-title">'+_cleanTitle(v.t)+'</div>':'')
+      +(_rsub?'<div class="feed-recent-sub">'+_rsub+'</div>':'');
     _vdur(item.querySelector('.feed-recent-thumb-wrap'),ytId(v.u||'')||_thumbVid(v.thumb),v.dur);
     item.addEventListener('click',()=>_feedNav(()=>{
       const ctx=v.groupKo?{groupKo:v.groupKo,memberKo:(v.memberKos&&v.memberKos[0])||undefined}:{};
@@ -24872,7 +24954,7 @@ function _igFeedDeck(card,m){
   const tw=card&&card.querySelector('.feed-card-thumb-wrap');
   if(!tw||!Array.isArray(m.c)||m.c.length<2)return;
   card.classList.add('ig-feed-deck');
-  m.c.slice(1,3).reverse().forEach((src,i,arr)=>{const b=document.createElement('img');b.className='ig-fd-back d'+(arr.length-i);b.src=src;b.alt='';b.loading='lazy';b.addEventListener('error',()=>b.remove());tw.insertBefore(b,tw.firstChild);});
+  m.c.slice(1,3).reverse().forEach((src,i,arr)=>{const b=document.createElement('img');b.className='ig-fd-back d'+(arr.length-i);b.src=_igSmall(src,400);b.alt='';b.loading='lazy';_igImgFallback(b,src,()=>b.remove());tw.insertBefore(b,tw.firstChild);});
   tw.appendChild(_igBars(m.c.length));
 }
 // For You 인스타 선반의 최애 표시(2026-11-16 사용자 "인스타도 최애 앞에 이모티콘, 젤 앞에 배치") — New Videos·차트 목록과 같은 규칙:
@@ -24887,15 +24969,19 @@ function _igBiasOf(owner){
   return{emoji:String((hit&&hit.emoji)||'🤍').replace(/[<>&"']/g,''),isBias:!!hit}; // 이모지는 사용자가 친 글자 — 태그 문자 제거
 }
 function _igRenderRail(list,photos){
-  photos.forEach(m=>{
+  photos.forEach((m,i)=>{
     const cap1=String(m.cap||'').split('\n').map(x=>x.trim()).find(Boolean)||''; // 본문 첫 줄
-    const card=_appendFeedCard(list,'📷',(m._emoji?m._emoji+' ':'')+m.owner.name,'',()=>_openIgViewer(m,m.h,0),m.u,null,{meta:_igAgo(m.t)});
+    const card=_appendFeedCard(list,'📷',(m._emoji?m._emoji+' ':'')+m.owner.name,'',()=>_openIgViewer(m,m.h,0),_igSmall(m.u),null,{meta:_igAgo(m.t)});
     // 이름 옆 흐린 @계정 — 카드 인스타 줄(_igCaption)과 같은 표기(2026-11-05 사용자 "카드엔 있는데 발견 탭엔 없다, 발견 탭이 더 필요")
     const tt=card&&card.querySelector('.feed-card-title');
     if(tt&&m.h){const hs=document.createElement('span');hs.className='ig-cap-h';hs.textContent='@'+m.h;tt.appendChild(hs);}
     if(cap1&&card){const c=document.createElement('div');c.className='feed-card-sub ig-cap1';c.textContent=cap1;card.querySelector('.feed-card-title')?.after(c);}
     const img=card&&card.querySelector('img');
-    if(img)img.addEventListener('error',()=>card.remove()); // 만료된 인스타 주소면 그 카드만 뺀다
+    if(img){
+      _igImgFallback(img,m.u,()=>card.remove()); // 프록시 실패 → 원본 → 그래도 안 되면(만료) 카드만 뺀다
+      // 앞 두 장은 즉시·우선 로딩 — 재방문 For You 첫 화면에서 인스타 사진이 늦게 뜨던 것(2026-11-18 사용자 "최소 첫 사진이라도 빨리")
+      if(i<2){img.loading='eager';try{img.fetchPriority='high';}catch(_){}img.setAttribute('fetchpriority','high');}
+    }
     _igFeedDeck(card,m);
   });
   list.scrollLeft=0;_enableDragScroll(list);
@@ -24907,9 +24993,9 @@ function _igRenderMagRail(list,items){
     const names=[...new Set((m.m||[]).map(h=>own.get(h)?.name).filter(Boolean))];
     const ttl=names.length>2?names.slice(0,2).join(' · ')+(currentLang==='ko'?` 외 ${names.length-2}`:` +${names.length-2}`):names.join(' · ');
     const open=m.ty==='VIDEO'?()=>window.open(m.p,'_blank','noopener'):()=>_openIgViewer(m,m.h,0);
-    const card=_appendFeedCard(list,'📷',ttl||m.src,'',open,m.u,null,{meta:m.src+' · '+_igAgo(m.t)});
+    const card=_appendFeedCard(list,'📷',ttl||m.src,'',open,_igSmall(m.u),null,{meta:m.src+' · '+_igAgo(m.t)});
     const img=card&&card.querySelector('img');
-    if(img)img.addEventListener('error',()=>card.remove());
+    if(img)_igImgFallback(img,m.u,()=>card.remove());
     const tw=card&&card.querySelector('.feed-card-thumb-wrap');
     if(tw&&m.ty==='VIDEO'){const b=document.createElement('span');b.className='ig-play';b.textContent='▶';tw.appendChild(b);}
     else _igFeedDeck(card,m);
@@ -24963,6 +25049,31 @@ async function _buildFeedIg(){
     _igRenderRail(list,photos);section.style.display='';
   }catch(e){console.warn('[feed] 인스타 선반 실패 — 이 선반만 빠집니다',e);}
 }
+// 최애가 이 앨범에 작사/작곡/편곡 크레딧으로 참여했는지 — disco/ 파일의 tracks[].cr(melon_song_credits가 채운다)을 받아
+// 즐겨찾기 멤버 이름과 대조한다(2026-11-19, #14 'For You 시의성'). disco는 그룹 파일에 멤버 disco까지 들어오므로 그룹 하나만 받으면 된다.
+// 실패·미스는 전부 null(선반을 막지 않는다). cr은 {l:[[이름,aid]],c:[...],a:[...]}.
+async function _albumFavCreditNote(a){
+  try{
+    if(!favMembers.size)return null;
+    const gko=a.g||(a.k==='g'?a.o:null);
+    const discs=[];
+    if(gko&&GROUPS[gko]){await _ensureGroupDisco(gko);discs.push(...(GROUPS[gko].discography||[]));}
+    const owner=a.k!=='g'?_albumOwnerArt(a):null;
+    if(owner){await _ensureMemberDisco(owner);if(owner.discography)discs.push(...owner.discography);}
+    if(!discs.length)return null;
+    const tn=_titleNorm(a.t);
+    const al=discs.find(x=>x&&x.title&&_titleNorm(x.title)===tn);
+    if(!al||!Array.isArray(al.tracks))return null;
+    const favNames=new Set([...favMembers].map(k=>k.slice(k.indexOf(':')+1))); // 'group:name' → name
+    const roleKo={l:'작사',c:'작곡',a:'편곡'},roleEn={l:'lyrics',c:'music',a:'arr.'};
+    const hits=new Map();
+    for(const t of al.tracks){if(!t||!t.cr)continue;for(const r of ['l','c','a'])for(const pair of (t.cr[r]||[])){const nm=Array.isArray(pair)?pair[0]:pair;if(favNames.has(nm)){if(!hits.has(nm))hits.set(nm,new Set());hits.get(nm).add(r);}}}
+    if(!hits.size)return null;
+    const ko=currentLang==='ko',role=ko?roleKo:roleEn;
+    const parts=[...hits.entries()].slice(0,2).map(([nm,rs])=>nm+' '+['l','c','a'].filter(r=>rs.has(r)).map(r=>role[r]).join('·'));
+    return '✍️ '+parts.join(', ')+(ko?' 참여':'');
+  }catch(e){return null;}
+}
 async function _buildFeedFavAlbums(){
   const section=document.getElementById('feed-favalbum-section');
   const list=document.getElementById('feed-favalbum');
@@ -24995,7 +25106,9 @@ async function _buildFeedFavAlbums(){
       // 흘렀는데, 나누니 아티스트가 독립해 읽히고 발매일도 자리가 생겼다(2026-09-21).
       const ownerDisp=a.f&&Array.isArray(a.h)&&a.h.length?a.h.join(', '):Array.isArray(a.w)&&a.w.length>1?a.w.join(', '):a.k==='g'?_gLabelKo(a.o):a.o; // 공동 앨범은 멜론 표기 순서대로 쉼표(2026-10-19) · 참여 앨범은 앨범 주인(h — 제목에 'Feat. 아이유'가 이미 있다)
       const meta=_albumShelfMeta(a);
-      _appendFeedCard(list,'💿',a.t,ownerDisp,_albumCardNav(a),a.c,null,{meta,metaFresh:_albumIsFresh(a.d),metaNew:_albumIsNew(a.d)});
+      const _card=_appendFeedCard(list,'💿',a.t,ownerDisp,_albumCardNav(a),a.c,null,{meta,metaFresh:_albumIsFresh(a.d),metaNew:_albumIsNew(a.d)});
+      // 최애가 이 신보에 작사/작곡 참여했으면 캡션에 한 줄(#14 For You 시의성, 2026-11-19). disco/ cr을 받아 대조 — 실패해도 선반은 그대로.
+      _albumFavCreditNote(a).then(note=>{if(note&&_card&&!_card._creditDone){_card._creditDone=1;const cap=_card.querySelector('.feed-card-cap');if(cap){const d=document.createElement('div');d.className='feed-card-credit';d.textContent=note;cap.appendChild(d);}}}).catch(()=>{});
     });
     // 최애 본인 앨범이 발매 48시간 안이면 For You 맨 위로(2026-11-04). 참여(피처링) 앨범은 제외.
     _fyUrgent('feed-favalbum-section',picked.some(a=>{if(a.f)return false;const age=now-_albumDate(a.d);return age>=-864e5&&age<2*864e5;}));
@@ -25652,7 +25765,11 @@ function _appendNewsRow(container,{type,title,sub,thumb,nav,square,plain,show,da
     if(!(type==='album'||square))_vdur(imgWrap,_thumbVid(thumb));
     row.appendChild(imgWrap);row.appendChild(cap);
   }else{
-    row.appendChild(badge);row.appendChild(body);
+    // 뱃지는 영상 썸네일이 있으면 썸네일 왼쪽 위로 — 조회수·MV 카드와 같은 자리(2026-11-19 사용자 "표기 방식 통일, 왼쪽 칩 칸은 여백 낭비").
+    // 앨범 커버(정사각)는 '커버 위에 아무것도 안 얹는다'(TASTE)라 칩 유지, 썸네일 없는 줄(결방)도 칩.
+    const _onThumb=!!thumb&&!(type==='album'||square);
+    if(!_onThumb)row.appendChild(badge);
+    row.appendChild(body);
     if(thumb){
       const img=document.createElement('img');
       img.className='feed-news-thumb'+(type==='album'||square?' is-square':'');
@@ -25660,7 +25777,7 @@ function _appendNewsRow(container,{type,title,sub,thumb,nav,square,plain,show,da
       img.addEventListener('load',()=>img.classList.add('loaded'));
       img.src=thumb;
       if(type==='album'||square)row.appendChild(img);
-      else{const nw=document.createElement('span');nw.className='feed-news-tw';nw.appendChild(img);row.appendChild(nw);_vdur(nw,_thumbVid(thumb));}
+      else{const nw=document.createElement('span');nw.className='feed-news-tw';nw.appendChild(img);nw.appendChild(badge);row.appendChild(nw);_vdur(nw,_thumbVid(thumb));}
     }
   }
   row.addEventListener('click',nav);
@@ -26534,8 +26651,9 @@ const _CHART_AXES={
        {v:'2',ko:'2세대',en:'Gen 2',pKo:'2세대 ',pEn:'Gen 2 '},{v:'1',ko:'1세대',en:'Gen 1',pKo:'1세대 ',pEn:'Gen 1 '}],
   // 기간(2026-11-05 차트 통합) — 주간 직캠 TOP 20·월간 퍼포먼스 TOP 30이 따로 있던 걸 이 축의 1주·1달로 합쳤다(사용자
   // "최근 1주·1달·1년 선택, 페이지 따로 만들 필요 없다"). 짧은 기간부터. 목록 위 세그먼트로 고른다.
-  era:[{v:'w',ko:'1주',en:'1W',pKo:'최근 1주 ',pEn:'Past-Week '},{v:'m',ko:'1달',en:'1M',pKo:'최근 1달 ',pEn:'Past-Month '},
-       {v:'y',ko:'1년',en:'1Y',pKo:'최근 1년 ',pEn:'Past-Year '},{v:'all',ko:'역대',en:'All-time',pKo:'역대 ',pEn:'All-Time '}],
+  // '최근 1주/1달'은 구리고 '이번 주'는 롤링 기간이라 부정확 — 주간·월간·연간으로 통일(2026-11-19 사용자)
+  era:[{v:'w',ko:'주간',en:'Weekly',pKo:'주간 ',pEn:'Weekly '},{v:'m',ko:'월간',en:'Monthly',pKo:'월간 ',pEn:'Monthly '},
+       {v:'y',ko:'연간',en:'Yearly',pKo:'연간 ',pEn:'Yearly '},{v:'all',ko:'역대',en:'All-time',pKo:'역대 ',pEn:'All-Time '}],
   // 방송사 축 — 성별·세대와 달리 그룹이 아니라 **제목 검색어**로 번역된다(축제는 영상 제목에만 남는다).
   // 연말용(fest)과 모아보기용(festS)이 나뉘는 이유: '전체'의 뜻이 다르다. 연말 전체는 여름판을 빼야
   // 하고(가요대전 썸머), 모아보기 전체는 여름판까지 포함한다.
@@ -27658,8 +27776,19 @@ function _feedWhoSub(song){
   const ms=arts.map(x=>x.a?_dispName(x.a,song.groupKo):x.mko).filter(Boolean);
   const more=ms.length>3?ms.length-3:0;
   const who=ms.slice(0,3).join(', ')+(more?(currentLang==='ko'?` 외 ${more}`:` +${more}`):'');
+  // 같이 나온 사람(게스트) — with_members "이름(그룹)" (2026-11-19 #29, 사용자 "For you에 같이 나온 사람도 표기"). 메인에 이미
+  // 뜬 사람은 빼고 최대 2명 + 외 n. 영어 화면은 영문 이름(_dispName). 솔로 "이름(솔로)"·본인 중복은 아래에서 걸러진다.
+  const shown=new Set(ms),anchorG=song.groupKo||'',guests=[];
+  (song.withMembers||[]).forEach(n=>{
+    const m=/^(.*)\((.*)\)$/.exec(String(n));const nm=m?m[1]:String(n);
+    if(!nm||m&&m[2]==='솔로'&&nm===anchorG||shown.has(nm)||guests.some(x=>x.nm===nm))return;
+    const a=_findArtistByConnName(n,anchorG);const disp=a?_dispName(a,anchorG):nm;
+    if(shown.has(disp))return;guests.push({nm,disp});
+  });
+  const gMore=guests.length>2?guests.length-2:0;
+  const withTxt=guests.length?((currentLang==='ko'?'함께 ':'with ')+guests.slice(0,2).map(x=>x.disp).join(', ')+(gMore?(currentLang==='ko'?` 외 ${gMore}`:` +${gMore}`):'')):'';
   // 솔로(그룹명=본인)면 이름 한 번만
-  return who+(g&&g!==who?` <span class="feed-sub-grp">${g}</span>`:'');
+  return who+(g&&g!==who?` <span class="feed-sub-grp">${g}</span>`:'')+(withTxt?` <span class="feed-sub-with">${withTxt}</span>`:'');
 }
 const _isPubTsMissing=err=>!!err&&/published_ts/.test(err.message||'');
 function _fmtVidAgo(iso){
@@ -28000,11 +28129,21 @@ function _feedBiasMatchers(){
       ||bias.find(b=>b&&(b.type||'member')==='group'&&b.ko===song.groupKo);
     return(hit&&hit.emoji)||'🤍';
   };
+  // 이 영상에 걸린 내 즐겨찾기 수(#26, 2026-11-19 사용자 "즐겨찾기 둘 이상 나오면 우선순위 높아야지") — 최애 그룹 + 태깅/게스트
+  // 멤버 중 내 최애를 중복 없이 센다. 2명↑이면 For You 최애 묶음에서 앞으로 올린다.
+  const favCount=song=>{
+    const hits=new Set();
+    if(gset.has(song.groupKo))hits.add('g:'+song.groupKo);
+    (song.memberKos||[]).forEach(m=>{if(mKeys.has(m+'|'+(song.groupKo||''))||mLoose.has(m))hits.add('m:'+m);});
+    (song.withMembers||[]).forEach(n=>{const mm=/^(.*)\((.*)\)$/.exec(String(n));const nm=mm?mm[1]:String(n),gg=mm?mm[2]:'';if(mKeys.has(nm+'|'+gg)||mLoose.has(nm))hits.add('m:'+nm);});
+    return hits.size;
+  };
   return{
     favEmoji,
     wide:song=>gset.has(song.groupKo)||mGroups.has(song.groupKo)||memberHit(song),
     short:memberHit,
     fav:song=>gset.has(song.groupKo)||memberHit(song),
+    favCount,
     favRgb,
   };
 }
@@ -28033,7 +28172,7 @@ async function _buildFeedFavCharts(){
   try{
     // 2026-11-05 차트 통합 — 주간 TOP 20·월간 TOP 30 대신 통합 차트(직캠 1주·퍼포먼스 1달, TOP 100)에서 최애를 찾는다.
     const isKo=currentLang==='ko';
-    const defs=[{id:'soloCam',era:'w',short:isKo?'1주 개인 직캠':'1W Fancam'},{id:'stage',era:'m',short:isKo?'1달 퍼포먼스':'1M Performance'}];
+    const defs=[{id:'soloCam',era:'w',short:isKo?'주간 개인 직캠':'Weekly Fancam'},{id:'stage',era:'m',short:isKo?'월간 퍼포먼스':'Monthly Performance'}];
     const charts=await Promise.all(defs.map(async c=>{
       const sel={..._CHART_SEL_DEFAULT,era:c.era};
       const[songs,prev]=await Promise.all([_chartSongs(c.id,sel),_fetchPrevRanks(_chartSnapKey(c.id,sel))]);
@@ -28050,7 +28189,9 @@ async function _buildFeedFavCharts(){
       });
     });
     if(!items.length)return;
-    items.sort((a,b)=>a.rank-b.rank); // 높은 순위부터
+    // For You 차트 선반은 영상 최신순(#28, 2026-11-19 사용자 "포유탭 차트는 순위순 말고 영상 최신순") — For You는 시의성이 핵심이라
+    // 새로 차트에 든 최애 영상이 먼저 보이게. 순위('N위')는 캡션에 그대로 남는다. 날짜가 같으면 높은 순위부터. (차트 화면 _openChartList는 순위순 유지)
+    items.sort((a,b)=>String(b.v.published_at||'').localeCompare(String(a.v.published_at||''))||a.rank-b.rank);
     // ⚠️ 섹션을 **먼저** 보이게 한 뒤 카드를 붙인다 — display:none 안에서 만든 lazy 썸네일은 나중에 보여도 로딩이 시작되지 않아
     //    캡션(썸네일이 떠야 보임)까지 빈 카드로 남았다(2026-10-15 헤드리스 실측).
     section.style.display='';
@@ -28151,18 +28292,22 @@ async function _buildFeedFavNew(opts){
     // (_feedBiasMatchers().fav). 예전 가로 판정(최애 멤버의 그룹 전체)은 빛까지 주기엔 너무 넓다.
     const _bias=_feedBiasMatchers();
     const _isFav=_bias?_bias.fav:()=>false;
-    const _favFirst=songs.filter(_isFav),_rest=songs.filter(s=>!_isFav(s)); // 각자 최신순 유지
+    const _favN=_bias?_bias.favCount:()=>0;
+    // 지난 방문 이후 올라온 영상엔 날짜 앞에 NEW(2026-11-04 — "새로 뭐 올라왔지?"가 바로 보이게). 썸네일 위엔 안 얹는다.
+    const _prevSeen=window._kpuPrevSeen||0;
+    // NEW 기준: 지난 방문 이후 OR 최근 48h(둘 중 하나). 지난 방문만 보면 자주 올수록 NEW가 거의 안 떠 "2시간 이내처럼" 타이트했다(2026-11-18 사용자).
+    const _NEW_WIN=48*3600e3;
+    const _isNewSince=s=>{const t=Date.parse(s.paFull||'');if(!isFinite(t)||String(s.paFull).length<=10)return false;return (Date.now()-t<_NEW_WIN)||(!!_prevSeen&&t>_prevSeen);};
+    // 최애 묶음: NEW 뱃지(안 본 새 영상) 먼저(2026-11-19 사용자) → 즐겨찾기 겹친 수(#26) → 최신순(안정 정렬). 나머지는 최신순 그대로.
+    const _favFirst=songs.filter(_isFav).sort((a,b)=>((_isNewSince(b)?1:0)-(_isNewSince(a)?1:0))||(_favN(b)-_favN(a))),_rest=songs.filter(s=>!_isFav(s));
     const rows=_packRows(_favFirst.concat(_rest),_songIsShort,{landscapeFull:true});
     if(rows.length&&!rows[rows.length-1].wide&&rows[rows.length-1].items.length===1)rows.pop(); // 끝에 홀로 남은 반폭 제거
     const flat=rows.flatMap(r=>r.items); // 라이트박스 재생목록 순서를 화면 순서와 일치
-    // 지난 방문 이후 올라온 영상엔 날짜 앞에 NEW(2026-11-04 — "새로 뭐 올라왔지?"가 바로 보이게). 썸네일 위엔 안 얹는다.
-    const _prevSeen=window._kpuPrevSeen||0;
-    const _isNewSince=s=>{if(!_prevSeen)return false;const t=Date.parse(s.paFull||'');return isFinite(t)&&String(s.paFull).length>10&&t>_prevSeen;};
     const drawItem=({song,row})=>{
       const isShort=_songIsShort(song);
       const _emo=_isFav(song)?String(_bias.favEmoji(song)).replace(/[<>&"']/g,''):''; // 이모지는 사용자가 친 글자 — 태그 문자 제거
-      // NEW는 맨 앞 뱃지(2026-11-18 사용자 "new 뱃지 최애 이모티콘 앞으로") — 신보 선반 NEW 칩(.feed-card-new)과 같은 모양
-      const sub=(_isNewSince(song)?'<span class="feed-card-new">NEW</span>':'')+(_emo?`<span class="feed-fav-emo">${_emo}</span>`:'')+[_feedWhoSub(song),song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
+      // NEW는 최애 이모지 앞(2026-11-19 사용자 "new 뱃지 최애 이모티콘 앞으로 가야지")
+      const sub=(_isNewSince(song)?'<span class="feed-new-hot">NEW</span>':'')+(_emo?`<span class="feed-fav-emo">${_emo}</span>`:'')+[_feedWhoSub(song),song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
       _appendFeedCard(strip,'💖',song.t,sub,
         ()=>openLightbox(song.u,isShort,flat,flat.indexOf(song),{groupKo:song.groupKo,memberKo:(song.memberKos||[])[0]},false,true),
         song.thumb,null, Object.assign({dur:song.dur}, row.wide?{wide:true,short:!!row.short}:(isShort?{short:true}:{}),
@@ -31781,7 +31926,7 @@ function _updateAdminUI(){
 // 옛 버전을 계속 서빙해서 고친 코드가 반영 안 되는 것처럼 보이는 사고가 남(2026-08-18, HTML 엔티티 정리
 // 버튼 타임아웃 재수정 후에도 계속 재현된다는 제보로 발견). admin.js 내용을 바꿀 때마다 이 버전 문자열도
 // 같이 올릴 것(sw.js의 CACHE_VERSION과 같은 수동 관리 방식).
-const _ADMIN_JS_VER='20261118-427b51aa';
+const _ADMIN_JS_VER='20261119-d704162d';
 function _loadAdminScript(){
   if(!_isAdmin()||document.getElementById('admin-js-script'))return;
   const s=document.createElement('script');
