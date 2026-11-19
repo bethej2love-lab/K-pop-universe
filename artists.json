@@ -51648,6 +51648,24 @@
     },
     "discography": [
       {
+        "title": "Leave With Me (Featured in Always Lalisa)",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/76/655/15176655_20261118113637_500.jpg",
+        "releaseDate": "2026.11.18",
+        "trackCount": 1,
+        "titleTrack": "Leave With Me",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Leave With Me",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15176655"
+      },
+      {
         "title": "PRESS PLAY",
         "type": "미니 1집",
         "isMain": true,
