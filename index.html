@@ -1638,6 +1638,11 @@ if(typeof window.supabase==='undefined'){
         <div id="feed-favnew" class="feed-grid"></div>
       </div>
       <!-- 내 최애 소식(2026-10-16) — 발견 탭 This Week's K-pop(음방 1위·MV·티저·조회수 돌파)을 즐겨찾기로 거른 것. 일주일이면 지나가는 소식이라 기념일 바로 밑 -->
+      <!-- Rediscover(2026-11-19, docs/FOR_YOU_FEED.md 3단계) — 최애의 옛 영상 중 아직 안 본 것. 하루 단위로 다른 묶음 -->
+      <div class="feed-section" id="feed-redisc-section" style="display:none">
+        <div class="feed-section-ttl">🕰️ Rediscover</div>
+        <div id="feed-redisc" class="feed-strip hscroll-drag"></div>
+      </div>
       <div class="feed-section" id="feed-favnews-section" style="display:none">
         <div class="feed-section-ttl">📰 This Week</div>
         <div id="feed-favnews" class="feed-news-list"></div>
@@ -1697,6 +1702,12 @@ if(typeof window.supabase==='undefined'){
           <div id="feed-showeps" class="feed-showeps hscroll-drag"></div>
         </div>
       </div>
+      <!-- Charts를 This Week 바로 아래로(2026-11-19 사용자 승인 — 8번째라 한참 내려야 보였다. "좋은 콘텐츠인데 노출이 약하다").
+           Trend·Picks(세로로 긴 격자)는 맨 아래 그대로 — 위로 올리면 그 아래 가로 선반들이 묻힌다. -->
+      <div class="feed-section">
+        <div class="feed-section-ttl">📊 Charts</div>
+        <div id="feed-chart" class="feed-strip hscroll-drag"></div>
+      </div>
       <!-- 인스타 사진(2026-10-19) — 팔로워 많은 계정들의 최근 사진 게시물(영상 제외) -->
       <div class="feed-section" id="feed-ig-section" style="display:none">
         <div class="feed-section-ttl" id="feed-ig-ttl">📷 Instagram</div>
@@ -1716,10 +1727,6 @@ if(typeof window.supabase==='undefined'){
       <div class="feed-section" id="feed-events-section" style="display:none">
         <div class="feed-section-ttl">🎤 Events</div>
         <div id="feed-events" class="feed-strip hscroll-drag"></div>
-      </div>
-      <div class="feed-section">
-        <div class="feed-section-ttl">📊 Charts</div>
-        <div id="feed-chart" class="feed-strip hscroll-drag"></div>
       </div>
       <!-- Original Contents: 여러 아이돌 개인 채널(source_tier='idol', 가을의 온도·따라해볼레이 등) 최근 업로드를 한 가로 선반에.
            Trend는 세로 그리드라 길어서, 짧은 가로 선반인 이걸 그 위로 올림(2026-09-04 사용자 요청). -->

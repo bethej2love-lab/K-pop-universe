@@ -28551,9 +28551,72 @@ async function _buildFeedFavNew(opts){
     section.style.display='';
   }catch(e){_feedSkelClear(strip);if(!strip.children.length)section.style.display='none';console.warn('[feed] 즐겨찾기 신작 선반 실패 — 이 선반만 빠집니다',e);}
 }
+// ── Rediscover(2026-11-19, 사용자 "하루에 여러 번 들어가도 화면이 똑같다"·"우리만의 알고리즘" — docs/FOR_YOU_FEED.md) ──
+// 최애가 새로 안 올린 날에도 볼 게 있게, 최애의 **옛 영상 중 아직 안 본 것**을 하루 단위로 다른 묶음으로. 카드마다 이유 한 줄.
+//  ① 'N년 전 이맘때' — 오늘 ±3일, 1~6년 전 중 날짜 씨앗으로 고른 한 해
+//  ② '아직 안 본 무대' — 1~6년 전 사이 날짜 씨앗으로 고른 40일 구간의 무대·직캠, 조회수 높은 순
+// DB 부담: 조회 2개뿐, 둘 다 '그룹 + 발행일 구간'(새 영상 선반과 같은 색인 경로) — 조회수 정렬 전체 훑기는 안 쓴다(CLAUDE.md). 하루 한 번만 조회(같은 날·같은 최애면 기억값).
+// 고르는 부분(_redPick)은 순수 함수라 tests/feed-rediscover.test.js가 본다.
+function _redSeed(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619);}h^=h>>>13;h=Math.imul(h,0x5bd1e995);h^=h>>>15;return (h>>>0)/4294967296;}
+function _redPlan(dayKey){ // dayKey 'YYYY-MM-DD' → 조회할 두 구간
+  const d0=Date.parse(dayKey+'T00:00:00Z'),iso=t=>new Date(t).toISOString().slice(0,10);
+  const yrs=1+Math.floor(_redSeed('y|'+dayKey)*6); // 1~6년 전
+  const base=new Date(d0);base.setUTCFullYear(base.getUTCFullYear()-yrs);
+  const back=365+Math.floor(_redSeed('w|'+dayKey)*(365*5)); // 1~6년 전 사이 어느 날
+  const wEnd=d0-back*864e5;
+  return{yrs,ann:[iso(base.getTime()-3*864e5),iso(base.getTime()+4*864e5)],win:[iso(wEnd-40*864e5),iso(wEnd)]};
+}
+function _redPick(annRows,winRows,o){ // o:{yrs,isSeen(id),ok(row),max}
+  const out=[],seen=new Set(),max=o.max||6;
+  const take=(rows,why,n)=>{let k=0;for(const v of rows){if(out.length>=max||k>=n)break;if(!v||seen.has(v.id)||o.isSeen(v.id)||!o.ok(v))continue;seen.add(v.id);out.push({v,why:why(v)});k++;}};
+  const byViews=(a,b)=>(b.view_count||0)-(a.view_count||0);
+  take([...(annRows||[])].sort(byViews),()=>({kind:'ann',yrs:o.yrs}),2);
+  take([...(winRows||[])].filter(v=>v.category==='live'||!v.category).sort(byViews),v=>({kind:'unseen',year:String(v.published_at||'').slice(0,4)}),max);
+  if(out.length<3)take([...(winRows||[])].sort(byViews),v=>({kind:'unseen',year:String(v.published_at||'').slice(0,4)}),max); // 무대가 모자라면 그 구간의 다른 영상으로
+  return out;
+}
+let _redCache=null; // {key,rows:[ann,win],plan}
+async function _buildFeedRediscover(){
+  const strip=document.getElementById('feed-redisc'),section=document.getElementById('feed-redisc-section');
+  if(!strip||!section||!sb)return;
+  strip.innerHTML='';section.style.display='none';
+  const {passAll,memberFilter,queryGkos}=_feedFavTargets();
+  if(!queryGkos.size)return;
+  const dayKey=_recDayKey(),gkos=[...queryGkos].sort().slice(0,60),key=dayKey+'|'+gkos.join(',');
+  try{
+    if(!_redCache||_redCache.key!==key){
+      const plan=_redPlan(dayKey);
+      const q=([a,b],lim)=>_withTimeout(()=>_applyLiveExclude(sb.from(_YT_TABLE).select(_FEED_COLS())).is('unavailable_at',null).in('group_ko',gkos)
+        .gte('published_at',a).lt('published_at',b)
+        .or('content_flag.is.null,content_flag.neq.기타').or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류').or('content_flag.is.null,content_flag.neq.hidden')
+        .order('published_at',{ascending:false}).limit(lim),6000,undefined,0);
+      const rs=await Promise.allSettled([q(plan.ann,80),q(plan.win,200)]);
+      const rows=rs.map(r=>r.status==='fulfilled'&&r.value&&!r.value.error?(r.value.data||[]):[]);
+      if(!rows[0].length&&!rows[1].length)return; // 실패·빈 결과는 기억하지 않는다(다음에 다시)
+      _redCache={key,rows,plan};
+    }
+    const favOk=v=>{if(passAll.has(v.group_ko))return true;const mf=memberFilter.get(v.group_ko);if(!mf)return false;const mem=v.members||[];return mem.length===0?true:mem.some(m=>mf.has(m));};
+    const banned=new Set(_filterBannedVideos([..._redCache.rows[0],..._redCache.rows[1]]).map(v=>v.id));
+    const picks=_redPick(_redCache.rows[0],_redCache.rows[1],{yrs:_redCache.plan.yrs,max:6,isSeen:id=>_vidProg.has(id),
+      ok:v=>banned.has(v.id)&&favOk(v)&&!_lessOnly(v)&&!_isCompilationVid(v)});
+    if(picks.length<2)return; // 한 장만 덩그러니 두지 않는다
+    const isKo=currentLang==='ko';
+    const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+    const songs=picks.map(({v})=>({..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),groupKo:v.group_ko,memberKos:v.members||[],_apiId:v.id,_apiGroupKo:v.group_ko,content_flag:v.content_flag||null}));
+    picks.forEach(({v,why},i)=>{
+      const reason=why.kind==='ann'?(isKo?`${why.yrs}년 전 이맘때`:`${why.yrs}y ago this week`):(isKo?`아직 안 본 무대 · ${why.year}`:`Unwatched · ${why.year}`);
+      const who=_feedWhoSub(songs[i]);
+      _appendFeedCard(strip,'',_cleanTitle(v.title),[reason,who].filter(Boolean).join(' · '),()=>{
+        _gaEvent('shelf_click',{action:'redisc_'+why.kind}); // 어떤 이유(ann·unseen)가 눌리는지 — _appendFeedCard의 기본 shelf_click(shelf_id)과 별개로 한 번 더 남는다
+        _feedNav(()=>openLightbox(songs[i].u,_songIsShort(songs[i]),songs,i,{groupKo:v.group_ko},false,true));
+      },v.thumb);
+    });
+    section.style.display='';
+  }catch(e){console.warn('[feed] Rediscover 선반 실패 — 이 선반만 빠집니다',e);}
+}
 // For You 선반 기본 순서(index.html과 같게) + '오늘 일어난 일' 끌어올림(2026-11-04).
 // 2026-11-15 사용자 "사진이 보기 편하니 인스타를 비디오보다 위에" — favig를 favnew 앞으로(index.html DOM 순서도 함께 변경).
-const _FY_ORDER=['feed-recent-section','feed-favig-section','feed-favnew-section','feed-favnews-section','feed-favalbum-section','feed-favchart-section',
+const _FY_ORDER=['feed-recent-section','feed-favig-section','feed-favnew-section','feed-redisc-section','feed-favnews-section','feed-favalbum-section','feed-favchart-section',
   'feed-favconcert-section','feed-foryou-anniv-section'];
 function _fyUrgent(id,on){const el=document.getElementById(id);if(!el)return;const v=on?'1':'';if((el.dataset.urgent||'')===v)return;el.dataset.urgent=v;_fyReorder();}
 function _fyReorder(){
@@ -28580,7 +28643,7 @@ function _buildFeedRec(){
   const favNewP=_buildFeedFavNew();
   const jobs=[favNewP];
   const gate=Promise.race([favNewP.catch(()=>{}),new Promise(r=>setTimeout(r,1200))]);
-  jobs.push(gate.then(()=>Promise.allSettled([_buildFeedFavNews(),_buildFeedFavAlbums(),_buildFeedFavConcerts(),_buildFeedFavIg(),_buildFeedFavCharts()])));
+  jobs.push(gate.then(()=>Promise.allSettled([_buildFeedFavNews(),_buildFeedFavAlbums(),_buildFeedFavConcerts(),_buildFeedFavIg(),_buildFeedFavCharts(),_buildFeedRediscover()])));
 
   setTimeout(()=>_feedCheckEmpty('rec'),1800); // 비동기 선반들이 다 실패해 빈 화면이면 재시도 노출
   const pending=Promise.allSettled(jobs).finally(()=>{if(_feedRecPending===pending)_feedRecPending=null;});
