@@ -28614,6 +28614,110 @@ async function _buildFeedRediscover(){
     section.style.display='';
   }catch(e){console.warn('[feed] Rediscover 선반 실패 — 이 선반만 빠집니다',e);}
 }
+// ── More for you — 끝없는 추천 줄(2026-11-19, 사용자 "피드가 쉽게 끝나지 않게 이어서 추천"·"우리만의 알고리즘" — docs/FOR_YOU_FEED.md 4단계) ──
+// 고르는 기준은 '많이 본 것'이 아니라 **최애와 이어진 팀**: 한 걸음(같은 소속사·데뷔 동기) 8 : 두 걸음(그 팀과 이어진 팀) 2. 카드마다 이유 한 줄.
+// 첫 장에는 '최애가 남의 영상에 함께 나온 것'(with_members·with_groups)도 섞는다. 가로 영상만(쇼츠는 격자가 들쭉날쭉해져 뺐다).
+// DB 부담: 한 장(20개)에 조회 1개 — '그룹 4팀 + 발행일 120일 구간'(새 영상 선반과 같은 경로), 첫 장만 함께 출연 조회 1개 더. 조회수 정렬 훑기 없음(CLAUDE.md). 한 번 열 때 최대 8장.
+// 하루 단위로 팀 순서·구간이 바뀐다(_redSeed). 고르는 부분(_moreNeighbors·_morePlan·_morePick)은 순수 함수 — tests/feed-more.test.js.
+function _moreNeighbors(favs,G){
+  const yr=k=>{const m=String((G[k]||{}).debut||'').match(/(\d{4})/);return m?+m[1]:null;};
+  const near=k=>{const x=G[k],r=[];if(!x)return r;const y0=yr(k);
+    for(const o in G){if(o===k)continue;const y=G[o];
+      if(x.co&&y.co===x.co)r.push({g:o,rel:'co'});
+      else if(y0&&yr(o)===y0&&(!x.gender||y.gender===x.gender))r.push({g:o,rel:'debut'});}
+    return r;};
+  const out=[],seen=new Set(favs);
+  favs.forEach(f=>near(f).forEach(n=>{if(seen.has(n.g))return;seen.add(n.g);out.push({g:n.g,via:f,rel:n.rel,step:1});}));
+  out.slice().forEach(a=>near(a.g).forEach(n=>{if(seen.has(n.g))return;seen.add(n.g);out.push({g:n.g,via:a.via,mid:a.g,rel:n.rel,step:2});}));
+  return out;
+}
+function _morePlan(neigh,dayKey,page){ // → {groups:[{g,…}],win:[from,to)} | null(더 없음)
+  const ord=(arr,salt)=>arr.map(x=>({x,k:_redSeed(salt+'|'+dayKey+'|'+x.g)})).sort((a,b)=>a.k-b.k).map(o=>o.x);
+  const s1=ord(neigh.filter(n=>n.step===1),'s1'),s2=ord(neigh.filter(n=>n.step===2),'s2');
+  const g1=s1.slice(page*3,page*3+3),g2=s2.slice(page,page+1);
+  if(!g1.length&&!g2.length)return null;
+  const d0=Date.parse(dayKey+'T00:00:00Z'),iso=t=>new Date(t).toISOString().slice(0,10);
+  const end=page===0?d0+864e5:d0-(120+Math.floor(_redSeed('mw|'+dayKey+'|'+page)*900))*864e5; // 첫 장은 최근 120일, 그 뒤는 지난 3년 안 어느 120일
+  return{groups:g1.concat(g2),win:[iso(end-120*864e5),iso(end)]};
+}
+function _morePick(rows,groups,o){ // o:{isSeen,ok,noise(id),max}
+  const meta=new Map(groups.map(g=>[g.g,g])),max=o.max||20;
+  const pool=(rows||[]).filter(v=>v&&meta.has(v.group_ko)&&!o.isSeen(v.id)&&o.ok(v));
+  if(!pool.length)return[];
+  const ts=pool.map(v=>Date.parse(v.published_at||'')||0),t0=Math.min(...ts),t1=Math.max(...ts),mx=Math.max(1,...pool.map(v=>Math.log10(1+(v.view_count||0))));
+  const sc=v=>0.45*Math.log10(1+(v.view_count||0))/mx+0.25*(t1>t0?((Date.parse(v.published_at||'')||t0)-t0)/(t1-t0):0.5)+0.30*o.noise(v.id);
+  const byG=new Map();pool.map(v=>({v,s:sc(v)})).sort((a,b)=>b.s-a.s).forEach(x=>{const k=x.v.group_ko;if(!byG.has(k))byG.set(k,[]);if(byG.get(k).length<6)byG.get(k).push(x);});
+  const one=[],two=[];byG.forEach((arr,k)=>(meta.get(k).step===2?two:one).push(...arr));
+  one.sort((a,b)=>b.s-a.s);two.sort((a,b)=>b.s-a.s);
+  const out=[];let i=0,j=0;
+  while(out.length<max&&(i<one.length||j<two.length)){ // 다섯 번째마다 두 걸음(8:2)
+    const want2=(out.length%5===4);
+    const x=(want2&&j<two.length)?two[j++]:(i<one.length?one[i++]:two[j++]);
+    out.push({v:x.v,why:meta.get(x.v.group_ko)});
+  }
+  return out;
+}
+let _moreSt=null,_moreObs=null;
+async function _buildFeedMore(reset){
+  const grid=document.getElementById('feed-more'),section=document.getElementById('feed-more-section'),sent=document.getElementById('feed-more-sentinel');
+  if(!grid||!section||!sb)return;
+  const {passAll,memberFilter,queryGkos}=_feedFavTargets();
+  const favs=[...queryGkos].filter(k=>GROUPS[k]).sort();
+  const dayKey=_recDayKey(),key=dayKey+'|'+favs.join(',');
+  if(reset||!_moreSt||_moreSt.key!==key){grid.innerHTML='';section.style.display='none';_moreSt={key,page:0,busy:false,done:false,shown:new Set(),neigh:_moreNeighbors(favs,GROUPS),songs:[]};}
+  const st=_moreSt;
+  if(!favs.length||!st.neigh.length||st.busy||st.done)return;
+  st.busy=true;
+  try{
+    const plan=st.page<8?_morePlan(st.neigh,dayKey,st.page):null;
+    if(!plan){st.done=true;return;}
+    const cols=_FEED_COLS(),flt=q=>q.or('content_flag.is.null,content_flag.neq.기타').or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류').or('content_flag.is.null,content_flag.neq.hidden');
+    const qs=[_withTimeout(()=>flt(_applyLiveExclude(sb.from(_YT_TABLE).select(cols)).is('unavailable_at',null).in('group_ko',plan.groups.map(g=>g.g))
+      .gte('published_at',plan.win[0]).lt('published_at',plan.win[1])).order('published_at',{ascending:false}).limit(160),6000,undefined,0)];
+    // 첫 장: 최애가 남의 영상에 함께 나온 것(최근 180일)
+    const gMem=[],gGrp=[];
+    if(st.page===0){
+      favMembers.forEach(k=>{const a=ARTISTS.find(x=>_mFavKey(x)===k);if(a)gMem.push(`${a.name.ko}(${GROUPS[a.group.ko]?a.group.ko:a.name.ko})`);});
+      passAll.forEach(g=>{if(GROUPS[g])gGrp.push(g);else gMem.push(`${g}(${g})`);});
+      const arr=a=>'{'+a.slice(0,60).map(x=>'"'+String(x).replace(/"/g,'\\"')+'"').join(',')+'}';
+      if(gMem.length||gGrp.length)qs.push(_withTimeout(()=>flt(_applyLiveExclude(sb.from(_YT_TABLE).select(cols)).is('unavailable_at',null)
+        .or([gMem.length?`with_members.ov.${arr(gMem)}`:null,gGrp.length?`with_groups.ov.${arr(gGrp)}`:null].filter(Boolean).join(','))
+        .gte('published_at',new Date(Date.now()-180*864e5).toISOString().slice(0,10))).order('published_at',{ascending:false}).limit(60),6000,undefined,0));
+    }
+    const rs=await Promise.allSettled(qs);
+    if(_moreSt!==st)return;
+    const rowsOf=r=>r&&r.status==='fulfilled'&&r.value&&!r.value.error?(r.value.data||[]):[];
+    const main=rowsOf(rs[0]),guest=rowsOf(rs[1]);
+    const okIds=new Set(_filterBannedVideos([...main,...guest]).map(v=>v.id));
+    const ok=v=>okIds.has(v.id)&&!st.shown.has(v.id)&&!_isShortV(v)&&!_isCompilationVid(v)&&!_lessOnly(v);
+    const picks=_morePick(main,plan.groups,{isSeen:id=>_vidProg.has(id),ok,noise:_recNoise,max:20});
+    // 함께 출연 — 최애 본인 채널이 아닌 영상만, 앞쪽에 최대 6개
+    const gp=[];guest.forEach(v=>{if(gp.length>=6||queryGkos.has(v.group_ko)||_vidProg.has(v.id)||!ok(v)||picks.some(p=>p.v.id===v.id))return;
+      const hitG=(v.with_groups||[]).find(g=>gGrp.includes(g)),hitM=(v.with_members||[]).find(m=>gMem.includes(m));
+      gp.push({v,why:{rel:'with',via:hitG||(hitM?hitM.replace(/\(.*$/,''):''),step:1}});});
+    const all=gp.concat(picks).slice(0,20);
+    st.page++;
+    // 이 장이 비었으면 다음 장으로. 아직 아무것도 못 띄웠으면 감지 칸도 숨겨져 있어 스크롤로는 안 불리므로 바로 한 번 더(처음 4장까지만)
+    if(!all.length){if(st.page>=8)st.done=true;else if(!grid.children.length&&st.page<4)st.again=true;return;}
+    const isKo=currentLang==='ko',lab=k=>(typeof _gLabelKo==='function'&&_gLabelKo(k))||k;
+    const reason=w=>w.rel==='with'?(isKo?`${lab(w.via)} 함께 출연`:`with ${lab(w.via)}`)
+      :w.step===2?(isKo?`한 다리 건너 · ${lab(w.mid)}`:`via ${lab(w.mid)}`)
+      :w.rel==='co'?(isKo?`같은 소속사 · ${lab(w.via)}`:`Same label · ${lab(w.via)}`):(isKo?`데뷔 동기 · ${lab(w.via)}`:`Same debut year · ${lab(w.via)}`);
+    const vidUrl=v=>`https://www.youtube.com/watch?v=${v.id}`;
+    all.forEach(({v,why})=>{
+      st.shown.add(v.id);
+      const song={..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),groupKo:v.group_ko,memberKos:v.members||[],_apiId:v.id,_apiGroupKo:v.group_ko,content_flag:v.content_flag||null};
+      const idx=st.songs.push(song)-1;
+      _appendFeedCard(grid,'',_cleanTitle(v.title),[reason(why),_feedWhoSub(song)].filter(Boolean).join(' · '),()=>{
+        _gaEvent('shelf_click',{action:'more_'+(why.rel==='with'?'with':why.step===2?'step2':why.rel)}); // 어떤 길이 눌리는지(가중치 조정용)
+        _feedNav(()=>openLightbox(song.u,false,st.songs,idx,{groupKo:v.group_ko},false,true));
+      },v.thumb);
+    });
+    section.style.display='';
+    if(sent&&!_moreObs&&'IntersectionObserver' in window){_moreObs=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting))_buildFeedMore(false);},{rootMargin:'600px 0px'});_moreObs.observe(sent);}
+  }catch(e){console.warn('[feed] More for you 실패 — 이 줄만 빠집니다',e);}
+  finally{st.busy=false;if(st.again){st.again=false;setTimeout(()=>{if(_moreSt===st)_buildFeedMore(false);},0);}}
+}
 // For You 선반 기본 순서(index.html과 같게) + '오늘 일어난 일' 끌어올림(2026-11-04).
 // 2026-11-15 사용자 "사진이 보기 편하니 인스타를 비디오보다 위에" — favig를 favnew 앞으로(index.html DOM 순서도 함께 변경).
 const _FY_ORDER=['feed-recent-section','feed-favig-section','feed-favnew-section','feed-redisc-section','feed-favnews-section','feed-favalbum-section','feed-favchart-section',
@@ -28643,7 +28747,7 @@ function _buildFeedRec(){
   const favNewP=_buildFeedFavNew();
   const jobs=[favNewP];
   const gate=Promise.race([favNewP.catch(()=>{}),new Promise(r=>setTimeout(r,1200))]);
-  jobs.push(gate.then(()=>Promise.allSettled([_buildFeedFavNews(),_buildFeedFavAlbums(),_buildFeedFavConcerts(),_buildFeedFavIg(),_buildFeedFavCharts(),_buildFeedRediscover()])));
+  jobs.push(gate.then(()=>Promise.allSettled([_buildFeedFavNews(),_buildFeedFavAlbums(),_buildFeedFavConcerts(),_buildFeedFavIg(),_buildFeedFavCharts(),_buildFeedRediscover()]).then(()=>_buildFeedMore(true))));
 
   setTimeout(()=>_feedCheckEmpty('rec'),1800); // 비동기 선반들이 다 실패해 빈 화면이면 재시도 노출
   const pending=Promise.allSettled(jobs).finally(()=>{if(_feedRecPending===pending)_feedRecPending=null;});

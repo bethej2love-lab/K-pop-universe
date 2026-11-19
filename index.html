@@ -1671,6 +1671,12 @@ if(typeof window.supabase==='undefined'){
         <div class="feed-section-ttl">🎉 Anniversaries Coming Up</div>
         <div id="feed-foryou-anniv" class="feed-strip hscroll-drag"></div>
       </div>
+      <!-- More for you(2026-11-19, docs/FOR_YOU_FEED.md 4단계) — 최애와 이어진 팀의 영상을 끝없이. 맨 아래 감지 칸이 보이면 20개씩 더 -->
+      <div class="feed-section" id="feed-more-section" style="display:none">
+        <div class="feed-section-ttl">🪐 More for you</div>
+        <div id="feed-more" class="feed-grid"></div>
+        <div id="feed-more-sentinel" aria-hidden="true"></div>
+      </div>
       <div id="feed-empty-rec" class="feed-empty" hidden><div class="feed-empty-txt"></div><button class="feed-empty-retry" type="button"></button></div>
       <!-- 슬로건 뒷짝(2026-10-21 사용자 — "디즈니 인트로처럼 앞뒤로, 은은하게"). 앞은 첫 화면 .ld-l3, 뒤는 For You 맨 끝 -->
       <div class="feed-signoff">Everything starts with your favorite.</div>
