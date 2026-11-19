@@ -26349,6 +26349,43 @@ function _chartStoryStats(songs,hist){
     return{s,id,h,streak,climb,isNew};
   });
 }
+// '오늘의 움직임'(2026-11-19 사용자 "저 그래프 대부분의 유저에겐 안 와닿을 것 — 보기 좋으면서 탐험에 도움 되는 시각자료") —
+// 선 그래프 대신 **누르면 바로 재생되는 썸네일 줄**: 가장 많이 오른 무대 2개 · 새로 들어온 무대 3개 · 가장 오래 버틴 무대 1개(겹치면 한 번만, 최대 6).
+// st = _chartStoryStats 결과. 움직임이 하나도 없으면 [] → 예전 미니 그래프가 그대로 뜬다.
+function _chartMoves(st,histLen){
+  const out=[],seen=new Set();
+  const add=(o,kind,badge)=>{if(!o||seen.has(o.id)||out.length>=6)return;seen.add(o.id);out.push({o,kind,badge});};
+  const rise=st.filter(o=>o.climb>0).sort((a,b)=>b.climb-a.climb||a.s.rank-b.s.rank);
+  const fresh=st.filter(o=>o.isNew).sort((a,b)=>a.s.rank-b.s.rank);
+  const long=st.filter(o=>o.streak>=3).sort((a,b)=>b.streak-a.streak||a.s.rank-b.s.rank)[0];
+  add(rise[0],'rise',rise[0]&&'↑'+rise[0].climb);
+  fresh.slice(0,3).forEach(o=>add(o,'new','NEW'));
+  add(rise[1],'rise',rise[1]&&'↑'+rise[1].climb);
+  if(long)add(long,'long',(histLen&&long.streak>=histLen?long.streak+'+':long.streak)+(currentLang==='ko'?'일째':'d'));
+  return out;
+}
+function _renderChartMoves(box,moves,onGraph,nDays){
+  const isKo=currentLang==='ko';
+  const wrap=document.createElement('div');wrap.className='cs-moves';
+  const songs=moves.map(m=>m.o.s);
+  moves.forEach((m,i)=>{
+    const s=m.o.s,b=document.createElement('button');b.type='button';b.className='cs-move cs-move-'+m.kind;
+    const tw=document.createElement('span');tw.className='cs-move-tw';
+    if(s.thumb){const im=document.createElement('img');im.src=s.thumb;im.alt='';im.loading='lazy';im.decoding='async';tw.appendChild(im);}
+    const bd=document.createElement('span');bd.className='cs-move-badge';bd.textContent=m.badge;tw.appendChild(bd);
+    const nm=document.createElement('span');nm.className='cs-move-who';nm.textContent=(_feedWho(s)||s.groupKo||'');
+    const rk=document.createElement('span');rk.className='cs-move-rank';rk.textContent=(isKo?s.rank+'위':'#'+s.rank)+(s.t?' · '+s.t:'');
+    b.appendChild(tw);b.appendChild(nm);b.appendChild(rk);
+    b.addEventListener('click',e=>{e.stopPropagation();_feedNav(()=>openLightbox(s.u,_songIsShort(s),songs,i,{groupKo:s.groupKo},false,true));});
+    wrap.appendChild(b);
+  });
+  box.appendChild(wrap);
+  if(typeof _enableDragScroll==='function')_enableDragScroll(wrap);
+  const cap=document.createElement('button');cap.type='button';cap.className='cs-cap';
+  cap.textContent=isKo?`최근 ${nDays}일 순위 흐름 보기 ⌄`:`Show ${nDays}-day rank paths ⌄`;
+  cap.addEventListener('click',e=>{e.stopPropagation();onGraph();});
+  box.appendChild(cap);
+}
 // (주간 TOP 20·월간 TOP 30 전용 _openChartStory는 2026-11-05 차트 통합으로 _openChartList에 합쳤다)
 // 접힌 미니 그림이 기본(2026-10-26 사용자 "그래프가 너무 자리 차지를 많이 한다" → A안): 높이 220→96, 상위 3개만 색·이름,
 // 주석은 숨김. 그림이나 '크게 보기'를 누르면 지금 크기로 펼친다. 펼친 상태는 탭을 바꿔도·다음에 열어도 유지(이 기기에만).
@@ -26367,6 +26404,9 @@ function _renderChartStory(box,st,hist,size,tab,onTab,spanDays){
     box.classList.toggle('cs-exp',_csExpanded);
     box.innerHTML='';_renderChartStory(box,st,hist,size,tab,onTab,spanDays);
   };
+  // 접힌 기본 화면 = '오늘의 움직임' 썸네일 줄(2026-11-19). 그래프·숫자 3칸은 '순위 흐름 보기'를 눌러 펼쳤을 때만.
+  if(!exp){const mv=_chartMoves(st,hist&&hist.dates&&hist.dates.length);if(mv.length){box.classList.add('cs-has-moves');_renderChartMoves(box,mv,_toggleExp,days.length);return;}}
+  box.classList.remove('cs-has-moves');
   const W=Math.max(300,Math.min(640,(box.parentElement?.clientWidth||360)-28)),H=exp?(size===30?250:220):(size===30?112:96);
   const L=22,R=96,T=12,B=22;
   const x=i=>L+(days.length<2?0:i*(W-L-R)/(days.length-1));

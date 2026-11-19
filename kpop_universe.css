@@ -5176,6 +5176,20 @@
 .cs-line.is-on .cs-path{filter:drop-shadow(0 0 4px var(--c));}
 .cs-cap{all:unset;box-sizing:border-box;display:block;width:100%;margin:4px 0 0;padding:4px 2px;font-size:10.5px;color:rgba(255,255,255,0.42);text-align:center;cursor:var(--kpu-cursor-pointer,pointer);-webkit-tap-highlight-color:transparent;}
 .cs-cap:hover{color:rgba(255,255,255,0.7);}
+/* '오늘의 움직임'(2026-11-19) — 그래프 대신 누르면 재생되는 썸네일 줄. 테두리 없음(TASTE 8장), 표시는 썸네일 위 작은 딱지 하나 */
+#feed-list-grid>.cs-story.cs-has-moves.is-loading{height:150px;}
+.cs-moves{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding:2px 0 2px;-webkit-overflow-scrolling:touch;}
+.cs-moves::-webkit-scrollbar{display:none;}
+.cs-move{all:unset;box-sizing:border-box;flex:0 0 auto;width:138px;display:flex;flex-direction:column;gap:3px;cursor:var(--kpu-cursor-pointer,pointer);-webkit-tap-highlight-color:transparent;}
+.cs-move:active{opacity:.75;}
+.cs-move-tw{position:relative;display:block;width:100%;aspect-ratio:16/9;border-radius:9px;overflow:hidden;background:rgba(255,255,255,0.07);}
+.cs-move-tw img{width:100%;height:100%;object-fit:cover;display:block;}
+.cs-move-badge{position:absolute;left:6px;top:6px;padding:2px 6px;border-radius:6px;font-size:11px;font-weight:700;line-height:1.3;color:#fff;background:rgba(10,12,22,0.72);font-variant-numeric:tabular-nums;letter-spacing:-0.01em;}
+.cs-move-rise .cs-move-badge{color:#ffb86b;}
+.cs-move-new .cs-move-badge{color:#7fe0b0;}
+.cs-move-who{margin-top:3px;font-size:12.5px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cs-move-rank{font-size:11px;color:rgba(255,255,255,0.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+@media(min-width:769px){.cs-move{width:168px;}}
 .cs-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:12px;border-top:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);}
 .cs-stat{all:unset;box-sizing:border-box;display:flex;flex-direction:column;gap:2px;padding:11px 10px 12px;cursor:var(--kpu-cursor-pointer,pointer);min-width:0;transition:background .15s;}
 .cs-stat+.cs-stat{border-left:1px solid rgba(255,255,255,0.08);}

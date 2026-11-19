@@ -73,9 +73,10 @@ async function shot(c,name){const r=await c.send('Page.captureScreenshot',{forma
       _csExpanded=false;
       _renderChartStory(box,st,hist,20,'all',()=>{});
       const p=document.getElementById('feed-list-panel').getBoundingClientRect();
-      return JSON.stringify({panelTop:p.top,panelH:p.height,vh:innerHeight,mini:box.getBoundingClientRect().height,svgH:box.querySelector('svg').getAttribute('height'),labels:[...box.querySelectorAll('.cs-line.is-top')].length});})()`));
+      return JSON.stringify({panelTop:p.top,panelH:p.height,vh:innerHeight,mini:box.getBoundingClientRect().height,moves:box.querySelectorAll('.cs-move').length,svgH:box.querySelector('svg')?box.querySelector('svg').getAttribute('height'):'0',labels:[...box.querySelectorAll('.cs-line.is-top')].length});})()`));
     if(fl.panelH>=fl.vh*0.86)ok(`목록 창 높이 ${fl.panelH.toFixed(0)}px = 화면의 ${(fl.panelH/fl.vh*100).toFixed(0)}% (위에서 ${fl.panelTop.toFixed(0)}px부터)`);else bad(`목록 창 높이 ${fl.panelH}/${fl.vh}`);
-    if(+fl.svgH<=100&&fl.labels<=3)ok(`그래프 기본 접힘: 그림 ${fl.svgH}px, 색·이름 상위 ${fl.labels}개, 그래프+숫자 칸 ${fl.mini.toFixed(0)}px`);else bad(`접힘 상태 이상 ${JSON.stringify(fl)}`);
+    // 2026-11-19: 접힌 기본 화면 = '오늘의 움직임' 썸네일 줄(움직임이 있으면 그래프 없음). 움직임이 없을 때만 예전 미니 그래프.
+    if((fl.moves>=1&&fl.moves<=6&&fl.svgH==='0'&&fl.mini<=200)||(fl.moves===0&&+fl.svgH<=100&&fl.labels<=3))ok(`기본 접힘: 움직임 카드 ${fl.moves}개(그림 ${fl.svgH}px), 높이 ${fl.mini.toFixed(0)}px`);else bad(`접힘 상태 이상 ${JSON.stringify(fl)}`);
     await shot(c,'v_chart_mini.png');
     const ex=JSON.parse(await ev(c,`(async()=>{const b=window.__cs.box;b.querySelector('.cs-cap').click();await new Promise(r=>setTimeout(r,300));
       const h1=b.querySelector('svg').getAttribute('height'),t1=b.querySelector('.cs-cap').textContent,ls=(()=>{try{return localStorage.getItem('kpu_cs_exp')}catch(e){return null}})();
@@ -83,7 +84,7 @@ async function shot(c,name){const r=await c.send('Page.captureScreenshot',{forma
     if(+ex.h1>=200&&ex.ls==='1')ok(`'크게 보기' → 펼침(${ex.h1}px), 이 기기에 기억`);else bad(`펼침 실패 ${JSON.stringify(ex)}`);
     await sleep(1400);await shot(c,'v_chart_exp.png');
     const col=JSON.parse(await ev(c,`(async()=>{const b=window.__cs.box;b.querySelector('svg').dispatchEvent(new MouseEvent('click',{bubbles:true}));await new Promise(r=>setTimeout(r,200));
-      const still=b.querySelector('svg').getAttribute('height');b.querySelector('.cs-cap').click();await new Promise(r=>setTimeout(r,200));return JSON.stringify({still,after:b.querySelector('svg').getAttribute('height')});})()`));
+      const still=b.querySelector('svg').getAttribute('height');b.querySelector('.cs-cap').click();await new Promise(r=>setTimeout(r,200));return JSON.stringify({still,after:b.querySelector('svg')?b.querySelector('svg').getAttribute('height'):'0'});})()`));
     if(+col.still>=200&&+col.after<=100)ok('펼친 상태에선 그림 클릭이 선 선택(접히지 않음), 접기 버튼으로 다시 접힘');else bad(`접기 ${JSON.stringify(col)}`);
     // 3) 목록 스크롤 → 모바일 스크롤 막대 + 끌기
     const rail=JSON.parse(await ev(c,`(async()=>{const g=document.getElementById('feed-list-grid');
