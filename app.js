@@ -14776,7 +14776,11 @@ function _renderSongVideoTabs(){
   const _memOf=v=>{const out=new Set();if(v.group_ko===st.gko)(v.members||[]).forEach(m=>out.add(m));(v.with_members||[]).forEach(x=>{const m=/^(.+)\((.+)\)$/.exec(x);if(m&&m[2]===st.gko)out.add(m[1]);});return out;};
   const _memCnt=new Map();st.orig.forEach(v=>_memOf(v).forEach(m=>_memCnt.set(m,(_memCnt.get(m)||0)+1)));
   if(st.member&&!_memCnt.has(st.member))st.member=null;
-  const _byMem=arr=>st.member?arr.filter(v=>_memOf(v).has(st.member)):arr;
+  // 멤버 선택 기본 = '포함된 모든 영상'(2026-11-19 사용자) — 멤버 태그가 비어 있는 자기 그룹 영상(단체 무대·MV)은
+  // 전원 출연으로 간주한다(재생화면 전원 펼침과 같은 근거 규칙: 게스트·비공연 형식이면 제외). '단독만' 칩이 좁힌다.
+  const _memAll=v=>_memOf(v).has(st.member)||(v.group_ko===st.gko&&!(v.members||[]).length&&!((v.with_members||[]).length||(v.with_groups||[]).length)&&!/^(?:other|variety|show)$/.test(v.category||''));
+  const _memSolo=v=>{const s=_memOf(v);return s.size===1&&s.has(st.member);};
+  const _byMem=arr=>st.member?arr.filter(st.memSolo?_memSolo:_memAll):arr;
   const base=_byMem(st.tab==='orig'?st.orig:st.tab==='cover'?st.cover:[...st.orig,...st.cover]);
   const fmtCnt={};base.forEach(v=>{const f=_tvfFmt(v);fmtCnt[f]=(fmtCnt[f]||0)+1;if(_isFanV(v))fmtCnt.fan=(fmtCnt.fan||0)+1;});
   const fmts=_TVF_FMTS.filter(([k])=>fmtCnt[k]);
@@ -14799,6 +14803,14 @@ function _renderSongVideoTabs(){
         _openPickSheet(_ko?'멤버로 보기':'Filter by member',_ko?'멤버가 태그된 영상이 아직 없어요':'No member-tagged videos yet',Promise.resolve(items),k=>{if(_songVid!==st)return;st.member=k;_renderSongVideoTabs();});
       });
       tabsEl.appendChild(mb);
+      // 멤버를 고르면 '단독만' 칩 — 기본은 포함 전체, 누르면 그 멤버만 태그된 영상(카드 Only와 같은 개념)
+      if(st.member){
+        const sb=document.createElement('button');sb.type='button';sb.className='gc-vid-pick'+(st.memSolo?' on':'');
+        sb.innerHTML='<span class="lbl"></span>';
+        sb.querySelector('.lbl').textContent=_ko?'단독만':'Solo only';
+        sb.addEventListener('click',e=>{e.stopPropagation();st.memSolo=!st.memSolo;_renderSongVideoTabs();});
+        tabsEl.appendChild(sb);
+      }
       const sp=document.createElement('span');sp.className='gc-vid-pick-sep';tabsEl.appendChild(sp);
     }
     const mk=(lbl,active,on)=>{
