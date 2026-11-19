@@ -3700,8 +3700,11 @@ function _groupAvUrl(g){
 function _avImg(url,onOk){
   const img=new Image();img.alt='';img.referrerPolicy='no-referrer';
   img.onload=()=>onOk(img);
-  img.onerror=()=>{const b=_avBackup.get(url);if(b&&b!==url){img.onerror=null;img.src=b;}};
-  img.src=url;return img;
+  // 인스타 프로필 원본(fbcdn, 100KB대)은 작은 원에 과해 늦게 떴다(2026-11-19 사용자 "프로필 사진 늦게 뜸") — 축소본(_igSmall) 먼저,
+  // 실패하면 원본 → 등록 사진(_avBackup) 순. 인스타 주소가 아니면 _igSmall이 그대로 돌려준다.
+  const small=_igSmall(url,160);let step=small!==url?0:1;
+  img.onerror=()=>{if(step===0){step=1;img.src=url;return;}const b=_avBackup.get(url);if(b&&b!==url){img.onerror=null;img.src=b;}};
+  img.src=small;return img;
 }
 function _srAvUrl(a){
   let p=_srAvMemo.get(a);
@@ -3822,8 +3825,9 @@ function _srAvPaint(av,url){
   // 똑같아 보였다(클유아 김성민·전민욱 Mnet 직캠). 쇼츠는 양옆 검은 띠까지 있어 더 크게.
   if(/ytimg\.com/.test(url))av.classList.add(_srAvShort.has(url)?'is-short':'is-thumb');
   img.onload=()=>{av.appendChild(img);av.classList.add('has-img');};
-  img.onerror=()=>{const b=_avBackup.get(url);if(b&&b!==url){img.onerror=null;img.src=b;}};
-  img.src=url;
+  const small=_igSmall(url,160);let step=small!==url?0:1; // 축소본 → 원본 → 등록 사진(_avImg와 같은 순서)
+  img.onerror=()=>{if(step===0){step=1;img.src=url;return;}const b=_avBackup.get(url);if(b&&b!==url){img.onerror=null;img.src=b;}};
+  img.src=small;
 }
 function _srAvatarEl(h){
   const av=document.createElement('span');av.className='sr-av';
@@ -12264,10 +12268,13 @@ async function _loadProfilePic(cfg){
   wrap.classList.remove('tt-pic-ready');
   document.getElementById(cfg.camBtnId)?.classList.add('cam-overlay');
   // 핸들러를 src보다 먼저 등록 (캐시된 이미지는 src 세팅 직후 onload 발화 가능)
-  img.onerror=()=>{if(picBackup&&img.src!==picBackup){const b=picBackup;picBackup=null;img.src=b;return;} // 인스타 주소가 깨지면 등록 사진으로
+  // 카드 프로필도 인스타 원본 대신 축소본 먼저(2026-11-19 "프로필 사진 늦게 뜸") — 실패하면 원본 → 등록 사진
+  const picShown=_igSmall(picUrl,360);let picTriedOrig=picShown===picUrl;
+  img.onerror=()=>{if(!picTriedOrig){picTriedOrig=true;img.src=picUrl;return;}
+    if(picBackup&&img.src!==picBackup){const b=picBackup;picBackup=null;img.src=b;return;} // 인스타 주소가 깨지면 등록 사진으로
     wrap.style.display='none';wrap.classList.remove('tt-pic-loading','tt-pic-ready');document.getElementById(cfg.cardId)?.classList.remove(cfg.hasPicClass);document.getElementById(cfg.camBtnId)?.classList.remove('cam-overlay');};
   img.onload=()=>{wrap.classList.remove('tt-pic-loading');wrap.classList.add('tt-pic-ready');document.getElementById(cfg.cardId)?.classList.add(cfg.hasPicClass);};
-  if(img.src!==picUrl)img.src=picUrl;
+  if(img.src!==picShown)img.src=picShown;
   else if(img.complete&&img.naturalWidth){wrap.classList.remove('tt-pic-loading');wrap.classList.add('tt-pic-ready');document.getElementById(cfg.cardId)?.classList.add(cfg.hasPicClass);}
 }
 // 멤버 카드용 — 기존 호출부(_loadInstaPic(a))는 그대로 두려고 얇은 래퍼로 남긴다.
