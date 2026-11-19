@@ -28215,6 +28215,11 @@ function _feedBiasMatchers(){
     favRgb,
   };
 }
+// 다 본 영상은 선반 뒤로(2026-11-19 사용자 "하루에 여러 번 들어가면 For You 화면이 거의 똑같아 재미없다" — docs/FOR_YOU_FEED.md 1단계).
+// 92% 이상 본 것만(보다 만 영상은 제자리 — 이어 보라고 진행 줄이 붙어 있다). 순서는 각 묶음 안에서 그대로(안정).
+const _FEED_DONE_RATIO=0.92;
+function _feedVidDone(id){const p=id?_vidProg.get(id):null;return !!(p&&p.d>0&&p.t/p.d>=_FEED_DONE_RATIO);}
+function _feedSinkWatched(list,isDone){const a=[],b=[];(list||[]).forEach(x=>(isDone(x)?b:a).push(x));return a.concat(b);}
 function _appendFeedOnboardCard(strip){
   const d=document.createElement('div');d.className='feed-onboard-card';
   const em=document.createElement('div');em.className='feed-onboard-emoji';em.textContent='💖';
@@ -28376,10 +28381,11 @@ async function _buildFeedFavNew(opts){
     const _prevSeen=window._kpuPrevSeen||0;
     // NEW 기준: 지난 방문 이후 OR 최근 48h(둘 중 하나). 지난 방문만 보면 자주 올수록 NEW가 거의 안 떠 "2시간 이내처럼" 타이트했다(2026-11-18 사용자).
     const _NEW_WIN=48*3600e3;
-    const _isNewSince=s=>{const t=Date.parse(s.paFull||'');if(!isFinite(t)||String(s.paFull).length<=10)return false;return (Date.now()-t<_NEW_WIN)||(!!_prevSeen&&t>_prevSeen);};
+    const _done=s=>_feedVidDone(s._apiId); // 다 본 영상 — NEW를 떼고 선반 맨 뒤로
+    const _isNewSince=s=>{if(_done(s))return false;const t=Date.parse(s.paFull||'');if(!isFinite(t)||String(s.paFull).length<=10)return false;return (Date.now()-t<_NEW_WIN)||(!!_prevSeen&&t>_prevSeen);};
     // 최애 묶음: NEW 뱃지(안 본 새 영상) 먼저(2026-11-19 사용자) → 즐겨찾기 겹친 수(#26) → 최신순(안정 정렬). 나머지는 최신순 그대로.
     const _favFirst=songs.filter(_isFav).sort((a,b)=>((_isNewSince(b)?1:0)-(_isNewSince(a)?1:0))||(_favN(b)-_favN(a))),_rest=songs.filter(s=>!_isFav(s));
-    const rows=_packRows(_favFirst.concat(_rest),_songIsShort,{landscapeFull:true});
+    const rows=_packRows(_feedSinkWatched(_favFirst.concat(_rest),_done),_songIsShort,{landscapeFull:true});
     if(rows.length&&!rows[rows.length-1].wide&&rows[rows.length-1].items.length===1)rows.pop(); // 끝에 홀로 남은 반폭 제거
     const flat=rows.flatMap(r=>r.items); // 라이트박스 재생목록 순서를 화면 순서와 일치
     const drawItem=({song,row})=>{
