@@ -13747,7 +13747,7 @@ function _openGcDiscogDetail(a,idx,ctx){
   _gcDiscogIdx=idx!=null?idx:_gcDiscogList.indexOf(a);
   document.getElementById('gc-discog-detail-prev').disabled=_gcDiscogIdx<=0;
   document.getElementById('gc-discog-detail-next').disabled=_gcDiscogIdx<0||_gcDiscogIdx>=_gcDiscogList.length-1;
-  document.getElementById('gc-discog-detail-cover').src=a.cover;
+  {const _c=document.getElementById('gc-discog-detail-cover');delete _c.dataset.ph;_c.src=a.cover;} // ph: 지난 앨범 커버가 실패했던 표식(_DISC_PH) 지우기
   document.getElementById('gc-discog-detail-type').textContent=_discogAlbumTypeLabel(a)+(a.trackCount?' · '+a.trackCount+'곡':'');
   document.getElementById('gc-discog-detail-title').textContent=a.title;
   _renderDiscogDetailArtists(a);
@@ -28215,6 +28215,13 @@ function _feedBiasMatchers(){
     favRgb,
   };
 }
+// 앨범 커버가 안 뜰 때(만료·차단) 깨진 그림 아이콘+제목 글자가 타일을 덮던 것 → 원반 자리 그림(2026-11-19 실사이트 워크스루에서 발견).
+// 카드 디스코그래피 타일(.gc-discog-cover)·앨범 창 커버(#gc-discog-detail-cover). error는 버블링이 없어 캡처로 받는다.
+const _DISC_PH="data:image/svg+xml,"+encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='#1c1d26'/><circle cx='50' cy='50' r='17' fill='none' stroke='#8fa3c8' stroke-opacity='.45' stroke-width='9'/><circle cx='50' cy='50' r='3' fill='#8fa3c8' fill-opacity='.5'/></svg>");
+document.addEventListener('error',e=>{const t=e.target;
+  if(!t||t.tagName!=='IMG'||t.dataset.ph||!(t.classList.contains('gc-discog-cover')||t.id==='gc-discog-detail-cover'))return;
+  if(!t.getAttribute('src'))return; // 아직 주소를 안 넣은 빈 img
+  t.dataset.ph='1';t.src=_DISC_PH;},true);
 // 다 본 영상은 선반 뒤로(2026-11-19 사용자 "하루에 여러 번 들어가면 For You 화면이 거의 똑같아 재미없다" — docs/FOR_YOU_FEED.md 1단계).
 // 92% 이상 본 것만(보다 만 영상은 제자리 — 이어 보라고 진행 줄이 붙어 있다). 순서는 각 묶음 안에서 그대로(안정).
 const _FEED_DONE_RATIO=0.92;

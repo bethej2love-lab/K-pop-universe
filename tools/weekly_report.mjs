@@ -166,10 +166,20 @@ async function main() {
 
   const healthMd = dataHealthMd();
 
+  // 방문자(2026-11-19) — 앱·정적 페이지에 온 사람과 다음 행동. 실패해도 보고는 나간다.
+  let visitorMd = '';
+  try {
+    const { visitorMarkdown } = await import('./visitor_report.mjs');
+    visitorMd = await visitorMarkdown(sb, now.getTime());
+  } catch (e) { visitorMd = `_(방문자 집계 실패: ${e.message})_`; }
+
   const queueWarn = queueCount > 50 ? ` ⚠️ 50건 초과` : '';
   const heldWarn = heldVideos > 200 ? ` ⚠️` : '';
 
   const body = `## 주간 현황 (${weekAgoStr} ~ ${nowStr})
+
+### 👥 방문자
+${visitorMd}
 
 ### 이번 주 활동
 | 항목 | 수치 |
