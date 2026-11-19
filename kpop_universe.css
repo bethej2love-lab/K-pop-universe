@@ -6294,7 +6294,8 @@
 .gc-discog-strip.has-stacks{padding-top:6px;}
 #gc-discog-row .gc-discog-hd,#tt-discog-row .gc-discog-hd{margin-bottom:11px;}
 /* 카드 컬렉션 줄 끝 '+' 칸(2026-11-19) — 테두리 없이 옅은 칸 + 가운데 +. order로 늘 맨 끝(프로그램 칩이 나중에 붙어도) */
-.gc-collection-add{all:unset;box-sizing:border-box;flex-shrink:0;width:var(--card-thumb);order:99;cursor:var(--kpu-cursor-pointer,pointer);-webkit-tap-highlight-color:transparent;}
+/* align-self:flex-start — button은 늘어난 높이 안에서 내용을 세로 가운데에 놓는다. 옆 칩(이름+개수 두 줄)만큼 늘어나면 + 칸이 그 차이의 절반(약 8px)만큼 내려갔다(2026-11-19 사용자 스크린샷) */
+.gc-collection-add{all:unset;box-sizing:border-box;flex-shrink:0;width:var(--card-thumb);order:99;align-self:flex-start;cursor:var(--kpu-cursor-pointer,pointer);-webkit-tap-highlight-color:transparent;}
 .gc-collection-add .gc-collection-chip-thumb-wrap{display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:300;line-height:1;color:rgba(200,214,245,0.6);background:rgba(255,255,255,0.05);}
 .gc-collection-add:active .gc-collection-chip-thumb-wrap{background:rgba(255,255,255,0.1);}
 .gc-collection-add .gc-collection-chip-name{color:rgba(190,205,240,0.6);}
