@@ -3210,19 +3210,22 @@
      제목과 같은 줄(.gc-discog-hd 안)로 옮기고 폭/높이를 확 줄인 축소판(.seg-control-sm)을 씀. */
   .gc-discog-hd-right{display:flex;align-items:center;justify-content:flex-end;gap:5px;min-width:0;}
   .gc-discog-hd-right .gc-ch-sort-wrap{flex-shrink:0;}
-  .seg-control{position:relative;display:flex;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.09);border-radius:10px;padding:2px;flex:1;min-width:0;}
-  .seg-control-sm{flex:0 1 auto;padding:1px;border-radius:8px;}
+  /* 2026-11-19 사용자 "세그먼트 컨트롤 너무 부담스럽고 투박, 좀 더 아이폰 물방울 느낌으로, 컬러도 덜 칙칙하게" — 회청색 그라데이션·안쪽 그림자·테두리를 걷고
+     완전히 둥근 캡슐 트랙 + 반투명 흰 유리 손잡이(위쪽 얇은 빛 한 줄)로. 손잡이 left:2px은 JS(moveThumbTo: offsetLeft-2)와 짝이라 그대로. */
+  .seg-control{position:relative;display:flex;background:rgba(255,255,255,0.06);border:none;border-radius:999px;padding:3px;flex:1;min-width:0;
+    -webkit-backdrop-filter:blur(14px) saturate(1.5);backdrop-filter:blur(14px) saturate(1.5);}
+  .seg-control-sm{flex:0 1 auto;padding:2px;border-radius:999px;}
   .seg-control-sm .seg-btn{padding:4px 10px;font-size:10px;letter-spacing:-.01em;}
-  .seg-control-sm .seg-thumb{top:1px;bottom:1px;border-radius:7px;}
-  .seg-thumb{position:absolute;top:2px;bottom:2px;left:2px;width:0;border-radius:8px;
-    background:linear-gradient(160deg,rgba(190,212,255,0.42),rgba(140,170,230,0.16));
-    box-shadow:inset 0 1px 1px rgba(255,255,255,0.4),inset 0 -4px 8px -6px rgba(120,150,220,0.3),0 2px 6px rgba(120,150,220,0.25);
-    transition:transform .22s cubic-bezier(0.4,0,0.2,1),width .22s cubic-bezier(0.4,0,0.2,1);
+  .seg-control-sm .seg-thumb{top:2px;bottom:2px;border-radius:999px;}
+  .seg-thumb{position:absolute;top:3px;bottom:3px;left:2px;width:0;border-radius:999px;
+    background:linear-gradient(180deg,rgba(255,255,255,0.24),rgba(255,255,255,0.11));
+    box-shadow:inset 0 0.5px 0 rgba(255,255,255,0.5),0 1px 4px rgba(0,0,0,0.22);
+    transition:transform .26s cubic-bezier(0.3,0.9,0.3,1),width .26s cubic-bezier(0.3,0.9,0.3,1);
     pointer-events:none;}
-  .seg-btn{position:relative;z-index:1;flex:1;background:none;border:none;padding:6px 4px;
-    font-size:11px;font-weight:600;color:rgba(170,190,225,0.62);cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;font-family:inherit;
+  .seg-btn{position:relative;z-index:1;flex:1;background:none;border:none;padding:5px 4px;
+    font-size:11px;font-weight:600;color:rgba(205,216,240,0.62);cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;font-family:inherit;
     white-space:nowrap;transition:color .18s;}
-  .seg-btn.active{color:#eef4ff;}
+  .seg-btn.active{color:#fff;}
   .gc-discog-hd-right .gc-ch-sort-btn{font-size:12px;padding:2px 3px;}
   .gc-discog-strip{display:flex;gap:9px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;cursor:grab;}
   .gc-discog-strip::-webkit-scrollbar{display:none;}
