@@ -6132,3 +6132,17 @@
   #side-panel #gc-grid,#side-panel #gc-discog-row,#side-panel #gc-ig-section,#side-panel #gc-timeline-section,
   #side-panel #gc-concert-row,#side-panel #gc-collection-row,#side-panel #gc-ch-vid{margin-top:13px!important;padding-top:11px!important;}
 }
+
+/* ── 아이폰 웹앱 상단 흐림 덮개 회피(2026-11-19 사용자 "영상 볼 때 맨 위 출연 아티스트 글자 윗부분이 살짝 흐려진다") ──
+   iOS 홈화면 앱은 상태바 아래 ~10px를 스스로 흐리게 덮는다(#msheet·#mob-top-bar가 이미 같은 보정).
+   재생 화면 상단 줄(출연 아티스트 칩·닫기·메뉴)도 같은 폭(+10px)만큼 내리고, 영상 시작점(wrap 패딩)도 따라 내린다.
+   가로(상태바 숨김)는 제외. 파일 끝이라 위 64px 규칙을 확실히 덮는다. */
+@media (display-mode: standalone) and (max-width:768px) and (orientation:portrait){
+  #yt-lightbox.lb-browse #yt-lb-member-info,
+  #yt-lightbox.lb-browse #yt-lb-close,
+  #yt-lightbox.lb-browse .lb-menu-wrap{top:calc(24px + env(safe-area-inset-top,0px));}
+  #yt-lightbox.lb-browse #yt-lb-wrap,
+  #yt-lightbox.lb-browse.lb-has-chips #yt-lb-wrap{padding-top:calc(74px + env(safe-area-inset-top,0px));}
+  /* 쇼츠(스와이프) 모드 상단 출연자 줄도 같은 폭(14→24px) */
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-member-info{top:calc(24px + env(safe-area-inset-top,0px));}
+}
