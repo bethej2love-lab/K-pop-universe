@@ -20122,7 +20122,8 @@ function _tipsTick(){
   const el=document.getElementById('ob-tips');if(!el||el.hidden||!el.classList.contains('show'))return;
   // 안내 중에 사용자가 직접 움직였으면(카드·검색을 열었으면) 안내는 끝 — 가르치려던 걸 이미 하고 있다
   const open=id=>document.getElementById(id)?.classList.contains('open');
-  if(open('side-panel')||open('member-panel')||document.getElementById('mob-sheet')?.classList.contains('bs-open')||open('search-wrap')||(typeof _obSearchMode!=='undefined'&&_obSearchMode)||(typeof _msIsOpen==='function'&&_msIsOpen())){_dismissTips();return;}
+  // 나(journal-sidebar)·탐험(feed-overlay)도 포함 — 안내 중 '나' 탭을 누르면 안내 글이 프로필 패널 위에 겹쳐 보였다(2026-11-19 워크스루)
+  if(open('side-panel')||open('member-panel')||open('journal-sidebar')||open('feed-overlay')||document.getElementById('mob-sheet')?.classList.contains('bs-open')||open('search-wrap')||(typeof _obSearchMode!=='undefined'&&_obSearchMode)||(typeof _msIsOpen==='function'&&_msIsOpen())){_dismissTips();return;}
   _tipsLayout();
   _tipsRaf=requestAnimationFrame(_tipsTick);
 }
