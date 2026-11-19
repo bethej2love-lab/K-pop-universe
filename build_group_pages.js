@@ -3170,7 +3170,9 @@ function buildAlbumPages() {
           const isVer = !!href && /((japanese|korean|english|chinese)[ ]*ver|일본어|한국어|영어|중국어|버전|(^|[ (-])(ver[.]?|version)([ ).-]|$)|(^|[ (-])(inst[.]?|instrumental|remix|acoustic)([ ).-]|$))/i.test(t.title || '');
           const verTag = isVer ? ` <span class="yr">${isEn ? 'version · opens the original song page' : '버전 · 원곡 페이지로 이동'}</span>` : '';
           const cr = t.cr || {}, ly = names(cr.l), co = names(cr.c);
-          const credit = [ly && `${isEn ? 'Lyrics' : '작사'} ${escHtml(ly)}`, co && `${isEn ? 'Music' : '작곡'} ${escHtml(co)}`].filter(Boolean).join(' · ');
+          // 작사·작곡 명단이 같으면 한 번만(2026-11-19 — 같은 열 몇 명이 두 번 반복돼 목록이 명단으로 뒤덮였다). 표시는 song-page.css가 작고 흐리게·두 줄까지만.
+          const credit = ly && ly === co ? `${isEn ? 'Lyrics · Music' : '작사·작곡'} ${escHtml(ly)}`
+            : [ly && `${isEn ? 'Lyrics' : '작사'} ${escHtml(ly)}`, co && `${isEn ? 'Music' : '작곡'} ${escHtml(co)}`].filter(Boolean).join(' · ');
           return `<li>${href ? `<a href="${href}">${escHtml(t.title)}</a>` : escHtml(t.title)}${verTag}${t.isTitle ? (isEn ? ' <b>(title)</b>' : ' <b>(타이틀)</b>') : ''}${credit ? `<br><span class="yr">${credit}</span>` : ''}</li>`;
         }).join('');
         const tt = al.titleTrack || ((al.tracks || []).find(t => t.isTitle) || {}).title || '';
