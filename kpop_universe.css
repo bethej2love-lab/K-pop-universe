@@ -5278,7 +5278,8 @@
    (쇼츠 화면은 같은 버튼들을 id로 오른쪽 세로 줄에 고정 배치하므로 DOM을 옮기면 그쪽이 깨진다). 가끔 쓰는 버튼(입덕·전체·소리·편집)은
    그리드에서 빼고 ··· 메뉴가 원래 버튼을 대신 눌러 준다. 이전/다음은 아래 목록 머리의 ‹ › 로. */
 #yt-lb-people,#yt-lb-more-wrap{display:none;}
-#yt-lightbox.lb-browse.open{background:linear-gradient(180deg,rgba(var(--lb-tint,8,9,26),0.15) 0,rgba(13,13,16,1) 380px),#0d0d10;}
+/* 2026-11-19 사용자 "회색이 너무 칙칙" — 영상 대표색 빛 0.15→0.30, 380→460px. 폰 세로의 영상 위 덮개(파일 끝)도 같은 그라디언트를 쓴다 — 바꾸면 같이 */
+#yt-lightbox.lb-browse.open{background:linear-gradient(180deg,rgba(var(--lb-tint,8,9,26),0.30) 0,rgba(13,13,16,1) 460px),#0d0d10;}
 #yt-lightbox.lb-browse #yt-lb-main{display:grid;grid-template-columns:minmax(0,1fr) 44px 44px 44px;column-gap:2px;align-items:center;}
 #yt-lightbox.lb-browse #yt-lb-video-box{grid-column:1/-1;grid-row:1;}
 #yt-lightbox.lb-browse #yt-lb-video-box.is-shorts{justify-self:center;}
@@ -6230,10 +6231,11 @@
 @media (max-width:768px) and (orientation:portrait){
   #yt-lightbox.lb-browse #yt-lb-wrap,#yt-lightbox.lb-browse.lb-has-chips #yt-lb-wrap{display:grid;grid-template-columns:minmax(0,1fr) 44px 44px 44px;column-gap:2px;
     align-items:center;align-content:start;grid-auto-rows:max-content;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
+  #yt-lightbox.lb-browse{--lb-pad:calc(64px + env(safe-area-inset-top,0px));} /* = wrap padding-top. 덮개가 화면 맨 위(y=0)에서 시작해야 배경 그라디언트와 이어진다 */
   #yt-lightbox.lb-browse #yt-lb-main{display:contents;}
   #yt-lightbox.lb-browse #yt-lb-video-box:not(.is-shorts){position:sticky;top:0;z-index:1;}
   /* 덮개: 위 띠 + 영상 둥근 모서리 뒤(14px)까지 — 스크롤된 썸네일이 모서리 틈으로 비치지 않게. z-index:-1 = 영상 뒤, 스크롤 내용 앞 */
-  #yt-lightbox.lb-browse #yt-lb-video-box:not(.is-shorts)::before{content:'';position:absolute;left:-14px;right:-14px;top:-140px;height:154px;z-index:-1;pointer-events:none;background:#0d0d10;}
+  #yt-lightbox.lb-browse #yt-lb-video-box:not(.is-shorts)::before{content:'';position:absolute;left:-14px;right:-14px;top:calc(-1 * var(--lb-pad));height:calc(var(--lb-pad) + 14px);z-index:-1;pointer-events:none;background:linear-gradient(180deg,rgba(var(--lb-tint,8,9,26),0.30) 0,rgba(13,13,16,1) 460px),#0d0d10;}
   #yt-lightbox.lb-browse #yt-lb-uplist-preview{grid-column:1/-1;grid-row:40;position:relative;z-index:0;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 16px);}
   /* '다음' 미리보기 — 썸네일 크게(폭 42%, 16:9), 글은 그 옆 두 줄(유튜브 모바일 목록). 쇼츠는 폭 22% 세로 */
   #yt-lightbox.lb-browse .lb-preview-item{gap:12px;padding:6px 2px;align-items:flex-start;}
@@ -6245,4 +6247,7 @@
   #yt-lightbox.lb-browse .lb-preview-info{padding-top:2px;}
   #yt-lightbox.lb-browse .lb-preview-title{font-size:13px;line-height:1.36;white-space:normal;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;}
   #yt-lightbox.lb-browse .lb-preview-meta{font-size:11.5px;margin-top:4px;}
+}
+@media (display-mode: standalone) and (max-width:768px) and (orientation:portrait){
+  #yt-lightbox.lb-browse{--lb-pad:calc(74px + env(safe-area-inset-top,0px));}
 }
