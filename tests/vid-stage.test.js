@@ -41,6 +41,9 @@ async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,ret
       // 쇼츠 그림은 큰 세로 원본을 2장씩 줄여 붙이는 대기열이라 늦을 수 있다 — 최대 24초까지 기다린다.
       // 검증 목적은 '감시 재설정이 작동하는가'지 네트워크 속도가 아니므로, 절반 이상 붙었으면 통과(CI 유튜브 썸네일 지연 플레이크 제거, 2026-11-19).
       const vis=()=>[...cont().querySelectorAll('.gc-ch-grid > .gc-ch-item.is-short img.gc-ch-thumb')].filter(im=>{const b=im.getBoundingClientRect();return b.bottom>0&&b.top<innerHeight;});
+      // 첫 화면에 쇼츠가 하나도 안 보이면 첫 쇼츠를 화면 안으로 데려온다(2026-11-19) — 추천순이 '하루 단위로 같은 순서'가 되면서, 그날 순서에 쇼츠가 아래쪽이면
+      // 하루 종일 실패했다(예전엔 열 때마다 순서가 달라 가끔만 실패). 검증 목적(옮긴 뒤에도 그림 감시가 작동)은 그대로.
+      if(!vis().length){const fs0=cont().querySelector('.gc-ch-grid > .gc-ch-item.is-short');if(fs0){fs0.scrollIntoView({block:'center'});await S(800);}}
       for(let i=0;i<48;i++){const v=vis();if(v.length&&v.every(im=>im.getAttribute('src')))break;await S(500);}
       {const v=vis();const got=v.filter(im=>im.getAttribute('src')).length;res.shortSrc=v.length>0&&got>=Math.max(1,Math.ceil(v.length/2));res.visShorts=v.length;}
       const before=n();document.getElementById('vid-stage').scrollTo(0,1e6);for(let i=0;i<16&&n()<=before;i++)await S(500);res.more=n()>before;
