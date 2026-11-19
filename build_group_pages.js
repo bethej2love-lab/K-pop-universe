@@ -507,19 +507,9 @@ groupKos.forEach(ko => {
     </div>`;
   }
 
-  function discogHtml(lang) {
-    if (!discogItems.length) return '';
-    const items = discogItems.map(a => {
-      const yr = (a.releaseDate || '').slice(0, 4);
-      const typeLabel = lang === 'en' ? typeEn(a.type) : a.type;
-      return `<li>${escHtml(a.title)}${yr ? ` <span class="yr">(${yr})</span>` : ''}${typeLabel ? ` <span class="tag">${escHtml(typeLabel)}</span>` : ''}</li>`;
-    }).join('\n      ');
-    return `
-    <h2>${lang === 'en' ? 'Discography' : '디스코그래피'}</h2>
-    <ul class="discog-list">
-      ${items}
-    </ul>`;
-  }
+  // 디스코그래피 = 앨범 커버 격자(2026-11-19 사용자 "디스코그라피에 앨범 커버 이미지" — 여러 번 요청). 예전엔 제목만 적힌 줄 목록 + 바로 위에
+  // 같은 앨범들의 '앨범·수록곡' 칩 줄이 따로 있어 같은 정보가 두 번이었다 → 커버 한 격자로 합치고, 앨범 페이지가 있으면 커버가 그 링크.
+  function discogHtml(lang) { return discogTilesHtml(ko, discogItems, lang); }
 
   function pageHtml(lang) {
     const isEn = lang === 'en';
@@ -556,6 +546,8 @@ groupKos.forEach(ko => {
       name: displayName,
       alternateName: subName || undefined,
       genre: 'K-pop',
+      // 소개 문장은 화면에서 뺐다(2026-11-19 사용자 "서술 문단 삭제 — 중복 정보·서술형 어미 싫음, 눈으로 보여주기"). 검색·AI용으로 구조화 데이터에만 남긴다.
+      description: groupIntroHtml(ko, info, members, discogItems, lang).replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#39;/g, "'") || undefined,
       foundingDate: debutIso || undefined,
       url: selfUrl,
       image: ogImage,
@@ -615,6 +607,7 @@ ${LIST_FWD}
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -641,15 +634,13 @@ ${SEO_GA_TAG}
     ${snsRowHtml(info.links, isEn)}
     ${factsTag(pageFacts({ vids: VIDS[ko], wins: EX.wins[ko], isEn }))}
   </div>
-  ${(() => { const e2 = lang === 'en'; const parts = [[memberListHtml(lang), 'members', e2 ? 'Members' : '멤버'], [songLinksHtml(ko, lang), 'songs', e2 ? 'Songs' : '곡별 직캠'], [albumLinksHtml(ko, lang), 'albums', e2 ? 'Albums' : '앨범']].filter(x => x[0]); return parts.length ? `<ul class="member-list jump" style="margin:4px 0 16px">${parts.map(x => `<li><a href="#${x[1]}">${x[2]}</a></li>`).join('')}</ul>` : ''; })()}
-  ${groupIntroHtml(ko, info, members, discogItems, lang)}
+  ${(() => { const e2 = lang === 'en'; const parts = [[memberListHtml(lang), 'members', e2 ? 'Members' : '멤버'], [songLinksHtml(ko, lang), 'songs', e2 ? 'Songs' : '곡별 직캠'], [discogHtml(lang), 'albums', e2 ? 'Albums' : '앨범']].filter(x => x[0]); return parts.length ? `<ul class="member-list jump" style="margin:4px 0 16px">${parts.map(x => `<li><a href="#${x[1]}">${x[2]}</a></li>`).join('')}</ul>` : ''; })()}
   ${memberListHtml(lang)}
   ${hasStage ? `
   <h2>${isEn ? `${escHtml(en)} fancams & stages` : `${escHtml(ko)} 직캠·무대`}</h2>
   <div class="mf-grid">${vidCardsHtml(stageVids.slice(0, 24), isEn)}</div>${stageVids.length > 24 ? `<p class="note">${isEn ? `Top 24 of ${stageVids.length} videos` : `영상 ${stageVids.length}개 중 상위 24개`}</p>` : ''}` : ''}
   ${xg.html}
   ${songLinksHtml(ko, lang)}
-  ${albumLinksHtml(ko, lang)}
   ${discogHtml(lang)}
   ${(() => { const rel = relatedGroups(ko); return rel.length ? `
     <h2>${isEn ? 'Related groups' : '함께 보면 좋은 그룹'}</h2>
@@ -876,6 +867,7 @@ ${LIST_FWD}
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -977,7 +969,7 @@ function writeSoloDisambigPages() {
 <meta name="robots" content="noindex,follow">
 <meta property="og:title" content="${escHtml(name)} — K-POP UNIVERSE">
 <meta property="og:image" content="${sqOg(ogImageForMember(list[0].a))}">
-<style>body{font-family:system-ui,sans-serif;background:#101013;color:#dfe7ff;padding:40px 20px;max-width:560px;margin:auto}a{color:#9fb8ff}li{margin:10px 0}</style>
+<style>body{font-family:system-ui,sans-serif;background:#101013;color:#dfe7ff;padding:40px 20px;max-width:560px;margin:auto}a{color:#9fb8ff;text-decoration:none}a:hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,.55)}li{margin:10px 0}</style>
 </head><body><h1>${escHtml(name)}</h1><p>${en ? 'Several artists share this name:' : '같은 이름의 아티스트가 여러 명이에요:'}</p><ul>
 ${items}
 </ul></body></html>
@@ -1158,6 +1150,7 @@ function hubPageHtml(lang, relLinks) {
   .yr{color:rgba(150,175,255,0.55);font-size:12px;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
 </style>
 ${SEO_GA_TAG}
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
@@ -1368,6 +1361,7 @@ function relPageHtml(o) {
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:36px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
 </style>
 ${SEO_GA_TAG}
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z5NTV6X3YF');document.addEventListener('DOMContentLoaded',function(){var s=location.pathname.split('/').filter(Boolean),i=s[0]==='en'?1:0,type=s.length-i>=3?'member':s.length-i===2&&s[i]==='g'?'group':s.length-i===2?'explore':'group_list',entity=(document.querySelector('h1')||{}).textContent||'';gtag('event','seo_land',{entity_name:entity.trim(),page_type:type});var c=document.querySelector('.cta');c&&c.addEventListener('click',function(){gtag('event','seo_cta_click',{entity_name:entity.trim(),page_type:type});});});</script>
@@ -2180,7 +2174,7 @@ function memberFaceUrl(a, gko) {
   return id ? ytThumb(id, 'mqdefault') : null;
 }
 // 스타일은 저장소의 song-page.css 한 파일(페이지마다 넣으면 3만 쪽 × 5KB) — 바꾸면 SONG_CSS_V를 올릴 것
-const SONG_CSS_V = 12;
+const SONG_CSS_V = 13;
 function songShareVideo(vids) {
   return vids.find(v => (v.category === 'live' || FANCAM_RE.test(v.title || ''))
     && !/\bM\/?V\b|music\s*video|뮤직비디오|\bteaser\b|티저/i.test(v.title || '')) || vids[0];
@@ -3135,6 +3129,28 @@ function albumTypeEn(t) {
   if (/리패키지/.test(t)) return n + (/정규/.test(t) ? 'Full Album ' : /미니/.test(t) ? 'Mini Album ' : '') + 'Repackage';
   if (/^정규/.test(t)) return n + 'Full Album'; if (/^미니/.test(t)) return n + 'Mini Album'; if (/^스페셜/.test(t)) return 'Special Album';
   return t;
+}
+// 그룹 페이지 디스코그래피 커버 격자 — 대표 앨범(discogItems) + 앨범 페이지가 있는 나머지(albumsFor)를 발매 최신순으로. 곡 타일(.sp-tiles)과 같은 모양.
+// 스포티파이 커버는 640px 원본 대신 300px 판(같은 주소의 크기 코드만 다름)으로.
+function discogTilesHtml(gko, discogItems, lang) {
+  const isEn = lang === 'en';
+  const slugOf = new Map(albumsFor(gko).map(x => [x.al, x.slug]));
+  const seen = new Set(), list = [];
+  [...discogItems, ...albumsFor(gko).map(x => x.al)].forEach(a => { if (!a || seen.has(a)) return; seen.add(a); list.push(a); });
+  if (!list.length) return '';
+  list.sort((a, b) => String(b.releaseDate || '').localeCompare(String(a.releaseDate || '')));
+  const small = u => String(u || '').replace('/image/ab67616d0000b273', '/image/ab67616d00001e02');
+  const items = list.slice(0, 48).map(a => {
+    const yr = String(a.releaseDate || '').slice(0, 4), type = isEn ? typeEn(a.type) : a.type;
+    const slug = slugOf.get(a), href = slug ? albumPagePath(gko, slug, lang) : null;
+    const inner = `${a.cover ? `<img src="${escHtml(small(a.cover))}" alt="" loading="lazy">` : `<span class="sp-tile-ph"></span>`}<span class="sp-tile-t">${escHtml(a.title)}</span><span class="sp-tile-n">${escHtml([yr, type].filter(Boolean).join(' · '))}</span>`;
+    return href ? `<a class="sp-tile" href="${SITE}/${href}">${inner}</a>` : `<div class="sp-tile">${inner}</div>`;
+  }).join('\n      ');
+  return `
+    <h2 id="albums">${isEn ? 'Discography' : '디스코그래피'}</h2>
+    <div class="sp-tiles dg-tiles">
+      ${items}
+    </div>`;
 }
 function albumLinksHtml(gko, lang) {
   const list = albumsFor(gko); if (!list.length) return '';

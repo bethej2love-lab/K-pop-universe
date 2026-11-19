@@ -48,5 +48,32 @@ need(/const parodyCue=!owner&&!members\.length&&[^\n]*_parodyRefCueFor\(v\.title
   && /const needsReview=!owner&&\(match\.confidence==='weak'\|\|ambiguous\|\|parodyCue\)/.test(admin), '외부 동기화: 빗댐이면 needs_review(주인 채널·멤버 태깅 제외)');
 need(/tab==='review'&&typeof _parodyRefCueFor==='function'/.test(admin), '검수 탭: 출연 의심 배지');
 
+// ── 남이 따라 해 본 영상(자기 선언) → 보류(2026-11-19) ──
+{
+  const s2 = shared.indexOf('const _PARODY_SELF_RE'), e2 = shared.indexOf('function _parodySelfCueFor');
+  const ctx2 = { GROUPS };
+  vm.runInNewContext(shared.slice(s2, shared.indexOf('\n}', e2) + 2) + ';this.f=_parodySelfCueFor;', ctx2);
+  const g = ctx2.f;
+  [
+    ['짭시리 쓰까르티스와 Cortis - RED RED MMA Ver. 패러디 해봤습니다 🔥', '코르티스'],
+    ['아이브 안무 따라해봤습니다 (일반인 커버)', '아이브'],
+    ['에스파 Whiplash 패러디를 해봤다', '에스파'],
+    ['직장인이 블랙핑크 성대모사 해봄', '블랙핑크'],
+    ['짭르세라핌 등장 ㅋㅋ #르세라핌', '르세라핌'],
+    ['BTS 흉내 해보기 챌린지', '방탄소년단'],
+  ].forEach(([t, k]) => need(!!g(t, k), `따라 해 본 영상 잡음: ${t.slice(0, 36)} → ${g(t, k)}`));
+  [
+    ['세븐틴이 직접 패러디 해봤습니다', '세븐틴'],            // 그룹이 주어 = 본인들
+    ['SEVENTEEN이 패러디 해봤습니다', '세븐틴'],
+    ['코르티스 REDRED 무대 직캠 #코르티스', '코르티스'],
+    ['아이브 따라와 (Follow Me) 무대', '아이브'],              // '따라'만 있고 '해봤' 없음
+    ['르세라핌 패러디 장인 등장｜SNL 코리아', '르세라핌'],     // 자기 선언 아님 — 기존 '출연 의심'(검수만) 몫
+    ['짭짤한 간식 먹방 with 에스파', '에스파'],                // 짭짤 = 2글자 미만 뒤따름 규칙에 안 걸려야
+    ['에스파 커버 해봤습니다', '에스파'],                      // 커버는 원곡 태깅 몫
+  ].forEach(([t, k]) => need(!g(t, k), `안 잡음: ${t.slice(0, 36)}${g(t, k) ? ' → ' + g(t, k) : ''}`));
+  need(/const parodySelf=!owner&&!members\.length&&tier!=='fans'&&tier!=='official'&&tier!=='grpsub'&&[^\n]*_parodySelfCueFor\(v\.title,match\.primaryGroup\)/.test(admin)
+    && /\(held\|\|parodySelf\)\?_flagPatch\('보류','auto',\{needs_review:true\}\)/.test(admin), '외부 동기화: 따라 해 본 영상은 보류+검수(주인·팬채널·멤버 태깅 제외)');
+}
+
 console.log(fail ? `\n❌ ${fail}개 실패` : '\n✅ 빗댐 제목 테스트 통과');
 process.exit(fail ? 1 : 0);

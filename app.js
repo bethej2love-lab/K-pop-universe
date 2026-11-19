@@ -3700,8 +3700,11 @@ function _groupAvUrl(g){
 function _avImg(url,onOk){
   const img=new Image();img.alt='';img.referrerPolicy='no-referrer';
   img.onload=()=>onOk(img);
-  img.onerror=()=>{const b=_avBackup.get(url);if(b&&b!==url){img.onerror=null;img.src=b;}};
-  img.src=url;return img;
+  // 인스타 프로필 원본(fbcdn, 100KB대)은 작은 원에 과해 늦게 떴다(2026-11-19 사용자 "프로필 사진 늦게 뜸") — 축소본(_igSmall) 먼저,
+  // 실패하면 원본 → 등록 사진(_avBackup) 순. 인스타 주소가 아니면 _igSmall이 그대로 돌려준다.
+  const small=_igSmall(url,160);let step=small!==url?0:1;
+  img.onerror=()=>{if(step===0){step=1;img.src=url;return;}const b=_avBackup.get(url);if(b&&b!==url){img.onerror=null;img.src=b;}};
+  img.src=small;return img;
 }
 function _srAvUrl(a){
   let p=_srAvMemo.get(a);
@@ -3822,8 +3825,9 @@ function _srAvPaint(av,url){
   // 똑같아 보였다(클유아 김성민·전민욱 Mnet 직캠). 쇼츠는 양옆 검은 띠까지 있어 더 크게.
   if(/ytimg\.com/.test(url))av.classList.add(_srAvShort.has(url)?'is-short':'is-thumb');
   img.onload=()=>{av.appendChild(img);av.classList.add('has-img');};
-  img.onerror=()=>{const b=_avBackup.get(url);if(b&&b!==url){img.onerror=null;img.src=b;}};
-  img.src=url;
+  const small=_igSmall(url,160);let step=small!==url?0:1; // 축소본 → 원본 → 등록 사진(_avImg와 같은 순서)
+  img.onerror=()=>{if(step===0){step=1;img.src=url;return;}const b=_avBackup.get(url);if(b&&b!==url){img.onerror=null;img.src=b;}};
+  img.src=small;
 }
 function _srAvatarEl(h){
   const av=document.createElement('span');av.className='sr-av';
@@ -7379,7 +7383,7 @@ window.addEventListener('message',e=>{
     const d=JSON.parse(e.data);
     if(d.event==='onError'&&e.source===document.getElementById('yt-lb-iframe')?.contentWindow){_lbEmbedBlocked(+d.info);return;}
     // 유튜브가 자막 등 모듈을 붙였다고 알릴 때(onApiChange) — 첫 60초 안이면 그 즉시 자막을 다시 끈다(위 _lbCaptionsOffOnce 주석)
-    if(d.event==='onApiChange'&&Date.now()<_lbCcWatchUntil&&e.source===document.getElementById('yt-lb-iframe')?.contentWindow){_lbCcSendNow(_lbActiveVid);return;}
+    if(d.event==='onApiChange'&&Date.now()<_lbCcWatchUntil&&e.source===document.getElementById('yt-lb-iframe')?.contentWindow){_lbCcSendNow(_lbActiveVid,false);return;}
     if((d.event!=='infoDelivery'&&d.event!=='initialDelivery')||!d.info)return;
     _lbYtHeard=true; // 핸드셰이크 성공 — 더 안 보내도 된다
     if(d.info.duration>0)_lbYtDur=d.info.duration;
@@ -7416,18 +7420,30 @@ window.addEventListener('message',e=>{
 // 같은 영상을 다시 열거나 모드 전환으로 틀이 새로 생기면 끄기 신호가 아예 안 갔다 → 틀이 바뀌면 기록을 비운다 ② 시각 타이머만으로는 유튜브가 모듈을
 // 늦게 붙이는 순간을 못 맞춘다 → 유튜브가 모듈이 붙을 때 보내는 onApiChange를 받아 그 즉시 끈다(첫 60초 동안만 — 그 뒤 사용자가 켠 CC는 유지)
 // ③ 모듈 이름이 captions/cc 두 가지로 쓰인다 → 둘 다 내린다.
-let _lbCcOffVid=null,_lbCcWatchUntil=0;
-function _lbCcSendNow(vid){
+// 2026-11-18 다시 점검(사용자 "자막이 꺼졌다 켜졌다 해, 전체화면 할 때도"): 위 방식은 unloadModule(자막 모듈 통째로 내리기)을 0·1.5·5·15·40초와
+// onApiChange마다 보냈는데, 모듈을 내리면 유튜브가 다시 붙이고(onApiChange) → 또 내리고… 가 반복돼 화면에선 자막이 깜빡였다. 전체화면 전환도
+// 모듈을 다시 붙이게 해 같은 일이 생겼고, 40초 안에 사용자가 켠 CC도 꺼버렸다. 바꾼 것:
+//  ① unloadModule은 첫 재생 때 한 번만. 그 뒤엔 setOption('captions','track',{}) — 자막 줄만 숨기고 모듈은 안 건드려 다시 붙이는 반복이 없다.
+//  ② 사용자가 플레이어를 직접 만지면(창 포커스가 영상 틀로 넘어감 = 재생·CC·전체화면 버튼 클릭) 그 틀에선 더 이상 자막 명령을 안 보낸다.
+//  ③ 우리 전체화면 버튼(yt-lb-fs)으로 바꿀 땐 숨기기 한 번만(만진 적 없을 때).
+let _lbCcOffVid=null,_lbCcWatchUntil=0,_lbCcUserTouched=false;
+function _lbCcPost(f,func,args){try{f.contentWindow.postMessage(JSON.stringify({event:'command',func,args}),'*');}catch(_){}}
+function _lbCcSendNow(vid,unload){
   const f=document.getElementById('yt-lb-iframe');
-  if(!f||!f.contentWindow||(vid&&_lbActiveVid!==vid))return;
-  ['captions','cc'].forEach(m=>{try{f.contentWindow.postMessage(JSON.stringify({event:'command',func:'unloadModule',args:[m]}),'*');}catch(_){}});
+  if(!f||!f.contentWindow||(vid&&_lbActiveVid!==vid)||_lbCcUserTouched)return;
+  _lbCcPost(f,'setOption',['captions','track',{}]);
+  if(unload)['captions','cc'].forEach(m=>_lbCcPost(f,'unloadModule',[m]));
 }
 function _lbCaptionsOffOnce(){
   if(!_lbActiveVid||_lbCcOffVid===_lbActiveVid)return;
   const vid=_lbActiveVid;_lbCcOffVid=vid;_lbCcWatchUntil=Date.now()+60000;
-  const send=()=>_lbCcSendNow(vid);
-  send();[1500,5000,15000,40000].forEach(ms=>setTimeout(send,ms));
+  _lbCcSendNow(vid,true);
+  setTimeout(()=>_lbCcSendNow(vid,false),1500);
 }
+// 플레이어를 직접 만짐 — 영상 틀(iframe)로 포커스가 넘어가면 창이 blur된다(교차 출처 iframe 안의 클릭은 직접 못 받으므로 이걸로 판단)
+// 폰은 열 때 앱이 직접 틀에 포커스를 주므로(iOS 첫 탭) 이 판단을 쓰지 않는다 — 데스크톱만
+window.addEventListener('blur',()=>{if(isMob())return;setTimeout(()=>{const f=document.getElementById('yt-lb-iframe');if(f&&document.activeElement===f)_lbCcUserTouched=true;},0);});
+document.addEventListener('fullscreenchange',()=>{if(document.getElementById('yt-lb-iframe')&&Date.now()<_lbCcWatchUntil)setTimeout(()=>_lbCcSendNow(_lbActiveVid,false),700);});
 // 회전 버튼(세로/가로 전환)은 지금 보는 영상에만 적용한다 — 예전엔 영상 ID를 폰에 영구 저장해서, 가로 영상에서
 // 한 번 잘못 눌리면 그 뒤로 열 때마다 세로 틀(9:16)에 갇혀 크게 잘려 보였고 되돌릴 단서도 없었다(2026-10-20 사용자 제보,
 // 코르티스 성현 가요대제전 직캠). 세로/가로 판정은 서버(tools/shorts_promote.mjs)가 정본. 남아 있던 저장분은 지운다.
@@ -7558,7 +7574,7 @@ function _lbSetIframeSrc(url){
   const fr=old.cloneNode(false);
   if(url)fr.src=url;else fr.removeAttribute('src');
   old.replaceWith(fr);
-  _lbCcOffVid=null; // 새 틀 = 새 재생 — 같은 영상을 다시 열어도 자막 끄기 신호를 다시 보낸다(_lbCaptionsOffOnce 주석)
+  _lbCcOffVid=null;_lbCcUserTouched=false; // 새 틀 = 새 재생 — 같은 영상을 다시 열어도 자막 끄기 신호를 다시 보낸다(_lbCaptionsOffOnce 주석)
   // 데스크톱: iframe이 로드되면 YouTube 플레이어가 포커스를 가져가 ESC가 부모 window에 안 옴 — 부모로 돌려줌
   // 모바일은 무대 옆 패널 아닌 전체화면이라 포커스 반환 불필요
   // ⚠️ load 이벤트 한 번(once)으론 부족 — 플레이어가 load 뒤 내부 초기화 중 포커스를 다시 가져간다(CI 리눅스
@@ -8445,8 +8461,13 @@ function _recOrder(vids,memberKo){
     const cat=_vidCatWeight(v.category)/4;
     return _REC_W.fresh*fresh+_REC_W.pop*pop+_REC_W.rise*(v._rise?1:0)+_REC_W.heart*heart+_REC_W.fav*fav+_REC_W.cat*cat+_REC_W.rnd*Math.random();
   };
-  return vids.map(v=>({v,s:score(v)})).sort((a,b)=>b.s-a.s).map(x=>x.v);
+  // 모음 영상(개별출연·제목 '모음/몰아보기/.zip' 등)은 첫 화면 맨 뒤로(2026-11-18 사용자 "모음 영상은 중요도가 높진 않음, 최신이어도 추천순 상위에 둘 필요 없음").
+  // 점수 순서는 각 묶음 안에서 그대로. 모음뿐이면 그대로 보인다.
+  return vids.map(v=>({v,s:score(v)-(_isCompilationVid(v)?10:0)})).sort((a,b)=>b.s-a.s).map(x=>x.v);
 }
+// 모음(편집) 영상 — 여러 영상을 이어 붙인 것. 추천순에서만 뒤로 보낸다(목록에서 빼지는 않음).
+const _COMPILATION_RE=/모음|모아보기|몰아보기|총집합|총정리|\bcompilation\b|\.zip\b|zip\]/i;
+function _isCompilationVid(v){return !!v&&(v.content_flag==='개별출연'||_COMPILATION_RE.test(String(v.title||'')));}
 // 상승 신호 — 후보 id만 짧게 조회(각 3초, 실패하면 신호 없이). 결과는 행에 _rise로 붙여 첫 페이지 캐시에도 같이 남는다.
 async function _recMarkRising(vids){
   if(!sb||!vids.length)return;
@@ -12247,10 +12268,13 @@ async function _loadProfilePic(cfg){
   wrap.classList.remove('tt-pic-ready');
   document.getElementById(cfg.camBtnId)?.classList.add('cam-overlay');
   // 핸들러를 src보다 먼저 등록 (캐시된 이미지는 src 세팅 직후 onload 발화 가능)
-  img.onerror=()=>{if(picBackup&&img.src!==picBackup){const b=picBackup;picBackup=null;img.src=b;return;} // 인스타 주소가 깨지면 등록 사진으로
+  // 카드 프로필도 인스타 원본 대신 축소본 먼저(2026-11-19 "프로필 사진 늦게 뜸") — 실패하면 원본 → 등록 사진
+  const picShown=_igSmall(picUrl,360);let picTriedOrig=picShown===picUrl;
+  img.onerror=()=>{if(!picTriedOrig){picTriedOrig=true;img.src=picUrl;return;}
+    if(picBackup&&img.src!==picBackup){const b=picBackup;picBackup=null;img.src=b;return;} // 인스타 주소가 깨지면 등록 사진으로
     wrap.style.display='none';wrap.classList.remove('tt-pic-loading','tt-pic-ready');document.getElementById(cfg.cardId)?.classList.remove(cfg.hasPicClass);document.getElementById(cfg.camBtnId)?.classList.remove('cam-overlay');};
   img.onload=()=>{wrap.classList.remove('tt-pic-loading');wrap.classList.add('tt-pic-ready');document.getElementById(cfg.cardId)?.classList.add(cfg.hasPicClass);};
-  if(img.src!==picUrl)img.src=picUrl;
+  if(img.src!==picShown)img.src=picShown;
   else if(img.complete&&img.naturalWidth){wrap.classList.remove('tt-pic-loading');wrap.classList.add('tt-pic-ready');document.getElementById(cfg.cardId)?.classList.add(cfg.hasPicClass);}
 }
 // 멤버 카드용 — 기존 호출부(_loadInstaPic(a))는 그대로 두려고 얇은 래퍼로 남긴다.
@@ -28289,7 +28313,8 @@ async function _buildFeedFavNew(opts){
     const drawItem=({song,row})=>{
       const isShort=_songIsShort(song);
       const _emo=_isFav(song)?String(_bias.favEmoji(song)).replace(/[<>&"']/g,''):''; // 이모지는 사용자가 친 글자 — 태그 문자 제거
-      const sub=(_emo?`<span class="feed-fav-emo">${_emo}</span>`:'')+(_isNewSince(song)?'<span class="feed-new-hot">NEW</span>':'')+[_feedWhoSub(song),song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
+      // NEW는 최애 이모지 앞(2026-11-19 사용자 "new 뱃지 최애 이모티콘 앞으로 가야지")
+      const sub=(_isNewSince(song)?'<span class="feed-new-hot">NEW</span>':'')+(_emo?`<span class="feed-fav-emo">${_emo}</span>`:'')+[_feedWhoSub(song),song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
       _appendFeedCard(strip,'💖',song.t,sub,
         ()=>openLightbox(song.u,isShort,flat,flat.indexOf(song),{groupKo:song.groupKo,memberKo:(song.memberKos||[])[0]},false,true),
         song.thumb,null, Object.assign({dur:song.dur}, row.wide?{wide:true,short:!!row.short}:(isShort?{short:true}:{}),
@@ -29756,6 +29781,8 @@ function _makeChVidController(contId){
       // '기타' 플래그 영상은 후순위로 — 대표영상 후보 제외 + 정상 영상 뒤로 밀기
       const _etcVids=vids.filter(v=>v.content_flag==='기타');
       if(_etcVids.length)vids=[...vids.filter(v=>v.content_flag!=='기타'),..._etcVids];
+      // 모음 영상은 추천순 첫 화면 맨 뒤로(_recOrder) — 위 같은 날 흩기가 몇 칸 당겨 올 수 있어 한 번 더(2026-11-18)
+      if(state.sortMode==='recommend'&&reset){const _cv=vids.filter(_isCompilationVid);if(_cv.length&&_cv.length<vids.length)vids=[...vids.filter(v=>!_isCompilationVid(v)),..._cv];}
       // 첫 로드 + 전체 탭: 스크랩(하트) 최다 영상을 맨 앞으로.
       // _featuredFromDB = 현재 필터 내 하트 최다 영상(하트 없으면 null).
       // 하트 없으면 페이지 내 첫 셔플 영상으로 폴백. 업로드순/오래된순은 건너뜀.

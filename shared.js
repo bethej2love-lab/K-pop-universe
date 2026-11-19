@@ -784,6 +784,32 @@ function _parodyRefCueFor(title,gko){
   const g=(typeof GROUPS!=='undefined'&&GROUPS)?GROUPS[gko]:null;
   return _parodyRefCue(title,[gko,g&&g.en]);
 }
+// 남이 그 그룹을 **따라 해 본** 영상(2026-11-19 사용자 "짭시리 쓰까르티스와 Cortis - RED RED MMA Ver. 패러디 해봤습니다 — 최신 영상에 오태깅 너무 티 난다").
+// 위 _parodyRefCue는 그룹명 바로 뒤에 '패러디'가 붙은 꼴만 보고, 걸려도 숨기지 않는다(진짜 출연에도 '○○ 스타일'을 써서). 이 함수는 더 좁고 확실한 꼴 —
+// 올린 사람이 스스로 "패러디/따라/흉내/성대모사/모창 … 해봤"이라고 밝혔거나 '짭○○'(가짜 ○○)을 내건 제목 — 만 잡아, 외부 동기화가 '보류'(화면에서 빠짐+검수)로 넣는다.
+// 그룹이 주어인 문장("세븐틴이 패러디 해봤습니다")은 그 그룹이 직접 한 것이라 뺀다. 커버는 원곡 태깅(_coverResolve)이 따로 다뤄 여기서 안 본다.
+// ⚠️ 정규식에 백슬래시를 쓰지 않는다(위 _parodyRefCue 주의와 같은 이유).
+const _PARODY_SELF_RE=/(패러디|따라 ?하기|따라|흉내|성대모사|모창)(?: ?[를을])? ?해 ?(?:봤|보았|봄|보기|본|봅)/;
+const _PARODY_FAKE_RE=/(?:^|[^가-힣])(짭(?!짤|조름|쪼름|짭)[가-힣]{2,})/; // 짭짤·짭조름(맛 표현)은 제외
+function _parodySelfCue(title,names){
+  const t=String(title||'');
+  if(!t)return '';
+  const a=t.match(_PARODY_SELF_RE),b=t.match(_PARODY_FAKE_RE);
+  if(!a&&!b)return '';
+  if(a&&!b){ // 그룹이 주어면 본인들이 한 것 — '짭○○'까지 있으면 주어여도 남이 한 것으로 본다
+    const BS=String.fromCharCode(92);
+    for(const n of names||[]){
+      if(!n||n.length<2)continue;
+      const e=[...n].map(c=>('.*+?^$|()[]{}'.includes(c)||c===BS)?BS+c:c).join('');
+      if(new RegExp(e+' ?(?:이|가|은|는|도|들이|멤버)(?=$|[^가-힣])','i').test(t))return '';
+    }
+  }
+  return a?a[0]:b[1];
+}
+function _parodySelfCueFor(title,gko){
+  const g=(typeof GROUPS!=='undefined'&&GROUPS)?GROUPS[gko]:null;
+  return _parodySelfCue(title,[gko,g&&g.en]);
+}
 
 // ── 음방 회차 묶기(2026-11-03) — 앱 회차 화면(_openShowEp)과 정적 회차 페이지(build_group_pages.js buildShowPages)가 같이 쓴다 ──
 // 출처는 방송사 공식 채널만. 회차 날짜 = ①제목 속 날짜(261030·2026.10.22·20261025)가 그 방송 요일과 맞을 때 ②없으면 같은 방송 다른 영상에서

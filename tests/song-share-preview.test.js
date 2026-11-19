@@ -39,6 +39,7 @@ const ctx={SITE:'https://example.test',SONG_CSS_V:4,coverChipsHtml:()=>'',heroCa
 vm.createContext(ctx);
 vm.runInContext(builder.match(/^const SEO_GA_TAG = [\s\S]*?^<script async[^\n]+\x60;/m)[0],ctx);
 vm.runInContext(block('function bilingualLabel(', '// 앱의 _hashEsc'),ctx);
+vm.runInContext(block('function heroCapHtml(','function fancamPageHtml('),ctx); // 대표 영상 정보 줄(2026-11-18 새 함수)
 vm.runInContext(block('function songShareVideo(vids)','// ── 직캠 조회수 순위 페이지'),ctx);
 const vids=[{id:'mv',title:'Snowy Summer MV',category:'mv'},
   {id:'teaser',title:'Snowy Summer Teaser',category:'live'},
