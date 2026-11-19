@@ -6344,14 +6344,23 @@
   #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-edit{top:calc(var(--sh-base) + 1px);filter:none;}
   #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-rotate{right:calc(var(--sh-m) + 2px + 0*34px);}
   #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-mute{right:calc(var(--sh-m) + 2px + 1*34px);}
-  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-col{right:calc(var(--sh-m) + 2px + 2*34px);}
-  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-flag{right:calc(var(--sh-m) + 2px + 3*34px);}
-  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-scrap{right:calc(var(--sh-m) + 2px + 4*34px);}
-  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-edit{right:calc(var(--sh-m) + 2px + 5*34px);}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-edit{right:calc(var(--sh-m) + 2px + 2*34px);}
+  /* 하트·저장·깃발은 이모지 줄로(같은 날 사용자 "이모티콘 줄에 3개만 덩그러니 — 하트 저장 깃발을 거기 붙이고, 소리·화면 전환은 윗줄 오른쪽에 그대로").
+     이모지 줄 = [♡ 🔖 ⚑][이모지…]를 한 묶음으로 가운데쯤에: 버튼 셋은 왼쪽 고정 좌표(화면 가운데 − 136px부터 38px 간격), 이모지는 그 바로 뒤에서 시작.
+     (이모지 폭은 반응 수에 따라 달라 CSS로 '이모지 뒤'를 잡을 수 없어 버튼을 앞에 둔다. 묶음 폭 약 272px 기준으로 가운데.) */
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-scrap,
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-col,
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-flag{right:auto;top:calc(var(--sh-base) + 46px);}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-scrap{left:calc(50vw - 136px + 0*38px);}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-col{left:calc(50vw - 136px + 1*38px);}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-flag{left:calc(50vw - 136px + 2*38px);}
   #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-video-box.is-shorts~#yt-lb-info{position:relative;top:7px;}
-  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-reactions{position:relative;top:11px;}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-reactions{position:relative;top:11px;justify-content:flex-start;padding-left:calc(50vw - 136px + 3*38px + 6px);box-sizing:border-box;}
 }
 /* 쇼츠 넘기기 미리보기(2026-11-19) — 다음/이전 영상의 썸네일 한 장. 영상 칸과 같은 자리·크기로 화면 밖에 대기하다 손가락을 따라 들어온다(좌표는 app.js _lbPeekShow) */
 #yt-lb-peek{position:fixed;z-index:3;border-radius:12px;overflow:hidden;background:#15161c;pointer-events:none;will-change:transform;}
 #yt-lb-peek img{width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .15s;}
 #yt-lb-peek img.loaded{opacity:1;}
+/* 재생 화면 ⋮ 메뉴 항목(2026-11-19 사용자 "케밥 버튼 누르면 아무것도 없음") — 가로 화면 ··· 메뉴와 같은 모양(.lb-more-item) */
+#yt-lb-menu-panel{min-width:180px;}
+#yt-lb-menu-panel .lb-more-item{width:100%;}

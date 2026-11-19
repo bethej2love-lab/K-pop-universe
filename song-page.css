@@ -2,7 +2,7 @@
    페이지마다 넣으면 3만 쪽 × 5KB = 150MB라 한 파일로 뺐다. 바꾸면 페이지의 ?v= 숫자도 올릴 것. */
 :root{color-scheme:dark;}
 body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.5;}
-.wrap{max-width:760px;margin:0 auto;padding:18px 16px 20px;}
+.wrap{max-width:760px;margin:0 auto;padding:23px 16px 20px;}
 .brand{font-size:12px;letter-spacing:.08em;color:rgba(150,175,255,0.6);text-decoration:none;white-space:nowrap;}
 a{color:inherit;text-decoration:none;}
 .hero{position:relative;display:block;margin:12px 0 14px;border-radius:16px;overflow:hidden;aspect-ratio:16/9;background:#17171a;text-decoration:none;}
@@ -22,7 +22,7 @@ a{color:inherit;text-decoration:none;}
 .crumbs{font-size:13px;color:rgba(180,200,255,0.65);margin:-4px 0 12px;}
 .crumbs a{text-decoration:none;color:rgba(200,215,255,0.85);}
 /* 곡·직캠 페이지: 경로 줄을 썸네일 **위**로, '직캠 전체' 링크를 같은 줄 오른쪽에(2026-11-19 사용자 폰 스크린샷 — 알약 버튼이 한 줄을 따로 먹고 썸네일 아래에 있었다) */
-.brand+.crumbs{margin:6px 0 10px;clear:both;}
+.brand+.crumbs{margin:13px 0 16px;clear:both;} /* 같은 날 사용자 "위쪽 줄 사이 여백 조금만 더 — 너무 다닥다닥": 브랜드 줄↔경로 줄 6→13px, 경로 줄↔썸네일 12→16px, 맨 위 줄↔브랜드 줄 18→23px(.wrap) */
 .crumbs-row{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:2px 14px;}
 .crumbs-path{min-width:0;}
 .crumbs .hub-all{white-space:nowrap;color:#dce6ff;}

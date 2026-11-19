@@ -7886,9 +7886,27 @@ document.getElementById('yt-lightbox').addEventListener('click',e=>{e.stopPropag
   }
 }
 document.getElementById('yt-lb-close').addEventListener('click',e=>{e.stopPropagation();closeLightbox();});
+// ⋮ 메뉴(쇼츠 화면 오른쪽 위) — 예전엔 '연결 보기' 하나뿐이라 연결이 없는 영상에선 눌러도 빈 판이 떴다(2026-11-19 사용자 "케밥 버튼 누르면 아무것도 없음").
+// 열 때마다 지금 영상 기준으로 채운다: 전체 화면 · 유튜브에서 보기 · 링크 복사 · 제보하기(+ 연결 보기는 원래 버튼 그대로).
+function _lbMenuFill(){
+  const panel=document.getElementById('yt-lb-menu-panel');if(!panel)return;
+  panel.querySelectorAll('.lb-menu-dyn').forEach(x=>x.remove());
+  const isKo=currentLang==='ko',s=(_lbPlaylist&&_lbIdx>=0)?_lbPlaylist[_lbIdx]:null,id=s&&ytId(s.u||''),short=!!(s&&_songIsShort(s));
+  const yt=id?(short?`https://www.youtube.com/shorts/${id}`:`https://www.youtube.com/watch?v=${id}`):'';
+  const close=()=>document.querySelector('.lb-menu-wrap')?.classList.remove('open');
+  const add=(t,fn)=>{const b=document.createElement('button');b.type='button';b.className='lb-more-item lb-menu-dyn';b.setAttribute('role','menuitem');b.textContent=t;
+    b.addEventListener('click',e=>{e.stopPropagation();close();try{fn();}catch(_){}});panel.appendChild(b);};
+  add(isKo?'전체 화면':'Full screen',()=>_lbRequestFs());
+  if(yt)add(isKo?'유튜브에서 보기 ↗':'Open on YouTube ↗',()=>window.open(yt,'_blank','noopener'));
+  if(yt)add(isKo?'링크 복사':'Copy link',()=>{const done=()=>{try{_showToast(isKo?'링크를 복사했어요':'Link copied');}catch(_){}};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(yt).then(done,()=>{});});
+  add(T[currentLang].fbReport,()=>{const vid=s&&(_lbApiId(s)||id);openFeedback(vid?{type:'video',id:vid,label:s.t||''}:null);});
+}
 document.getElementById('yt-lb-menu-btn')?.addEventListener('click',e=>{
   e.stopPropagation();
-  document.querySelector('.lb-menu-wrap')?.classList.toggle('open');
+  const w=document.querySelector('.lb-menu-wrap');if(!w)return;
+  if(!w.classList.contains('open'))_lbMenuFill();
+  w.classList.toggle('open');
 });
 document.addEventListener('click',e=>{
   const wrap=document.querySelector('.lb-menu-wrap');
