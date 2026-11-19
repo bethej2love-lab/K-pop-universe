@@ -132950,6 +132950,29 @@
   },
   "discography": [
    {
+    "title": "ORIGAMI",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/81/888/15181888_20261119115413_500.jpg",
+    "releaseDate": "2026.11.20",
+    "trackCount": 2,
+    "titleTrack": "ORIGAMI (&TEAM)",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "ORIGAMI (&TEAM)",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "ORIGAMI",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15181888"
+   },
+   {
     "title": "Fearless",
     "type": "싱글",
     "isMain": true,
