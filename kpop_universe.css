@@ -6298,3 +6298,7 @@
 .gc-collection-add .gc-collection-chip-thumb-wrap{display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:300;line-height:1;color:rgba(200,214,245,0.6);background:rgba(255,255,255,0.05);}
 .gc-collection-add:active .gc-collection-chip-thumb-wrap{background:rgba(255,255,255,0.1);}
 .gc-collection-add .gc-collection-chip-name{color:rgba(190,205,240,0.6);}
+/* 멤버 카드 '연결' 버튼을 첫째 줄(이름 줄) 오른쪽 끝으로(2026-11-19 사용자 "둘째 줄에 있으니 가려지는 경우가 너무 많아서").
+   둘째 줄은 링크·소속이 길면 옆으로 넘쳐 버튼이 밀려났다. 이름 줄을 카드 폭 전체로 펴고 버튼을 맨 끝(order)으로 — 공유·+ 버튼이 나중에 끼어들어도 끝자리 유지. */
+#tt-name-row:has(#tt-conn-btn){display:flex;width:100%;}
+#tt-name-row>#tt-conn-btn{order:9;margin-left:auto;margin-right:8px;} /* 오른쪽 8px: 이름 줄이 카드 보이는 폭보다 6px 넓어 버튼 끝이 잘렸다(실측) */
