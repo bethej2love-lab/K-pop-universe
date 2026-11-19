@@ -13126,7 +13126,8 @@ function _discogTypeLabel(type){
 // prefix='gc'(그룹 카드)/'tt'(멤버 카드, 솔로 디스코그래피) 공용 — DOM id만 접두어로 갈라서 재사용.
 // 트로피 뱃지 조회(_loadGcDiscogTrackTrophies)는 그룹 단위 캐시라 멤버(tt) 쪽에선 호출하지 않음 —
 // _appendGcDiscogTrackBadges가 _gcDiscogTrackTrophiesKo 불일치 시 조용히 스킵하므로 별도 가드 불필요.
-function _renderDiscography(prefix,albums){
+// opts(멤버 카드 전용, 2026-11-19): {groupKo, groupAlbums} — 소속 그룹 앨범을 같이 보여줄 수 있게(아래 groupIncluded 주석).
+function _renderDiscography(prefix,albums,opts){
   const row=document.getElementById(prefix+'-discog-row');
   const strip=document.getElementById(prefix+'-discog-strip');
   const moreBtn=document.getElementById(prefix+'-discog-more-btn');
@@ -13143,7 +13144,14 @@ function _renderDiscography(prefix,albums){
   const jpBtn=document.getElementById(prefix+'-discog-jp-btn');
   const programBtn=document.getElementById(prefix+'-discog-program-btn');
   const variantBtn=document.getElementById(prefix+'-discog-variant-btn');
-  if(!albums||!albums.length){row.style.display='none';return;}
+  const grpBtn=document.getElementById(prefix+'-discog-grp-btn');
+  albums=albums||[];
+  // 소속 그룹 앨범(멤버 카드) — 대표 앨범만(OST·피처링·프로그램 앨범 제외). 솔로 목록의 다른 토글과 섞이지 않게 따로 다룬다.
+  const _grpKo=(opts&&opts.groupKo)||null;
+  const grpAlbums=_grpKo?((opts.groupAlbums||[]).filter(a=>a&&a.isMain&&a.type!=='OST'&&!a.feat&&!a.program)):[];
+  const _grpSet=new Set(grpAlbums);
+  if(grpBtn)grpBtn.style.display='none';
+  if(!albums.length&&!grpAlbums.length){row.style.display='none';return;}
   row.style.display='';
   if(prefix==='gc')_loadGcDiscogTrackTrophies(_openGCko);
   const mainAlbums=albums.filter(a=>a.isMain);
@@ -13168,6 +13176,9 @@ function _renderDiscography(prefix,albums){
   // 수집 정책이 "멜론에 있는 모든 발매를 태그해서 넣는다"로 바뀌면서 생긴 토글이다(수집은 전부,
   // 노출은 선별). 이게 없으면 82메이저처럼 14장 중 7장이 리믹스인 팀의 목록이 리믹스로 도배된다.
   let variantIncluded=false;
+  // 그룹 앨범 같이 보기(2026-11-19 사용자 "소속 그룹 있는 멤버가 솔로 없으면 디스코그라피가 너무 빈다 — 솔로 4개 미만이면 그룹 것까지 기본 표시,
+  // 4개 이상이면 솔로만, 둘 다 선택할 수 있게"). 기본값은 아래에서 '솔로 기본 목록 개수'로 정한다. 토글은 세그먼트 왼쪽 칩(#tt-discog-grp-btn).
+  let groupIncluded=false;
   // 일본판 판정은 주인의 본거지를 봐야 한다(_isJpRelease 주석) — gc는 그룹 ko, tt는 아티스트 객체.
   const _jpOwner=prefix==='gc'?_openGCko:(typeof _openTArtist!=='undefined'?_openTArtist:null);
   const _isJp=a=>_isJpRelease(a,_jpOwner);
@@ -13195,7 +13206,28 @@ function _renderDiscography(prefix,albums){
     base=base.filter(a=>!a.program);
     if(programIncluded)base=[...base,...albums.filter(a=>a.program&&(typeFilter==='all'||_discogBucket(a.type)===typeFilter))];
     if(!variantIncluded)base=base.filter(a=>!a.variant); // 디폴트: 리믹스·변형판 제외
-    return sortedList(base);
+    if(groupIncluded&&grpAlbums.length){
+      const seen=new Set(base);
+      let g=grpAlbums.filter(a=>!seen.has(a)&&(typeFilter==='all'||_discogBucket(a.type)===typeFilter));
+      if(!jpIncluded)g=g.filter(a=>!_isJpRelease(a,_grpKo));
+      if(!variantIncluded)g=g.filter(a=>!a.variant);
+      base=[...base,...g];
+    }
+    const out=sortedList(base);
+    // 앨범 창이 주인을 가릴 수 있게 목록에 표시(_openGcDiscogDetail) — 그룹 앨범은 그룹 맥락, 나머지는 카드(멤버) 맥락
+    if(groupIncluded&&grpAlbums.length){out._mixGko=_grpKo;out._mixSet=_grpSet;}
+    return out;
+  }
+  // 솔로 4개 미만이면 그룹 앨범까지 기본 표시(위 주석). 솔로가 아예 없으면 그룹 것만 — 이때는 끌 것이 없어 칩을 안 보인다.
+  if(grpAlbums.length){
+    groupIncluded=currentList().length<4;
+    if(grpBtn&&albums.length){
+      grpBtn.style.display='';
+      grpBtn.textContent='+ '+(typeof _gLabelKo==='function'&&currentLang==='ko'?_gLabelKo(_grpKo):((GROUPS[_grpKo]||{}).en||_grpKo));
+      const paint=()=>{grpBtn.classList.toggle('active',groupIncluded);grpBtn.setAttribute('aria-pressed',groupIncluded?'true':'false');};
+      paint();
+      grpBtn.onclick=e=>{e.stopPropagation();groupIncluded=!groupIncluded;paint();renderItems();};
+    }
   }
   function renderItems(){
     strip.innerHTML='';
@@ -13346,7 +13378,8 @@ function _renderDiscography(prefix,albums){
     moreBtn.style.display=show?'':'none';
     moreDivider.style.display=show?'':'none';
   }
-  const presentBuckets=_DISCOG_BUCKETS.filter(b=>albums.some(a=>_discogBucket(a.type)===b));
+  const _bucketSrc=grpAlbums.length?[...albums,...grpAlbums]:albums; // 그룹 앨범이 있으면 그 종류도 세그먼트에
+  const presentBuckets=_DISCOG_BUCKETS.filter(b=>_bucketSrc.some(a=>_discogBucket(a.type)===b));
   if(presentBuckets.length>1){
     segEl.style.display='';
     segEl.querySelectorAll('.seg-btn').forEach(b=>b.remove());
@@ -13635,9 +13668,12 @@ function _renderGcDiscography(ko){
 // 솔로 활동 디스코그래피 — artists.json 개인 멤버 항목의 discography 필드(groups.json과 동일 스키마).
 // 없는 멤버가 대부분이라 필드 있는 멤버만 섹션이 뜨고, 나머지는 그룹 디스코그래피처럼 자동으로 숨김.
 function _renderTtDiscography(a){
-  if(a.discography!==undefined){_renderDiscography('tt',a.discography);return;}
+  // 소속 그룹이 있는 현재 멤버는 그룹 앨범도 넘긴다(_renderDiscography opts — 솔로 4개 미만이면 기본으로 같이 표시). 탈퇴 멤버·솔로 가수는 예전대로.
+  const gk=a&&a.group&&GROUPS[a.group.ko]&&!(typeof _isFormerOf==='function'&&_isFormerOf(a,a.group.ko))?a.group.ko:null;
+  const go=()=>_renderDiscography('tt',a.discography,gk?{groupKo:gk,groupAlbums:(GROUPS[gk]||{}).discography||[]}:null);
+  if(a.discography!==undefined&&(!gk||GROUPS[gk].discography!==undefined)){go();return;}
   const row=document.getElementById('tt-discog-row');if(row)row.style.display='none';
-  _ensureMemberDisco(a).then(()=>{if(_openTArtist===a)_renderDiscography('tt',a.discography);});
+  Promise.all([_ensureMemberDisco(a),gk?_ensureGroupDisco(gk):null]).catch(()=>{}).then(()=>{if(_openTArtist===a)go();});
 }
 // 2026-08-19, 사용자 요청 — 디스코그래피 트랙이 멜론 연간 TOP100/스포티파이 마일스톤에 해당하면 곡
 // 제목 옆에 작은 아이콘 뱃지 표시. 앨범 상세를 열 때마다 매번 조회하면 앨범 넘길 때(이전/다음)마다
@@ -13699,6 +13735,8 @@ let _discogCtx=null;
 function _dGko(){return _discogCtx?_discogCtx.gko:_openGCko;}
 function _dArtist(){return _discogCtx?_discogCtx.artist:_openTArtist;}
 function _openGcDiscogDetail(a,idx,ctx){
+  // 멤버 카드에 그룹 앨범이 섞인 목록(_renderDiscography groupIncluded) — 그룹 앨범은 그룹이 주인, 솔로 앨범은 카드(멤버)가 주인
+  if(ctx===undefined&&_gcDiscogList&&_gcDiscogList._mixGko)ctx=_gcDiscogList._mixSet.has(a)?{gko:_gcDiscogList._mixGko,artist:null}:null;
   if(ctx!==undefined)_discogCtx=ctx;
   else if(!document.getElementById('gc-discog-detail').classList.contains('open'))_discogCtx=null; // 새로 여는 건 카드 맥락
   _discogDetailGko=_discogCtx?(_discogCtx.gko||_discogCtx.artist?.group?.ko||''):(_openGCko||(_openTArtist?.group?.ko)||'');

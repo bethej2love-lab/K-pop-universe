@@ -3231,7 +3231,11 @@
   .gc-discog-type{font-size:8px;font-weight:700;letter-spacing:.03em;color:rgba(150,175,225,0.66);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .gc-discog-item-title{font-size:11px;color:rgba(215,228,255,0.85);line-height:1.28;margin-top:1px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
   .gc-discog-item-artists{font-size:9.5px;color:rgba(160,180,220,0.62);line-height:1.25;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .gc-discog-extra .gc-discog-cover{opacity:.55;}
+  .gc-discog-extra .gc-discog-cover{opacity:.82;} /* 2026-11-19 사용자 "OST 앨범 흐리게 표시하는 정도 완화" — .55 → .82 */
+  /* 멤버 카드 '그룹 앨범 같이 보기' 칩(세그먼트 왼쪽) — 켜짐=채워진 알약, 꺼짐=테두리만 */
+  .discog-grp-chip{flex:0 0 auto;max-width:96px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:4px 9px;border-radius:999px;font-size:10px;font-weight:600;letter-spacing:-.01em;font-family:inherit;
+    color:rgba(170,190,230,0.6);background:transparent;border:0.5px solid rgba(150,175,255,0.22);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .15s,color .15s,border-color .15s;}
+  .discog-grp-chip.active{color:#eef2ff;background:rgba(140,165,255,0.22);border-color:rgba(150,175,255,0.5);}
   /* 활동기 스택(2026-10-13, 기본 켬 · ?stack=0으로 끔) — 뒤 커버는 오른쪽 위로 부채꼴로만 비친다(커버 위엔 아무것도 안 얹음) */
   .gc-discog-strip.has-stacks{padding-top:22px;}
   .gc-discog-stack{width:calc(var(--card-thumb) + 24px);} /* 묶음 폭 = 커버 + 겹친 뒷장 몫(커버 크기 변수와 같이 움직인다) */
