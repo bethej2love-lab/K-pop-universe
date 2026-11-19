@@ -4556,6 +4556,8 @@
   /* 투데이스 케이팝 1면(2026-09-28) — 헤드라인 1 + 요약 4 + 더보기 */
   /* 배지 썸네일 오버레이 — hero .fnh-media, row .fnr-media, shorts .feed-card-thumb-wrap 공용 */
   .fnh-media .feed-news-badge,.fnr-media .feed-news-badge,.feed-card-thumb-wrap .feed-news-badge{position:absolute;top:8px;left:8px;z-index:2;min-width:0;}
+  /* 작은 오른쪽 썸네일(시상식·1위·신보 줄)도 같은 자리 — 칸이 작아 뱃지는 한 단계 작게(2026-11-19 표기 통일) */
+  .feed-news-tw .feed-news-badge{position:absolute;top:4px;left:4px;z-index:2;min-width:0;font-size:9px;padding:2px 6px;background:rgba(14,14,17,0.8);}
   /* 썸네일 위 뱃지는 배경을 어둡게(2026-10-15, 사용자: 조회수 뱃지 글자가 안 보임) — 색 배경 0.13은 사진이 그대로 비쳐 글자가 묻혔다.
      종류 구분은 글자색으로 그대로 둔다. 목록 줄 안 뱃지(.fnr-row 등)는 바탕이 어두워 원래 값 유지. */
   .fnh-media .feed-news-badge,.fnr-media .feed-news-badge,.feed-card-thumb-wrap .feed-news-badge{background:rgba(14,14,17,0.8);}
@@ -4623,7 +4625,8 @@
   .feed-album-rail>.feed-card .feed-card-sub,.feed-album-rail>.feed-card .feed-card-meta{font-size:10px;}
   /* 공연 포스터는 세로 틀에 전체를 담는다. 양쪽 탭에서 같은 규칙을 쓴다. */
   #feed-concerts>.feed-card .feed-card-thumb-wrap,#feed-favconcert>.feed-card .feed-card-thumb-wrap,.card-concert-rail>.feed-card .feed-card-thumb-wrap{aspect-ratio:2/3;}
-  #feed-concerts>.feed-card .feed-card-thumb,#feed-favconcert>.feed-card .feed-card-thumb,.card-concert-rail>.feed-card .feed-card-thumb{object-fit:contain;}
+  /* contain은 포스터 비율이 2:3과 다르면 위아래 검은 여백 — 가장자리 크롭(cover)이 낫다(2026-11-19 사용자) */
+  #feed-concerts>.feed-card .feed-card-thumb,#feed-favconcert>.feed-card .feed-card-thumb,.card-concert-rail>.feed-card .feed-card-thumb{object-fit:cover;}
   /* 그룹/멤버 카드 공연 포스터 레일(2026-11-10) — 탐험 공연 선반과 같은 카드, 아래 '전체 공연' 줄과 간격 */
   .card-concert-rail{margin-bottom:8px;}
   @media(min-width:769px) and (pointer:fine),(min-width:769px) and (min-height:501px){

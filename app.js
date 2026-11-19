@@ -22785,8 +22785,9 @@ function _visitLine(d,grp,ko,a){
   const w=a?sum(d&&d.mw,_memberVisitKeys(a)):(d&&d.vw&&d.vw[grp]),t=a?sum(d&&d.mt,_memberVisitKeys(a)):(d&&d.vt&&d.vt[grp]);
   if(!t&&!w)return '';
   const f=n=>Number(n).toLocaleString(ko?'ko-KR':'en-US');
-  if(ko)return (w?'이번 주 '+f(w)+'명 · ':'')+(t?'지금까지 '+f(t)+'명이 다녀갔어요':'다녀갔어요');
-  return (w?f(w)+' this week · ':'')+(t?f(t)+' visited so far':'visited');
+  // 한 문장에 둘을 합치지 않는다(2026-11-19 사용자 "쪼개라" — 둘 다 뜰 필요 없이 하나만): 주간 숫자가 있으면 주간, 없으면 누적.
+  if(ko)return w?('이번 주 '+f(w)+'명이 다녀갔어요'):('지금까지 '+f(t)+'명이 다녀갔어요');
+  return w?(f(w)+' visited this week'):(f(t)+' visited so far');
 }
 async function _showVisitCount(kind,grp,a){
   _gcStatusState[kind].visits='';
@@ -25727,7 +25728,11 @@ function _appendNewsRow(container,{type,title,sub,thumb,nav,square,plain,show,da
     if(!(type==='album'||square))_vdur(imgWrap,_thumbVid(thumb));
     row.appendChild(imgWrap);row.appendChild(cap);
   }else{
-    row.appendChild(badge);row.appendChild(body);
+    // 뱃지는 영상 썸네일이 있으면 썸네일 왼쪽 위로 — 조회수·MV 카드와 같은 자리(2026-11-19 사용자 "표기 방식 통일, 왼쪽 칩 칸은 여백 낭비").
+    // 앨범 커버(정사각)는 '커버 위에 아무것도 안 얹는다'(TASTE)라 칩 유지, 썸네일 없는 줄(결방)도 칩.
+    const _onThumb=!!thumb&&!(type==='album'||square);
+    if(!_onThumb)row.appendChild(badge);
+    row.appendChild(body);
     if(thumb){
       const img=document.createElement('img');
       img.className='feed-news-thumb'+(type==='album'||square?' is-square':'');
@@ -25735,7 +25740,7 @@ function _appendNewsRow(container,{type,title,sub,thumb,nav,square,plain,show,da
       img.addEventListener('load',()=>img.classList.add('loaded'));
       img.src=thumb;
       if(type==='album'||square)row.appendChild(img);
-      else{const nw=document.createElement('span');nw.className='feed-news-tw';nw.appendChild(img);row.appendChild(nw);_vdur(nw,_thumbVid(thumb));}
+      else{const nw=document.createElement('span');nw.className='feed-news-tw';nw.appendChild(img);nw.appendChild(badge);row.appendChild(nw);_vdur(nw,_thumbVid(thumb));}
     }
   }
   row.addEventListener('click',nav);
@@ -26609,8 +26614,9 @@ const _CHART_AXES={
        {v:'2',ko:'2세대',en:'Gen 2',pKo:'2세대 ',pEn:'Gen 2 '},{v:'1',ko:'1세대',en:'Gen 1',pKo:'1세대 ',pEn:'Gen 1 '}],
   // 기간(2026-11-05 차트 통합) — 주간 직캠 TOP 20·월간 퍼포먼스 TOP 30이 따로 있던 걸 이 축의 1주·1달로 합쳤다(사용자
   // "최근 1주·1달·1년 선택, 페이지 따로 만들 필요 없다"). 짧은 기간부터. 목록 위 세그먼트로 고른다.
-  era:[{v:'w',ko:'1주',en:'1W',pKo:'최근 1주 ',pEn:'Past-Week '},{v:'m',ko:'1달',en:'1M',pKo:'최근 1달 ',pEn:'Past-Month '},
-       {v:'y',ko:'1년',en:'1Y',pKo:'최근 1년 ',pEn:'Past-Year '},{v:'all',ko:'역대',en:'All-time',pKo:'역대 ',pEn:'All-Time '}],
+  // '최근 1주/1달'은 구리고 '이번 주'는 롤링 기간이라 부정확 — 주간·월간·연간으로 통일(2026-11-19 사용자)
+  era:[{v:'w',ko:'주간',en:'Weekly',pKo:'주간 ',pEn:'Weekly '},{v:'m',ko:'월간',en:'Monthly',pKo:'월간 ',pEn:'Monthly '},
+       {v:'y',ko:'연간',en:'Yearly',pKo:'연간 ',pEn:'Yearly '},{v:'all',ko:'역대',en:'All-time',pKo:'역대 ',pEn:'All-Time '}],
   // 방송사 축 — 성별·세대와 달리 그룹이 아니라 **제목 검색어**로 번역된다(축제는 영상 제목에만 남는다).
   // 연말용(fest)과 모아보기용(festS)이 나뉘는 이유: '전체'의 뜻이 다르다. 연말 전체는 여름판을 빼야
   // 하고(가요대전 썸머), 모아보기 전체는 여름판까지 포함한다.
@@ -28129,7 +28135,7 @@ async function _buildFeedFavCharts(){
   try{
     // 2026-11-05 차트 통합 — 주간 TOP 20·월간 TOP 30 대신 통합 차트(직캠 1주·퍼포먼스 1달, TOP 100)에서 최애를 찾는다.
     const isKo=currentLang==='ko';
-    const defs=[{id:'soloCam',era:'w',short:isKo?'1주 개인 직캠':'1W Fancam'},{id:'stage',era:'m',short:isKo?'1달 퍼포먼스':'1M Performance'}];
+    const defs=[{id:'soloCam',era:'w',short:isKo?'주간 개인 직캠':'Weekly Fancam'},{id:'stage',era:'m',short:isKo?'월간 퍼포먼스':'Monthly Performance'}];
     const charts=await Promise.all(defs.map(async c=>{
       const sel={..._CHART_SEL_DEFAULT,era:c.era};
       const[songs,prev]=await Promise.all([_chartSongs(c.id,sel),_fetchPrevRanks(_chartSnapKey(c.id,sel))]);
