@@ -501,9 +501,8 @@ const EXTRA_CSS =`.vid-list{padding-left:20px;margin:0;}.vid-list li{font-size:1
 .face-nm .tag{display:block;}
 @media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
 /* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
-.wrap a{text-decoration:none;}
-.lang-switch a,.note a,.intro a,.sp-tile,.face{transition:color .15s,text-shadow .15s;}
-.lang-switch a:hover,.note a:hover,.intro a:hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.6);}
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
 .face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
 .face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
 /* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
