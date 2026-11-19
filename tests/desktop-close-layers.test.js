@@ -79,19 +79,28 @@ const server = http.createServer((req, res) => {
     // ESC가 부모 window에 안 와 라이트박스가 안 닫히던 플레이크(2026-11-16~, 앱 쪽 복구 보강으로도 간헐 재발 → 테스트 쪽 복구, 2026-11-19).
     const esc = async () => { await ev(cdp, `(function(){var a=document.activeElement;if(a&&a.tagName==='IFRAME'){try{a.blur();}catch(e){}try{window.focus();document.body.focus();}catch(e){}}return 1;})()`); for (const type of ['keyDown', 'keyUp']) await cdp.send('Input.dispatchKeyEvent', { type, key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 }); await sleep(900); };
     const reset = async () => { await ev(cdp, `(function(){try{closeLightbox()}catch(e){};try{closeConnCard()}catch(e){};try{closeCards()}catch(e){};history.replaceState(null,'',location.pathname);return 1})()`); await sleep(900); };
+    // 고정 대기(1.5초) 대신 '실제로 열렸나/닫혔나'를 기다린다(2026-11-19 — CI에서 하루 종일 ①②③이 번갈아 실패).
+    // 실패 모양이 전부 '영상 창이 늦게 열림'으로 설명된다: ①은 닫기를 누른 뒤에 창이 열려 남고, ②는 ESC가 빈 화면에 가고 난 뒤 창이 열려 남고,
+    // ③은 그렇게 남은 영상 창이 ESC를 대신 먹어 멤버 카드가 남는다. CI는 브라우저 검사 여러 개가 동시에 돌아 DB·유튜브 응답이 느릴 때가 있다.
+    const waitFor = async (expr, ms = 12000) => { const t = Date.now(); while (Date.now() - t < ms) { try { if (await ev(cdp, expr)) return true; } catch (e) {} await sleep(200); } return false; };
+    const LB_OPEN = `(function(){var l=document.getElementById('yt-lightbox'),f=document.getElementById('yt-lb-iframe');return !!(l&&l.classList.contains('open')&&l.getBoundingClientRect().width>0&&f&&f.getAttribute('src'));})()`;
+    const LB_CLOSED = `(function(){var l=document.getElementById('yt-lightbox');return !l||!l.classList.contains('open');})()`;
+    const lbOpened = async () => { const y = await waitFor(LB_OPEN); await sleep(900); return y; }; // 열린 뒤 0.9초 — 여는 애니메이션·포커스 이동이 끝나게
     const LB = `openLightbox('https://www.youtube.com/watch?v=4Hyx7TZ2cXg',false,null,0,{groupKo:'에스파'})`;
     const KA = `ARTISTS.find(a=>a.name&&a.name.ko==='카리나'&&a.group&&a.group.ko==='에스파')`;
     // ①
-    await ev(cdp, `(showGC('에스파'),1)`); await sleep(2500); await ev(cdp, `(${LB},1)`); await sleep(1500);
-    await ev(cdp, `(document.getElementById('yt-lb-close').click(),1)`); await sleep(900);
+    await ev(cdp, `(showGC('에스파'),1)`); await sleep(2500); await ev(cdp, `(${LB},1)`); await lbOpened();
+    await ev(cdp, `(document.getElementById('yt-lb-close').click(),1)`); await waitFor(LB_CLOSED, 5000); await sleep(400);
     let o = await open(); const h = await ev(cdp, 'decodeURIComponent(location.hash)');
     if (!has(o, 'yt-lightbox') && has(o, 'side-panel') && h.includes('에스파')) ok('① 영상 닫기 = 영상만, 카드·주소 유지'); else bad(`① ${o} ${h}`);
     // ②
-    await ev(cdp, `(${LB},1)`); await sleep(1500); await esc(); o = await open();
+    await ev(cdp, `(${LB},1)`); await lbOpened(); await esc(); await waitFor(LB_CLOSED, 4000); o = await open();
     if (!has(o, 'yt-lightbox') && has(o, 'side-panel')) ok('② ESC = 영상만'); else bad(`② ${o} | ${await focusInfo()}`);
     // ③
+    await waitFor(LB_CLOSED, 3000); // ②에서 늦게 열린 영상 창이 남아 있으면 ESC를 대신 먹는다 — 닫힌 걸 확인하고 시작
+    await ev(cdp, `(function(){try{if(document.getElementById('yt-lightbox').classList.contains('open'))closeLightbox()}catch(e){}return 1})()`); await sleep(300);
     await ev(cdp, `(showT(${KA}),1)`); await sleep(2500); o = await open();
-    if (has(o, 'member-panel')) { await esc(); o = await open(); if (!has(o, 'member-panel') && has(o, 'side-panel')) ok('③ 그룹+멤버에서 ESC = 멤버 카드만'); else bad(`③ ${o} | ${await focusInfo()}`); } else bad(`③ 사전조건 멤버 패널 없음 ${o}`);
+    if (has(o, 'member-panel')) { await esc(); await waitFor(`!document.getElementById('member-panel').classList.contains('open')`, 3000); o = await open(); if (!has(o, 'member-panel') && has(o, 'side-panel')) ok('③ 그룹+멤버에서 ESC = 멤버 카드만'); else bad(`③ ${o} | ${await focusInfo()}`); } else bad(`③ 사전조건 멤버 패널 없음 ${o}`);
     // ④
     await ev(cdp, `(document.getElementById('sp-wide-btn').click(),1)`); await sleep(900); o = await open();
     const wide = await ev(cdp, `document.body.classList.contains('card-wide')`);
@@ -100,7 +109,7 @@ const server = http.createServer((req, res) => {
     await reset();
     // ⑤
     await ev(cdp, `(showT(${KA}),1)`); await sleep(3000); await ev(cdp, `(document.getElementById('tt-conn-btn').click(),1)`); await sleep(3000);
-    await ev(cdp, `(${LB},1)`); await sleep(1500); o = await open();
+    await ev(cdp, `(${LB},1)`); await lbOpened(); o = await open();
     if (has(o, 'side-panel') && has(o, 'conn-panel') && has(o, 'yt-lightbox')) ok('⑤ 멤버+연결 카드 위 영상 = 멤버 카드 유지'); else bad(`⑤ ${o}`);
     await reset();
     // ⑥
