@@ -6302,3 +6302,17 @@
    둘째 줄은 링크·소속이 길면 옆으로 넘쳐 버튼이 밀려났다. 이름 줄을 카드 폭 전체로 펴고 버튼을 맨 끝(order)으로 — 공유·+ 버튼이 나중에 끼어들어도 끝자리 유지. */
 #tt-name-row:has(#tt-conn-btn){display:flex;width:100%;}
 #tt-name-row>#tt-conn-btn{order:9;margin-left:auto;margin-right:8px;} /* 오른쪽 8px: 이름 줄이 카드 보이는 폭보다 6px 넓어 버튼 끝이 잘렸다(실측) */
+/* 폰 멤버 카드 머리 두 줄 정리(2026-11-19 사용자 스크린샷 — 가을 카드).
+   ① 둘째 줄: 소속 그룹을 **앞**에 두고 링크가 넘치면 아이콘 단위로 다음 줄로. 예전엔 한 줄에 가두고 소속 글자를 줄여 '아이브'가 '아…'가 됐다.
+      (통째로 다음 줄로 넘기면 첫 줄 끝에 구분점만 남고 소속이 홀로 둘째 줄에 떨어져 어색했다 — 캡처로 확인.) 웹은 11-18 규칙(넘치면 다음 줄) 그대로.
+   ② 첫 줄 아이콘 높이: 하트·공유가 이름·+보다 1.5px 위였다 — 4030행의 광학 보정(top:-1.5px)이 3906행의 '모바일에선 0' 리셋보다 뒤에 있어 리셋이 안 먹었다.
+      +는 글자라 아이폰에서 원래 조금 낮게 그려져 그대로 두고, 그림 아이콘(하트·트로피·공유)만 0으로. '연결'은 떠오르는 1px 이동을 이 줄에선 뺀다. */
+@media(max-width:768px){
+  #tg-row{flex-wrap:wrap;row-gap:6px;column-gap:10px;overflow:visible!important;}
+  #tg-row>#tg{order:-1;flex:0 1 auto;max-width:100%;}
+  #tg-row>#tt-links{display:contents;}
+  #tt-links:not(:empty)::after{content:none;}
+  #tg-row:has(#tt-links:not(:empty))>#tg:not(:empty)::after{content:'·';margin-left:10px;color:rgba(120,145,195,0.46);font-size:10px;letter-spacing:0;}
+  #tt-name-row .fav-btn,#tt-name-row .trophy-btn,#tt-name-row .share-btn:not(.card-menu-btn){top:0;}
+  #tt-name-row>#tt-conn-btn.conn-btn-visible{transform:none;}
+}

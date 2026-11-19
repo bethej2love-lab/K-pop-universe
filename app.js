@@ -12485,6 +12485,8 @@ async function _igPicFor(koName,groupKo,artistId){
 function _floor1(x){const v=Math.floor(x*10+1e-9)/10;return v%1===0?String(v):v.toFixed(1);}
 function _fmtFollowers(n){
   n=+n||0;
+  // 조회수와 같은 표기로 통일(2026-11-19 사용자 "구독자 수도 n만 말고 조회수처럼 nK 형식으로") — 210K+·21M+. 정확한 수는 title(길게 누르기·마우스 올리기)에 있다. 아래 옛 표기(만·억)는 남겨 둠(안 탐).
+  if(n>0)return _fmtVC(n);
   if(currentLang==='ko'){
     if(n>=1e8)return (n>=1e9?String(Math.floor(n/1e8)):_floor1(n/1e8))+'억';
     if(n>=1e4)return (n>=1e6?String(Math.floor(n/1e4)):_floor1(n/1e4))+'만';
