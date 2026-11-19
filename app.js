@@ -7681,6 +7681,42 @@ document.getElementById('yt-lightbox').addEventListener('click',e=>{e.stopPropag
   // 순간 이 조건이 참이 되고, 그때 dy는 이미 100px 넘게 쌓여 있어서 곧장 큰 translateY로 튀고 손을
   // 떼면 임계값(90px)을 넘겨 닫혀버린다. 목록을 훑어보던 손짓이 그대로 "닫기"로 승격되던 것.
   let _lbStartedAtTop=true,_lbDidScroll=false,_lbListCramped=false;
+  // ── 쇼츠 넘기기: 피드처럼 '지금 영상이 그대로 밀려 나가고 다음 영상이 붙어 올라온다'(2026-11-19 사용자 "릴스처럼 꽉 차진 않아도 피드 넘기듯
+  //    영상이 유지된 채 사라지면서 다음 영상이 올라오게"). 재생기(iframe)는 하나뿐이라 다음 영상은 **썸네일 한 장**(#yt-lb-peek)으로 미리 보여 주고,
+  //    손을 떼면 둘이 같이 미끄러진 뒤 그 자리에서 재생기 주소만 바꾼다. 썸네일은 새 영상이 뜬 뒤 스르륵 걷힌다. 다음/이전이 없으면 예전처럼 살짝만 끌린다.
+  let _lbPeekEl=null,_lbPeekDir=0;
+  function _lbPeekShow(dir){
+    if(_lbPeekEl&&_lbPeekDir===dir)return _lbPeekEl;
+    _lbPeekClear();
+    const ni=_lbAdjacentIdx(dir);if(ni<0||!_lbPlaylist)return null;
+    const it=_lbPlaylist[ni],box=document.getElementById('yt-lb-video-box');if(!it||!box)return null;
+    const r=box.getBoundingClientRect();if(!r.width)return null;
+    const cur=parseFloat((/translateY\((-?[\d.]+)px\)/.exec(_lbWrap.style.transform||'')||[0,0])[1])||0; // 이미 끌린 만큼은 빼고 제자리 기준으로
+    const el=document.createElement('div');el.id='yt-lb-peek';
+    el.style.cssText=`left:${r.left}px;top:${r.top-cur+dir*window.innerHeight}px;width:${r.width}px;height:${r.height}px;`;
+    const img=document.createElement('img');img.alt='';img.decoding='async';
+    const id=ytId(it.u||'');
+    if(id&&_songIsShort(it)&&typeof _mountShortThumb==='function')_mountShortThumb(img,id,{onReady:i=>i.classList.add('loaded')});
+    else if(it.thumb){img.src=it.thumb;img.classList.add('loaded');}
+    el.appendChild(img);_lbEl.appendChild(el);
+    _lbPeekEl=el;_lbPeekDir=dir;return el;
+  }
+  function _lbPeekClear(fade){
+    const el=_lbPeekEl;_lbPeekEl=null;_lbPeekDir=0;if(!el)return;
+    if(!fade){el.remove();return;}
+    el.style.transition='opacity .28s ease';el.style.opacity='0';setTimeout(()=>el.remove(),300);
+  }
+  // 손을 뗀 뒤: 지금 영상과 미리보기를 같이 한 화면만큼 밀고 → 재생기 내용을 바꾼 뒤 제자리로(미리보기가 그 위를 덮고 있어 티가 안 난다) → 미리보기 걷기
+  function _lbPeekCommit(dir){
+    const el=_lbPeekEl,dist=-dir*window.innerHeight;
+    _lbWrap.style.transition='transform .26s cubic-bezier(0.3,0.7,0.3,1)';_lbWrap.style.transform=`translateY(${dist}px)`;_lbWrap.style.opacity='';
+    el.style.transition='transform .26s cubic-bezier(0.3,0.7,0.3,1)';el.style.transform=`translateY(${dist}px)`;
+    setTimeout(()=>{
+      _lbGo(dir);
+      _lbWrap.style.transition='none';_lbWrap.style.transform='';_lbWrap.style.opacity='';
+      setTimeout(()=>{_lbWrap.style.transition='';if(_lbPeekEl===el)_lbPeekClear(true);else el.remove();},650); // 새 영상 첫 그림이 뜰 시간
+    },270);
+  }
   function _lbSlideIn(fromDir){
     // fromDir=1: 아래서 위로 진입(위로 스와이프→다음 영상)
     // fromDir=-1: 위에서 아래로 진입(아래로 스와이프→이전 영상)
@@ -7727,7 +7763,10 @@ document.getElementById('yt-lightbox').addEventListener('click',e=>{e.stopPropag
       let eff=dy;
       if((dy<0&&!canNext)||(dy>0&&!canPrev))eff=dy*0.12;
       _lbWrap.style.transform=`translateY(${eff}px)`;
-      _lbWrap.style.opacity=`${Math.max(0.25,1-Math.abs(eff)/280)}`;
+      // 다음(이전) 영상이 있으면 그 썸네일이 붙어 따라온다 — 그때는 지금 영상을 흐리지 않는다(피드처럼). 없으면 예전처럼 흐려지며 조금만 끌린다.
+      const _pk=(eff<0&&canNext)?_lbPeekShow(1):(eff>0&&canPrev)?_lbPeekShow(-1):(_lbPeekClear(),null);
+      if(_pk){_pk.style.transition='none';_pk.style.transform=`translateY(${eff}px)`;_lbWrap.style.opacity='';}
+      else _lbWrap.style.opacity=`${Math.max(0.25,1-Math.abs(eff)/280)}`;
     }else{
       // 브라우즈 모드: 목록이 맨 위까지 스크롤된 상태에서 더 아래로 당기면 "당겨서 닫기"(인스타/트위터
       // 이미지뷰어 방식) — 그 외엔 preventDefault 없이 평소처럼 네이티브 스크롤 그대로 둔다
@@ -7758,13 +7797,17 @@ document.getElementById('yt-lightbox').addEventListener('click',e=>{e.stopPropag
       const canPrev=_lbPlaylist&&_lbIdx>0;
       const canNext=_lbPlaylist&&_lbIdx<_lbPlaylist.length-1;
       const thresh=vel>0.45?35:65;
-      if(dy<-thresh&&canNext){
+      if(dy<-thresh&&canNext&&_lbPeekEl&&_lbPeekDir===1){_lbPeekCommit(1);}
+      else if(dy>thresh&&canPrev&&_lbPeekEl&&_lbPeekDir===-1){_lbPeekCommit(-1);}
+      else if(dy<-thresh&&canNext){
+        _lbPeekClear();
         // 현재 영상 위로 날리기 → 화면 밖에서 내용 교체 → 다음 영상 아래서 진입
         _lbWrap.style.transition='transform .26s cubic-bezier(0.4,0,1,1),opacity .2s ease';
         _lbWrap.style.transform='translateY(-100vh)';
         _lbWrap.style.opacity='0';
         setTimeout(()=>{_lbGo(1);_lbSlideIn(1);},260);
       }else if(dy>thresh&&canPrev){
+        _lbPeekClear();
         // 현재 영상 아래로 날리기 → 화면 밖에서 내용 교체 → 이전 영상 위에서 진입
         _lbWrap.style.transition='transform .26s cubic-bezier(0.4,0,1,1),opacity .2s ease';
         _lbWrap.style.transform='translateY(100vh)';
@@ -7773,6 +7816,7 @@ document.getElementById('yt-lightbox').addEventListener('click',e=>{e.stopPropag
       }else{
         _lbWrap.style.transition='transform .4s cubic-bezier(0.22,1,0.36,1),opacity .3s ease';
         _lbWrap.style.transform='';_lbWrap.style.opacity='';
+        if(_lbPeekEl){const _pe=_lbPeekEl;_pe.style.transition='transform .4s cubic-bezier(0.22,1,0.36,1)';_pe.style.transform='';setTimeout(()=>{if(_lbPeekEl===_pe)_lbPeekClear();},420);} // 덜 밀었으면 미리보기도 같이 제자리로 돌아간 뒤 치운다
         setTimeout(()=>{_lbWrap.style.transition='';},420);
       }
     }else if(_lbAxis==='y'&&_lbSessionMode==='browse'&&_lbPullMode){

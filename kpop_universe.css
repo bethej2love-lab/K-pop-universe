@@ -6351,3 +6351,7 @@
   #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-video-box.is-shorts~#yt-lb-info{position:relative;top:7px;}
   #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-reactions{position:relative;top:11px;}
 }
+/* 쇼츠 넘기기 미리보기(2026-11-19) — 다음/이전 영상의 썸네일 한 장. 영상 칸과 같은 자리·크기로 화면 밖에 대기하다 손가락을 따라 들어온다(좌표는 app.js _lbPeekShow) */
+#yt-lb-peek{position:fixed;z-index:3;border-radius:12px;overflow:hidden;background:#15161c;pointer-events:none;will-change:transform;}
+#yt-lb-peek img{width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .15s;}
+#yt-lb-peek img.loaded{opacity:1;}
