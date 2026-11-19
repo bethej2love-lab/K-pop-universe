@@ -7,7 +7,7 @@
   'use strict';
   if(window.__kpuPlay)return;window.__kpuPlay=1;
   var EN=/^\/en\//.test(location.pathname)||document.documentElement.lang==='en';
-  var T=EN?{close:'Close',next:'Up next',app:'See more in the app',nxK:'Explore',nxS:'Profile · fancams · stages'}:{close:'닫기',next:'이어서 보기',app:'앱에서 더 보기',nxK:'더 둘러보기',nxS:'프로필 · 직캠 · 무대'};
+  var T=EN?{back:'Back',close:'Close',next:'Up next',app:'See more in the app',nxK:'Explore',nxS:'Profile · fancams · stages'}:{back:'이전',close:'닫기',next:'이어서 보기',app:'앱에서 더 보기',nxK:'더 둘러보기',nxS:'프로필 · 직캠 · 무대'};
   var RE=/(?:youtube\.com\/(?:watch\?(?:[^#]*&)?v=|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/;
   function vidOf(a){var m=RE.exec(a&&a.getAttribute('href')||'');return m?m[1]:null;}
   function isShort(a){return /\/shorts\//.test(a.getAttribute('href')||'');}
@@ -36,7 +36,7 @@
   var entity=((document.querySelector('h1')||{}).textContent||'').trim();
   var css='.kpu-pl{position:fixed;inset:0;z-index:2147483000;background:#07070a;display:flex;justify-content:center;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}'
     +'.kpu-pl-in{width:100%;max-width:760px;padding:56px 16px 32px;box-sizing:border-box}'
-    +'.kpu-pl-x{position:fixed;top:12px;right:12px;width:40px;height:40px;border-radius:20px;border:1px solid rgba(255,255,255,.18);background:rgba(25,25,28,.85);color:#fff;font-size:20px;line-height:38px;text-align:center;cursor:pointer;z-index:2}'
+    +'.kpu-pl-x{position:fixed;top:10px;left:8px;width:44px;height:44px;border-radius:22px;border:none;background:rgba(25,25,28,.6);color:#fff;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2}.kpu-pl-x svg{width:22px;height:22px;display:block}' // 2026-11-19 사용자: 오른쪽 위 ✕ 대신 왼쪽 위 '이전'(‹) — 닫는다기보다 보던 페이지로 돌아가는 느낌. 테두리 없음
     +'.kpu-pl-v{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden}'
     +'.kpu-pl-v.sh{aspect-ratio:9/16;max-width:min(100%,calc((100vh - 120px)*9/16));margin:0 auto}'
     +'.kpu-pl-v iframe{position:absolute;inset:0;width:100%;height:100%;border:0}'
@@ -373,7 +373,10 @@
   var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
   // 제목은 제목 칸(.card-t 등)만 — a.textContent를 통째로 쓰면 날짜·조회수(.card-y)까지 한 덩어리로 붙어
   // "…MBC2504262025.04.28 · 조회수 4만회"처럼 보이고, 긴 통짜 토큰이 그리드 칸까지 밀었다(2026-11-16).
-  function titleOf(a){var t=(a.getAttribute('title')||'').trim();if(t)return t;var x=a.querySelector('.card-t,.mf-t,.t,.title,b,strong');t=((x&&x.textContent)||'').replace(/\s+/g,' ').trim();if(!t)t=(a.textContent||'').replace(/\s+/g,' ').trim();if(!t){var im=a.querySelector('img');t=im&&im.alt||'';}return t.slice(0,140);}
+  function titleOf(a){var t=(a.getAttribute('title')||'').trim();if(t)return t;
+    // 맨 위 대표 영상(.hero)은 안에 페이지 제목(h1)과 부제가 붙어 있어 통째로 읽으면 '…직캠코르티스(CORTIS) · 직캠 5개'처럼 한 덩어리가 됐다(2026-11-19 발견) — 그림의 alt(실제 영상 제목)를 쓴다
+    if(a.classList&&a.classList.contains('hero')){var hi=a.querySelector('img');if(hi&&hi.alt)return hi.alt.trim().slice(0,140);var hh=a.querySelector('h1');if(hh)return hh.textContent.replace(/\s+/g,' ').trim().slice(0,140);}
+    var x=a.querySelector('.card-t,.mf-t,.t,.title,b,strong');t=((x&&x.textContent)||'').replace(/\s+/g,' ').trim();if(!t)t=(a.textContent||'').replace(/\s+/g,' ').trim();if(!t){var im=a.querySelector('img');t=im&&im.alt||'';}return t.slice(0,140);}
   function metaOf(a){var y=a.querySelector('.card-y,.v');return y?y.textContent.replace(/\s+/g,' ').trim():'';}
   function allLinks(){var seen={},out=[];[].forEach.call(document.querySelectorAll('a[href]'),function(a){if(a.closest&&a.closest('.kpu-pl'))return;var v=vidOf(a);if(!v||seen[v])return;seen[v]=1;out.push({v:v,a:a,t:titleOf(a),m:metaOf(a),sh:isShort(a)});});return out;}
   var ov=null,cur=-1,list=[];
@@ -426,7 +429,7 @@
       ov=document.createElement('div');ov.className='kpu-pl';ov.setAttribute('role','dialog');
       // '유튜브에서 보기' 링크는 뺐다(2026-11-16 사용자) — 새 탭은 ctrl/⌘/가운데 클릭으로 여전히 가능.
       ov.innerHTML='<button class="kpu-pl-x" type="button"></button><div class="kpu-pl-in"><div class="kpu-pl-v"></div><div class="kpu-pl-t"></div><div class="kpu-pl-m"></div><div class="kpu-pl-nx"></div><div class="kpu-pl-h"></div><div class="kpu-pl-g"></div></div>';
-      var x=ov.querySelector('.kpu-pl-x');x.textContent='✕';x.setAttribute('aria-label',T.close);x.onclick=function(){close();};
+      var x=ov.querySelector('.kpu-pl-x');x.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>';x.setAttribute('aria-label',T.back);x.onclick=function(){close();};
       ov.querySelector('.kpu-pl-h').textContent=T.next;
       ov.querySelector('.kpu-pl-nx').onclick=function(e){var n=e.target.closest&&e.target.closest('.kpu-pl-n');if(n)ga('seo_play_cta',{entity_name:entity,video_id:list[cur]&&list[cur].v,kind:n.getAttribute('data-k')||''});};
       ov.addEventListener('click',function(e){
