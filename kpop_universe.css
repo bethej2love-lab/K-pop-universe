@@ -1268,7 +1268,7 @@
        클릭 활성화 — 브라우즈 모드와 동일하게 눌러서 하프카드를 연다(2026-08-29, 사용자 제보 "쇼츠에선
        카드가 안 열림"). 탭=카드 열기, 스와이프=다음/이전 영상(touch 이벤트는 버블되어 그대로 동작). */
     #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-member-info .lb-anchor-part{pointer-events:auto;}
-    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-anchor-chip{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-anchor-chip{font-size:12px;font-weight:600;color:rgba(255,255,255,0.94);line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;} /* 2026-11-19 사용자: 밑줄 없이 스포티파이 상단 글자처럼, 11→12px, 양옆 36px 아이콘과 세로 가운데 */
     #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-with-chips{display:none;}
     #yt-lightbox.lb-shorts:not(.lb-browse){align-items:flex-start;}
     /* 상단 고정바(닫기/멤버정보/케밥, top:14px + height:36px = 50px에서 끝남) 바로 밑으로 여백 최소화
@@ -6068,20 +6068,20 @@
 @media (pointer:coarse) and (orientation:portrait){
   /* 2026-11-19 사용자 "웹앱에서 화면이 잘려 — 아래 이모티콘이 일부만 보여": 아래 홈 막대 영역(safe-area-inset-bottom, 아이폰 약 34px)을 안 빼서,
      화면 전체를 쓰는 홈화면 웹앱에서만 이모지 줄이 그 영역으로 밀려 잘렸다(사파리는 주소창이 svh에서 빠져 티가 안 남). 홈 막대만큼 뺀다. */
-  #yt-lightbox.lb-shorts:not(.lb-browse){--sh-h:min(calc(100vw * 16 / 9), calc(100svh - 52px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 88px));}
+  #yt-lightbox.lb-shorts:not(.lb-browse){--sh-top:52px;--sh-h:min(calc(100vw * 16 / 9), calc(100svh - var(--sh-top) - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 88px));}
   /* 쇼츠는 유튜브 플레이어가 제목을 영상 안에 늘 보여 준다(재생 전: 위 제목 띠 / 재생 중: 아래 채널·제목 — 플레이어 상태에 따라 화면이 둘) →
      영상 아래 우리 제목은 이중 표기(2026-11-19 사용자 스크린샷). 폰 쇼츠 재생 화면에선 제목을 빼고 날짜·조회수 줄만 남긴다 — 그만큼 영상이 커진다(아래 자리 88px = 날짜 줄+이모지 줄). */
   #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-title-text{display:none;}
-  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-wrap{padding-left:0;padding-right:0;width:100vw;max-width:100vw;}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-wrap{padding-left:0;padding-right:0;width:100vw;max-width:100vw;padding-top:calc(var(--sh-top) + env(safe-area-inset-top, 0px));}
   #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-video-box.is-shorts{height:var(--sh-h);width:calc(var(--sh-h) * 9 / 16);max-width:100vw;}
   #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-video-box.is-shorts~#yt-lb-info{width:calc(var(--sh-h) * 9 / 16);max-width:calc(100vw - 24px);}
   #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-shorts-next:not([hidden]){width:calc(var(--sh-h) * 9 / 16);}
-  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-rotate{top:calc(52px + env(safe-area-inset-top, 0px) + var(--sh-h) - 150px - 0*52px);}
-  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-mute{top:calc(52px + env(safe-area-inset-top, 0px) + var(--sh-h) - 150px - 1*52px);}
-  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-col{top:calc(52px + env(safe-area-inset-top, 0px) + var(--sh-h) - 150px - 2*52px);}
-  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-flag{top:calc(52px + env(safe-area-inset-top, 0px) + var(--sh-h) - 150px - 3*52px);}
-  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-scrap{top:calc(52px + env(safe-area-inset-top, 0px) + var(--sh-h) - 150px - 4*52px);}
-  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-edit{top:calc(52px + env(safe-area-inset-top, 0px) + var(--sh-h) - 150px - 5*52px);}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-rotate{top:calc(var(--sh-top) + env(safe-area-inset-top, 0px) + var(--sh-h) - 150px - 0*52px);}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-mute{top:calc(var(--sh-top) + env(safe-area-inset-top, 0px) + var(--sh-h) - 150px - 1*52px);}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-col{top:calc(var(--sh-top) + env(safe-area-inset-top, 0px) + var(--sh-h) - 150px - 2*52px);}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-flag{top:calc(var(--sh-top) + env(safe-area-inset-top, 0px) + var(--sh-h) - 150px - 3*52px);}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-scrap{top:calc(var(--sh-top) + env(safe-area-inset-top, 0px) + var(--sh-h) - 150px - 4*52px);}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-edit{top:calc(var(--sh-top) + env(safe-area-inset-top, 0px) + var(--sh-h) - 150px - 5*52px);}
 }
 
 /* 카드 5차(2026-11-18 사용자): 그룹 한글명 14.5→15.5 · 대표 영상(맨 위 넓은 칸) 제목 14→13 · 날짜·조회수 13→12 */
@@ -6164,8 +6164,12 @@
   #yt-lightbox.lb-browse .lb-menu-wrap{top:calc(24px + env(safe-area-inset-top,0px));}
   #yt-lightbox.lb-browse #yt-lb-wrap,
   #yt-lightbox.lb-browse.lb-has-chips #yt-lb-wrap{padding-top:calc(74px + env(safe-area-inset-top,0px));}
-  /* 쇼츠(스와이프) 모드 상단 출연자 줄도 같은 폭(14→24px) */
-  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-member-info{top:calc(24px + env(safe-area-inset-top,0px));}
+  /* 쇼츠(스와이프) 모드 상단 줄도 같은 폭(14→24px) — 가운데 이름만 내리면 양옆 아이콘(닫기·메뉴)과 높이가 10px 어긋난다(2026-11-19 사용자 스크린샷
+     "옆 아이콘들이랑 줄맞춤이 안 맞아"). 셋을 같이 내리고 영상 시작점(--sh-top)도 10px 내려 영상 높이·오른쪽 버튼이 따라오게. */
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-member-info,
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-close,
+  #yt-lightbox.lb-shorts:not(.lb-browse) .lb-menu-wrap{top:calc(24px + env(safe-area-inset-top,0px));}
+  #yt-lightbox.lb-shorts:not(.lb-browse){--sh-top:62px;}
 }
 
 /* ── 웹 재생 화면 닫기 버튼(2026-11-19 사용자 "탐험에서 영상 보다가 영상만 쏙 끄고 싶을 때 누를 버튼이 없다") ──
