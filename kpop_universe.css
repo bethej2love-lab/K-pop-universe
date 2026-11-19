@@ -1103,7 +1103,14 @@
       height:min(86vh,760px);width:auto;aspect-ratio:9/16;margin:0;}
     /* 넓은 화면: 정보(제목·이모지·출연 아티스트·곡)는 영상 '아래'가 아니라 '옆' 칼럼 — 유튜브 쇼츠 웹 참고(2026-11-19 사용자
        "영상은 더 크게, 밑 정보는 옆 영역으로, 여백 없이"). 영상 왼쪽 큰 빈 공간이 정보 칼럼으로 채워진다. */
+    /* 카드가 열려 있으면 폭이 모자라 영상이 왼쪽으로 잘린다(1680 실측) — 카드 없을 땐 1360부터, 카드 열리면 1780부터만 옆 칼럼 */
     @media(min-width:1360px){
+      body:not(:has(#side-panel.open)):not(:has(#member-panel.open)) #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-main{display:grid;width:auto;grid-template-columns:auto minmax(300px,380px);column-gap:22px;align-content:start;}
+      body:not(:has(#side-panel.open)):not(:has(#member-panel.open)) #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-main>#yt-lb-video-box{grid-column:1;grid-row:1/span 14;}
+      body:not(:has(#side-panel.open)):not(:has(#member-panel.open)) #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-main>*:not(#yt-lb-video-box){grid-column:2;min-width:0;width:auto;}
+      body:not(:has(#side-panel.open)):not(:has(#member-panel.open)) #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-toolbar{justify-content:flex-start;}
+    }
+    @media(min-width:1780px){
       #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-main{display:grid;width:auto;grid-template-columns:auto minmax(300px,380px);column-gap:22px;align-content:start;}
       #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-main>#yt-lb-video-box{grid-column:1;grid-row:1/span 14;}
       #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-main>*:not(#yt-lb-video-box){grid-column:2;min-width:0;width:auto;}
@@ -6145,4 +6152,14 @@
   #yt-lightbox.lb-browse.lb-has-chips #yt-lb-wrap{padding-top:calc(74px + env(safe-area-inset-top,0px));}
   /* 쇼츠(스와이프) 모드 상단 출연자 줄도 같은 폭(14→24px) */
   #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-member-info{top:calc(24px + env(safe-area-inset-top,0px));}
+}
+
+/* ── 웹 재생 화면 닫기 버튼(2026-11-19 사용자 "탐험에서 영상 보다가 영상만 쏙 끄고 싶을 때 누를 버튼이 없다") ──
+   폰은 좌상단 원형 ∨가 있는데 웹(lb-browse)은 wrap 위 -30px 자리라 무대 배치에서 잘려 안 보였다.
+   폰과 같은 원형 버튼을 재생 영역 왼쪽 위에 — 영상만 닫히고 탐험·카드는 그대로(기존 close 동작). */
+@media(min-width:1024px){
+  #yt-lightbox.lb-browse #yt-lb-wrap{position:relative;}
+  #yt-lightbox.lb-browse #yt-lb-close{position:absolute;top:8px;left:8px;right:auto;bottom:auto;z-index:3;
+    width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;opacity:.85;}
+  #yt-lightbox.lb-browse #yt-lb-close:hover{opacity:1;background:rgba(40,44,60,0.7);}
 }
