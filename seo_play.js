@@ -360,7 +360,7 @@
     document.head.appendChild(st);
     var bar=document.createElement('a');bar.className='kpu-topbar';bar.href=href;
     var i=document.createElement('i');bar.appendChild(i);
-    bar.appendChild(document.createTextNode('Find your place in K-pop.'));
+    bar.appendChild(document.createTextNode('Find your place in K-pop'));
     document.body.insertBefore(bar,document.body.firstChild);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',topbar);else topbar();
