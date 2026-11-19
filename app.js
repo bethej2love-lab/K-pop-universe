@@ -11865,6 +11865,10 @@ function showT(a,cx,cy,keepNavStack,urlMode,_unusedPushMobNav,noFly){
   _renderIgMagStrip('tt',[_igHandle(a.links?.instagram)].filter(Boolean));
   const tgEl=document.getElementById('tg');
   tgEl.innerHTML='';tgEl.onclick=null;
+  // 폰은 소속을 이름 바로 옆(이름 줄)에, 웹은 원래 자리(둘째 줄 링크 뒤)에(2026-11-19 사용자 "가을 옆에 아이브 붙이는 게 낫지") — 화면 폭이 바뀌어도 카드를 열 때마다 다시 맞춘다
+  try{const _nr=document.getElementById('tt-name-row'),_row=document.getElementById('tg-row'),_tn=document.getElementById('tn');
+    if(isMob()){if(_nr&&_tn&&tgEl.previousElementSibling!==_tn)_nr.insertBefore(tgEl,_tn.nextSibling);}
+    else if(_row&&tgEl.parentElement!==_row)_row.insertBefore(tgEl,document.getElementById('tt-links').nextSibling);}catch(e){}
   function _makeGcClickFn(gKo){
     return e=>{
       e.stopPropagation();

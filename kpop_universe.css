@@ -6309,11 +6309,22 @@
    ② 첫 줄 아이콘 높이: 하트·공유가 이름·+보다 1.5px 위였다 — 4030행의 광학 보정(top:-1.5px)이 3906행의 '모바일에선 0' 리셋보다 뒤에 있어 리셋이 안 먹었다.
       +는 글자라 아이폰에서 원래 조금 낮게 그려져 그대로 두고, 그림 아이콘(하트·트로피·공유)만 0으로. '연결'은 떠오르는 1px 이동을 이 줄에선 뺀다. */
 @media(max-width:768px){
-  #tg-row{flex-wrap:wrap;row-gap:6px;column-gap:10px;overflow:visible!important;}
-  #tg-row>#tg{order:-1;flex:0 1 auto;max-width:100%;}
-  #tg-row>#tt-links{display:contents;}
-  #tt-links:not(:empty)::after{content:none;}
-  #tg-row:has(#tt-links:not(:empty))>#tg:not(:empty)::after{content:'·';margin-left:10px;color:rgba(120,145,195,0.46);font-size:10px;letter-spacing:0;}
+  /* 같은 날 재조정(사용자 "소속 그룹 덜렁 저거 뭐야, 차라리 가을 옆에 아이브 붙이는 게 낫지" · "하트 공유 플러스 사이 간격 너무 크고 어색" · "유튜브 아이콘 혼자 너무 커 — 그대로 두고 나머지를 살짝 키워"):
+     소속은 **이름 바로 옆**(app.js showT가 폰에서 #tg를 이름 줄로 옮긴다), 둘째 줄은 링크만. 버튼 사이는 줄 간격 8px+패딩 12px=20px이던 걸 패딩만(10px)으로. */
+  #tt-name-row{gap:0;}
+  #tt-name-row>#tt-glyph:not(:empty){margin-right:7px;}
+  #tt-name-row>.tn{flex:0 0 auto;margin-right:7px;}
+  #tt-name-row>#tg{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-right:4px;font-size:12.5px;letter-spacing:.02em;}
+  #tt-name-row .fav-btn,#tt-name-row .trophy-btn,#tt-name-row .share-btn{padding:7px 5px;margin-left:0!important;}
   #tt-name-row .fav-btn,#tt-name-row .trophy-btn,#tt-name-row .share-btn:not(.card-menu-btn){top:0;}
   #tt-name-row>#tt-conn-btn.conn-btn-visible{transform:none;}
+  /* 둘째 줄 = 링크만. 넘치면 아이콘 단위로 다음 줄 */
+  #tg-row{flex-wrap:wrap;row-gap:6px;column-gap:11px;overflow:visible!important;}
+  #tg-row>#tt-links{display:contents;}
+  #tt-links:not(:empty)::after{content:none;}
+  /* 유튜브 아이콘(28.6×20)은 그대로, 나머지 14px→18px·말풍선류 13→16px·글자 한 단계 — 웹(20px·17px)과 비슷한 비율 */
+  #tt-links .gc-link-icon:not(.gc-link-icon-youtube){width:18px;height:18px;}
+  #tt-links .gc-link-msg svg{width:16px;height:16px;}
+  #tt-links .gc-link-msg{font-size:12.5px;gap:4px;}
+  #tt-links .gc-link-count{font-size:12px;margin-left:-6px;}
 }
