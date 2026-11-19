@@ -196,5 +196,12 @@ expectGuest('#WheeIn #휘인 선배님과 #InTheMoodchallenge 🖤 @wheeinthebla
 // 함께 표시가 없어도 그 사람 그룹명이 같이 있으면 인정
 expectGuest('What The #Potential#FANTASYBOYS#히카루#HIKARU #김규래#KIMGYURAE #다크비 #DKB #희찬 #HEECHAN', '판타지보이즈', '김규래', true);
 
+// ── 라디오 진행자(DJ) 이름이 프로그램명 안에만 있는 게스트 무대(2026-11-19 사용자 제보) ──
+expect("쿨룩 LIVE ▷ 장들레 '스마일' / [오마이걸 효정의 볼륨을 높여요] | KBS 261118 방송", '오마이걸', '효정', false);
+// 진행자가 직접 부른 무대·곡 따옴표 없는 프로그램 영상·자기 그룹 무대는 그대로
+expect("쿨룩 LIVE ▷ 효정 '살짝 설렜어' / [오마이걸 효정의 볼륨을 높여요] | KBS 261118 방송", '오마이걸', '효정', true);
+expect('[오마이걸 효정의 볼륨을 높여요] 보이는 라디오 풀버전 | KBS 261118 방송', '오마이걸', '효정', true);
+expect("쿨룩 LIVE ▷ 오마이걸 '던 던 댄스' / [오마이걸 효정의 볼륨을 높여요]", '오마이걸', '효정', true);
+
 console.log(pass ? '\n🎉 다른 사람 풀네임·협찬 크레딧 테스트 통과' : '\n❌ 다른 사람 풀네임·협찬 크레딧 테스트 실패');
 process.exit(pass ? 0 : 1);
