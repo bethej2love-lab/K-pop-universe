@@ -42,8 +42,9 @@ async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,ret
       document.querySelector('#gc-ch-vid .gc-ch-vs-btn')?.click();await S(1200);res.vsOpen=on('vid-stage');
       esc();await S(500);res.vsAfter=on('vid-stage');res.cardAfterVs=on('side-panel');
       // ④ 멤버 탐색에서 멤버를 고르면 웹에선 탐색이 가운데에 남는다
-      _openMemberExplorer();for(let i=0;i<20&&![...document.querySelectorAll('#mx-overlay button')].some(b=>/년생/.test(b.textContent));i++)await S(500);
-      [...document.querySelectorAll('#mx-overlay button')].find(b=>/년생/.test(b.textContent))?.click();await S(2500);
+      // 멤버 카드는 .mx-card로 찾는다(2026-11-19 — 예전엔 글자 '년생'으로 찾았는데 카드 표기가 생년월일로 바뀌며 못 찾았다)
+      _openMemberExplorer();for(let i=0;i<20&&!document.querySelector('#mx-overlay .mx-card');i++)await S(500);
+      document.querySelector('#mx-overlay .mx-card')?.click();await S(2500);
       res.mxStays=on('mx-overlay');res.memberCard=on('member-panel');
       try{localStorage.removeItem('kpu_vid_stage');}catch(e){}
       return JSON.stringify(res);})()`));
