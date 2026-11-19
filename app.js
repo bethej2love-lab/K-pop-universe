@@ -24478,8 +24478,11 @@ function _buildFeedRecentlyViewed(){
   arr.forEach((v,i)=>{
     const item=document.createElement('div');
     item.className='feed-recent-item';
+    // 둘째 줄(그룹 · n일 전) — 영상 썸네일 표기는 어디서든 같게(제목 2줄 + 날짜 줄). 옛 기록엔 groupKo/pa가 없을 수 있어 있는 것만.
+    const _rsub=[v.groupKo?(currentLang==='ko'?v.groupKo:((GROUPS[v.groupKo]&&GROUPS[v.groupKo].en)||v.groupKo)):'',v.pa?_fmtVidAgo(String(v.pa).replace(/\./g,'-')):''].filter(Boolean).join(' · '); // 기록엔 2026.03.29/2026-03-29 두 표기가 섞여 있다
     item.innerHTML='<div class="feed-recent-thumb-wrap"><img class="feed-recent-thumb" loading="lazy" decoding="async" src="'+v.thumb+'" alt=""></div>'
-      +(v.t?'<div class="feed-recent-title">'+_cleanTitle(v.t)+'</div>':'');
+      +(v.t?'<div class="feed-recent-title">'+_cleanTitle(v.t)+'</div>':'')
+      +(_rsub?'<div class="feed-recent-sub">'+_rsub+'</div>':'');
     _vdur(item.querySelector('.feed-recent-thumb-wrap'),ytId(v.u||'')||_thumbVid(v.thumb),v.dur);
     item.addEventListener('click',()=>_feedNav(()=>{
       const ctx=v.groupKo?{groupKo:v.groupKo,memberKo:(v.memberKos&&v.memberKos[0])||undefined}:{};
