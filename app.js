@@ -12414,6 +12414,11 @@ const _igMap=new Map();let _igWarmP=null;
 // 11-04 실측 1,159개 중 378개(33%)가 이미 만료(403) — 앱은 인스타 사진을 먼저 쓰니 그 그룹·멤버는 사진이 깨지거나
 // (검색 첫 화면 원은 대체가 없어) 색깔 원으로만 남았다. 만료된 주소는 처음부터 없는 셈 치고 등록 사진으로 바로 간다.
 function _igPicAlive(u){const m=/[?&]oe=([0-9A-Fa-f]{6,})/.exec(u||'');return !!u&&(!m||parseInt(m[1],16)*1000>Date.now()+600e3);}
+// 인스타 썸네일 축소 프록시(2026-11-19 사용자 "인스타 너무 느려 — 화질을 살짝 낮추든지"): fbcdn 원본(장당 ~160KB)을
+// wsrv.nl w=480 webp(~25KB)로 받아 선반·스트립이 5~6배 빨리 뜬다. og 정사각(11-19 네이버)과 같은 서비스라 새 의존성 아님.
+// 뷰어(크게 보기)는 원본 그대로. 프록시가 실패하면(만료 등) 호출부가 원본→제거 순서로 폴백(_igImgFallback).
+function _igSmall(u,w){u=String(u||'');if(!/^https:\/\/[^ ]*(?:fbcdn|cdninstagram)\.(?:net|com)\//i.test(u))return u;return 'https://wsrv.nl/?url='+encodeURIComponent(u)+'&w='+(w||480)+'&output=webp';}
+function _igImgFallback(img,orig,gone){img.addEventListener('error',()=>{if(orig&&img.src!==orig){img.src=orig;return;}gone&&gone();});}
 function _igHandle(url){const m=String(url||'').match(/instagram\.com\/([A-Za-z0-9._]+)/i);return m?m[1].toLowerCase():null;}
 function _igWarm(){
   if(_igWarmP)return _igWarmP;
@@ -12543,8 +12548,8 @@ async function _renderIgStrip(prefix,url){
     const href=m.p,ty=i?'IMAGE':m.ty;
     const a=document.createElement('a');a.className='ig-item';a.href=href;a.target='_blank';a.rel='noopener noreferrer';
     a.addEventListener('click',e=>{e.stopPropagation();e.preventDefault();if(ty==='VIDEO'){const k=_igPostKey(m.p);if(k)_openIgEmbed({post_key:k,v:m.v,u:m.u});else window.open(href,'_blank','noopener');return;}_openIgViewer(m,h,i||0);}); // 영상은 인스타 공식 임베드로 사이트 안에서 재생(2026-11-13)
-    const img=document.createElement('img');img.loading='lazy';img.alt='';img.src=src;
-    img.addEventListener('error',()=>{(a.closest('.ig-cell')||a).remove();if(!strip.children.length)_igSecSync(sec);});
+    const img=document.createElement('img');img.loading='lazy';img.alt='';img.src=_igSmall(src,400);
+    _igImgFallback(img,src,()=>{(a.closest('.ig-cell')||a).remove();if(!strip.children.length)_igSecSync(sec);});
     a.appendChild(img);
     if(ty==='VIDEO'){const b=document.createElement('span');b.className='ig-play';b.textContent='▶';a.appendChild(b);}
     return a;
@@ -12555,9 +12560,9 @@ async function _renderIgStrip(prefix,url){
     if(Array.isArray(m.c)&&m.c.length>1){
       const d=document.createElement('div');d.className='ig-item ig-deck';d.setAttribute('role','button');
       d.title=ko?`사진 ${m.c.length}장`:`${m.c.length} photos`;
-      m.c.slice(1,3).reverse().forEach((src,i,arr)=>{const b=document.createElement('img');b.className='ig-deck-back d'+(arr.length-i);b.src=src;b.alt='';b.loading='lazy';b.addEventListener('error',()=>b.remove());d.appendChild(b);});
-      const f=document.createElement('img');f.className='ig-deck-front';f.src=m.c[0]||m.u;f.alt='';f.loading='lazy';
-      f.addEventListener('error',()=>{(d.closest('.ig-cell')||d).remove();if(!strip.children.length)_igSecSync(sec);});
+      m.c.slice(1,3).reverse().forEach((src,i,arr)=>{const b=document.createElement('img');b.className='ig-deck-back d'+(arr.length-i);b.src=_igSmall(src,400);b.alt='';b.loading='lazy';_igImgFallback(b,src,()=>b.remove());d.appendChild(b);});
+      const f=document.createElement('img');f.className='ig-deck-front';f.src=_igSmall(m.c[0]||m.u,400);f.alt='';f.loading='lazy';
+      _igImgFallback(f,m.c[0]||m.u,()=>{(d.closest('.ig-cell')||d).remove();if(!strip.children.length)_igSecSync(sec);});
       d.appendChild(f);
       d.appendChild(_igBars(m.c.length));
       d.addEventListener('click',e=>{e.stopPropagation();_openIgViewer(m,h,0);});
@@ -24932,7 +24937,7 @@ function _igFeedDeck(card,m){
   const tw=card&&card.querySelector('.feed-card-thumb-wrap');
   if(!tw||!Array.isArray(m.c)||m.c.length<2)return;
   card.classList.add('ig-feed-deck');
-  m.c.slice(1,3).reverse().forEach((src,i,arr)=>{const b=document.createElement('img');b.className='ig-fd-back d'+(arr.length-i);b.src=src;b.alt='';b.loading='lazy';b.addEventListener('error',()=>b.remove());tw.insertBefore(b,tw.firstChild);});
+  m.c.slice(1,3).reverse().forEach((src,i,arr)=>{const b=document.createElement('img');b.className='ig-fd-back d'+(arr.length-i);b.src=_igSmall(src,400);b.alt='';b.loading='lazy';_igImgFallback(b,src,()=>b.remove());tw.insertBefore(b,tw.firstChild);});
   tw.appendChild(_igBars(m.c.length));
 }
 // For You 인스타 선반의 최애 표시(2026-11-16 사용자 "인스타도 최애 앞에 이모티콘, 젤 앞에 배치") — New Videos·차트 목록과 같은 규칙:
@@ -24949,14 +24954,14 @@ function _igBiasOf(owner){
 function _igRenderRail(list,photos){
   photos.forEach((m,i)=>{
     const cap1=String(m.cap||'').split('\n').map(x=>x.trim()).find(Boolean)||''; // 본문 첫 줄
-    const card=_appendFeedCard(list,'📷',(m._emoji?m._emoji+' ':'')+m.owner.name,'',()=>_openIgViewer(m,m.h,0),m.u,null,{meta:_igAgo(m.t)});
+    const card=_appendFeedCard(list,'📷',(m._emoji?m._emoji+' ':'')+m.owner.name,'',()=>_openIgViewer(m,m.h,0),_igSmall(m.u),null,{meta:_igAgo(m.t)});
     // 이름 옆 흐린 @계정 — 카드 인스타 줄(_igCaption)과 같은 표기(2026-11-05 사용자 "카드엔 있는데 발견 탭엔 없다, 발견 탭이 더 필요")
     const tt=card&&card.querySelector('.feed-card-title');
     if(tt&&m.h){const hs=document.createElement('span');hs.className='ig-cap-h';hs.textContent='@'+m.h;tt.appendChild(hs);}
     if(cap1&&card){const c=document.createElement('div');c.className='feed-card-sub ig-cap1';c.textContent=cap1;card.querySelector('.feed-card-title')?.after(c);}
     const img=card&&card.querySelector('img');
     if(img){
-      img.addEventListener('error',()=>card.remove()); // 만료된 인스타 주소면 그 카드만 뺀다
+      _igImgFallback(img,m.u,()=>card.remove()); // 프록시 실패 → 원본 → 그래도 안 되면(만료) 카드만 뺀다
       // 앞 두 장은 즉시·우선 로딩 — 재방문 For You 첫 화면에서 인스타 사진이 늦게 뜨던 것(2026-11-18 사용자 "최소 첫 사진이라도 빨리")
       if(i<2){img.loading='eager';try{img.fetchPriority='high';}catch(_){}img.setAttribute('fetchpriority','high');}
     }
@@ -24971,9 +24976,9 @@ function _igRenderMagRail(list,items){
     const names=[...new Set((m.m||[]).map(h=>own.get(h)?.name).filter(Boolean))];
     const ttl=names.length>2?names.slice(0,2).join(' · ')+(currentLang==='ko'?` 외 ${names.length-2}`:` +${names.length-2}`):names.join(' · ');
     const open=m.ty==='VIDEO'?()=>window.open(m.p,'_blank','noopener'):()=>_openIgViewer(m,m.h,0);
-    const card=_appendFeedCard(list,'📷',ttl||m.src,'',open,m.u,null,{meta:m.src+' · '+_igAgo(m.t)});
+    const card=_appendFeedCard(list,'📷',ttl||m.src,'',open,_igSmall(m.u),null,{meta:m.src+' · '+_igAgo(m.t)});
     const img=card&&card.querySelector('img');
-    if(img)img.addEventListener('error',()=>card.remove());
+    if(img)_igImgFallback(img,m.u,()=>card.remove());
     const tw=card&&card.querySelector('.feed-card-thumb-wrap');
     if(tw&&m.ty==='VIDEO'){const b=document.createElement('span');b.className='ig-play';b.textContent='▶';tw.appendChild(b);}
     else _igFeedDeck(card,m);
