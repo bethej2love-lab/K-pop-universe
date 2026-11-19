@@ -23760,15 +23760,25 @@ function _renderFeedListFacet(ctx){
   };
   const lbl=o=>ko?o.ko:(o.en||o.ko);
   //  · ui:'seg'   — 디스코그래피 종류와 같은 세그먼트 컨트롤(.seg-control, 2026-11-05 차트 기간·성별). "목록 전체를 바꾸는" 축에 쓴다.
-  facets.filter(f=>f.ui==='seg').forEach(f=>{
-    const row=document.createElement('div');row.className='fl-facet-row fl-seg';
+  // 세그먼트가 둘 이상이면(차트: 기간·성별) **한 줄에 나란히** + 고르기(세대)도 그 줄 끝에(2026-11-19 사용자 "디자인을 살짝 달리해서 두 컨트롤을 한 줄에, 세대까지").
+  // 한 줄에선 짧은 글자(sKo/sEn — 보이·걸)를 쓰고, 칸 폭은 선택지 수에 비례.
+  const _segFs=facets.filter(f=>f.ui==='seg');
+  const _segMulti=_segFs.length>1;
+  const _pickInSeg=_segMulti&&facets.every(f=>f.ui!=='sort')&&facets.filter(f=>f.ui==='pick').length<=1; // 고르기 하나뿐이고 정렬이 없을 때만 같은 줄로
+  const lblS=o=>_segMulti?(ko?(o.sKo||o.ko):(o.sEn||o.en||o.ko)):lbl(o);
+  let _segRow=null;
+  _segFs.forEach(f=>{
+    const row=(_segMulti&&_segRow)?_segRow:document.createElement('div');
+    if(row!==_segRow)row.className='fl-facet-row fl-seg'+(_segMulti?' fl-seg-multi':'');
+    if(_segMulti)_segRow=row;
     const seg=document.createElement('div');seg.className='seg-control';
+    if(_segMulti)seg.style.flex=f.options.length+' 1 0';
     const thumb=document.createElement('div');thumb.className='seg-thumb';seg.appendChild(thumb);
     const place=b=>{thumb.style.width=b.offsetWidth+'px';thumb.style.transform=`translateX(${b.offsetLeft-2}px)`;};
     let selected=f.sel;
     f.options.forEach(o=>{
       const b=document.createElement('button');b.type='button';b.className='seg-btn'+(o.v===f.sel?' active':'');
-      b.textContent=lbl(o);
+      b.textContent=lblS(o);if(_segMulti)b.setAttribute('aria-label',lbl(o));
       b.addEventListener('click',e=>{
         e.stopPropagation();if(o.v===selected)return;selected=o.v;
         seg.querySelectorAll('.seg-btn.active').forEach(x=>x.classList.remove('active'));b.classList.add('active');place(b);
@@ -23776,13 +23786,14 @@ function _renderFeedListFacet(ctx){
       });
       seg.appendChild(b);
     });
-    row.appendChild(seg);el.appendChild(row);
+    row.appendChild(seg);if(row.parentNode!==el)el.appendChild(row);
     requestAnimationFrame(()=>{const on=seg.querySelector('.seg-btn.active');if(on){thumb.style.transition='none';place(on);requestAnimationFrame(()=>thumb.style.transition='');}});
   });
   // 고르기·정렬은 한 줄(bar)에, 탭은 각자 한 줄
   const barFs=facets.filter(f=>f.ui==='pick'||f.ui==='sort');
   if(barFs.length){
-    const bar=document.createElement('div');bar.className='fl-facet-row fl-bar';
+    // 세그먼트 줄에 같이 넣을 수 있으면 그 줄을 쓴다(위 _pickInSeg) — 아니면 예전처럼 따로 한 줄
+    const bar=(_pickInSeg&&_segRow)?_segRow:document.createElement('div');if(bar!==_segRow)bar.className='fl-facet-row fl-bar';
     barFs.forEach(f=>{
       if(f.ui==='pick'){
         const allOpt=f.options.find(o=>o.v==='all');
@@ -23806,7 +23817,7 @@ function _renderFeedListFacet(ctx){
         bar.appendChild(b);
       }
     });
-    el.appendChild(bar);
+    if(bar.parentNode!==el)el.appendChild(bar);
   }
   facets.filter(f=>f.ui!=='pick'&&f.ui!=='sort'&&f.ui!=='seg').forEach(f=>{
     const row=document.createElement('div');row.className='fl-facet-row fl-tabs hscroll-drag';
@@ -26696,16 +26707,17 @@ async function _fetchSoloFancamPool(groupKos,fetchLimit,sinceDate){
 // 접두사를 안 쓰면 pKo:''.
 const _CHART_AXES={
   // 2026-11-05 사용자 "보이그룹 걸그룹으로" — 여돌/남돌 표기·순서 변경(보이그룹 먼저)
-  gender:[{v:'all',ko:'전체',en:'All',pKo:'',pEn:''},{v:'m',ko:'보이그룹',en:'Boy groups',pKo:'보이그룹 ',pEn:'Boy Group '},
-          {v:'f',ko:'걸그룹',en:'Girl groups',pKo:'걸그룹 ',pEn:'Girl Group '}],
+  // sKo/sEn = 한 줄 세그먼트용 짧은 글자(2026-11-19 — 기간·성별·세대를 한 줄에)
+  gender:[{v:'all',ko:'전체',en:'All',pKo:'',pEn:''},{v:'m',ko:'보이그룹',en:'Boy groups',sKo:'보이',sEn:'Boys',pKo:'보이그룹 ',pEn:'Boy Group '},
+          {v:'f',ko:'걸그룹',en:'Girl groups',sKo:'걸',sEn:'Girls',pKo:'걸그룹 ',pEn:'Girl Group '}],
   gen:[{v:'all',ko:'전세대',en:'All gens',pKo:'',pEn:''},{v:'5',ko:'5세대',en:'Gen 5',pKo:'5세대 ',pEn:'Gen 5 '},
        {v:'4',ko:'4세대',en:'Gen 4',pKo:'4세대 ',pEn:'Gen 4 '},{v:'3',ko:'3세대',en:'Gen 3',pKo:'3세대 ',pEn:'Gen 3 '},
        {v:'2',ko:'2세대',en:'Gen 2',pKo:'2세대 ',pEn:'Gen 2 '},{v:'1',ko:'1세대',en:'Gen 1',pKo:'1세대 ',pEn:'Gen 1 '}],
   // 기간(2026-11-05 차트 통합) — 주간 직캠 TOP 20·월간 퍼포먼스 TOP 30이 따로 있던 걸 이 축의 1주·1달로 합쳤다(사용자
   // "최근 1주·1달·1년 선택, 페이지 따로 만들 필요 없다"). 짧은 기간부터. 목록 위 세그먼트로 고른다.
   // '최근 1주/1달'은 구리고 '이번 주'는 롤링 기간이라 부정확 — 주간·월간·연간으로 통일(2026-11-19 사용자)
-  era:[{v:'w',ko:'주간',en:'Weekly',pKo:'주간 ',pEn:'Weekly '},{v:'m',ko:'월간',en:'Monthly',pKo:'월간 ',pEn:'Monthly '},
-       {v:'y',ko:'연간',en:'Yearly',pKo:'연간 ',pEn:'Yearly '},{v:'all',ko:'역대',en:'All-time',pKo:'역대 ',pEn:'All-Time '}],
+  era:[{v:'w',ko:'주간',en:'Weekly',sEn:'1W',pKo:'주간 ',pEn:'Weekly '},{v:'m',ko:'월간',en:'Monthly',sEn:'1M',pKo:'월간 ',pEn:'Monthly '},
+       {v:'y',ko:'연간',en:'Yearly',sEn:'1Y',pKo:'연간 ',pEn:'Yearly '},{v:'all',ko:'역대',en:'All-time',sEn:'All',pKo:'역대 ',pEn:'All-Time '}],
   // 방송사 축 — 성별·세대와 달리 그룹이 아니라 **제목 검색어**로 번역된다(축제는 영상 제목에만 남는다).
   // 연말용(fest)과 모아보기용(festS)이 나뉘는 이유: '전체'의 뜻이 다르다. 연말 전체는 여름판을 빼야
   // 하고(가요대전 썸머), 모아보기 전체는 여름판까지 포함한다.
