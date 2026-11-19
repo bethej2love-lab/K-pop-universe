@@ -671,7 +671,7 @@ const T={
       sp_title:'설정',debutYr:'데뷔 연도',birthYr:'멤버 생년',grpType:'그룹 유형',
       genLabel:'세대',genNote:'데뷔 연도 기준. 재미로 봐주세요 !',
       all:'전체',girl:'걸그룹',boy:'보이그룹',coed:'혼성그룹',inactive:'비활동/탈퇴 멤버',lessTitle:'For You에서 덜 보기',lessSub:'이 멤버 혼자 나온 영상은 For You에 안 떠요. 눌러서 풀기',reset:'↺ 초기화',powerSave:'절전 모드',psAuto:'자동',psOn:'켬',psOff:'끔',psHintAuto:'기기 성능을 보고 알아서 조절해요',psHintAutoOn:'자동 — 지금 절전 중이에요',psHintOn:'화질과 부드러움을 낮춰 발열을 줄여요',psHintOff:'항상 최고 화질로 그려요',
-      searchPH:'그룹 · 멤버 검색…',mobileTitle:'케이팝 아이돌 지형도',srGroup:'그룹',
+      searchPH:'그룹 · 멤버 · 곡 · 프로그램',mobileTitle:'케이팝 아이돌 지형도',srGroup:'그룹',
       preparing:'준비 중',gcAgency:'소속',gcDebut:'데뷔',gcFandom:'팬덤',gcLeader:'리더',gcMember:'멤버',gcSNS:'공식',
       chSortRec:'추천순',chSortNew:'최신순',chSortOld:'날짜순',chSortPop:'인기순',chViewsPfx:'',chViewsSfx:'',chViewCon:'콘텐츠별 보기',chSearch:'영상 검색…',
       idxTitle:'인덱스',idxGroupTab:'그룹',idxMemberTab:'멤버',idxSearchPH:'그룹명 검색…',idxSearchPHMember:'멤버명 검색…',
@@ -693,7 +693,7 @@ const T={
       sp_title:'Settings',debutYr:'Debut Year',birthYr:'Birth Year',grpType:'Group Type',
       genLabel:'Generation',genNote:'By debut year. Just for fun!',
       all:'All',girl:'Girl Groups',boy:'Boy Groups',coed:'Coed Groups',inactive:'Inactive / Left',lessTitle:'Show less in For You',lessSub:'Solo videos of these members stay out of For You. Tap to undo',reset:'↺ Reset',powerSave:'Power saving',psAuto:'Auto',psOn:'On',psOff:'Off',psHintAuto:'Adjusts itself based on your device',psHintAutoOn:'Auto — saving power right now',psHintOn:'Lowers quality and smoothness to run cooler',psHintOff:'Always render at full quality',
-      searchPH:'Search groups · members…',mobileTitle:'K-pop Idol Map',srGroup:'Group',
+      searchPH:'Groups · members · songs · shows',mobileTitle:'K-pop Idol Map',srGroup:'Group',
       preparing:'Coming soon',gcAgency:'Agency',gcDebut:'Debut',gcFandom:'Fandom',gcLeader:'Leader',gcMember:'Members',gcSNS:'Official',
       chSortRec:'Recommended',chSortNew:'Latest',chSortOld:'Oldest',chSortPop:'Popular',chViewsPfx:'',chViewsSfx:' views',chViewCon:'By Content',chSearch:'Search videos…',
       idxTitle:'Index',idxGroupTab:'Groups',idxMemberTab:'Members',idxSearchPH:'Search group name…',idxSearchPHMember:'Search member name…',
@@ -8350,6 +8350,8 @@ function _updateProgBars(id){
   document.querySelectorAll(`.gc-ch-prog[data-vid="${id}"],.vid-prog[data-vid="${id}"]`).forEach(b=>{
     b.style.width=Math.min(ratio,1)*100+'%';
     b.style.display=ratio>=0.01?'block':'none'; // ⚠️ '' 이면 CSS 기본값 display:none이 이겨서 줄이 영영 안 보였다(2026-10-13 발견)
+    // 이미 그려진 탐험 카드의 NEW도 바로 흑백으로(2026-11-19) — 선반은 3분 캐시라 다시 그려질 때까지 기다리면 본 직후에도 분홍으로 남는다
+    const nb=b.closest('.feed-card')?.querySelector('.feed-new-hot');if(nb)nb.classList.add('is-seen');
   });
 }
 // 저장은 **간격 저장(throttle)** — 예전엔 '마지막 메시지 후 N초 조용하면 저장'(debounce)이었는데, 재생 중엔 유튜브가
@@ -24904,11 +24906,14 @@ function _openIgViewer(m,handle,idx){
 function _igvShow(){
   const ov=document.getElementById('igv-overlay');if(!ov||!_igv)return;
   const {pics,i}=_igv;
-  ov.querySelector('#igv-img').src=pics[i];
+  // ⚠️ 같은 주소를 다시 넣지 않는다(2026-11-19 사용자 "넘기자마자 깜빡거리는 오류 여전") — 넘긴 직후 _igvGo가 이미 넣은 주소를 여기서 또 넣으면
+  //    사파리가 그림을 처음부터 다시 풀면서 한 순간 빈 칸이 된다. 주소가 바뀔 때만 넣는다.
+  const _set=(el,u)=>{if(el.getAttribute('src')!==u)el.src=u;};
+  _set(ov.querySelector('#igv-img'),pics[i]);
   // 양옆 장 — 넘길 때 손가락을 따라 같이 들어오는 사진(미리 받아 둠)
   const pv=ov.querySelector('#igv-pv'),nx=ov.querySelector('#igv-nx');
-  if(pics[i-1])pv.src=pics[i-1];else pv.removeAttribute('src');pv.hidden=!pics[i-1];
-  if(pics[i+1])nx.src=pics[i+1];else nx.removeAttribute('src');nx.hidden=!pics[i+1];
+  if(pics[i-1])_set(pv,pics[i-1]);else pv.removeAttribute('src');pv.hidden=!pics[i-1];
+  if(pics[i+1])_set(nx,pics[i+1]);else nx.removeAttribute('src');nx.hidden=!pics[i+1];
   ov.querySelector('#igv-prev').hidden=i<=0;ov.querySelector('#igv-next').hidden=i>=pics.length-1;
   const dots=ov.querySelector('#igv-dots');dots.innerHTML='';dots.hidden=pics.length<2;
   pics.forEach((_,k)=>{const d=document.createElement('span');if(k===i)d.className='on';dots.appendChild(d);});
@@ -24967,8 +24972,9 @@ function _igvGo(d){
       const img=ov.querySelector('#igv-img');img.src=cur.pics[n];
       const done=()=>{if(_igv!==cur)return;cur.i=n;cur.anim=false;_igvShow();_igvPos(0,false);};
       if(sync===true){done();return;}
-      // 미리 받아 풀어 둔 그림이라 거의 즉시 — decode가 늦어도 120ms 넘게 안 기다린다
-      (img.decode?Promise.race([img.decode(),new Promise(r=>setTimeout(r,120))]):Promise.resolve()).then(done,done);
+      // 가운데 그림이 다 풀릴 때까지 기다렸다 자리를 바꾼다 — 그동안 화면엔 미끄러져 들어온 옆 장(같은 사진, 이미 그려짐)이 그대로 보여 기다려도 티가 안 난다.
+      // 예전엔 120ms만 기다려서, 큰 사진·느린 폰에선 덜 풀린 그림이 가운데로 와 한 순간 비었다(2026-11-19). 상한 700ms.
+      (img.decode?Promise.race([img.decode(),new Promise(r=>setTimeout(r,700))]):Promise.resolve()).then(done,done);
     };
     cur._settle=fin;cur._tm=setTimeout(fin,190);
   });
@@ -28455,11 +28461,13 @@ async function _buildFeedFavNew(opts){
     const _prevSeen=window._kpuPrevSeen||0;
     // NEW 기준: 지난 방문 이후 OR 최근 48h(둘 중 하나). 지난 방문만 보면 자주 올수록 NEW가 거의 안 떠 "2시간 이내처럼" 타이트했다(2026-11-18 사용자).
     const _NEW_WIN=48*3600e3;
-    const _done=s=>_feedVidDone(s._apiId); // 다 본 영상 — NEW를 떼고 선반 맨 뒤로
-    const _isNewSince=s=>{if(_done(s))return false;const t=Date.parse(s.paFull||'');if(!isFinite(t)||String(s.paFull).length<=10)return false;return (Date.now()-t<_NEW_WIN)||(!!_prevSeen&&t>_prevSeen);};
+    const _done=s=>_feedVidDone(s._apiId); // 다 본 영상 — 선반 맨 뒤로
+    // 열어 본 영상(재생 기록이 있음)은 NEW를 떼지 않고 흑백으로(2026-11-19 사용자 "클릭해서 봤으면 new 배지를 흑백톤으로 — 없애긴 그렇고 가만 두기엔 너무 튄다"). 순서에서는 안 본 NEW가 앞.
+    const _seen=s=>!!(s._apiId&&_vidProg.has(s._apiId));
+    const _isNewSince=s=>{const t=Date.parse(s.paFull||'');if(!isFinite(t)||String(s.paFull).length<=10)return false;return (Date.now()-t<_NEW_WIN)||(!!_prevSeen&&t>_prevSeen);};
     // 최애 묶음: NEW 뱃지(안 본 새 영상) 먼저(2026-11-19 사용자) → 즐겨찾기 겹친 수(#26) → 최신순(안정 정렬). 나머지는 최신순 그대로.
     // 다 본 영상(92%↑)은 최애여도 맨 뒤(_rest 끝) — 2026-11-19
-    const _favFirst=songs.filter(s=>_isFav(s)&&!_done(s)).sort((a,b)=>((_isNewSince(b)?1:0)-(_isNewSince(a)?1:0))||(_favN(b)-_favN(a))),_rest=_feedSinkWatched(songs.filter(s=>!_isFav(s)||_done(s)),_done);
+    const _favFirst=songs.filter(s=>_isFav(s)&&!_done(s)).sort((a,b)=>((_isNewSince(b)&&!_seen(b)?1:0)-(_isNewSince(a)&&!_seen(a)?1:0))||(_favN(b)-_favN(a))),_rest=_feedSinkWatched(songs.filter(s=>!_isFav(s)||_done(s)),_done);
     const rows=_packRows(_favFirst.concat(_rest),_songIsShort,{landscapeFull:true});
     if(rows.length&&!rows[rows.length-1].wide&&rows[rows.length-1].items.length===1)rows.pop(); // 끝에 홀로 남은 반폭 제거
     const flat=rows.flatMap(r=>r.items); // 라이트박스 재생목록 순서를 화면 순서와 일치
@@ -28467,7 +28475,9 @@ async function _buildFeedFavNew(opts){
       const isShort=_songIsShort(song);
       const _emo=_isFav(song)?String(_bias.favEmoji(song)).replace(/[<>&"']/g,''):''; // 이모지는 사용자가 친 글자 — 태그 문자 제거
       // NEW는 최애 이모지 앞(2026-11-19 사용자 "new 뱃지 최애 이모티콘 앞으로 가야지")
-      const sub=(_isNewSince(song)?'<span class="feed-new-hot">NEW</span>':'')+(_emo?`<span class="feed-fav-emo">${_emo}</span>`:'')+[_feedWhoSub(song),song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null)].filter(Boolean).join(' · ');
+      // 조회수는 올라온 지 24시간이 지난 영상만(2026-11-19 사용자 "너무 최근 영상엔 필요 없고 24시간 넘으면 탐험 탭에도") — 수집은 매시간(최근 14일치 갱신)이라 값은 늘 있다
+      const _old24=(()=>{const t=Date.parse(song.paFull||song.pa||'');return isFinite(t)&&Date.now()-t>24*3600e3;})();
+      const sub=(_isNewSince(song)?`<span class="feed-new-hot${_seen(song)?' is-seen':''}">NEW</span>`:'')+(_emo?`<span class="feed-fav-emo">${_emo}</span>`:'')+[_feedWhoSub(song),song.paFull?_fmtVidAgo(song.paFull):(song.pa?_fmtVidAgo(song.pa):null),(_old24&&song.vc?_fmtVC(song.vc):null)].filter(Boolean).join(' · ');
       _appendFeedCard(strip,'💖',song.t,sub,
         ()=>openLightbox(song.u,isShort,flat,flat.indexOf(song),{groupKo:song.groupKo,memberKo:(song.memberKos||[])[0]},false,true),
         song.thumb,null, Object.assign({dur:song.dur}, row.wide?{wide:true,short:!!row.short}:(isShort?{short:true}:{}),
