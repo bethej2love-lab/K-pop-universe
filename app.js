@@ -31103,20 +31103,6 @@ async function _loadCollectionRow(ko,containerId,memberKo,cardMemberKo){
   _colAddTile(containerId,{groupKo:ko,memberKo:memberKo||null}); // 줄 끝 + 칸(컬렉션이 없어도 줄을 띄운다)
   _loadProgramRow(ko,containerId,memberKo,cardMemberKo,_stale);
 }
-// 카드 컬렉션 줄 끝의 '+' 칸 — 누르면 이 카드의 그룹/멤버로 사진 컬렉션 만들기(2026-11-19 사용자 "맨 오른쪽 컬렉션 옆에 + 버튼, 케밥에서는 빼고").
-// 프로그램 칩이 뒤늦게 같은 목록에 붙으므로 자리는 CSS order로 맨 끝에 고정한다(DOM 순서와 무관). 컬렉션이 하나도 없어도 줄을 띄워 만들 길을 남긴다.
-function _colAddTile(containerId,ctx){
-  const row=document.getElementById(containerId);const listEl=row&&row.querySelector('.gc-collection-list');if(!listEl)return;
-  listEl.querySelector('.gc-collection-add')?.remove();
-  const b=document.createElement('button');b.type='button';b.className='gc-collection-chip gc-collection-add';
-  b.setAttribute('aria-label',currentLang==='ko'?'사진 컬렉션 만들기':'New photo collection');
-  const box=document.createElement('div');box.className='gc-collection-chip-thumb-wrap';box.textContent='+';
-  const nm=document.createElement('div');nm.className='gc-collection-chip-name';nm.textContent=currentLang==='ko'?'사진 컬렉션':'Photo collection';
-  b.appendChild(box);b.appendChild(nm);
-  b.addEventListener('click',e=>{e.stopPropagation();_createPhotoColFromCard(ctx);});
-  listEl.appendChild(b);
-  row.style.display='';
-}
 function _renderCollectionRow(containerId,list){
   const row=document.getElementById(containerId);
   if(!row)return;
@@ -31168,6 +31154,20 @@ function _renderCollectionRow(containerId,list){
     listEl.appendChild(chip);
   });
   _enableDragScroll(listEl); // 프로그램 행과 같은 컴포넌트(.gc-collection-list) — 같이 가로 스크롤
+  row.style.display='';
+}
+// 카드 컬렉션 줄 끝의 '+' 칸 — 누르면 이 카드의 그룹/멤버로 사진 컬렉션 만들기(2026-11-19 사용자 "맨 오른쪽 컬렉션 옆에 + 버튼, 케밥에서는 빼고").
+// 프로그램 칩이 뒤늦게 같은 목록에 붙으므로 자리는 CSS order로 맨 끝에 고정한다(DOM 순서와 무관). 컬렉션이 하나도 없어도 줄을 띄워 만들 길을 남긴다.
+function _colAddTile(containerId,ctx){
+  const row=document.getElementById(containerId);const listEl=row&&row.querySelector('.gc-collection-list');if(!listEl)return;
+  [...(listEl.children||[])].forEach(c=>{if(c.className&&String(c.className).indexOf('gc-collection-add')>=0)c.remove();});
+  const b=document.createElement('button');b.type='button';b.className='gc-collection-chip gc-collection-add';
+  b.setAttribute('aria-label',currentLang==='ko'?'사진 컬렉션 만들기':'New photo collection');
+  const box=document.createElement('div');box.className='gc-collection-chip-thumb-wrap';box.textContent='+';
+  const nm=document.createElement('div');nm.className='gc-collection-chip-name';nm.textContent=currentLang==='ko'?'사진 컬렉션':'Photo collection';
+  b.appendChild(box);b.appendChild(nm);
+  b.addEventListener('click',e=>{e.stopPropagation();_createPhotoColFromCard(ctx);});
+  listEl.appendChild(b);
   row.style.display='';
 }
 // ── 카드 내 프로그램 컬렉션(2026-09-05, Part C) ────────────────────────────────

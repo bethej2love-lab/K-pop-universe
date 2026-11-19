@@ -9,7 +9,7 @@ function fixture(plan){
  const calls=[],views=[],programs=[],errors=[],row={style:{},querySelector:()=>({innerHTML:''})};
  const provider={from(table){const spec={table,orders:[]};const q={spec,select(cols){spec.cols=cols;return q;},order(...args){spec.orders.push(args);return q;}};return q;}};
  const ctx={sb:provider,window:{_sbSession:{user:{id:'me'}}},document:{getElementById:()=>row},collections:[],_openGCko:'G',_openTArtist:{name:{ko:'M'}},_colLikesP:null,_colLikeCounts:new Map(),
- _collectionMatchesCard:(c,g,m)=>c.group===g&&(!m||c.member===m),_renderCollectionRow:(id,list)=>views.push({id,list}),_loadProgramRow:(...args)=>programs.push(args),console:{error:(...args)=>errors.push(args)},
+ _collectionMatchesCard:(c,g,m)=>c.group===g&&(!m||c.member===m),_renderCollectionRow:(id,list)=>views.push({id,list}),_colAddTile:()=>{},_loadProgramRow:(...args)=>programs.push(args),console:{error:(...args)=>errors.push(args)},
  _sbSelectAll:async factory=>{const q=factory();calls.push(q.spec);const n=plan.shift();if(!n)throw new Error('unexpected query');return typeof n==='function'?n():n;}};
  vm.createContext(ctx);vm.runInContext(code,ctx);
  return{ctx,calls,views,programs,provider,errors,warm:()=>ctx._warmPubCollections(),boot:()=>vm.runInContext(boot,ctx),load:(g='G',m=null,cm=null)=>ctx._loadCollectionRow(g,'row',m,cm),last:()=>views.at(-1)?.list||[]};
