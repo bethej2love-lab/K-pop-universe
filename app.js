@@ -3738,7 +3738,7 @@ function _fetchSoloCamThumbs(a){
     const gkos=new Set(_artistGroups(a).map(g=>g.ko).filter(k=>GROUPS[k]));
     {const sk=_soloNameKeyOf(a);if(sk)gkos.add(sk);} // 이름 키는 유일하거나 주인일 때만, 동명이인 솔로는 이름#id(2026-10-19)
     try{
-      let q=sb.from(_YT_TABLE).select('id,title,thumb,view_count,is_short,published_at,group_ko,members,category,content_flag,embed_blocked_at'+_durCol())
+      let q=sb.from(_YT_TABLE).select('id,title,thumb,view_count,is_short,published_at,group_ko,members,category,content_flag,embed_blocked_at,cover_of_groups,cover_of_members'+_durCol())
         .in('group_ko',[...gkos]).filter('members','eq',`{${_pgFilterVal(mko)}}`).is('unavailable_at',null)
         .or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
         .or('content_flag.is.null,content_flag.neq.hidden').or('content_flag.is.null,content_flag.neq.개별출연');
@@ -3754,7 +3754,10 @@ function _fetchSoloCamThumbs(a){
       const pool=(horiz.length?horiz:data.filter(v=>v.thumb));
       // 긴 방송 클립·예능·비하인드는 뒤로(2026-11-12 Codex 검수 — 태연 대표가 19분 놀라운 토요일 클립, 백현 대표가 20분 투어 비하인드)
       const okFmt=v=>!(v.duration_sec>600)&&v.category!=='variety'&&!/비하인드|behind/i.test(v.title||'');
-      return pool.sort((x,y)=>(_embBlk(x)-_embBlk(y))||(okFmt(y)-okFmt(x))||(nameHit(y)-nameHit(x))||(isCam(y)-isCam(x))||((y.category==='live')-(x.category==='live'))||((y.view_count||0)-(x.view_count||0)));
+      // 남의 곡 커버(cover_of)는 본인 곡 무대/직캠보다 뒤로 — 대표는 '본인 곡'이 맞다(2026-11-19 #15, 그룹 대표(_fetchGroupHeroCands tier)와 같은 기준).
+      // 커버만 있으면 그중 고르므로 회귀 없음. embed차단 > 포맷 OK > 본인 곡 > 이름 든 제목 > 직캠 > 라이브 > 조회수.
+      const isCover=v=>!!((v.cover_of_groups||[]).length||(v.cover_of_members||[]).length);
+      return pool.sort((x,y)=>(_embBlk(x)-_embBlk(y))||(okFmt(y)-okFmt(x))||(isCover(x)-isCover(y))||(nameHit(y)-nameHit(x))||(isCam(y)-isCam(x))||((y.category==='live')-(x.category==='live'))||((y.view_count||0)-(x.view_count||0)));
     }catch(e){return [];}
   })();
   _soloCamMemo.set(a,p);
