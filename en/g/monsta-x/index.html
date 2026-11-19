@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="1304 MONSTA X fancams and stages, most viewed first. MONSTA X: members, debut 2015.05.14, Starship Entertainment. 23 music show wins, largest tour The X: Nexus World Tour (141K attendees), 1 grand prizes (daesang). Fancams, stages and discography on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/deK2SCJmF9s/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"MONSTA X","alternateName":"몬스타엑스","genre":"K-pop","foundingDate":"2015-05-14","url":"https://kpop-universe.kr/en/g/monsta-x/","image":"https://img.youtube.com/vi/deK2SCJmF9s/maxresdefault.jpg","member":[{"@type":"Person","name":"Shownu"},{"@type":"Person","name":"Minhyuk"},{"@type":"Person","name":"Kihyun"},{"@type":"Person","name":"Hyungwon"},{"@type":"Person","name":"Joohoney"},{"@type":"Person","name":"I.M"},{"@type":"Person","name":"Wonho"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"MONSTA X","alternateName":"몬스타엑스","genre":"K-pop","description":"MONSTA X is a 6-member K-pop boy group under Starship Entertainment, debuting in 2015. Fan club: Monbebe. Recent releases: NOW PROJECT vol.2 (2026), The Phase (2026), Unfold (2026).","foundingDate":"2015-05-14","url":"https://kpop-universe.kr/en/g/monsta-x/","image":"https://img.youtube.com/vi/deK2SCJmF9s/maxresdefault.jpg","member":[{"@type":"Person","name":"Shownu"},{"@type":"Person","name":"Minhyuk"},{"@type":"Person","name":"Kihyun"},{"@type":"Person","name":"Hyungwon"},{"@type":"Person","name":"Joohoney"},{"@type":"Person","name":"I.M"},{"@type":"Person","name":"Wonho"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["3 new videos this week","Latest music show win · MAGIC (2026.09.11)","23 music show wins","3,118 stages & videos collected","Most viewed · 140M views"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
-  <p class="intro">MONSTA X is a 6-member K-pop boy group under Starship Entertainment, debuting in 2015. Fan club: Monbebe. Recent releases: NOW PROJECT vol.2 (2026), The Phase (2026), Unfold (2026).</p>
   
     <h2 id="members">Members</h2>
     <div class="faces">
@@ -155,12 +173,12 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/rushhour/">Rush Hour</a></li>
       <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/alligator/">Alligator</a></li>
       <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/nthefront/">N the Front</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/shootout/">Shoot Out</a></li>
       <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/jealousy/">Jealousy</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/beautifulliar/">Beautiful Liar</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/love/">LOVE</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/shootout/">Shoot Out</a></li>
       <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/magic/">MAGIC</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/beautifulliar/">Beautiful Liar</a></li>
       <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/dramarama/">DRAMARAMA</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/love/">LOVE</a></li>
       <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/fantasia/">FANTASIA</a></li>
       <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/아름다워/">아름다워 (Beautiful)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/follow/">Follow</a></li>
@@ -185,89 +203,75 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/findyou/">Find you</a></li>
       <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/sting/">STING</a></li>
       <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/미쳤으니까/">미쳤으니까 (Go Crazy)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/better/">Better</a></li>
       <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/standup/">Stand Up</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/whodoulove/">WHO DO U LOVE?</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/someonessomeone/">SOMEONE&#39;S SOMEONE</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/middleofthenight/">MIDDLE OF THE NIGHT</a></li>
+    </ul>
+    <details class="more-songs"><summary>13 more songs</summary>
+    <ul class="member-list rel">
       <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/readyornot/">Ready or Not</a></li>
       <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/freedom/">FREEDOM</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/better/">Better</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/youcantholdmyheart/">YOU CAN&#39;T HOLD MY HEART</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/besideu/">BESIDE U</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/그놈의크리스마스/">그놈의 크리스마스 (Lonely Christmas)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/oneday/">One Day</a></li>
-    </ul>
-    <details class="more-songs"><summary>7 more songs</summary>
-    <ul class="member-list rel">
       <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/뉴튼/">뉴튼 (NEWTON)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/솔직히말할까/">솔직히 말할까 (Honestly)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/playme/">Play Me</a></li>
       <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/babyblue/">baby blue</a></li>
       <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/ridewithu/">Ride with U</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/그놈의크리스마스/">그놈의 크리스마스 (Lonely Christmas)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/mercy/">Mercy</a></li>
       <li><a href="https://kpop-universe.kr/en/g/monsta-x/s/heal/">heal</a></li>
     </ul></details>
   
-    <h2 id="albums">Albums & tracklists</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/nowprojectvol2/">NOW PROJECT vol.2</a> <span class="yr">2026</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/thephase/">The Phase</a> <span class="yr">2026</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/unfold/">Unfold</a> <span class="yr">2026</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/thex/">THE X</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/beautifulliargambler/">Beautiful Liar / GAMBLER (JAPAN SPECIAL EDITION)</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/nowprojectvol1/">NOW PROJECT vol.1</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/reason/">REASON</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/shapeoflove/">SHAPE of LOVE</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/thedreaming/">The Dreaming</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/nolimit/">NO LIMIT</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/oneofakind/">One Of A Kind</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/flavorsoflove/">Flavors Of Love</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/fatallove/">Fatal Love</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/fantasiax/">FANTASIA X</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/allaboutluv/">ALL ABOUT LUV</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/followfindyou/">&#39;FOLLOW’ : FIND YOU</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/phenomenon/">Phenomenon</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/weareherethe2ndalbumtake2/">WE ARE HERE - The 2nd Album Take.2</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/areyoutherethe2ndalbumtake1/">ARE YOU THERE? - The 2nd Album Take.1</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/piece/">Piece</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/theconnectdejavu/">THE CONNECT : DEJAVU</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/thecode/">THE CODE</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/shineforever/">SHINE FOREVER</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/theclanpt25beautiful/">THE CLAN pt.2.5 &#39;BEAUTIFUL&#39;</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/theclanpt2guilty/">THE CLAN pt.2 &#39;GUILTY&#39;</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/theclanpt1lost/">THE CLAN pt.1 &#39;LOST&#39;</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/rushdigitalrepackagehero/">RUSH DIGITAL REPACKAGE &#39;HERO&#39;</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/rush/">RUSH</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/monsta-x/a/trespass/">TRESPASS</a> <span class="yr">2015</span></li>
-    </ul>
-  
-    <h2>Discography</h2>
-    <ul class="discog-list">
-      <li>NOW PROJECT vol.2 <span class="yr">(2026)</span> <span class="tag">Special</span></li>
-      <li>The Phase <span class="yr">(2026)</span> <span class="tag">14th EP</span></li>
-      <li>Unfold <span class="yr">(2026)</span> <span class="tag">Album</span></li>
-      <li>growing pains <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>baby blue <span class="yr">(2025)</span> <span class="tag">Single</span></li>
-      <li>THE X <span class="yr">(2025)</span> <span class="tag">13th EP</span></li>
-      <li>Do What I Want <span class="yr">(2025)</span> <span class="tag">Single</span></li>
-      <li>Beautiful Liar / GAMBLER (JAPAN SPECIAL EDITION) <span class="yr">(2025)</span> <span class="tag">EP</span></li>
-      <li>NOW PROJECT vol.1 <span class="yr">(2025)</span> <span class="tag">Special</span></li>
-      <li>REASON <span class="yr">(2023)</span> <span class="tag">12th EP</span></li>
-      <li>If with U <span class="yr">(2022)</span> <span class="tag">Single</span></li>
-      <li>SHAPE of LOVE <span class="yr">(2022)</span> <span class="tag">11th EP</span></li>
-      <li>The Dreaming <span class="yr">(2021)</span> <span class="tag">Album</span></li>
-      <li>NO LIMIT <span class="yr">(2021)</span> <span class="tag">10th EP</span></li>
-      <li>One Day <span class="yr">(2021)</span> <span class="tag">Single</span></li>
-      <li>KISS OR DEATH <span class="yr">(2021)</span> <span class="tag">Single</span></li>
-      <li>One Of A Kind <span class="yr">(2021)</span> <span class="tag">9th EP</span></li>
-      <li>Flavors Of Love <span class="yr">(2021)</span> <span class="tag">Album</span></li>
-      <li>Wanted <span class="yr">(2021)</span> <span class="tag">Single</span></li>
-      <li>Love Killa <span class="yr">(2020)</span> <span class="tag">Single</span></li>
-      <li>Love Killa (Japanese Version) <span class="yr">(2020)</span> <span class="tag">Single</span></li>
-      <li>Fatal Love <span class="yr">(2020)</span> <span class="tag">3rd Album</span></li>
-      <li>Reckless <span class="yr">(2020)</span> <span class="tag">Single</span></li>
-      <li>FANTASIA X <span class="yr">(2020)</span> <span class="tag">8th EP</span></li>
-      <li>Wish On The Same Sky <span class="yr">(2020)</span> <span class="tag">Single</span></li>
-      <li>Here We Are <span class="yr">(2020)</span> <span class="tag">Single</span></li>
-      <li>ALL ABOUT LUV <span class="yr">(2020)</span> <span class="tag">Album</span></li>
-      <li>Magnetic <span class="yr">(2019)</span> <span class="tag">Single</span></li>
-      <li>&#39;FOLLOW’ : FIND YOU <span class="yr">(2019)</span> <span class="tag">7th EP</span></li>
-      <li>SOMEONE&#39;S SOMEONE <span class="yr">(2019)</span> <span class="tag">Single</span></li>
-    </ul>
+    <h2 id="albums">Discography</h2>
+    <div class="sp-tiles dg-tiles">
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/nowprojectvol2/"><img src="https://i.scdn.co/image/ab67616d00001e0284571c3df551665a3bd37d37" alt="" loading="lazy"><span class="sp-tile-t">NOW PROJECT vol.2</span><span class="sp-tile-n">2026 · Special</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/thephase/"><img src="https://i.scdn.co/image/ab67616d00001e0237874a89ff8a3d387d6600d1" alt="" loading="lazy"><span class="sp-tile-t">The Phase</span><span class="sp-tile-n">2026 · 14th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/unfold/"><img src="https://i.scdn.co/image/ab67616d00001e022aa679b24f76ab1434ba6bde" alt="" loading="lazy"><span class="sp-tile-t">Unfold</span><span class="sp-tile-n">2026 · Album</span></a>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02417701f392558bc7805ccef5" alt="" loading="lazy"><span class="sp-tile-t">growing pains</span><span class="sp-tile-n">2026 · Single</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02c798f6060c137768283fd689" alt="" loading="lazy"><span class="sp-tile-t">baby blue</span><span class="sp-tile-n">2025 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/thex/"><img src="https://i.scdn.co/image/ab67616d00001e0271a56d4b3dd677baf0629102" alt="" loading="lazy"><span class="sp-tile-t">THE X</span><span class="sp-tile-n">2025 · 13th EP</span></a>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02f309948c510474f67178aca8" alt="" loading="lazy"><span class="sp-tile-t">Do What I Want</span><span class="sp-tile-n">2025 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/beautifulliargambler/"><img src="https://i.scdn.co/image/ab67616d00001e021f6dc96e6de95e2ea63ae7bc" alt="" loading="lazy"><span class="sp-tile-t">Beautiful Liar / GAMBLER (JAPAN SPECIAL EDITION)</span><span class="sp-tile-n">2025 · EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/nowprojectvol1/"><img src="https://i.scdn.co/image/ab67616d00001e020ead0ed030ccb89d2ee71e84" alt="" loading="lazy"><span class="sp-tile-t">NOW PROJECT vol.1</span><span class="sp-tile-n">2025 · Special</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/reason/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/111/41/889/11141889_20230106190700_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">REASON</span><span class="sp-tile-n">2023 · 12th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/109/99/134/10999134_20220707112541_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">If with U</span><span class="sp-tile-n">2022 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/shapeoflove/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/109/32/098/10932098_20220426110407_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SHAPE of LOVE</span><span class="sp-tile-n">2022 · 11th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/thedreaming/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/108/08/020/10808020_20211209143033_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">The Dreaming</span><span class="sp-tile-n">2021 · Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/nolimit/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/107/84/417/10784417_20211119100852_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">NO LIMIT</span><span class="sp-tile-n">2021 · 10th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/129/42/825/12942825_20260324101152_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">One Day</span><span class="sp-tile-n">2021 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/61/899/10661899_20210726152318_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">KISS OR DEATH</span><span class="sp-tile-n">2021 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/oneofakind/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/17/676/10617676_20210601151844_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">One Of A Kind</span><span class="sp-tile-n">2021 · 9th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/flavorsoflove/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/01/617/10601617_20210503143938_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Flavors Of Love</span><span class="sp-tile-n">2021 · Album</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/74/629/10574629_20210308141507_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Wanted</span><span class="sp-tile-n">2021 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/33/989/10533989_20201214183038_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Love Killa</span><span class="sp-tile-n">2020 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/18/456/10518456_20201116101411_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Love Killa (Japanese Version)</span><span class="sp-tile-n">2020 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/fatallove/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/12/133/10512133_20201102104946_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Fatal Love</span><span class="sp-tile-n">2020 · 3rd Album</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/70/414/10470414_20200731153319_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Reckless</span><span class="sp-tile-n">2020 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/fantasiax/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/35/392/10435392_20200526154259_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">FANTASIA X</span><span class="sp-tile-n">2020 · 8th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/16/615/10416615_20200413140812_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Wish On The Same Sky</span><span class="sp-tile-n">2020 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/04/499/10404499_20200318153419_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Here We Are</span><span class="sp-tile-n">2020 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/allaboutluv/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/61/460/10361460_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ALL ABOUT LUV</span><span class="sp-tile-n">2020 · Album</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/66/341/10366341_20191218154333_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Magnetic</span><span class="sp-tile-n">2019 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/followfindyou/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/42/315/10342315_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">&#39;FOLLOW’ : FIND YOU</span><span class="sp-tile-n">2019 · 7th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/34/950/10334950_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SOMEONE&#39;S SOMEONE</span><span class="sp-tile-n">2019 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/phenomenon/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/19/693/10319693_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Phenomenon</span><span class="sp-tile-n">2019 · Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/weareherethe2ndalbumtake2/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/52/320/10252320_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">WE ARE HERE - The 2nd Album Take.2</span><span class="sp-tile-n">2019 · 2nd Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/areyoutherethe2ndalbumtake1/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/14/762/10214762_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ARE YOU THERE? - The 2nd Album Take.1</span><span class="sp-tile-n">2018 · 2nd Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/piece/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/78/835/10278835_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Piece</span><span class="sp-tile-n">2018 · Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/theconnectdejavu/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/51/409/10151409_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">THE CONNECT : DEJAVU</span><span class="sp-tile-n">2018 · 6th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/thecode/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/09/536/10109536_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">THE CODE</span><span class="sp-tile-n">2017 · 5th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/shineforever/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/72/518/10072518_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SHINE FOREVER</span><span class="sp-tile-n">2017 · 정규 1집 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/theclanpt25beautiful/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/47/752/10047752_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">THE CLAN pt.2.5 &#39;BEAUTIFUL&#39;</span><span class="sp-tile-n">2017 · 1st Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/theclanpt2guilty/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/02/902/10002902_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">THE CLAN pt.2 &#39;GUILTY&#39;</span><span class="sp-tile-n">2016 · 4th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/theclanpt1lost/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/83/593/2683593_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">THE CLAN pt.1 &#39;LOST&#39;</span><span class="sp-tile-n">2016 · 3rd EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/rushdigitalrepackagehero/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/46/190/2646190_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">RUSH DIGITAL REPACKAGE &#39;HERO&#39;</span><span class="sp-tile-n">2015 · Repackage</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/rush/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/38/792/2638792_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">RUSH</span><span class="sp-tile-n">2015 · 2nd EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/monsta-x/a/trespass/"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/18/539/2318539_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">TRESPASS</span><span class="sp-tile-n">2015 · 1st EP</span></a>
+    </div>
   
     <h2>Related groups</h2>
     <ul class="member-list rel">
@@ -282,7 +286,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/몬스타엑스/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=몬스타엑스">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"GAMBLER","s":"88 videos","img":"yY13X0BKaUw","m":"GAMBLER","h":"https://kpop-universe.kr/en/g/monsta-x/s/gambler/"},{"k":"Member fancams","t":"Minhyuk","s":"128 fancams","img":"dOBkkO7OntI","h":"https://kpop-universe.kr/en/g/monsta-x/minhyuk/fancams/"},{"k":"Album","t":"NOW PROJECT vol.2","s":"8 tracks","im":"https://i.scdn.co/image/ab67616d0000b27384571c3df551665a3bd37d37","h":"https://kpop-universe.kr/en/g/monsta-x/a/nowprojectvol2/"},{"k":"Song fancams","t":"Love Killa","s":"85 videos","img":"-ToHbHcolfA","m":"Love Killa","h":"https://kpop-universe.kr/en/g/monsta-x/s/lovekilla/"},{"k":"Member fancams","t":"Joohoney","s":"95 fancams","img":"_5gg_bpdDQE","h":"https://kpop-universe.kr/en/g/monsta-x/joohoney/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"GAMBLER","s":"89 videos","img":"yY13X0BKaUw","m":"GAMBLER","h":"https://kpop-universe.kr/en/g/monsta-x/s/gambler/"},{"k":"Member fancams","t":"Minhyuk","s":"128 fancams","img":"dOBkkO7OntI","h":"https://kpop-universe.kr/en/g/monsta-x/minhyuk/fancams/"},{"k":"Album","t":"NOW PROJECT vol.2","s":"8 tracks","im":"https://i.scdn.co/image/ab67616d0000b27384571c3df551665a3bd37d37","h":"https://kpop-universe.kr/en/g/monsta-x/a/nowprojectvol2/"},{"k":"Song fancams","t":"Love Killa","s":"85 videos","img":"-ToHbHcolfA","m":"Love Killa","h":"https://kpop-universe.kr/en/g/monsta-x/s/lovekilla/"},{"k":"Member fancams","t":"Joohoney","s":"95 fancams","img":"_5gg_bpdDQE","h":"https://kpop-universe.kr/en/g/monsta-x/joohoney/fancams/"}]</script>
 </div>
 </body>
 </html>

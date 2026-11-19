@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="방탄소년단 직캠·무대 영상 2141개를 조회수 순으로(알엠·진·슈가·제이홉·지민·뷔·정국). 방탄소년단 멤버·데뷔일(2013.06.13)·소속사(빅히트 뮤직 / HYBE). 음악방송 1위 226회, 최대 투어 BTS World Tour: Love Yourself(관객 104만 명), 대상 56개, 밀리언셀러 앨범 3장. 직캠·무대 영상과 디스코그래피를 K-POP UNIVERSE에서.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/8AYxDDrG5uQ/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"방탄소년단","alternateName":"BTS","genre":"K-pop","foundingDate":"2013-06-13","url":"https://kpop-universe.kr/g/방탄소년단/","image":"https://img.youtube.com/vi/8AYxDDrG5uQ/maxresdefault.jpg","member":[{"@type":"Person","name":"알엠"},{"@type":"Person","name":"진"},{"@type":"Person","name":"슈가"},{"@type":"Person","name":"제이홉"},{"@type":"Person","name":"지민"},{"@type":"Person","name":"뷔"},{"@type":"Person","name":"정국"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"방탄소년단","alternateName":"BTS","genre":"K-pop","description":"7인조 보이그룹. 빅히트 뮤직 / HYBE. 2013년 데뷔. 팬덤명 아미. 대표 앨범 NORMAL(2026), Come Over(2026), KEEP SWIMMING(2026).","foundingDate":"2013-06-13","url":"https://kpop-universe.kr/g/방탄소년단/","image":"https://img.youtube.com/vi/8AYxDDrG5uQ/maxresdefault.jpg","member":[{"@type":"Person","name":"알엠"},{"@type":"Person","name":"진"},{"@type":"Person","name":"슈가"},{"@type":"Person","name":"제이홉"},{"@type":"Person","name":"지민"},{"@type":"Person","name":"뷔"},{"@type":"Person","name":"정국"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -104,10 +123,9 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>팬덤명</b> 아미</span>
     </div>
     <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/@BTS" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://instagram.com/bts.bighitofficial" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/BTS_twt" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://tiktok.com/@bts_official_bighit" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-weverse" href="https://weverse.io/bts" target="_blank" rel="noopener noreferrer">Weverse</a><a class="sns-namu" href="https://namu.wiki/w/방탄소년단" target="_blank" rel="noopener noreferrer">나무위키</a></div>
-    <script type="application/json" id="kpu-facts">["이번 주 새 영상 6개","최근 음방 1위 · 2.0 (2026.04.19)","음방 1위 226회","모아둔 무대·영상 6,340개","가장 많이 본 영상 · 조회수 2.1B"]</script>
+    <script type="application/json" id="kpu-facts">["이번 주 새 영상 5개","최근 음방 1위 · 2.0 (2026.04.19)","음방 1위 226회","모아둔 무대·영상 6,340개","가장 많이 본 영상 · 조회수 2.1B"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
-  <p class="intro">7인조 보이그룹. 빅히트 뮤직 / HYBE. 2013년 데뷔. 팬덤명 아미. 대표 앨범 NORMAL(2026), Come Over(2026), KEEP SWIMMING(2026).</p>
   
     <h2 id="members">멤버</h2>
     <div class="faces">
@@ -230,8 +248,8 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/방탄소년단/s/butter/">Butter</a></li>
       <li><a href="https://kpop-universe.kr/g/방탄소년단/s/blackswan/">Black Swan</a></li>
       <li><a href="https://kpop-universe.kr/g/방탄소년단/s/on/">ON</a></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/s/dionysus/">Dionysus</a></li>
       <li><a href="https://kpop-universe.kr/g/방탄소년단/s/foryouth/">For Youth</a></li>
+      <li><a href="https://kpop-universe.kr/g/방탄소년단/s/dionysus/">Dionysus</a></li>
       <li><a href="https://kpop-universe.kr/g/방탄소년단/s/ineedu/">I NEED U</a></li>
       <li><a href="https://kpop-universe.kr/g/방탄소년단/s/상남자/">상남자 (Boy In Luv)</a></li>
       <li><a href="https://kpop-universe.kr/g/방탄소년단/s/봄날/">봄날 Spring Day</a></li>
@@ -245,28 +263,28 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/방탄소년단/s/anpanman/">Anpanman</a></li>
       <li><a href="https://kpop-universe.kr/g/방탄소년단/s/nomoredream/">No More Dream</a></li>
       <li><a href="https://kpop-universe.kr/g/방탄소년단/s/고민보다go/">고민보다 Go</a></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/s/magicshop/">Magic Shop</a></li>
       <li><a href="https://kpop-universe.kr/g/방탄소년단/s/호르몬전쟁/">호르몬 전쟁 War of Hormone</a></li>
+      <li><a href="https://kpop-universe.kr/g/방탄소년단/s/magicshop/">Magic Shop</a></li>
       <li><a href="https://kpop-universe.kr/g/방탄소년단/s/ホルモン戰爭/">ホルモン戰爭</a></li>
       <li><a href="https://kpop-universe.kr/g/방탄소년단/s/airplanept2/">Airplane pt.2</a></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/s/butterfly/">Butterfly</a></li>
       <li><a href="https://kpop-universe.kr/g/방탄소년단/s/saveme/">Save ME</a></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/s/21세기소녀/">21세기 소녀 21st Century Girl</a></li>
+      <li><a href="https://kpop-universe.kr/g/방탄소년단/s/butterfly/">Butterfly</a></li>
       <li><a href="https://kpop-universe.kr/g/방탄소년단/s/swim/">SWIM</a></li>
+      <li><a href="https://kpop-universe.kr/g/방탄소년단/s/21세기소녀/">21세기 소녀 21st Century Girl</a></li>
       <li><a href="https://kpop-universe.kr/g/방탄소년단/s/mama/">MAMA</a></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/s/likecrazy/">Like Crazy</a></li>
       <li><a href="https://kpop-universe.kr/g/방탄소년단/s/run/">RUN</a></li>
+      <li><a href="https://kpop-universe.kr/g/방탄소년단/s/likecrazy/">Like Crazy</a></li>
       <li><a href="https://kpop-universe.kr/g/방탄소년단/s/normal/">NORMAL</a></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/s/amiwrong/">Am I Wrong</a></li>
+      <li><a href="https://kpop-universe.kr/g/방탄소년단/s/no/">N.O</a></li>
     </ul>
     <details class="more-songs"><summary>나머지 45곡 더 보기</summary>
     <ul class="member-list rel">
+      <li><a href="https://kpop-universe.kr/g/방탄소년단/s/amiwrong/">Am I Wrong</a></li>
       <li><a href="https://kpop-universe.kr/g/방탄소년단/s/sowhat/">So What</a></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/s/no/">N.O</a></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/s/singularity/">Singularity</a></li>
       <li><a href="https://kpop-universe.kr/g/방탄소년단/s/쩔어/">쩔어 Dope</a></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/s/하루만/">하루만 Just One Day</a></li>
+      <li><a href="https://kpop-universe.kr/g/방탄소년단/s/singularity/">Singularity</a></li>
       <li><a href="https://kpop-universe.kr/g/방탄소년단/s/makeitright/">Make It Right</a></li>
+      <li><a href="https://kpop-universe.kr/g/방탄소년단/s/하루만/">하루만 Just One Day</a></li>
       <li><a href="https://kpop-universe.kr/g/방탄소년단/s/taketwo/">Take Two</a></li>
       <li><a href="https://kpop-universe.kr/g/방탄소년단/s/euphoria/">Euphoria</a></li>
       <li><a href="https://kpop-universe.kr/g/방탄소년단/s/bestofme/">Best Of Me</a></li>
@@ -308,63 +326,47 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/방탄소년단/s/fri/">FRI(END)S</a></li>
     </ul></details>
   
-    <h2 id="albums">앨범·수록곡</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/a/arirang/">ARIRANG</a> <span class="yr">2026</span></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/a/be/">BE</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/a/mapofthesoul7thejourney/">MAP OF THE SOUL : 7 ~THE JOURNEY~</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/a/mapofthesoul7/">MAP OF THE SOUL : 7</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/a/mapofthesoulpersona/">MAP OF THE SOUL : PERSONA</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/a/loveyourself結answer/">LOVE YOURSELF 結 &#39;Answer&#39;</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/a/loveyourself轉tear/">LOVE YOURSELF 轉 &#39;Tear&#39;</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/a/faceyourself/">FACE YOURSELF</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/a/loveyourself承her/">LOVE YOURSELF 承 &#39;Her&#39;</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/a/youneverwalkalone/">YOU NEVER WALK ALONE</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/a/youth/">YOUTH</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/a/wings/">WINGS</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/a/화양연화youngforever/">화양연화 Young Forever</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/a/화양연화pt2/">화양연화 pt.2</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/a/화양연화pt1/">화양연화 pt.1</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/a/wakeup/">WAKE UP</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/a/darkwild/">DARK&amp;WILD</a> <span class="yr">2014</span></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/a/skoolluvaffairspecialaddition/">Skool Luv Affair Special Addition</a> <span class="yr">2014</span></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/a/skoolluvaffair/">Skool Luv Affair</a> <span class="yr">2014</span></li>
-      <li><a href="https://kpop-universe.kr/g/방탄소년단/a/orul82/">O!RUL8,2?</a> <span class="yr">2013</span></li>
-    </ul>
-  
-    <h2>디스코그래피</h2>
-    <ul class="discog-list">
-      <li>NORMAL <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>Come Over <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>KEEP SWIMMING <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>ARIRANG <span class="yr">(2026)</span> <span class="tag">정규 5집</span></li>
-      <li>PERMISSION TO DANCE ON STAGE - LIVE <span class="yr">(2025)</span> <span class="tag">라이브</span></li>
-      <li>Take Two <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>The Planet <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>Proof <span class="yr">(2022)</span> <span class="tag">앤솔러지</span></li>
-      <li>My Universe <span class="yr">(2021)</span> <span class="tag">싱글</span></li>
-      <li>Butter (feat. Megan Thee Stallion) <span class="yr">(2021)</span> <span class="tag">싱글</span></li>
-      <li>Permission to Dance <span class="yr">(2021)</span> <span class="tag">싱글</span></li>
-      <li>Butter <span class="yr">(2021)</span> <span class="tag">싱글</span></li>
-      <li>BE <span class="yr">(2020)</span> <span class="tag">미니 7집</span></li>
-      <li>MAP OF THE SOUL : 7 ~THE JOURNEY~ <span class="yr">(2020)</span> <span class="tag">정규</span></li>
-      <li>MAP OF THE SOUL : 7 <span class="yr">(2020)</span> <span class="tag">정규 4집</span></li>
-      <li>Make It Right (feat. Lauv) <span class="yr">(2019)</span> <span class="tag">싱글</span></li>
-      <li>Lights / Boy With Luv <span class="yr">(2019)</span> <span class="tag">싱글</span></li>
-      <li>MAP OF THE SOUL : PERSONA <span class="yr">(2019)</span> <span class="tag">미니 6집</span></li>
-      <li>FAKE LOVE / Airplane pt.2 <span class="yr">(2018)</span> <span class="tag">싱글</span></li>
-      <li>LOVE YOURSELF 結 &#39;Answer&#39; <span class="yr">(2018)</span> <span class="tag">리패키지</span></li>
-      <li>LOVE YOURSELF 轉 &#39;Tear&#39; <span class="yr">(2018)</span> <span class="tag">정규 3집</span></li>
-      <li>FACE YOURSELF <span class="yr">(2018)</span> <span class="tag">정규</span></li>
-      <li>MIC Drop/DNA/Crystal Snow <span class="yr">(2017)</span> <span class="tag">싱글</span></li>
-      <li>LOVE YOURSELF 承 &#39;Her&#39; <span class="yr">(2017)</span> <span class="tag">미니 5집</span></li>
-      <li>Come Back Home <span class="yr">(2017)</span> <span class="tag">싱글</span></li>
-      <li>Blood Sweat &amp; Tears <span class="yr">(2017)</span> <span class="tag">싱글</span></li>
-      <li>YOU NEVER WALK ALONE <span class="yr">(2017)</span> <span class="tag">정규 2집 리패키지</span></li>
-      <li>YOUTH <span class="yr">(2016)</span> <span class="tag">정규</span></li>
-      <li>WINGS <span class="yr">(2016)</span> <span class="tag">정규 2집</span></li>
-      <li>RUN (Japanese Ver.) <span class="yr">(2016)</span> <span class="tag">싱글</span></li>
-    </ul>
+    <h2 id="albums">디스코그래피</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02f9cb83c28ce6ce9d5c97cc1f" alt="" loading="lazy"><span class="sp-tile-t">NORMAL</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02df7118c4f396e50961cc0e74" alt="" loading="lazy"><span class="sp-tile-t">Come Over</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02dd898ec5b8a2107a1ab9f47b" alt="" loading="lazy"><span class="sp-tile-t">KEEP SWIMMING</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/방탄소년단/a/arirang/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/129/37/623/12937623_20260320094322_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ARIRANG</span><span class="sp-tile-n">2026 · 정규 5집</span></a>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02b79d4683964a0100d69e21ae" alt="" loading="lazy"><span class="sp-tile-t">PERMISSION TO DANCE ON STAGE - LIVE</span><span class="sp-tile-n">2025 · 라이브</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/61/503/11261503_20230608180105_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Take Two</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/42/802/11242802_20230512092757_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">The Planet</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/109/79/636/10979636_20220609175418_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Proof</span><span class="sp-tile-n">2022 · 앤솔러지</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/107/20/913/10720913_20210923173742_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">My Universe</span><span class="sp-tile-n">2021 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/95/099/10695099_20210827102823_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Butter (feat. Megan Thee Stallion)</span><span class="sp-tile-n">2021 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/48/182/10648182_20210709104950_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Permission to Dance</span><span class="sp-tile-n">2021 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/12/483/10612483_20210521111412_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Butter</span><span class="sp-tile-n">2021 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/방탄소년단/a/be/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/21/521/10521521_20201120112220_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BE</span><span class="sp-tile-n">2020 · 미니 7집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/방탄소년단/a/mapofthesoul7thejourney/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/47/526/10447526_20200619135907_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">MAP OF THE SOUL : 7 ~THE JOURNEY~</span><span class="sp-tile-n">2020 · 정규</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/방탄소년단/a/mapofthesoul7/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/77/346/10377346_20200221153622_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">MAP OF THE SOUL : 7</span><span class="sp-tile-n">2020 · 정규 4집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/40/584/10340584_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Make It Right (feat. Lauv)</span><span class="sp-tile-n">2019 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/103/02/627/10302627_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Lights / Boy With Luv</span><span class="sp-tile-n">2019 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/방탄소년단/a/mapofthesoulpersona/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/73/641/10273641_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">MAP OF THE SOUL : PERSONA</span><span class="sp-tile-n">2019 · 미니 6집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/19/699/10219699_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">FAKE LOVE / Airplane pt.2</span><span class="sp-tile-n">2018 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/방탄소년단/a/loveyourself結answer/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/97/480/10197480_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">LOVE YOURSELF 結 &#39;Answer&#39;</span><span class="sp-tile-n">2018 · 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/방탄소년단/a/loveyourself轉tear/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/68/559/10168559_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">LOVE YOURSELF 轉 &#39;Tear&#39;</span><span class="sp-tile-n">2018 · 정규 3집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/방탄소년단/a/faceyourself/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/54/490/10154490_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">FACE YOURSELF</span><span class="sp-tile-n">2018 · 정규</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/17/028/10117028_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">MIC Drop/DNA/Crystal Snow</span><span class="sp-tile-n">2017 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/방탄소년단/a/loveyourself承her/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/97/112/10097112_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">LOVE YOURSELF 承 &#39;Her&#39;</span><span class="sp-tile-n">2017 · 미니 5집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/76/659/10076659_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Come Back Home</span><span class="sp-tile-n">2017 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/62/888/10062888_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Blood Sweat &amp; Tears</span><span class="sp-tile-n">2017 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/방탄소년단/a/youneverwalkalone/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/37/969/10037969_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">YOU NEVER WALK ALONE</span><span class="sp-tile-n">2017 · 정규 2집 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/방탄소년단/a/youth/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/13/707/10013707_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">YOUTH</span><span class="sp-tile-n">2016 · 정규</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/방탄소년단/a/wings/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/04/707/10004707_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">WINGS</span><span class="sp-tile-n">2016 · 정규 2집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/85/727/2685727_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">RUN (Japanese Ver.)</span><span class="sp-tile-n">2016 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/방탄소년단/a/화양연화youngforever/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/80/573/2680573_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">화양연화 Young Forever</span><span class="sp-tile-n">2016 · 스페셜</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/방탄소년단/a/화양연화pt2/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/026/53/551/2653551_20260203115145_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">화양연화 pt.2</span><span class="sp-tile-n">2015 · 미니 4집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/방탄소년단/a/화양연화pt1/"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/16/261/2316261_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">화양연화 pt.1</span><span class="sp-tile-n">2015 · 미니 3집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/방탄소년단/a/wakeup/"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/06/283/2306283_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">WAKE UP</span><span class="sp-tile-n">2015 · 정규</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/방탄소년단/a/darkwild/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/75/731/2275731_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">DARK&amp;WILD</span><span class="sp-tile-n">2014 · 정규 1집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/방탄소년단/a/skoolluvaffairspecialaddition/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/56/072/2256072_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Skool Luv Affair Special Addition</span><span class="sp-tile-n">2014 · 미니 2집 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/방탄소년단/a/skoolluvaffair/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/32/496/2232496_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Skool Luv Affair</span><span class="sp-tile-n">2014 · 미니 2집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/방탄소년단/a/orul82/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/00/733/2200733_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">O!RUL8,2?</span><span class="sp-tile-n">2013 · 미니 1집</span></a>
+    </div>
   
     <h2>함께 보면 좋은 그룹</h2>
     <ul class="member-list rel">
@@ -379,7 +381,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/bts/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=방탄소년단">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"작은 것들을 위한 시 Boy With Luv (feat. Halsey)","s":"영상 110개","img":"XsX3ATc3FbA","m":"작은 것들을 위한 시","h":"https://kpop-universe.kr/g/방탄소년단/s/작은것들을위한시/"},{"k":"멤버 직캠","t":"정국","s":"직캠 277개","img":"8d0zyzje_9w","h":"https://kpop-universe.kr/g/방탄소년단/정국/fancams/"},{"k":"앨범","t":"ARIRANG","s":"수록곡 14곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/129/37/623/12937623_20260320094322_500.jpg","h":"https://kpop-universe.kr/g/방탄소년단/a/arirang/"},{"k":"곡별 직캠·무대","t":"IDOL","s":"영상 100개","img":"pBuZEGYXA6E","m":"IDOL","h":"https://kpop-universe.kr/g/방탄소년단/s/idol/"},{"k":"멤버 직캠","t":"지민","s":"직캠 253개","img":"GfX62fI1NyA","h":"https://kpop-universe.kr/g/방탄소년단/지민/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"작은 것들을 위한 시 Boy With Luv (feat. Halsey)","s":"영상 119개","img":"XsX3ATc3FbA","m":"작은 것들을 위한 시","h":"https://kpop-universe.kr/g/방탄소년단/s/작은것들을위한시/"},{"k":"멤버 직캠","t":"정국","s":"직캠 277개","img":"8d0zyzje_9w","h":"https://kpop-universe.kr/g/방탄소년단/정국/fancams/"},{"k":"앨범","t":"ARIRANG","s":"수록곡 14곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/129/37/623/12937623_20260320094322_500.jpg","h":"https://kpop-universe.kr/g/방탄소년단/a/arirang/"},{"k":"곡별 직캠·무대","t":"IDOL","s":"영상 104개","img":"pBuZEGYXA6E","m":"IDOL","h":"https://kpop-universe.kr/g/방탄소년단/s/idol/"},{"k":"멤버 직캠","t":"지민","s":"직캠 253개","img":"GfX62fI1NyA","h":"https://kpop-universe.kr/g/방탄소년단/지민/fancams/"}]</script>
 </div>
 </body>
 </html>

@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="유키스 직캠·무대 영상 323개를 조회수 순으로. 유키스 멤버·데뷔일(2008.08.28)·소속사(탱고뮤직). 음악방송 1위 1회. 직캠·무대 영상과 디스코그래피를 K-POP UNIVERSE에서.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/_dz_bdrSX2Q/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"유키스","alternateName":"U-KISS","genre":"K-pop","foundingDate":"2008-08-28","url":"https://kpop-universe.kr/g/유키스/","image":"https://img.youtube.com/vi/_dz_bdrSX2Q/maxresdefault.jpg","member":[{"@type":"Person","name":"알렉산더"},{"@type":"Person","name":"수현"},{"@type":"Person","name":"기섭"},{"@type":"Person","name":"일라이"},{"@type":"Person","name":"훈"},{"@type":"Person","name":"기범"},{"@type":"Person","name":"동호"},{"@type":"Person","name":"케빈"},{"@type":"Person","name":"준"},{"@type":"Person","name":"AJ"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"유키스","alternateName":"U-KISS","genre":"K-pop","description":"5인조 보이그룹. 탱고뮤직. 2008년 데뷔. 팬덤명 키스미. 대표 앨범 Money(2025), RE:PRESENT(2024), LET'S GET STARTED(2024).","foundingDate":"2008-08-28","url":"https://kpop-universe.kr/g/유키스/","image":"https://img.youtube.com/vi/_dz_bdrSX2Q/maxresdefault.jpg","member":[{"@type":"Person","name":"알렉산더"},{"@type":"Person","name":"수현"},{"@type":"Person","name":"기섭"},{"@type":"Person","name":"일라이"},{"@type":"Person","name":"훈"},{"@type":"Person","name":"기범"},{"@type":"Person","name":"동호"},{"@type":"Person","name":"케빈"},{"@type":"Person","name":"준"},{"@type":"Person","name":"AJ"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["최근 음방 1위 · 놀이터 (2015.02.17)","모아둔 무대·영상 583개","가장 많이 본 영상 · 조회수 25M"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
-  <p class="intro">5인조 보이그룹. 탱고뮤직. 2008년 데뷔. 팬덤명 키스미. 대표 앨범 Money(2025), RE:PRESENT(2024), LET&#39;S GET STARTED(2024).</p>
   
     <h2 id="members">멤버</h2>
     <div class="faces">
@@ -157,58 +175,39 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/유키스/s/believe/">Believe</a></li>
     </ul>
   
-    <h2 id="albums">앨범·수록곡</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/유키스/a/represent/">RE:PRESENT</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/g/유키스/a/letsgetstarted/">LET&#39;S GET STARTED</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/g/유키스/a/playlist/">PLAY LIST</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/g/유키스/a/stalker/">STALKER</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/g/유키스/a/always/">Always</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/g/유키스/a/monoscandal/">MONO SCANDAL</a> <span class="yr">2014</span></li>
-      <li><a href="https://kpop-universe.kr/g/유키스/a/moments/">Moments</a> <span class="yr">2013</span></li>
-      <li><a href="https://kpop-universe.kr/g/유키스/a/collage/">COLLAGE</a> <span class="yr">2013</span></li>
-      <li><a href="https://kpop-universe.kr/g/유키스/a/stopgirl/">Stop Girl</a> <span class="yr">2012</span></li>
-      <li><a href="https://kpop-universe.kr/g/유키스/a/thespecialtokissme/">THE SPECIAL TO KISSME</a> <span class="yr">2012</span></li>
-      <li><a href="https://kpop-universe.kr/g/유키스/a/doradora/">DORADORA (돌아돌아)</a> <span class="yr">2012</span></li>
-      <li><a href="https://kpop-universe.kr/g/유키스/a/neverland/">NEVERLAND</a> <span class="yr">2011</span></li>
-      <li><a href="https://kpop-universe.kr/g/유키스/a/brannewkiss/">Bran New KISS</a> <span class="yr">2011</span></li>
-      <li><a href="https://kpop-universe.kr/g/유키스/a/breaktime/">Break Time</a> <span class="yr">2010</span></li>
-      <li><a href="https://kpop-universe.kr/g/유키스/a/ukissonlyonealbum/">U-Kiss Only One Album</a> <span class="yr">2010</span></li>
-    </ul>
-  
-    <h2>디스코그래피</h2>
-    <ul class="discog-list">
-      <li>Money <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>RE:PRESENT <span class="yr">(2024)</span> <span class="tag">미니</span></li>
-      <li>LET&#39;S GET STARTED <span class="yr">(2024)</span> <span class="tag">미니 13집</span></li>
-      <li>아름다워 (Beautiful you are) <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-      <li>모스부호(Morse code) <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-      <li>갈래! (The Wonderful Escape) Rock Ver. <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>PLAY LIST <span class="yr">(2023)</span> <span class="tag">미니 12집</span></li>
-      <li>널 맞이할 준비 <span class="yr">(2017)</span> <span class="tag">싱글</span></li>
-      <li>STALKER <span class="yr">(2016)</span> <span class="tag">미니 11집</span></li>
-      <li>Always <span class="yr">(2015)</span> <span class="tag">미니 10집</span></li>
-      <li>MONO SCANDAL <span class="yr">(2014)</span> <span class="tag">미니 9집</span></li>
-      <li>Moments <span class="yr">(2013)</span> <span class="tag">미니 8집</span></li>
-      <li>Mysterious Lady <span class="yr">(2013)</span> <span class="tag">싱글</span></li>
-      <li>COLLAGE <span class="yr">(2013)</span> <span class="tag">정규 3집</span></li>
-      <li>Gangsta Boy <span class="yr">(2012)</span> <span class="tag">싱글</span></li>
-      <li>Stop Girl <span class="yr">(2012)</span> <span class="tag">미니 7집</span></li>
-      <li>CINDERELLA <span class="yr">(2012)</span> <span class="tag">싱글</span></li>
-      <li>THE SPECIAL TO KISSME <span class="yr">(2012)</span> <span class="tag">정규</span></li>
-      <li>Te Amo <span class="yr">(2012)</span> <span class="tag">싱글</span></li>
-      <li>DORADORA (돌아돌아) <span class="yr">(2012)</span> <span class="tag">미니 6집</span></li>
-      <li>AMAZING <span class="yr">(2012)</span> <span class="tag">싱글</span></li>
-      <li>평생 (For KISS Me) <span class="yr">(2011)</span> <span class="tag">싱글</span></li>
-      <li>SOMEDAY <span class="yr">(2011)</span> <span class="tag">싱글</span></li>
-      <li>프로야구 30주년 기념앨범 (유키스 - 오오오) <span class="yr">(2011)</span> <span class="tag">싱글</span></li>
-      <li>NEVERLAND <span class="yr">(2011)</span> <span class="tag">정규 2집</span></li>
-      <li>Bran New KISS <span class="yr">(2011)</span> <span class="tag">미니 5집</span></li>
-      <li>Break Time <span class="yr">(2010)</span> <span class="tag">미니 4집</span></li>
-      <li>도전 히어로 (김수로, 유상철, 유키스 월드컵송) <span class="yr">(2010)</span> <span class="tag">싱글</span></li>
-      <li>뭐라고 <span class="yr">(2010)</span> <span class="tag">싱글</span></li>
-      <li>U-Kiss Only One Album <span class="yr">(2010)</span> <span class="tag">정규 1집</span></li>
-    </ul>
+    <h2 id="albums">디스코그래피</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e0279285abad9a45782c1c8d5a5" alt="" loading="lazy"><span class="sp-tile-t">Money</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/유키스/a/represent/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/54/194/11654194_20241128150406_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">RE:PRESENT</span><span class="sp-tile-n">2024 · 미니</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/유키스/a/letsgetstarted/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/20/304/11520304_20240624165907_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">LET&#39;S GET STARTED</span><span class="sp-tile-n">2024 · 미니 13집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/00/796/11500796_20240529140703_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">아름다워 (Beautiful you are)</span><span class="sp-tile-n">2024 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/75/696/11475696_20240426182810_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">모스부호(Morse code)</span><span class="sp-tile-n">2024 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/14/277/11314277_20230825155946_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">갈래! (The Wonderful Escape) Rock Ver.</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/유키스/a/playlist/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/74/377/11274377_20230705152042_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">PLAY LIST</span><span class="sp-tile-n">2023 · 미니 12집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/22/842/10122842_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">널 맞이할 준비</span><span class="sp-tile-n">2017 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/유키스/a/stalker/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/89/165/2689165_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">STALKER</span><span class="sp-tile-n">2016 · 미니 11집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/유키스/a/always/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/99/613/2299613_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Always</span><span class="sp-tile-n">2015 · 미니 10집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/유키스/a/monoscandal/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/58/937/2258937_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">MONO SCANDAL</span><span class="sp-tile-n">2014 · 미니 9집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/유키스/a/moments/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/13/568/2213568_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Moments</span><span class="sp-tile-n">2013 · 미니 8집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/12/399/2212399_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Mysterious Lady</span><span class="sp-tile-n">2013 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/유키스/a/collage/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/77/335/2177335_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">COLLAGE</span><span class="sp-tile-n">2013 · 정규 3집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/71/257/2171257_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Gangsta Boy</span><span class="sp-tile-n">2012 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/유키스/a/stopgirl/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/50/865/2150865_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Stop Girl</span><span class="sp-tile-n">2012 · 미니 7집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/48/306/2148306_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">CINDERELLA</span><span class="sp-tile-n">2012 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/유키스/a/thespecialtokissme/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/25/958/2125958_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">THE SPECIAL TO KISSME</span><span class="sp-tile-n">2012 · 정규</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/25/717/2125717_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Te Amo</span><span class="sp-tile-n">2012 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/유키스/a/doradora/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/15/086/2115086_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">DORADORA (돌아돌아)</span><span class="sp-tile-n">2012 · 미니 6집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/14/609/2114609_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">AMAZING</span><span class="sp-tile-n">2012 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/020/53/306/2053306_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">평생 (For KISS Me)</span><span class="sp-tile-n">2011 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/020/23/714/2023714_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SOMEDAY</span><span class="sp-tile-n">2011 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/020/22/868/2022868_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">프로야구 30주년 기념앨범 (유키스 - 오오오)</span><span class="sp-tile-n">2011 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/유키스/a/neverland/"><img src="https://cdnimg.melon.co.kr/cm/album/images/020/08/678/2008678_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">NEVERLAND</span><span class="sp-tile-n">2011 · 정규 2집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/유키스/a/brannewkiss/"><img src="https://cdnimg.melon.co.kr/cm/album/images/012/31/054/1231054_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Bran New KISS</span><span class="sp-tile-n">2011 · 미니 5집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/유키스/a/breaktime/"><img src="https://cdnimg.melon.co.kr/cm/album/images/010/30/384/1030384_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Break Time</span><span class="sp-tile-n">2010 · 미니 4집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/009/13/452/913452_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">도전 히어로 (김수로, 유상철, 유키스 월드컵송)</span><span class="sp-tile-n">2010 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/008/76/051/876051_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">뭐라고</span><span class="sp-tile-n">2010 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/유키스/a/ukissonlyonealbum/"><img src="https://cdnimg.melon.co.kr/cm/album/images/007/82/653/782653_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">U-Kiss Only One Album</span><span class="sp-tile-n">2010 · 정규 1집</span></a>
+    </div>
   
     <h2>함께 보면 좋은 그룹</h2>
     <ul class="member-list rel">
@@ -218,7 +217,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/u-kiss/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=유키스">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"0330","s":"영상 36개","img":"O7aFRaKyTfo","m":"0330","h":"https://kpop-universe.kr/g/유키스/s/0330/"},{"k":"멤버 직캠","t":"수현","s":"직캠 23개","img":"8qvUQzHqaLM","h":"https://kpop-universe.kr/g/유키스/수현/fancams/"},{"k":"앨범","t":"RE:PRESENT","s":"수록곡 6곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/116/54/194/11654194_20241128150406_500.jpg","h":"https://kpop-universe.kr/g/유키스/a/represent/"},{"k":"곡별 직캠·무대","t":"갈래! (The Wonderful Escape)","s":"영상 29개","img":"wYh8-6QciGY","m":"갈래!","h":"https://kpop-universe.kr/g/유키스/s/갈래/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"0330","s":"영상 36개","img":"O7aFRaKyTfo","m":"0330","h":"https://kpop-universe.kr/g/유키스/s/0330/"},{"k":"멤버 직캠","t":"수현","s":"직캠 23개","img":"8qvUQzHqaLM","h":"https://kpop-universe.kr/g/유키스/수현/fancams/"},{"k":"앨범","t":"RE:PRESENT","s":"수록곡 6곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/116/54/194/11654194_20241128150406_500.jpg","h":"https://kpop-universe.kr/g/유키스/a/represent/"},{"k":"곡별 직캠·무대","t":"갈래! (The Wonderful Escape)","s":"영상 30개","img":"wYh8-6QciGY","m":"갈래!","h":"https://kpop-universe.kr/g/유키스/s/갈래/"}]</script>
 </div>
 </body>
 </html>

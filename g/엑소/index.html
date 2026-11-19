@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="엑소 직캠·무대 영상 854개를 조회수 순으로(시우민·수호·레이·백현·첸·찬열·도경수·카이·세훈). 엑소 멤버·데뷔일(2012.04.08)·소속사(SM엔터테인먼트). 음악방송 1위 55회, 대상 27개, 밀리언셀러 앨범 1장. 직캠·무대 영상과 디스코그래피를 K-POP UNIVERSE에서.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/cQeeTansp8U/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"엑소","alternateName":"EXO","genre":"K-pop","foundingDate":"2012-04-08","url":"https://kpop-universe.kr/g/엑소/","image":"https://img.youtube.com/vi/cQeeTansp8U/maxresdefault.jpg","member":[{"@type":"Person","name":"시우민"},{"@type":"Person","name":"수호"},{"@type":"Person","name":"레이"},{"@type":"Person","name":"백현"},{"@type":"Person","name":"첸"},{"@type":"Person","name":"찬열"},{"@type":"Person","name":"디오"},{"@type":"Person","name":"카이"},{"@type":"Person","name":"세훈"},{"@type":"Person","name":"루한"},{"@type":"Person","name":"타오"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"엑소","alternateName":"EXO","genre":"K-pop","description":"9인조 보이그룹. SM엔터테인먼트. 2012년 데뷔. 팬덤명 엑소엘. 대표 앨범 REVERXE(2026), EXIST(2023), Hear Me Out(2023).","foundingDate":"2012-04-08","url":"https://kpop-universe.kr/g/엑소/","image":"https://img.youtube.com/vi/cQeeTansp8U/maxresdefault.jpg","member":[{"@type":"Person","name":"시우민"},{"@type":"Person","name":"수호"},{"@type":"Person","name":"레이"},{"@type":"Person","name":"백현"},{"@type":"Person","name":"첸"},{"@type":"Person","name":"찬열"},{"@type":"Person","name":"디오"},{"@type":"Person","name":"카이"},{"@type":"Person","name":"세훈"},{"@type":"Person","name":"루한"},{"@type":"Person","name":"타오"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["이번 주 새 영상 3개","최근 음방 1위 · Crown (2026.02.01)","음방 1위 55회","모아둔 무대·영상 2,299개","가장 많이 본 영상 · 조회수 681M"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
-  <p class="intro">9인조 보이그룹. SM엔터테인먼트. 2012년 데뷔. 팬덤명 엑소엘. 대표 앨범 REVERXE(2026), EXIST(2023), Hear Me Out(2023).</p>
   
     <h2 id="members">멤버</h2>
     <div class="faces">
@@ -115,7 +133,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <a class="face" href="https://kpop-universe.kr/g/엑소/수호/"><span class="face-img"><img class="pf" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/519904fa-d491-4b36-9cf0-7d0ae5e0e44d.jpg#pf" alt="수호" loading="lazy"></span><span class="face-nm">수호</span></a>
       <a class="face" href="https://kpop-universe.kr/g/엑소/레이/"><span class="face-img"><img class="pf" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/0eae2fbf-20db-44dd-96c3-50710e2b2203.jpg#pf" alt="레이" loading="lazy"></span><span class="face-nm">레이</span></a>
       <a class="face" href="https://kpop-universe.kr/g/엑소/백현/"><span class="face-img"><img class="pf" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/ca389903-5feb-4452-9268-db0ec1b6e556.jpg#pf" alt="백현" loading="lazy"></span><span class="face-nm">백현</span></a>
-      <a class="face" href="https://kpop-universe.kr/g/엑소/첸/"><span class="face-img"><img src="https://i.ytimg.com/vi/Ow02FCOMcuI/mqdefault.jpg" alt="첸" loading="lazy"></span><span class="face-nm">첸</span></a>
+      <a class="face" href="https://kpop-universe.kr/g/엑소/첸/"><span class="face-img"><img src="https://i.ytimg.com/vi/u5wszDHbJz8/mqdefault.jpg" alt="첸" loading="lazy"></span><span class="face-nm">첸</span></a>
       <a class="face" href="https://kpop-universe.kr/g/엑소/찬열/"><span class="face-img"><img class="pf" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/560bfbed-8834-4447-b5e6-6833bb42114f.jpg#pf" alt="찬열" loading="lazy"></span><span class="face-nm">찬열</span></a>
       <a class="face" href="https://kpop-universe.kr/g/엑소/디오/"><span class="face-img"><img class="pf" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/9438f2c6-73ca-4659-9a3a-eb3a95255285.jpg#pf" alt="디오" loading="lazy"></span><span class="face-nm">디오</span></a>
       <a class="face" href="https://kpop-universe.kr/g/엑소/카이/"><span class="face-img"><img class="pf" src="https://dukgguehegnembimqvkm.supabase.co/storage/v1/object/public/artist-pics/10b35f01-add4-45d2-8f04-1013cdf568da.jpg#pf" alt="카이" loading="lazy"></span><span class="face-nm">카이</span></a>
@@ -194,117 +212,99 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/엑소/s/monster/">Monster</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/으르렁/">으르렁 (Growl)</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/lovemeright/">LOVE ME RIGHT</a></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/s/brandnew/">Brand New</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/loveshot/">Love Shot</a></li>
+      <li><a href="https://kpop-universe.kr/g/엑소/s/brandnew/">Brand New</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/mama/">MAMA</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/tempo/">Tempo</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/candy/">Candy</a></li>
+      <li><a href="https://kpop-universe.kr/g/엑소/s/callmebaby/">CALL ME BABY</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/늑대와미녀/">늑대와 미녀 (Wolf)</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/psychic/">Psychic</a></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/s/callmebaby/">CALL ME BABY</a></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/s/power/">Power</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/unvillage/">UN Village</a></li>
+      <li><a href="https://kpop-universe.kr/g/엑소/s/power/">Power</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/중독/">중독 (Overdose)</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/kokobop/">Ko Ko Bop</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/花요일/">花요일 (Blooming Day)</a></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/s/exploration/">EXplOration</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/pineappleslice/">Pineapple Slice</a></li>
+      <li><a href="https://kpop-universe.kr/g/엑소/s/exploration/">EXplOration</a></li>
+      <li><a href="https://kpop-universe.kr/g/엑소/s/chocolate/">Chocolate</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/닿은순간/">닿은 순간 (Ooh La La La)</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/obsession/">Obsession</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/전야/">전야</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/history/">History</a></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/s/chocolate/">Chocolate</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/사라지고있어/">사라지고 있어 (Last Scene)</a></li>
+      <li><a href="https://kpop-universe.kr/g/엑소/s/elevator/">Elevator</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/crazy/">Crazy</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/beyond/">Beyond</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/delight/">Delight</a></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/s/elevator/">Elevator</a></li>
+      <li><a href="https://kpop-universe.kr/g/엑소/s/나비소녀/">나비소녀 (Don&#39;t Go)</a></li>
+      <li><a href="https://kpop-universe.kr/g/엑소/s/rendezvous/">Rendez-Vous</a></li>
+      <li><a href="https://kpop-universe.kr/g/엑소/s/12월의기적/">12월의 기적 (Miracles In December)</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/heymama/">Hey Mama!</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/사랑하자/">사랑, 하자</a></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/s/rendezvous/">Rendez-Vous</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/bambi/">Bambi</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/loveagain/">Love Again</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/backitup/">Back It Up</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/whatalife/">What a life</a></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/s/runthis/">Run This</a></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/s/blackpearl/">Black Pearl</a></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/s/12월의기적/">12월의 기적 (Miracles In December)</a></li>
+      <li><a href="https://kpop-universe.kr/g/엑소/s/playboy/">PLAYBOY</a></li>
     </ul>
-    <details class="more-songs"><summary>나머지 17곡 더 보기</summary>
+    <details class="more-songs"><summary>나머지 23곡 더 보기</summary>
     <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/엑소/s/나비소녀/">나비소녀 (Don&#39;t Go)</a></li>
+      <li><a href="https://kpop-universe.kr/g/엑소/s/runthis/">Run This</a></li>
+      <li><a href="https://kpop-universe.kr/g/엑소/s/eldorado/">EL DORADO</a></li>
+      <li><a href="https://kpop-universe.kr/g/엑소/s/blackpearl/">Black Pearl</a></li>
+      <li><a href="https://kpop-universe.kr/g/엑소/s/babydontcry/">Baby, Don&#39;t Cry (인어의 눈물)</a></li>
+      <li><a href="https://kpop-universe.kr/g/엑소/s/lemonade/">Lemonade</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/bungee/">Bungee</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/바래다줄게/">바래다줄게 (Take You Home)</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/gravity/">Gravity</a></li>
+      <li><a href="https://kpop-universe.kr/g/엑소/s/wait/">Wait</a></li>
+      <li><a href="https://kpop-universe.kr/g/엑소/s/오늘도/">오늘도 (Day After Day)</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/내가미쳐/">내가 미쳐 (Going Crazy)</a></li>
+      <li><a href="https://kpop-universe.kr/g/엑소/s/singforyou/">Sing For You</a></li>
+      <li><a href="https://kpop-universe.kr/g/엑소/s/lightsaber/">LIGHTSABER</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/점선면/">점선면 (1 to 3)</a></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/s/lemonade/">Lemonade</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/10억뷰/">10억뷰</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/waitonme/">Wait On Me</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/hearmeout/">Hear Me Out</a></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/s/wait/">Wait</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/psycho/">Psycho</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/다이아몬드/">다이아몬드 (Diamond)</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/theone/">The One</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/greysuit/">Grey Suit</a></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/s/rover/">Rover</a></li>
       <li><a href="https://kpop-universe.kr/g/엑소/s/jopping/">Jopping</a></li>
+      <li><a href="https://kpop-universe.kr/g/엑소/s/rover/">Rover</a></li>
     </ul></details>
   
-    <h2 id="albums">앨범·수록곡</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/엑소/a/reverxe/">REVERXE</a> <span class="yr">2026</span></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/a/exist/">EXIST</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/a/dontfightthefeeling/">DON&#39;T FIGHT THE FEELING</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/a/obsession/">OBSESSION</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/a/loveshotthe5thalbumrepackage/">LOVE SHOT – The 5th Album Repackage</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/a/dontmessupmytempo/">DON&#39;T MESS UP MY TEMPO</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/a/countdown/">COUNTDOWN</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/a/universewinterspecialalbum2017/">Universe – Winter Special Album, 2017</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/a/thepowerofmusic/">The Power of Music</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/a/thewar/">THE WAR</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/a/forlife겨울스페셜앨범2016/">For Life - 겨울 스페셜 앨범, 2016</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/a/lottothe3rdalbumrepackage/">LOTTO - The 3rd Album Repackage</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/a/exact/">EX&#39;ACT</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/a/singforyou겨울스페셜앨범2015/">SING FOR YOU - 겨울 스페셜 앨범, 2015</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/a/lovemerightthe2ndalbumrepackage/">LOVE ME RIGHT - The 2nd Album Repackage</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/a/exodus/">EXODUS</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/a/중독/">중독 (Overdose)</a> <span class="yr">2014</span></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/a/miraclesindecember/">Miracles in December</a> <span class="yr">2013</span></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/a/xoxo/">XOXO (KISS&amp;HUG)</a> <span class="yr">2013</span></li>
-      <li><a href="https://kpop-universe.kr/g/엑소/a/mama/">Mama</a> <span class="yr">2012</span></li>
-    </ul>
-  
-    <h2>디스코그래피</h2>
-    <ul class="discog-list">
-      <li>REVERXE <span class="yr">(2026)</span> <span class="tag">정규 8집</span></li>
-      <li>EXIST <span class="yr">(2023)</span> <span class="tag">정규 7집</span></li>
-      <li>Hear Me Out <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>Let Me In <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>DON&#39;T FIGHT THE FEELING <span class="yr">(2021)</span> <span class="tag">스페셜</span></li>
-      <li>OBSESSION <span class="yr">(2019)</span> <span class="tag">정규 6집</span></li>
-      <li>BIRD <span class="yr">(2019)</span> <span class="tag">싱글</span></li>
-      <li>LOVE SHOT – The 5th Album Repackage <span class="yr">(2018)</span> <span class="tag">리패키지</span></li>
-      <li>DON&#39;T MESS UP MY TEMPO <span class="yr">(2018)</span> <span class="tag">정규 5집</span></li>
-      <li>COUNTDOWN <span class="yr">(2018)</span> <span class="tag">정규</span></li>
-      <li>Universe – Winter Special Album, 2017 <span class="yr">(2017)</span> <span class="tag">정규</span></li>
-      <li>The Power of Music <span class="yr">(2017)</span> <span class="tag">리패키지</span></li>
-      <li>THE WAR <span class="yr">(2017)</span> <span class="tag">정규 4집</span></li>
-      <li>Coming Over <span class="yr">(2017)</span> <span class="tag">싱글</span></li>
-      <li>For Life - 겨울 스페셜 앨범, 2016 <span class="yr">(2016)</span> <span class="tag">스페셜</span></li>
-      <li>LOTTO - The 3rd Album Repackage <span class="yr">(2016)</span> <span class="tag">리패키지</span></li>
-      <li>EX&#39;ACT <span class="yr">(2016)</span> <span class="tag">정규 3집</span></li>
-      <li>LIGHTSABER (Japanese Ver.) <span class="yr">(2016)</span> <span class="tag">싱글</span></li>
-      <li>SING FOR YOU - 겨울 스페셜 앨범, 2015 <span class="yr">(2015)</span> <span class="tag">스페셜</span></li>
-      <li>Love Me Right ~Romantic Universe~ <span class="yr">(2015)</span> <span class="tag">싱글</span></li>
-      <li>LIGHTSABER <span class="yr">(2015)</span> <span class="tag">싱글</span></li>
-      <li>LOVE ME RIGHT - The 2nd Album Repackage <span class="yr">(2015)</span> <span class="tag">리패키지</span></li>
-      <li>EXODUS <span class="yr">(2015)</span> <span class="tag">정규 2집</span></li>
-      <li>중독 (Overdose) <span class="yr">(2014)</span> <span class="tag">미니 2집</span></li>
-      <li>Miracles in December <span class="yr">(2013)</span> <span class="tag">스페셜</span></li>
-      <li>XOXO (KISS&amp;HUG) <span class="yr">(2013)</span> <span class="tag">정규 1집</span></li>
-      <li>Mama <span class="yr">(2012)</span> <span class="tag">미니 1집</span></li>
-    </ul>
+    <h2 id="albums">디스코그래피</h2>
+    <div class="sp-tiles dg-tiles">
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엑소/a/reverxe/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/124/38/632/12438632_20260119095249_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">REVERXE</span><span class="sp-tile-n">2026 · 정규 8집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엑소/a/exist/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/62/317/11262317_20230710172603_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">EXIST</span><span class="sp-tile-n">2023 · 정규 7집</span></a>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02d0f0f4d4e7aa3012151edefa" alt="" loading="lazy"><span class="sp-tile-t">Hear Me Out</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02d524dec6220e41c596125857" alt="" loading="lazy"><span class="sp-tile-t">Let Me In</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엑소/a/dontfightthefeeling/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/21/353/10621353_20210607151038_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">DON&#39;T FIGHT THE FEELING</span><span class="sp-tile-n">2021 · 스페셜</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엑소/a/obsession/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/57/878/10357878_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">OBSESSION</span><span class="sp-tile-n">2019 · 정규 6집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/38/374/10338374_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BIRD</span><span class="sp-tile-n">2019 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엑소/a/loveshotthe5thalbumrepackage/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/32/781/10232781_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">LOVE SHOT – The 5th Album Repackage</span><span class="sp-tile-n">2018 · 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엑소/a/dontmessupmytempo/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/18/750/10218750_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">DON&#39;T MESS UP MY TEMPO</span><span class="sp-tile-n">2018 · 정규 5집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엑소/a/countdown/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/39/591/10139591_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">COUNTDOWN</span><span class="sp-tile-n">2018 · 정규</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엑소/a/universewinterspecialalbum2017/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/22/917/10122917_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Universe – Winter Special Album, 2017</span><span class="sp-tile-n">2017 · 정규</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엑소/a/thepowerofmusic/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/93/773/10093773_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">The Power of Music</span><span class="sp-tile-n">2017 · 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엑소/a/thewar/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/80/589/10080589_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">THE WAR</span><span class="sp-tile-n">2017 · 정규 4집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/28/274/10028274_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Coming Over</span><span class="sp-tile-n">2017 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엑소/a/forlife겨울스페셜앨범2016/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/24/125/10024125_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">For Life - 겨울 스페셜 앨범, 2016</span><span class="sp-tile-n">2016 · 스페셜</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엑소/a/lottothe3rdalbumrepackage/"><img src="https://cdnimg.melon.co.kr/cm/album/images/027/04/940/2704940_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">LOTTO - The 3rd Album Repackage</span><span class="sp-tile-n">2016 · 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엑소/a/exact/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/89/855/2689855_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">EX&#39;ACT</span><span class="sp-tile-n">2016 · 정규 3집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/62/696/2662696_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">LIGHTSABER (Japanese Ver.)</span><span class="sp-tile-n">2016 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엑소/a/singforyou겨울스페셜앨범2015/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/55/828/2655828_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SING FOR YOU - 겨울 스페셜 앨범, 2015</span><span class="sp-tile-n">2015 · 스페셜</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/51/256/2651256_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Love Me Right ~Romantic Universe~</span><span class="sp-tile-n">2015 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/50/063/2650063_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">LIGHTSABER</span><span class="sp-tile-n">2015 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엑소/a/lovemerightthe2ndalbumrepackage/"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/21/827/2321827_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">LOVE ME RIGHT - The 2nd Album Repackage</span><span class="sp-tile-n">2015 · 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엑소/a/exodus/"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/11/397/2311397_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">EXODUS</span><span class="sp-tile-n">2015 · 정규 2집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엑소/a/중독/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/54/734/2254734_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">중독 (Overdose)</span><span class="sp-tile-n">2014 · 미니 2집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엑소/a/miraclesindecember/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/19/671/2219671_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Miracles in December</span><span class="sp-tile-n">2013 · 스페셜</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엑소/a/xoxo/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/87/253/2187253_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">XOXO (KISS&amp;HUG)</span><span class="sp-tile-n">2013 · 정규 1집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엑소/a/mama/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/08/026/2108026_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Mama</span><span class="sp-tile-n">2012 · 미니 1집</span></a>
+    </div>
   
     <h2>함께 보면 좋은 그룹</h2>
     <ul class="member-list rel">
@@ -319,7 +319,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/exo/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=엑소">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"Crown","s":"영상 49개","img":"BWfKkqo1Mk8","m":"Crown","h":"https://kpop-universe.kr/g/엑소/s/crown/"},{"k":"멤버 직캠","t":"백현","s":"직캠 217개","img":"4owpEFKevVM","h":"https://kpop-universe.kr/g/엑소/백현/fancams/"},{"k":"앨범","t":"REVERXE","s":"수록곡 9곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/124/38/632/12438632_20260119095249_500.jpg","h":"https://kpop-universe.kr/g/엑소/a/reverxe/"},{"k":"곡별 직캠·무대","t":"Cream Soda","s":"영상 49개","img":"zomvO2Ii-kA","m":"Cream Soda","h":"https://kpop-universe.kr/g/엑소/s/creamsoda/"},{"k":"멤버 직캠","t":"시우민","s":"직캠 174개","img":"2kROZyt8gi0","h":"https://kpop-universe.kr/g/엑소/시우민/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"Crown","s":"영상 51개","img":"BWfKkqo1Mk8","m":"Crown","h":"https://kpop-universe.kr/g/엑소/s/crown/"},{"k":"멤버 직캠","t":"백현","s":"직캠 217개","img":"4owpEFKevVM","h":"https://kpop-universe.kr/g/엑소/백현/fancams/"},{"k":"앨범","t":"REVERXE","s":"수록곡 9곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/124/38/632/12438632_20260119095249_500.jpg","h":"https://kpop-universe.kr/g/엑소/a/reverxe/"},{"k":"곡별 직캠·무대","t":"Cream Soda","s":"영상 49개","img":"zomvO2Ii-kA","m":"Cream Soda","h":"https://kpop-universe.kr/g/엑소/s/creamsoda/"},{"k":"멤버 직캠","t":"시우민","s":"직캠 174개","img":"2kROZyt8gi0","h":"https://kpop-universe.kr/g/엑소/시우민/fancams/"}]</script>
 </div>
 </body>
 </html>

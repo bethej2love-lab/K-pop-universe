@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="1221 KickFlip fancams and stages, most viewed first (Gyehun, Amaru, Donghwa, Juwang, Minje, Keiju, Donghyun). KickFlip: members, debut 2025.01.20, JYP Entertainment. 7 music show wins. Fancams, stages and discography on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/D_rKgpTkaMw/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"KickFlip","alternateName":"킥플립","genre":"K-pop","foundingDate":"2025-01-20","url":"https://kpop-universe.kr/en/g/kickflip/","image":"https://img.youtube.com/vi/D_rKgpTkaMw/maxresdefault.jpg","member":[{"@type":"Person","name":"Gyehun"},{"@type":"Person","name":"Amaru"},{"@type":"Person","name":"Donghwa"},{"@type":"Person","name":"Juwang"},{"@type":"Person","name":"Minje"},{"@type":"Person","name":"Keiju"},{"@type":"Person","name":"Donghyun"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"KickFlip","alternateName":"킥플립","genre":"K-pop","description":"KickFlip is a 7-member K-pop boy group under JYP Entertainment, debuting in 2025. Fan club: WeFlip. Recent releases: KICK OFF THE WALL Pt. 1 (2026), Everyday, Everynight (Youth of Revelation X KickFlip) (Original Webtoon Soundtrack) (2026), My First Kick (2026).","foundingDate":"2025-01-20","url":"https://kpop-universe.kr/en/g/kickflip/","image":"https://img.youtube.com/vi/D_rKgpTkaMw/maxresdefault.jpg","member":[{"@type":"Person","name":"Gyehun"},{"@type":"Person","name":"Amaru"},{"@type":"Person","name":"Donghwa"},{"@type":"Person","name":"Juwang"},{"@type":"Person","name":"Minje"},{"@type":"Person","name":"Keiju"},{"@type":"Person","name":"Donghyun"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -104,10 +123,9 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>Fandom</b> WeFlip</span>
     </div>
     <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/channel/UCmq9jjpHA69PwAwlA0DwOsg" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://www.instagram.com/kickflip_jype" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/kickflip_jype" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://www.tiktok.com/@kickflip_jype" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-namu" href="https://namu.wiki/w/KickFlip" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
-    <script type="application/json" id="kpu-facts">["6 new videos this week","Latest music show win · 미완성 (Puzzle Piece) (2026.10.16)","7 music show wins","2,206 stages & videos collected","Most viewed · 28M views"]</script>
+    <script type="application/json" id="kpu-facts">["4 new videos this week","Latest music show win · 미완성 (Puzzle Piece) (2026.10.16)","7 music show wins","2,206 stages & videos collected","Most viewed · 28M views"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
-  <p class="intro">KickFlip is a 7-member K-pop boy group under JYP Entertainment, debuting in 2025. Fan club: WeFlip. Recent releases: KICK OFF THE WALL Pt. 1 (2026), Everyday, Everynight (Youth of Revelation X KickFlip) (Original Webtoon Soundtrack) (2026), My First Kick (2026).</p>
   
     <h2 id="members">Members</h2>
     <div class="faces">
@@ -137,8 +155,8 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <h2 id="songs">Fancams & stages by song</h2>
     <ul class="member-list rel">
       <li><a href="https://kpop-universe.kr/en/g/kickflip/s/처음불러보는노래/">처음 불러보는 노래 My First Love Song</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/kickflip/s/눈에거슬리고싶어/">눈에 거슬리고 싶어 Eye-Poppin&#39;</a></li>
       <li><a href="https://kpop-universe.kr/en/g/kickflip/s/mamasaid/">Mama Said</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/kickflip/s/눈에거슬리고싶어/">눈에 거슬리고 싶어 Eye-Poppin&#39;</a></li>
       <li><a href="https://kpop-universe.kr/en/g/kickflip/s/freeze/">FREEZE</a></li>
       <li><a href="https://kpop-universe.kr/en/g/kickflip/s/kickoffthewall/">Kick Off The Wall</a></li>
       <li><a href="https://kpop-universe.kr/en/g/kickflip/s/미완성/">미완성 (Puzzle Piece)</a></li>
@@ -160,26 +178,17 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/kickflip/s/내일에서만나/">내일에서 만나 See You On Tomorrow</a></li>
     </ul>
   
-    <h2 id="albums">Albums & tracklists</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/kickflip/a/kickoffthewallpt1/">KICK OFF THE WALL Pt. 1</a> <span class="yr">2026</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/kickflip/a/myfirstkick/">My First Kick</a> <span class="yr">2026</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/kickflip/a/myfirstflip/">My First Flip</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/kickflip/a/kickoutflipnow/">Kick Out, Flip Now!</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/kickflip/a/flipitkickit/">Flip it, Kick it!</a> <span class="yr">2025</span></li>
-    </ul>
-  
-    <h2>Discography</h2>
-    <ul class="discog-list">
-      <li>KICK OFF THE WALL Pt. 1 <span class="yr">(2026)</span> <span class="tag">5th EP</span></li>
-      <li>Everyday, Everynight (Youth of Revelation X KickFlip) (Original Webtoon Soundtrack) <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>My First Kick <span class="yr">(2026)</span> <span class="tag">4th EP</span></li>
-      <li>Twenty <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>To My Beloved Thief, Pt. 2 (Original Soundtrack) <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>My First Flip <span class="yr">(2025)</span> <span class="tag">3rd EP</span></li>
-      <li>Kick Out, Flip Now! <span class="yr">(2025)</span> <span class="tag">2nd EP</span></li>
-      <li>Flip it, Kick it! <span class="yr">(2025)</span> <span class="tag">1st EP</span></li>
-    </ul>
+    <h2 id="albums">Discography</h2>
+    <div class="sp-tiles dg-tiles">
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/kickflip/a/kickoffthewallpt1/"><img src="https://i.scdn.co/image/ab67616d00001e0252b7e00ea6f769c1de818b73" alt="" loading="lazy"><span class="sp-tile-t">KICK OFF THE WALL Pt. 1</span><span class="sp-tile-n">2026 · 5th EP</span></a>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02e759852ce3cb8045940115f6" alt="" loading="lazy"><span class="sp-tile-t">Everyday, Everynight (Youth of Revelation X KickFlip) (Original Webtoon Soundtrack)</span><span class="sp-tile-n">2026 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/kickflip/a/myfirstkick/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/32/50/a9/3250a985-8f85-7494-908a-086c552b18d8/8809928958071_Cover.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">My First Kick</span><span class="sp-tile-n">2026 · 4th EP</span></a>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02667ae57a04fc60f91a2bfea2" alt="" loading="lazy"><span class="sp-tile-t">Twenty</span><span class="sp-tile-n">2026 · Single</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02e2d8c054c0f2094346cb84f5" alt="" loading="lazy"><span class="sp-tile-t">To My Beloved Thief, Pt. 2 (Original Soundtrack)</span><span class="sp-tile-n">2026 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/kickflip/a/myfirstflip/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/74/7b/ab/747bab11-0bb6-cf96-5724-47b0af9be6a7/8809928954554_Cover.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">My First Flip</span><span class="sp-tile-n">2025 · 3rd EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/kickflip/a/kickoutflipnow/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/14/10/bf/1410bfce-fa69-8841-e433-ca616776de08/8809928953090_Cover.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Kick Out, Flip Now!</span><span class="sp-tile-n">2025 · 2nd EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/kickflip/a/flipitkickit/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/1b/6c/74/1b6c74ef-92d7-9a32-2a8e-6676e0bb9b39/8809928953663_Cover.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Flip it, Kick it!</span><span class="sp-tile-n">2025 · 1st EP</span></a>
+    </div>
   
     <h2>Related groups</h2>
     <ul class="member-list rel">
@@ -194,7 +203,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/킥플립/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=킥플립">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"처음 불러보는 노래 My First Love Song","s":"164 videos","img":"eebhl4lGv_Y","m":"처음 불러보는 노래","h":"https://kpop-universe.kr/en/g/kickflip/s/처음불러보는노래/"},{"k":"Member fancams","t":"Gyehun","s":"138 fancams","img":"4FGNWM1rLb8","h":"https://kpop-universe.kr/en/g/kickflip/gyehun/fancams/"},{"k":"Album","t":"KICK OFF THE WALL Pt. 1","s":"8 tracks","im":"https://i.scdn.co/image/ab67616d0000b27352b7e00ea6f769c1de818b73","h":"https://kpop-universe.kr/en/g/kickflip/a/kickoffthewallpt1/"},{"k":"Song fancams","t":"눈에 거슬리고 싶어 Eye-Poppin'","s":"158 videos","img":"i5S7DBQnqP0","m":"눈에 거슬리고 싶어","h":"https://kpop-universe.kr/en/g/kickflip/s/눈에거슬리고싶어/"},{"k":"Member fancams","t":"Donghwa","s":"136 fancams","img":"Ui1eCV289ws","h":"https://kpop-universe.kr/en/g/kickflip/donghwa/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"처음 불러보는 노래 My First Love Song","s":"171 videos","img":"eebhl4lGv_Y","m":"처음 불러보는 노래","h":"https://kpop-universe.kr/en/g/kickflip/s/처음불러보는노래/"},{"k":"Member fancams","t":"Gyehun","s":"138 fancams","img":"4FGNWM1rLb8","h":"https://kpop-universe.kr/en/g/kickflip/gyehun/fancams/"},{"k":"Album","t":"KICK OFF THE WALL Pt. 1","s":"8 tracks","im":"https://i.scdn.co/image/ab67616d0000b27352b7e00ea6f769c1de818b73","h":"https://kpop-universe.kr/en/g/kickflip/a/kickoffthewallpt1/"},{"k":"Song fancams","t":"Mama Said","s":"168 videos","img":"JY0UTOgh8M8","m":"Mama Said","h":"https://kpop-universe.kr/en/g/kickflip/s/mamasaid/"},{"k":"Member fancams","t":"Donghwa","s":"136 fancams","img":"Ui1eCV289ws","h":"https://kpop-universe.kr/en/g/kickflip/donghwa/fancams/"}]</script>
 </div>
 </body>
 </html>

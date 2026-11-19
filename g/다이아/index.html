@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="다이아 직캠·무대 영상 248개를 조회수 순으로. 다이아 멤버·데뷔일(2015.09.14)·소속사(포켓돌스튜디오). 음악방송 1위 1회. 직캠·무대 영상과 디스코그래피를 K-POP UNIVERSE에서.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/u8GVmBCwIzg/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"다이아","alternateName":"DIA","genre":"K-pop","foundingDate":"2015-09-14","url":"https://kpop-universe.kr/g/다이아/","image":"https://img.youtube.com/vi/u8GVmBCwIzg/maxresdefault.jpg","member":[{"@type":"Person","name":"정채연"},{"@type":"Person","name":"유니스"},{"@type":"Person","name":"주은"},{"@type":"Person","name":"기희현"},{"@type":"Person","name":"은채"},{"@type":"Person","name":"이소율"},{"@type":"Person","name":"안솜이"},{"@type":"Person","name":"안은진"},{"@type":"Person","name":"백예빈"},{"@type":"Person","name":"승희"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"다이아","alternateName":"DIA","genre":"K-pop","description":"5인조 걸그룹. 포켓돌스튜디오. 2015년 데뷔. 팬덤명 에이드. 대표 앨범 Rooting for you(2022), Flower 4 Seasons(2020), NEWTRO(2019).","foundingDate":"2015-09-14","url":"https://kpop-universe.kr/g/다이아/","image":"https://img.youtube.com/vi/u8GVmBCwIzg/maxresdefault.jpg","member":[{"@type":"Person","name":"정채연"},{"@type":"Person","name":"유니스"},{"@type":"Person","name":"주은"},{"@type":"Person","name":"기희현"},{"@type":"Person","name":"은채"},{"@type":"Person","name":"이소율"},{"@type":"Person","name":"안솜이"},{"@type":"Person","name":"안은진"},{"@type":"Person","name":"백예빈"},{"@type":"Person","name":"승희"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["최근 음방 1위 · WooWoo (2018.08.14)","모아둔 무대·영상 470개","가장 많이 본 영상 · 조회수 7.4M"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
-  <p class="intro">5인조 걸그룹. 포켓돌스튜디오. 2015년 데뷔. 팬덤명 에이드. 대표 앨범 Rooting for you(2022), Flower 4 Seasons(2020), NEWTRO(2019).</p>
   
     <h2 id="members">멤버</h2>
     <div class="faces">
@@ -140,43 +158,29 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/다이아/s/우우/">우우 (WooWoo)</a></li>
       <li><a href="https://kpop-universe.kr/g/다이아/s/듣고싶어/">듣고싶어 (E905)</a></li>
       <li><a href="https://kpop-universe.kr/g/다이아/s/굿밤/">굿밤 (Good Night)</a></li>
-      <li><a href="https://kpop-universe.kr/g/다이아/s/mrpotter/">Mr. Potter</a></li>
       <li><a href="https://kpop-universe.kr/g/다이아/s/왠지/">왠지 (Somehow)</a></li>
+      <li><a href="https://kpop-universe.kr/g/다이아/s/mrpotter/">Mr. Potter</a></li>
       <li><a href="https://kpop-universe.kr/g/다이아/s/아무도몰래/">아무도 몰래</a></li>
       <li><a href="https://kpop-universe.kr/g/다이아/s/easybreezy/">Easy Breezy</a></li>
       <li><a href="https://kpop-universe.kr/g/다이아/s/그길에서/">그 길에서</a></li>
       <li><a href="https://kpop-universe.kr/g/다이아/s/1234/">1,2,3,4</a></li>
     </ul>
   
-    <h2 id="albums">앨범·수록곡</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/다이아/a/flower4seasons/">Flower 4 Seasons</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/g/다이아/a/newtro/">NEWTRO</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/g/다이아/a/summerade/">Summer Ade</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/다이아/a/선물/">선물</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/다이아/a/lovegeneration/">LOVE GENERATION</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/다이아/a/stardust/">Stardust</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/다이아/a/yolo/">YOLO</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/다이아/a/spell/">Spell</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/g/다이아/a/happyending/">HAPPY ENDING</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/g/다이아/a/doitamazing/">Do It Amazing</a> <span class="yr">2015</span></li>
-    </ul>
-  
-    <h2>디스코그래피</h2>
-    <ul class="discog-list">
-      <li>Rooting for you <span class="yr">(2022)</span> <span class="tag">싱글</span></li>
-      <li>Flower 4 Seasons <span class="yr">(2020)</span> <span class="tag">미니 6집</span></li>
-      <li>NEWTRO <span class="yr">(2019)</span> <span class="tag">미니 5집</span></li>
-      <li>Summer Ade <span class="yr">(2018)</span> <span class="tag">미니 4집</span></li>
-      <li>선물 <span class="yr">(2017)</span> <span class="tag">스페셜</span></li>
-      <li>LOVE GENERATION <span class="yr">(2017)</span> <span class="tag">미니 3집</span></li>
-      <li>Stardust <span class="yr">(2017)</span> <span class="tag">정규 3집</span></li>
-      <li>YOLO <span class="yr">(2017)</span> <span class="tag">정규 2집</span></li>
-      <li>Spell <span class="yr">(2016)</span> <span class="tag">미니 2집</span></li>
-      <li>HAPPY ENDING <span class="yr">(2016)</span> <span class="tag">미니 1집</span></li>
-      <li>내 친구의 남자친구 <span class="yr">(2015)</span> <span class="tag">싱글</span></li>
-      <li>Do It Amazing <span class="yr">(2015)</span> <span class="tag">정규 1집</span></li>
-    </ul>
+    <h2 id="albums">디스코그래피</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/53/746/11053746_20220913190147_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Rooting for you</span><span class="sp-tile-n">2022 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/다이아/a/flower4seasons/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/08/0e/08/080e0864-a816-d5c7-4200-98913d056958/8804775144905.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Flower 4 Seasons</span><span class="sp-tile-n">2020 · 미니 6집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/다이아/a/newtro/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ae/c0/d6/aec0d63c-a122-469c-76cb-69aeb350cb62/cover_KM0008222_1.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">NEWTRO</span><span class="sp-tile-n">2019 · 미니 5집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/다이아/a/summerade/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/af/14/6c/af146c47-0466-af1c-4e2e-0629c0406cf7/cover_KM0021090_1.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Summer Ade</span><span class="sp-tile-n">2018 · 미니 4집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/다이아/a/선물/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/01/535/10101535_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">선물</span><span class="sp-tile-n">2017 · 스페셜</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/다이아/a/lovegeneration/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/09/bb/21/09bb215b-bb8f-b402-9a10-27e184438ac8/cover_KM0021030_1.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">LOVE GENERATION</span><span class="sp-tile-n">2017 · 미니 3집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/다이아/a/stardust/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music117/v4/d3/a7/d7/d3a7d7c4-23b6-acd5-9404-0dcf2f6d021f/8809380635848.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Stardust</span><span class="sp-tile-n">2017 · 정규 3집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/다이아/a/yolo/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/56/227/10056227_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">YOLO</span><span class="sp-tile-n">2017 · 정규 2집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/다이아/a/spell/"><img src="https://cdnimg.melon.co.kr/cm/album/images/027/10/969/2710969_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Spell</span><span class="sp-tile-n">2016 · 미니 2집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/다이아/a/happyending/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ee/39/8a/ee398aa7-2ec3-9c10-36ce-54cda83750a9/cover_KM0021015_1.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">HAPPY ENDING</span><span class="sp-tile-n">2016 · 미니 1집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/45/645/2645645_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">내 친구의 남자친구</span><span class="sp-tile-n">2015 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/다이아/a/doitamazing/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/12/eb/88/12eb88e6-2bd1-cb54-e32e-72f4bd02740a/cover_KM0020999_1.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Do It Amazing</span><span class="sp-tile-n">2015 · 정규 1집</span></a>
+    </div>
   
     <h2>함께 보면 좋은 그룹</h2>
     <ul class="member-list rel">

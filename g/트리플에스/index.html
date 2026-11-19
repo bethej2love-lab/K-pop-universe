@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="트리플에스 직캠·무대 영상 1361개를 조회수 순으로(윤서연·정혜린·이지우·김채연·김유연·김수민·김나경·공유빈·카에데·서다현·코토네·곽연지·니엔·박소현·신위·마유·린·주빈·정하연·박시온·김채원·설린·서아·지연). 트리플에스 멤버·데뷔일(2023.02.13)·소속사(Modhaus). 음악방송 1위 6회. 직캠·무대 영상과 디스코그래피를 K-POP UNIVERSE에서.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/dNOghipqkqE/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"트리플에스","alternateName":"tripleS","genre":"K-pop","foundingDate":"2023-02-13","url":"https://kpop-universe.kr/g/트리플에스/","image":"https://img.youtube.com/vi/dNOghipqkqE/maxresdefault.jpg","member":[{"@type":"Person","name":"윤서연"},{"@type":"Person","name":"정혜린"},{"@type":"Person","name":"이지우"},{"@type":"Person","name":"김채연"},{"@type":"Person","name":"김유연"},{"@type":"Person","name":"김수민"},{"@type":"Person","name":"김나경"},{"@type":"Person","name":"공유빈"},{"@type":"Person","name":"카에데"},{"@type":"Person","name":"서다현"},{"@type":"Person","name":"코토네"},{"@type":"Person","name":"곽연지"},{"@type":"Person","name":"니엔"},{"@type":"Person","name":"박소현"},{"@type":"Person","name":"신위"},{"@type":"Person","name":"마유"},{"@type":"Person","name":"린"},{"@type":"Person","name":"주빈"},{"@type":"Person","name":"정하연"},{"@type":"Person","name":"박시온"},{"@type":"Person","name":"김채원"},{"@type":"Person","name":"설린"},{"@type":"Person","name":"서아"},{"@type":"Person","name":"지연"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"트리플에스","alternateName":"tripleS","genre":"K-pop","description":"24인조 걸그룹. Modhaus. 2023년 데뷔. 팬덤명 웨이브. 대표 앨범 <I Want You To Know>(2026), See You(2026), <LOVE&POP> pt.2(2026).","foundingDate":"2023-02-13","url":"https://kpop-universe.kr/g/트리플에스/","image":"https://img.youtube.com/vi/dNOghipqkqE/maxresdefault.jpg","member":[{"@type":"Person","name":"윤서연"},{"@type":"Person","name":"정혜린"},{"@type":"Person","name":"이지우"},{"@type":"Person","name":"김채연"},{"@type":"Person","name":"김유연"},{"@type":"Person","name":"김수민"},{"@type":"Person","name":"김나경"},{"@type":"Person","name":"공유빈"},{"@type":"Person","name":"카에데"},{"@type":"Person","name":"서다현"},{"@type":"Person","name":"코토네"},{"@type":"Person","name":"곽연지"},{"@type":"Person","name":"니엔"},{"@type":"Person","name":"박소현"},{"@type":"Person","name":"신위"},{"@type":"Person","name":"마유"},{"@type":"Person","name":"린"},{"@type":"Person","name":"주빈"},{"@type":"Person","name":"정하연"},{"@type":"Person","name":"박시온"},{"@type":"Person","name":"김채원"},{"@type":"Person","name":"설린"},{"@type":"Person","name":"서아"},{"@type":"Person","name":"지연"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -104,10 +123,9 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>팬덤명</b> 웨이브</span>
     </div>
     <div class="sns"><a class="sns-youtube" href="https://youtube.com/@triplescosmos" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://instagram.com/triplescosmos" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/triplescosmos" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://tiktok.com/@triplescosmos" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-namu" href="https://namu.wiki/w/tripleS" target="_blank" rel="noopener noreferrer">나무위키</a></div>
-    <script type="application/json" id="kpu-facts">["이번 주 새 영상 9개","최근 음방 1위 · Baby Flower (2026.06.12)","음방 1위 6회","모아둔 무대·영상 3,834개","가장 많이 본 영상 · 조회수 46M"]</script>
+    <script type="application/json" id="kpu-facts">["이번 주 새 영상 8개","최근 음방 1위 · Baby Flower (2026.06.12)","음방 1위 6회","모아둔 무대·영상 3,834개","가장 많이 본 영상 · 조회수 46M"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
-  <p class="intro">24인조 걸그룹. Modhaus. 2023년 데뷔. 팬덤명 웨이브. 대표 앨범 &lt;I Want You To Know&gt;(2026), See You(2026), &lt;LOVE&amp;POP&gt; pt.2(2026).</p>
   
     <h2 id="members">멤버</h2>
     <div class="faces">
@@ -164,27 +182,27 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/트리플에스/s/generation/">Generation</a></li>
       <li><a href="https://kpop-universe.kr/g/트리플에스/s/door/">Door</a></li>
       <li><a href="https://kpop-universe.kr/g/트리플에스/s/andless/">Andless</a></li>
-      <li><a href="https://kpop-universe.kr/g/트리플에스/s/girlscapitalism/">Girls’ Capitalism</a></li>
-      <li><a href="https://kpop-universe.kr/g/트리플에스/s/sadgirlsschemin/">Sad Girls Schemin&#39;</a></li>
       <li><a href="https://kpop-universe.kr/g/트리플에스/s/cameolove/">Cameo Love</a></li>
+      <li><a href="https://kpop-universe.kr/g/트리플에스/s/sadgirlsschemin/">Sad Girls Schemin&#39;</a></li>
+      <li><a href="https://kpop-universe.kr/g/트리플에스/s/girlscapitalism/">Girls’ Capitalism</a></li>
       <li><a href="https://kpop-universe.kr/g/트리플에스/s/choom/">Choom</a></li>
       <li><a href="https://kpop-universe.kr/g/트리플에스/s/flyup/">Fly Up</a></li>
       <li><a href="https://kpop-universe.kr/g/트리플에스/s/bubblegumgirl/">Bubble Gum Girl</a></li>
       <li><a href="https://kpop-universe.kr/g/트리플에스/s/추리소설/">추리소설 (Detective Soseol)</a></li>
       <li><a href="https://kpop-universe.kr/g/트리플에스/s/qa/">Q&amp;A</a></li>
-      <li><a href="https://kpop-universe.kr/g/트리플에스/s/colorful/">Colorful</a></li>
       <li><a href="https://kpop-universe.kr/g/트리플에스/s/nonscale/">Non Scale</a></li>
+      <li><a href="https://kpop-universe.kr/g/트리플에스/s/colorful/">Colorful</a></li>
       <li><a href="https://kpop-universe.kr/g/트리플에스/s/beam/">Beam</a></li>
       <li><a href="https://kpop-universe.kr/g/트리플에스/s/diablo/">Diablo</a></li>
-      <li><a href="https://kpop-universe.kr/g/트리플에스/s/24/">24</a></li>
-      <li><a href="https://kpop-universe.kr/g/트리플에스/s/justdoit/">Just Do It</a></li>
-      <li><a href="https://kpop-universe.kr/g/트리플에스/s/blacksouldress/">Black Soul Dress</a></li>
       <li><a href="https://kpop-universe.kr/g/트리플에스/s/love2love/">Love2Love</a></li>
+      <li><a href="https://kpop-universe.kr/g/트리플에스/s/24/">24</a></li>
+      <li><a href="https://kpop-universe.kr/g/트리플에스/s/blacksouldress/">Black Soul Dress</a></li>
+      <li><a href="https://kpop-universe.kr/g/트리플에스/s/justdoit/">Just Do It</a></li>
+      <li><a href="https://kpop-universe.kr/g/트리플에스/s/whitesoulsneakers/">White Soul Sneakers</a></li>
       <li><a href="https://kpop-universe.kr/g/트리플에스/s/복합성/">복합성 (Complexity)</a></li>
       <li><a href="https://kpop-universe.kr/g/트리플에스/s/newlook/">New Look</a></li>
       <li><a href="https://kpop-universe.kr/g/트리플에스/s/password/">Password</a></li>
       <li><a href="https://kpop-universe.kr/g/트리플에스/s/bionicpower/">Bionic Power</a></li>
-      <li><a href="https://kpop-universe.kr/g/트리플에스/s/whitesoulsneakers/">White Soul Sneakers</a></li>
       <li><a href="https://kpop-universe.kr/g/트리플에스/s/찰나/">찰나 (Charla)</a></li>
       <li><a href="https://kpop-universe.kr/g/트리플에스/s/worldwildwomen/">World Wild Women</a></li>
       <li><a href="https://kpop-universe.kr/g/트리플에스/s/crybaby/">Cry Baby</a></li>
@@ -197,47 +215,39 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/트리플에스/s/untitled/">Untitled</a></li>
     </ul></details>
   
-    <h2 id="albums">앨범·수록곡</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/트리플에스/a/lovepoppt1/">&lt;LOVE&amp;POP&gt; pt.1</a> <span class="yr">2026</span></li>
-      <li><a href="https://kpop-universe.kr/g/트리플에스/a/assemble25/">ASSEMBLE25</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/g/트리플에스/a/assemble24/">ASSEMBLE24</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/g/트리플에스/a/assemble/">ASSEMBLE</a> <span class="yr">2023</span></li>
-    </ul>
-  
-    <h2>디스코그래피</h2>
-    <ul class="discog-list">
-      <li>&lt;I Want You To Know&gt; <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>See You <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>&lt;LOVE&amp;POP&gt; pt.2 <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>Welcome to Heaven <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>&lt;DNA&gt; <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>&lt;World Wild Women&gt; <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>Dream Dress <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>Baby Flower Japanese Version <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>&lt;LOVE&amp;POP&gt; pt.1 <span class="yr">(2026)</span> <span class="tag">정규 3집</span></li>
-      <li>Tokimetique <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>msnz &lt;Beyond Beauty&gt; <span class="yr">(2025)</span> <span class="tag">msnz 미니 1집</span></li>
-      <li>tripleS ∞! ＜SecretHimitsuBimil＞ <span class="yr">(2025)</span> <span class="tag">∞! 정규 1집</span></li>
-      <li>tripleS ∞! ＜Password＞ <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>ASSEMBLE25 <span class="yr">(2025)</span> <span class="tag">정규 2집</span></li>
-      <li>Girls Never Die -Japanese Version- <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>Rising -Japanese Version- <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>Friendly Rivalry (Music from the U+ Original Series), Pt. 4 <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>Dreaming (골 때리는 그녀들 X tripleS (트리플에스)) <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-      <li>tripleS hatch! &lt;Untitled&gt; <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-      <li>Visionary Vision &lt;Performante&gt; <span class="yr">(2024)</span> <span class="tag">Visionary Vision 정규 1집</span></li>
-      <li>Glow &lt;Inner Dance&gt; <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-      <li>ASSEMBLE24 <span class="yr">(2024)</span> <span class="tag">정규 1집</span></li>
-      <li>Aria &lt;Structure Of Sadness&gt; <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-      <li>NXT &lt;Just Do It&gt; <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>EVOLution &lt;⟡&gt; <span class="yr">(2023)</span> <span class="tag">EVOLution 미니 1집</span></li>
-      <li>LOVElution &lt;ↀ&gt; <span class="yr">(2023)</span> <span class="tag">LOVElution 미니 1집</span></li>
-      <li>Acid Eyes &lt;Cherry Gene&gt; <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>+(KR)ystal Eyes &lt;Touch+&gt; <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>+(KR)ystal Eyes &lt;AESTHETIC&gt; <span class="yr">(2023)</span> <span class="tag">+(KR)ystal Eyes 미니 1집</span></li>
-      <li>ASSEMBLE <span class="yr">(2023)</span> <span class="tag">미니 1집</span></li>
-    </ul>
+    <h2 id="albums">디스코그래피</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/151/55/775/15155775_20261112150336_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">&lt;I Want You To Know&gt;</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/150/82/613/15082613_20261026181611_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">See You</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/147/58/989/14758989_20261015152707_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">&lt;LOVE&amp;POP&gt; pt.2</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e022702e187eba4292ea8c4c28d" alt="" loading="lazy"><span class="sp-tile-t">Welcome to Heaven</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e0293a1963e19f20cdcfb0738ff" alt="" loading="lazy"><span class="sp-tile-t">&lt;DNA&gt;</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e024647d0b1dd16d9fdad45e0a0" alt="" loading="lazy"><span class="sp-tile-t">&lt;World Wild Women&gt;</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02e815213a5b29a9dde3d08397" alt="" loading="lazy"><span class="sp-tile-t">Dream Dress</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02d65d1cf4ebab479b8ba3182c" alt="" loading="lazy"><span class="sp-tile-t">Baby Flower Japanese Version</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/트리플에스/a/lovepoppt1/"><img src="https://i.scdn.co/image/ab67616d00001e02506d39b3511775087f8813e6" alt="" loading="lazy"><span class="sp-tile-t">&lt;LOVE&amp;POP&gt; pt.1</span><span class="sp-tile-n">2026 · 정규 3집</span></a>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e024f837f1528dc174ebfa3c8dd" alt="" loading="lazy"><span class="sp-tile-t">Tokimetique</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e0273267fc9ae46eeb53515546f" alt="" loading="lazy"><span class="sp-tile-t">msnz &lt;Beyond Beauty&gt;</span><span class="sp-tile-n">2025 · msnz 미니 1집</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02ef88c8625bfc9c6619d0c987" alt="" loading="lazy"><span class="sp-tile-t">tripleS ∞! ＜SecretHimitsuBimil＞</span><span class="sp-tile-n">2025 · ∞! 정규 1집</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02b0f1251875bc0f81585531f5" alt="" loading="lazy"><span class="sp-tile-t">tripleS ∞! ＜Password＞</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/트리플에스/a/assemble25/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/118/02/897/11802897_20250509162244_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ASSEMBLE25</span><span class="sp-tile-n">2025 · 정규 2집</span></a>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02abb72da4c79780145bc6f063" alt="" loading="lazy"><span class="sp-tile-t">Girls Never Die -Japanese Version-</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e0227bbfa1a050b3435c59f6823" alt="" loading="lazy"><span class="sp-tile-t">Rising -Japanese Version-</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02afadbcba533545f2ad530cad" alt="" loading="lazy"><span class="sp-tile-t">Friendly Rivalry (Music from the U+ Original Series), Pt. 4</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/50/131/11650131_20241125151111_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Dreaming (골 때리는 그녀들 X tripleS (트리플에스))</span><span class="sp-tile-n">2024 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/42/122/11642122_20241114162600_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">tripleS hatch! &lt;Untitled&gt;</span><span class="sp-tile-n">2024 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/21/908/11621908_20241022162415_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Visionary Vision &lt;Performante&gt;</span><span class="sp-tile-n">2024 · Visionary Vision 정규 1집</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/17/804/11517804_20240620152731_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Glow &lt;Inner Dance&gt;</span><span class="sp-tile-n">2024 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/트리플에스/a/assemble24/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/82/512/11482512_20240507163129_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ASSEMBLE24</span><span class="sp-tile-n">2024 · 정규 1집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/98/406/11398406_20240112140845_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Aria &lt;Structure Of Sadness&gt;</span><span class="sp-tile-n">2024 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/88/823/11388823_20231222114130_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">NXT &lt;Just Do It&gt;</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/41/308/11341308_20231010181053_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">EVOLution &lt;⟡&gt;</span><span class="sp-tile-n">2023 · EVOLution 미니 1집</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/07/474/11307474_20230816170056_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">LOVElution &lt;ↀ&gt;</span><span class="sp-tile-n">2023 · LOVElution 미니 1집</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/58/824/11258824_20230605151131_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Acid Eyes &lt;Cherry Gene&gt;</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/73/352/11273352_20230626170806_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">+(KR)ystal Eyes &lt;Touch+&gt;</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/37/617/11237617_20230503152222_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">+(KR)ystal Eyes &lt;AESTHETIC&gt;</span><span class="sp-tile-n">2023 · +(KR)ystal Eyes 미니 1집</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/트리플에스/a/assemble/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/111/73/138/11173138_20230212224158_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ASSEMBLE</span><span class="sp-tile-n">2023 · 미니 1집</span></a>
+    </div>
   
     <h2>함께 보면 좋은 그룹</h2>
     <ul class="member-list rel">
@@ -252,7 +262,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/triples/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=트리플에스">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"Girls Never Die","s":"영상 172개","img":"2tda_TCjz8w","m":"Girls Never Die","h":"https://kpop-universe.kr/g/트리플에스/s/girlsneverdie/"},{"k":"멤버 직캠","t":"김유연","s":"직캠 117개","img":"eEWrbcm6rHI","h":"https://kpop-universe.kr/g/트리플에스/김유연/fancams/"},{"k":"앨범","t":"\u003cLOVE&POP> pt.1","s":"수록곡 7곡","im":"https://i.scdn.co/image/ab67616d0000b273506d39b3511775087f8813e6","h":"https://kpop-universe.kr/g/트리플에스/a/lovepoppt1/"},{"k":"곡별 직캠·무대","t":"Rising","s":"영상 170개","img":"3TQd2ahq6oU","m":"Rising","h":"https://kpop-universe.kr/g/트리플에스/s/rising/"},{"k":"멤버 직캠","t":"카에데","s":"직캠 96개","img":"vBDbiaS2Czw","h":"https://kpop-universe.kr/g/트리플에스/카에데/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"Girls Never Die","s":"영상 181개","img":"2tda_TCjz8w","m":"Girls Never Die","h":"https://kpop-universe.kr/g/트리플에스/s/girlsneverdie/"},{"k":"멤버 직캠","t":"김유연","s":"직캠 117개","img":"eEWrbcm6rHI","h":"https://kpop-universe.kr/g/트리플에스/김유연/fancams/"},{"k":"앨범","t":"\u003cLOVE&POP> pt.1","s":"수록곡 7곡","im":"https://i.scdn.co/image/ab67616d0000b273506d39b3511775087f8813e6","h":"https://kpop-universe.kr/g/트리플에스/a/lovepoppt1/"},{"k":"곡별 직캠·무대","t":"Rising","s":"영상 174개","img":"3TQd2ahq6oU","m":"Rising","h":"https://kpop-universe.kr/g/트리플에스/s/rising/"},{"k":"멤버 직캠","t":"카에데","s":"직캠 96개","img":"vBDbiaS2Czw","h":"https://kpop-universe.kr/g/트리플에스/카에데/fancams/"}]</script>
 </div>
 </body>
 </html>

@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="더보이즈 직캠·무대 영상 2255개를 조회수 순으로(상연·제이콥·영훈·현재·주연·케빈·큐·선우·에릭). 더보이즈 멤버·데뷔일(2017.12.06)·소속사(ONE HUNDRED). 음악방송 1위 32회, 대상 1개. 직캠·무대 영상과 디스코그래피를 K-POP UNIVERSE에서.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/NNmCWHYJWhI/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"더보이즈","alternateName":"THE BOYZ","genre":"K-pop","foundingDate":"2017-12-06","url":"https://kpop-universe.kr/g/더보이즈/","image":"https://img.youtube.com/vi/NNmCWHYJWhI/maxresdefault.jpg","member":[{"@type":"Person","name":"상연"},{"@type":"Person","name":"제이콥"},{"@type":"Person","name":"영훈"},{"@type":"Person","name":"현재"},{"@type":"Person","name":"주연"},{"@type":"Person","name":"케빈"},{"@type":"Person","name":"뉴"},{"@type":"Person","name":"큐"},{"@type":"Person","name":"선우"},{"@type":"Person","name":"에릭"},{"@type":"Person","name":"주학년"},{"@type":"Person","name":"활"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"더보이즈","alternateName":"THE BOYZ","genre":"K-pop","description":"9인조 보이그룹. ONE HUNDRED. 2017년 데뷔. 팬덤명 더비. 대표 앨범 THE BOYZ Special Single [Still Love You](2025), THE BOYZ Special Unit Digital Single [Tiger](2025), a;effect(2025).","foundingDate":"2017-12-06","url":"https://kpop-universe.kr/g/더보이즈/","image":"https://img.youtube.com/vi/NNmCWHYJWhI/maxresdefault.jpg","member":[{"@type":"Person","name":"상연"},{"@type":"Person","name":"제이콥"},{"@type":"Person","name":"영훈"},{"@type":"Person","name":"현재"},{"@type":"Person","name":"주연"},{"@type":"Person","name":"케빈"},{"@type":"Person","name":"뉴"},{"@type":"Person","name":"큐"},{"@type":"Person","name":"선우"},{"@type":"Person","name":"에릭"},{"@type":"Person","name":"주학년"},{"@type":"Person","name":"활"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["최근 음방 1위 · Stylish (2025.08.08)","음방 1위 32회","모아둔 무대·영상 3,875개","가장 많이 본 영상 · 조회수 34M"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
-  <p class="intro">9인조 보이그룹. ONE HUNDRED. 2017년 데뷔. 팬덤명 더비. 대표 앨범 THE BOYZ Special Single [Still Love You](2025), THE BOYZ Special Unit Digital Single [Tiger](2025), a;effect(2025).</p>
   
     <h2 id="members">멤버</h2>
     <div class="faces">
@@ -169,14 +187,14 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/더보이즈/s/righthere/">Right Here</a></li>
       <li><a href="https://kpop-universe.kr/g/더보이즈/s/stylish/">Stylish</a></li>
       <li><a href="https://kpop-universe.kr/g/더보이즈/s/passionfruit/">Passion Fruit</a></li>
-      <li><a href="https://kpop-universe.kr/g/더보이즈/s/salty/">Salty</a></li>
       <li><a href="https://kpop-universe.kr/g/더보이즈/s/tiger/">Tiger</a></li>
+      <li><a href="https://kpop-universe.kr/g/더보이즈/s/salty/">Salty</a></li>
       <li><a href="https://kpop-universe.kr/g/더보이즈/s/rockandroll/">Rock and Roll</a></li>
       <li><a href="https://kpop-universe.kr/g/더보이즈/s/honey/">Honey</a></li>
       <li><a href="https://kpop-universe.kr/g/더보이즈/s/whiplash/">Whiplash</a></li>
+      <li><a href="https://kpop-universe.kr/g/더보이즈/s/aura/">AURA</a></li>
       <li><a href="https://kpop-universe.kr/g/더보이즈/s/timeless/">Timeless</a></li>
       <li><a href="https://kpop-universe.kr/g/더보이즈/s/checkmate/">CHECKMATE</a></li>
-      <li><a href="https://kpop-universe.kr/g/더보이즈/s/aura/">AURA</a></li>
       <li><a href="https://kpop-universe.kr/g/더보이즈/s/오솔레미오/">오솔레미오 (The Red Wedding)</a></li>
       <li><a href="https://kpop-universe.kr/g/더보이즈/s/화이트/">화이트 (White)</a></li>
       <li><a href="https://kpop-universe.kr/g/더보이즈/s/hypnotized/">Hypnotized</a></li>
@@ -184,68 +202,49 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/더보이즈/s/youandi/">You and I</a></li>
       <li><a href="https://kpop-universe.kr/g/더보이즈/s/boy/">B.O.Y</a></li>
       <li><a href="https://kpop-universe.kr/g/더보이즈/s/소년/">소년 (Boy)</a></li>
+      <li><a href="https://kpop-universe.kr/g/더보이즈/s/환상고백/">환상고백 Break Your Rules</a></li>
       <li><a href="https://kpop-universe.kr/g/더보이즈/s/tattoo/">TATTOO</a></li>
       <li><a href="https://kpop-universe.kr/g/더보이즈/s/textmeback/">Text Me Back</a></li>
       <li><a href="https://kpop-universe.kr/g/더보이즈/s/breakingdawn/">Breaking Dawn</a></li>
-      <li><a href="https://kpop-universe.kr/g/더보이즈/s/환상고백/">환상고백 Break Your Rules</a></li>
     </ul>
   
-    <h2 id="albums">앨범·수록곡</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/더보이즈/a/aeffect/">a;effect</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/g/더보이즈/a/unexpected/">Unexpected</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/g/더보이즈/a/導火線/">導火線</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/g/더보이즈/a/gibberish/">Gibberish</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/g/더보이즈/a/phantasypt2sixthsense/">PHANTASY Pt.2 Sixth Sense</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/g/더보이즈/a/phantasypt1christmasinaugust/">PHANTASY Pt.1 Christmas In August</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/g/더보이즈/a/delicious/">Delicious</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/g/더보이즈/a/beawake/">BE AWAKE</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/g/더보이즈/a/theboyz7thminialbum/">THE BOYZ 7TH MINI ALBUM [BE AWARE]</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/g/더보이즈/a/shestheboss/">SHE&#39;S THE BOSS</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/g/더보이즈/a/thrilling/">THRILL-ING</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/g/더보이즈/a/breakingdawn/">Breaking Dawn</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/g/더보이즈/a/chase/">CHASE</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/g/더보이즈/a/reveal/">REVEAL</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/g/더보이즈/a/tattoo/">TATTOO</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/g/더보이즈/a/dreamlike/">DREAMLIKE</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/g/더보이즈/a/theonly/">THE ONLY</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/더보이즈/a/thestart/">THE START</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/더보이즈/a/thefirst/">THE FIRST</a> <span class="yr">2017</span></li>
-    </ul>
-  
-    <h2>디스코그래피</h2>
-    <ul class="discog-list">
-      <li>THE BOYZ Special Single [Still Love You] <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>THE BOYZ Special Unit Digital Single [Tiger] <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>a;effect <span class="yr">(2025)</span> <span class="tag">미니 10집</span></li>
-      <li>Unexpected <span class="yr">(2025)</span> <span class="tag">정규 3집</span></li>
-      <li>導火線 <span class="yr">(2024)</span> <span class="tag">미니 9집</span></li>
-      <li>PHANTASY Pt.3 Love Letter <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-      <li>PHANTASY Pt.2 Sixth Sense <span class="yr">(2023)</span> <span class="tag">정규 2집</span></li>
-      <li>PHANTASY Pt.1 Christmas In August <span class="yr">(2023)</span> <span class="tag">정규 2집</span></li>
-      <li>Delicious <span class="yr">(2023)</span> <span class="tag">미니</span></li>
-      <li>더뽀이즈 바나나차차 <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>더뽀이즈 놀자 <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>BE AWAKE <span class="yr">(2023)</span> <span class="tag">미니 8집</span></li>
-      <li>Here is <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>THE BOYZ 7TH MINI ALBUM [BE AWARE] <span class="yr">(2022)</span> <span class="tag">미니 7집</span></li>
-      <li>Sweet <span class="yr">(2022)</span> <span class="tag">싱글</span></li>
-      <li>SHE&#39;S THE BOSS <span class="yr">(2022)</span> <span class="tag">미니</span></li>
-      <li>MAVERICK <span class="yr">(2021)</span> <span class="tag">싱글</span></li>
-      <li>THRILL-ING <span class="yr">(2021)</span> <span class="tag">미니 6집</span></li>
-      <li>Drink It <span class="yr">(2021)</span> <span class="tag">싱글</span></li>
-      <li>THE BOYZ Special Single &#39;Christmassy!&#39; <span class="yr">(2020)</span> <span class="tag">싱글</span></li>
-      <li>CHASE <span class="yr">(2020)</span> <span class="tag">미니 5집</span></li>
-      <li>REVEAL <span class="yr">(2020)</span> <span class="tag">정규 1집</span></li>
-      <li>THE BOYZ Special Single &#39;화이트 (White)&#39; <span class="yr">(2019)</span> <span class="tag">싱글</span></li>
-      <li>TATTOO <span class="yr">(2019)</span> <span class="tag">미니</span></li>
-      <li>DREAMLIKE <span class="yr">(2019)</span> <span class="tag">미니 4집</span></li>
-      <li>Bloom Bloom <span class="yr">(2019)</span> <span class="tag">싱글</span></li>
-      <li>THE ONLY <span class="yr">(2018)</span> <span class="tag">미니 3집</span></li>
-      <li>THE BOYZ 1st Single Album [THE SPHERE] <span class="yr">(2018)</span> <span class="tag">싱글</span></li>
-      <li>THE BOYZ Special Single &#39;지킬게 (Prod. 박경)&#39; <span class="yr">(2018)</span> <span class="tag">싱글</span></li>
-      <li>THE SPHERE <span class="yr">(2018)</span> <span class="tag">싱글</span></li>
-    </ul>
+    <h2 id="albums">디스코그래피</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e0262e1d00d42cc3a9b977b19e2" alt="" loading="lazy"><span class="sp-tile-t">THE BOYZ Special Single [Still Love You]</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e0239387676af50ced54eb43316" alt="" loading="lazy"><span class="sp-tile-t">THE BOYZ Special Unit Digital Single [Tiger]</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/더보이즈/a/aeffect/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/119/41/412/11941412_20250724202430_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">a;effect</span><span class="sp-tile-n">2025 · 미니 10집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/더보이즈/a/unexpected/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/39/409/11739409_20250317105207_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Unexpected</span><span class="sp-tile-n">2025 · 정규 3집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/더보이즈/a/導火線/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/26/562/11626562_20241028100544_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">導火線</span><span class="sp-tile-n">2024 · 미니 9집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/더보이즈/a/gibberish/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/27/152/11527152_20240701155431_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Gibberish</span><span class="sp-tile-n">2024 · 정규</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/44/103/11444103_20240315162843_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">PHANTASY Pt.3 Love Letter</span><span class="sp-tile-n">2024 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/더보이즈/a/phantasypt2sixthsense/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/68/380/11368380_20231120105403_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">PHANTASY Pt.2 Sixth Sense</span><span class="sp-tile-n">2023 · 정규 2집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/더보이즈/a/phantasypt1christmasinaugust/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/01/233/11301233_20230807150805_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">PHANTASY Pt.1 Christmas In August</span><span class="sp-tile-n">2023 · 정규 2집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/더보이즈/a/delicious/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/53/281/11253281_20230530152331_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Delicious</span><span class="sp-tile-n">2023 · 미니</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/38/153/11238153_20230504114418_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">더뽀이즈 바나나차차</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/29/348/11229348_20230421150447_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">더뽀이즈 놀자</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/더보이즈/a/beawake/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/111/80/917/11180917_20230219220315_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BE AWAKE</span><span class="sp-tile-n">2023 · 미니 8집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/111/49/895/11149895_20230116190640_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Here is</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/더보이즈/a/theboyz7thminialbum/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/24/679/11024679_20220816144744_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">THE BOYZ 7TH MINI ALBUM [BE AWARE]</span><span class="sp-tile-n">2022 · 미니 7집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/109/85/471/10985471_20220617110328_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Sweet</span><span class="sp-tile-n">2022 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/더보이즈/a/shestheboss/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/109/53/437/10953437_20220513120454_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SHE&#39;S THE BOSS</span><span class="sp-tile-n">2022 · 미니</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/107/59/131/10759131_20211101145621_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">MAVERICK</span><span class="sp-tile-n">2021 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/더보이즈/a/thrilling/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/74/988/10674988_20210809143318_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">THRILL-ING</span><span class="sp-tile-n">2021 · 미니 6집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/48/710/10648710_20210709162340_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Drink It</span><span class="sp-tile-n">2021 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/더보이즈/a/breakingdawn/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/69/145/10569145_20210223163904_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Breaking Dawn</span><span class="sp-tile-n">2021 · 정규</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/29/969/10529969_20201207163541_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">THE BOYZ Special Single &#39;Christmassy!&#39;</span><span class="sp-tile-n">2020 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/더보이즈/a/chase/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/93/556/10493556_20200921150848_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">CHASE</span><span class="sp-tile-n">2020 · 미니 5집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/더보이즈/a/reveal/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/86/023/10386023_20200210152331_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">REVEAL</span><span class="sp-tile-n">2020 · 정규 1집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/61/805/10361805_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">THE BOYZ Special Single &#39;화이트 (White)&#39;</span><span class="sp-tile-n">2019 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/더보이즈/a/tattoo/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/48/770/10348770_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">TATTOO</span><span class="sp-tile-n">2019 · 미니</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/더보이즈/a/dreamlike/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/19/189/10319189_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">DREAMLIKE</span><span class="sp-tile-n">2019 · 미니 4집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/79/286/10279286_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Bloom Bloom</span><span class="sp-tile-n">2019 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/더보이즈/a/theonly/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/27/604/10227604_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">THE ONLY</span><span class="sp-tile-n">2018 · 미니 3집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/01/311/10201311_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">THE BOYZ 1st Single Album [THE SPHERE]</span><span class="sp-tile-n">2018 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/84/141/10184141_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">THE BOYZ Special Single &#39;지킬게 (Prod. 박경)&#39;</span><span class="sp-tile-n">2018 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/01/311/10201311_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">THE SPHERE</span><span class="sp-tile-n">2018 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/더보이즈/a/thestart/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/54/357/10154357_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">THE START</span><span class="sp-tile-n">2018 · 미니 2집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/더보이즈/a/thefirst/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/17/506/10117506_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">THE FIRST</span><span class="sp-tile-n">2017 · 미니 1집</span></a>
+    </div>
   
     <h2>함께 보면 좋은 그룹</h2>
     <ul class="member-list rel">
@@ -257,7 +256,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/the-boyz/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=더보이즈">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"THRILL RIDE","s":"영상 169개","img":"mwCeeVU_2Jo","m":"THRILL RIDE","h":"https://kpop-universe.kr/g/더보이즈/s/thrillride/"},{"k":"멤버 직캠","t":"주연","s":"직캠 190개","img":"yIIa7XEOcUs","h":"https://kpop-universe.kr/g/더보이즈/주연/fancams/"},{"k":"앨범","t":"a;effect","s":"수록곡 5곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/119/41/412/11941412_20250724202430_500.jpg","h":"https://kpop-universe.kr/g/더보이즈/a/aeffect/"},{"k":"곡별 직캠·무대","t":"REVEAL","s":"영상 144개","img":"PugZA26sj-8","m":"REVEAL","h":"https://kpop-universe.kr/g/더보이즈/s/reveal/"},{"k":"멤버 직캠","t":"현재","s":"직캠 168개","img":"-al-ZLMuIh4","h":"https://kpop-universe.kr/g/더보이즈/현재/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"THRILL RIDE","s":"영상 172개","img":"mwCeeVU_2Jo","m":"THRILL RIDE","h":"https://kpop-universe.kr/g/더보이즈/s/thrillride/"},{"k":"멤버 직캠","t":"주연","s":"직캠 190개","img":"yIIa7XEOcUs","h":"https://kpop-universe.kr/g/더보이즈/주연/fancams/"},{"k":"앨범","t":"a;effect","s":"수록곡 5곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/119/41/412/11941412_20250724202430_500.jpg","h":"https://kpop-universe.kr/g/더보이즈/a/aeffect/"},{"k":"곡별 직캠·무대","t":"REVEAL","s":"영상 145개","img":"PugZA26sj-8","m":"REVEAL","h":"https://kpop-universe.kr/g/더보이즈/s/reveal/"},{"k":"멤버 직캠","t":"현재","s":"직캠 168개","img":"-al-ZLMuIh4","h":"https://kpop-universe.kr/g/더보이즈/현재/fancams/"}]</script>
 </div>
 </body>
 </html>

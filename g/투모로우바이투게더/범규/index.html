@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -168,8 +187,8 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <h2>곡별 직캠</h2>
     <div class="sp-tiles">
       <a class="sp-tile" href="https://kpop-universe.kr/g/투모로우바이투게더/범규/s/goodboygonebad/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/109/46/688/10946688_20220509134858_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Good Boy Gone Bad</span><span class="sp-tile-n">직캠 19</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/투모로우바이투게더/범규/s/sugarrushride/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/111/58/153/11158153_20230126154403_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Sugar Rush Ride</span><span class="sp-tile-n">직캠 15</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/투모로우바이투게더/범규/s/beautifulstrangers/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/119/18/636/11918636_20250721104940_500.jpg?e2b17d3af5da1d2c6ac182d607e1c8a1" alt="" loading="lazy"><span class="sp-tile-t">Beautiful Strangers</span><span class="sp-tile-n">직캠 15</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/투모로우바이투게더/범규/s/sugarrushride/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/111/58/153/11158153_20230126154403_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Sugar Rush Ride</span><span class="sp-tile-n">직캠 15</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/투모로우바이투게더/범규/s/하루에하루만더/"><img src="https://i.scdn.co/image/ab67616d0000b2735f42ea05cfc5233136e8546a" alt="" loading="lazy"><span class="sp-tile-t">하루에 하루만 더 (Stick With You)</span><span class="sp-tile-n">직캠 14</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/투모로우바이투게더/범규/s/0x1lovesong/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/17/217/10617217_20210531132328_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">0X1=LOVESONG</span><span class="sp-tile-n">직캠 13</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/투모로우바이투게더/범규/s/chasingthatfeeling/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/43/302/11343302_20231012153730_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Chasing That Feeling</span><span class="sp-tile-n">직캠 13</span></a>
@@ -181,8 +200,8 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <a class="sp-tile" href="https://kpop-universe.kr/g/투모로우바이투게더/범규/s/devilbythewindow/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/111/58/153/11158153_20230126154403_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Devil by the Window</span><span class="sp-tile-n">직캠 7</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/투모로우바이투게더/범규/s/5시53분의하늘에서발견한너와나/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/08/871/10508871_20201026151152_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">5시 53분의 하늘에서 발견한 너와 나 Blue Hour</span><span class="sp-tile-n">직캠 6</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/투모로우바이투게더/범규/s/lovelanguage/"><img src="https://i.scdn.co/image/ab67616d0000b273bc23afc74585dc9ea1ae22c3" alt="" loading="lazy"><span class="sp-tile-t">Love Language</span><span class="sp-tile-n">직캠 6</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/투모로우바이투게더/범규/s/upsidedownkiss/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/119/18/636/11918636_20250721104940_500.jpg?e2b17d3af5da1d2c6ac182d607e1c8a1" alt="" loading="lazy"><span class="sp-tile-t">Upside Down Kiss</span><span class="sp-tile-n">직캠 6</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/투모로우바이투게더/범규/s/날씨를잃어버렸어/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/08/871/10508871_20201026151152_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">날씨를 잃어버렸어 We Lost The Summer</span><span class="sp-tile-n">직캠 6</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/투모로우바이투게더/범규/s/upsidedownkiss/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/119/18/636/11918636_20250721104940_500.jpg?e2b17d3af5da1d2c6ac182d607e1c8a1" alt="" loading="lazy"><span class="sp-tile-t">Upside Down Kiss</span><span class="sp-tile-n">직캠 6</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/투모로우바이투게더/범규/s/norules/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/17/217/10617217_20210531132328_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">No Rules</span><span class="sp-tile-n">직캠 6</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/투모로우바이투게더/범규/s/growingpain/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/43/302/11343302_20231012153730_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Growing Pain</span><span class="sp-tile-n">직캠 6</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/투모로우바이투게더/범규/s/fortyonewinks/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/32/009/11632009_20241104105912_500.jpg?0317ef579138cb2aeebe962b36b1ebdf" alt="" loading="lazy"><span class="sp-tile-t">Forty One Winks</span><span class="sp-tile-n">직캠 5</span></a>
@@ -218,7 +237,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/스테이씨/시은/">시은</a> <span class="tag">스테이씨</span></li>
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/tomorrow-x-together/beomgyu/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"모든 무대","t":"Good Boy Gone Bad","s":"범규 직캠 19개","img":"Sf8d5Rra9k0","m":"Good Boy Gone Bad","h":"https://kpop-universe.kr/g/투모로우바이투게더/범규/s/goodboygonebad/"},{"k":"같은 곡","t":"수빈 · Good Boy Gone Bad","s":"직캠 16개","img":"PK1ufWgw7uQ","m":"Good Boy Gone Bad","h":"https://kpop-universe.kr/g/투모로우바이투게더/수빈/s/goodboygonebad/"},{"k":"그룹","t":"투모로우바이투게더","s":"무대 · 뮤비 · 멤버","im":"https://img.youtube.com/vi/zT2hLFMCj6k/mqdefault.jpg","h":"https://kpop-universe.kr/g/투모로우바이투게더/"},{"k":"케미","t":"범규 × 수빈","s":"함께 나온 영상 102개","img":"PLrjYtVmOrE","h":"https://kpop-universe.kr/chem/투모로우바이투게더/범규-수빈/"},{"k":"모든 무대","t":"Sugar Rush Ride","s":"범규 직캠 15개","img":"60oEQeBw1Es","m":"Sugar Rush Ride","h":"https://kpop-universe.kr/g/투모로우바이투게더/범규/s/sugarrushride/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"모든 무대","t":"Good Boy Gone Bad","s":"범규 직캠 19개","img":"Sf8d5Rra9k0","m":"Good Boy Gone Bad","h":"https://kpop-universe.kr/g/투모로우바이투게더/범규/s/goodboygonebad/"},{"k":"같은 곡","t":"수빈 · Good Boy Gone Bad","s":"직캠 16개","img":"PK1ufWgw7uQ","m":"Good Boy Gone Bad","h":"https://kpop-universe.kr/g/투모로우바이투게더/수빈/s/goodboygonebad/"},{"k":"그룹","t":"투모로우바이투게더","s":"무대 · 뮤비 · 멤버","im":"https://img.youtube.com/vi/zT2hLFMCj6k/mqdefault.jpg","h":"https://kpop-universe.kr/g/투모로우바이투게더/"},{"k":"케미","t":"범규 × 수빈","s":"함께 나온 영상 102개","img":"PLrjYtVmOrE","h":"https://kpop-universe.kr/chem/투모로우바이투게더/범규-수빈/"},{"k":"모든 무대","t":"Beautiful Strangers","s":"범규 직캠 15개","img":"lS17hitDcXc","m":"Beautiful Strangers","h":"https://kpop-universe.kr/g/투모로우바이투게더/범규/s/beautifulstrangers/"}]</script>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=투모로우바이투게더&m=범규">프로필·직캠·무대 영상 보기 →</a></div>
 </div>
 </body>

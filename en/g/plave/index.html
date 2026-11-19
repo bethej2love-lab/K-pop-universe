@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="553 PLAVE fancams and stages, most viewed first. PLAVE: members, debut 2023.03.12, VLAST. 6 music show wins. Fancams, stages and discography on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/BGffZyzl60Y/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"PLAVE","alternateName":"플레이브","genre":"K-pop","foundingDate":"2023-03-12","url":"https://kpop-universe.kr/en/g/plave/","image":"https://img.youtube.com/vi/BGffZyzl60Y/maxresdefault.jpg","member":[{"@type":"Person","name":"Yejun"},{"@type":"Person","name":"Noah"},{"@type":"Person","name":"Bambi"},{"@type":"Person","name":"Eunho"},{"@type":"Person","name":"Hamin"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"PLAVE","alternateName":"플레이브","genre":"K-pop","description":"PLAVE is a 5-member K-pop boy group under VLAST, debuting in 2023. Fan club: PLLI. Recent releases: HYPERDRIVE (2026), Flame (feat. milet) (2026), Caligo Pt.2 (2026).","foundingDate":"2023-03-12","url":"https://kpop-universe.kr/en/g/plave/","image":"https://img.youtube.com/vi/BGffZyzl60Y/maxresdefault.jpg","member":[{"@type":"Person","name":"Yejun"},{"@type":"Person","name":"Noah"},{"@type":"Person","name":"Bambi"},{"@type":"Person","name":"Eunho"},{"@type":"Person","name":"Hamin"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -104,10 +123,9 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>Fandom</b> PLLI</span>
     </div>
     <div class="sns"><a class="sns-youtube" href="https://youtube.com/@plave_official" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://www.instagram.com/plave_official" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/plave_official" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://www.tiktok.com/@plave_official" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-namu" href="https://namu.wiki/w/PLAVE" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
-    <script type="application/json" id="kpu-facts">["3 new videos this week","Latest music show win · Star Trace (2026.10.24)","6 music show wins","1,053 stages & videos collected","Most viewed · 17M views"]</script>
+    <script type="application/json" id="kpu-facts">["4 new videos this week","Latest music show win · Star Trace (2026.10.24)","6 music show wins","1,054 stages & videos collected","Most viewed · 17M views"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
-  <p class="intro">PLAVE is a 5-member K-pop boy group under VLAST, debuting in 2023. Fan club: PLLI. Recent releases: HYPERDRIVE (2026), Flame (feat. milet) (2026), Caligo Pt.2 (2026).</p>
   
     <h2 id="members">Members</h2>
     <div class="faces">
@@ -149,32 +167,23 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/plave/s/merrypllistmas/">Merry PLLIstmas</a></li>
     </ul>
   
-    <h2 id="albums">Albums & tracklists</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/plave/a/hyperdrive/">HYPERDRIVE</a> <span class="yr">2026</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/plave/a/caligopt2/">Caligo Pt.2</a> <span class="yr">2026</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/plave/a/caligopt1/">Caligo Pt.1</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/plave/a/asterum1341/">ASTERUM : 134-1</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/plave/a/asterumtheshapeofthingstocome/">ASTERUM : The Shape of Things to Come</a> <span class="yr">2023</span></li>
-    </ul>
-  
-    <h2>Discography</h2>
-    <ul class="discog-list">
-      <li>HYPERDRIVE <span class="yr">(2026)</span> <span class="tag">5th EP</span></li>
-      <li>Flame (feat. milet) <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>Caligo Pt.2 <span class="yr">(2026)</span> <span class="tag">4th EP</span></li>
-      <li>HMPH! <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>이 밤을 빌려 말해요 (오늘 밤, 세계에서 이 사랑이 사라진다 해도 X PLAVE) <span class="yr">(2025)</span> <span class="tag">Single</span></li>
-      <li>PLBBUU <span class="yr">(2025)</span> <span class="tag">Single</span></li>
-      <li>숨바꼭질 (Hide and Seek) <span class="yr">(2025)</span> <span class="tag">Single</span></li>
-      <li>Caligo Pt.1 <span class="yr">(2025)</span> <span class="tag">3rd EP</span></li>
-      <li>Pump Up The Volume! <span class="yr">(2024)</span> <span class="tag">Single</span></li>
-      <li>ASTERUM : 134-1 <span class="yr">(2024)</span> <span class="tag">2nd EP</span></li>
-      <li>Merry PLLIstmas <span class="yr">(2023)</span> <span class="tag">Single</span></li>
-      <li>ASTERUM : The Shape of Things to Come <span class="yr">(2023)</span> <span class="tag">1st EP</span></li>
-      <li>왜요 왜요 왜? <span class="yr">(2023)</span> <span class="tag">Single</span></li>
-      <li>ASTERUM <span class="yr">(2023)</span> <span class="tag">Single</span></li>
-    </ul>
+    <h2 id="albums">Discography</h2>
+    <div class="sp-tiles dg-tiles">
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/plave/a/hyperdrive/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/146/29/242/14629242_20261007150642_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">HYPERDRIVE</span><span class="sp-tile-n">2026 · 5th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/145/14/699/14514699_20260902120032_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Flame (feat. milet)</span><span class="sp-tile-n">2026 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/plave/a/caligopt2/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/1c/ac/33/1cac3302-5fdb-4aa6-9a37-d316afcb1b18/8800365019813_cover.png/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Caligo Pt.2</span><span class="sp-tile-n">2026 · 4th EP</span></a>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02995505a7cd8a8fd5a3a909a8" alt="" loading="lazy"><span class="sp-tile-t">HMPH!</span><span class="sp-tile-n">2026 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/124/58/320/12458320_20251226151630_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">이 밤을 빌려 말해요 (오늘 밤, 세계에서 이 사랑이 사라진다 해도 X PLAVE)</span><span class="sp-tile-n">2025 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/122/00/862/12200862_20251110101649_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">PLBBUU</span><span class="sp-tile-n">2025 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/121/15/563/12115563_20250915103532_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">숨바꼭질 (Hide and Seek)</span><span class="sp-tile-n">2025 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/plave/a/caligopt1/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/4b/a8/b7/4ba8b7b1-82f4-fab2-9f41-3650346af088/8800296369636_cover.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Caligo Pt.1</span><span class="sp-tile-n">2025 · 3rd EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/70/634/11570634_20240820095436_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Pump Up The Volume!</span><span class="sp-tile-n">2024 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/plave/a/asterum1341/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/97/09/40/970940a4-afc8-42a3-5fd1-ee003507fde6/Final_134-1_album_jacket_image.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">ASTERUM : 134-1</span><span class="sp-tile-n">2024 · 2nd EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/81/907/11381907_20231211140806_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Merry PLLIstmas</span><span class="sp-tile-n">2023 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/plave/a/asterumtheshapeofthingstocome/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/72/6b/4a/726b4a3f-ec07-c604-b570-1b15ee1fe77c/PLAVE_ASTERUM_The_Shape_of_Things_to_Come.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">ASTERUM : The Shape of Things to Come</span><span class="sp-tile-n">2023 · 1st EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/50/847/11250847_20230525095846_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">왜요 왜요 왜?</span><span class="sp-tile-n">2023 · Single</span></div>
+      <div class="sp-tile"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/bb/da/78/bbda783a-b777-6a5c-d040-100090323307/Cover_PLAVE_ASTERUM.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">ASTERUM</span><span class="sp-tile-n">2023 · Single</span></div>
+    </div>
   
     <h2>Related groups</h2>
     <ul class="member-list rel">

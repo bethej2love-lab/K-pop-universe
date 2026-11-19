@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="90 DXMON fancams and stages, most viewed first. DXMON: members, debut 2024.01.17, SSQ Ent.. Fancams, stages and discography on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/nWJRCaqBtG4/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"DXMON","alternateName":"다이몬","genre":"K-pop","foundingDate":"2024-01-17","url":"https://kpop-universe.kr/en/g/dxmon/","image":"https://img.youtube.com/vi/nWJRCaqBtG4/maxresdefault.jpg","member":[{"@type":"Person","name":"Minjae"},{"@type":"Person","name":"Seita"},{"@type":"Person","name":"Hee"},{"@type":"Person","name":"TK"},{"@type":"Person","name":"Rex"},{"@type":"Person","name":"Jo"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"DXMON","alternateName":"다이몬","genre":"K-pop","description":"DXMON is a 5-member K-pop boy group under SSQ Ent., debuting in 2024. Fan club: MONS. Recent releases: HYPER LINK : Vol.4 (2026), HYPER LINK : Vol.3 (2026), HYPER LINK: Vol.2 (2026).","foundingDate":"2024-01-17","url":"https://kpop-universe.kr/en/g/dxmon/","image":"https://img.youtube.com/vi/nWJRCaqBtG4/maxresdefault.jpg","member":[{"@type":"Person","name":"Minjae"},{"@type":"Person","name":"Seita"},{"@type":"Person","name":"Hee"},{"@type":"Person","name":"TK"},{"@type":"Person","name":"Rex"},{"@type":"Person","name":"Jo"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["2 new videos this week","235 stages & videos collected","Most viewed · 3M views"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
-  <p class="intro">DXMON is a 5-member K-pop boy group under SSQ Ent., debuting in 2024. Fan club: MONS. Recent releases: HYPER LINK : Vol.4 (2026), HYPER LINK : Vol.3 (2026), HYPER LINK: Vol.2 (2026).</p>
   
     <h2 id="members">Members</h2>
     <div class="faces">
@@ -132,22 +150,17 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/dxmon/s/열기구/">열기구 (Heart Balloon)</a></li>
     </ul>
   
-    <h2 id="albums">Albums & tracklists</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/dxmon/a/hyperspace/">HYPERSPACE</a> <span class="yr">2024</span></li>
-    </ul>
-  
-    <h2>Discography</h2>
-    <ul class="discog-list">
-      <li>HYPER LINK : Vol.4 <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>HYPER LINK : Vol.3 <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>HYPER LINK: Vol.2 <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>HYPER LINK: Vol.1 <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>Youth Never DIE <span class="yr">(2024)</span> <span class="tag">Single</span></li>
-      <li>HYPERSPACE 911 <span class="yr">(2024)</span> <span class="tag">Single</span></li>
-      <li>HYPERSPACE <span class="yr">(2024)</span> <span class="tag">1st EP</span></li>
-      <li>BURN UP <span class="yr">(2024)</span> <span class="tag">Single</span></li>
-    </ul>
+    <h2 id="albums">Discography</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/150/90/474/15090474_20261028105450_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">HYPER LINK : Vol.4</span><span class="sp-tile-n">2026 · Single</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02e77622ea419d4158babc152d" alt="" loading="lazy"><span class="sp-tile-t">HYPER LINK : Vol.3</span><span class="sp-tile-n">2026 · Single</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e0242d2a2a77ce348dc1e3498f0" alt="" loading="lazy"><span class="sp-tile-t">HYPER LINK: Vol.2</span><span class="sp-tile-n">2026 · Single</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02189f0b43ea92d5e44ce58817" alt="" loading="lazy"><span class="sp-tile-t">HYPER LINK: Vol.1</span><span class="sp-tile-n">2026 · Single</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e0248741674fcb7cb9a330da0c3" alt="" loading="lazy"><span class="sp-tile-t">Youth Never DIE</span><span class="sp-tile-n">2024 · Single</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02f9da642cc2644c7be786ae0d" alt="" loading="lazy"><span class="sp-tile-t">HYPERSPACE 911</span><span class="sp-tile-n">2024 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/dxmon/a/hyperspace/"><img src="https://i.scdn.co/image/ab67616d00001e0207cd4f904e32cc8c6cfa0f8f" alt="" loading="lazy"><span class="sp-tile-t">HYPERSPACE</span><span class="sp-tile-n">2024 · 1st EP</span></a>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e0271fc7e8e9d0b77ce54013ec2" alt="" loading="lazy"><span class="sp-tile-t">BURN UP</span><span class="sp-tile-n">2024 · Single</span></div>
+    </div>
   
     <h2>Related groups</h2>
     <ul class="member-list rel">
@@ -162,7 +175,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/다이몬/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=다이몬">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"소년…소녀를 만나다 Girls, Love boys, Love girls","s":"50 videos","img":"GDEzPtKawKw","m":"소년…소녀를 만나다","h":"https://kpop-universe.kr/en/g/dxmon/s/소년소녀를만나다/"},{"k":"Member fancams","t":"Jo","s":"11 fancams","img":"qT1iLrA5eFg","h":"https://kpop-universe.kr/en/g/dxmon/jo/fancams/"},{"k":"Album","t":"HYPERSPACE","s":"6 tracks","im":"https://i.scdn.co/image/ab67616d0000b27307cd4f904e32cc8c6cfa0f8f","h":"https://kpop-universe.kr/en/g/dxmon/a/hyperspace/"},{"k":"Song fancams","t":"찍찍찍 (Zip Zip Zip)","s":"18 videos","img":"ZiuIL_krh8Q","m":"찍찍찍","h":"https://kpop-universe.kr/en/g/dxmon/s/찍찍찍/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"소년…소녀를 만나다 Girls, Love boys, Love girls","s":"51 videos","img":"GDEzPtKawKw","m":"소년…소녀를 만나다","h":"https://kpop-universe.kr/en/g/dxmon/s/소년소녀를만나다/"},{"k":"Member fancams","t":"Jo","s":"11 fancams","img":"qT1iLrA5eFg","h":"https://kpop-universe.kr/en/g/dxmon/jo/fancams/"},{"k":"Album","t":"HYPERSPACE","s":"6 tracks","im":"https://i.scdn.co/image/ab67616d0000b27307cd4f904e32cc8c6cfa0f8f","h":"https://kpop-universe.kr/en/g/dxmon/a/hyperspace/"},{"k":"Song fancams","t":"찍찍찍 (Zip Zip Zip)","s":"18 videos","img":"ZiuIL_krh8Q","m":"찍찍찍","h":"https://kpop-universe.kr/en/g/dxmon/s/찍찍찍/"}]</script>
 </div>
 </body>
 </html>

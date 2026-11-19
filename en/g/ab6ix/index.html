@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="986 AB6IX fancams and stages, most viewed first. AB6IX: members, debut 2019.05.22, Brand New Music. 7 music show wins. Fancams, stages and discography on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/VDPg9lHQVCw/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"AB6IX","alternateName":"에이비식스","genre":"K-pop","foundingDate":"2019-05-22","url":"https://kpop-universe.kr/en/g/ab6ix/","image":"https://img.youtube.com/vi/VDPg9lHQVCw/maxresdefault.jpg","member":[{"@type":"Person","name":"Woojin"},{"@type":"Person","name":"Daehwi"},{"@type":"Person","name":"Jeon Woong"},{"@type":"Person","name":"Kim Donghyun"},{"@type":"Person","name":"Lim Youngmin"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"AB6IX","alternateName":"에이비식스","genre":"K-pop","description":"AB6IX is a 4-member K-pop boy group under Brand New Music, debuting in 2019. Fan club: ABNEW. Recent releases: SEVEN : CRIMSON HORIZON (2026), So Sweet (0522) (2026), A Minute, A Second (2026).","foundingDate":"2019-05-22","url":"https://kpop-universe.kr/en/g/ab6ix/","image":"https://img.youtube.com/vi/VDPg9lHQVCw/maxresdefault.jpg","member":[{"@type":"Person","name":"Woojin"},{"@type":"Person","name":"Daehwi"},{"@type":"Person","name":"Jeon Woong"},{"@type":"Person","name":"Kim Donghyun"},{"@type":"Person","name":"Lim Youngmin"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["Latest music show win · Fly Away (2023.06.06)","7 music show wins","1,594 stages & videos collected","Most viewed · 3.1M views"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
-  <p class="intro">AB6IX is a 4-member K-pop boy group under Brand New Music, debuting in 2019. Fan club: ABNEW. Recent releases: SEVEN : CRIMSON HORIZON (2026), So Sweet (0522) (2026), A Minute, A Second (2026).</p>
   
     <h2 id="members">Members</h2>
     <div class="faces">
@@ -156,69 +174,47 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/ab6ix/s/moonlight/">Moonlight</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ab6ix/s/별자리/">별자리 (SHINING STARS)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ab6ix/s/이게그리움이아니라면대체뭐겠어/">이게 그리움이 아니라면 대체 뭐겠어 (MAYBE)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ab6ix/s/foreveryoung/">Forever Young</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ab6ix/s/toptier/">Top Tier</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ab6ix/s/foreveryoung/">Forever Young</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ab6ix/s/vivid/">VIVID</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ab6ix/s/absolute/">ABSOLUTE</a></li>
     </ul>
   
-    <h2 id="albums">Albums & tracklists</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/ab6ix/a/sevencrimsonhorizon/">SEVEN : CRIMSON HORIZON</a> <span class="yr">2026</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/ab6ix/a/upsidedown/">UPSIDE DOWN</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/ab6ix/a/bornlikethis/">BORN LIKE THIS</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/ab6ix/a/findyou/">Find YOU</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/ab6ix/a/trapgrabme/">TRAP / GRAB ME - Japanese ver. -</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/ab6ix/a/thefutureisoursfound/">The Future Is Ours: FOUND</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/ab6ix/a/thefutureisourslost/">The Future Is Ours: LOST</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/ab6ix/a/takeachance/">TAKE A CHANCE</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/ab6ix/a/savior/">SAVIOR</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/ab6ix/a/atob/">A to B</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/ab6ix/a/completewithyou/">COMPLETE WITH YOU</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/ab6ix/a/absolute6ix/">ABSOLUTE 6IX</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/ab6ix/a/mocomplete/">MO&#39; COMPLETE</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/ab6ix/a/mocompletehaveadream/">MO&#39; COMPLETE : HAVE A DREAM</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/ab6ix/a/saluteanewhope/">SALUTE : A NEW HOPE</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/ab6ix/a/salute/">SALUTE</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/ab6ix/a/vivid/">VIVID</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/ab6ix/a/5nally/">5NALLY</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/ab6ix/a/6ixense/">6IXENSE</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/ab6ix/a/bcomplete/">B:COMPLETE</a> <span class="yr">2019</span></li>
-    </ul>
-  
-    <h2>Discography</h2>
-    <ul class="discog-list">
-      <li>SEVEN : CRIMSON HORIZON <span class="yr">(2026)</span> <span class="tag">3rd Album</span></li>
-      <li>So Sweet (0522) <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>A Minute, A Second <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>UPSIDE DOWN <span class="yr">(2025)</span> <span class="tag">10th EP</span></li>
-      <li>BORN LIKE THIS <span class="yr">(2024)</span> <span class="tag">9th EP</span></li>
-      <li>Find YOU <span class="yr">(2024)</span> <span class="tag">Special</span></li>
-      <li>TRAP / GRAB ME - Japanese ver. - <span class="yr">(2024)</span> <span class="tag">EP</span></li>
-      <li>GRAB ME - Japanese ver. - <span class="yr">(2024)</span> <span class="tag">Single</span></li>
-      <li>The Future Is Ours: FOUND <span class="yr">(2024)</span> <span class="tag">8th EP</span></li>
-      <li>Siren <span class="yr">(2023)</span> <span class="tag">Single</span></li>
-      <li>The Future Is Ours: LOST <span class="yr">(2023)</span> <span class="tag">7th EP</span></li>
-      <li>Fly Away <span class="yr">(2023)</span> <span class="tag">Single</span></li>
-      <li>BRANDNEW YEAR 2022 &#39;BRANDNEW V1S1ON&#39; <span class="yr">(2022)</span> <span class="tag">Single</span></li>
-      <li>TAKE A CHANCE <span class="yr">(2022)</span> <span class="tag">6th EP</span></li>
-      <li>Moonlight <span class="yr">(2022)</span> <span class="tag">Single</span></li>
-      <li>CHANCE <span class="yr">(2022)</span> <span class="tag">Single</span></li>
-      <li>SAVIOR <span class="yr">(2022)</span> <span class="tag">EP</span></li>
-      <li>Umbrella <span class="yr">(2022)</span> <span class="tag">Single</span></li>
-      <li>SAVIOR -Japanese ver.- <span class="yr">(2022)</span> <span class="tag">Single</span></li>
-      <li>A to B <span class="yr">(2022)</span> <span class="tag">5th EP</span></li>
-      <li>COMPLETE WITH YOU <span class="yr">(2022)</span> <span class="tag">Special</span></li>
-      <li>ABSOLUTE 6IX <span class="yr">(2021)</span> <span class="tag">EP</span></li>
-      <li>MO&#39; COMPLETE <span class="yr">(2021)</span> <span class="tag">2nd Album</span></li>
-      <li>비범벅 (TEN PROJECT Part.4) <span class="yr">(2021)</span> <span class="tag">Single</span></li>
-      <li>GEMINI <span class="yr">(2021)</span> <span class="tag">Single</span></li>
-      <li>MO&#39; COMPLETE : HAVE A DREAM <span class="yr">(2021)</span> <span class="tag">4th EP</span></li>
-      <li>SALUTE : A NEW HOPE <span class="yr">(2021)</span> <span class="tag">미니 3집 리패키지</span></li>
-      <li>SALUTE <span class="yr">(2020)</span> <span class="tag">3rd EP</span></li>
-      <li>VIVID <span class="yr">(2020)</span> <span class="tag">2nd EP</span></li>
-      <li>5NALLY <span class="yr">(2020)</span> <span class="tag">Special</span></li>
-    </ul>
+    <h2 id="albums">Discography</h2>
+    <div class="sp-tiles dg-tiles">
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ab6ix/a/sevencrimsonhorizon/"><img src="https://i.scdn.co/image/ab67616d00001e0225c06ce96dc56010251b7d10" alt="" loading="lazy"><span class="sp-tile-t">SEVEN : CRIMSON HORIZON</span><span class="sp-tile-n">2026 · 3rd Album</span></a>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02a17015b8970dd827373f1d0c" alt="" loading="lazy"><span class="sp-tile-t">So Sweet (0522)</span><span class="sp-tile-n">2026 · Single</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02a954f74fd8025cb7e738ee9f" alt="" loading="lazy"><span class="sp-tile-t">A Minute, A Second</span><span class="sp-tile-n">2026 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ab6ix/a/upsidedown/"><img src="https://i.scdn.co/image/ab67616d00001e021ece836f8d9c582d109f37ab" alt="" loading="lazy"><span class="sp-tile-t">UPSIDE DOWN</span><span class="sp-tile-n">2025 · 10th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ab6ix/a/bornlikethis/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/12/069/11612069_20241010143313_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BORN LIKE THIS</span><span class="sp-tile-n">2024 · 9th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ab6ix/a/findyou/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/65/130/11565130_20240812143719_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Find YOU</span><span class="sp-tile-n">2024 · Special</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ab6ix/a/trapgrabme/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/27/855/11527855_20240702162556_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">TRAP / GRAB ME - Japanese ver. -</span><span class="sp-tile-n">2024 · EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/07/011/11507011_20240607112507_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">GRAB ME - Japanese ver. -</span><span class="sp-tile-n">2024 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ab6ix/a/thefutureisoursfound/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/02/944/11402944_20240122102120_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">The Future Is Ours: FOUND</span><span class="sp-tile-n">2024 · 8th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/72/753/11372753_20231124180207_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Siren</span><span class="sp-tile-n">2023 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ab6ix/a/thefutureisourslost/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/52/515/11252515_20230526143209_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">The Future Is Ours: LOST</span><span class="sp-tile-n">2023 · 7th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/40/352/11240352_20230509170544_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Fly Away</span><span class="sp-tile-n">2023 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/111/25/974/11125974_20221216153654_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BRANDNEW YEAR 2022 &#39;BRANDNEW V1S1ON&#39;</span><span class="sp-tile-n">2022 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ab6ix/a/takeachance/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/69/758/11069758_20221004112957_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">TAKE A CHANCE</span><span class="sp-tile-n">2022 · 6th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/53/290/11053290_20220913171622_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Moonlight</span><span class="sp-tile-n">2022 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/36/031/11036031_20220823151041_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">CHANCE</span><span class="sp-tile-n">2022 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ab6ix/a/savior/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/30/134/11030134_20220816173530_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SAVIOR</span><span class="sp-tile-n">2022 · EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/25/494/11025494_20220809145904_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Umbrella</span><span class="sp-tile-n">2022 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/03/071/11003071_20220712172615_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SAVIOR -Japanese ver.-</span><span class="sp-tile-n">2022 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ab6ix/a/atob/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/109/59/935/10959935_20220518114502_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">A to B</span><span class="sp-tile-n">2022 · 5th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ab6ix/a/completewithyou/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/108/42/969/10842969_20220117140347_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">COMPLETE WITH YOU</span><span class="sp-tile-n">2022 · Special</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ab6ix/a/absolute6ix/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/107/98/577/10798577_20211201102410_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ABSOLUTE 6IX</span><span class="sp-tile-n">2021 · EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ab6ix/a/mocomplete/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/107/23/956/10723956_20210927155743_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">MO&#39; COMPLETE</span><span class="sp-tile-n">2021 · 2nd Album</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/76/603/10676603_20210810164245_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">비범벅 (TEN PROJECT Part.4)</span><span class="sp-tile-n">2021 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/13/544/10613544_20210524121723_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">GEMINI</span><span class="sp-tile-n">2021 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ab6ix/a/mocompletehaveadream/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/98/320/10598320_20210426151902_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">MO&#39; COMPLETE : HAVE A DREAM</span><span class="sp-tile-n">2021 · 4th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ab6ix/a/saluteanewhope/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/49/120/10549120_20210118141523_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SALUTE : A NEW HOPE</span><span class="sp-tile-n">2021 · 미니 3집 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ab6ix/a/salute/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/12/189/10512189_20201102121756_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SALUTE</span><span class="sp-tile-n">2020 · 3rd EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ab6ix/a/vivid/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/52/432/10452432_20200629162615_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">VIVID</span><span class="sp-tile-n">2020 · 2nd EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ab6ix/a/5nally/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/87/696/10387696_20200213104134_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">5NALLY</span><span class="sp-tile-n">2020 · Special</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ab6ix/a/6ixense/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/35/957/10335957_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">6IXENSE</span><span class="sp-tile-n">2019 · 1st Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ab6ix/a/bcomplete/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/78/828/10278828_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">B:COMPLETE</span><span class="sp-tile-n">2019 · 1st EP</span></a>
+    </div>
   
     <h2>Related groups</h2>
     <ul class="member-list rel">
@@ -233,7 +229,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/에이비식스/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=에이비식스">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"BREATHE","s":"115 videos","img":"nk-T1_7me8A","m":"BREATHE","h":"https://kpop-universe.kr/en/g/ab6ix/s/breathe/"},{"k":"Member fancams","t":"Jeon Woong","s":"122 fancams","img":"9uMB9Kl3i0s","h":"https://kpop-universe.kr/en/g/ab6ix/jeon-woong/fancams/"},{"k":"Album","t":"SEVEN : CRIMSON HORIZON","s":"11 tracks","im":"https://i.scdn.co/image/ab67616d0000b27325c06ce96dc56010251b7d10","h":"https://kpop-universe.kr/en/g/ab6ix/a/sevencrimsonhorizon/"},{"k":"Song fancams","t":"답을 줘 (THE ANSWER)","s":"97 videos","img":"qzUDCKpYWuo","m":"답을 줘","h":"https://kpop-universe.kr/en/g/ab6ix/s/답을줘/"},{"k":"Member fancams","t":"Kim Donghyun","s":"111 fancams","img":"B0Kcx84ZWwQ","h":"https://kpop-universe.kr/en/g/ab6ix/kim-donghyun/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"BREATHE","s":"117 videos","img":"nk-T1_7me8A","m":"BREATHE","h":"https://kpop-universe.kr/en/g/ab6ix/s/breathe/"},{"k":"Member fancams","t":"Jeon Woong","s":"122 fancams","img":"9uMB9Kl3i0s","h":"https://kpop-universe.kr/en/g/ab6ix/jeon-woong/fancams/"},{"k":"Album","t":"SEVEN : CRIMSON HORIZON","s":"11 tracks","im":"https://i.scdn.co/image/ab67616d0000b27325c06ce96dc56010251b7d10","h":"https://kpop-universe.kr/en/g/ab6ix/a/sevencrimsonhorizon/"},{"k":"Song fancams","t":"답을 줘 (THE ANSWER)","s":"100 videos","img":"qzUDCKpYWuo","m":"답을 줘","h":"https://kpop-universe.kr/en/g/ab6ix/s/답을줘/"},{"k":"Member fancams","t":"Kim Donghyun","s":"111 fancams","img":"B0Kcx84ZWwQ","h":"https://kpop-universe.kr/en/g/ab6ix/kim-donghyun/fancams/"}]</script>
 </div>
 </body>
 </html>

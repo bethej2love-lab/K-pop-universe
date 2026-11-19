@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="템페스트 직캠·무대 영상 895개를 조회수 순으로. 템페스트 멤버·데뷔일(2022.03.02)·소속사(YH엔터테인먼트). 음악방송 1위 4회. 직캠·무대 영상과 디스코그래피를 K-POP UNIVERSE에서.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/06gLcQ4IMsA/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"템페스트","alternateName":"TEMPEST","genre":"K-pop","foundingDate":"2022-03-02","url":"https://kpop-universe.kr/g/템페스트/","image":"https://img.youtube.com/vi/06gLcQ4IMsA/maxresdefault.jpg","member":[{"@type":"Person","name":"한빈"},{"@type":"Person","name":"형섭"},{"@type":"Person","name":"혁"},{"@type":"Person","name":"은찬"},{"@type":"Person","name":"LEW"},{"@type":"Person","name":"태래"},{"@type":"Person","name":"화랑"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"템페스트","alternateName":"TEMPEST","genre":"K-pop","description":"보이그룹. YH엔터테인먼트. 2022년 데뷔. 해체. 대표 앨범 In The Dark (暮色独白)(2025), As I am(2025), My Way(2025).","foundingDate":"2022-03-02","url":"https://kpop-universe.kr/g/템페스트/","image":"https://img.youtube.com/vi/06gLcQ4IMsA/maxresdefault.jpg","member":[{"@type":"Person","name":"한빈"},{"@type":"Person","name":"형섭"},{"@type":"Person","name":"혁"},{"@type":"Person","name":"은찬"},{"@type":"Person","name":"LEW"},{"@type":"Person","name":"태래"},{"@type":"Person","name":"화랑"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["최근 음방 1위 · Baddest Behavior (2024.03.20)","음방 1위 4회","모아둔 무대·영상 1,594개","가장 많이 본 영상 · 조회수 19M"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
-  <p class="intro">보이그룹. YH엔터테인먼트. 2022년 데뷔. 해체. 대표 앨범 In The Dark (暮色独白)(2025), As I am(2025), My Way(2025).</p>
   
     <h2 id="members">멤버</h2>
     <div class="faces">
@@ -145,9 +163,9 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/템페스트/s/dive/">DIVE</a></li>
       <li><a href="https://kpop-universe.kr/g/템페스트/s/nofear/">No Fear</a></li>
       <li><a href="https://kpop-universe.kr/g/템페스트/s/nocturnal/">nocturnal</a></li>
-      <li><a href="https://kpop-universe.kr/g/템페스트/s/maniac/">MANIAC</a></li>
       <li><a href="https://kpop-universe.kr/g/템페스트/s/there/">There</a></li>
       <li><a href="https://kpop-universe.kr/g/템페스트/s/jopping/">Jopping</a></li>
+      <li><a href="https://kpop-universe.kr/g/템페스트/s/maniac/">MANIAC</a></li>
       <li><a href="https://kpop-universe.kr/g/템페스트/s/youngwild/">Young &amp; Wild</a></li>
       <li><a href="https://kpop-universe.kr/g/템페스트/s/폭풍의눈/">폭풍의 눈 EYE OF THE STORM</a></li>
       <li><a href="https://kpop-universe.kr/g/템페스트/s/하루만/">하루만 Only One Day</a></li>
@@ -161,36 +179,25 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/템페스트/s/baddestbehavior/">Baddest Behavior</a></li>
     </ul>
   
-    <h2 id="albums">앨범·수록곡</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/템페스트/a/asiam/">As I am</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/g/템페스트/a/refullofyouth/">RE: Full of Youth</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/g/템페스트/a/bubblegum/">BUBBLE GUM</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/g/템페스트/a/bang/">BANG!</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/g/템페스트/a/tempestvoyage/">TEMPEST Voyage</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/g/템페스트/a/폭풍전야/">폭풍전야</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/g/템페스트/a/onandon/">ON and ON</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/g/템페스트/a/shiningup/">SHINING UP</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/g/템페스트/a/itsmeitswe/">It&#39;s ME, It&#39;s WE</a> <span class="yr">2022</span></li>
-    </ul>
-  
-    <h2>디스코그래피</h2>
-    <ul class="discog-list">
-      <li>In The Dark (暮色独白) <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>As I am <span class="yr">(2025)</span> <span class="tag">미니 7집</span></li>
-      <li>My Way <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>My Way -TV Edit Ver.- <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>Unfreeze (Chinese Ver.) <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>RE: Full of Youth <span class="yr">(2025)</span> <span class="tag">미니 6집</span></li>
-      <li>Destiny <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>Baddest Behavior <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-      <li>TEMPEST Voyage <span class="yr">(2024)</span> <span class="tag">미니 5집</span></li>
-      <li>폭풍 속으로 <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>폭풍전야 <span class="yr">(2023)</span> <span class="tag">미니 4집</span></li>
-      <li>ON and ON <span class="yr">(2022)</span> <span class="tag">미니 3집</span></li>
-      <li>SHINING UP <span class="yr">(2022)</span> <span class="tag">미니 2집</span></li>
-      <li>It&#39;s ME, It&#39;s WE <span class="yr">(2022)</span> <span class="tag">미니 1집</span></li>
-    </ul>
+    <h2 id="albums">디스코그래피</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/121/87/913/12187913_20251103103458_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">In The Dark (暮色独白)</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/템페스트/a/asiam/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/121/76/813/12176813_20251024184510_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">As I am</span><span class="sp-tile-n">2025 · 미니 7집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/119/28/685/11928685_20250722115531_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">My Way</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/118/81/036/11881036_20250704144628_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">My Way -TV Edit Ver.-</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/68/827/11768827_20250409161017_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Unfreeze (Chinese Ver.)</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/템페스트/a/refullofyouth/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/6c/ff/09/6cff09c9-3380-84a9-8bc2-54b8368c304f/8809704433105_Cover.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">RE: Full of Youth</span><span class="sp-tile-n">2025 · 미니 6집</span></a>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02cd4bdef11934ed9dd0ff5e91" alt="" loading="lazy"><span class="sp-tile-t">Destiny</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/템페스트/a/bubblegum/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/63/f7/fe/63f7fe3f-b61c-3ea8-f198-0001a7d97feb/COCP-42418.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">BUBBLE GUM</span><span class="sp-tile-n">2024 · 미니</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/템페스트/a/bang/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/31/8a/c7/318ac70b-cc59-8bc1-68a1-44baec98d0f2/COCP-42218.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">BANG!</span><span class="sp-tile-n">2024 · 미니</span></a>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02353681d2348608b90da31260" alt="" loading="lazy"><span class="sp-tile-t">Baddest Behavior</span><span class="sp-tile-n">2024 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/템페스트/a/tempestvoyage/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/08/5c/12/085c1221-6545-28e9-5a96-a0d7452dc8e7/888272131055_Cover.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">TEMPEST Voyage</span><span class="sp-tile-n">2024 · 미니 5집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/29/575/11329575_20230919144956_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">폭풍 속으로</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/템페스트/a/폭풍전야/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/24/506/11224506_20230414160725_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">폭풍전야</span><span class="sp-tile-n">2023 · 미니 4집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/템페스트/a/onandon/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/1e/93/d6/1e93d6bd-2c26-85d2-41a1-8b9601bb6ad2/888272108965_Cover.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">ON and ON</span><span class="sp-tile-n">2022 · 미니 3집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/템페스트/a/shiningup/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/52/71/88/527188ff-c197-43c9-2755-83023a29e735/888272104851_Cover.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">SHINING UP</span><span class="sp-tile-n">2022 · 미니 2집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/템페스트/a/itsmeitswe/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/40/5c/92/405c928a-6071-714f-09b8-da91098e3e94/888272095050_Cover.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">It&#39;s ME, It&#39;s WE</span><span class="sp-tile-n">2022 · 미니 1집</span></a>
+    </div>
   
     <h2>함께 보면 좋은 그룹</h2>
     <ul class="member-list rel">
@@ -205,7 +212,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/tempest/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=템페스트">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"Can't Stop Shining","s":"영상 106개","img":"JOiri4g1MnE","m":"Can't Stop Shining","h":"https://kpop-universe.kr/g/템페스트/s/cantstopshining/"},{"k":"멤버 직캠","t":"한빈","s":"직캠 90개","img":"dAnm8VnL-Kc","h":"https://kpop-universe.kr/g/템페스트/한빈/fancams/"},{"k":"앨범","t":"As I am","s":"수록곡 5곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/121/76/813/12176813_20251024184510_500.jpg","h":"https://kpop-universe.kr/g/템페스트/a/asiam/"},{"k":"곡별 직캠·무대","t":"난장 (Dangerous)","s":"영상 101개","img":"rutBKYlNfyM","m":"난장","h":"https://kpop-universe.kr/g/템페스트/s/난장/"},{"k":"멤버 직캠","t":"LEW","s":"직캠 58개","img":"oX9luk7FrsY","h":"https://kpop-universe.kr/g/템페스트/LEW/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"Can't Stop Shining","s":"영상 107개","img":"JOiri4g1MnE","m":"Can't Stop Shining","h":"https://kpop-universe.kr/g/템페스트/s/cantstopshining/"},{"k":"멤버 직캠","t":"한빈","s":"직캠 90개","img":"dAnm8VnL-Kc","h":"https://kpop-universe.kr/g/템페스트/한빈/fancams/"},{"k":"앨범","t":"As I am","s":"수록곡 5곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/121/76/813/12176813_20251024184510_500.jpg","h":"https://kpop-universe.kr/g/템페스트/a/asiam/"},{"k":"곡별 직캠·무대","t":"난장 (Dangerous)","s":"영상 103개","img":"rutBKYlNfyM","m":"난장","h":"https://kpop-universe.kr/g/템페스트/s/난장/"},{"k":"멤버 직캠","t":"LEW","s":"직캠 58개","img":"oX9luk7FrsY","h":"https://kpop-universe.kr/g/템페스트/LEW/fancams/"}]</script>
 </div>
 </body>
 </html>

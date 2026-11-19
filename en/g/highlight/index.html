@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="499 Highlight fancams and stages, most viewed first. Highlight: members, debut 2009.10.16, Around Us Entertainment. 29 music show wins, 3 grand prizes (daesang). Fancams, stages and discography on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/vU5tBGRJTPQ/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"Highlight","alternateName":"하이라이트","genre":"K-pop","foundingDate":"2009-10-16","url":"https://kpop-universe.kr/en/g/highlight/","image":"https://img.youtube.com/vi/vU5tBGRJTPQ/maxresdefault.jpg","member":[{"@type":"Person","name":"Yoon Doojoon"},{"@type":"Person","name":"Yang Yoseob"},{"@type":"Person","name":"Lee Gikwang"},{"@type":"Person","name":"Son Dongwoon"},{"@type":"Person","name":"Jang Hyunseung"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"Highlight","alternateName":"하이라이트","genre":"K-pop","description":"Highlight is a 4-member K-pop boy group under Around Us Entertainment, debuting in 2009. Fan club: Light. Recent releases: HIGHLIGHT LIVE 2025 〈RIDE OR DIE〉 (2025), RAINBOW (2025), From Real to Surreal (2025).","foundingDate":"2009-10-16","url":"https://kpop-universe.kr/en/g/highlight/","image":"https://img.youtube.com/vi/vU5tBGRJTPQ/maxresdefault.jpg","member":[{"@type":"Person","name":"Yoon Doojoon"},{"@type":"Person","name":"Yang Yoseob"},{"@type":"Person","name":"Lee Gikwang"},{"@type":"Person","name":"Son Dongwoon"},{"@type":"Person","name":"Jang Hyunseung"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["3 new videos this week","Latest music show win · Chains (2025.05.09)","29 music show wins","1,799 stages & videos collected","Most viewed · 28M views"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
-  <p class="intro">Highlight is a 4-member K-pop boy group under Around Us Entertainment, debuting in 2009. Fan club: Light. Recent releases: HIGHLIGHT LIVE 2025 〈RIDE OR DIE〉 (2025), RAINBOW (2025), From Real to Surreal (2025).</p>
   
     <h2 id="members">Members</h2>
     <div class="faces">
@@ -152,54 +170,44 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/highlight/s/body/">BODY</a></li>
       <li><a href="https://kpop-universe.kr/en/g/highlight/s/불어온다/">불어온다 (Not The End)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/highlight/s/없는엔딩/">없는 엔딩 (Endless Ending)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/highlight/s/얼굴찌푸리지말아요/">얼굴 찌푸리지 말아요 (Don&#39;t Frown)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/highlight/s/switchon/">Switch On</a></li>
       <li><a href="https://kpop-universe.kr/en/g/highlight/s/disconnected/">Disconnected</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/highlight/s/얼굴찌푸리지말아요/">얼굴 찌푸리지 말아요 (Don&#39;t Frown)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/highlight/s/sily/">S.I.L.Y</a></li>
       <li><a href="https://kpop-universe.kr/en/g/highlight/s/predator/">Predator</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/highlight/s/sevenwonders/">Seven Wonders</a></li>
       <li><a href="https://kpop-universe.kr/en/g/highlight/s/callingyou/">CALLING YOU</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/highlight/s/sily/">S.I.L.Y</a></li>
       <li><a href="https://kpop-universe.kr/en/g/highlight/s/네가없는곳/">네가 없는 곳</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/highlight/s/sevenwonders/">Seven Wonders</a></li>
       <li><a href="https://kpop-universe.kr/en/g/highlight/s/옅어져가/">옅어져 가 (Fade Away)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/highlight/s/brain/">BRAIN</a></li>
       <li><a href="https://kpop-universe.kr/en/g/highlight/s/미안/">미안</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/highlight/s/사랑했나봐/">사랑했나봐</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/highlight/s/dontcloseyoureyes/">Don&#39;t Close Your Eyes</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/highlight/s/whatyoulike/">What You Like</a></li>
       <li><a href="https://kpop-universe.kr/en/g/highlight/s/밤안개/">밤안개 (Night Fog)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/highlight/s/어쩔수없지뭐/">어쩔 수 없지 뭐</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/highlight/s/lonelynight/">Lonely Night</a></li>
       <li><a href="https://kpop-universe.kr/en/g/highlight/s/밤이야/">밤이야 Midnight</a></li>
       <li><a href="https://kpop-universe.kr/en/g/highlight/s/celebrate/">CELEBRATE</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/highlight/s/dontcloseyoureyes/">Don&#39;t Close Your Eyes</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/highlight/s/사랑했나봐/">사랑했나봐</a></li>
       <li><a href="https://kpop-universe.kr/en/g/highlight/s/편해지자/">편해지자</a></li>
     </ul>
   
-    <h2 id="albums">Albums & tracklists</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/highlight/a/fromrealtosurreal/">From Real to Surreal</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/highlight/a/switchon/">Switch On</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/highlight/a/aftersunset/">AFTER SUNSET</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/highlight/a/daydream/">DAYDREAM</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/highlight/a/theblowing/">The Blowing</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/highlight/a/outro/">OUTRO</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/highlight/a/celebrate/">CELEBRATE</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/highlight/a/callingyou/">CALLING YOU</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/highlight/a/canyoufeelit/">Can You Feel It?</a> <span class="yr">2017</span></li>
-    </ul>
-  
-    <h2>Discography</h2>
-    <ul class="discog-list">
-      <li>HIGHLIGHT LIVE 2025 〈RIDE OR DIE〉 <span class="yr">(2025)</span> <span class="tag">Live</span></li>
-      <li>RAINBOW <span class="yr">(2025)</span> <span class="tag">Single</span></li>
-      <li>From Real to Surreal <span class="yr">(2025)</span> <span class="tag">6th EP</span></li>
-      <li>Switch On <span class="yr">(2024)</span> <span class="tag">5th EP</span></li>
-      <li>Give You My All <span class="yr">(2023)</span> <span class="tag">Single</span></li>
-      <li>AFTER SUNSET <span class="yr">(2022)</span> <span class="tag">4th EP</span></li>
-      <li>DAYDREAM <span class="yr">(2022)</span> <span class="tag">1st Album</span></li>
-      <li>The Blowing <span class="yr">(2021)</span> <span class="tag">3rd EP</span></li>
-      <li>OUTRO <span class="yr">(2018)</span> <span class="tag">Special</span></li>
-      <li>잘 지내줘 <span class="yr">(2018)</span> <span class="tag">Single</span></li>
-      <li>CELEBRATE <span class="yr">(2017)</span> <span class="tag">2nd EP</span></li>
-      <li>CALLING YOU <span class="yr">(2017)</span> <span class="tag">미니 1집 리패키지</span></li>
-      <li>Can You Feel It? <span class="yr">(2017)</span> <span class="tag">1st EP</span></li>
-    </ul>
+    <h2 id="albums">Discography</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02993ddc2947e7fc66ccec7ab9" alt="" loading="lazy"><span class="sp-tile-t">HIGHLIGHT LIVE 2025 〈RIDE OR DIE〉</span><span class="sp-tile-n">2025 · Live</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02e8b5cdcf1abdeed17c070a38" alt="" loading="lazy"><span class="sp-tile-t">RAINBOW</span><span class="sp-tile-n">2025 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/highlight/a/fromrealtosurreal/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/72/903/11772903_20250428154703_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">From Real to Surreal</span><span class="sp-tile-n">2025 · 6th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/highlight/a/switchon/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/37/485/11437485_20240308145759_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Switch On</span><span class="sp-tile-n">2024 · 5th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/44/381/11344381_20231013165611_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Give You My All</span><span class="sp-tile-n">2023 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/highlight/a/aftersunset/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/95/813/11095813_20221107102303_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">AFTER SUNSET</span><span class="sp-tile-n">2022 · 4th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/highlight/a/daydream/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/108/94/694/10894694_20220321112209_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">DAYDREAM</span><span class="sp-tile-n">2022 · 1st Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/highlight/a/theblowing/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/01/599/10601599_20210503143025_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">The Blowing</span><span class="sp-tile-n">2021 · 3rd EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/highlight/a/outro/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/24/217/10224217_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">OUTRO</span><span class="sp-tile-n">2018 · Special</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/17/136/10217136_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">잘 지내줘</span><span class="sp-tile-n">2018 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/highlight/a/celebrate/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/02/644/10102644_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">CELEBRATE</span><span class="sp-tile-n">2017 · 2nd EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/highlight/a/callingyou/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/66/561/10066561_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">CALLING YOU</span><span class="sp-tile-n">2017 · 미니 1집 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/highlight/a/canyoufeelit/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/44/814/10044814_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Can You Feel It?</span><span class="sp-tile-n">2017 · 1st EP</span></a>
+    </div>
   
     <h2>Related groups</h2>
     <ul class="member-list rel">
@@ -208,7 +216,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/하이라이트/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=하이라이트">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"양요섭","s":"72 videos","img":"pys0iujXJjQ","m":"양요섭","h":"https://kpop-universe.kr/en/g/highlight/s/양요섭/"},{"k":"Member fancams","t":"Yang Yoseob","s":"94 fancams","img":"gai5vUuGGZQ","h":"https://kpop-universe.kr/en/g/highlight/yang-yoseob/fancams/"},{"k":"Album","t":"From Real to Surreal","s":"4 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/117/72/903/11772903_20250428154703_500.jpg","h":"https://kpop-universe.kr/en/g/highlight/a/fromrealtosurreal/"},{"k":"Song fancams","t":"Alone","s":"55 videos","img":"RW5mY4VfkZM","m":"Alone","h":"https://kpop-universe.kr/en/g/highlight/s/alone/"},{"k":"Member fancams","t":"Lee Gikwang","s":"68 fancams","img":"ZBUuDtVMfEU","h":"https://kpop-universe.kr/en/g/highlight/lee-gikwang/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"양요섭","s":"74 videos","img":"pys0iujXJjQ","m":"양요섭","h":"https://kpop-universe.kr/en/g/highlight/s/양요섭/"},{"k":"Member fancams","t":"Yang Yoseob","s":"94 fancams","img":"gai5vUuGGZQ","h":"https://kpop-universe.kr/en/g/highlight/yang-yoseob/fancams/"},{"k":"Album","t":"From Real to Surreal","s":"4 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/117/72/903/11772903_20250428154703_500.jpg","h":"https://kpop-universe.kr/en/g/highlight/a/fromrealtosurreal/"},{"k":"Song fancams","t":"Alone","s":"55 videos","img":"RW5mY4VfkZM","m":"Alone","h":"https://kpop-universe.kr/en/g/highlight/s/alone/"},{"k":"Member fancams","t":"Lee Gikwang","s":"68 fancams","img":"ZBUuDtVMfEU","h":"https://kpop-universe.kr/en/g/highlight/lee-gikwang/fancams/"}]</script>
 </div>
 </body>
 </html>

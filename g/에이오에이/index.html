@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="에이오에이 직캠·무대 영상 367개를 조회수 순으로. 에이오에이 멤버·데뷔일(2012.07.30)·소속사(FNC엔터테인먼트). 음악방송 1위 8회. 직캠·무대 영상과 디스코그래피를 K-POP UNIVERSE에서.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/t0BhZtEM7KI/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"에이오에이","alternateName":"AOA","genre":"K-pop","foundingDate":"2012-07-30","url":"https://kpop-universe.kr/g/에이오에이/","image":"https://img.youtube.com/vi/t0BhZtEM7KI/maxresdefault.jpg","member":[{"@type":"Person","name":"혜정"},{"@type":"Person","name":"설현"},{"@type":"Person","name":"찬미"},{"@type":"Person","name":"유경"},{"@type":"Person","name":"초아"},{"@type":"Person","name":"민아"},{"@type":"Person","name":"지민"},{"@type":"Person","name":"유나"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"에이오에이","alternateName":"AOA","genre":"K-pop","description":"걸그룹. FNC엔터테인먼트. 2012년 데뷔. 해체. 대표 앨범 NEW MOON(2019), BINGLE BANGLE(2018), Angel's Knock(2017).","foundingDate":"2012-07-30","url":"https://kpop-universe.kr/g/에이오에이/","image":"https://img.youtube.com/vi/t0BhZtEM7KI/maxresdefault.jpg","member":[{"@type":"Person","name":"혜정"},{"@type":"Person","name":"설현"},{"@type":"Person","name":"찬미"},{"@type":"Person","name":"유경"},{"@type":"Person","name":"초아"},{"@type":"Person","name":"민아"},{"@type":"Person","name":"지민"},{"@type":"Person","name":"유나"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["최근 음방 1위 · 너나 해 (Excuse Me) (2017.01.18)","음방 1위 8회","모아둔 무대·영상 1,006개","가장 많이 본 영상 · 조회수 145M"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
-  <p class="intro">걸그룹. FNC엔터테인먼트. 2012년 데뷔. 해체. 대표 앨범 NEW MOON(2019), BINGLE BANGLE(2018), Angel&#39;s Knock(2017).</p>
   
     <h2 id="members">멤버</h2>
     <div class="faces">
@@ -138,12 +156,12 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <ul class="member-list rel">
       <li><a href="https://kpop-universe.kr/g/에이오에이/s/날보러와요/">날 보러 와요 (Come See Me)</a></li>
       <li><a href="https://kpop-universe.kr/g/에이오에이/s/빙글뱅글/">빙글뱅글 (Bingle Bangle)</a></li>
-      <li><a href="https://kpop-universe.kr/g/에이오에이/s/excuseme/">Excuse Me</a></li>
       <li><a href="https://kpop-universe.kr/g/에이오에이/s/심쿵해/">심쿵해 (Heart Attack)</a></li>
+      <li><a href="https://kpop-universe.kr/g/에이오에이/s/excuseme/">Excuse Me</a></li>
       <li><a href="https://kpop-universe.kr/g/에이오에이/s/짧은치마/">짧은 치마 (Miniskirt)</a></li>
       <li><a href="https://kpop-universe.kr/g/에이오에이/s/사뿐사뿐/">사뿐사뿐</a></li>
-      <li><a href="https://kpop-universe.kr/g/에이오에이/s/흔들려/">흔들려 Confused</a></li>
       <li><a href="https://kpop-universe.kr/g/에이오에이/s/goodluck/">Good Luck</a></li>
+      <li><a href="https://kpop-universe.kr/g/에이오에이/s/흔들려/">흔들려 Confused</a></li>
       <li><a href="https://kpop-universe.kr/g/에이오에이/s/얼마나/">얼마나 (Confused)</a></li>
       <li><a href="https://kpop-universe.kr/g/에이오에이/s/빙빙/">빙빙 (Bing Bing)</a></li>
       <li><a href="https://kpop-universe.kr/g/에이오에이/s/elvis/">ELVIS</a></li>
@@ -151,38 +169,29 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/에이오에이/s/질투나요baby/">질투 나요 BABY</a></li>
       <li><a href="https://kpop-universe.kr/g/에이오에이/s/getout/">GET OUT</a></li>
       <li><a href="https://kpop-universe.kr/g/에이오에이/s/10seconds/">10 Seconds</a></li>
-      <li><a href="https://kpop-universe.kr/g/에이오에이/s/aoa/">AOA</a></li>
       <li><a href="https://kpop-universe.kr/g/에이오에이/s/단발머리/">단발머리 (Short Hair)</a></li>
+      <li><a href="https://kpop-universe.kr/g/에이오에이/s/aoa/">AOA</a></li>
       <li><a href="https://kpop-universe.kr/g/에이오에이/s/superduper/">Super Duper</a></li>
+      <li><a href="https://kpop-universe.kr/g/에이오에이/s/야하고싶어/">야 하고 싶어</a></li>
       <li><a href="https://kpop-universe.kr/g/에이오에이/s/sorry/">Sorry</a></li>
+      <li><a href="https://kpop-universe.kr/g/에이오에이/s/할렐루야/">할렐루야 (Hallelujah)</a></li>
     </ul>
   
-    <h2 id="albums">앨범·수록곡</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/에이오에이/a/newmoon/">NEW MOON</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/g/에이오에이/a/binglebangle/">BINGLE BANGLE</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/에이오에이/a/angelsknock/">Angel&#39;s Knock</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/에이오에이/a/goodluck/">Good Luck</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/g/에이오에이/a/heartattack/">Heart Attack</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/g/에이오에이/a/사뿐사뿐/">사뿐사뿐</a> <span class="yr">2014</span></li>
-      <li><a href="https://kpop-universe.kr/g/에이오에이/a/단발머리/">단발머리 (Short Hair)</a> <span class="yr">2014</span></li>
-    </ul>
-  
-    <h2>디스코그래피</h2>
-    <ul class="discog-list">
-      <li>NEW MOON <span class="yr">(2019)</span> <span class="tag">미니 6집</span></li>
-      <li>BINGLE BANGLE <span class="yr">(2018)</span> <span class="tag">미니 5집</span></li>
-      <li>Angel&#39;s Knock <span class="yr">(2017)</span> <span class="tag">정규 1집</span></li>
-      <li>Good Luck <span class="yr">(2016)</span> <span class="tag">미니 4집</span></li>
-      <li>Heart Attack <span class="yr">(2015)</span> <span class="tag">미니 3집</span></li>
-      <li>사뿐사뿐 <span class="yr">(2014)</span> <span class="tag">미니 2집</span></li>
-      <li>단발머리 (Short Hair) <span class="yr">(2014)</span> <span class="tag">미니 1집</span></li>
-      <li>짧은 치마 (Miniskirt) <span class="yr">(2014)</span> <span class="tag">싱글</span></li>
-      <li>RED MOTION <span class="yr">(2013)</span> <span class="tag">싱글</span></li>
-      <li>MOYA <span class="yr">(2013)</span> <span class="tag">싱글</span></li>
-      <li>WANNA BE <span class="yr">(2012)</span> <span class="tag">싱글</span></li>
-      <li>Angels&#39; Story <span class="yr">(2012)</span> <span class="tag">싱글</span></li>
-    </ul>
+    <h2 id="albums">디스코그래피</h2>
+    <div class="sp-tiles dg-tiles">
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에이오에이/a/newmoon/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/57/177/10357177_500.jpg?e6803cee70b895f54d7261104c7d79be" alt="" loading="lazy"><span class="sp-tile-t">NEW MOON</span><span class="sp-tile-n">2019 · 미니 6집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에이오에이/a/binglebangle/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/70/965/10170965_500.jpg?8e2318891d8058cf61ff26ba6e1be309" alt="" loading="lazy"><span class="sp-tile-t">BINGLE BANGLE</span><span class="sp-tile-n">2018 · 미니 5집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에이오에이/a/angelsknock/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/27/430/10027430_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Angel&#39;s Knock</span><span class="sp-tile-n">2017 · 정규 1집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에이오에이/a/goodluck/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/84/922/2684922_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Good Luck</span><span class="sp-tile-n">2016 · 미니 4집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에이오에이/a/heartattack/"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/25/321/2325321_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Heart Attack</span><span class="sp-tile-n">2015 · 미니 3집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에이오에이/a/사뿐사뿐/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/90/102/2290102_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">사뿐사뿐</span><span class="sp-tile-n">2014 · 미니 2집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에이오에이/a/단발머리/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/61/569/2261569_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">단발머리 (Short Hair)</span><span class="sp-tile-n">2014 · 미니 1집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/26/803/2226803_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">짧은 치마 (Miniskirt)</span><span class="sp-tile-n">2014 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/09/942/2209942_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">RED MOTION</span><span class="sp-tile-n">2013 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/94/484/2194484_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">MOYA</span><span class="sp-tile-n">2013 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/52/424/2152424_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">WANNA BE</span><span class="sp-tile-n">2012 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/38/811/2138811_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Angels&#39; Story</span><span class="sp-tile-n">2012 · 싱글</span></div>
+    </div>
   
     <h2>함께 보면 좋은 그룹</h2>
     <ul class="member-list rel">
@@ -197,7 +206,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/aoa/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=에이오에이">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"날 보러 와요 (Come See Me)","s":"영상 66개","img":"ixxWWKX4S_8","m":"날 보러 와요","h":"https://kpop-universe.kr/g/에이오에이/s/날보러와요/"},{"k":"멤버 직캠","t":"설현","s":"직캠 31개","img":"hgvshqzQke4","h":"https://kpop-universe.kr/g/에이오에이/설현/fancams/"},{"k":"앨범","t":"NEW MOON","s":"수록곡 5곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/103/57/177/10357177_500.jpg?e6803cee70b895f54d7261104c7d79be","h":"https://kpop-universe.kr/g/에이오에이/a/newmoon/"},{"k":"곡별 직캠·무대","t":"빙글뱅글 (Bingle Bangle)","s":"영상 53개","img":"ntWSnDV0MYs","m":"빙글뱅글","h":"https://kpop-universe.kr/g/에이오에이/s/빙글뱅글/"},{"k":"멤버 직캠","t":"혜정","s":"직캠 22개","img":"1pX3dzJbmk0","h":"https://kpop-universe.kr/g/에이오에이/혜정/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"날 보러 와요 (Come See Me)","s":"영상 68개","img":"ixxWWKX4S_8","m":"날 보러 와요","h":"https://kpop-universe.kr/g/에이오에이/s/날보러와요/"},{"k":"멤버 직캠","t":"설현","s":"직캠 31개","img":"hgvshqzQke4","h":"https://kpop-universe.kr/g/에이오에이/설현/fancams/"},{"k":"앨범","t":"NEW MOON","s":"수록곡 5곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/103/57/177/10357177_500.jpg?e6803cee70b895f54d7261104c7d79be","h":"https://kpop-universe.kr/g/에이오에이/a/newmoon/"},{"k":"곡별 직캠·무대","t":"빙글뱅글 (Bingle Bangle)","s":"영상 56개","img":"ntWSnDV0MYs","m":"빙글뱅글","h":"https://kpop-universe.kr/g/에이오에이/s/빙글뱅글/"},{"k":"멤버 직캠","t":"혜정","s":"직캠 22개","img":"1pX3dzJbmk0","h":"https://kpop-universe.kr/g/에이오에이/혜정/fancams/"}]</script>
 </div>
 </body>
 </html>

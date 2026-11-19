@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -153,8 +172,8 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <a class="sp-tile" href="https://kpop-universe.kr/g/엑스디너리 히어로즈/건일/s/icu/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/54/a5/6a/54a56a90-4197-f66f-772f-3f8944b7fcaf/8809928954158.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">ICU</span><span class="sp-tile-n">직캠 4</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/엑스디너리 히어로즈/건일/s/voyager/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ee/de/2f/eede2f38-3a35-414a-14b5-16ec2fd35d90/8809928958163.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Voyager</span><span class="sp-tile-n">직캠 3</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/엑스디너리 히어로즈/건일/s/nightbeforetheend/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/3c/6d/87/3c6d87fe-4bdd-b0e5-8bfe-9c8d57776670/Xdinary_Heroes_LIVE_and_FALL_Artwork.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Night before the end</span><span class="sp-tile-n">직캠 3</span></a>
-      <a class="sp-tile" href="https://kpop-universe.kr/g/엑스디너리 히어로즈/건일/s/haircut/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/a7/73/3e/a7733e4f-b5cc-9e53-b521-ccc466ebc4ab/Xdinary_Heroes_Overload_Online_cover.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Hair Cut</span><span class="sp-tile-n">직캠 3</span></a>
       <a class="sp-tile" href="https://kpop-universe.kr/g/엑스디너리 히어로즈/건일/s/happydeathday/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/10/bf/4e/10bf4e75-d5b5-d72c-dbe9-85c1488d344f/XH_HDD_online_cover.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Happy Death Day</span><span class="sp-tile-n">직캠 3</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엑스디너리 히어로즈/건일/s/haircut/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/a7/73/3e/a7733e4f-b5cc-9e53-b521-ccc466ebc4ab/Xdinary_Heroes_Overload_Online_cover.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Hair Cut</span><span class="sp-tile-n">직캠 3</span></a>
     </div>
   
   

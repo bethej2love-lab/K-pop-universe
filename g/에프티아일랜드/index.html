@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="에프티아일랜드 직캠·무대 영상 195개를 조회수 순으로. 에프티아일랜드 멤버·데뷔일(2007.06.07)·소속사(FNC엔터테인먼트). 음악방송 1위 5회. 직캠·무대 영상과 디스코그래피를 K-POP UNIVERSE에서.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/bIRKT_MaDdI/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"에프티아일랜드","alternateName":"FTISLAND","genre":"K-pop","foundingDate":"2007-06-07","url":"https://kpop-universe.kr/g/에프티아일랜드/","image":"https://img.youtube.com/vi/bIRKT_MaDdI/maxresdefault.jpg","member":[{"@type":"Person","name":"이홍기"},{"@type":"Person","name":"이재진"},{"@type":"Person","name":"최민환"},{"@type":"Person","name":"오원빈"},{"@type":"Person","name":"송승현"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"에프티아일랜드","alternateName":"FTISLAND","genre":"K-pop","description":"3인조 보이그룹. FNC엔터테인먼트. 2007년 데뷔. 팬덤명 프리마돈나. 대표 앨범 너란 섬(2026), Like The First Day(2026), Lemonade(2026).","foundingDate":"2007-06-07","url":"https://kpop-universe.kr/g/에프티아일랜드/","image":"https://img.youtube.com/vi/bIRKT_MaDdI/maxresdefault.jpg","member":[{"@type":"Person","name":"이홍기"},{"@type":"Person","name":"이재진"},{"@type":"Person","name":"최민환"},{"@type":"Person","name":"오원빈"},{"@type":"Person","name":"송승현"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["이번 주 새 영상 2개","최근 음방 1위 · Take Me Now (2016.07.26)","음방 1위 5회","모아둔 무대·영상 643개","가장 많이 본 영상 · 조회수 36M"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
-  <p class="intro">3인조 보이그룹. FNC엔터테인먼트. 2007년 데뷔. 팬덤명 프리마돈나. 대표 앨범 너란 섬(2026), Like The First Day(2026), Lemonade(2026).</p>
   
     <h2 id="members">멤버</h2>
     <div class="faces">
@@ -138,86 +156,74 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/에프티아일랜드/s/사랑앓이/">사랑앓이 Love Sick</a></li>
       <li><a href="https://kpop-universe.kr/g/에프티아일랜드/s/좋겠어/">좋겠어 (I wish)</a></li>
       <li><a href="https://kpop-universe.kr/g/에프티아일랜드/s/지독하게/">지독하게 Severely</a></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/s/sage/">Sage</a></li>
       <li><a href="https://kpop-universe.kr/g/에프티아일랜드/s/사랑사랑사랑/">사랑사랑사랑 Love Love Love</a></li>
+      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/s/sage/">Sage</a></li>
+      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/s/미치도록/">미치도록 Madly</a></li>
+      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/s/puppy/">PUPPY</a></li>
       <li><a href="https://kpop-universe.kr/g/에프티아일랜드/s/lovesick/">Love Sick(Live-2017 Autumn Tour -Here is Paradise-)</a></li>
       <li><a href="https://kpop-universe.kr/g/에프티아일랜드/s/heaven/">Heaven</a></li>
       <li><a href="https://kpop-universe.kr/g/에프티아일랜드/s/burnit/">BURN IT</a></li>
       <li><a href="https://kpop-universe.kr/g/에프티아일랜드/s/serious/">Serious</a></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/s/hellohello/">Hello Hello</a></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/s/여름밤의꿈/">여름밤의 꿈 Summer Night&#39;s Dream</a></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/s/미치도록/">미치도록 Madly</a></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/s/새들처럼/">새들처럼 Like Birds</a></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/s/남자의첫사랑은무덤까지간다/">남자의 첫사랑은 무덤까지 간다 A Man&#39;s First Love Follows Him To the Grave</a></li>
       <li><a href="https://kpop-universe.kr/g/에프티아일랜드/s/pray/">PRAY</a></li>
       <li><a href="https://kpop-universe.kr/g/에프티아일랜드/s/tothelight/">To The Light</a></li>
+      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/s/hellohello/">Hello Hello</a></li>
+      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/s/여름밤의꿈/">여름밤의 꿈 Summer Night&#39;s Dream</a></li>
+      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/s/새들처럼/">새들처럼 Like Birds</a></li>
       <li><a href="https://kpop-universe.kr/g/에프티아일랜드/s/바래/">바래 I Hope</a></li>
+      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/s/남자의첫사랑은무덤까지간다/">남자의 첫사랑은 무덤까지 간다 A Man&#39;s First Love Follows Him To the Grave</a></li>
       <li><a href="https://kpop-universe.kr/g/에프티아일랜드/s/말이안돼/">말이 안 돼 (Unthinkable)</a></li>
       <li><a href="https://kpop-universe.kr/g/에프티아일랜드/s/paradise/">Paradise</a></li>
       <li><a href="https://kpop-universe.kr/g/에프티아일랜드/s/눈치없이/">눈치 없이 (INSENSIBLE)</a></li>
     </ul>
   
-    <h2 id="albums">앨범·수록곡</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/a/instinct/">Instinct</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/a/serious/">Serious</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/a/sage/">Sage</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/a/lockup/">LOCK UP</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/a/zapping/">ZAPPING</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/a/ftisland6thminialbum/">FTISLAND 6TH MINI ALBUM [WHAT IF]</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/a/ftisland10thanniversaryalbumover10years/">FTISLAND 10th Anniversary Album &#39;OVER 10 YEARS&#39;</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/a/ftisland6thalbumwheresthetruth/">FTISLAND 6th ALBUM &#39;Where&#39;s the truth?&#39;</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/a/iwill/">I WILL</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/a/themood/">THE MOOD</a> <span class="yr">2013</span></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/a/thanksto/">THANKS TO</a> <span class="yr">2013</span></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/a/fivetreasurebox/">FIVE TREASURE BOX</a> <span class="yr">2012</span></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/a/grownup/">Grown-Up</a> <span class="yr">2012</span></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/a/memoryinftisland/">MEMORY IN FTISLAND</a> <span class="yr">2011</span></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/a/return/">Return</a> <span class="yr">2011</span></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/a/beautifuljourney/">Beautiful Journey</a> <span class="yr">2010</span></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/a/japanspecialalbumvol1/">Japan Special Album Vol.1</a> <span class="yr">2010</span></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/a/doubledate/">Double Date</a> <span class="yr">2009</span></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/a/crosschange/">Cross &amp; Change</a> <span class="yr">2009</span></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/a/jumpup/">Jump Up</a> <span class="yr">2009</span></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/a/colorfulsensibilitypart2/">Colorful Sensibility Part.2</a> <span class="yr">2008</span></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/a/colorfulsensibility/">Colorful Sensibility</a> <span class="yr">2008</span></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/a/therefreshment/">The Refreshment (Special Album)</a> <span class="yr">2007</span></li>
-      <li><a href="https://kpop-universe.kr/g/에프티아일랜드/a/cheerfulsensibility/">Cheerful Sensibility</a> <span class="yr">2007</span></li>
-    </ul>
-  
-    <h2>디스코그래피</h2>
-    <ul class="discog-list">
-      <li>너란 섬 <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>Like The First Day <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>Lemonade <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>정답 <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>작은 나보다 커다란 세상이 문을 열어 줄 것 같아 <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>Love in the City <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>Instinct <span class="yr">(2025)</span> <span class="tag">정규</span></li>
-      <li>MONOCHROME <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>THUNDERSTORM <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>Burn to Win (Original Soundtrack) Part.1 <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>행복 이론 (Theory of Happiness) <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>Serious <span class="yr">(2024)</span> <span class="tag">정규 7집</span></li>
-      <li>BURN IT <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-      <li>베르사이유의 장미 (웹툰 ‘세이렌’ X FTISLAND (FT아일랜드)) <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-      <li>마중 (2023) (낮에 뜨는 달 X FTISLAND (FT아일랜드)) <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>사랑하는 법을 몰라서 (2023) <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>F-R-I-E-N-DS <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>Sage <span class="yr">(2023)</span> <span class="tag">미니 9집</span></li>
-      <li>DOOR <span class="yr">(2022)</span> <span class="tag">싱글</span></li>
-      <li>이홍기의 플레이리스트 &lt;ONCE&gt; <span class="yr">(2022)</span> <span class="tag">싱글</span></li>
-      <li>LOCK UP <span class="yr">(2021)</span> <span class="tag">미니 8집</span></li>
-      <li>[Vol.110] 유희열의 스케치북 : 일흔 두번째 목소리 &#39;유스케 X FT아일랜드&#39; <span class="yr">(2021)</span> <span class="tag">싱글</span></li>
-      <li>Sunrise Yellow <span class="yr">(2020)</span> <span class="tag">싱글</span></li>
-      <li>ZAPPING <span class="yr">(2019)</span> <span class="tag">미니 7집</span></li>
-      <li>FTISLAND 6TH MINI ALBUM [WHAT IF] <span class="yr">(2018)</span> <span class="tag">미니 6집</span></li>
-      <li>FTISLAND 10th Anniversary Album &#39;OVER 10 YEARS&#39; <span class="yr">(2017)</span> <span class="tag">스페셜</span></li>
-      <li>FTISLAND 10th Anniversary Special Digital Single <span class="yr">(2017)</span> <span class="tag">싱글</span></li>
-      <li>FTISLAND 6th ALBUM &#39;Where&#39;s the truth?&#39; <span class="yr">(2016)</span> <span class="tag">정규 6집</span></li>
-      <li>PUPPY <span class="yr">(2015)</span> <span class="tag">싱글</span></li>
-      <li>I WILL <span class="yr">(2015)</span> <span class="tag">정규 5집</span></li>
-    </ul>
+    <h2 id="albums">디스코그래피</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02d5d6e4885d16989795bac857" alt="" loading="lazy"><span class="sp-tile-t">너란 섬</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e023808b500b9062a42a4e30e53" alt="" loading="lazy"><span class="sp-tile-t">Like The First Day</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/144/53/079/14453079_20260816153428_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Lemonade</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/122/01/817/12201817_20251110162925_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">정답</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/121/85/304/12185304_20251030151548_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">작은 나보다 커다란 세상이 문을 열어 줄 것 같아</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/121/41/876/12141876_20250929155308_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Love in the City</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에프티아일랜드/a/instinct/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/121/15/400/12115400_20250914153826_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Instinct</span><span class="sp-tile-n">2025 · 정규</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/120/75/735/12075735_20250826185001_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">MONOCHROME</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/119/06/511/11906511_20250718120347_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">THUNDERSTORM</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e0236c7ec8c5881e9d95b555ed6" alt="" loading="lazy"><span class="sp-tile-t">Burn to Win (Original Soundtrack) Part.1</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/95/156/11795156_20250430182507_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">행복 이론 (Theory of Happiness)</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에프티아일랜드/a/serious/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/35/861/11535861_20240709161818_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Serious</span><span class="sp-tile-n">2024 · 정규 7집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/23/372/11523372_20240626154943_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BURN IT</span><span class="sp-tile-n">2024 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/39/992/11439992_20240313094247_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">베르사이유의 장미 (웹툰 ‘세이렌’ X FTISLAND (FT아일랜드))</span><span class="sp-tile-n">2024 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/81/243/11381243_20231208152319_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">마중 (2023) (낮에 뜨는 달 X FTISLAND (FT아일랜드))</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/52/514/11352514_20231026160309_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">사랑하는 법을 몰라서 (2023)</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/37/118/11337118_20231002230500_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">F-R-I-E-N-DS</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에프티아일랜드/a/sage/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/22/137/11322137_20230906172035_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Sage</span><span class="sp-tile-n">2023 · 미니 9집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/62/060/11062060_20220922103044_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">DOOR</span><span class="sp-tile-n">2022 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/108/46/560/10846560_20220120144910_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">이홍기의 플레이리스트 &lt;ONCE&gt;</span><span class="sp-tile-n">2022 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에프티아일랜드/a/lockup/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/108/08/779/10808779_20211209181656_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">LOCK UP</span><span class="sp-tile-n">2021 · 미니 8집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/107/17/531/10717531_20210917131534_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">[Vol.110] 유희열의 스케치북 : 일흔 두번째 목소리 &#39;유스케 X FT아일랜드&#39;</span><span class="sp-tile-n">2021 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/98/179/10398179_20200304114329_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Sunrise Yellow</span><span class="sp-tile-n">2020 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에프티아일랜드/a/zapping/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/27/035/10327035_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ZAPPING</span><span class="sp-tile-n">2019 · 미니 7집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에프티아일랜드/a/ftisland6thminialbum/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/88/875/10188875_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">FTISLAND 6TH MINI ALBUM [WHAT IF]</span><span class="sp-tile-n">2018 · 미니 6집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에프티아일랜드/a/ftisland10thanniversaryalbumover10years/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/68/952/10068952_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">FTISLAND 10th Anniversary Album &#39;OVER 10 YEARS&#39;</span><span class="sp-tile-n">2017 · 스페셜</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/66/219/10066219_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">FTISLAND 10th Anniversary Special Digital Single</span><span class="sp-tile-n">2017 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에프티아일랜드/a/ftisland6thalbumwheresthetruth/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/98/216/2698216_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">FTISLAND 6th ALBUM &#39;Where&#39;s the truth?&#39;</span><span class="sp-tile-n">2016 · 정규 6집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/37/525/2337525_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">PUPPY</span><span class="sp-tile-n">2015 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에프티아일랜드/a/iwill/"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/09/393/2309393_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">I WILL</span><span class="sp-tile-n">2015 · 정규 5집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에프티아일랜드/a/themood/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/15/134/2215134_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">THE MOOD</span><span class="sp-tile-n">2013 · 미니 5집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에프티아일랜드/a/thanksto/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/01/913/2201913_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">THANKS TO</span><span class="sp-tile-n">2013 · 스페셜</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에프티아일랜드/a/fivetreasurebox/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/49/653/2149653_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">FIVE TREASURE BOX</span><span class="sp-tile-n">2012 · 정규 4집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에프티아일랜드/a/grownup/"><img src="https://cdnimg.melon.co.kr/cm/album/images/020/72/048/2072048_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Grown-Up</span><span class="sp-tile-n">2012 · 미니 4집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에프티아일랜드/a/memoryinftisland/"><img src="https://cdnimg.melon.co.kr/cm/album/images/020/18/666/2018666_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">MEMORY IN FTISLAND</span><span class="sp-tile-n">2011 · 스페셜</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에프티아일랜드/a/return/"><img src="https://cdnimg.melon.co.kr/cm/album/images/012/83/353/1283353_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Return</span><span class="sp-tile-n">2011 · 미니 3집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에프티아일랜드/a/beautifuljourney/"><img src="https://cdnimg.melon.co.kr/cm/album/images/010/01/652/1001652_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Beautiful Journey</span><span class="sp-tile-n">2010 · 미니 2집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에프티아일랜드/a/japanspecialalbumvol1/"><img src="https://cdnimg.melon.co.kr/cm/album/images/008/61/251/861251_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Japan Special Album Vol.1</span><span class="sp-tile-n">2010 · 스페셜</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에프티아일랜드/a/doubledate/"><img src="https://cdnimg.melon.co.kr/cm/album/images/007/03/553/703553_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Double Date</span><span class="sp-tile-n">2009 · 스페셜</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에프티아일랜드/a/crosschange/"><img src="https://cdnimg.melon.co.kr/cm/album/images/006/05/252/605252_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Cross &amp; Change</span><span class="sp-tile-n">2009 · 정규 3집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에프티아일랜드/a/jumpup/"><img src="https://cdnimg.melon.co.kr/cm/album/images/004/95/152/495152_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Jump Up</span><span class="sp-tile-n">2009 · 미니 1집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에프티아일랜드/a/colorfulsensibilitypart2/"><img src="https://cdnimg.melon.co.kr/cm/album/images/003/99/060/399060_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Colorful Sensibility Part.2</span><span class="sp-tile-n">2008 · 정규 2집 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에프티아일랜드/a/colorfulsensibility/"><img src="https://cdnimg.melon.co.kr/cm/album/images/003/94/954/394954_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Colorful Sensibility</span><span class="sp-tile-n">2008 · 정규 2집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에프티아일랜드/a/therefreshment/"><img src="https://cdnimg.melon.co.kr/cm/album/images/003/61/533/361533_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">The Refreshment (Special Album)</span><span class="sp-tile-n">2007 · 스페셜</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/에프티아일랜드/a/cheerfulsensibility/"><img src="https://cdnimg.melon.co.kr/cm/album/images/003/52/436/352436_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Cheerful Sensibility</span><span class="sp-tile-n">2007 · 정규 1집</span></a>
+    </div>
   
     <h2>함께 보면 좋은 그룹</h2>
     <ul class="member-list rel">
@@ -232,7 +238,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/ftisland/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=에프티아일랜드">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"Wind","s":"영상 13개","img":"5C3f01ZiovA","m":"Wind","h":"https://kpop-universe.kr/g/에프티아일랜드/s/wind/"},{"k":"멤버 직캠","t":"이홍기","s":"직캠 12개","img":"Sy95MnB1b_4","h":"https://kpop-universe.kr/g/에프티아일랜드/이홍기/fancams/"},{"k":"앨범","t":"Instinct","s":"수록곡 10곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/121/15/400/12115400_20250914153826_500.jpg","h":"https://kpop-universe.kr/g/에프티아일랜드/a/instinct/"},{"k":"곡별 직캠·무대","t":"Take Me Now","s":"영상 11개","img":"WsC0jG1M5jA","m":"Take Me Now","h":"https://kpop-universe.kr/g/에프티아일랜드/s/takemenow/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"Wind","s":"영상 14개","img":"5C3f01ZiovA","m":"Wind","h":"https://kpop-universe.kr/g/에프티아일랜드/s/wind/"},{"k":"멤버 직캠","t":"이홍기","s":"직캠 12개","img":"Sy95MnB1b_4","h":"https://kpop-universe.kr/g/에프티아일랜드/이홍기/fancams/"},{"k":"앨범","t":"Instinct","s":"수록곡 10곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/121/15/400/12115400_20250914153826_500.jpg","h":"https://kpop-universe.kr/g/에프티아일랜드/a/instinct/"},{"k":"곡별 직캠·무대","t":"Take Me Now","s":"영상 11개","img":"WsC0jG1M5jA","m":"Take Me Now","h":"https://kpop-universe.kr/g/에프티아일랜드/s/takemenow/"}]</script>
 </div>
 </body>
 </html>

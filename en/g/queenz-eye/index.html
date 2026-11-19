@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="145 Queenz Eye fancams and stages, most viewed first. Queenz Eye: members, debut 2022.10.24, BIG Entertainment. Fancams, stages and discography on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/iyZZYnjT0ow/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"Queenz Eye","alternateName":"퀸즈아이","genre":"K-pop","foundingDate":"2022-10-24","url":"https://kpop-universe.kr/en/g/queenz-eye/","image":"https://img.youtube.com/vi/iyZZYnjT0ow/maxresdefault.jpg","member":[{"@type":"Person","name":"Wonchae"},{"@type":"Person","name":"Ayoon"},{"@type":"Person","name":"Kiri"},{"@type":"Person","name":"Seobin"},{"@type":"Person","name":"Jinyul"},{"@type":"Person","name":"Seoha"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"Queenz Eye","alternateName":"퀸즈아이","genre":"K-pop","description":"Queenz Eye is a 6-member K-pop girl group under BIG Entertainment, debuting in 2022. Fan club: I-Q. Recent releases: PRISM EP.02 (2026), PRISM EP.01 (2025), THIS IS LOVE (2023).","foundingDate":"2022-10-24","url":"https://kpop-universe.kr/en/g/queenz-eye/","image":"https://img.youtube.com/vi/iyZZYnjT0ow/maxresdefault.jpg","member":[{"@type":"Person","name":"Wonchae"},{"@type":"Person","name":"Ayoon"},{"@type":"Person","name":"Kiri"},{"@type":"Person","name":"Seobin"},{"@type":"Person","name":"Jinyul"},{"@type":"Person","name":"Seoha"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["275 stages & videos collected","Most viewed · 6.3M views"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
-  <p class="intro">Queenz Eye is a 6-member K-pop girl group under BIG Entertainment, debuting in 2022. Fan club: I-Q. Recent releases: PRISM EP.02 (2026), PRISM EP.01 (2025), THIS IS LOVE (2023).</p>
   
     <h2 id="members">Members</h2>
     <div class="faces">
@@ -135,20 +153,14 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/queenz-eye/s/lbd/">LBD</a></li>
     </ul>
   
-    <h2 id="albums">Albums & tracklists</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/queenz-eye/a/prismep02/">PRISM EP.02</a> <span class="yr">2026</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/queenz-eye/a/prismep01/">PRISM EP.01</a> <span class="yr">2025</span></li>
-    </ul>
-  
-    <h2>Discography</h2>
-    <ul class="discog-list">
-      <li>PRISM EP.02 <span class="yr">(2026)</span> <span class="tag">2nd EP</span></li>
-      <li>PRISM EP.01 <span class="yr">(2025)</span> <span class="tag">1st EP</span></li>
-      <li>THIS IS LOVE <span class="yr">(2023)</span> <span class="tag">Single</span></li>
-      <li>UNI-Q <span class="yr">(2023)</span> <span class="tag">Single</span></li>
-      <li>Queenz Table <span class="yr">(2022)</span> <span class="tag">Single</span></li>
-    </ul>
+    <h2 id="albums">Discography</h2>
+    <div class="sp-tiles dg-tiles">
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/queenz-eye/a/prismep02/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/76/fc/ad/76fcad90-2ab9-c513-3770-304e1fe416ec/888272181951_Cover.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">PRISM EP.02</span><span class="sp-tile-n">2026 · 2nd EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/queenz-eye/a/prismep01/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/41/a2/74/41a27426-ce15-c726-0a8a-a3ed5e8f3648/888272158458_Cover.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">PRISM EP.01</span><span class="sp-tile-n">2025 · 1st EP</span></a>
+      <div class="sp-tile"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/1a/c5/b2/1ac5b200-7faa-3c59-0534-4b88612f3d17/888272124491_Cover.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">THIS IS LOVE</span><span class="sp-tile-n">2023 · Single</span></div>
+      <div class="sp-tile"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/b3/e3/cd/b3e3cded-5d81-4c09-2728-93c8dc5b1632/888272119541_Cover.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">UNI-Q</span><span class="sp-tile-n">2023 · Single</span></div>
+      <div class="sp-tile"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/67/c0/6f/67c06f3a-9d90-ef45-a052-0baa6467e0e6/888272107760_Cover.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Queenz Table</span><span class="sp-tile-n">2022 · Single</span></div>
+    </div>
   
     <h2>Related groups</h2>
     <ul class="member-list rel">
@@ -163,7 +175,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/퀸즈아이/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=퀸즈아이">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"UN-NORMAL","s":"55 videos","img":"MgKusS_8Dmk","m":"UN-NORMAL","h":"https://kpop-universe.kr/en/g/queenz-eye/s/unnormal/"},{"k":"Album","t":"PRISM EP.02","s":"7 tracks","im":"https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/76/fc/ad/76fcad90-2ab9-c513-3770-304e1fe416ec/888272181951_Cover.jpg/600x600bb.jpg","h":"https://kpop-universe.kr/en/g/queenz-eye/a/prismep02/"},{"k":"Song fancams","t":"Feel the Vibe","s":"25 videos","img":"3Izae7pUXvA","m":"Feel the Vibe","h":"https://kpop-universe.kr/en/g/queenz-eye/s/feelthevibe/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"UN-NORMAL","s":"56 videos","img":"MgKusS_8Dmk","m":"UN-NORMAL","h":"https://kpop-universe.kr/en/g/queenz-eye/s/unnormal/"},{"k":"Album","t":"PRISM EP.02","s":"7 tracks","im":"https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/76/fc/ad/76fcad90-2ab9-c513-3770-304e1fe416ec/888272181951_Cover.jpg/600x600bb.jpg","h":"https://kpop-universe.kr/en/g/queenz-eye/a/prismep02/"},{"k":"Song fancams","t":"Feel the Vibe","s":"25 videos","img":"3Izae7pUXvA","m":"Feel the Vibe","h":"https://kpop-universe.kr/en/g/queenz-eye/s/feelthevibe/"}]</script>
 </div>
 </body>
 </html>

@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="108 BOYFRIEND fancams and stages, most viewed first. BOYFRIEND: members, debut 2011.05.26, WESTTIME Inc. 2 music show wins. Fancams, stages and discography on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/ej0YJtGl6SQ/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"BOYFRIEND","alternateName":"보이프렌드","genre":"K-pop","foundingDate":"2011-05-26","url":"https://kpop-universe.kr/en/g/boyfriend/","image":"https://img.youtube.com/vi/ej0YJtGl6SQ/maxresdefault.jpg","member":[{"@type":"Person","name":"Donghyun"},{"@type":"Person","name":"Hyunseong"},{"@type":"Person","name":"Jeongmin"},{"@type":"Person","name":"Youngmin"},{"@type":"Person","name":"Kwangmin"},{"@type":"Person","name":"Minwoo"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"BOYFRIEND","alternateName":"보이프렌드","genre":"K-pop","description":"BOYFRIEND was K-pop boy group under WESTTIME Inc, debuting in 2011. Recent releases: BOYAGER 6 (2026), Time limit (2025), Bouquet (2019).","foundingDate":"2011-05-26","url":"https://kpop-universe.kr/en/g/boyfriend/","image":"https://img.youtube.com/vi/ej0YJtGl6SQ/maxresdefault.jpg","member":[{"@type":"Person","name":"Donghyun"},{"@type":"Person","name":"Hyunseong"},{"@type":"Person","name":"Jeongmin"},{"@type":"Person","name":"Youngmin"},{"@type":"Person","name":"Kwangmin"},{"@type":"Person","name":"Minwoo"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["2 new videos this week","Latest music show win · BOUNCE (2015.03.24)","2 music show wins","337 stages & videos collected","Most viewed · 40M views"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
-  <p class="intro">BOYFRIEND was K-pop boy group under WESTTIME Inc, debuting in 2011. Recent releases: BOYAGER 6 (2026), Time limit (2025), Bouquet (2019).</p>
   
     <h2 id="members">Members</h2>
     <div class="faces">
@@ -138,48 +156,34 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/boyfriend/s/lovestyle/">Love Style</a></li>
       <li><a href="https://kpop-universe.kr/en/g/boyfriend/s/아이야/">아이야 (I Yah)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/boyfriend/s/내여자손대지마/">내 여자 손대지마 (Don&#39;t Touch My Girl)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/boyfriend/s/star/">Star</a></li>
       <li><a href="https://kpop-universe.kr/en/g/boyfriend/s/boyfriend/">Boyfriend (보이프렌드)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/boyfriend/s/내가갈게/">내가 갈게 (I&#39;ll Be There)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/boyfriend/s/너란여자/">너란 여자 (OBSESSION)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/boyfriend/s/내가갈게/">내가 갈게 (I&#39;ll Be There)</a></li>
     </ul>
   
-    <h2 id="albums">Albums & tracklists</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/boyfriend/a/boyager6/">BOYAGER 6</a> <span class="yr">2026</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/boyfriend/a/bouquet/">Bouquet</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/boyfriend/a/callme/">CALL ME</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/boyfriend/a/boyfriend5thepneverend/">BOYFRIEND 5th EP &#39;NEVER END&#39;</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/boyfriend/a/summer/">Summer</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/boyfriend/a/boyfriendinwonderland/">BOYFRIEND in Wonderland</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/boyfriend/a/witch/">Witch</a> <span class="yr">2014</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/boyfriend/a/obsession/">OBSESSION</a> <span class="yr">2014</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/boyfriend/a/아이야/">아이야 (I Yah)</a> <span class="yr">2013</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/boyfriend/a/야누스/">야누스</a> <span class="yr">2012</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/boyfriend/a/lovestyle/">Love Style</a> <span class="yr">2012</span></li>
-    </ul>
-  
-    <h2>Discography</h2>
-    <ul class="discog-list">
-      <li>BOYAGER 6 <span class="yr">(2026)</span> <span class="tag">6th EP</span></li>
-      <li>Time limit <span class="yr">(2025)</span> <span class="tag">Single</span></li>
-      <li>Bouquet <span class="yr">(2019)</span> <span class="tag">Album</span></li>
-      <li>CALL ME <span class="yr">(2018)</span> <span class="tag">EP</span></li>
-      <li>여우비 <span class="yr">(2018)</span> <span class="tag">Single</span></li>
-      <li>BOYFRIEND 5th EP &#39;NEVER END&#39; <span class="yr">(2017)</span> <span class="tag">5th EP</span></li>
-      <li>Summer <span class="yr">(2017)</span> <span class="tag">EP</span></li>
-      <li>약속할게 <span class="yr">(2016)</span> <span class="tag">Single</span></li>
-      <li>BOYFRIEND in Wonderland <span class="yr">(2015)</span> <span class="tag">4th EP</span></li>
-      <li>Witch <span class="yr">(2014)</span> <span class="tag">3rd EP</span></li>
-      <li>OBSESSION <span class="yr">(2014)</span> <span class="tag">2nd EP</span></li>
-      <li>On &amp; On (온앤온) <span class="yr">(2013)</span> <span class="tag">Single</span></li>
-      <li>아이야 (I Yah) <span class="yr">(2013)</span> <span class="tag">정규 1집 리패키지</span></li>
-      <li>야누스 <span class="yr">(2012)</span> <span class="tag">1st Album</span></li>
-      <li>Be my shine ～君を離さない～ <span class="yr">(2012)</span> <span class="tag">Single</span></li>
-      <li>Love Style <span class="yr">(2012)</span> <span class="tag">1st EP</span></li>
-      <li>I&#39;ll Be There <span class="yr">(2011)</span> <span class="tag">Single</span></li>
-      <li>Don&#39;t Touch My Girl <span class="yr">(2011)</span> <span class="tag">Single</span></li>
-      <li>Boyfriend <span class="yr">(2011)</span> <span class="tag">Single</span></li>
-    </ul>
+    <h2 id="albums">Discography</h2>
+    <div class="sp-tiles dg-tiles">
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/boyfriend/a/boyager6/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/41/da/9e/41da9efe-9c12-24a2-587d-f8ace48c38f7/191953543697.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">BOYAGER 6</span><span class="sp-tile-n">2026 · 6th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/13/362/11713362_20250212152858_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Time limit</span><span class="sp-tile-n">2025 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/boyfriend/a/bouquet/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/8e/3e/b3/8e3eb385-d660-763a-34c3-d58d82a2e960/859754740546_cover.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Bouquet</span><span class="sp-tile-n">2019 · Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/boyfriend/a/callme/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/16/a5/e2/16a5e2d3-63ee-6459-a1b6-d867fe95ceed/859754242484_cover.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">CALL ME</span><span class="sp-tile-n">2018 · EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/70/387/10170387_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">여우비</span><span class="sp-tile-n">2018 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/boyfriend/a/boyfriend5thepneverend/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/86/581/10086581_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BOYFRIEND 5th EP &#39;NEVER END&#39;</span><span class="sp-tile-n">2017 · 5th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/boyfriend/a/summer/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/b9/e1/94/b9e194c8-fea0-176a-120f-aadcd6db4ec1/859753683332_cover.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Summer</span><span class="sp-tile-n">2017 · EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/86/590/2686590_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">약속할게</span><span class="sp-tile-n">2016 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/boyfriend/a/boyfriendinwonderland/"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/06/989/2306989_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BOYFRIEND in Wonderland</span><span class="sp-tile-n">2015 · 4th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/boyfriend/a/witch/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music3/v4/c3/9b/b9/c39bb9f6-b861-b293-4ce3-0b16c0846a40/cover-.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Witch</span><span class="sp-tile-n">2014 · 3rd EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/boyfriend/a/obsession/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/59/511/2259511_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">OBSESSION</span><span class="sp-tile-n">2014 · 2nd EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/86/571/2186571_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">On &amp; On (온앤온)</span><span class="sp-tile-n">2013 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/boyfriend/a/아이야/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/72/192/2172192_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">아이야 (I Yah)</span><span class="sp-tile-n">2013 · 정규 1집 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/boyfriend/a/야누스/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/66/203/2166203_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">야누스</span><span class="sp-tile-n">2012 · 1st Album</span></a>
+      <div class="sp-tile"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music/v4/0f/45/5c/0f455ca5-6d57-bbf0-32c0-cb8604ad2242/JBCB-4001JK.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Be my shine ～君を離さない～</span><span class="sp-tile-n">2012 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/boyfriend/a/lovestyle/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music/v4/de/5f/a6/de5fa66f-e4a6-0447-ff83-1bd3d581c919/KM0001545-_BOYFRIEND_-0614.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Love Style</span><span class="sp-tile-n">2012 · 1st EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/020/46/366/2046366_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">I&#39;ll Be There</span><span class="sp-tile-n">2011 · Single</span></div>
+      <div class="sp-tile"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music/e7/85/33/mzi.rnggitkc.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Don&#39;t Touch My Girl</span><span class="sp-tile-n">2011 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/012/82/351/1282351_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Boyfriend</span><span class="sp-tile-n">2011 · Single</span></div>
+    </div>
   
     <h2>Related groups</h2>
     <ul class="member-list rel">

@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="731 MAMAMOO fancams and stages, most viewed first. MAMAMOO: members, debut 2014.06.19, RBW. 24 music show wins, 2 grand prizes (daesang). Fancams, stages and discography on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/I4HWnYSiRtE/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"MAMAMOO","alternateName":"마마무","genre":"K-pop","foundingDate":"2014-06-19","url":"https://kpop-universe.kr/en/g/mamamoo/","image":"https://img.youtube.com/vi/I4HWnYSiRtE/maxresdefault.jpg","member":[{"@type":"Person","name":"Solar"},{"@type":"Person","name":"Moonbyul"},{"@type":"Person","name":"Wheein"},{"@type":"Person","name":"Hwasa"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"MAMAMOO","alternateName":"마마무","genre":"K-pop","description":"MAMAMOO is a 4-member K-pop girl group under RBW, debuting in 2014. Fan club: MooMoo. Recent releases: 4WARD (2026), [Hwa Sa Show Vol.3] MMM Simile (2023), MIC ON (2022).","foundingDate":"2014-06-19","url":"https://kpop-universe.kr/en/g/mamamoo/","image":"https://img.youtube.com/vi/I4HWnYSiRtE/maxresdefault.jpg","member":[{"@type":"Person","name":"Solar"},{"@type":"Person","name":"Moonbyul"},{"@type":"Person","name":"Wheein"},{"@type":"Person","name":"Hwasa"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["8 new videos this week","Latest music show win · HIP (2019.12.22)","24 music show wins","2,276 stages & videos collected","Most viewed · 470M views"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
-  <p class="intro">MAMAMOO is a 4-member K-pop girl group under RBW, debuting in 2014. Fan club: MooMoo. Recent releases: 4WARD (2026), [Hwa Sa Show Vol.3] MMM Simile (2023), MIC ON (2022).</p>
   
     <h2 id="members">Members</h2>
     <div class="faces">
@@ -153,41 +171,42 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/aya/">AYA</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/windflower/">Wind flower</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/decalcomanie/">Decalcomanie (데칼코마니)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/나로말할것같으면/">나로 말할 것 같으면 (Yes I am)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/음오아예/">음오아예 (Um Oh Ah Yeh)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/4flowers/">4 Flowers</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/나로말할것같으면/">나로 말할 것 같으면 (Yes I am)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/너나해/">너나 해 (Egotistic)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/wherearewenow/">Where Are We Now</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/hip/">HIP</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/goodgoodbye/">Good Goodbye</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/socute/">So Cute</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/댕댕/">댕댕 (dangdang)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/ggbb/">GGBB</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/하나둘셋어이/">하나둘셋 어이! (1,2,3 Eoi!)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/쟤가걔야/">쟤가 걔야 (Waggy)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/hertz/">Hertz</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/goodbyesandsadeyes/">Goodbyes and Sad Eyes</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/lunatic/">LUNATIC</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/watercolor/">water color</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/하나둘셋어이/">하나둘셋 어이! (1,2,3 Eoi!)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/하늘땅바다만큼/">하늘 땅 바다만큼 (mumumumuch)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/아재개그/">아재개그 AZE GAG</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/넌is뭔들/">넌 is 뭔들 You&#39;re the Best</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/뱉어/">뱉어 (Spit it out)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/socute/">So Cute</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/mr애매모호/">Mr.애매모호 Mr. Ambiguous</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/hertz/">Hertz</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/goodbyesandsadeyes/">Goodbyes and Sad Eyes</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/touchinmovin/">TOUCHIN&amp;MOVIN</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/마리아/">마리아 (Maria)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/뱉어/">뱉어 (Spit it out)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/멍청이/">멍청이(twit)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/pianoman/">Piano Man</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/touchinmovin/">TOUCHIN&amp;MOVIN</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/마리아/">마리아 (Maria)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/나쁜놈/">나쁜놈 (Chico malo)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/내친구의친구얘기인데/">내 친구의 친구 얘기인데 (Is This Love?)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/달이태양을가릴때/">달이 태양을 가릴 때 (Eclipse)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/inthemood/">In The Mood</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/오묘해/">오묘해</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/꿀/">꿀 (HONEY)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/icybby/">ICY BBY</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/이노랜꽤오래된거야/">이 노랜 꽤 오래된 거야 (A song from the past)</a></li>
     </ul>
-    <details class="more-songs"><summary>17 more songs</summary>
+    <details class="more-songs"><summary>18 more songs</summary>
     <ul class="member-list rel">
+      <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/icybby/">ICY BBY</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/citt/">C.I.T.T</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/na/">NA</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/ilovemybody/">I Love My Body</a></li>
@@ -199,65 +218,47 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/memories/">Memories</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/buti/">But I</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/present/">PRESENT</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/chili/">Chili</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/칠해줘/">칠해줘 Paint Me</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/better/">Better</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/imissyou/">I Miss You</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/girlcrush/">Girl Crush</a></li>
       <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/낯선날/">낯선날</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/mamamoo/s/chili/">Chili</a></li>
     </ul></details>
   
-    <h2 id="albums">Albums & tracklists</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/mamamoo/a/micon/">MIC ON</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/mamamoo/a/waw/">WAW</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/mamamoo/a/travel/">TRAVEL</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/mamamoo/a/realityinblack/">reality in BLACK</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/mamamoo/a/whitewind/">White Wind</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/mamamoo/a/blues/">BLUE;S</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/mamamoo/a/redmoon/">RED MOON</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/mamamoo/a/yellowflower/">Yellow Flower</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/mamamoo/a/purple/">Purple</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/mamamoo/a/memory/">MEMORY</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/mamamoo/a/melting/">Melting</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/mamamoo/a/pinkfunky/">Pink Funky</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/mamamoo/a/pianoman/">Piano Man</a> <span class="yr">2014</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/mamamoo/a/hello/">Hello</a> <span class="yr">2014</span></li>
-    </ul>
-  
-    <h2>Discography</h2>
-    <ul class="discog-list">
-      <li>4WARD <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>[Hwa Sa Show Vol.3] MMM Simile <span class="yr">(2023)</span> <span class="tag">Single</span></li>
-      <li>MIC ON <span class="yr">(2022)</span> <span class="tag">12th EP</span></li>
-      <li>WAW <span class="yr">(2021)</span> <span class="tag">11th EP</span></li>
-      <li>TRAVEL <span class="yr">(2020)</span> <span class="tag">10th EP</span></li>
-      <li>딩가딩가 (Dingga) <span class="yr">(2020)</span> <span class="tag">Single</span></li>
-      <li>WANNA BE MYSELF <span class="yr">(2020)</span> <span class="tag">Single</span></li>
-      <li>reality in BLACK <span class="yr">(2019)</span> <span class="tag">2nd Album</span></li>
-      <li>다 빛이나 <span class="yr">(2019)</span> <span class="tag">Single</span></li>
-      <li>White Wind <span class="yr">(2019)</span> <span class="tag">9th EP</span></li>
-      <li>Wind flower (Japanese ver.) <span class="yr">(2019)</span> <span class="tag">Single</span></li>
-      <li>BLUE;S <span class="yr">(2018)</span> <span class="tag">8th EP</span></li>
-      <li>Decalcomanie (Japanese ver.) <span class="yr">(2018)</span> <span class="tag">Single</span></li>
-      <li>RED MOON <span class="yr">(2018)</span> <span class="tag">7th EP</span></li>
-      <li>장마 (Rainy Season) <span class="yr">(2018)</span> <span class="tag">Single</span></li>
-      <li>매일 봐요 (MAEIL BIO) <span class="yr">(2018)</span> <span class="tag">Single</span></li>
-      <li>Yellow Flower <span class="yr">(2018)</span> <span class="tag">6th EP</span></li>
-      <li>칠해줘 <span class="yr">(2018)</span> <span class="tag">Single</span></li>
-      <li>Taste The Feeling <span class="yr">(2017)</span> <span class="tag">Single</span></li>
-      <li>Purple <span class="yr">(2017)</span> <span class="tag">5th EP</span></li>
-      <li>MEMORY <span class="yr">(2016)</span> <span class="tag">4th EP</span></li>
-      <li>NEW YORK <span class="yr">(2016)</span> <span class="tag">Single</span></li>
-      <li>Angel, DABDAB <span class="yr">(2016)</span> <span class="tag">Single</span></li>
-      <li>Melting <span class="yr">(2016)</span> <span class="tag">1st Album</span></li>
-      <li>1cm의 자존심 <span class="yr">(2016)</span> <span class="tag">Single</span></li>
-      <li>I Miss You <span class="yr">(2016)</span> <span class="tag">Single</span></li>
-      <li>Pink Funky <span class="yr">(2015)</span> <span class="tag">3rd EP</span></li>
-      <li>AHH OOP! <span class="yr">(2015)</span> <span class="tag">Single</span></li>
-      <li>Piano Man <span class="yr">(2014)</span> <span class="tag">2nd EP</span></li>
-      <li>Hello <span class="yr">(2014)</span> <span class="tag">1st EP</span></li>
-    </ul>
+    <h2 id="albums">Discography</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e0231b503a96c3d6d774fa84286" alt="" loading="lazy"><span class="sp-tile-t">4WARD</span><span class="sp-tile-n">2026 · Single</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02661e8f8b008ceeb4b48e2765" alt="" loading="lazy"><span class="sp-tile-t">[Hwa Sa Show Vol.3] MMM Simile</span><span class="sp-tile-n">2023 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/mamamoo/a/micon/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/74/309/11074309_20221011124306_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">MIC ON</span><span class="sp-tile-n">2022 · 12th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/mamamoo/a/waw/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/18/168/10618168_20210602121116_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">WAW</span><span class="sp-tile-n">2021 · 11th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/mamamoo/a/travel/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/12/631/10512631_20201103134822_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">TRAVEL</span><span class="sp-tile-n">2020 · 10th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/05/830/10505830_20201020115450_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">딩가딩가 (Dingga)</span><span class="sp-tile-n">2020 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/89/013/10489013_20200910151319_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">WANNA BE MYSELF</span><span class="sp-tile-n">2020 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/mamamoo/a/realityinblack/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/51/886/10351886_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">reality in BLACK</span><span class="sp-tile-n">2019 · 2nd Album</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/103/10/439/10310439_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">다 빛이나</span><span class="sp-tile-n">2019 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/mamamoo/a/whitewind/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/61/306/10261306_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">White Wind</span><span class="sp-tile-n">2019 · 9th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/48/510/10248510_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Wind flower (Japanese ver.)</span><span class="sp-tile-n">2019 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/mamamoo/a/blues/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/27/568/10227568_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BLUE;S</span><span class="sp-tile-n">2018 · 8th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/15/271/10215271_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Decalcomanie (Japanese ver.)</span><span class="sp-tile-n">2018 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/mamamoo/a/redmoon/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/85/416/10185416_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">RED MOON</span><span class="sp-tile-n">2018 · 7th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/80/730/10180730_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">장마 (Rainy Season)</span><span class="sp-tile-n">2018 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/53/370/10153370_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">매일 봐요 (MAEIL BIO)</span><span class="sp-tile-n">2018 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/mamamoo/a/yellowflower/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/45/303/10145303_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Yellow Flower</span><span class="sp-tile-n">2018 · 6th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/25/420/10125420_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">칠해줘</span><span class="sp-tile-n">2018 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/10/074/10110074_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Taste The Feeling</span><span class="sp-tile-n">2017 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/mamamoo/a/purple/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/73/791/10073791_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Purple</span><span class="sp-tile-n">2017 · 5th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/mamamoo/a/memory/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/12/900/10012900_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">MEMORY</span><span class="sp-tile-n">2016 · 4th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/027/10/845/2710845_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">NEW YORK</span><span class="sp-tile-n">2016 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/027/07/925/2707925_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Angel, DABDAB</span><span class="sp-tile-n">2016 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/mamamoo/a/melting/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/69/407/2669407_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Melting</span><span class="sp-tile-n">2016 · 1st Album</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/66/499/2666499_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">1cm의 자존심</span><span class="sp-tile-n">2016 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/64/685/2664685_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">I Miss You</span><span class="sp-tile-n">2016 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/mamamoo/a/pinkfunky/"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/24/685/2324685_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Pink Funky</span><span class="sp-tile-n">2015 · 3rd EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/11/632/2311632_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">AHH OOP!</span><span class="sp-tile-n">2015 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/mamamoo/a/pianoman/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/91/790/2291790_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Piano Man</span><span class="sp-tile-n">2014 · 2nd EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/mamamoo/a/hello/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/61/347/2261347_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Hello</span><span class="sp-tile-n">2014 · 1st EP</span></a>
+    </div>
   
     <h2>Related groups</h2>
     <ul class="member-list rel">
@@ -271,7 +272,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/마마무/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=마마무">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"HWASA","s":"70 videos","img":"Uu1KvQDDOog","m":"HWASA","h":"https://kpop-universe.kr/en/g/mamamoo/s/hwasa/"},{"k":"Member fancams","t":"Moonbyul","s":"115 fancams","img":"6R5zXgO_TOY","h":"https://kpop-universe.kr/en/g/mamamoo/moonbyul/fancams/"},{"k":"Album","t":"MIC ON","s":"3 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/110/74/309/11074309_20221011124306_500.jpg","h":"https://kpop-universe.kr/en/g/mamamoo/a/micon/"},{"k":"Song fancams","t":"ILLELLA (일낼라)","s":"65 videos","img":"Vz508O9NNTg","m":"ILLELLA","h":"https://kpop-universe.kr/en/g/mamamoo/s/illella/"},{"k":"Member fancams","t":"Hwasa","s":"89 fancams","img":"avI_vIIQYG8","h":"https://kpop-universe.kr/en/g/mamamoo/hwasa/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"HWASA","s":"74 videos","img":"Uu1KvQDDOog","m":"HWASA","h":"https://kpop-universe.kr/en/g/mamamoo/s/hwasa/"},{"k":"Member fancams","t":"Moonbyul","s":"115 fancams","img":"6R5zXgO_TOY","h":"https://kpop-universe.kr/en/g/mamamoo/moonbyul/fancams/"},{"k":"Album","t":"MIC ON","s":"3 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/110/74/309/11074309_20221011124306_500.jpg","h":"https://kpop-universe.kr/en/g/mamamoo/a/micon/"},{"k":"Song fancams","t":"ILLELLA (일낼라)","s":"66 videos","img":"Vz508O9NNTg","m":"ILLELLA","h":"https://kpop-universe.kr/en/g/mamamoo/s/illella/"},{"k":"Member fancams","t":"Hwasa","s":"89 fancams","img":"avI_vIIQYG8","h":"https://kpop-universe.kr/en/g/mamamoo/hwasa/fancams/"}]</script>
 </div>
 </body>
 </html>

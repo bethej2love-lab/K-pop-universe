@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="823 ASTRO fancams and stages, most viewed first. ASTRO: members, debut 2016.02.23, Fantagio. 13 music show wins. Fancams, stages and discography on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/DXHWdpJSmaU/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"ASTRO","alternateName":"아스트로","genre":"K-pop","foundingDate":"2016-02-23","url":"https://kpop-universe.kr/en/g/astro/","image":"https://img.youtube.com/vi/DXHWdpJSmaU/maxresdefault.jpg","member":[{"@type":"Person","name":"MJ"},{"@type":"Person","name":"Jinjin"},{"@type":"Person","name":"Cha Eunwoo"},{"@type":"Person","name":"Yoon Sanha"},{"@type":"Person","name":"Moon Bin"},{"@type":"Person","name":"Rocky"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"ASTRO","alternateName":"아스트로","genre":"K-pop","description":"ASTRO is K-pop boy group under Fantagio, debuting in 2016. Fan club: AROHA. Recent releases: Moon (2025), Twilight (2025), Circles (2024).","foundingDate":"2016-02-23","url":"https://kpop-universe.kr/en/g/astro/","image":"https://img.youtube.com/vi/DXHWdpJSmaU/maxresdefault.jpg","member":[{"@type":"Person","name":"MJ"},{"@type":"Person","name":"Jinjin"},{"@type":"Person","name":"Cha Eunwoo"},{"@type":"Person","name":"Yoon Sanha"},{"@type":"Person","name":"Moon Bin"},{"@type":"Person","name":"Rocky"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["Latest music show win · Candy Sugar Pop (2022.05.27)","13 music show wins","2,118 stages & videos collected","Most viewed · 40M views"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
-  <p class="intro">ASTRO is K-pop boy group under Fantagio, debuting in 2016. Fan club: AROHA. Recent releases: Moon (2025), Twilight (2025), Circles (2024).</p>
   
     <h2 id="members">Members</h2>
     <div class="faces">
@@ -139,11 +157,11 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/astro/s/전화해/">전화해 (All Night)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/astro/s/aftermidnight/">After Midnight</a></li>
       <li><a href="https://kpop-universe.kr/en/g/astro/s/candysugarpop/">Candy Sugar Pop</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/astro/s/who/">WHO</a></li>
       <li><a href="https://kpop-universe.kr/en/g/astro/s/knock/">Knock (널 찾아가)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/astro/s/who/">WHO</a></li>
       <li><a href="https://kpop-universe.kr/en/g/astro/s/madness/">Madness</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/astro/s/숨가빠/">숨가빠 (Breathless)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/astro/s/badidea/">Bad Idea</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/astro/s/숨가빠/">숨가빠 (Breathless)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/astro/s/고백/">고백 (Confession)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/astro/s/숨좀쉬자/">숨 좀 쉬자 (Just Breath)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/astro/s/계세요/">계세요</a></li>
@@ -153,10 +171,10 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/astro/s/내이름을부를때/">내 이름을 부를 때 When You Call My Name</a></li>
       <li><a href="https://kpop-universe.kr/en/g/astro/s/lovewheel/">Love Wheel</a></li>
       <li><a href="https://kpop-universe.kr/en/g/astro/s/니가불어와/">니가 불어와 (Crazy Sexy Cool)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/astro/s/allgood/">All Good</a></li>
       <li><a href="https://kpop-universe.kr/en/g/astro/s/extravirgin/">EXTRA VIRGIN</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/astro/s/별비/">별비 (gemini)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/astro/s/allgood/">All Good</a></li>
       <li><a href="https://kpop-universe.kr/en/g/astro/s/숨바꼭질/">숨바꼭질 (HIDE&amp;SEEK)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/astro/s/별비/">별비 (gemini)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/astro/s/idkme/">IDK ME</a></li>
       <li><a href="https://kpop-universe.kr/en/g/astro/s/찬바람불때면/">찬바람 불 때면 (When The Wind Blows)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/astro/s/피어나/">피어나 (Bloom)</a></li>
@@ -175,51 +193,34 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/astro/s/모닝콜/">모닝콜 Morning Call</a></li>
     </ul>
   
-    <h2 id="albums">Albums & tracklists</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/astro/a/drivetothestarryroad/">Drive to the Starry Road</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/astro/a/switchon/">SWITCH ON</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/astro/a/allyours/">All Yours</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/astro/a/gateway/">GATEWAY</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/astro/a/blueflame/">BLUE FLAME</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/astro/a/venus/">Venus</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/astro/a/alllight/">All Light</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/astro/a/riseup/">Rise Up</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/astro/a/dreampart02/">Dream Part.02</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/astro/a/dreampart01/">Dream Part.01</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/astro/a/autumnstory/">Autumn Story</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/astro/a/summervibes/">Summer Vibes</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/astro/a/springup/">Spring Up</a> <span class="yr">2016</span></li>
-    </ul>
-  
-    <h2>Discography</h2>
-    <ul class="discog-list">
-      <li>Moon <span class="yr">(2025)</span> <span class="tag">Single</span></li>
-      <li>Twilight <span class="yr">(2025)</span> <span class="tag">Single</span></li>
-      <li>Circles <span class="yr">(2024)</span> <span class="tag">Single</span></li>
-      <li>U&amp;Iverse <span class="yr">(2022)</span> <span class="tag">Single</span></li>
-      <li>Drive to the Starry Road <span class="yr">(2022)</span> <span class="tag">3rd Album</span></li>
-      <li>1番好きな人にサヨナラを言おう <span class="yr">(2021)</span> <span class="tag">Single</span></li>
-      <li>ALIVE <span class="yr">(2021)</span> <span class="tag">Single</span></li>
-      <li>All Good-JP Ver.- <span class="yr">(2021)</span> <span class="tag">Single</span></li>
-      <li>SWITCH ON <span class="yr">(2021)</span> <span class="tag">8th EP</span></li>
-      <li>All Yours <span class="yr">(2021)</span> <span class="tag">2nd Album</span></li>
-      <li>ASTRO Digital Single [We Still (Be With U)] <span class="yr">(2020)</span> <span class="tag">Single</span></li>
-      <li>아니 그래 <span class="yr">(2020)</span> <span class="tag">Single</span></li>
-      <li>GATEWAY <span class="yr">(2020)</span> <span class="tag">7th EP</span></li>
-      <li>ONE&amp;ONLY <span class="yr">(2020)</span> <span class="tag">Single</span></li>
-      <li>BLUE FLAME <span class="yr">(2019)</span> <span class="tag">6th EP</span></li>
-      <li>Venus <span class="yr">(2019)</span> <span class="tag">Album</span></li>
-      <li>All Light <span class="yr">(2019)</span> <span class="tag">1st Album</span></li>
-      <li>Merry-Go-Round (Christmas Edition) <span class="yr">(2018)</span> <span class="tag">Single</span></li>
-      <li>Rise Up <span class="yr">(2018)</span> <span class="tag">Special</span></li>
-      <li>Dream Part.02 <span class="yr">(2017)</span> <span class="tag">5th EP</span></li>
-      <li>Dream Part.01 <span class="yr">(2017)</span> <span class="tag">4th EP</span></li>
-      <li>Winter Dream <span class="yr">(2017)</span> <span class="tag">Single</span></li>
-      <li>Autumn Story <span class="yr">(2016)</span> <span class="tag">3rd EP</span></li>
-      <li>Summer Vibes <span class="yr">(2016)</span> <span class="tag">2nd EP</span></li>
-      <li>Spring Up <span class="yr">(2016)</span> <span class="tag">1st EP</span></li>
-    </ul>
+    <h2 id="albums">Discography</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02f61d48004e9cacd4fce6fd2d" alt="" loading="lazy"><span class="sp-tile-t">Moon</span><span class="sp-tile-n">2025 · Single</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02ad7dc1d9ba55097b78651d83" alt="" loading="lazy"><span class="sp-tile-t">Twilight</span><span class="sp-tile-n">2025 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/26/306/11426306_20240223095951_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Circles</span><span class="sp-tile-n">2024 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/10/896/11010896_20220720202159_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">U&amp;Iverse</span><span class="sp-tile-n">2022 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/astro/a/drivetothestarryroad/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/109/55/560/10955560_20220516114506_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Drive to the Starry Road</span><span class="sp-tile-n">2022 · 3rd Album</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/107/61/589/10761589_20211102213527_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">1番好きな人にサヨナラを言おう</span><span class="sp-tile-n">2021 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/107/00/201/10700201_20210901155223_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ALIVE</span><span class="sp-tile-n">2021 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/88/569/10688569_20210823135942_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">All Good-JP Ver.-</span><span class="sp-tile-n">2021 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/astro/a/switchon/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/67/554/10667554_20210802120006_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SWITCH ON</span><span class="sp-tile-n">2021 · 8th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/astro/a/allyours/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/87/508/10587508_20210405142611_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">All Yours</span><span class="sp-tile-n">2021 · 2nd Album</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/40/819/10540819_20201230170247_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ASTRO Digital Single [We Still (Be With U)]</span><span class="sp-tile-n">2020 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/51/841/10451841_20200626160317_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">아니 그래</span><span class="sp-tile-n">2020 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/astro/a/gateway/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/25/649/10425649_20200504145602_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">GATEWAY</span><span class="sp-tile-n">2020 · 7th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/92/272/10392272_20200221145140_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ONE&amp;ONLY</span><span class="sp-tile-n">2020 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/astro/a/blueflame/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/53/834/10353834_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BLUE FLAME</span><span class="sp-tile-n">2019 · 6th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/astro/a/venus/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/69/100/10269100_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Venus</span><span class="sp-tile-n">2019 · Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/astro/a/alllight/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/42/874/10242874_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">All Light</span><span class="sp-tile-n">2019 · 1st Album</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/36/258/10236258_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Merry-Go-Round (Christmas Edition)</span><span class="sp-tile-n">2018 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/astro/a/riseup/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/87/814/10187814_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Rise Up</span><span class="sp-tile-n">2018 · Special</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/astro/a/dreampart02/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/07/916/10107916_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Dream Part.02</span><span class="sp-tile-n">2017 · 5th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/astro/a/dreampart01/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/66/305/10066305_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Dream Part.01</span><span class="sp-tile-n">2017 · 4th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/40/723/10040723_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Winter Dream</span><span class="sp-tile-n">2017 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/astro/a/autumnstory/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/14/041/10014041_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Autumn Story</span><span class="sp-tile-n">2016 · 3rd EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/astro/a/summervibes/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/94/715/2694715_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Summer Vibes</span><span class="sp-tile-n">2016 · 2nd EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/astro/a/springup/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/68/475/2668475_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Spring Up</span><span class="sp-tile-n">2016 · 1st EP</span></a>
+    </div>
   
     <h2>Related groups</h2>
     <ul class="member-list rel">
@@ -234,7 +235,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/아스트로/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=아스트로">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"ONE","s":"82 videos","img":"lNZj24H24OQ","m":"ONE","h":"https://kpop-universe.kr/en/g/astro/s/one/"},{"k":"Member fancams","t":"Moon Bin","s":"83 fancams","img":"thpKDt6Yg8Y","h":"https://kpop-universe.kr/en/g/astro/moon-bin/fancams/"},{"k":"Album","t":"Drive to the Starry Road","s":"11 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/109/55/560/10955560_20220516114506_500.jpg","h":"https://kpop-universe.kr/en/g/astro/a/drivetothestarryroad/"},{"k":"Song fancams","t":"전화해 (All Night)","s":"64 videos","img":"ZEE1UC90I0o","m":"전화해","h":"https://kpop-universe.kr/en/g/astro/s/전화해/"},{"k":"Member fancams","t":"Cha Eunwoo","s":"71 fancams","img":"mMvxWuW28Kg","h":"https://kpop-universe.kr/en/g/astro/cha-eunwoo/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"ONE","s":"83 videos","img":"lNZj24H24OQ","m":"ONE","h":"https://kpop-universe.kr/en/g/astro/s/one/"},{"k":"Member fancams","t":"Moon Bin","s":"83 fancams","img":"thpKDt6Yg8Y","h":"https://kpop-universe.kr/en/g/astro/moon-bin/fancams/"},{"k":"Album","t":"Drive to the Starry Road","s":"11 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/109/55/560/10955560_20220516114506_500.jpg","h":"https://kpop-universe.kr/en/g/astro/a/drivetothestarryroad/"},{"k":"Song fancams","t":"전화해 (All Night)","s":"65 videos","img":"ZEE1UC90I0o","m":"전화해","h":"https://kpop-universe.kr/en/g/astro/s/전화해/"},{"k":"Member fancams","t":"Cha Eunwoo","s":"71 fancams","img":"mMvxWuW28Kg","h":"https://kpop-universe.kr/en/g/astro/cha-eunwoo/fancams/"}]</script>
 </div>
 </body>
 </html>

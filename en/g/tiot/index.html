@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="196 TIOT fancams and stages, most viewed first. TIOT: members, debut 2024.04.22, Redstart ENM. Fancams, stages and discography on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/k2iU0rcgjFI/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"TIOT","alternateName":"티아이오티","genre":"K-pop","foundingDate":"2024-04-22","url":"https://kpop-universe.kr/en/g/tiot/","image":"https://img.youtube.com/vi/k2iU0rcgjFI/maxresdefault.jpg","member":[{"@type":"Person","name":"Kim Minseong"},{"@type":"Person","name":"Keum Junhyun"},{"@type":"Person","name":"Hong Keonhee"},{"@type":"Person","name":"Choi Woojin"},{"@type":"Person","name":"Shin Yechan"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"TIOT","alternateName":"티아이오티","genre":"K-pop","description":"TIOT is a 5-member K-pop boy group under Redstart ENM, debuting in 2024. Fan club: LOTI. Recent releases: Time for us (2026), MY PRIDE (2025), 맨발의 청춘 (2025).","foundingDate":"2024-04-22","url":"https://kpop-universe.kr/en/g/tiot/","image":"https://img.youtube.com/vi/k2iU0rcgjFI/maxresdefault.jpg","member":[{"@type":"Person","name":"Kim Minseong"},{"@type":"Person","name":"Keum Junhyun"},{"@type":"Person","name":"Hong Keonhee"},{"@type":"Person","name":"Choi Woojin"},{"@type":"Person","name":"Shin Yechan"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["3 new videos this week","460 stages & videos collected","Most viewed · 2M views"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
-  <p class="intro">TIOT is a 5-member K-pop boy group under Redstart ENM, debuting in 2024. Fan club: LOTI. Recent releases: Time for us (2026), MY PRIDE (2025), 맨발의 청춘 (2025).</p>
   
     <h2 id="members">Members</h2>
     <div class="faces">
@@ -137,27 +155,18 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/tiot/s/가나요/">가나요 (Moonrise)</a></li>
     </ul>
   
-    <h2 id="albums">Albums & tracklists</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/tiot/a/timeforus/">Time for us</a> <span class="yr">2026</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/tiot/a/mypride/">MY PRIDE</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/tiot/a/flexline/">FLEX LINE</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/tiot/a/kickstart/">Kick-START</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/tiot/a/frametheblueprintpreludetopossibilities/">Frame the Blueprint : Prelude to Possibilities</a> <span class="yr">2023</span></li>
-    </ul>
-  
-    <h2>Discography</h2>
-    <ul class="discog-list">
-      <li>Time for us <span class="yr">(2026)</span> <span class="tag">5th EP</span></li>
-      <li>MY PRIDE <span class="yr">(2025)</span> <span class="tag">4th EP</span></li>
-      <li>맨발의 청춘 <span class="yr">(2025)</span> <span class="tag">Single</span></li>
-      <li>FLEX LINE <span class="yr">(2025)</span> <span class="tag">3rd EP</span></li>
-      <li>Take It Slow <span class="yr">(2024)</span> <span class="tag">Single</span></li>
-      <li>그 계절 긴 터널을 지나 <span class="yr">(2024)</span> <span class="tag">Single</span></li>
-      <li>Kick-START <span class="yr">(2024)</span> <span class="tag">2nd EP</span></li>
-      <li>Find the way <span class="yr">(2023)</span> <span class="tag">Single</span></li>
-      <li>Frame the Blueprint : Prelude to Possibilities <span class="yr">(2023)</span> <span class="tag">1st EP</span></li>
-    </ul>
+    <h2 id="albums">Discography</h2>
+    <div class="sp-tiles dg-tiles">
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/tiot/a/timeforus/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/145/94/356/14594356_20260928152253_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Time for us</span><span class="sp-tile-n">2026 · 5th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/tiot/a/mypride/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/eb/e2/bd/ebe2bd6e-9659-7779-a9c0-e813be913d05/8800335179448_cover.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">MY PRIDE</span><span class="sp-tile-n">2025 · 4th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/118/81/165/11881165_20250704152350_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">맨발의 청춘</span><span class="sp-tile-n">2025 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/tiot/a/flexline/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/73/d9/45/73d945ed-5101-0325-058c-cc381cc4fbcf/8800303089991_cover.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">FLEX LINE</span><span class="sp-tile-n">2025 · 3rd EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/37/458/11637458_20241108173308_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Take It Slow</span><span class="sp-tile-n">2024 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/05/682/11605682_20241002100844_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">그 계절 긴 터널을 지나</span><span class="sp-tile-n">2024 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/tiot/a/kickstart/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/24/96/7c/24967cbe-8346-a4a1-87fd-b4d4b7affbb9/5021732288042.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Kick-START</span><span class="sp-tile-n">2024 · 2nd EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/84/395/11384395_20240112140518_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Find the way</span><span class="sp-tile-n">2023 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/tiot/a/frametheblueprintpreludetopossibilities/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/3e/10/49/3e10490c-acf7-2f94-1a70-d0280395f0ca/5054197787843_cover.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Frame the Blueprint : Prelude to Possibilities</span><span class="sp-tile-n">2023 · 1st EP</span></a>
+    </div>
   
     <h2>Related groups</h2>
     <ul class="member-list rel">
@@ -172,7 +181,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/티아이오티/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=티아이오티">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"백전무패 Unbeatable","s":"36 videos","img":"xvzQdBvcHZ8","m":"백전무패","h":"https://kpop-universe.kr/en/g/tiot/s/백전무패/"},{"k":"Member fancams","t":"Keum Junhyun","s":"11 fancams","img":"fYOvJvsON1A","h":"https://kpop-universe.kr/en/g/tiot/keum-junhyun/fancams/"},{"k":"Album","t":"Time for us","s":"4 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/145/94/356/14594356_20260928152253_500.jpg","h":"https://kpop-universe.kr/en/g/tiot/a/timeforus/"},{"k":"Song fancams","t":"ROCK THANG","s":"28 videos","img":"ipSUlGEfwCQ","m":"ROCK THANG","h":"https://kpop-universe.kr/en/g/tiot/s/rockthang/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"백전무패 Unbeatable","s":"36 videos","img":"xvzQdBvcHZ8","m":"백전무패","h":"https://kpop-universe.kr/en/g/tiot/s/백전무패/"},{"k":"Member fancams","t":"Keum Junhyun","s":"11 fancams","img":"fYOvJvsON1A","h":"https://kpop-universe.kr/en/g/tiot/keum-junhyun/fancams/"},{"k":"Album","t":"Time for us","s":"4 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/145/94/356/14594356_20260928152253_500.jpg","h":"https://kpop-universe.kr/en/g/tiot/a/timeforus/"},{"k":"Song fancams","t":"ROCK THANG","s":"30 videos","img":"ipSUlGEfwCQ","m":"ROCK THANG","h":"https://kpop-universe.kr/en/g/tiot/s/rockthang/"}]</script>
 </div>
 </body>
 </html>

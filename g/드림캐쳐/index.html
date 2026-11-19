@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="드림캐쳐 직캠·무대 영상 872개를 조회수 순으로(지유·수아·시연·한동·유현·다미·가현). 드림캐쳐 멤버·데뷔일(2017.01.13)·소속사(드림캐쳐컴퍼니). 음악방송 1위 4회. 직캠·무대 영상과 디스코그래피를 K-POP UNIVERSE에서.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/2iF9xPRWbhQ/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"드림캐쳐","alternateName":"Dreamcatcher","genre":"K-pop","foundingDate":"2017-01-13","url":"https://kpop-universe.kr/g/드림캐쳐/","image":"https://img.youtube.com/vi/2iF9xPRWbhQ/maxresdefault.jpg","member":[{"@type":"Person","name":"지유"},{"@type":"Person","name":"수아"},{"@type":"Person","name":"시연"},{"@type":"Person","name":"한동"},{"@type":"Person","name":"유현"},{"@type":"Person","name":"다미"},{"@type":"Person","name":"가현"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"드림캐쳐","alternateName":"Dreamcatcher","genre":"K-pop","description":"7인조 걸그룹. 드림캐쳐컴퍼니. 2017년 데뷔. 팬덤명 인섬니아. 대표 앨범 [My Christmas Sweet Love](2024), [VirtuouS](2024), [Luck Inside 7 Doors](2024).","foundingDate":"2017-01-13","url":"https://kpop-universe.kr/g/드림캐쳐/","image":"https://img.youtube.com/vi/2iF9xPRWbhQ/maxresdefault.jpg","member":[{"@type":"Person","name":"지유"},{"@type":"Person","name":"수아"},{"@type":"Person","name":"시연"},{"@type":"Person","name":"한동"},{"@type":"Person","name":"유현"},{"@type":"Person","name":"다미"},{"@type":"Person","name":"가현"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["이번 주 새 영상 1개","최근 음방 1위 · BONVOYAGE (2023.05.31)","음방 1위 4회","모아둔 무대·영상 2,106개","가장 많이 본 영상 · 조회수 82M"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
-  <p class="intro">7인조 걸그룹. 드림캐쳐컴퍼니. 2017년 데뷔. 팬덤명 인섬니아. 대표 앨범 [My Christmas Sweet Love](2024), [VirtuouS](2024), [Luck Inside 7 Doors](2024).</p>
   
     <h2 id="members">멤버</h2>
     <div class="faces">
@@ -155,8 +173,8 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/드림캐쳐/s/2months/">2 Months</a></li>
       <li><a href="https://kpop-universe.kr/g/드림캐쳐/s/2rings/">2 Rings</a></li>
       <li><a href="https://kpop-universe.kr/g/드림캐쳐/s/redsun/">Red Sun</a></li>
-      <li><a href="https://kpop-universe.kr/g/드림캐쳐/s/blackorwhite/">Black Or White</a></li>
       <li><a href="https://kpop-universe.kr/g/드림캐쳐/s/날아올라/">날아올라 (Fly high)</a></li>
+      <li><a href="https://kpop-universe.kr/g/드림캐쳐/s/blackorwhite/">Black Or White</a></li>
       <li><a href="https://kpop-universe.kr/g/드림캐쳐/s/attitude/">Attitude</a></li>
       <li><a href="https://kpop-universe.kr/g/드림캐쳐/s/alldaylong/">Alldaylong</a></li>
       <li><a href="https://kpop-universe.kr/g/드림캐쳐/s/paradise/">Paradise</a></li>
@@ -170,57 +188,38 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/드림캐쳐/s/roseblue/">R.o.S.E BLUE</a></li>
     </ul>
   
-    <h2 id="albums">앨범·수록곡</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/드림캐쳐/a/virtuous/">[VirtuouS]</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/g/드림캐쳐/a/villains/">[VillainS]</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/g/드림캐쳐/a/apocalypsefromus/">[Apocalypse : From us]</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/g/드림캐쳐/a/apocalypsefollowus/">[Apocalypse : Follow us]</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/g/드림캐쳐/a/apocalypsesaveus/">[Apocalypse : Save us]</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/g/드림캐쳐/a/summerholiday/">[Summer Holiday]</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/g/드림캐쳐/a/dystopiaroadtoutopia/">[Dystopia : Road to Utopia]</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/g/드림캐쳐/a/dystopialosemyself/">[Dystopia : Lose Myself]</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/g/드림캐쳐/a/1stalbum/">1st Album [Dystopia : The Tree of Language]</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/g/드림캐쳐/a/raidofdream/">Raid of Dream</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/g/드림캐쳐/a/thebeginningoftheend/">The Beginning Of The End</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/g/드림캐쳐/a/theendofnightmare/">The End of Nightmare</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/g/드림캐쳐/a/aloneinthecity/">Alone In The City</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/드림캐쳐/a/악몽escapetheera/">악몽·Escape the ERA</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/드림캐쳐/a/prequel/">Prequel</a> <span class="yr">2017</span></li>
-    </ul>
-  
-    <h2>디스코그래피</h2>
-    <ul class="discog-list">
-      <li>[My Christmas Sweet Love] <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-      <li>[VirtuouS] <span class="yr">(2024)</span> <span class="tag">미니 10집</span></li>
-      <li>[Luck Inside 7 Doors] <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-      <li>[VillainS] <span class="yr">(2023)</span> <span class="tag">미니 9집</span></li>
-      <li>[BONVOYAGE (Farewell Ver.)] <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>[Apocalypse : From us] <span class="yr">(2023)</span> <span class="tag">미니 8집</span></li>
-      <li>[REASON] <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>[Apocalypse : Follow us] <span class="yr">(2022)</span> <span class="tag">미니 7집</span></li>
-      <li>[Apocalypse : Save us] <span class="yr">(2022)</span> <span class="tag">정규 2집</span></li>
-      <li>[Summer Holiday] <span class="yr">(2021)</span> <span class="tag">스페셜</span></li>
-      <li>Eclipse <span class="yr">(2021)</span> <span class="tag">싱글</span></li>
-      <li>[Dystopia : Road to Utopia] <span class="yr">(2021)</span> <span class="tag">미니 6집</span></li>
-      <li>NO MORE <span class="yr">(2020)</span> <span class="tag">싱글</span></li>
-      <li>[Dystopia : Lose Myself] <span class="yr">(2020)</span> <span class="tag">미니 5집</span></li>
-      <li>Millenasia Project &#39;Be the Future&#39; <span class="yr">(2020)</span> <span class="tag">싱글</span></li>
-      <li>Endless Night <span class="yr">(2020)</span> <span class="tag">싱글</span></li>
-      <li>1st Album [Dystopia : The Tree of Language] <span class="yr">(2020)</span> <span class="tag">정규 1집</span></li>
-      <li>Raid of Dream <span class="yr">(2019)</span> <span class="tag">스페셜</span></li>
-      <li>The Beginning Of The End <span class="yr">(2019)</span> <span class="tag">스페셜</span></li>
-      <li>PIRI -Japanese ver.- <span class="yr">(2019)</span> <span class="tag">싱글</span></li>
-      <li>The End of Nightmare <span class="yr">(2019)</span> <span class="tag">미니 4집</span></li>
-      <li>하늘을 넘어 <span class="yr">(2019)</span> <span class="tag">싱글</span></li>
-      <li>What -Japanese ver.- <span class="yr">(2018)</span> <span class="tag">싱글</span></li>
-      <li>Alone In The City <span class="yr">(2018)</span> <span class="tag">미니 3집</span></li>
-      <li>악몽·Escape the ERA <span class="yr">(2018)</span> <span class="tag">미니 2집</span></li>
-      <li>Full Moon <span class="yr">(2018)</span> <span class="tag">싱글</span></li>
-      <li>Prequel <span class="yr">(2017)</span> <span class="tag">미니 1집</span></li>
-      <li>악몽·Fall asleep in the mirror <span class="yr">(2017)</span> <span class="tag">싱글</span></li>
-      <li>악몽 (惡夢) <span class="yr">(2017)</span> <span class="tag">싱글</span></li>
-    </ul>
+    <h2 id="albums">디스코그래피</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/71/543/11671543_20241219160701_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">[My Christmas Sweet Love]</span><span class="sp-tile-n">2024 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/드림캐쳐/a/virtuous/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/35/866/11535866_20240709162327_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">[VirtuouS]</span><span class="sp-tile-n">2024 · 미니 10집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/37/064/11437064_20240307173957_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">[Luck Inside 7 Doors]</span><span class="sp-tile-n">2024 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/드림캐쳐/a/villains/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/69/723/11369723_20231122181145_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">[VillainS]</span><span class="sp-tile-n">2023 · 미니 9집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/26/266/11326266_20230913161659_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">[BONVOYAGE (Farewell Ver.)]</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/드림캐쳐/a/apocalypsefromus/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/50/211/11250211_20230523173209_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">[Apocalypse : From us]</span><span class="sp-tile-n">2023 · 미니 8집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/111/47/266/11147266_20230112175542_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">[REASON]</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/드림캐쳐/a/apocalypsefollowus/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/74/452/11074452_20221011143552_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">[Apocalypse : Follow us]</span><span class="sp-tile-n">2022 · 미니 7집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/드림캐쳐/a/apocalypsesaveus/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/109/16/670/10916670_20220411171520_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">[Apocalypse : Save us]</span><span class="sp-tile-n">2022 · 정규 2집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/드림캐쳐/a/summerholiday/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/66/094/10666094_20210730100633_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">[Summer Holiday]</span><span class="sp-tile-n">2021 · 스페셜</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/80/632/10580632_20210322143256_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Eclipse</span><span class="sp-tile-n">2021 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/드림캐쳐/a/dystopiaroadtoutopia/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/52/963/10552963_20210125175348_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">[Dystopia : Road to Utopia]</span><span class="sp-tile-n">2021 · 미니 6집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/20/896/10520896_20201119143406_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">NO MORE</span><span class="sp-tile-n">2020 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/드림캐쳐/a/dystopialosemyself/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/76/787/10476787_20200814171427_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">[Dystopia : Lose Myself]</span><span class="sp-tile-n">2020 · 미니 5집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/24/982/10424982_20200429181249_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Millenasia Project &#39;Be the Future&#39;</span><span class="sp-tile-n">2020 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/03/071/10403071_20200313173121_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Endless Night</span><span class="sp-tile-n">2020 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/드림캐쳐/a/1stalbum/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/90/136/10390136_20200218155253_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">1st Album [Dystopia : The Tree of Language]</span><span class="sp-tile-n">2020 · 정규 1집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/드림캐쳐/a/raidofdream/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/29/398/10329398_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Raid of Dream</span><span class="sp-tile-n">2019 · 스페셜</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/드림캐쳐/a/thebeginningoftheend/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/26/945/10326945_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">The Beginning Of The End</span><span class="sp-tile-n">2019 · 스페셜</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/61/581/10261581_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">PIRI -Japanese ver.-</span><span class="sp-tile-n">2019 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/드림캐쳐/a/theendofnightmare/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/50/805/10250805_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">The End of Nightmare</span><span class="sp-tile-n">2019 · 미니 4집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/42/873/10242873_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">하늘을 넘어</span><span class="sp-tile-n">2019 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/25/374/10225374_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">What -Japanese ver.-</span><span class="sp-tile-n">2018 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/드림캐쳐/a/aloneinthecity/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/06/543/10206543_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Alone In The City</span><span class="sp-tile-n">2018 · 미니 3집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/드림캐쳐/a/악몽escapetheera/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/65/768/10165768_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">악몽·Escape the ERA</span><span class="sp-tile-n">2018 · 미니 2집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/28/594/10128594_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Full Moon</span><span class="sp-tile-n">2018 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/드림캐쳐/a/prequel/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/83/185/10083185_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Prequel</span><span class="sp-tile-n">2017 · 미니 1집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/52/038/10052038_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">악몽·Fall asleep in the mirror</span><span class="sp-tile-n">2017 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/31/121/10031121_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">악몽 (惡夢)</span><span class="sp-tile-n">2017 · 싱글</span></div>
+    </div>
   
     <h2>함께 보면 좋은 그룹</h2>
     <ul class="member-list rel">
@@ -232,7 +231,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/dreamcatcher/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=드림캐쳐">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"BONVOYAGE","s":"영상 114개","img":"RPNaYj6etb8","m":"BONVOYAGE","h":"https://kpop-universe.kr/g/드림캐쳐/s/bonvoyage/"},{"k":"멤버 직캠","t":"지유","s":"직캠 92개","img":"i1rEIHgKqoA","h":"https://kpop-universe.kr/g/드림캐쳐/지유/fancams/"},{"k":"앨범","t":"[VirtuouS]","s":"수록곡 5곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/115/35/866/11535866_20240709162327_500.jpg","h":"https://kpop-universe.kr/g/드림캐쳐/a/virtuous/"},{"k":"곡별 직캠·무대","t":"MAISON","s":"영상 83개","img":"z4t9LLq1Nk0","m":"MAISON","h":"https://kpop-universe.kr/g/드림캐쳐/s/maison/"},{"k":"멤버 직캠","t":"수아","s":"직캠 83개","img":"HxNMUYm1Es0","h":"https://kpop-universe.kr/g/드림캐쳐/수아/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"BONVOYAGE","s":"영상 115개","img":"RPNaYj6etb8","m":"BONVOYAGE","h":"https://kpop-universe.kr/g/드림캐쳐/s/bonvoyage/"},{"k":"멤버 직캠","t":"지유","s":"직캠 92개","img":"i1rEIHgKqoA","h":"https://kpop-universe.kr/g/드림캐쳐/지유/fancams/"},{"k":"앨범","t":"[VirtuouS]","s":"수록곡 5곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/115/35/866/11535866_20240709162327_500.jpg","h":"https://kpop-universe.kr/g/드림캐쳐/a/virtuous/"},{"k":"곡별 직캠·무대","t":"MAISON","s":"영상 84개","img":"z4t9LLq1Nk0","m":"MAISON","h":"https://kpop-universe.kr/g/드림캐쳐/s/maison/"},{"k":"멤버 직캠","t":"수아","s":"직캠 83개","img":"HxNMUYm1Es0","h":"https://kpop-universe.kr/g/드림캐쳐/수아/fancams/"}]</script>
 </div>
 </body>
 </html>

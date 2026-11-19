@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="484 NiziU fancams and stages, most viewed first (Mako, Rio, Maya, Riku, Ayaka, Mayuka, Rima, Miihi, Nina). NiziU: members, debut 2020.12.02, JYP Entertainment. 3 music show wins. Fancams, stages and discography on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/mbaXQ_64qVA/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"NiziU","alternateName":"니쥬","genre":"K-pop","foundingDate":"2020-12-02","url":"https://kpop-universe.kr/en/g/niziu/","image":"https://img.youtube.com/vi/mbaXQ_64qVA/maxresdefault.jpg","member":[{"@type":"Person","name":"Mako"},{"@type":"Person","name":"Rio"},{"@type":"Person","name":"Maya"},{"@type":"Person","name":"Riku"},{"@type":"Person","name":"Ayaka"},{"@type":"Person","name":"Mayuka"},{"@type":"Person","name":"Rima"},{"@type":"Person","name":"Miihi"},{"@type":"Person","name":"Nina"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"NiziU","alternateName":"니쥬","genre":"K-pop","description":"NiziU is a 9-member K-pop girl group under JYP Entertainment, debuting in 2020. Fan club: WithU. Recent releases: Sour Grapes (2026), Portfolio (2026), GOOD GIRL BUT NOT FOR YOU (2026).","foundingDate":"2020-12-02","url":"https://kpop-universe.kr/en/g/niziu/","image":"https://img.youtube.com/vi/mbaXQ_64qVA/maxresdefault.jpg","member":[{"@type":"Person","name":"Mako"},{"@type":"Person","name":"Rio"},{"@type":"Person","name":"Maya"},{"@type":"Person","name":"Riku"},{"@type":"Person","name":"Ayaka"},{"@type":"Person","name":"Mayuka"},{"@type":"Person","name":"Rima"},{"@type":"Person","name":"Miihi"},{"@type":"Person","name":"Nina"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["8 new videos this week","Latest music show win · Sour Grapes (2026.10.07)","3 music show wins","1,500 stages & videos collected","Most viewed · 331M views"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
-  <p class="intro">NiziU is a 9-member K-pop girl group under JYP Entertainment, debuting in 2020. Fan club: WithU. Recent releases: Sour Grapes (2026), Portfolio (2026), GOOD GIRL BUT NOT FOR YOU (2026).</p>
   
     <h2 id="members">Members</h2>
     <div class="faces">
@@ -163,50 +181,39 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/niziu/s/shiningday/">Shining day</a></li>
     </ul>
   
-    <h2 id="albums">Albums & tracklists</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/niziu/a/sourgrapes/">Sour Grapes</a> <span class="yr">2026</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/niziu/a/newemotion/">New Emotion</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/niziu/a/awake/">AWAKE</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/niziu/a/riseup/">RISE UP</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/niziu/a/coconutdeluxeedition/">COCONUT ‐Deluxe Edition‐</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/niziu/a/uspecialedition/">U -Special Edition-</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/niziu/a/makeyouhappy/">Make you happy</a> <span class="yr">2020</span></li>
-    </ul>
-  
-    <h2>Discography</h2>
-    <ul class="discog-list">
-      <li>Sour Grapes <span class="yr">(2026)</span> <span class="tag">1st EP</span></li>
-      <li>Portfolio <span class="yr">(2026)</span> <span class="tag">Compilation</span></li>
-      <li>GOOD GIRL BUT NOT FOR YOU <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>Dear… <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>New Emotion <span class="yr">(2025)</span> <span class="tag">Album</span></li>
-      <li>♡Emotion <span class="yr">(2025)</span> <span class="tag">Single</span></li>
-      <li>만약이라는 건 없어 (What if) (Japanese ver.) <span class="yr">(2025)</span> <span class="tag">Single</span></li>
-      <li>LOVE LINE (Japanese ver.) / Shining day <span class="yr">(2025)</span> <span class="tag">Single</span></li>
-      <li>LOVE LINE <span class="yr">(2025)</span> <span class="tag">Single</span></li>
-      <li>AWAKE <span class="yr">(2025)</span> <span class="tag">Album</span></li>
-      <li>YOAKE <span class="yr">(2025)</span> <span class="tag">Single</span></li>
-      <li>Buddy Buddy <span class="yr">(2024)</span> <span class="tag">Single</span></li>
-      <li>AlwayS <span class="yr">(2024)</span> <span class="tag">Single</span></li>
-      <li>RISE UP <span class="yr">(2024)</span> <span class="tag">EP</span></li>
-      <li>SWEET NONFICTION <span class="yr">(2024)</span> <span class="tag">Single</span></li>
-      <li>Memories <span class="yr">(2024)</span> <span class="tag">Single</span></li>
-      <li>Press Play <span class="yr">(2023)</span> <span class="tag">Single</span></li>
-      <li>COCONUT ‐Deluxe Edition‐ <span class="yr">(2023)</span> <span class="tag">Album</span></li>
-      <li>COCONUT <span class="yr">(2023)</span> <span class="tag">Single</span></li>
-      <li>Paradise <span class="yr">(2023)</span> <span class="tag">Single</span></li>
-      <li>Blue Moon <span class="yr">(2022)</span> <span class="tag">Single</span></li>
-      <li>CLAP CLAP <span class="yr">(2022)</span> <span class="tag">Single</span></li>
-      <li>ASOBO <span class="yr">(2022)</span> <span class="tag">Single</span></li>
-      <li>U -Special Edition- <span class="yr">(2021)</span> <span class="tag">Album</span></li>
-      <li>Super Summer <span class="yr">(2021)</span> <span class="tag">Single</span></li>
-      <li>Take a picture / Poppin&#39; Shakin&#39; <span class="yr">(2021)</span> <span class="tag">Single</span></li>
-      <li>Take a picture <span class="yr">(2021)</span> <span class="tag">Single</span></li>
-      <li>Poppin&#39; Shakin&#39; <span class="yr">(2021)</span> <span class="tag">Single</span></li>
-      <li>Step and a step <span class="yr">(2020)</span> <span class="tag">Single</span></li>
-      <li>Make you happy <span class="yr">(2020)</span> <span class="tag">EP</span></li>
-    </ul>
+    <h2 id="albums">Discography</h2>
+    <div class="sp-tiles dg-tiles">
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/niziu/a/sourgrapes/"><img src="https://i.scdn.co/image/ab67616d00001e02933c38c65ee163a4de368e95" alt="" loading="lazy"><span class="sp-tile-t">Sour Grapes</span><span class="sp-tile-n">2026 · 1st EP</span></a>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02b062cb0f11060feec026a608" alt="" loading="lazy"><span class="sp-tile-t">Portfolio</span><span class="sp-tile-n">2026 · Compilation</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02f77391f4fa8da174a98c2414" alt="" loading="lazy"><span class="sp-tile-t">GOOD GIRL BUT NOT FOR YOU</span><span class="sp-tile-n">2026 · Single</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02aadab5936607a161d72c1fd5" alt="" loading="lazy"><span class="sp-tile-t">Dear…</span><span class="sp-tile-n">2026 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/niziu/a/newemotion/"><img src="https://i.scdn.co/image/ab67616d00001e022f709877c107d3ff778098d3" alt="" loading="lazy"><span class="sp-tile-t">New Emotion</span><span class="sp-tile-n">2025 · Album</span></a>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e0204b1b0d813f5017d0c875611" alt="" loading="lazy"><span class="sp-tile-t">♡Emotion</span><span class="sp-tile-n">2025 · Single</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02321f1709085114351e36e5c7" alt="" loading="lazy"><span class="sp-tile-t">만약이라는 건 없어 (What if) (Japanese ver.)</span><span class="sp-tile-n">2025 · Single</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e020732a1f5be52da4a784b3b3c" alt="" loading="lazy"><span class="sp-tile-t">LOVE LINE (Japanese ver.) / Shining day</span><span class="sp-tile-n">2025 · Single</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e026ef784f1211818e818cbf0b8" alt="" loading="lazy"><span class="sp-tile-t">LOVE LINE</span><span class="sp-tile-n">2025 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/niziu/a/awake/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/27/eb/fc/27ebfc4d-0ef5-86ed-0138-9a4cb5cdbc2f/4547366724820.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">AWAKE</span><span class="sp-tile-n">2025 · Album</span></a>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e0245b65231d4a318ae1ac6fcd7" alt="" loading="lazy"><span class="sp-tile-t">YOAKE</span><span class="sp-tile-n">2025 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/62/827/11662827_20241210140301_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Buddy Buddy</span><span class="sp-tile-n">2024 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/56/183/11656183_20241202152441_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">AlwayS</span><span class="sp-tile-n">2024 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/niziu/a/riseup/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/32/584/11532584_20240723142300_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">RISE UP</span><span class="sp-tile-n">2024 · EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/42/025/11442025_20240313154348_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SWEET NONFICTION</span><span class="sp-tile-n">2024 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/12/425/11412425_20240205163101_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Memories</span><span class="sp-tile-n">2024 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/54/709/11354709_20231030151746_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Press Play</span><span class="sp-tile-n">2023 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/niziu/a/coconutdeluxeedition/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/87/911/11287911_20230718152309_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">COCONUT ‐Deluxe Edition‐</span><span class="sp-tile-n">2023 · Album</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/75/673/11275673_20230628160032_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">COCONUT</span><span class="sp-tile-n">2023 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/111/93/529/11193529_20230228193104_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Paradise</span><span class="sp-tile-n">2023 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/111/05/772/11105772_20221118121807_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Blue Moon</span><span class="sp-tile-n">2022 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/02/786/11002786_20220712144948_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">CLAP CLAP</span><span class="sp-tile-n">2022 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/109/16/482/10916482_20220411150357_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ASOBO</span><span class="sp-tile-n">2022 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/niziu/a/uspecialedition/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/9f/60/92/9f609210-bb3e-3673-198a-ec5358b00e56/4547366539400.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">U -Special Edition-</span><span class="sp-tile-n">2021 · Album</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/43/345/10643345_20210702141931_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Super Summer</span><span class="sp-tile-n">2021 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/88/286/10588286_20210406150302_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Take a picture / Poppin&#39; Shakin&#39;</span><span class="sp-tile-n">2021 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/82/896/10582896_20210325110001_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Take a picture</span><span class="sp-tile-n">2021 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/67/559/10567559_20210323173329_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Poppin&#39; Shakin&#39;</span><span class="sp-tile-n">2021 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/26/887/10526887_20201201160556_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Step and a step</span><span class="sp-tile-n">2020 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/niziu/a/makeyouhappy/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/0a/43/d5/0a43d5e3-43c3-6351-2d28-c2c082333f34/jacket_EJXX00081B00Z_550.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Make you happy</span><span class="sp-tile-n">2020 · EP</span></a>
+    </div>
   
     <h2>Related groups</h2>
     <ul class="member-list rel">
@@ -221,7 +228,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/니쥬/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=니쥬">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"LOVE LINE (운명선)","s":"113 videos","img":"RkPj6AnKm0Y","m":"LOVE LINE","h":"https://kpop-universe.kr/en/g/niziu/s/loveline/"},{"k":"Member fancams","t":"Maya","s":"35 fancams","img":"o6sqgRg6X-U","h":"https://kpop-universe.kr/en/g/niziu/maya/fancams/"},{"k":"Album","t":"Sour Grapes","s":"5 tracks","im":"https://i.scdn.co/image/ab67616d0000b273933c38c65ee163a4de368e95","h":"https://kpop-universe.kr/en/g/niziu/a/sourgrapes/"},{"k":"Song fancams","t":"HEARTRIS","s":"105 videos","img":"gRfDY9WrGwk","m":"HEARTRIS","h":"https://kpop-universe.kr/en/g/niziu/s/heartris/"},{"k":"Member fancams","t":"Miihi","s":"30 fancams","img":"mtyZoayhZjw","h":"https://kpop-universe.kr/en/g/niziu/miihi/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"LOVE LINE (운명선)","s":"116 videos","img":"RkPj6AnKm0Y","m":"LOVE LINE","h":"https://kpop-universe.kr/en/g/niziu/s/loveline/"},{"k":"Member fancams","t":"Maya","s":"35 fancams","img":"o6sqgRg6X-U","h":"https://kpop-universe.kr/en/g/niziu/maya/fancams/"},{"k":"Album","t":"Sour Grapes","s":"5 tracks","im":"https://i.scdn.co/image/ab67616d0000b273933c38c65ee163a4de368e95","h":"https://kpop-universe.kr/en/g/niziu/a/sourgrapes/"},{"k":"Song fancams","t":"HEARTRIS","s":"107 videos","img":"gRfDY9WrGwk","m":"HEARTRIS","h":"https://kpop-universe.kr/en/g/niziu/s/heartris/"},{"k":"Member fancams","t":"Miihi","s":"30 fancams","img":"mtyZoayhZjw","h":"https://kpop-universe.kr/en/g/niziu/miihi/fancams/"}]</script>
 </div>
 </body>
 </html>

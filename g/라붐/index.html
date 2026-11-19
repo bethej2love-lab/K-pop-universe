@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="라붐 직캠·무대 영상 228개를 조회수 순으로. 라붐 멤버·데뷔일(2014.08.28)·소속사(인터파크뮤직플러스). 음악방송 1위 1회. 직캠·무대 영상과 디스코그래피를 K-POP UNIVERSE에서.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/t9Fja2pJ3gg/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"라붐","alternateName":"LABOUM","genre":"K-pop","foundingDate":"2014-08-28","url":"https://kpop-universe.kr/g/라붐/","image":"https://img.youtube.com/vi/t9Fja2pJ3gg/maxresdefault.jpg","member":[{"@type":"Person","name":"소연"},{"@type":"Person","name":"진예"},{"@type":"Person","name":"해인"},{"@type":"Person","name":"솔빈"},{"@type":"Person","name":"율희"},{"@type":"Person","name":"유정"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"라붐","alternateName":"LABOUM","genre":"K-pop","description":"걸그룹. 인터파크뮤직플러스. 2014년 데뷔. 해체. 대표 앨범 White Love (스키장에서)(2021), BLOSSOM(2021), Cheese (치즈)(2020).","foundingDate":"2014-08-28","url":"https://kpop-universe.kr/g/라붐/","image":"https://img.youtube.com/vi/t9Fja2pJ3gg/maxresdefault.jpg","member":[{"@type":"Person","name":"소연"},{"@type":"Person","name":"진예"},{"@type":"Person","name":"해인"},{"@type":"Person","name":"솔빈"},{"@type":"Person","name":"율희"},{"@type":"Person","name":"유정"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["최근 음방 1위 · Hwi hwi (2017.04.28)","모아둔 무대·영상 511개","가장 많이 본 영상 · 조회수 13M"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
-  <p class="intro">걸그룹. 인터파크뮤직플러스. 2014년 데뷔. 해체. 대표 앨범 White Love (스키장에서)(2021), BLOSSOM(2021), Cheese (치즈)(2020).</p>
   
     <h2 id="members">멤버</h2>
     <div class="faces">
@@ -147,33 +165,25 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/라붐/s/어떡할래/">어떡할래</a></li>
     </ul>
   
-    <h2 id="albums">앨범·수록곡</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/라붐/a/blossom/">BLOSSOM</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/g/라붐/a/twoofus/">Two of Us</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/g/라붐/a/missthiskiss/">MISS THIS KISS</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/라붐/a/lovesign/">Love Sign</a> <span class="yr">2016</span></li>
-    </ul>
-  
-    <h2>디스코그래피</h2>
-    <ul class="discog-list">
-      <li>White Love (스키장에서) <span class="yr">(2021)</span> <span class="tag">싱글</span></li>
-      <li>BLOSSOM <span class="yr">(2021)</span> <span class="tag">미니 3집</span></li>
-      <li>Cheese (치즈) <span class="yr">(2020)</span> <span class="tag">싱글</span></li>
-      <li>상상더하기 WINTER ++ <span class="yr">(2019)</span> <span class="tag">싱글</span></li>
-      <li>Two of Us <span class="yr">(2019)</span> <span class="tag">정규 1집</span></li>
-      <li>I&#39;M Yours <span class="yr">(2018)</span> <span class="tag">싱글</span></li>
-      <li>Between Us <span class="yr">(2018)</span> <span class="tag">싱글</span></li>
-      <li>LABOUM Summer Special <span class="yr">(2017)</span> <span class="tag">싱글</span></li>
-      <li>MISS THIS KISS <span class="yr">(2017)</span> <span class="tag">미니 2집</span></li>
-      <li>겨울동화 <span class="yr">(2016)</span> <span class="tag">싱글</span></li>
-      <li>Love Sign <span class="yr">(2016)</span> <span class="tag">미니 1집</span></li>
-      <li>Fresh Adventure <span class="yr">(2016)</span> <span class="tag">싱글</span></li>
-      <li>Aalow Aalow <span class="yr">(2015)</span> <span class="tag">싱글</span></li>
-      <li>Sugar Sugar <span class="yr">(2015)</span> <span class="tag">싱글</span></li>
-      <li>PETIT MACARON DATA PACK <span class="yr">(2014)</span> <span class="tag">싱글</span></li>
-      <li>Petit Macaron <span class="yr">(2014)</span> <span class="tag">싱글</span></li>
-    </ul>
+    <h2 id="albums">디스코그래피</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/108/15/477/10815477_20211217105742_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">White Love (스키장에서)</span><span class="sp-tile-n">2021 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/라붐/a/blossom/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/28/61/d3/2861d36a-658d-c775-a437-207d54976992/8809829726946.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">BLOSSOM</span><span class="sp-tile-n">2021 · 미니 3집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/38/631/10538631_20201223174200_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Cheese (치즈)</span><span class="sp-tile-n">2020 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/67/674/10367674_20191220164714_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">상상더하기 WINTER ++</span><span class="sp-tile-n">2019 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/라붐/a/twoofus/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/42/c1/16/42c11660-ac3c-0b98-9513-f3f3d1e1824a/191953047287.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Two of Us</span><span class="sp-tile-n">2019 · 정규 1집</span></a>
+      <div class="sp-tile"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/3a/f6/de/3af6dec4-6d17-2f1d-44ae-4cba013ccf3d/191953020747.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">I&#39;M Yours</span><span class="sp-tile-n">2018 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/a5/03/0a/a5030a67-b79c-339a-935f-16d80fa2d8f6/191953013381.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Between Us</span><span class="sp-tile-n">2018 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/82/460/10082460_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">LABOUM Summer Special</span><span class="sp-tile-n">2017 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/라붐/a/missthiskiss/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/fc/b2/78/fcb278de-aa5c-5de0-4035-573826cf3b5b/cover_KM0021038_1.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">MISS THIS KISS</span><span class="sp-tile-n">2017 · 미니 2집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/20/243/10020243_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">겨울동화</span><span class="sp-tile-n">2016 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/라붐/a/lovesign/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/93/a6/4c/93a64c1b-4f55-6de2-487f-62ccd74014e4/3000.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Love Sign</span><span class="sp-tile-n">2016 · 미니 1집</span></a>
+      <div class="sp-tile"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/89/0e/70/890e7043-25e3-86a4-7e45-355719c0d8e6/cover_KM0021012_1.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Fresh Adventure</span><span class="sp-tile-n">2016 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/3d/63/cf/3d63cfa0-668d-0666-7488-eb91d2de86f3/3000.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Aalow Aalow</span><span class="sp-tile-n">2015 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/10/447/2310447_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Sugar Sugar</span><span class="sp-tile-n">2015 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/88/480/2288480_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">PETIT MACARON DATA PACK</span><span class="sp-tile-n">2014 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/66/47/ea/6647ea39-11ed-72a4-650f-ecae95b9eac5/3000.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Petit Macaron</span><span class="sp-tile-n">2014 · 싱글</span></div>
+    </div>
   
     <h2>함께 보면 좋은 그룹</h2>
     <ul class="member-list rel">
@@ -186,7 +196,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/laboum/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=라붐">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"Kiss Kiss","s":"영상 52개","img":"8W4JquqUhfQ","m":"Kiss Kiss","h":"https://kpop-universe.kr/g/라붐/s/kisskiss/"},{"k":"멤버 직캠","t":"솔빈","s":"직캠 19개","img":"vny1bYoyi7I","h":"https://kpop-universe.kr/member/솔빈/fancams/"},{"k":"앨범","t":"BLOSSOM","s":"수록곡 5곡","im":"https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/28/61/d3/2861d36a-658d-c775-a437-207d54976992/8809829726946.jpg/600x600bb.jpg","h":"https://kpop-universe.kr/g/라붐/a/blossom/"},{"k":"곡별 직캠·무대","t":"Firework","s":"영상 37개","img":"bz_BR3baCkA","m":"Firework","h":"https://kpop-universe.kr/g/라붐/s/firework/"},{"k":"멤버 직캠","t":"해인","s":"직캠 16개","img":"YEgvhRJWwWo","h":"https://kpop-universe.kr/member/해인/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"Kiss Kiss","s":"영상 52개","img":"8W4JquqUhfQ","m":"Kiss Kiss","h":"https://kpop-universe.kr/g/라붐/s/kisskiss/"},{"k":"멤버 직캠","t":"솔빈","s":"직캠 19개","img":"vny1bYoyi7I","h":"https://kpop-universe.kr/member/솔빈/fancams/"},{"k":"앨범","t":"BLOSSOM","s":"수록곡 5곡","im":"https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/28/61/d3/2861d36a-658d-c775-a437-207d54976992/8809829726946.jpg/600x600bb.jpg","h":"https://kpop-universe.kr/g/라붐/a/blossom/"},{"k":"곡별 직캠·무대","t":"Firework","s":"영상 38개","img":"bz_BR3baCkA","m":"Firework","h":"https://kpop-universe.kr/g/라붐/s/firework/"},{"k":"멤버 직캠","t":"해인","s":"직캠 16개","img":"YEgvhRJWwWo","h":"https://kpop-universe.kr/member/해인/fancams/"}]</script>
 </div>
 </body>
 </html>

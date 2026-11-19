@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="동방신기 직캠·무대 영상 312개를 조회수 순으로. 동방신기 멤버·데뷔일(2003.12.26)·소속사(SM엔터테인먼트). 음악방송 1위 5회, 대상 9개. 직캠·무대 영상과 디스코그래피를 K-POP UNIVERSE에서.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/dWVd84BpaUk/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"동방신기","alternateName":"TVXQ","genre":"K-pop","foundingDate":"2003-12-26","url":"https://kpop-universe.kr/g/동방신기/","image":"https://img.youtube.com/vi/dWVd84BpaUk/maxresdefault.jpg","member":[{"@type":"Person","name":"유노윤호"},{"@type":"Person","name":"최강창민"},{"@type":"Person","name":"김재중"},{"@type":"Person","name":"박유천"},{"@type":"Person","name":"김준수"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"동방신기","alternateName":"TVXQ","genre":"K-pop","description":"2인조 보이그룹. SM엔터테인먼트. 2003년 데뷔. 팬덤명 카시오페아. 대표 앨범 Share The World -RED OCEAN Ver.-(2026), IDENTITY(2026), Tsukinourade Aimashou(2025).","foundingDate":"2003-12-26","url":"https://kpop-universe.kr/g/동방신기/","image":"https://img.youtube.com/vi/dWVd84BpaUk/maxresdefault.jpg","member":[{"@type":"Person","name":"유노윤호"},{"@type":"Person","name":"최강창민"},{"@type":"Person","name":"김재중"},{"@type":"Person","name":"박유천"},{"@type":"Person","name":"김준수"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -104,10 +123,9 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>팬덤명</b> 카시오페아</span>
     </div>
     <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/@TVXQ" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://www.instagram.com/tvxq.official" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/TVXQ" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://www.tiktok.com/@tvxq_official" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-weverse" href="https://weverse.io/tvxq" target="_blank" rel="noopener noreferrer">Weverse</a><a class="sns-namu" href="https://namu.wiki/w/동방신기" target="_blank" rel="noopener noreferrer">나무위키</a></div>
-    <script type="application/json" id="kpu-facts">["이번 주 새 영상 2개","최근 음방 1위 · Something (2014.02.07)","음방 1위 5회","모아둔 무대·영상 887개","가장 많이 본 영상 · 조회수 10M"]</script>
+    <script type="application/json" id="kpu-facts">["이번 주 새 영상 1개","최근 음방 1위 · Something (2014.02.07)","음방 1위 5회","모아둔 무대·영상 887개","가장 많이 본 영상 · 조회수 10M"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
-  <p class="intro">2인조 보이그룹. SM엔터테인먼트. 2003년 데뷔. 팬덤명 카시오페아. 대표 앨범 Share The World -RED OCEAN Ver.-(2026), IDENTITY(2026), Tsukinourade Aimashou(2025).</p>
   
     <h2 id="members">멤버</h2>
     <div class="faces">
@@ -152,102 +170,89 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/동방신기/s/이것만은알고가/">이것만은 알고 가 (Before U Go)</a></li>
       <li><a href="https://kpop-universe.kr/g/동방신기/s/rebel/">Rebel</a></li>
       <li><a href="https://kpop-universe.kr/g/동방신기/s/risingsun/">Rising Sun (순수)</a></li>
+      <li><a href="https://kpop-universe.kr/g/동방신기/s/체크메이트/">체크메이트</a></li>
+      <li><a href="https://kpop-universe.kr/g/동방신기/s/maximum/">MAXIMUM</a></li>
       <li><a href="https://kpop-universe.kr/g/동방신기/s/something/">Something</a></li>
       <li><a href="https://kpop-universe.kr/g/동방신기/s/왜/">왜 (Keep Your Head Down)</a></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/s/maximum/">MAXIMUM</a></li>
       <li><a href="https://kpop-universe.kr/g/동방신기/s/allofmylife/">All Of My Life</a></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/s/체크메이트/">체크메이트</a></li>
       <li><a href="https://kpop-universe.kr/g/동방신기/s/chocolate/">Chocolate</a></li>
       <li><a href="https://kpop-universe.kr/g/동방신기/s/운명/">운명 (The Chance of Love)</a></li>
       <li><a href="https://kpop-universe.kr/g/동방신기/s/catchme/">Catch Me</a></li>
+      <li><a href="https://kpop-universe.kr/g/동방신기/s/hug/">Hug (포옹)</a></li>
+      <li><a href="https://kpop-universe.kr/g/동방신기/s/주문/">주문 (Mirotic)</a></li>
+      <li><a href="https://kpop-universe.kr/g/동방신기/s/thewayuare/">The Way U Are</a></li>
       <li><a href="https://kpop-universe.kr/g/동방신기/s/humanoids/">Humanoids</a></li>
       <li><a href="https://kpop-universe.kr/g/동방신기/s/수리수리/">수리수리 (Spellbound)</a></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/s/주문/">주문 (Mirotic)</a></li>
       <li><a href="https://kpop-universe.kr/g/동방신기/s/tonight/">Tonight</a></li>
+      <li><a href="https://kpop-universe.kr/g/동방신기/s/bodylanguage/">Body Language</a></li>
+      <li><a href="https://kpop-universe.kr/g/동방신기/s/stretch/">Stretch</a></li>
       <li><a href="https://kpop-universe.kr/g/동방신기/s/평행선/">평행선 (Love Line)</a></li>
       <li><a href="https://kpop-universe.kr/g/동방신기/s/wrongnumber/">Wrong Number</a></li>
+      <li><a href="https://kpop-universe.kr/g/동방신기/s/timestickin/">Time&#39;s Tickin&#39;</a></li>
+      <li><a href="https://kpop-universe.kr/g/동방신기/s/thanku/">Thank U</a></li>
+      <li><a href="https://kpop-universe.kr/g/동방신기/s/devil/">Devil</a></li>
       <li><a href="https://kpop-universe.kr/g/동방신기/s/jungle/">Jungle</a></li>
       <li><a href="https://kpop-universe.kr/g/동방신기/s/풍선/">풍선 (Balloons)</a></li>
       <li><a href="https://kpop-universe.kr/g/동방신기/s/믿어요/">믿어요</a></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/s/timestickin/">Time&#39;s Tickin&#39;</a></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/s/stretch/">Stretch</a></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/s/thanku/">Thank U</a></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/s/devil/">Devil</a></li>
       <li><a href="https://kpop-universe.kr/g/동방신기/s/gloriousday/">Glorious Day</a></li>
       <li><a href="https://kpop-universe.kr/g/동방신기/s/down/">Down</a></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/s/bodylanguage/">Body Language</a></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/s/hybrid/">HYBRID</a></li>
       <li><a href="https://kpop-universe.kr/g/동방신기/s/iamu/">I AM U</a></li>
+      <li><a href="https://kpop-universe.kr/g/동방신기/s/呪文miroticzyumonmirotic/">呪文-Mirotic- / Zyumon-Mirotic-</a></li>
       <li><a href="https://kpop-universe.kr/g/동방신기/s/vujade/">Vuja De</a></li>
+      <li><a href="https://kpop-universe.kr/g/동방신기/s/hybrid/">HYBRID</a></li>
     </ul>
   
-    <h2 id="albums">앨범·수록곡</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/zone/">ZONE</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/202/">20&amp;2</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/epitaph/">Epitaph</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/xv/">XV</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/newchapter2thetruthoflove/">New Chapter #2: The Truth of Love</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/tomorrow/">TOMORROW</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/newchapter1thechanceoflove/">New Chapter #1: The Chance of Love</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/finecollectionbeginagain/">FINE COLLECTION ～Begin Again～</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/twoofus/">Two of Us</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/riseasgodtvxqspecialalbum/">RISE AS GOD - TVXQ! SPECIAL ALBUM</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/with/">WITH</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/tree/">TREE</a> <span class="yr">2014</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/the7thalbumrepackage수리수리/">The 7th Album Repackage &#39;수리수리 (Spellbound)&#39;</a> <span class="yr">2014</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/tense/">TENSE</a> <span class="yr">2014</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/scream/">SCREAM</a> <span class="yr">2013</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/time/">Time</a> <span class="yr">2013</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/humanoids/">Humanoids</a> <span class="yr">2012</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/catchme/">Catch Me</a> <span class="yr">2012</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/tone/">TONE</a> <span class="yr">2011</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/왜/">왜 (Keep Your Head Down) REPACKAGE &#39;이것만은 알고 가&#39;</a> <span class="yr">2011</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/왜-20110105/">왜 (Keep Your Head Down)</a> <span class="yr">2011</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/thesecretcode/">The Secret Code</a> <span class="yr">2009</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/mirotic/">MIROTIC</a> <span class="yr">2008</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/fiveintheblack/">Five in the Black</a> <span class="yr">2007</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/o正反合/">O -正.反.合.</a> <span class="yr">2006</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/heartmindandsoul/">Heart, Mind And Soul</a> <span class="yr">2006</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/showmeyourlove/">Show Me Your Love (동방신기 &amp; Super Junior 05)</a> <span class="yr">2005</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/risingsun/">Rising Sun</a> <span class="yr">2005</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/christmasgiftfrom동방신기/">Christmas Gift From 동방신기(東方神起)</a> <span class="yr">2004</span></li>
-      <li><a href="https://kpop-universe.kr/g/동방신기/a/triangle/">Tri-Angle</a> <span class="yr">2004</span></li>
-    </ul>
-  
-    <h2>디스코그래피</h2>
-    <ul class="discog-list">
-      <li>Share The World -RED OCEAN Ver.- <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>IDENTITY <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>Tsukinourade Aimashou <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>DEAREST <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-      <li>SWEET SURRENDER <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-      <li>20&amp;2 <span class="yr">(2023)</span> <span class="tag">정규 9집</span></li>
-      <li>Lime ＆ Lemon <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>PARALLEL PARALLEL <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>UTSUROI <span class="yr">(2022)</span> <span class="tag">싱글</span></li>
-      <li>Epitaph <span class="yr">(2022)</span> <span class="tag">미니</span></li>
-      <li>Small Talk <span class="yr">(2020)</span> <span class="tag">싱글</span></li>
-      <li>まなざし／MANAZASHI <span class="yr">(2020)</span> <span class="tag">싱글</span></li>
-      <li>XV <span class="yr">(2019)</span> <span class="tag">정규</span></li>
-      <li>Hot Hot Hot／ミラーズ／Hot Hot Hot／Mirrors <span class="yr">(2019)</span> <span class="tag">싱글</span></li>
-      <li>New Chapter #2: The Truth of Love <span class="yr">(2018)</span> <span class="tag">스페셜</span></li>
-      <li>Jealous <span class="yr">(2018)</span> <span class="tag">싱글</span></li>
-      <li>Road <span class="yr">(2018)</span> <span class="tag">싱글</span></li>
-      <li>TOMORROW <span class="yr">(2018)</span> <span class="tag">정규</span></li>
-      <li>New Chapter #1: The Chance of Love <span class="yr">(2018)</span> <span class="tag">정규 8집</span></li>
-      <li>Reboot <span class="yr">(2017)</span> <span class="tag">싱글</span></li>
-      <li>FINE COLLECTION ～Begin Again～ <span class="yr">(2017)</span> <span class="tag">정규</span></li>
-      <li>Two of Us <span class="yr">(2016)</span> <span class="tag">정규</span></li>
-      <li>RISE AS GOD - TVXQ! SPECIAL ALBUM <span class="yr">(2015)</span> <span class="tag">스페셜</span></li>
-      <li>サクラミチ / Sakuramichi (벚꽃길) <span class="yr">(2015)</span> <span class="tag">싱글</span></li>
-      <li>WITH <span class="yr">(2015)</span> <span class="tag">정규</span></li>
-      <li>Time Works Wonders <span class="yr">(2014)</span> <span class="tag">싱글</span></li>
-      <li>Sweat / Answer <span class="yr">(2014)</span> <span class="tag">싱글</span></li>
-      <li>TREE <span class="yr">(2014)</span> <span class="tag">정규</span></li>
-      <li>The 7th Album Repackage &#39;수리수리 (Spellbound)&#39; <span class="yr">(2014)</span> <span class="tag">리패키지</span></li>
-      <li>Hide &amp; Seek / Something <span class="yr">(2014)</span> <span class="tag">싱글</span></li>
-    </ul>
+    <h2 id="albums">디스코그래피</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02f432f3757d07726a58c43d6e" alt="" loading="lazy"><span class="sp-tile-t">Share The World -RED OCEAN Ver.-</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02ff57721e8505cb2c670d104f" alt="" loading="lazy"><span class="sp-tile-t">IDENTITY</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e0248f831d8c584c4feb570b113" alt="" loading="lazy"><span class="sp-tile-t">Tsukinourade Aimashou</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/zone/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/33/321/11633321_20241105154604_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ZONE</span><span class="sp-tile-n">2024 · 정규</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/26/560/11626560_20241028100251_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">DEAREST</span><span class="sp-tile-n">2024 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/08/423/11608423_20241004154219_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SWEET SURRENDER</span><span class="sp-tile-n">2024 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/202/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/77/578/11377578_20231226093052_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">20&amp;2</span><span class="sp-tile-n">2023 · 정규 9집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/62/062/11262062_20230627191057_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Lime ＆ Lemon</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/111/59/373/11159373_20230127172211_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">PARALLEL PARALLEL</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/16/043/11016043_20220816132055_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">UTSUROI</span><span class="sp-tile-n">2022 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/epitaph/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/108/91/575/10891575_20220315150823_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Epitaph</span><span class="sp-tile-n">2022 · 미니</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/24/701/10524701_20201126141458_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Small Talk</span><span class="sp-tile-n">2020 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/78/295/10378295_20200121140113_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">まなざし／MANAZASHI</span><span class="sp-tile-n">2020 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/xv/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/42/099/10342099_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">XV</span><span class="sp-tile-n">2019 · 정규</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/18/505/10318505_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Hot Hot Hot／ミラーズ／Hot Hot Hot／Mirrors</span><span class="sp-tile-n">2019 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/newchapter2thetruthoflove/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/36/755/10236755_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">New Chapter #2: The Truth of Love</span><span class="sp-tile-n">2018 · 스페셜</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/24/347/10224347_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Jealous</span><span class="sp-tile-n">2018 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/12/338/10212338_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Road</span><span class="sp-tile-n">2018 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/tomorrow/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/05/905/10205905_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">TOMORROW</span><span class="sp-tile-n">2018 · 정규</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/newchapter1thechanceoflove/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/52/415/10152415_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">New Chapter #1: The Chance of Love</span><span class="sp-tile-n">2018 · 정규 8집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/23/397/10123397_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Reboot</span><span class="sp-tile-n">2017 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/finecollectionbeginagain/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/09/566/10109566_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">FINE COLLECTION ～Begin Again～</span><span class="sp-tile-n">2017 · 정규</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/twoofus/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/07/615/10007615_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Two of Us</span><span class="sp-tile-n">2016 · 정규</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/riseasgodtvxqspecialalbum/"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/30/195/2330195_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">RISE AS GOD - TVXQ! SPECIAL ALBUM</span><span class="sp-tile-n">2015 · 스페셜</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/05/992/2305992_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">サクラミチ / Sakuramichi (벚꽃길)</span><span class="sp-tile-n">2015 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/with/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/98/417/2298417_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">WITH</span><span class="sp-tile-n">2015 · 정규</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/90/326/2290326_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Time Works Wonders</span><span class="sp-tile-n">2014 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/60/196/2260196_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Sweat / Answer</span><span class="sp-tile-n">2014 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/tree/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/42/825/2242825_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">TREE</span><span class="sp-tile-n">2014 · 정규</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/the7thalbumrepackage수리수리/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/36/091/2236091_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">The 7th Album Repackage &#39;수리수리 (Spellbound)&#39;</span><span class="sp-tile-n">2014 · 리패키지</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/31/579/2231579_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Hide &amp; Seek / Something</span><span class="sp-tile-n">2014 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/tense/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/24/087/2224087_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">TENSE</span><span class="sp-tile-n">2014 · 정규 7집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/scream/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/05/729/2205729_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SCREAM</span><span class="sp-tile-n">2013 · 미니</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/time/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/87/239/2187239_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Time</span><span class="sp-tile-n">2013 · 정규</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/humanoids/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/68/108/2168108_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Humanoids</span><span class="sp-tile-n">2012 · 정규 6집 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/catchme/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/51/126/2151126_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Catch Me</span><span class="sp-tile-n">2012 · 정규 6집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/tone/"><img src="https://cdnimg.melon.co.kr/cm/album/images/020/16/566/2016566_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">TONE</span><span class="sp-tile-n">2011 · 정규</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/왜/"><img src="https://cdnimg.melon.co.kr/cm/album/images/012/01/353/1201353_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">왜 (Keep Your Head Down) REPACKAGE &#39;이것만은 알고 가&#39;</span><span class="sp-tile-n">2011 · 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/왜-20110105/"><img src="https://cdnimg.melon.co.kr/cm/album/images/011/25/251/1125251_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">왜 (Keep Your Head Down)</span><span class="sp-tile-n">2011 · 정규 5집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/thesecretcode/"><img src="https://cdnimg.melon.co.kr/cm/album/images/005/37/756/537756_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">The Secret Code</span><span class="sp-tile-n">2009 · 정규</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/mirotic/"><img src="https://cdnimg.melon.co.kr/cm/album/images/003/97/972/397972_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">MIROTIC</span><span class="sp-tile-n">2008 · 정규 4집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/fiveintheblack/"><img src="https://cdnimg.melon.co.kr/cm/album/images/003/48/865/348865_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Five in the Black</span><span class="sp-tile-n">2007 · 정규</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/o正反合/"><img src="https://cdnimg.melon.co.kr/cm/album/images/003/28/098/328098_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">O -正.反.合.</span><span class="sp-tile-n">2006 · 정규 3집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/heartmindandsoul/"><img src="https://cdnimg.melon.co.kr/cm/album/images/003/15/907/315907_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Heart, Mind And Soul</span><span class="sp-tile-n">2006 · 정규</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/showmeyourlove/"><img src="https://cdnimg.melon.co.kr/cm/album/images/003/11/502/311502_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Show Me Your Love (동방신기 &amp; Super Junior 05)</span><span class="sp-tile-n">2005 · 스페셜</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/risingsun/"><img src="https://cdnimg.melon.co.kr/cm/album/images/003/07/424/307424_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Rising Sun</span><span class="sp-tile-n">2005 · 정규 2집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/christmasgiftfrom동방신기/"><img src="https://cdnimg.melon.co.kr/cm/album/images/003/01/372/301372_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Christmas Gift From 동방신기(東方神起)</span><span class="sp-tile-n">2004 · 스페셜</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/동방신기/a/triangle/"><img src="https://cdnimg.melon.co.kr/cm/album/images/000/43/185/43185_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Tri-Angle</span><span class="sp-tile-n">2004 · 정규 1집</span></a>
+    </div>
   
     <h2>함께 보면 좋은 그룹</h2>
     <ul class="member-list rel">
@@ -262,7 +267,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/tvxq/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=동방신기">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"이것만은 알고 가 (Before U Go)","s":"영상 27개","img":"rm5-JJYgR8o","m":"이것만은 알고 가","h":"https://kpop-universe.kr/g/동방신기/s/이것만은알고가/"},{"k":"멤버 직캠","t":"유노윤호","s":"직캠 70개","img":"B-WcLoiqUNQ","h":"https://kpop-universe.kr/g/동방신기/유노윤호/fancams/"},{"k":"앨범","t":"ZONE","s":"수록곡 20곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/116/33/321/11633321_20241105154604_500.jpg","h":"https://kpop-universe.kr/g/동방신기/a/zone/"},{"k":"곡별 직캠·무대","t":"Rebel","s":"영상 23개","img":"i7GYq_JazwQ","m":"Rebel","h":"https://kpop-universe.kr/g/동방신기/s/rebel/"},{"k":"멤버 직캠","t":"최강창민","s":"직캠 27개","img":"SzG0QUKfwrY","h":"https://kpop-universe.kr/g/동방신기/최강창민/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"이것만은 알고 가 (Before U Go)","s":"영상 28개","img":"rm5-JJYgR8o","m":"이것만은 알고 가","h":"https://kpop-universe.kr/g/동방신기/s/이것만은알고가/"},{"k":"멤버 직캠","t":"유노윤호","s":"직캠 70개","img":"B-WcLoiqUNQ","h":"https://kpop-universe.kr/g/동방신기/유노윤호/fancams/"},{"k":"앨범","t":"ZONE","s":"수록곡 20곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/116/33/321/11633321_20241105154604_500.jpg","h":"https://kpop-universe.kr/g/동방신기/a/zone/"},{"k":"곡별 직캠·무대","t":"Rebel","s":"영상 24개","img":"i7GYq_JazwQ","m":"Rebel","h":"https://kpop-universe.kr/g/동방신기/s/rebel/"},{"k":"멤버 직캠","t":"최강창민","s":"직캠 27개","img":"SzG0QUKfwrY","h":"https://kpop-universe.kr/g/동방신기/최강창민/fancams/"}]</script>
 </div>
 </body>
 </html>

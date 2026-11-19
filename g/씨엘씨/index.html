@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="씨엘씨 직캠·무대 영상 371개를 조회수 순으로. 씨엘씨 멤버·데뷔일(2015.03.19)·소속사(큐브엔터테인먼트). 음악방송 1위 1회. 직캠·무대 영상과 디스코그래피를 K-POP UNIVERSE에서.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/4cy_DTpH4r0/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"씨엘씨","alternateName":"CLC","genre":"K-pop","foundingDate":"2015-03-19","url":"https://kpop-universe.kr/g/씨엘씨/","image":"https://img.youtube.com/vi/4cy_DTpH4r0/maxresdefault.jpg","member":[{"@type":"Person","name":"최유진"},{"@type":"Person","name":"오승희"},{"@type":"Person","name":"장승연"},{"@type":"Person","name":"SORN"},{"@type":"Person","name":"장예은"},{"@type":"Person","name":"엘키"},{"@type":"Person","name":"권은빈"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"씨엘씨","alternateName":"CLC","genre":"K-pop","description":"걸그룹. 큐브엔터테인먼트. 2015년 데뷔. 해체. 대표 앨범 HELICOPTER(2020), Devil(2019), ME(美)(2019).","foundingDate":"2015-03-19","url":"https://kpop-universe.kr/g/씨엘씨/","image":"https://img.youtube.com/vi/4cy_DTpH4r0/maxresdefault.jpg","member":[{"@type":"Person","name":"최유진"},{"@type":"Person","name":"오승희"},{"@type":"Person","name":"장승연"},{"@type":"Person","name":"SORN"},{"@type":"Person","name":"장예은"},{"@type":"Person","name":"엘키"},{"@type":"Person","name":"권은빈"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["최근 음방 1위 · No (2019.02.12)","모아둔 무대·영상 626개","가장 많이 본 영상 · 조회수 75M"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
-  <p class="intro">걸그룹. 큐브엔터테인먼트. 2015년 데뷔. 해체. 대표 앨범 HELICOPTER(2020), Devil(2019), ME(美)(2019).</p>
   
     <h2 id="members">멤버</h2>
     <div class="faces">
@@ -139,45 +157,31 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/씨엘씨/s/no/">No</a></li>
       <li><a href="https://kpop-universe.kr/g/씨엘씨/s/아니야/">아니야 (No Oh Oh)</a></li>
       <li><a href="https://kpop-universe.kr/g/씨엘씨/s/예뻐지게/">예뻐지게 High Heels</a></li>
-      <li><a href="https://kpop-universe.kr/g/씨엘씨/s/어디야/">어디야? (Where Are You?)</a></li>
       <li><a href="https://kpop-universe.kr/g/씨엘씨/s/pepe/">Pepe</a></li>
-      <li><a href="https://kpop-universe.kr/g/씨엘씨/s/궁금해/">궁금해 Like</a></li>
+      <li><a href="https://kpop-universe.kr/g/씨엘씨/s/어디야/">어디야? (Where Are You?)</a></li>
       <li><a href="https://kpop-universe.kr/g/씨엘씨/s/highheels/">High Heels</a></li>
+      <li><a href="https://kpop-universe.kr/g/씨엘씨/s/궁금해/">궁금해 Like</a></li>
       <li><a href="https://kpop-universe.kr/g/씨엘씨/s/첫사랑/">첫사랑 First Love</a></li>
     </ul>
   
-    <h2 id="albums">앨범·수록곡</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/씨엘씨/a/no1/">No.1</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/g/씨엘씨/a/blackdress/">BLACK DRESS</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/씨엘씨/a/freesm/">FREE&#39;SM</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/씨엘씨/a/crystyle/">CRYSTYLE</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/씨엘씨/a/チャミスマcharmingsmile/">チャミスマ  charming smile</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/g/씨엘씨/a/nuclear/">NU.CLEAR</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/g/씨엘씨/a/highheels/">High Heels</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/g/씨엘씨/a/refresh/">Refresh</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/g/씨엘씨/a/question/">Question</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/g/씨엘씨/a/첫사랑/">첫사랑</a> <span class="yr">2015</span></li>
-    </ul>
-  
-    <h2>디스코그래피</h2>
-    <ul class="discog-list">
-      <li>HELICOPTER <span class="yr">(2020)</span> <span class="tag">싱글</span></li>
-      <li>Devil <span class="yr">(2019)</span> <span class="tag">싱글</span></li>
-      <li>ME(美) <span class="yr">(2019)</span> <span class="tag">싱글</span></li>
-      <li>No.1 <span class="yr">(2019)</span> <span class="tag">미니 8집</span></li>
-      <li>BLACK DRESS <span class="yr">(2018)</span> <span class="tag">미니 7집</span></li>
-      <li>To the sky <span class="yr">(2018)</span> <span class="tag">싱글</span></li>
-      <li>FREE&#39;SM <span class="yr">(2017)</span> <span class="tag">미니 6집</span></li>
-      <li>CRYSTYLE <span class="yr">(2017)</span> <span class="tag">미니 5집</span></li>
-      <li>チャミスマ  charming smile <span class="yr">(2016)</span> <span class="tag">미니</span></li>
-      <li>NU.CLEAR <span class="yr">(2016)</span> <span class="tag">미니 4집</span></li>
-      <li>High Heels <span class="yr">(2016)</span> <span class="tag">미니</span></li>
-      <li>Refresh <span class="yr">(2016)</span> <span class="tag">미니 3집</span></li>
-      <li>Question <span class="yr">(2015)</span> <span class="tag">미니 2집</span></li>
-      <li>Eighteen <span class="yr">(2015)</span> <span class="tag">싱글</span></li>
-      <li>첫사랑 <span class="yr">(2015)</span> <span class="tag">미니 1집</span></li>
-    </ul>
+    <h2 id="albums">디스코그래피</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/84/789/10484789_20200902150957_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">HELICOPTER</span><span class="sp-tile-n">2020 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/26/616/10326616_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Devil</span><span class="sp-tile-n">2019 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/91/695/10291695_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ME(美)</span><span class="sp-tile-n">2019 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/씨엘씨/a/no1/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/47/560/10247560_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">No.1</span><span class="sp-tile-n">2019 · 미니 8집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/씨엘씨/a/blackdress/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/41/747/10141747_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BLACK DRESS</span><span class="sp-tile-n">2018 · 미니 7집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/35/457/10135457_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">To the sky</span><span class="sp-tile-n">2018 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/씨엘씨/a/freesm/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/85/147/10085147_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">FREE&#39;SM</span><span class="sp-tile-n">2017 · 미니 6집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/씨엘씨/a/crystyle/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/31/738/10031738_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">CRYSTYLE</span><span class="sp-tile-n">2017 · 미니 5집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/씨엘씨/a/チャミスマcharmingsmile/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/28/674/10228674_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">チャミスマ  charming smile</span><span class="sp-tile-n">2016 · 미니</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/씨엘씨/a/nuclear/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/87/699/2687699_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">NU.CLEAR</span><span class="sp-tile-n">2016 · 미니 4집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/씨엘씨/a/highheels/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/28/665/10228665_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">High Heels</span><span class="sp-tile-n">2016 · 미니</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/씨엘씨/a/refresh/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/ac/f5/16/acf5169e-b71b-4d5f-9afb-26c7619faa70/cover-CLC_REFRESH.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Refresh</span><span class="sp-tile-n">2016 · 미니 3집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/씨엘씨/a/question/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/85/14/70/851470eb-b550-bdd2-d2c2-2a09bc2199d9/cover-CLC_Question.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Question</span><span class="sp-tile-n">2015 · 미니 2집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/14/326/2314326_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Eighteen</span><span class="sp-tile-n">2015 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/씨엘씨/a/첫사랑/"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/09/886/2309886_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">첫사랑</span><span class="sp-tile-n">2015 · 미니 1집</span></a>
+    </div>
   
     <h2>함께 보면 좋은 그룹</h2>
     <ul class="member-list rel">
@@ -192,7 +196,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/clc/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=씨엘씨">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"HELICOPTER","s":"영상 79개","img":"NeUODC6F7zk","m":"HELICOPTER","h":"https://kpop-universe.kr/g/씨엘씨/s/helicopter/"},{"k":"멤버 직캠","t":"최유진","s":"직캠 75개","img":"eyf18n8jLu0","h":"https://kpop-universe.kr/g/케플러/최유진/fancams/"},{"k":"앨범","t":"No.1","s":"수록곡 5곡","im":"https://cdnimg.melon.co.kr/cm/album/images/102/47/560/10247560_500.jpg","h":"https://kpop-universe.kr/g/씨엘씨/a/no1/"},{"k":"곡별 직캠·무대","t":"Devil","s":"영상 45개","img":"MY4qnUGwWIU","m":"Devil","h":"https://kpop-universe.kr/g/씨엘씨/s/devil/"},{"k":"멤버 직캠","t":"장예은","s":"직캠 42개","img":"_RO2jPyCh8U","h":"https://kpop-universe.kr/member/장예은/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"HELICOPTER","s":"영상 81개","img":"NeUODC6F7zk","m":"HELICOPTER","h":"https://kpop-universe.kr/g/씨엘씨/s/helicopter/"},{"k":"멤버 직캠","t":"최유진","s":"직캠 75개","img":"eyf18n8jLu0","h":"https://kpop-universe.kr/g/케플러/최유진/fancams/"},{"k":"앨범","t":"No.1","s":"수록곡 5곡","im":"https://cdnimg.melon.co.kr/cm/album/images/102/47/560/10247560_500.jpg","h":"https://kpop-universe.kr/g/씨엘씨/a/no1/"},{"k":"곡별 직캠·무대","t":"Devil","s":"영상 45개","img":"MY4qnUGwWIU","m":"Devil","h":"https://kpop-universe.kr/g/씨엘씨/s/devil/"},{"k":"멤버 직캠","t":"장예은","s":"직캠 42개","img":"_RO2jPyCh8U","h":"https://kpop-universe.kr/member/장예은/fancams/"}]</script>
 </div>
 </body>
 </html>

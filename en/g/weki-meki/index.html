@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="719 Weki Meki fancams and stages, most viewed first. Weki Meki: members, debut 2017.08.08, Fantagio. Fancams, stages and discography on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/I7chzfdbEPc/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"Weki Meki","alternateName":"위키미키","genre":"K-pop","foundingDate":"2017-08-08","url":"https://kpop-universe.kr/en/g/weki-meki/","image":"https://img.youtube.com/vi/I7chzfdbEPc/maxresdefault.jpg","member":[{"@type":"Person","name":"Yoojung"},{"@type":"Person","name":"Doyeon"},{"@type":"Person","name":"Ji Suyeon"},{"@type":"Person","name":"Elly"},{"@type":"Person","name":"Sei"},{"@type":"Person","name":"Rua"},{"@type":"Person","name":"Lina"},{"@type":"Person","name":"Lucy"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"Weki Meki","alternateName":"위키미키","genre":"K-pop","description":"Weki Meki was K-pop girl group under Fantagio, debuting in 2017. Recent releases: CoinciDestiny (2024), I AM ME. (2021), 산막이옛길을 달리는 소녀 (2020).","foundingDate":"2017-08-08","url":"https://kpop-universe.kr/en/g/weki-meki/","image":"https://img.youtube.com/vi/I7chzfdbEPc/maxresdefault.jpg","member":[{"@type":"Person","name":"Yoojung"},{"@type":"Person","name":"Doyeon"},{"@type":"Person","name":"Ji Suyeon"},{"@type":"Person","name":"Elly"},{"@type":"Person","name":"Sei"},{"@type":"Person","name":"Rua"},{"@type":"Person","name":"Lina"},{"@type":"Person","name":"Lucy"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["1,323 stages & videos collected","Most viewed · 17M views"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
-  <p class="intro">Weki Meki was K-pop girl group under Fantagio, debuting in 2017. Recent releases: CoinciDestiny (2024), I AM ME. (2021), 산막이옛길을 달리는 소녀 (2020).</p>
   
     <h2 id="members">Members</h2>
     <div class="faces">
@@ -127,13 +145,13 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   
     <h2 id="songs">Fancams & stages by song</h2>
     <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/weki-meki/s/siesta/">Siesta</a></li>
       <li><a href="https://kpop-universe.kr/en/g/weki-meki/s/tikitaka/">Tiki-Taka</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/weki-meki/s/siesta/">Siesta</a></li>
       <li><a href="https://kpop-universe.kr/en/g/weki-meki/s/oopsy/">OOPSY</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/weki-meki/s/pickypicky/">Picky Picky</a></li>
       <li><a href="https://kpop-universe.kr/en/g/weki-meki/s/dazzledazzle/">DAZZLE DAZZLE</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/weki-meki/s/crush/">Crush</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/weki-meki/s/pickypicky/">Picky Picky</a></li>
       <li><a href="https://kpop-universe.kr/en/g/weki-meki/s/cool/">COOL</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/weki-meki/s/crush/">Crush</a></li>
       <li><a href="https://kpop-universe.kr/en/g/weki-meki/s/lalala/">La La La</a></li>
       <li><a href="https://kpop-universe.kr/en/g/weki-meki/s/idontlikeyourgirlfriend/">I don&#39;t like your Girlfriend</a></li>
       <li><a href="https://kpop-universe.kr/en/g/weki-meki/s/truevalentine/">True Valentine</a></li>
@@ -142,31 +160,21 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/weki-meki/s/lucky/">Lucky</a></li>
     </ul>
   
-    <h2 id="albums">Albums & tracklists</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/weki-meki/a/iamme/">I AM ME.</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/weki-meki/a/newrules/">NEW RULES</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/weki-meki/a/hideandseek/">HIDE and SEEK</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/weki-meki/a/weekendlol/">WEEK END LOL</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/weki-meki/a/lucky/">Lucky</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/weki-meki/a/weme/">WEME</a> <span class="yr">2017</span></li>
-    </ul>
-  
-    <h2>Discography</h2>
-    <ul class="discog-list">
-      <li>CoinciDestiny <span class="yr">(2024)</span> <span class="tag">Single</span></li>
-      <li>I AM ME. <span class="yr">(2021)</span> <span class="tag">5th EP</span></li>
-      <li>산막이옛길을 달리는 소녀 <span class="yr">(2020)</span> <span class="tag">Single</span></li>
-      <li>NEW RULES <span class="yr">(2020)</span> <span class="tag">4th EP</span></li>
-      <li>HIDE and SEEK <span class="yr">(2020)</span> <span class="tag">3rd EP</span></li>
-      <li>위키미키(Weki Meki) Digital Single [DAZZLE DAZZLE] <span class="yr">(2020)</span> <span class="tag">Single</span></li>
-      <li>WEEK END LOL <span class="yr">(2019)</span> <span class="tag">Special</span></li>
-      <li>LOCK END LOL <span class="yr">(2019)</span> <span class="tag">Single</span></li>
-      <li>KISS, KICKS <span class="yr">(2018)</span> <span class="tag">Single</span></li>
-      <li>Lucky <span class="yr">(2018)</span> <span class="tag">2nd EP</span></li>
-      <li>Butterfly (2018 PyeongChang Winter Olympics Special) <span class="yr">(2018)</span> <span class="tag">Single</span></li>
-      <li>WEME <span class="yr">(2017)</span> <span class="tag">1st EP</span></li>
-    </ul>
+    <h2 id="albums">Discography</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/09/291/11509291_20240611161226_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">CoinciDestiny</span><span class="sp-tile-n">2024 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/weki-meki/a/iamme/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/107/81/783/10781783_20211117170146_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">I AM ME.</span><span class="sp-tile-n">2021 · 5th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/16/503/10516503_20201111102223_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">산막이옛길을 달리는 소녀</span><span class="sp-tile-n">2020 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/weki-meki/a/newrules/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/00/476/10500476_20201007185343_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">NEW RULES</span><span class="sp-tile-n">2020 · 4th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/weki-meki/a/hideandseek/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/46/849/10446849_20200618152017_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">HIDE and SEEK</span><span class="sp-tile-n">2020 · 3rd EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/91/579/10391579_20200220152024_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">위키미키(Weki Meki) Digital Single [DAZZLE DAZZLE]</span><span class="sp-tile-n">2020 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/weki-meki/a/weekendlol/"><img src="https://cdnimg.melon.co.kr/cm/album/images/103/15/976/10315976_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">WEEK END LOL</span><span class="sp-tile-n">2019 · Special</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/85/032/10285032_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">LOCK END LOL</span><span class="sp-tile-n">2019 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/11/077/10211077_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">KISS, KICKS</span><span class="sp-tile-n">2018 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/weki-meki/a/lucky/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/41/232/10141232_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Lucky</span><span class="sp-tile-n">2018 · 2nd EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/28/090/10128090_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Butterfly (2018 PyeongChang Winter Olympics Special)</span><span class="sp-tile-n">2018 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/weki-meki/a/weme/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/86/118/10086118_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">WEME</span><span class="sp-tile-n">2017 · 1st EP</span></a>
+    </div>
   
     <h2>Related groups</h2>
     <ul class="member-list rel">
@@ -181,7 +189,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/위키미키/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=위키미키">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"Siesta","s":"87 videos","img":"DXiY4u9MJk0","m":"Siesta","h":"https://kpop-universe.kr/en/g/weki-meki/s/siesta/"},{"k":"Member fancams","t":"Lucy","s":"86 fancams","img":"yEAk4QzZ4Vo","h":"https://kpop-universe.kr/en/member/lucy/fancams/"},{"k":"Album","t":"I AM ME.","s":"6 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/107/81/783/10781783_20211117170146_500.jpg","h":"https://kpop-universe.kr/en/g/weki-meki/a/iamme/"},{"k":"Song fancams","t":"Tiki-Taka","s":"87 videos","img":"bgrOljOXdCQ","m":"Tiki-Taka","h":"https://kpop-universe.kr/en/g/weki-meki/s/tikitaka/"},{"k":"Member fancams","t":"Ji Suyeon","s":"49 fancams","img":"fnpAyqg8Oq8","h":"https://kpop-universe.kr/en/member/ji-suyeon/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"Tiki-Taka","s":"88 videos","img":"bgrOljOXdCQ","m":"Tiki-Taka","h":"https://kpop-universe.kr/en/g/weki-meki/s/tikitaka/"},{"k":"Member fancams","t":"Lucy","s":"86 fancams","img":"yEAk4QzZ4Vo","h":"https://kpop-universe.kr/en/member/lucy/fancams/"},{"k":"Album","t":"I AM ME.","s":"6 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/107/81/783/10781783_20211117170146_500.jpg","h":"https://kpop-universe.kr/en/g/weki-meki/a/iamme/"},{"k":"Song fancams","t":"Siesta","s":"87 videos","img":"DXiY4u9MJk0","m":"Siesta","h":"https://kpop-universe.kr/en/g/weki-meki/s/siesta/"},{"k":"Member fancams","t":"Ji Suyeon","s":"49 fancams","img":"fnpAyqg8Oq8","h":"https://kpop-universe.kr/en/member/ji-suyeon/fancams/"}]</script>
 </div>
 </body>
 </html>

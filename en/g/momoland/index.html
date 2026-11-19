@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="268 Momoland fancams and stages, most viewed first. Momoland: members, debut 2016.11.10, Inyeon Entertainment. 5 music show wins. Fancams, stages and discography on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/ca2YrGtpELI/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"Momoland","alternateName":"모모랜드","genre":"K-pop","foundingDate":"2016-11-10","url":"https://kpop-universe.kr/en/g/momoland/","image":"https://img.youtube.com/vi/ca2YrGtpELI/maxresdefault.jpg","member":[{"@type":"Person","name":"Hyebin"},{"@type":"Person","name":"Jane"},{"@type":"Person","name":"Nayun"},{"@type":"Person","name":"Jooe"},{"@type":"Person","name":"Ain"},{"@type":"Person","name":"Nancy"},{"@type":"Person","name":"Yeonwoo"},{"@type":"Person","name":"Kim Taeha"},{"@type":"Person","name":"Daisy"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"Momoland","alternateName":"모모랜드","genre":"K-pop","description":"Momoland is a 6-member K-pop girl group under Inyeon Entertainment, debuting in 2016. Fan club: Merry-Go-Round. Recent releases: Still Valid (2026), white spring (하얀 봄) (2026), RODEO (2025).","foundingDate":"2016-11-10","url":"https://kpop-universe.kr/en/g/momoland/","image":"https://img.youtube.com/vi/ca2YrGtpELI/maxresdefault.jpg","member":[{"@type":"Person","name":"Hyebin"},{"@type":"Person","name":"Jane"},{"@type":"Person","name":"Nayun"},{"@type":"Person","name":"Jooe"},{"@type":"Person","name":"Ain"},{"@type":"Person","name":"Nancy"},{"@type":"Person","name":"Yeonwoo"},{"@type":"Person","name":"Kim Taeha"},{"@type":"Person","name":"Daisy"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["1 new video this week","Latest music show win · I'm So Hot (2019.04.03)","5 music show wins","640 stages & videos collected","Most viewed · 694M views"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
-  <p class="intro">Momoland is a 6-member K-pop girl group under Inyeon Entertainment, debuting in 2016. Fan club: Merry-Go-Round. Recent releases: Still Valid (2026), white spring (하얀 봄) (2026), RODEO (2025).</p>
   
     <h2 id="members">Members</h2>
     <div class="faces">
@@ -144,44 +162,33 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/momoland/s/짠쿵쾅/">짠쿵쾅 JJan! Koong! Kwang!</a></li>
       <li><a href="https://kpop-universe.kr/en/g/momoland/s/thumbsup/">Thumbs Up</a></li>
       <li><a href="https://kpop-universe.kr/en/g/momoland/s/merrygoround/">Merry Go Round</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/momoland/s/whitespring/">white spring (하얀 봄)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/momoland/s/바나나차차/">바나나차차 BANANA CHACHA</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/momoland/s/whitespring/">white spring (하얀 봄)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/momoland/s/꼼짝마/">꼼짝마 Freeze</a></li>
     </ul>
   
-    <h2 id="albums">Albums & tracklists</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/momoland/a/festivaland/">FESTIVALAND</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/momoland/a/starrynight/">Starry Night</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/momoland/a/showme/">Show Me</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/momoland/a/funtotheworld/">Fun to The World</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/momoland/a/great/">GREAT!</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/momoland/a/freeze/">Freeze!</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/momoland/a/welcometomomoland/">Welcome to MOMOLAND</a> <span class="yr">2016</span></li>
-    </ul>
-  
-    <h2>Discography</h2>
-    <ul class="discog-list">
-      <li>Still Valid <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>white spring (하얀 봄) <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>RODEO <span class="yr">(2025)</span> <span class="tag">Single</span></li>
-      <li>FESTIVALAND <span class="yr">(2025)</span> <span class="tag">7th EP</span></li>
-      <li>Yummy Yummy Love <span class="yr">(2022)</span> <span class="tag">Single</span></li>
-      <li>Wrap Me In Plastic <span class="yr">(2021)</span> <span class="tag">Single</span></li>
-      <li>Ready Or Not <span class="yr">(2020)</span> <span class="tag">Single</span></li>
-      <li>Starry Night <span class="yr">(2020)</span> <span class="tag">6th EP</span></li>
-      <li>티키타카 <span class="yr">(2020)</span> <span class="tag">Single</span></li>
-      <li>Thumbs Up <span class="yr">(2019)</span> <span class="tag">Single</span></li>
-      <li>사랑은 너 하나(MOMOLA) <span class="yr">(2019)</span> <span class="tag">Single</span></li>
-      <li>BANANA CHACHA <span class="yr">(2019)</span> <span class="tag">Single</span></li>
-      <li>Show Me <span class="yr">(2019)</span> <span class="tag">5th EP</span></li>
-      <li>Fun to The World <span class="yr">(2018)</span> <span class="tag">4th EP</span></li>
-      <li>GREAT! <span class="yr">(2018)</span> <span class="tag">3rd EP</span></li>
-      <li>Freeze! <span class="yr">(2017)</span> <span class="tag">2nd EP</span></li>
-      <li>어마어마해 (EDM Ver.) <span class="yr">(2017)</span> <span class="tag">Single</span></li>
-      <li>어마어마해 <span class="yr">(2017)</span> <span class="tag">Single</span></li>
-      <li>Welcome to MOMOLAND <span class="yr">(2016)</span> <span class="tag">1st EP</span></li>
-    </ul>
+    <h2 id="albums">Discography</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/151/30/759/15130759_20261105155658_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Still Valid</span><span class="sp-tile-n">2026 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/128/01/028/12801028_20260121160204_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">white spring (하얀 봄)</span><span class="sp-tile-n">2026 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/121/00/631/12100631_20250905151851_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">RODEO</span><span class="sp-tile-n">2025 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/momoland/a/festivaland/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/118/71/433/11871433_20250627165757_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">FESTIVALAND</span><span class="sp-tile-n">2025 · 7th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/108/41/011/10841011_20220113104453_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Yummy Yummy Love</span><span class="sp-tile-n">2022 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/60/263/10560263_20210205112821_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Wrap Me In Plastic</span><span class="sp-tile-n">2021 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/19/124/10519124_20201117104340_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Ready Or Not</span><span class="sp-tile-n">2020 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/momoland/a/starrynight/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/43/370/10443370_20200611150921_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Starry Night</span><span class="sp-tile-n">2020 · 6th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/36/788/10436788_20200528150953_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">티키타카</span><span class="sp-tile-n">2020 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/69/973/10369973_20191230151302_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Thumbs Up</span><span class="sp-tile-n">2019 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/81/778/10281778_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">사랑은 너 하나(MOMOLA)</span><span class="sp-tile-n">2019 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/69/464/10269464_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BANANA CHACHA</span><span class="sp-tile-n">2019 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/momoland/a/showme/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/63/677/10263677_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Show Me</span><span class="sp-tile-n">2019 · 5th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/momoland/a/funtotheworld/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/79/169/10179169_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Fun to The World</span><span class="sp-tile-n">2018 · 4th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/momoland/a/great/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/24/822/10124822_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">GREAT!</span><span class="sp-tile-n">2018 · 3rd EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/momoland/a/freeze/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/89/850/10089850_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Freeze!</span><span class="sp-tile-n">2017 · 2nd EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/71/823/10071823_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">어마어마해 (EDM Ver.)</span><span class="sp-tile-n">2017 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/58/095/10058095_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">어마어마해</span><span class="sp-tile-n">2017 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/momoland/a/welcometomomoland/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/14/101/10014101_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Welcome to MOMOLAND</span><span class="sp-tile-n">2016 · 1st EP</span></a>
+    </div>
   
     <h2>Related groups</h2>
     <ul class="member-list rel">
@@ -196,7 +203,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/모모랜드/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=모모랜드">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"Ready Or Not","s":"48 videos","img":"WRuPxzknR4I","m":"Ready Or Not","h":"https://kpop-universe.kr/en/g/momoland/s/readyornot/"},{"k":"Member fancams","t":"Nancy","s":"23 fancams","img":"OATqM1sJ-Uk","h":"https://kpop-universe.kr/en/g/momoland/nancy/fancams/"},{"k":"Album","t":"FESTIVALAND","s":"4 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/118/71/433/11871433_20250627165757_500.jpg","h":"https://kpop-universe.kr/en/g/momoland/a/festivaland/"},{"k":"Song fancams","t":"뿜뿜 Bboom Bboom","s":"36 videos","img":"JQGRg8XBnB4","m":"뿜뿜","h":"https://kpop-universe.kr/en/g/momoland/s/뿜뿜/"},{"k":"Member fancams","t":"Jooe","s":"21 fancams","img":"W83_HLk1SXc","h":"https://kpop-universe.kr/en/g/momoland/jooe/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"Ready Or Not","s":"48 videos","img":"WRuPxzknR4I","m":"Ready Or Not","h":"https://kpop-universe.kr/en/g/momoland/s/readyornot/"},{"k":"Member fancams","t":"Nancy","s":"23 fancams","img":"OATqM1sJ-Uk","h":"https://kpop-universe.kr/en/g/momoland/nancy/fancams/"},{"k":"Album","t":"FESTIVALAND","s":"4 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/118/71/433/11871433_20250627165757_500.jpg","h":"https://kpop-universe.kr/en/g/momoland/a/festivaland/"},{"k":"Song fancams","t":"뿜뿜 Bboom Bboom","s":"38 videos","img":"JQGRg8XBnB4","m":"뿜뿜","h":"https://kpop-universe.kr/en/g/momoland/s/뿜뿜/"},{"k":"Member fancams","t":"Jooe","s":"21 fancams","img":"W83_HLk1SXc","h":"https://kpop-universe.kr/en/g/momoland/jooe/fancams/"}]</script>
 </div>
 </body>
 </html>

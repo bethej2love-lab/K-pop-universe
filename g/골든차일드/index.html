@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="골든차일드 직캠·무대 영상 887개를 조회수 순으로(이대열·Y·이장준·배승민·봉재현·김동현·홍주찬). 골든차일드 멤버·데뷔일(2017.08.28)·소속사(울림엔터테인먼트). 음악방송 1위 4회. 직캠·무대 영상과 디스코그래피를 K-POP UNIVERSE에서.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/qumaxqGdKSU/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"골든차일드","alternateName":"Golden Child","genre":"K-pop","foundingDate":"2017-08-28","url":"https://kpop-universe.kr/g/골든차일드/","image":"https://img.youtube.com/vi/qumaxqGdKSU/maxresdefault.jpg","member":[{"@type":"Person","name":"이대열"},{"@type":"Person","name":"Y"},{"@type":"Person","name":"이장준"},{"@type":"Person","name":"배승민"},{"@type":"Person","name":"봉재현"},{"@type":"Person","name":"김동현"},{"@type":"Person","name":"홍주찬"},{"@type":"Person","name":"TAG"},{"@type":"Person","name":"박재석"},{"@type":"Person","name":"김지범"},{"@type":"Person","name":"최보민"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"골든차일드","alternateName":"Golden Child","genre":"K-pop","description":"7인조 보이그룹. 울림엔터테인먼트. 2017년 데뷔. 팬덤명 골드니스. 대표 앨범 Feel me(2023), Invisible Crayon(2023), AURA(2022).","foundingDate":"2017-08-28","url":"https://kpop-universe.kr/g/골든차일드/","image":"https://img.youtube.com/vi/qumaxqGdKSU/maxresdefault.jpg","member":[{"@type":"Person","name":"이대열"},{"@type":"Person","name":"Y"},{"@type":"Person","name":"이장준"},{"@type":"Person","name":"배승민"},{"@type":"Person","name":"봉재현"},{"@type":"Person","name":"김동현"},{"@type":"Person","name":"홍주찬"},{"@type":"Person","name":"TAG"},{"@type":"Person","name":"박재석"},{"@type":"Person","name":"김지범"},{"@type":"Person","name":"최보민"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -104,10 +123,9 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>팬덤명</b> 골드니스</span>
     </div>
     <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/@GoldenChild" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://www.instagram.com/official_gncd11" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/GoldenChild" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://www.tiktok.com/@goldenchildofficial" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-weverse" href="https://weverse.io/goldenchild" target="_blank" rel="noopener noreferrer">Weverse</a><a class="sns-namu" href="https://namu.wiki/w/골든차일드" target="_blank" rel="noopener noreferrer">나무위키</a></div>
-    <script type="application/json" id="kpu-facts">["이번 주 새 영상 2개","최근 음방 1위 · 안아줄게(Burn It) (2021.02.03)","음방 1위 4회","모아둔 무대·영상 1,938개","가장 많이 본 영상 · 조회수 11M"]</script>
+    <script type="application/json" id="kpu-facts">["이번 주 새 영상 1개","최근 음방 1위 · 안아줄게(Burn It) (2021.02.03)","음방 1위 4회","모아둔 무대·영상 1,938개","가장 많이 본 영상 · 조회수 11M"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
-  <p class="intro">7인조 보이그룹. 울림엔터테인먼트. 2017년 데뷔. 팬덤명 골드니스. 대표 앨범 Feel me(2023), Invisible Crayon(2023), AURA(2022).</p>
   
     <h2 id="members">멤버</h2>
     <div class="faces">
@@ -141,57 +159,45 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/골든차일드/s/rapampam/">Ra Pam Pam</a></li>
       <li><a href="https://kpop-universe.kr/g/골든차일드/s/안아줄게/">안아줄게(Burn It)</a></li>
       <li><a href="https://kpop-universe.kr/g/골든차일드/s/replay/">Replay</a></li>
-      <li><a href="https://kpop-universe.kr/g/골든차일드/s/ddara/">DDARA</a></li>
       <li><a href="https://kpop-universe.kr/g/골든차일드/s/one/">ONE(Lucid Dream)</a></li>
+      <li><a href="https://kpop-universe.kr/g/골든차일드/s/ddara/">DDARA</a></li>
       <li><a href="https://kpop-universe.kr/g/골든차일드/s/feelme/">Feel me</a></li>
       <li><a href="https://kpop-universe.kr/g/골든차일드/s/genie/">Genie</a></li>
       <li><a href="https://kpop-universe.kr/g/골든차일드/s/breathe/">Breathe</a></li>
       <li><a href="https://kpop-universe.kr/g/골든차일드/s/lady/">LADY</a></li>
       <li><a href="https://kpop-universe.kr/g/골든차일드/s/나침반/">나침반 Compass</a></li>
       <li><a href="https://kpop-universe.kr/g/골든차일드/s/빵빠레/">빵빠레 Fanfare</a></li>
-      <li><a href="https://kpop-universe.kr/g/골든차일드/s/coolcool/">Cool Cool</a></li>
       <li><a href="https://kpop-universe.kr/g/골든차일드/s/너라고/">너라고 (It&#39;s U)</a></li>
+      <li><a href="https://kpop-universe.kr/g/골든차일드/s/coolcool/">Cool Cool</a></li>
       <li><a href="https://kpop-universe.kr/g/골든차일드/s/훅들어와/">훅 들어와(OMG)</a></li>
       <li><a href="https://kpop-universe.kr/g/골든차일드/s/wish/">WISH</a></li>
       <li><a href="https://kpop-universe.kr/g/골든차일드/s/너만보인다/">너만 보인다 I See U</a></li>
       <li><a href="https://kpop-universe.kr/g/골든차일드/s/담다디/">담다디 DamDaDi</a></li>
-      <li><a href="https://kpop-universe.kr/g/골든차일드/s/들어봐줄래/">들어봐 줄래 Listen</a></li>
       <li><a href="https://kpop-universe.kr/g/골든차일드/s/바람이라면/">바람이라면</a></li>
+      <li><a href="https://kpop-universe.kr/g/골든차일드/s/들어봐줄래/">들어봐 줄래 Listen</a></li>
       <li><a href="https://kpop-universe.kr/g/골든차일드/s/gamechanger/">Game Changer</a></li>
       <li><a href="https://kpop-universe.kr/g/골든차일드/s/reboot/">Re-boot</a></li>
       <li><a href="https://kpop-universe.kr/g/골든차일드/s/문제아/">문제아 (Joo Chan Solo)</a></li>
     </ul>
   
-    <h2 id="albums">앨범·수록곡</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/골든차일드/a/aura/">AURA</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/g/골든차일드/a/ddara/">DDARA</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/g/골든차일드/a/gamechanger/">Game Changer</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/g/골든차일드/a/yes/">YES.</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/g/골든차일드/a/goldenchild4thminialbum/">Golden Child 4th Mini Album [Take A Leap]</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/g/골든차일드/a/goldenchild1stalbum/">Golden Child 1st Album [Re-boot]</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/g/골든차일드/a/goldenchild3rdminialbum/">Golden Child 3rd Mini Album [WISH]</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/골든차일드/a/goldenchild2ndminialbum/">Golden Child 2nd Mini Album [奇跡 (기적)]</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/골든차일드/a/golcha/">Gol-Cha!</a> <span class="yr">2017</span></li>
-    </ul>
-  
-    <h2>디스코그래피</h2>
-    <ul class="discog-list">
-      <li>Feel me <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>Invisible Crayon <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>AURA <span class="yr">(2022)</span> <span class="tag">미니 6집</span></li>
-      <li>RATA-TAT-TAT <span class="yr">(2022)</span> <span class="tag">싱글</span></li>
-      <li>A Woo!! <span class="yr">(2022)</span> <span class="tag">싱글</span></li>
-      <li>더 플레이리스트 Part.7 <span class="yr">(2021)</span> <span class="tag">싱글</span></li>
-      <li>Game Changer <span class="yr">(2021)</span> <span class="tag">정규 2집</span></li>
-      <li>YES. <span class="yr">(2021)</span> <span class="tag">미니 5집</span></li>
-      <li>Golden Child 4th Mini Album [Take A Leap] <span class="yr">(2020)</span> <span class="tag">미니 4집</span></li>
-      <li>Golden Child 1st Album [Re-boot] <span class="yr">(2019)</span> <span class="tag">정규 1집</span></li>
-      <li>그러다 봄 <span class="yr">(2019)</span> <span class="tag">싱글</span></li>
-      <li>Golden Child 3rd Mini Album [WISH] <span class="yr">(2018)</span> <span class="tag">미니 3집</span></li>
-      <li>Golden Child 2nd Mini Album [奇跡 (기적)] <span class="yr">(2018)</span> <span class="tag">미니 2집</span></li>
-      <li>Gol-Cha! <span class="yr">(2017)</span> <span class="tag">미니 1집</span></li>
-    </ul>
+    <h2 id="albums">디스코그래피</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/57/184/11357184_20231101174257_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Feel me</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/25/602/11225602_20230417175219_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Invisible Crayon</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/골든차일드/a/aura/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/24/370/11024370_20220808134938_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">AURA</span><span class="sp-tile-n">2022 · 미니 6집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/109/80/709/10980709_20220613113124_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">RATA-TAT-TAT</span><span class="sp-tile-n">2022 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/108/49/454/10849454_20220125102602_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">A Woo!!</span><span class="sp-tile-n">2022 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/골든차일드/a/ddara/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/107/31/703/10731703_20211005144202_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">DDARA</span><span class="sp-tile-n">2021 · 리패키지</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/98/718/10698718_20210831164226_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">더 플레이리스트 Part.7</span><span class="sp-tile-n">2021 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/골든차일드/a/gamechanger/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/67/671/10667671_20210802135822_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Game Changer</span><span class="sp-tile-n">2021 · 정규 2집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/골든차일드/a/yes/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/52/724/10552724_20210125150820_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">YES.</span><span class="sp-tile-n">2021 · 미니 5집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/골든차일드/a/goldenchild4thminialbum/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/48/354/10448354_20200623162105_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Golden Child 4th Mini Album [Take A Leap]</span><span class="sp-tile-n">2020 · 미니 4집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/골든차일드/a/goldenchild1stalbum/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/53/066/10353066_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Golden Child 1st Album [Re-boot]</span><span class="sp-tile-n">2019 · 정규 1집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/80/598/10280598_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">그러다 봄</span><span class="sp-tile-n">2019 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/골든차일드/a/goldenchild3rdminialbum/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/15/695/10215695_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Golden Child 3rd Mini Album [WISH]</span><span class="sp-tile-n">2018 · 미니 3집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/골든차일드/a/goldenchild2ndminialbum/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/34/080/10134080_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Golden Child 2nd Mini Album [奇跡 (기적)]</span><span class="sp-tile-n">2018 · 미니 2집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/골든차일드/a/golcha/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/91/533/10091533_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Gol-Cha!</span><span class="sp-tile-n">2017 · 미니 1집</span></a>
+    </div>
   
     <h2>함께 보면 좋은 그룹</h2>
     <ul class="member-list rel">
@@ -205,7 +211,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/golden-child/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=골든차일드">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"WANNABE","s":"영상 82개","img":"knIBy6fKR5Y","m":"WANNABE","h":"https://kpop-universe.kr/g/골든차일드/s/wannabe/"},{"k":"멤버 직캠","t":"최보민","s":"직캠 65개","img":"TOkfeRi_1xI","h":"https://kpop-universe.kr/g/골든차일드/최보민/fancams/"},{"k":"앨범","t":"AURA","s":"수록곡 6곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/110/24/370/11024370_20220808134938_500.jpg","h":"https://kpop-universe.kr/g/골든차일드/a/aura/"},{"k":"곡별 직캠·무대","t":"Ra Pam Pam","s":"영상 78개","img":"6cQaOf2Ghjg","m":"Ra Pam Pam","h":"https://kpop-universe.kr/g/골든차일드/s/rapampam/"},{"k":"멤버 직캠","t":"홍주찬","s":"직캠 54개","img":"6uALCVnw_4A","h":"https://kpop-universe.kr/g/골든차일드/홍주찬/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"WANNABE","s":"영상 83개","img":"knIBy6fKR5Y","m":"WANNABE","h":"https://kpop-universe.kr/g/골든차일드/s/wannabe/"},{"k":"멤버 직캠","t":"최보민","s":"직캠 65개","img":"TOkfeRi_1xI","h":"https://kpop-universe.kr/g/골든차일드/최보민/fancams/"},{"k":"앨범","t":"AURA","s":"수록곡 6곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/110/24/370/11024370_20220808134938_500.jpg","h":"https://kpop-universe.kr/g/골든차일드/a/aura/"},{"k":"곡별 직캠·무대","t":"Ra Pam Pam","s":"영상 79개","img":"6cQaOf2Ghjg","m":"Ra Pam Pam","h":"https://kpop-universe.kr/g/골든차일드/s/rapampam/"},{"k":"멤버 직캠","t":"홍주찬","s":"직캠 54개","img":"6uALCVnw_4A","h":"https://kpop-universe.kr/g/골든차일드/홍주찬/fancams/"}]</script>
 </div>
 </body>
 </html>

@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="카라 직캠·무대 영상 143개를 조회수 순으로. 카라 멤버·데뷔일(2007.03.29)·소속사(DSP미디어). 음악방송 1위 6회. 직캠·무대 영상과 디스코그래피를 K-POP UNIVERSE에서.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/_vHw17-zFa4/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"카라","alternateName":"KARA","genre":"K-pop","foundingDate":"2007-03-29","url":"https://kpop-universe.kr/g/카라/","image":"https://img.youtube.com/vi/_vHw17-zFa4/maxresdefault.jpg","member":[{"@type":"Person","name":"박규리"},{"@type":"Person","name":"한승연"},{"@type":"Person","name":"니콜"},{"@type":"Person","name":"강지영"},{"@type":"Person","name":"허영지"},{"@type":"Person","name":"구하라"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"카라","alternateName":"KARA","genre":"K-pop","description":"걸그룹. DSP미디어. 2007년 데뷔. 팬덤명 카밀리아. 대표 앨범 I Do I Do (Japanese Version)(2024), Hello(2024), MOVE AGAIN (Japan Edition)(2022).","foundingDate":"2007-03-29","url":"https://kpop-universe.kr/g/카라/","image":"https://img.youtube.com/vi/_vHw17-zFa4/maxresdefault.jpg","member":[{"@type":"Person","name":"박규리"},{"@type":"Person","name":"한승연"},{"@type":"Person","name":"니콜"},{"@type":"Person","name":"강지영"},{"@type":"Person","name":"허영지"},{"@type":"Person","name":"구하라"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["이번 주 새 영상 7개","최근 음방 1위 · WHEN I MOVE (2022.12.16)","음방 1위 6회","모아둔 무대·영상 512개","가장 많이 본 영상 · 조회수 140M"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
-  <p class="intro">걸그룹. DSP미디어. 2007년 데뷔. 팬덤명 카밀리아. 대표 앨범 I Do I Do (Japanese Version)(2024), Hello(2024), MOVE AGAIN (Japan Edition)(2022).</p>
   
     <h2 id="members">멤버</h2>
     <div class="faces">
@@ -144,67 +162,49 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/카라/s/step/">STEP</a></li>
       <li><a href="https://kpop-universe.kr/g/카라/s/pandora/">Pandora</a></li>
       <li><a href="https://kpop-universe.kr/g/카라/s/맘마미아/">맘마미아 Mamma Mia</a></li>
-      <li><a href="https://kpop-universe.kr/g/카라/s/5678/">5!6!7!8!</a></li>
       <li><a href="https://kpop-universe.kr/g/카라/s/숙녀가못돼/">숙녀가 못 돼 (Damaged Lady)</a></li>
+      <li><a href="https://kpop-universe.kr/g/카라/s/5678/">5!6!7!8!</a></li>
       <li><a href="https://kpop-universe.kr/g/카라/s/honey/">Honey (하니)</a></li>
-      <li><a href="https://kpop-universe.kr/g/카라/s/미스터/">미스터</a></li>
       <li><a href="https://kpop-universe.kr/g/카라/s/cupid/">CUPID</a></li>
-      <li><a href="https://kpop-universe.kr/g/카라/s/루팡/">루팡 (Lupin)</a></li>
+      <li><a href="https://kpop-universe.kr/g/카라/s/미스터/">미스터</a></li>
       <li><a href="https://kpop-universe.kr/g/카라/s/damagedlady/">Damaged Lady</a></li>
+      <li><a href="https://kpop-universe.kr/g/카라/s/루팡/">루팡 (Lupin)</a></li>
       <li><a href="https://kpop-universe.kr/g/카라/s/prettygirl/">Pretty Girl</a></li>
       <li><a href="https://kpop-universe.kr/g/카라/s/breakit/">Break It</a></li>
       <li><a href="https://kpop-universe.kr/g/카라/s/mysterious/">Mysterious</a></li>
-      <li><a href="https://kpop-universe.kr/g/카라/s/점핑/">점핑 (Jumping)</a></li>
       <li><a href="https://kpop-universe.kr/g/카라/s/youfo/">YOU.F.O</a></li>
+      <li><a href="https://kpop-universe.kr/g/카라/s/점핑/">점핑 (Jumping)</a></li>
+      <li><a href="https://kpop-universe.kr/g/카라/s/idoido/">I Do I Do</a></li>
     </ul>
   
-    <h2 id="albums">앨범·수록곡</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/카라/a/moveagain/">MOVE AGAIN</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/g/카라/a/inlove/">In Love</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/g/카라/a/dspspecialalbumwhiteletter/">DSP Special Album &#39;White Letter&#39;</a> <span class="yr">2014</span></li>
-      <li><a href="https://kpop-universe.kr/g/카라/a/daynight/">Day &amp; Night</a> <span class="yr">2014</span></li>
-      <li><a href="https://kpop-universe.kr/g/카라/a/fullbloom/">Full Bloom</a> <span class="yr">2013</span></li>
-      <li><a href="https://kpop-universe.kr/g/카라/a/karasolocollection/">KARA SoloCollection</a> <span class="yr">2012</span></li>
-      <li><a href="https://kpop-universe.kr/g/카라/a/pandora/">PANDORA</a> <span class="yr">2012</span></li>
-      <li><a href="https://kpop-universe.kr/g/카라/a/step/">STEP</a> <span class="yr">2011</span></li>
-      <li><a href="https://kpop-universe.kr/g/카라/a/점핑/">점핑 (Jumping)</a> <span class="yr">2010</span></li>
-      <li><a href="https://kpop-universe.kr/g/카라/a/루팡/">루팡 (Lupin)</a> <span class="yr">2010</span></li>
-      <li><a href="https://kpop-universe.kr/g/카라/a/revolution/">Revolution</a> <span class="yr">2009</span></li>
-      <li><a href="https://kpop-universe.kr/g/카라/a/honey/">Honey (Special Edition)</a> <span class="yr">2009</span></li>
-      <li><a href="https://kpop-universe.kr/g/카라/a/prettygirl/">Pretty Girl</a> <span class="yr">2008</span></li>
-      <li><a href="https://kpop-universe.kr/g/카라/a/카라/">카라 (1st Mini)</a> <span class="yr">2008</span></li>
-      <li><a href="https://kpop-universe.kr/g/카라/a/blooming/">Blooming</a> <span class="yr">2007</span></li>
-    </ul>
-  
-    <h2>디스코그래피</h2>
-    <ul class="discog-list">
-      <li>I Do I Do (Japanese Version) <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-      <li>Hello <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-      <li>MOVE AGAIN (Japan Edition) <span class="yr">(2022)</span> <span class="tag">싱글</span></li>
-      <li>WHEN I MOVE (Japanese Version) <span class="yr">(2022)</span> <span class="tag">싱글</span></li>
-      <li>MOVE AGAIN <span class="yr">(2022)</span> <span class="tag">스페셜</span></li>
-      <li>In Love <span class="yr">(2015)</span> <span class="tag">미니 7집</span></li>
-      <li>DSP Special Album &#39;White Letter&#39; <span class="yr">(2014)</span> <span class="tag">스페셜</span></li>
-      <li>Day &amp; Night <span class="yr">(2014)</span> <span class="tag">미니 6집</span></li>
-      <li>Kara The Animation <span class="yr">(2013)</span> <span class="tag">싱글</span></li>
-      <li>Full Bloom <span class="yr">(2013)</span> <span class="tag">정규 4집</span></li>
-      <li>둘 중에 하나 (Runaway) <span class="yr">(2013)</span> <span class="tag">싱글</span></li>
-      <li>KARA SoloCollection <span class="yr">(2012)</span> <span class="tag">스페셜</span></li>
-      <li>PANDORA <span class="yr">(2012)</span> <span class="tag">미니 5집</span></li>
-      <li>STEP <span class="yr">(2011)</span> <span class="tag">정규 3집</span></li>
-      <li>점핑 (Jumping) <span class="yr">(2010)</span> <span class="tag">미니 4집</span></li>
-      <li>We Online Part.2 <span class="yr">(2010)</span> <span class="tag">싱글</span></li>
-      <li>We&#39;re With You <span class="yr">(2010)</span> <span class="tag">싱글</span></li>
-      <li>루팡 (Lupin) <span class="yr">(2010)</span> <span class="tag">미니 3집</span></li>
-      <li>Revolution <span class="yr">(2009)</span> <span class="tag">정규 2집</span></li>
-      <li>아이뮤지션 <span class="yr">(2009)</span> <span class="tag">싱글</span></li>
-      <li>Honey (Special Edition) <span class="yr">(2009)</span> <span class="tag">미니</span></li>
-      <li>Pretty Girl <span class="yr">(2008)</span> <span class="tag">미니 2집</span></li>
-      <li>굿데이 시즌 2 (Digital Single) <span class="yr">(2008)</span> <span class="tag">싱글</span></li>
-      <li>카라 (1st Mini) <span class="yr">(2008)</span> <span class="tag">미니 1집</span></li>
-      <li>Blooming <span class="yr">(2007)</span> <span class="tag">정규 1집</span></li>
-    </ul>
+    <h2 id="albums">디스코그래피</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/46/516/11546516_20240722113129_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">I Do I Do (Japanese Version)</span><span class="sp-tile-n">2024 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02be2af5b456143f9ba3d3cdc6" alt="" loading="lazy"><span class="sp-tile-t">Hello</span><span class="sp-tile-n">2024 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/111/27/342/11127342_20221219123236_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">MOVE AGAIN (Japan Edition)</span><span class="sp-tile-n">2022 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/111/16/252/11116252_20221205110408_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">WHEN I MOVE (Japanese Version)</span><span class="sp-tile-n">2022 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/카라/a/moveagain/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/111/12/312/11112312_20221129115017_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">MOVE AGAIN</span><span class="sp-tile-n">2022 · 스페셜</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/카라/a/inlove/"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/20/294/2320294_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">In Love</span><span class="sp-tile-n">2015 · 미니 7집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/카라/a/dspspecialalbumwhiteletter/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/95/201/2295201_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">DSP Special Album &#39;White Letter&#39;</span><span class="sp-tile-n">2014 · 스페셜</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/카라/a/daynight/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/75/068/2275068_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Day &amp; Night</span><span class="sp-tile-n">2014 · 미니 6집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/23/023/2223023_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Kara The Animation</span><span class="sp-tile-n">2013 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/카라/a/fullbloom/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/98/928/2198928_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Full Bloom</span><span class="sp-tile-n">2013 · 정규 4집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/97/686/2197686_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">둘 중에 하나 (Runaway)</span><span class="sp-tile-n">2013 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/카라/a/karasolocollection/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/68/404/2168404_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">KARA SoloCollection</span><span class="sp-tile-n">2012 · 스페셜</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/카라/a/pandora/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/46/186/2146186_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">PANDORA</span><span class="sp-tile-n">2012 · 미니 5집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/카라/a/step/"><img src="https://cdnimg.melon.co.kr/cm/album/images/020/09/327/2009327_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">STEP</span><span class="sp-tile-n">2011 · 정규 3집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/카라/a/점핑/"><img src="https://cdnimg.melon.co.kr/cm/album/images/010/68/498/1068498_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">점핑 (Jumping)</span><span class="sp-tile-n">2010 · 미니 4집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/010/07/116/1007116_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">We Online Part.2</span><span class="sp-tile-n">2010 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/008/77/951/877951_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">We&#39;re With You</span><span class="sp-tile-n">2010 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/카라/a/루팡/"><img src="https://cdnimg.melon.co.kr/cm/album/images/008/02/252/802252_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">루팡 (Lupin)</span><span class="sp-tile-n">2010 · 미니 3집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/카라/a/revolution/"><img src="https://cdnimg.melon.co.kr/cm/album/images/006/16/053/616053_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Revolution</span><span class="sp-tile-n">2009 · 정규 2집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/005/79/351/579351_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">아이뮤지션</span><span class="sp-tile-n">2009 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/카라/a/honey/"><img src="https://cdnimg.melon.co.kr/cm/album/images/004/97/862/497862_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Honey (Special Edition)</span><span class="sp-tile-n">2009 · 미니</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/카라/a/prettygirl/"><img src="https://cdnimg.melon.co.kr/cm/album/images/004/32/151/432151_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Pretty Girl</span><span class="sp-tile-n">2008 · 미니 2집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/003/98/788/398788_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">굿데이 시즌 2 (Digital Single)</span><span class="sp-tile-n">2008 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/카라/a/카라/"><img src="https://image.bugsm.co.kr/album/images/1200/1603/160361.jpg" alt="" loading="lazy"><span class="sp-tile-t">카라 (1st Mini)</span><span class="sp-tile-n">2008 · 미니 1집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/카라/a/blooming/"><img src="https://cdnimg.melon.co.kr/cm/album/images/003/48/747/348747_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Blooming</span><span class="sp-tile-n">2007 · 정규 1집</span></a>
+    </div>
   
     <h2>함께 보면 좋은 그룹</h2>
     <ul class="member-list rel">
@@ -216,7 +216,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/kara/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=카라">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"WHEN I MOVE","s":"영상 31개","img":"VNYEHXsehTg","m":"WHEN I MOVE","h":"https://kpop-universe.kr/g/카라/s/whenimove/"},{"k":"멤버 직캠","t":"니콜","s":"직캠 33개","img":"bLmjVSlKAcw","h":"https://kpop-universe.kr/g/카라/니콜/fancams/"},{"k":"앨범","t":"MOVE AGAIN","s":"수록곡 4곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/111/12/312/11112312_20221129115017_500.jpg","h":"https://kpop-universe.kr/g/카라/a/moveagain/"},{"k":"곡별 직캠·무대","t":"STEP","s":"영상 16개","img":"zYoYoBtLqOY","m":"STEP","h":"https://kpop-universe.kr/g/카라/s/step/"},{"k":"멤버 직캠","t":"허영지","s":"직캠 16개","img":"NPQDayFJ-5s","h":"https://kpop-universe.kr/g/카라/허영지/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"WHEN I MOVE","s":"영상 32개","img":"VNYEHXsehTg","m":"WHEN I MOVE","h":"https://kpop-universe.kr/g/카라/s/whenimove/"},{"k":"멤버 직캠","t":"니콜","s":"직캠 33개","img":"bLmjVSlKAcw","h":"https://kpop-universe.kr/g/카라/니콜/fancams/"},{"k":"앨범","t":"MOVE AGAIN","s":"수록곡 4곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/111/12/312/11112312_20221129115017_500.jpg","h":"https://kpop-universe.kr/g/카라/a/moveagain/"},{"k":"곡별 직캠·무대","t":"STEP","s":"영상 17개","img":"zYoYoBtLqOY","m":"STEP","h":"https://kpop-universe.kr/g/카라/s/step/"},{"k":"멤버 직캠","t":"허영지","s":"직캠 16개","img":"NPQDayFJ-5s","h":"https://kpop-universe.kr/g/카라/허영지/fancams/"}]</script>
 </div>
 </body>
 </html>

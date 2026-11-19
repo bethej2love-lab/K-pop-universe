@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="틴탑 직캠·무대 영상 560개를 조회수 순으로. 틴탑 멤버·데뷔일(2010.07.10)·소속사(티오피미디어). 음악방송 1위 7회. 직캠·무대 영상과 디스코그래피를 K-POP UNIVERSE에서.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/ebBmV5cRfYQ/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"틴탑","alternateName":"TEEN TOP","genre":"K-pop","foundingDate":"2010-07-10","url":"https://kpop-universe.kr/g/틴탑/","image":"https://img.youtube.com/vi/ebBmV5cRfYQ/maxresdefault.jpg","member":[{"@type":"Person","name":"천지"},{"@type":"Person","name":"니엘"},{"@type":"Person","name":"리키"},{"@type":"Person","name":"창조"},{"@type":"Person","name":"엘조"},{"@type":"Person","name":"C.A.P"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"틴탑","alternateName":"TEEN TOP","genre":"K-pop","description":"4인조 보이그룹. 티오피미디어. 2010년 데뷔. 팬덤명 엔젤. 대표 앨범 DON'T STOP(2026), Just 15, Just Teen Top(2025), 4SHO(2023).","foundingDate":"2010-07-10","url":"https://kpop-universe.kr/g/틴탑/","image":"https://img.youtube.com/vi/ebBmV5cRfYQ/maxresdefault.jpg","member":[{"@type":"Person","name":"천지"},{"@type":"Person","name":"니엘"},{"@type":"Person","name":"리키"},{"@type":"Person","name":"창조"},{"@type":"Person","name":"엘조"},{"@type":"Person","name":"C.A.P"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -104,10 +123,9 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>팬덤명</b> 엔젤</span>
     </div>
     <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/@teentopofficial" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://www.instagram.com/official_teentop" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/TEEN_TOP" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://www.tiktok.com/@official_teentop" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-namu" href="https://namu.wiki/w/틴탑" target="_blank" rel="noopener noreferrer">나무위키</a></div>
-    <script type="application/json" id="kpu-facts">["이번 주 새 영상 3개","최근 음방 1위 · 지독하다 (Love is...) (2017.04.21)","음방 1위 7회","모아둔 무대·영상 1,545개","가장 많이 본 영상 · 조회수 31M"]</script>
+    <script type="application/json" id="kpu-facts">["이번 주 새 영상 2개","최근 음방 1위 · 지독하다 (Love is...) (2017.04.21)","음방 1위 7회","모아둔 무대·영상 1,545개","가장 많이 본 영상 · 조회수 31M"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
-  <p class="intro">4인조 보이그룹. 티오피미디어. 2010년 데뷔. 팬덤명 엔젤. 대표 앨범 DON&#39;T STOP(2026), Just 15, Just Teen Top(2025), 4SHO(2023).</p>
   
     <h2 id="members">멤버</h2>
     <div class="faces">
@@ -136,18 +154,18 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <ul class="member-list rel">
       <li><a href="https://kpop-universe.kr/g/틴탑/s/장난아냐/">장난아냐 (Rocking)</a></li>
       <li><a href="https://kpop-universe.kr/g/틴탑/s/재밌어/">재밌어? (Love is)</a></li>
-      <li><a href="https://kpop-universe.kr/g/틴탑/s/휙/">휙 (HWEEK)</a></li>
       <li><a href="https://kpop-universe.kr/g/틴탑/s/긴생머리그녀/">긴 생머리 그녀 (Miss Right)</a></li>
+      <li><a href="https://kpop-universe.kr/g/틴탑/s/휙/">휙 (HWEEK)</a></li>
       <li><a href="https://kpop-universe.kr/g/틴탑/s/지독하다/">지독하다 (Love is...)</a></li>
       <li><a href="https://kpop-universe.kr/g/틴탑/s/runaway/">Run Away</a></li>
-      <li><a href="https://kpop-universe.kr/g/틴탑/s/박수/">박수 (Clap)</a></li>
       <li><a href="https://kpop-universe.kr/g/틴탑/s/쉽지않아/">쉽지않아 (Missing)</a></li>
+      <li><a href="https://kpop-universe.kr/g/틴탑/s/박수/">박수 (Clap)</a></li>
       <li><a href="https://kpop-universe.kr/g/틴탑/s/미치겠어/">미치겠어 I&#39;m Gonna Crazy</a></li>
       <li><a href="https://kpop-universe.kr/g/틴탑/s/cherrypie/">Cherry Pie</a></li>
-      <li><a href="https://kpop-universe.kr/g/틴탑/s/toyou/">To You</a></li>
       <li><a href="https://kpop-universe.kr/g/틴탑/s/서울밤/">서울밤 (SEOUL NIGHT)</a></li>
-      <li><a href="https://kpop-universe.kr/g/틴탑/s/사각지대/">사각지대 (Warning Sign)</a></li>
+      <li><a href="https://kpop-universe.kr/g/틴탑/s/toyou/">To You</a></li>
       <li><a href="https://kpop-universe.kr/g/틴탑/s/향수뿌리지마/">향수 뿌리지마 No More Perfume On You</a></li>
+      <li><a href="https://kpop-universe.kr/g/틴탑/s/사각지대/">사각지대 (Warning Sign)</a></li>
       <li><a href="https://kpop-universe.kr/g/틴탑/s/dontstop/">DON&#39;T STOP</a></li>
       <li><a href="https://kpop-universe.kr/g/틴탑/s/supaluv/">Supa Luv</a></li>
       <li><a href="https://kpop-universe.kr/g/틴탑/s/toyou2020/">To You 2020</a></li>
@@ -159,68 +177,49 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/틴탑/s/날울리지마/">날 울리지마</a></li>
       <li><a href="https://kpop-universe.kr/g/틴탑/s/놀면돼/">놀면 돼 (Let&#39;s play!)</a></li>
       <li><a href="https://kpop-universe.kr/g/틴탑/s/callme/">Call Me</a></li>
+      <li><a href="https://kpop-universe.kr/g/틴탑/s/안녕/">안녕?! (High Five)</a></li>
       <li><a href="https://kpop-universe.kr/g/틴탑/s/가지마/">가지마 (Please, don&#39;t go)</a></li>
       <li><a href="https://kpop-universe.kr/g/틴탑/s/눈사탕/">눈사탕 (Snow Kiss)</a></li>
       <li><a href="https://kpop-universe.kr/g/틴탑/s/donti/">Don&#39;t I</a></li>
       <li><a href="https://kpop-universe.kr/g/틴탑/s/california/">California</a></li>
       <li><a href="https://kpop-universe.kr/g/틴탑/s/못된여자/">못된 여자</a></li>
       <li><a href="https://kpop-universe.kr/g/틴탑/s/now/">Now</a></li>
-      <li><a href="https://kpop-universe.kr/g/틴탑/s/안녕/">안녕?! (High Five)</a></li>
+      <li><a href="https://kpop-universe.kr/g/틴탑/s/메리크리스마스/">메리 크리스마스 (Merry Christmas)</a></li>
+      <li><a href="https://kpop-universe.kr/g/틴탑/s/우린문제없어/">우린 문제 없어 (I&#39;m Sorry)</a></li>
       <li><a href="https://kpop-universe.kr/g/틴탑/s/잘지내/">잘 지내?</a></li>
       <li><a href="https://kpop-universe.kr/g/틴탑/s/왼손오른손/">왼손 오른손</a></li>
     </ul>
   
-    <h2 id="albums">앨범·수록곡</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/틴탑/a/dontstop/">DON&#39;T STOP</a> <span class="yr">2026</span></li>
-      <li><a href="https://kpop-universe.kr/g/틴탑/a/just15justteentop/">Just 15, Just Teen Top</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/g/틴탑/a/dearn9ne/">DEAR. N9NE</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/g/틴탑/a/teentopstory8pisode/">TEEN TOP STORY : 8PISODE</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/틴탑/a/seoulnight/">SEOUL NIGHT</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/틴탑/a/highfive/">HIGH FIVE</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/틴탑/a/redpoint/">RED POINT</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/g/틴탑/a/naturalbornteentop/">NATURAL BORN TEEN TOP</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/g/틴탑/a/teentop20slovetwoexito/">TEEN TOP 20&#39;S LOVE TWO &#39;EXITO&#39;</a> <span class="yr">2014</span></li>
-      <li><a href="https://kpop-universe.kr/g/틴탑/a/teentopexito/">TEEN TOP EXITO</a> <span class="yr">2014</span></li>
-      <li><a href="https://kpop-universe.kr/g/틴탑/a/틴탑클래스어디션/">틴탑 클래스 어디션</a> <span class="yr">2013</span></li>
-      <li><a href="https://kpop-universe.kr/g/틴탑/a/틴탑클래스/">틴탑 클래스</a> <span class="yr">2013</span></li>
-      <li><a href="https://kpop-universe.kr/g/틴탑/a/no1리패키지스페셜에디션/">&#39;No.1&#39; 리패키지 스페셜 에디션</a> <span class="yr">2013</span></li>
-      <li><a href="https://kpop-universe.kr/g/틴탑/a/no1/">No.1</a> <span class="yr">2013</span></li>
-      <li><a href="https://kpop-universe.kr/g/틴탑/a/artist/">aRtisT</a> <span class="yr">2012</span></li>
-      <li><a href="https://kpop-universe.kr/g/틴탑/a/its/">It&#39;s</a> <span class="yr">2012</span></li>
-      <li><a href="https://kpop-universe.kr/g/틴탑/a/roman/">Roman</a> <span class="yr">2011</span></li>
-    </ul>
-  
-    <h2>디스코그래피</h2>
-    <ul class="discog-list">
-      <li>DON&#39;T STOP <span class="yr">(2026)</span> <span class="tag">미니 11집</span></li>
-      <li>Just 15, Just Teen Top <span class="yr">(2025)</span> <span class="tag">미니 10집</span></li>
-      <li>4SHO <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>[Vol.76] 유희열의 스케치북 : 마흔일곱 번째 목소리 &#39;유스케 X 틴탑&#39; <span class="yr">(2020)</span> <span class="tag">싱글</span></li>
-      <li>To You 2020 <span class="yr">(2020)</span> <span class="tag">싱글</span></li>
-      <li>DEAR. N9NE <span class="yr">(2019)</span> <span class="tag">미니 9집</span></li>
-      <li>TEEN TOP STORY : 8PISODE <span class="yr">(2018)</span> <span class="tag">스페셜</span></li>
-      <li>SEOUL NIGHT <span class="yr">(2018)</span> <span class="tag">미니 8집</span></li>
-      <li>HIGH FIVE <span class="yr">(2017)</span> <span class="tag">정규 2집</span></li>
-      <li>바람이 분다 (2010 voice) <span class="yr">(2016)</span> <span class="tag">싱글</span></li>
-      <li>RED POINT <span class="yr">(2016)</span> <span class="tag">미니 7집</span></li>
-      <li>나만 빼고 <span class="yr">(2015)</span> <span class="tag">싱글</span></li>
-      <li>NATURAL BORN TEEN TOP <span class="yr">(2015)</span> <span class="tag">미니 6집</span></li>
-      <li>TEEN TOP 눈사탕 <span class="yr">(2014)</span> <span class="tag">싱글</span></li>
-      <li>TEEN TOP 20&#39;S LOVE TWO &#39;EXITO&#39; <span class="yr">(2014)</span> <span class="tag">미니 5집 리패키지</span></li>
-      <li>TEEN TOP EXITO <span class="yr">(2014)</span> <span class="tag">미니 5집</span></li>
-      <li>틴탑 클래스 어디션 <span class="yr">(2013)</span> <span class="tag">미니 4집 리패키지</span></li>
-      <li>틴탑 클래스 <span class="yr">(2013)</span> <span class="tag">미니 4집</span></li>
-      <li>&#39;No.1&#39; 리패키지 스페셜 에디션 <span class="yr">(2013)</span> <span class="tag">정규 1집 리패키지</span></li>
-      <li>No.1 <span class="yr">(2013)</span> <span class="tag">정규 1집</span></li>
-      <li>Summer Special &#39;나랑 사귈래?&#39; <span class="yr">(2012)</span> <span class="tag">싱글</span></li>
-      <li>aRtisT <span class="yr">(2012)</span> <span class="tag">미니 3집</span></li>
-      <li>It&#39;s <span class="yr">(2012)</span> <span class="tag">미니 2집</span></li>
-      <li>Roman <span class="yr">(2011)</span> <span class="tag">미니 1집</span></li>
-      <li>Teen Top Supa Luv <span class="yr">(2011)</span> <span class="tag">싱글</span></li>
-      <li>Transform <span class="yr">(2011)</span> <span class="tag">싱글</span></li>
-      <li>Come Into The World <span class="yr">(2010)</span> <span class="tag">싱글</span></li>
-    </ul>
+    <h2 id="albums">디스코그래피</h2>
+    <div class="sp-tiles dg-tiles">
+      <a class="sp-tile" href="https://kpop-universe.kr/g/틴탑/a/dontstop/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/147/12/842/14712842_20261014152539_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">DON&#39;T STOP</span><span class="sp-tile-n">2026 · 미니 11집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/틴탑/a/just15justteentop/"><img src="https://i.scdn.co/image/ab67616d00001e02e61bf8fe409277938fa2c0d2" alt="" loading="lazy"><span class="sp-tile-t">Just 15, Just Teen Top</span><span class="sp-tile-n">2025 · 미니 10집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/78/026/11278026_20230703165432_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">4SHO</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/25/629/10525629_20201127141921_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">[Vol.76] 유희열의 스케치북 : 마흔일곱 번째 목소리 &#39;유스케 X 틴탑&#39;</span><span class="sp-tile-n">2020 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/59/137/10459137_20200710151200_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">To You 2020</span><span class="sp-tile-n">2020 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/틴탑/a/dearn9ne/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/93/902/10293902_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">DEAR. N9NE</span><span class="sp-tile-n">2019 · 미니 9집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/틴탑/a/teentopstory8pisode/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/81/443/10181443_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">TEEN TOP STORY : 8PISODE</span><span class="sp-tile-n">2018 · 스페셜</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/틴탑/a/seoulnight/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/64/836/10164836_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SEOUL NIGHT</span><span class="sp-tile-n">2018 · 미니 8집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/틴탑/a/highfive/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/53/467/10053467_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">HIGH FIVE</span><span class="sp-tile-n">2017 · 정규 2집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/96/074/2696074_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">바람이 분다 (2010 voice)</span><span class="sp-tile-n">2016 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/틴탑/a/redpoint/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/62/452/2662452_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">RED POINT</span><span class="sp-tile-n">2016 · 미니 7집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/32/509/2332509_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">나만 빼고</span><span class="sp-tile-n">2015 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/틴탑/a/naturalbornteentop/"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/25/320/2325320_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">NATURAL BORN TEEN TOP</span><span class="sp-tile-n">2015 · 미니 6집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/94/432/2294432_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">TEEN TOP 눈사탕</span><span class="sp-tile-n">2014 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/틴탑/a/teentop20slovetwoexito/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/89/959/2289959_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">TEEN TOP 20&#39;S LOVE TWO &#39;EXITO&#39;</span><span class="sp-tile-n">2014 · 미니 5집 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/틴탑/a/teentopexito/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/79/992/2279992_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">TEEN TOP EXITO</span><span class="sp-tile-n">2014 · 미니 5집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/틴탑/a/틴탑클래스어디션/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/12/134/2212134_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">틴탑 클래스 어디션</span><span class="sp-tile-n">2013 · 미니 4집 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/틴탑/a/틴탑클래스/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/98/166/2198166_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">틴탑 클래스</span><span class="sp-tile-n">2013 · 미니 4집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/틴탑/a/no1리패키지스페셜에디션/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/82/980/2182980_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">&#39;No.1&#39; 리패키지 스페셜 에디션</span><span class="sp-tile-n">2013 · 정규 1집 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/틴탑/a/no1/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/76/269/2176269_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">No.1</span><span class="sp-tile-n">2013 · 정규 1집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/39/260/2139260_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Summer Special &#39;나랑 사귈래?&#39;</span><span class="sp-tile-n">2012 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/틴탑/a/artist/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/25/064/2125064_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">aRtisT</span><span class="sp-tile-n">2012 · 미니 3집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/틴탑/a/its/"><img src="https://cdnimg.melon.co.kr/cm/album/images/020/59/007/2059007_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">It&#39;s</span><span class="sp-tile-n">2012 · 미니 2집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/틴탑/a/roman/"><img src="https://cdnimg.melon.co.kr/cm/album/images/013/47/957/1347957_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Roman</span><span class="sp-tile-n">2011 · 미니 1집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/011/77/753/1177753_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Teen Top Supa Luv</span><span class="sp-tile-n">2011 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/011/32/657/1132657_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Transform</span><span class="sp-tile-n">2011 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/009/53/856/953856_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Come Into The World</span><span class="sp-tile-n">2010 · 싱글</span></div>
+    </div>
   
     <h2>함께 보면 좋은 그룹</h2>
     <ul class="member-list rel">
@@ -232,7 +231,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/teen-top/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=틴탑">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"장난아냐 (Rocking)","s":"영상 50개","img":"hHd_8iZFvK8","m":"장난아냐","h":"https://kpop-universe.kr/g/틴탑/s/장난아냐/"},{"k":"멤버 직캠","t":"니엘","s":"직캠 39개","img":"422fWiI0Sps","h":"https://kpop-universe.kr/g/틴탑/니엘/fancams/"},{"k":"앨범","t":"DON'T STOP","s":"수록곡 5곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/147/12/842/14712842_20261014152539_500.jpg","h":"https://kpop-universe.kr/g/틴탑/a/dontstop/"},{"k":"곡별 직캠·무대","t":"재밌어? (Love is)","s":"영상 48개","img":"ebBmV5cRfYQ","m":"재밌어?","h":"https://kpop-universe.kr/g/틴탑/s/재밌어/"},{"k":"멤버 직캠","t":"창조","s":"직캠 21개","img":"BX9JaYWCowU","h":"https://kpop-universe.kr/g/틴탑/창조/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"장난아냐 (Rocking)","s":"영상 56개","img":"hHd_8iZFvK8","m":"장난아냐","h":"https://kpop-universe.kr/g/틴탑/s/장난아냐/"},{"k":"멤버 직캠","t":"니엘","s":"직캠 39개","img":"422fWiI0Sps","h":"https://kpop-universe.kr/g/틴탑/니엘/fancams/"},{"k":"앨범","t":"DON'T STOP","s":"수록곡 5곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/147/12/842/14712842_20261014152539_500.jpg","h":"https://kpop-universe.kr/g/틴탑/a/dontstop/"},{"k":"곡별 직캠·무대","t":"재밌어? (Love is)","s":"영상 50개","img":"ebBmV5cRfYQ","m":"재밌어?","h":"https://kpop-universe.kr/g/틴탑/s/재밌어/"},{"k":"멤버 직캠","t":"창조","s":"직캠 21개","img":"BX9JaYWCowU","h":"https://kpop-universe.kr/g/틴탑/창조/fancams/"}]</script>
 </div>
 </body>
 </html>

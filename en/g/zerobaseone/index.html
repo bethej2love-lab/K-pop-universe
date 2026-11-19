@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="2238 ZEROBASEONE fancams and stages, most viewed first (Hanbin, Jiwoong, Matthew, Taerae, Gunwook, Zhang Hao, Ricky, Gyuvin, Yujin). ZEROBASEONE: members, debut 2023.07.10, WAKEONE. 23 music show wins, 1 grand prizes (daesang). Fancams, stages and discography on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/v5_GoNFr5wc/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"ZEROBASEONE","alternateName":"제로베이스원","genre":"K-pop","foundingDate":"2023-07-10","url":"https://kpop-universe.kr/en/g/zerobaseone/","image":"https://img.youtube.com/vi/v5_GoNFr5wc/maxresdefault.jpg","member":[{"@type":"Person","name":"Hanbin"},{"@type":"Person","name":"Jiwoong"},{"@type":"Person","name":"Matthew"},{"@type":"Person","name":"Taerae"},{"@type":"Person","name":"Gunwook"},{"@type":"Person","name":"Zhang Hao"},{"@type":"Person","name":"Ricky"},{"@type":"Person","name":"Gyuvin"},{"@type":"Person","name":"Yujin"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"ZEROBASEONE","alternateName":"제로베이스원","genre":"K-pop","description":"ZEROBASEONE is a 9-member K-pop boy group under WAKEONE, debuting in 2023. Fan club: ZEROSE. Recent releases: KAIKILOVE (2026), Existence (2026), Ascend- (2026).","foundingDate":"2023-07-10","url":"https://kpop-universe.kr/en/g/zerobaseone/","image":"https://img.youtube.com/vi/v5_GoNFr5wc/maxresdefault.jpg","member":[{"@type":"Person","name":"Hanbin"},{"@type":"Person","name":"Jiwoong"},{"@type":"Person","name":"Matthew"},{"@type":"Person","name":"Taerae"},{"@type":"Person","name":"Gunwook"},{"@type":"Person","name":"Zhang Hao"},{"@type":"Person","name":"Ricky"},{"@type":"Person","name":"Gyuvin"},{"@type":"Person","name":"Yujin"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -104,10 +123,9 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>Fandom</b> ZEROSE</span>
     </div>
     <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/channel/UCSAp0Yl9S0Zq5uDqE6im_XQ" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://www.instagram.com/zb1official" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/ZB1_official" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://www.tiktok.com/@zb1_official" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-namu" href="https://namu.wiki/w/ZEROBASEONE" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
-    <script type="application/json" id="kpu-facts">["8 new videos this week","Latest music show win · TOP 5 (2026.05.28)","23 music show wins","3,754 stages & videos collected","Most viewed · 57M views"]</script>
+    <script type="application/json" id="kpu-facts">["6 new videos this week","Latest music show win · TOP 5 (2026.05.28)","23 music show wins","3,754 stages & videos collected","Most viewed · 57M views"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
-  <p class="intro">ZEROBASEONE is a 9-member K-pop boy group under WAKEONE, debuting in 2023. Fan club: ZEROSE. Recent releases: KAIKILOVE (2026), Existence (2026), Ascend- (2026).</p>
   
     <h2 id="members">Members</h2>
     <div class="faces">
@@ -153,13 +171,13 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/inbloom/">In Bloom</a></li>
       <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/feelthepop/">Feel the POP</a></li>
       <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/crush/">CRUSH (가시)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/goodsobad/">GOOD SO BAD</a></li>
       <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/iconik/">ICONIK</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/goodsobad/">GOOD SO BAD</a></li>
       <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/blue/">BLUE</a></li>
       <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/sweat/">SWEAT</a></li>
       <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/top5/">TOP 5</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/meltingpoint/">MELTING POINT</a></li>
       <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/devilgame/">Devil Game</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/meltingpoint/">MELTING POINT</a></li>
       <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/killtheromeo/">KILL THE ROMEO</a></li>
       <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/newkidzontheblock/">New Kidz on the Block</a></li>
       <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/slamdunk/">SLAM DUNK</a></li>
@@ -178,61 +196,48 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/nowornever/">NOW OR NEVER</a></li>
       <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/lovepocalypse/">LOVEPOCALYPSE</a></li>
       <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/cruel/">Cruel</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/ourseason/">Our Season</a></li>
       <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/jellypop/">Jelly Pop</a></li>
       <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/runningtofuture/">Running to Future</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/checkmate/">Checkmate</a></li>
       <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/바다/">바다 (ZB1 Remake)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/deareclipse/">Dear ECLIPSE</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/ourseason/">Our Season</a></li>
       <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/killinme/">Killin&#39; Me</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/checkmate/">Checkmate</a></li>
       <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/첫행복/">첫행복</a></li>
       <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/더바랄게없죠/">더 바랄게 없죠</a></li>
       <li><a href="https://kpop-universe.kr/en/g/zerobaseone/s/backtozerobase/">Back to ZEROBASE</a></li>
     </ul>
   
-    <h2 id="albums">Albums & tracklists</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/zerobaseone/a/ascend/">Ascend-</a> <span class="yr">2026</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/zerobaseone/a/neversaynever/">NEVER SAY NEVER</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/zerobaseone/a/blueparadise/">BLUE PARADISE</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/zerobaseone/a/prezent/">PREZENT</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/zerobaseone/a/cinemaparadise/">CINEMA PARADISE</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/zerobaseone/a/youhadmeathello/">You had me at HELLO</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/zerobaseone/a/yurayura/">YURA YURA</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/zerobaseone/a/meltingpoint/">MELTING POINT</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/zerobaseone/a/youthintheshade/">YOUTH IN THE SHADE</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/zerobaseone/a/boysplanetartistbattle/">BOYS PLANET - ARTIST BATTLE</a> <span class="yr">2023</span></li>
-    </ul>
-  
-    <h2>Discography</h2>
-    <ul class="discog-list">
-      <li>KAIKILOVE <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>Existence <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>Ascend- <span class="yr">(2026)</span> <span class="tag">6th EP</span></li>
-      <li>RE-FLOW <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>ROSES <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>Running to Future <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>ICONIK <span class="yr">(2025)</span> <span class="tag">Single</span></li>
-      <li>NEVER SAY NEVER <span class="yr">(2025)</span> <span class="tag">1st Album</span></li>
-      <li>SLAM DUNK <span class="yr">(2025)</span> <span class="tag">Single</span></li>
-      <li>Head over Heels, Pt. 1 (Original Soundtrack) <span class="yr">(2025)</span> <span class="tag">Single</span></li>
-      <li>Only One Story (Korean ver.) <span class="yr">(2025)</span> <span class="tag">Single</span></li>
-      <li>BLUE (Japanese version) <span class="yr">(2025)</span> <span class="tag">Single</span></li>
-      <li>BLUE PARADISE <span class="yr">(2025)</span> <span class="tag">5th EP</span></li>
-      <li>PREZENT <span class="yr">(2025)</span> <span class="tag">Album</span></li>
-      <li>Doctor! Doctor! <span class="yr">(2025)</span> <span class="tag">Single</span></li>
-      <li>NOW OR NEVER <span class="yr">(2025)</span> <span class="tag">Single</span></li>
-      <li>스테이지 파이터(STF) Original Vol.6 <span class="yr">(2024)</span> <span class="tag">Single</span></li>
-      <li>Only One Story <span class="yr">(2024)</span> <span class="tag">Single</span></li>
-      <li>GOOD SO BAD (Japanese version) <span class="yr">(2024)</span> <span class="tag">Single</span></li>
-      <li>CINEMA PARADISE <span class="yr">(2024)</span> <span class="tag">4th EP</span></li>
-      <li>Feel the POP (Japanese version) <span class="yr">(2024)</span> <span class="tag">Single</span></li>
-      <li>You had me at HELLO <span class="yr">(2024)</span> <span class="tag">3rd EP</span></li>
-      <li>SWEAT <span class="yr">(2024)</span> <span class="tag">Single</span></li>
-      <li>YURA YURA <span class="yr">(2024)</span> <span class="tag">Album</span></li>
-      <li>MELTING POINT <span class="yr">(2023)</span> <span class="tag">2nd EP</span></li>
-      <li>YOUTH IN THE SHADE <span class="yr">(2023)</span> <span class="tag">1st EP</span></li>
-    </ul>
+    <h2 id="albums">Discography</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/144/15/288/14415288_20260803141421_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">KAIKILOVE</span><span class="sp-tile-n">2026 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/141/76/845/14176845_20260727143908_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Existence</span><span class="sp-tile-n">2026 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/zerobaseone/a/ascend/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/133/94/241/13394241_20260514172730_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Ascend-</span><span class="sp-tile-n">2026 · 6th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/128/31/033/12831033_20260130150535_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">RE-FLOW</span><span class="sp-tile-n">2026 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/128/05/282/12805282_20260122121054_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ROSES</span><span class="sp-tile-n">2026 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/124/73/593/12473593_20260108120824_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Running to Future</span><span class="sp-tile-n">2026 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/121/57/436/12157436_20251013104749_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ICONIK</span><span class="sp-tile-n">2025 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/zerobaseone/a/neversaynever/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/120/87/343/12087343_20250829145601_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">NEVER SAY NEVER</span><span class="sp-tile-n">2025 · 1st Album</span></a>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02f3204cce916c37214b715ef8" alt="" loading="lazy"><span class="sp-tile-t">SLAM DUNK</span><span class="sp-tile-n">2025 · Single</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e0200cabb597d1b9a6bf09d1315" alt="" loading="lazy"><span class="sp-tile-t">Head over Heels, Pt. 1 (Original Soundtrack)</span><span class="sp-tile-n">2025 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/72/766/11772766_20250414145748_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Only One Story (Korean ver.)</span><span class="sp-tile-n">2025 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/36/910/11736910_20250313161509_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BLUE (Japanese version)</span><span class="sp-tile-n">2025 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/zerobaseone/a/blueparadise/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/20/927/11720927_20250221122612_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BLUE PARADISE</span><span class="sp-tile-n">2025 · 5th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/zerobaseone/a/prezent/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/98/730/11698730_20250122120941_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">PREZENT</span><span class="sp-tile-n">2025 · Album</span></a>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02c1bea3a5fd036b7a19263828" alt="" loading="lazy"><span class="sp-tile-t">Doctor! Doctor!</span><span class="sp-tile-n">2025 · Single</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02a163fa8299dec18a52ceafdd" alt="" loading="lazy"><span class="sp-tile-t">NOW OR NEVER</span><span class="sp-tile-n">2025 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/50/583/11650583_20241126102640_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">스테이지 파이터(STF) Original Vol.6</span><span class="sp-tile-n">2024 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/13/028/11613028_20241010165043_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Only One Story</span><span class="sp-tile-n">2024 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/77/992/11577992_20240828142138_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">GOOD SO BAD (Japanese version)</span><span class="sp-tile-n">2024 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/zerobaseone/a/cinemaparadise/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/74/289/11574289_20240827175358_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">CINEMA PARADISE</span><span class="sp-tile-n">2024 · 4th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/88/700/11488700_20240514175940_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Feel the POP (Japanese version)</span><span class="sp-tile-n">2024 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/zerobaseone/a/youhadmeathello/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/69/986/11469986_20240513162331_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">You had me at HELLO</span><span class="sp-tile-n">2024 · 3rd EP</span></a>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e0278361eb2fde0048517f4a7f0" alt="" loading="lazy"><span class="sp-tile-t">SWEAT</span><span class="sp-tile-n">2024 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/zerobaseone/a/yurayura/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/45/866/11445866_20240319171449_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">YURA YURA</span><span class="sp-tile-n">2024 · Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/zerobaseone/a/meltingpoint/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/58/523/11358523_20231103153003_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">MELTING POINT</span><span class="sp-tile-n">2023 · 2nd EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/zerobaseone/a/youthintheshade/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/81/739/11281739_20230707121615_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">YOUTH IN THE SHADE</span><span class="sp-tile-n">2023 · 1st EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/zerobaseone/a/boysplanetartistbattle/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/17/923/11217923_20230405112917_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BOYS PLANET - ARTIST BATTLE</span><span class="sp-tile-n">2023 · Special</span></a>
+    </div>
   
     <h2>Related groups</h2>
     <ul class="member-list rel">
@@ -247,7 +252,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/제로베이스원/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=제로베이스원">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"In Bloom","s":"289 videos","img":"trzeUClQIIg","m":"In Bloom","h":"https://kpop-universe.kr/en/g/zerobaseone/s/inbloom/"},{"k":"Member fancams","t":"Hanbin","s":"285 fancams","img":"MLQpnAMBYOg","h":"https://kpop-universe.kr/en/g/zerobaseone/hanbin/fancams/"},{"k":"Album","t":"Ascend-","s":"7 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/133/94/241/13394241_20260514172730_500.jpg","h":"https://kpop-universe.kr/en/g/zerobaseone/a/ascend/"},{"k":"Song fancams","t":"Feel the POP","s":"219 videos","img":"L9Ts6kiEAts","m":"Feel the POP","h":"https://kpop-universe.kr/en/g/zerobaseone/s/feelthepop/"},{"k":"Member fancams","t":"Taerae","s":"174 fancams","img":"zaK7pIidqI0","h":"https://kpop-universe.kr/en/g/zerobaseone/taerae/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"In Bloom","s":"293 videos","img":"trzeUClQIIg","m":"In Bloom","h":"https://kpop-universe.kr/en/g/zerobaseone/s/inbloom/"},{"k":"Member fancams","t":"Hanbin","s":"285 fancams","img":"MLQpnAMBYOg","h":"https://kpop-universe.kr/en/g/zerobaseone/hanbin/fancams/"},{"k":"Album","t":"Ascend-","s":"7 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/133/94/241/13394241_20260514172730_500.jpg","h":"https://kpop-universe.kr/en/g/zerobaseone/a/ascend/"},{"k":"Song fancams","t":"Feel the POP","s":"224 videos","img":"L9Ts6kiEAts","m":"Feel the POP","h":"https://kpop-universe.kr/en/g/zerobaseone/s/feelthepop/"},{"k":"Member fancams","t":"Taerae","s":"174 fancams","img":"zaK7pIidqI0","h":"https://kpop-universe.kr/en/g/zerobaseone/taerae/fancams/"}]</script>
 </div>
 </body>
 </html>

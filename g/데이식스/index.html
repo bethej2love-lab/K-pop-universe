@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="데이식스 직캠·무대 영상 798개를 조회수 순으로. 데이식스 멤버·데뷔일(2015.09.07)·소속사(JYP엔터테인먼트). 음악방송 1위 8회, 대상 2개. 직캠·무대 영상과 디스코그래피를 K-POP UNIVERSE에서.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/Z3ji8GrPSik/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"데이식스","alternateName":"DAY6","genre":"K-pop","foundingDate":"2015-09-07","url":"https://kpop-universe.kr/g/데이식스/","image":"https://img.youtube.com/vi/Z3ji8GrPSik/maxresdefault.jpg","member":[{"@type":"Person","name":"성진"},{"@type":"Person","name":"Young K"},{"@type":"Person","name":"원필"},{"@type":"Person","name":"도운"},{"@type":"Person","name":"Jae"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"데이식스","alternateName":"DAY6","genre":"K-pop","description":"4인조 보이그룹. JYP엔터테인먼트. 2015년 데뷔. 팬덤명 마이데이. 대표 앨범 Lovin' the Christmas(2025), The DECADE(2025), Maybe Tomorrow(2025).","foundingDate":"2015-09-07","url":"https://kpop-universe.kr/g/데이식스/","image":"https://img.youtube.com/vi/Z3ji8GrPSik/maxresdefault.jpg","member":[{"@type":"Person","name":"성진"},{"@type":"Person","name":"Young K"},{"@type":"Person","name":"원필"},{"@type":"Person","name":"도운"},{"@type":"Person","name":"Jae"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -104,10 +123,9 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>팬덤명</b> 마이데이</span>
     </div>
     <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/channel/UCp-pqXsizklX3ZHvLxXyhxw" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://www.instagram.com/day6official/" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/day6official" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://www.tiktok.com/@day6_official" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-namu" href="https://namu.wiki/w/DAY6" target="_blank" rel="noopener noreferrer">나무위키</a></div>
-    <script type="application/json" id="kpu-facts">["이번 주 새 영상 4개","최근 음방 1위 · Maybe Tomorrow (2025.05.17)","음방 1위 8회","모아둔 무대·영상 2,044개","가장 많이 본 영상 · 조회수 109M"]</script>
+    <script type="application/json" id="kpu-facts">["이번 주 새 영상 3개","최근 음방 1위 · Maybe Tomorrow (2025.05.17)","음방 1위 8회","모아둔 무대·영상 2,044개","가장 많이 본 영상 · 조회수 109M"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
-  <p class="intro">4인조 보이그룹. JYP엔터테인먼트. 2015년 데뷔. 팬덤명 마이데이. 대표 앨범 Lovin&#39; the Christmas(2025), The DECADE(2025), Maybe Tomorrow(2025).</p>
   
     <h2 id="members">멤버</h2>
     <div class="faces">
@@ -143,28 +161,29 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/데이식스/s/한페이지가될수있게/">한 페이지가 될 수 있게 (Time of Our Life)</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/행복했던날들이었다/">행복했던 날들이었다 (Days Gone By)</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/youwerebeautiful/">You Were Beautiful (예뻤어)</a></li>
+      <li><a href="https://kpop-universe.kr/g/데이식스/s/congratulations/">Congratulations</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/역대급/">역대급 (WALK)</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/zombie/">Zombie</a></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/s/congratulations/">Congratulations</a></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/s/shootme/">Shoot Me</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/shutthedoor/">Shut The Door</a></li>
+      <li><a href="https://kpop-universe.kr/g/데이식스/s/shootme/">Shoot Me</a></li>
+      <li><a href="https://kpop-universe.kr/g/데이식스/s/예뻤어/">예뻤어</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/이것밖에는없다/">이것밖에는 없다</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/끝까지안아줄게/">끝까지 안아 줄게</a></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/s/예뻤어/">예뻤어</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/파도가끝나는곳까지/">파도가 끝나는 곳까지</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/ismile/">I Smile (반드시 웃는다)</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/안녕잘가/">안녕, 잘 가</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/myday/">My Day</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/놓아놓아놓아/">놓아 놓아 놓아 (Letting Go)</a></li>
+      <li><a href="https://kpop-universe.kr/g/데이식스/s/imserious/">I&#39;m Serious (장난 아닌데)</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/꿈의버스/">꿈의 버스</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/좋아합니다/">좋아합니다</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/그렇더라고요/">그렇더라고요 When you love someone</a></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/s/imserious/">I&#39;m Serious (장난 아닌데)</a></li>
+      <li><a href="https://kpop-universe.kr/g/데이식스/s/happy/">HAPPY</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/sweetchaos/">Sweet Chaos</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/howcanisay/">How Can I Say (어떻게 말해)</a></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/s/happy/">HAPPY</a></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/s/free하게/">Free하게 Freely</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/장난아닌데/">장난 아닌데</a></li>
+      <li><a href="https://kpop-universe.kr/g/데이식스/s/bestpart/">Best Part</a></li>
+      <li><a href="https://kpop-universe.kr/g/데이식스/s/free하게/">Free하게 Freely</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/아왜/">아 왜 (I Wait)</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/goodbyewinter/">Goodbye Winter (겨울이 간다)</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/겨울이간다/">겨울이 간다</a></li>
@@ -172,7 +191,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/데이식스/s/행운을빌어줘/">행운을 빌어 줘</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/insideout/">INSIDE OUT</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/youmakeme/">You Make Me</a></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/s/bestpart/">Best Part</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/아픈길/">아픈 길 (Hurt Road)</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/maninamovie/">Man in a movie</a></li>
       <li><a href="https://kpop-universe.kr/g/데이식스/s/dancedance/">DANCE DANCE</a></li>
@@ -193,52 +211,35 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/데이식스/s/사랑병동/">사랑병동</a></li>
     </ul></details>
   
-    <h2 id="albums">앨범·수록곡</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/데이식스/a/thedecade/">The DECADE</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/a/bandaid/">Band Aid</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/a/fourever/">Fourever</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/a/thebookofusnegentropy/">The Book of Us: Negentropy</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/a/thebookofusthedemon/">The Book of Us: The Demon</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/a/thebookofusentropy/">The Book of Us: Entropy</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/a/thebookofusgravity/">The Book of Us: Gravity</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/a/rememberusyouthpart2/">Remember Us: Youth Part 2</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/a/shootmeyouthpart1/">Shoot Me: Youth Part 1</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/a/moonrise/">MOONRISE</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/a/sunrise/">SUNRISE</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/a/daydream/">DAYDREAM</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/g/데이식스/a/theday/">The Day</a> <span class="yr">2015</span></li>
-    </ul>
-  
-    <h2>디스코그래피</h2>
-    <ul class="discog-list">
-      <li>Lovin&#39; the Christmas <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>The DECADE <span class="yr">(2025)</span> <span class="tag">정규 4집</span></li>
-      <li>Maybe Tomorrow <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>Band Aid <span class="yr">(2024)</span> <span class="tag">미니 9집</span></li>
-      <li>Fourever <span class="yr">(2024)</span> <span class="tag">미니 8집</span></li>
-      <li>The Book of Us: Negentropy <span class="yr">(2021)</span> <span class="tag">미니 7집</span></li>
-      <li>The Book of Us: The Demon <span class="yr">(2020)</span> <span class="tag">미니 6집</span></li>
-      <li>The Book of Us: Entropy <span class="yr">(2019)</span> <span class="tag">정규 3집</span></li>
-      <li>The Book of Us: Gravity <span class="yr">(2019)</span> <span class="tag">미니 5집</span></li>
-      <li>Remember Us: Youth Part 2 <span class="yr">(2018)</span> <span class="tag">미니 4집</span></li>
-      <li>Beautiful Feeling <span class="yr">(2018)</span> <span class="tag">싱글</span></li>
-      <li>Shoot Me: Youth Part 1 <span class="yr">(2018)</span> <span class="tag">미니 3집</span></li>
-      <li>MOONRISE <span class="yr">(2017)</span> <span class="tag">정규 2집</span></li>
-      <li>Every DAY6 November <span class="yr">(2017)</span> <span class="tag">싱글</span></li>
-      <li>Every DAY6 October <span class="yr">(2017)</span> <span class="tag">싱글</span></li>
-      <li>Every DAY6 September <span class="yr">(2017)</span> <span class="tag">싱글</span></li>
-      <li>Every DAY6 August <span class="yr">(2017)</span> <span class="tag">싱글</span></li>
-      <li>Every DAY6 July <span class="yr">(2017)</span> <span class="tag">싱글</span></li>
-      <li>SUNRISE <span class="yr">(2017)</span> <span class="tag">정규 1집</span></li>
-      <li>Every DAY6 May <span class="yr">(2017)</span> <span class="tag">싱글</span></li>
-      <li>Every DAY6 April <span class="yr">(2017)</span> <span class="tag">싱글</span></li>
-      <li>Every DAY6 March <span class="yr">(2017)</span> <span class="tag">싱글</span></li>
-      <li>Every DAY6 February <span class="yr">(2017)</span> <span class="tag">싱글</span></li>
-      <li>Every DAY6 January <span class="yr">(2017)</span> <span class="tag">싱글</span></li>
-      <li>DAYDREAM <span class="yr">(2016)</span> <span class="tag">미니 2집</span></li>
-      <li>The Day <span class="yr">(2015)</span> <span class="tag">미니 1집</span></li>
-    </ul>
+    <h2 id="albums">디스코그래피</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02bb27c579d1e6e3cea2ae6bee" alt="" loading="lazy"><span class="sp-tile-t">Lovin&#39; the Christmas</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/데이식스/a/thedecade/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/121/00/029/12100029_20250905101446_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">The DECADE</span><span class="sp-tile-n">2025 · 정규 4집</span></a>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02224979e86a0751c03bcf4899" alt="" loading="lazy"><span class="sp-tile-t">Maybe Tomorrow</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/데이식스/a/bandaid/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/80/616/11580616_20240830171855_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Band Aid</span><span class="sp-tile-n">2024 · 미니 9집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/데이식스/a/fourever/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/44/397/11444397_20240318115810_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Fourever</span><span class="sp-tile-n">2024 · 미니 8집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/데이식스/a/thebookofusnegentropy/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/94/808/10594808_20210419141531_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">The Book of Us: Negentropy</span><span class="sp-tile-n">2021 · 미니 7집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/데이식스/a/thebookofusthedemon/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/28/497/10428497_20200511134253_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">The Book of Us: The Demon</span><span class="sp-tile-n">2020 · 미니 6집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/데이식스/a/thebookofusentropy/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/42/108/10342108_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">The Book of Us: Entropy</span><span class="sp-tile-n">2019 · 정규 3집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/데이식스/a/thebookofusgravity/"><img src="https://cdnimg.melon.co.kr/cm/album/images/103/07/346/10307346_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">The Book of Us: Gravity</span><span class="sp-tile-n">2019 · 미니 5집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/데이식스/a/rememberusyouthpart2/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/31/033/10231033_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Remember Us: Youth Part 2</span><span class="sp-tile-n">2018 · 미니 4집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/02/330/10202330_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Beautiful Feeling</span><span class="sp-tile-n">2018 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/데이식스/a/shootmeyouthpart1/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/79/171/10179171_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Shoot Me: Youth Part 1</span><span class="sp-tile-n">2018 · 미니 3집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/데이식스/a/moonrise/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/17/508/10117508_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">MOONRISE</span><span class="sp-tile-n">2017 · 정규 2집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/09/058/10109058_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Every DAY6 November</span><span class="sp-tile-n">2017 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/00/430/10100430_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Every DAY6 October</span><span class="sp-tile-n">2017 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/93/986/10093986_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Every DAY6 September</span><span class="sp-tile-n">2017 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/85/703/10085703_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Every DAY6 August</span><span class="sp-tile-n">2017 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/77/051/10077051_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Every DAY6 July</span><span class="sp-tile-n">2017 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/데이식스/a/sunrise/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/68/941/10068941_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SUNRISE</span><span class="sp-tile-n">2017 · 정규 1집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/60/034/10060034_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Every DAY6 May</span><span class="sp-tile-n">2017 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/52/301/10052301_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Every DAY6 April</span><span class="sp-tile-n">2017 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/43/181/10043181_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Every DAY6 March</span><span class="sp-tile-n">2017 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/36/099/10036099_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Every DAY6 February</span><span class="sp-tile-n">2017 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/28/987/10028987_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Every DAY6 January</span><span class="sp-tile-n">2017 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/데이식스/a/daydream/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/76/264/2676264_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">DAYDREAM</span><span class="sp-tile-n">2016 · 미니 2집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/데이식스/a/theday/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/38/778/2638778_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">The Day</span><span class="sp-tile-n">2015 · 미니 1집</span></a>
+    </div>
   
     <h2>함께 보면 좋은 그룹</h2>
     <ul class="member-list rel">

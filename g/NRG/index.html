@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="NRG 멤버·데뷔일(1997.10.28)·소속사(대영에이브이). 직캠·무대 영상과 디스코그래피를 K-POP UNIVERSE에서.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/YDvYY8DoLfM/mqdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"NRG","genre":"K-pop","foundingDate":"1997-10-28","url":"https://kpop-universe.kr/g/NRG/","image":"https://img.youtube.com/vi/YDvYY8DoLfM/mqdefault.jpg","member":[{"@type":"Person","name":"이성진"},{"@type":"Person","name":"천명훈"},{"@type":"Person","name":"노유민"},{"@type":"Person","name":"문성훈"},{"@type":"Person","name":"김환성"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"NRG","genre":"K-pop","description":"보이그룹. 대영에이브이. 1997년 데뷔. 해체. 대표 앨범 평창 올림픽 헌정곡(2018), 통화중(2018), 20세기(2017).","foundingDate":"1997-10-28","url":"https://kpop-universe.kr/g/NRG/","image":"https://img.youtube.com/vi/YDvYY8DoLfM/mqdefault.jpg","member":[{"@type":"Person","name":"이성진"},{"@type":"Person","name":"천명훈"},{"@type":"Person","name":"노유민"},{"@type":"Person","name":"문성훈"},{"@type":"Person","name":"김환성"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["모아둔 무대·영상 70개","가장 많이 본 영상 · 조회수 1.2M"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
-  <p class="intro">보이그룹. 대영에이브이. 1997년 데뷔. 해체. 대표 앨범 평창 올림픽 헌정곡(2018), 통화중(2018), 20세기(2017).</p>
   
     <h2 id="members">멤버</h2>
     <div class="faces">
@@ -124,42 +142,31 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   
     <h2 id="songs">곡별 직캠·무대</h2>
     <ul class="member-list rel">
+      <li><a href="https://kpop-universe.kr/g/NRG/s/hitsong/">Hit Song</a></li>
+      <li><a href="https://kpop-universe.kr/g/NRG/s/별이빛나는밤에/">별이 빛나는 밤에 (Hit Song)</a></li>
       <li><a href="https://kpop-universe.kr/g/NRG/s/명훈이간다/">명훈이 간다</a></li>
     </ul>
   
-    <h2 id="albums">앨범·수록곡</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/NRG/a/20세기/">20세기</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/NRG/a/oneoffive7집/">One of Five - 7집</a> <span class="yr">2005</span></li>
-      <li><a href="https://kpop-universe.kr/g/NRG/a/newradiancy6group6집/">New Radiancy 6 Group - 6집</a> <span class="yr">2004</span></li>
-      <li><a href="https://kpop-universe.kr/g/NRG/a/hitsong5집/">Hit Song - 5집</a> <span class="yr">2003</span></li>
-      <li><a href="https://kpop-universe.kr/g/NRG/a/비/">비 (Sorrow) - 4집</a> <span class="yr">2001</span></li>
-      <li><a href="https://kpop-universe.kr/g/NRG/a/nrg0033집/">NRG 003 - 3집</a> <span class="yr">1999</span></li>
-      <li><a href="https://kpop-universe.kr/g/NRG/a/kissinchristmas/">Kiss In Christmas</a> <span class="yr">1999</span></li>
-      <li><a href="https://kpop-universe.kr/g/NRG/a/seasonsgreetings시즌스페셜/">Season&#39;s Greetings - 시즌 스페셜</a> <span class="yr">1998</span></li>
-      <li><a href="https://kpop-universe.kr/g/NRG/a/race2집/">Race - 2집</a> <span class="yr">1998</span></li>
-      <li><a href="https://kpop-universe.kr/g/NRG/a/newradiancygroup1집/">New Radiancy Group - 1집</a> <span class="yr">1997</span></li>
-    </ul>
-  
-    <h2>디스코그래피</h2>
-    <ul class="discog-list">
-      <li>평창 올림픽 헌정곡 <span class="yr">(2018)</span> <span class="tag">싱글</span></li>
-      <li>통화중 <span class="yr">(2018)</span> <span class="tag">싱글</span></li>
-      <li>20세기 <span class="yr">(2017)</span> <span class="tag">스페셜</span></li>
-      <li>영화 어깨동무 삽입곡 <span class="yr">(2014)</span> <span class="tag">싱글</span></li>
-      <li>One of Five - 7집 <span class="yr">(2005)</span> <span class="tag">정규 7집</span></li>
-      <li>New Radiancy 6 Group - 6집 <span class="yr">(2004)</span> <span class="tag">정규 6집</span></li>
-      <li>Hit Song - 5집 <span class="yr">(2003)</span> <span class="tag">정규 5집</span></li>
-      <li>비 (Sorrow) - 4집 <span class="yr">(2001)</span> <span class="tag">정규 4집</span></li>
-      <li>NRG 003 - 3집 <span class="yr">(1999)</span> <span class="tag">정규 3집</span></li>
-      <li>Kiss In Christmas <span class="yr">(1999)</span> <span class="tag">스페셜</span></li>
-      <li>Race - 2집 <span class="yr">(1998)</span> <span class="tag">정규 2집</span></li>
-      <li>New Radiancy Group - 1집 <span class="yr">(1997)</span> <span class="tag">정규 1집</span></li>
-    </ul>
+    <h2 id="albums">디스코그래피</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/36/053/10136053_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">평창 올림픽 헌정곡</span><span class="sp-tile-n">2018 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/83/96/5b/83965b5c-e7b1-2713-2923-404ecd6e5e99/8809795711069.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">통화중</span><span class="sp-tile-n">2018 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/NRG/a/20세기/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/cd/67/72/cd67725b-9e3a-ed13-b63f-71aa6ce9eb19/8809795711045.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">20세기</span><span class="sp-tile-n">2017 · 스페셜</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/022/68/603/2268603_20210623094952_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">영화 어깨동무 삽입곡</span><span class="sp-tile-n">2014 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/NRG/a/oneoffive7집/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/f7/09/87/f70987a0-3e86-ccf2-a1dd-11819cdfa01f/8809795711052.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">One of Five - 7집</span><span class="sp-tile-n">2005 · 정규 7집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/NRG/a/newradiancy6group6집/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/31/67/1e/31671e41-6da4-376b-972d-39b532d56fe1/8809795712165.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">New Radiancy 6 Group - 6집</span><span class="sp-tile-n">2004 · 정규 6집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/NRG/a/hitsong5집/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/4d/13/01/4d130125-2cdd-3033-aa12-a8b94b5053cd/8809795711885.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Hit Song - 5집</span><span class="sp-tile-n">2003 · 정규 5집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/NRG/a/비/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/80/68/22/806822eb-c3e3-7c63-6ea1-68bb061a1f1f/8809795711861.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">비 (Sorrow) - 4집</span><span class="sp-tile-n">2001 · 정규 4집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/NRG/a/nrg0033집/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/b9/45/10/b9451096-ec99-9fd2-2cbf-0207beb22165/8809795711373.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">NRG 003 - 3집</span><span class="sp-tile-n">1999 · 정규 3집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/NRG/a/kissinchristmas/"><img src="https://cdnimg.melon.co.kr/cm/album/images/000/42/209/42209_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Kiss In Christmas</span><span class="sp-tile-n">1999 · 스페셜</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/NRG/a/seasonsgreetings시즌스페셜/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/c1/ee/f9/c1eef9a5-37ca-648c-b391-70f7bfa8fd44/8809795711311.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Season&#39;s Greetings - 시즌 스페셜</span><span class="sp-tile-n">1998 · 스페셜</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/NRG/a/race2집/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/fe/91/62/fe9162f8-01c1-2701-a86a-469c6ab7fe95/8809795711199.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Race - 2집</span><span class="sp-tile-n">1998 · 정규 2집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/NRG/a/newradiancygroup1집/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/b4/60/3d/b4603da5-23d4-83fa-3ac3-edd86a2493ee/8809795710710.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">New Radiancy Group - 1집</span><span class="sp-tile-n">1997 · 정규 1집</span></a>
+    </div>
   
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/nrg/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=NRG">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"명훈이 간다","s":"영상 5개","img":"hdQSUs5l9DU","m":"명훈이 간다","h":"https://kpop-universe.kr/g/NRG/s/명훈이간다/"},{"k":"앨범","t":"20세기","s":"수록곡 5곡","im":"https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/cd/67/72/cd67725b-9e3a-ed13-b63f-71aa6ce9eb19/8809795711045.jpg/600x600bb.jpg","h":"https://kpop-universe.kr/g/NRG/a/20세기/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"Hit Song","s":"영상 7개","img":"BSy1jVuFgOI","m":"Hit Song","h":"https://kpop-universe.kr/g/NRG/s/hitsong/"},{"k":"앨범","t":"20세기","s":"수록곡 5곡","im":"https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/cd/67/72/cd67725b-9e3a-ed13-b63f-71aa6ce9eb19/8809795711045.jpg/600x600bb.jpg","h":"https://kpop-universe.kr/g/NRG/a/20세기/"},{"k":"곡별 직캠·무대","t":"별이 빛나는 밤에 (Hit Song)","s":"영상 7개","img":"BSy1jVuFgOI","m":"별이 빛나는 밤에","h":"https://kpop-universe.kr/g/NRG/s/별이빛나는밤에/"}]</script>
 </div>
 </body>
 </html>

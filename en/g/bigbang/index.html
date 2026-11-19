@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="235 BIGBANG fancams and stages, most viewed first. BIGBANG: members, debut 2006.08.19, YG Entertainment. 131 music show wins, largest tour Alive Galaxy Tour (800K attendees), 28 grand prizes (daesang). Fancams, stages and discography on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/74QQZxkALdw/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"BIGBANG","alternateName":"빅뱅","genre":"K-pop","foundingDate":"2006-08-19","url":"https://kpop-universe.kr/en/g/bigbang/","image":"https://img.youtube.com/vi/74QQZxkALdw/maxresdefault.jpg","member":[{"@type":"Person","name":"G-Dragon"},{"@type":"Person","name":"Taeyang"},{"@type":"Person","name":"T.O.P"},{"@type":"Person","name":"Daesung"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"BIGBANG","alternateName":"빅뱅","genre":"K-pop","description":"BIGBANG is a 3-member K-pop boy group under YG Entertainment, debuting in 2006. Fan club: V.I.P. Recent releases: BiiiG (2026), 봄여름가을겨울 (Still Life) (2022), 꽃 길 (2018).","foundingDate":"2006-08-19","url":"https://kpop-universe.kr/en/g/bigbang/","image":"https://img.youtube.com/vi/74QQZxkALdw/maxresdefault.jpg","member":[{"@type":"Person","name":"G-Dragon"},{"@type":"Person","name":"Taeyang"},{"@type":"Person","name":"T.O.P"},{"@type":"Person","name":"Daesung"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["4 new videos this week","Latest music show win · BiiiG (2026.09.06)","131 music show wins","1,202 stages & videos collected","Most viewed · 859M views"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
-  <p class="intro">BIGBANG is a 3-member K-pop boy group under YG Entertainment, debuting in 2006. Fan club: V.I.P. Recent releases: BiiiG (2026), 봄여름가을겨울 (Still Life) (2022), 꽃 길 (2018).</p>
   
     <h2 id="members">Members</h2>
     <div class="faces">
@@ -179,86 +197,70 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
   
     <h2 id="songs">Fancams & stages by song</h2>
     <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/bigbang/s/뱅뱅뱅/">뱅뱅뱅 (BANG BANG BANG)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/bigbang/s/fantasticbaby/">FANTASTIC BABY</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/bigbang/s/뱅뱅뱅/">뱅뱅뱅 (BANG BANG BANG)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/bigbang/s/loser/">LOSER</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/bigbang/s/맨정신/">맨정신</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/bigbang/s/tonight/">TONIGHT</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/bigbang/s/baebae/">BAE BAE</a></li>
       <li><a href="https://kpop-universe.kr/en/g/bigbang/s/badboy/">BAD BOY</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/bigbang/s/붉은노을/">붉은노을</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/bigbang/s/맨정신/">맨정신</a></li>
       <li><a href="https://kpop-universe.kr/en/g/bigbang/s/lastdance/">LAST DANCE</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/bigbang/s/baebae/">BAE BAE</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/bigbang/s/tonight/">TONIGHT</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/bigbang/s/붉은노을/">붉은노을</a></li>
       <li><a href="https://kpop-universe.kr/en/g/bigbang/s/goodboy/">GOOD BOY</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/bigbang/s/쩔어/">쩔어 (GD &amp; T.O.P)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/bigbang/s/welike2party/">WE LIKE 2 PARTY</a></li>
       <li><a href="https://kpop-universe.kr/en/g/bigbang/s/fxxkit/">FXXK IT</a></li>
       <li><a href="https://kpop-universe.kr/en/g/bigbang/s/ifyou/">IF YOU</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/bigbang/s/쩔어/">쩔어 (GD &amp; T.O.P)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/bigbang/s/welike2party/">WE LIKE 2 PARTY</a></li>
       <li><a href="https://kpop-universe.kr/en/g/bigbang/s/lovesong/">LOVE SONG</a></li>
       <li><a href="https://kpop-universe.kr/en/g/bigbang/s/거짓말/">거짓말 (Lie)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/bigbang/s/sunsetglow/">Sunset Glow</a></li>
       <li><a href="https://kpop-universe.kr/en/g/bigbang/s/삐딱하게/">삐딱하게 (Crooked)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/bigbang/s/blue/">BLUE</a></li>
       <li><a href="https://kpop-universe.kr/en/g/bigbang/s/somebodytolove/">SOMEBODY TO LOVE</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/bigbang/s/하루하루/">하루하루 (Haru Haru)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/bigbang/s/천국/">천국 My Heaven</a></li>
       <li><a href="https://kpop-universe.kr/en/g/bigbang/s/vibe/">VIBE</a></li>
       <li><a href="https://kpop-universe.kr/en/g/bigbang/s/biiig/">BiiiG</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/bigbang/s/blue/">BLUE</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/bigbang/s/하루하루/">하루하루 (Haru Haru)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/bigbang/s/monster/">MONSTER</a></li>
       <li><a href="https://kpop-universe.kr/en/g/bigbang/s/haruharu/">Haru Haru</a></li>
       <li><a href="https://kpop-universe.kr/en/g/bigbang/s/봄여름가을겨울/">봄여름가을겨울 (Still Life)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/bigbang/s/우리사랑하지말아요/">우리 사랑하지 말아요</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/bigbang/s/monster/">MONSTER</a></li>
     </ul>
   
-    <h2 id="albums">Albums & tracklists</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/bigbang/a/made/">MADE</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/bigbang/a/bigbangspecialeditionstillalive/">BIGBANG SPECIAL EDITION &#39;STILL ALIVE&#39;</a> <span class="yr">2012</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/bigbang/a/alive/">Alive</a> <span class="yr">2012</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/bigbang/a/빅뱅스페셜에디션/">빅뱅 스페셜에디션</a> <span class="yr">2011</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/bigbang/a/tonight/">Tonight</a> <span class="yr">2011</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/bigbang/a/number1/">Number 1</a> <span class="yr">2008</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/bigbang/a/remember/">Remember</a> <span class="yr">2008</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/bigbang/a/standup/">Stand Up</a> <span class="yr">2008</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/bigbang/a/withu/">With U</a> <span class="yr">2008</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/bigbang/a/fortheworld/">For The World</a> <span class="yr">2008</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/bigbang/a/hotissue/">Hot Issue</a> <span class="yr">2007</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/bigbang/a/always/">Always</a> <span class="yr">2007</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/bigbang/a/bigbangvol1/">BIGBANG Vol.1</a> <span class="yr">2006</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/bigbang/a/bigbang/">BIGBANG</a> <span class="yr">2006</span></li>
-    </ul>
-  
-    <h2>Discography</h2>
-    <ul class="discog-list">
-      <li>BiiiG <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>봄여름가을겨울 (Still Life) <span class="yr">(2022)</span> <span class="tag">Single</span></li>
-      <li>꽃 길 <span class="yr">(2018)</span> <span class="tag">Single</span></li>
-      <li>MADE <span class="yr">(2016)</span> <span class="tag">3rd Album</span></li>
-      <li>E <span class="yr">(2015)</span> <span class="tag">Single</span></li>
-      <li>D <span class="yr">(2015)</span> <span class="tag">Single</span></li>
-      <li>A <span class="yr">(2015)</span> <span class="tag">Single</span></li>
-      <li>M <span class="yr">(2015)</span> <span class="tag">Single</span></li>
-      <li>BIGBANG SPECIAL EDITION &#39;STILL ALIVE&#39; <span class="yr">(2012)</span> <span class="tag">미니 5집 리패키지</span></li>
-      <li>Alive <span class="yr">(2012)</span> <span class="tag">5th EP</span></li>
-      <li>빅뱅 스페셜에디션 <span class="yr">(2011)</span> <span class="tag">Special</span></li>
-      <li>Tonight <span class="yr">(2011)</span> <span class="tag">4th EP</span></li>
-      <li>Tell Me Goodbye <span class="yr">(2010)</span> <span class="tag">Single</span></li>
-      <li>승리의 함성 (The Shouts Of Reds Part2) <span class="yr">(2010)</span> <span class="tag">Single</span></li>
-      <li>Lollipop Pt.2 (Digital Single) <span class="yr">(2010)</span> <span class="tag">Single</span></li>
-      <li>聲をきかせて / Koe Wo Kikasete (목소리를 들려줘) <span class="yr">(2009)</span> <span class="tag">Single</span></li>
-      <li>가라가라 고!! <span class="yr">(2009)</span> <span class="tag">Single</span></li>
-      <li>My Heaven <span class="yr">(2009)</span> <span class="tag">Single</span></li>
-      <li>So Fresh, So Cool <span class="yr">(2009)</span> <span class="tag">Single</span></li>
-      <li>Lollipop (Digital Single) <span class="yr">(2009)</span> <span class="tag">Single</span></li>
-      <li>FILA Limited Edition With Bigbang <span class="yr">(2008)</span> <span class="tag">Single</span></li>
-      <li>Number 1 <span class="yr">(2008)</span> <span class="tag">Album</span></li>
-      <li>Remember <span class="yr">(2008)</span> <span class="tag">2nd Album</span></li>
-      <li>Stand Up <span class="yr">(2008)</span> <span class="tag">3rd EP</span></li>
-      <li>With U <span class="yr">(2008)</span> <span class="tag">EP</span></li>
-      <li>For The World <span class="yr">(2008)</span> <span class="tag">EP</span></li>
-      <li>Hot Issue <span class="yr">(2007)</span> <span class="tag">2nd EP</span></li>
-      <li>Always <span class="yr">(2007)</span> <span class="tag">1st EP</span></li>
-      <li>BIGBANG Vol.1 <span class="yr">(2006)</span> <span class="tag">1st Album</span></li>
-      <li>BigBang 3 <span class="yr">(2006)</span> <span class="tag">Single</span></li>
-    </ul>
+    <h2 id="albums">Discography</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e024d02d148d2ae249bdd2991e3" alt="" loading="lazy"><span class="sp-tile-t">BiiiG</span><span class="sp-tile-n">2026 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/109/08/834/10908834_20220404174407_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">봄여름가을겨울 (Still Life)</span><span class="sp-tile-n">2022 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/47/314/10147314_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">꽃 길</span><span class="sp-tile-n">2018 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/bigbang/a/made/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/22/709/10022709_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">MADE</span><span class="sp-tile-n">2016 · 3rd Album</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/33/193/2333193_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">E</span><span class="sp-tile-n">2015 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/26/937/2326937_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">D</span><span class="sp-tile-n">2015 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/21/510/2321510_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">A</span><span class="sp-tile-n">2015 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/16/478/2316478_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">M</span><span class="sp-tile-n">2015 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/bigbang/a/bigbangspecialeditionstillalive/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/25/847/2125847_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BIGBANG SPECIAL EDITION &#39;STILL ALIVE&#39;</span><span class="sp-tile-n">2012 · 미니 5집 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/bigbang/a/alive/"><img src="https://cdnimg.melon.co.kr/cm/album/images/020/84/128/2084128_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Alive</span><span class="sp-tile-n">2012 · 5th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/bigbang/a/빅뱅스페셜에디션/"><img src="https://cdnimg.melon.co.kr/cm/album/images/012/36/055/1236055_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">빅뱅 스페셜에디션</span><span class="sp-tile-n">2011 · Special</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/bigbang/a/tonight/"><img src="https://cdnimg.melon.co.kr/cm/album/images/011/84/151/1184151_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Tonight</span><span class="sp-tile-n">2011 · 4th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/009/18/756/918756_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Tell Me Goodbye</span><span class="sp-tile-n">2010 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/008/86/054/886054_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">승리의 함성 (The Shouts Of Reds Part2)</span><span class="sp-tile-n">2010 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/008/06/252/806252_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Lollipop Pt.2 (Digital Single)</span><span class="sp-tile-n">2010 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/007/13/254/713254_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">聲をきかせて / Koe Wo Kikasete (목소리를 들려줘)</span><span class="sp-tile-n">2009 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/006/02/760/602760_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">가라가라 고!!</span><span class="sp-tile-n">2009 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/005/93/651/593651_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">My Heaven</span><span class="sp-tile-n">2009 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/005/33/857/533857_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">So Fresh, So Cool</span><span class="sp-tile-n">2009 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/005/28/151/528151_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Lollipop (Digital Single)</span><span class="sp-tile-n">2009 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/004/55/651/455651_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">FILA Limited Edition With Bigbang</span><span class="sp-tile-n">2008 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/bigbang/a/number1/"><img src="https://cdnimg.melon.co.kr/cm/album/images/003/98/679/398679_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Number 1</span><span class="sp-tile-n">2008 · Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/bigbang/a/remember/"><img src="https://cdnimg.melon.co.kr/cm/album/images/004/05/351/405351_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Remember</span><span class="sp-tile-n">2008 · 2nd Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/bigbang/a/standup/"><img src="https://cdnimg.melon.co.kr/cm/album/images/003/92/870/392870_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Stand Up</span><span class="sp-tile-n">2008 · 3rd EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/bigbang/a/withu/"><img src="https://cdnimg.melon.co.kr/cm/album/images/003/82/335/382335_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">With U</span><span class="sp-tile-n">2008 · EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/bigbang/a/fortheworld/"><img src="https://cdnimg.melon.co.kr/cm/album/images/003/62/856/362856_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">For The World</span><span class="sp-tile-n">2008 · EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/bigbang/a/hotissue/"><img src="https://cdnimg.melon.co.kr/cm/album/images/003/60/994/360994_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Hot Issue</span><span class="sp-tile-n">2007 · 2nd EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/bigbang/a/always/"><img src="https://cdnimg.melon.co.kr/cm/album/images/003/55/853/355853_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Always</span><span class="sp-tile-n">2007 · 1st EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/bigbang/a/bigbangvol1/"><img src="https://cdnimg.melon.co.kr/cm/album/images/003/37/138/337138_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BIGBANG Vol.1</span><span class="sp-tile-n">2006 · 1st Album</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/003/33/501/333501_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BigBang 3</span><span class="sp-tile-n">2006 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/bigbang/a/bigbang/"><img src="https://cdnimg.melon.co.kr/cm/album/images/003/28/008/328008_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BIGBANG</span><span class="sp-tile-n">2006 · Special</span></a>
+    </div>
   
     <h2>Related groups</h2>
     <ul class="member-list rel">
@@ -271,7 +273,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/빅뱅/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=빅뱅">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"뱅뱅뱅 (BANG BANG BANG)","s":"24 videos","img":"2ips2mM7Zqw","m":"뱅뱅뱅","h":"https://kpop-universe.kr/en/g/bigbang/s/뱅뱅뱅/"},{"k":"Member fancams","t":"Taeyang","s":"16 fancams","img":"5A2ti8VOaGs","h":"https://kpop-universe.kr/en/g/bigbang/taeyang/fancams/"},{"k":"Album","t":"MADE","s":"11 tracks","im":"https://cdnimg.melon.co.kr/cm/album/images/100/22/709/10022709_500.jpg","h":"https://kpop-universe.kr/en/g/bigbang/a/made/"},{"k":"Song fancams","t":"FANTASTIC BABY","s":"22 videos","img":"AAbokV76tkU","m":"FANTASTIC BABY","h":"https://kpop-universe.kr/en/g/bigbang/s/fantasticbaby/"},{"k":"Member fancams","t":"G-Dragon","s":"11 fancams","img":"-xkIx6qSjus","h":"https://kpop-universe.kr/en/g/bigbang/g-dragon/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"FANTASTIC BABY","s":"32 videos","img":"AAbokV76tkU","m":"FANTASTIC BABY","h":"https://kpop-universe.kr/en/g/bigbang/s/fantasticbaby/"},{"k":"Member fancams","t":"Taeyang","s":"16 fancams","img":"5A2ti8VOaGs","h":"https://kpop-universe.kr/en/g/bigbang/taeyang/fancams/"},{"k":"Album","t":"MADE","s":"11 tracks","im":"https://cdnimg.melon.co.kr/cm/album/images/100/22/709/10022709_500.jpg","h":"https://kpop-universe.kr/en/g/bigbang/a/made/"},{"k":"Song fancams","t":"뱅뱅뱅 (BANG BANG BANG)","s":"29 videos","img":"2ips2mM7Zqw","m":"뱅뱅뱅","h":"https://kpop-universe.kr/en/g/bigbang/s/뱅뱅뱅/"},{"k":"Member fancams","t":"G-Dragon","s":"11 fancams","img":"-xkIx6qSjus","h":"https://kpop-universe.kr/en/g/bigbang/g-dragon/fancams/"}]</script>
 </div>
 </body>
 </html>

@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="웨이션브이 직캠·무대 영상 857개를 조회수 순으로. 웨이션브이 멤버·데뷔일(2019.01.17)·소속사(Label V / SM). 음악방송 1위 7회. 직캠·무대 영상과 디스코그래피를 K-POP UNIVERSE에서.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/mcwsVyVapt0/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"웨이션브이","alternateName":"WayV","genre":"K-pop","foundingDate":"2019-01-17","url":"https://kpop-universe.kr/g/웨이션브이/","image":"https://img.youtube.com/vi/mcwsVyVapt0/maxresdefault.jpg","member":[{"@type":"Person","name":"쿤"},{"@type":"Person","name":"텐"},{"@type":"Person","name":"윈윈"},{"@type":"Person","name":"샤오쥔"},{"@type":"Person","name":"헨드리"},{"@type":"Person","name":"양양"},{"@type":"Person","name":"루카스"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"웨이션브이","alternateName":"WayV","genre":"K-pop","description":"5인조 보이그룹. Label V / SM. 2019년 데뷔. 팬덤명 웨이젠니. 대표 앨범 Vision Wings(2026), 白色定格 (Eternal White) - Winter Special Album(2025), BIG BANDS(2025).","foundingDate":"2019-01-17","url":"https://kpop-universe.kr/g/웨이션브이/","image":"https://img.youtube.com/vi/mcwsVyVapt0/maxresdefault.jpg","member":[{"@type":"Person","name":"쿤"},{"@type":"Person","name":"텐"},{"@type":"Person","name":"윈윈"},{"@type":"Person","name":"샤오쥔"},{"@type":"Person","name":"헨드리"},{"@type":"Person","name":"양양"},{"@type":"Person","name":"루카스"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -104,10 +123,9 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>팬덤명</b> 웨이젠니</span>
     </div>
     <div class="sns"><a class="sns-youtube" href="https://youtube.com/@WayV" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://instagram.com/wayvofficial" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/WayV_official" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://tiktok.com/@official_wayv" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-weverse" href="https://weverse.io/wayv" target="_blank" rel="noopener noreferrer">Weverse</a><a class="sns-namu" href="https://namu.wiki/w/WayV" target="_blank" rel="noopener noreferrer">나무위키</a></div>
-    <script type="application/json" id="kpu-facts">["이번 주 새 영상 12개","최근 음방 1위 · BIG BANDS (2025.07.29)","음방 1위 7회","모아둔 무대·영상 1,617개","가장 많이 본 영상 · 조회수 24M"]</script>
+    <script type="application/json" id="kpu-facts">["이번 주 새 영상 4개","최근 음방 1위 · BIG BANDS (2025.07.29)","음방 1위 7회","모아둔 무대·영상 1,617개","가장 많이 본 영상 · 조회수 24M"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
-  <p class="intro">5인조 보이그룹. Label V / SM. 2019년 데뷔. 팬덤명 웨이젠니. 대표 앨범 Vision Wings(2026), 白色定格 (Eternal White) - Winter Special Album(2025), BIG BANDS(2025).</p>
   
     <h2 id="members">멤버</h2>
     <div class="faces">
@@ -141,8 +159,8 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/웨이션브이/s/turnbacktime/">Turn Back Time</a></li>
       <li><a href="https://kpop-universe.kr/g/웨이션브이/s/visionwings/">Vision Wings</a></li>
       <li><a href="https://kpop-universe.kr/g/웨이션브이/s/bigbands/">BIG BANDS</a></li>
-      <li><a href="https://kpop-universe.kr/g/웨이션브이/s/sheawolf/">She A Wolf</a></li>
       <li><a href="https://kpop-universe.kr/g/웨이션브이/s/badalive/">Bad Alive</a></li>
+      <li><a href="https://kpop-universe.kr/g/웨이션브이/s/sheawolf/">She A Wolf</a></li>
       <li><a href="https://kpop-universe.kr/g/웨이션브이/s/onmyyouth/">On My Youth</a></li>
       <li><a href="https://kpop-universe.kr/g/웨이션브이/s/stunner/">STUNNER</a></li>
       <li><a href="https://kpop-universe.kr/g/웨이션브이/s/heysomebody/">Hey, Somebody</a></li>
@@ -165,49 +183,33 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/웨이션브이/s/regular/">Regular</a></li>
       <li><a href="https://kpop-universe.kr/g/웨이션브이/s/universe/">Universe</a></li>
       <li><a href="https://kpop-universe.kr/g/웨이션브이/s/callme/">Call Me</a></li>
+      <li><a href="https://kpop-universe.kr/g/웨이션브이/s/actionfigure/">Action Figure</a></li>
       <li><a href="https://kpop-universe.kr/g/웨이션브이/s/workit/">Work It</a></li>
       <li><a href="https://kpop-universe.kr/g/웨이션브이/s/birthday/">Birthday</a></li>
       <li><a href="https://kpop-universe.kr/g/웨이션브이/s/newride/">New Ride</a></li>
-      <li><a href="https://kpop-universe.kr/g/웨이션브이/s/actionfigure/">Action Figure</a></li>
       <li><a href="https://kpop-universe.kr/g/웨이션브이/s/gohigher/">Go Higher</a></li>
     </ul>
   
-    <h2 id="albums">앨범·수록곡</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/웨이션브이/a/visionwings/">Vision Wings</a> <span class="yr">2026</span></li>
-      <li><a href="https://kpop-universe.kr/g/웨이션브이/a/白色定格/">白色定格 (Eternal White) - Winter Special Album</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/g/웨이션브이/a/bigbands/">BIG BANDS</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/g/웨이션브이/a/frequency/">FREQUENCY</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/g/웨이션브이/a/thehighest/">The Highest</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/g/웨이션브이/a/givemethat/">Give Me That</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/g/웨이션브이/a/onmyyouth/">On My Youth</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/g/웨이션브이/a/phantom/">Phantom</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/g/웨이션브이/a/kickback/">Kick Back</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/g/웨이션브이/a/awakentheworld/">Awaken the World</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/g/웨이션브이/a/takeoverthemoon/">Take Over the Moon</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/g/웨이션브이/a/takeoff/">Take Off</a> <span class="yr">2019</span></li>
-    </ul>
-  
-    <h2>디스코그래피</h2>
-    <ul class="discog-list">
-      <li>Vision Wings <span class="yr">(2026)</span> <span class="tag">미니 8집</span></li>
-      <li>白色定格 (Eternal White) - Winter Special Album <span class="yr">(2025)</span> <span class="tag">스페셜</span></li>
-      <li>BIG BANDS <span class="yr">(2025)</span> <span class="tag">미니 7집</span></li>
-      <li>FREQUENCY <span class="yr">(2024)</span> <span class="tag">미니 6집</span></li>
-      <li>HIGH FIVE <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-      <li>The Highest <span class="yr">(2024)</span> <span class="tag">미니</span></li>
-      <li>Give Me That <span class="yr">(2024)</span> <span class="tag">미니 5집</span></li>
-      <li>On My Youth <span class="yr">(2023)</span> <span class="tag">정규 2집</span></li>
-      <li>Welcome To My Paradise <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>Phantom <span class="yr">(2022)</span> <span class="tag">미니 4집</span></li>
-      <li>Kick Back <span class="yr">(2021)</span> <span class="tag">미니 3집</span></li>
-      <li>Turn Back Time (Korean Ver.) <span class="yr">(2020)</span> <span class="tag">싱글</span></li>
-      <li>Awaken the World <span class="yr">(2020)</span> <span class="tag">정규 1집</span></li>
-      <li>Love Talk <span class="yr">(2019)</span> <span class="tag">싱글</span></li>
-      <li>Take Over the Moon <span class="yr">(2019)</span> <span class="tag">미니 2집</span></li>
-      <li>Take Off <span class="yr">(2019)</span> <span class="tag">미니 1집</span></li>
-      <li>The Vision <span class="yr">(2019)</span> <span class="tag">싱글</span></li>
-    </ul>
+    <h2 id="albums">디스코그래피</h2>
+    <div class="sp-tiles dg-tiles">
+      <a class="sp-tile" href="https://kpop-universe.kr/g/웨이션브이/a/visionwings/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/e5/64/e1/e564e1f1-fa4d-dabe-dd0a-96d9024561c8/888735956584.png/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Vision Wings</span><span class="sp-tile-n">2026 · 미니 8집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/웨이션브이/a/白色定格/"><img src="https://i.scdn.co/image/ab67616d00001e02697a7e266d2bd1b05e80b3e3" alt="" loading="lazy"><span class="sp-tile-t">白色定格 (Eternal White) - Winter Special Album</span><span class="sp-tile-n">2025 · 스페셜</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/웨이션브이/a/bigbands/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/b8/78/cc/b878cce6-d805-ed8b-4497-5bae1e80d43d/888735952807.png/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">BIG BANDS</span><span class="sp-tile-n">2025 · 미니 7집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/웨이션브이/a/frequency/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/62/76/3f/62763faf-66e0-9b48-0556-dfb887f1d46b/888735950216.png/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">FREQUENCY</span><span class="sp-tile-n">2024 · 미니 6집</span></a>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e022fe73a070ca9471270b87633" alt="" loading="lazy"><span class="sp-tile-t">HIGH FIVE</span><span class="sp-tile-n">2024 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/웨이션브이/a/thehighest/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/61/930/11561930_20240807152134_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">The Highest</span><span class="sp-tile-n">2024 · 미니</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/웨이션브이/a/givemethat/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/d2/2c/df/d22cdfcf-610f-e407-5e9f-5e9fdc75bedd/888735948114.png/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Give Me That</span><span class="sp-tile-n">2024 · 미니 5집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/웨이션브이/a/onmyyouth/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/6e/8a/10/6e8a10f9-d1ae-d982-6008-a9eb739ac068/WayV_DC_big_F.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">On My Youth</span><span class="sp-tile-n">2023 · 정규 2집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/38/476/11238476_20230504160101_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Welcome To My Paradise</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/웨이션브이/a/phantom/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/73/cc/90/73cc903e-5a5e-1b41-0464-71e4311702ca/Digital_Cover_WayV_Phantom.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Phantom</span><span class="sp-tile-n">2022 · 미니 4집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/웨이션브이/a/kickback/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/0d/62/ef/0d62eff6-5953-9863-024a-4b2aca991810/WayV_A_3_Kick_Back.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Kick Back</span><span class="sp-tile-n">2021 · 미니 3집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/46/846/10446846_20200618151558_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Turn Back Time (Korean Ver.)</span><span class="sp-tile-n">2020 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/웨이션브이/a/awakentheworld/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/ba/c8/02/bac8023f-481f-de80-14aa-1ee2ee935e2f/1._WayV_1_-.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Awaken the World</span><span class="sp-tile-n">2020 · 정규 1집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/47/300/10347300_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Love Talk</span><span class="sp-tile-n">2019 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/웨이션브이/a/takeoverthemoon/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/bd/83/6d/bd836d2d-4ce5-363c-9e7f-d17f9d5b7a1c/WayV_Take_Over_The_Moon-_-.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Take Over the Moon</span><span class="sp-tile-n">2019 · 미니 2집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/웨이션브이/a/takeoff/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/24/31/c9/2431c988-f355-2722-4dfb-051a9dfad924/WayV_TakeOff-Digital_Cover-R.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Take Off</span><span class="sp-tile-n">2019 · 미니 1집</span></a>
+      <div class="sp-tile"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/71/b2/1e/71b21ea1-aece-c8d1-a04d-f3ad5ce7038f/The_Vision-cover.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">The Vision</span><span class="sp-tile-n">2019 · 싱글</span></div>
+    </div>
   
     <h2>함께 보면 좋은 그룹</h2>
     <ul class="member-list rel">
@@ -222,7 +224,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/wayv/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=웨이션브이">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"Give Me That","s":"영상 103개","img":"7sejnU9YT6c","m":"Give Me That","h":"https://kpop-universe.kr/g/웨이션브이/s/givemethat/"},{"k":"멤버 직캠","t":"텐","s":"직캠 147개","img":"tTkIK6qfoCg","h":"https://kpop-universe.kr/g/웨이션브이/텐/fancams/"},{"k":"앨범","t":"Vision Wings","s":"수록곡 7곡","im":"https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/e5/64/e1/e564e1f1-fa4d-dabe-dd0a-96d9024561c8/888735956584.png/600x600bb.jpg","h":"https://kpop-universe.kr/g/웨이션브이/a/visionwings/"},{"k":"곡별 직캠·무대","t":"FREQUENCY","s":"영상 83개","img":"PYWntwKzwJ8","m":"FREQUENCY","h":"https://kpop-universe.kr/g/웨이션브이/s/frequency/"},{"k":"멤버 직캠","t":"샤오쥔","s":"직캠 107개","img":"tHCkOH_6IKc","h":"https://kpop-universe.kr/g/웨이션브이/샤오쥔/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"Give Me That","s":"영상 106개","img":"7sejnU9YT6c","m":"Give Me That","h":"https://kpop-universe.kr/g/웨이션브이/s/givemethat/"},{"k":"멤버 직캠","t":"텐","s":"직캠 147개","img":"tTkIK6qfoCg","h":"https://kpop-universe.kr/g/웨이션브이/텐/fancams/"},{"k":"앨범","t":"Vision Wings","s":"수록곡 7곡","im":"https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/e5/64/e1/e564e1f1-fa4d-dabe-dd0a-96d9024561c8/888735956584.png/600x600bb.jpg","h":"https://kpop-universe.kr/g/웨이션브이/a/visionwings/"},{"k":"곡별 직캠·무대","t":"FREQUENCY","s":"영상 88개","img":"PYWntwKzwJ8","m":"FREQUENCY","h":"https://kpop-universe.kr/g/웨이션브이/s/frequency/"},{"k":"멤버 직캠","t":"샤오쥔","s":"직캠 107개","img":"tHCkOH_6IKc","h":"https://kpop-universe.kr/g/웨이션브이/샤오쥔/fancams/"}]</script>
 </div>
 </body>
 </html>

@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="엔시티 127 직캠·무대 영상 1949개를 조회수 순으로(쟈니·태용·유타·도영·재현·정우·해찬). 엔시티 127 멤버·데뷔일(2016.07.10)·소속사(SM엔터테인먼트). 음악방송 1위 54회, 대상 2개, 밀리언셀러 앨범 1장. 직캠·무대 영상과 디스코그래피를 K-POP UNIVERSE에서.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/WJlynyFXexs/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"엔시티 127","alternateName":"NCT 127","genre":"K-pop","foundingDate":"2016-07-10","url":"https://kpop-universe.kr/g/엔시티 127/","image":"https://img.youtube.com/vi/WJlynyFXexs/maxresdefault.jpg","member":[{"@type":"Person","name":"쟈니"},{"@type":"Person","name":"태용"},{"@type":"Person","name":"유타"},{"@type":"Person","name":"도영"},{"@type":"Person","name":"재현"},{"@type":"Person","name":"정우"},{"@type":"Person","name":"마크"},{"@type":"Person","name":"해찬"},{"@type":"Person","name":"윈윈"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"엔시티 127","alternateName":"NCT 127","genre":"K-pop","description":"7인조 보이그룹. SM엔터테인먼트. 2016년 데뷔. 팬덤명 시즈니. 대표 앨범 BLINGY(2026), WALK(2024), Colors(2024).","foundingDate":"2016-07-10","url":"https://kpop-universe.kr/g/엔시티 127/","image":"https://img.youtube.com/vi/WJlynyFXexs/maxresdefault.jpg","member":[{"@type":"Person","name":"쟈니"},{"@type":"Person","name":"태용"},{"@type":"Person","name":"유타"},{"@type":"Person","name":"도영"},{"@type":"Person","name":"재현"},{"@type":"Person","name":"정우"},{"@type":"Person","name":"마크"},{"@type":"Person","name":"해찬"},{"@type":"Person","name":"윈윈"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["이번 주 새 영상 7개","최근 음방 1위 · Blingy (2026.09.05)","음방 1위 54회","모아둔 무대·영상 3,127개","가장 많이 본 영상 · 조회수 76M"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
-  <p class="intro">7인조 보이그룹. SM엔터테인먼트. 2016년 데뷔. 팬덤명 시즈니. 대표 앨범 BLINGY(2026), WALK(2024), Colors(2024).</p>
   
     <h2 id="members">멤버</h2>
     <div class="faces">
@@ -163,8 +181,8 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <ul class="member-list rel">
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/질주/">질주 (2 Baddies)</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/factcheck/">Fact Check (불가사의; 不可思議)</a></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 127/s/sticker/">Sticker</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/삐그덕/">삐그덕 (Walk)</a></li>
+      <li><a href="https://kpop-universe.kr/g/엔시티 127/s/sticker/">Sticker</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/blingy/">Blingy</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/ayyo/">Ay-Yo</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/faster/">Faster</a></li>
@@ -172,8 +190,8 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/영웅/">영웅 (英雄; Kick It)</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/dj/">DJ</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/baggyjeans/">Baggy Jeans</a></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 127/s/touch/">TOUCH</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/반딧불/">반딧불 (Little Light)</a></li>
+      <li><a href="https://kpop-universe.kr/g/엔시티 127/s/touch/">TOUCH</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/bethereforme/">Be There For Me</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/simonsays/">Simon Says</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/regular/">Regular</a></li>
@@ -183,21 +201,21 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/superhuman/">Superhuman</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/안녕우주/">안녕, 우주 (Memory)</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/parade/">Parade (행진)</a></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 127/s/piata/">Piñata</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/cherrybomb/">Cherry Bomb</a></li>
+      <li><a href="https://kpop-universe.kr/g/엔시티 127/s/piata/">Piñata</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/smoke/">Smoke</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/127/">1, 2, 7</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/punch/">Punch</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/universe/">Universe</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/noclue/">No Clue</a></li>
+      <li><a href="https://kpop-universe.kr/g/엔시티 127/s/사랑한다는말의뜻을알아가자/">사랑한다는 말의 뜻을 알아가자 (Meaning of Love)</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/다시만나는날/">다시 만나는 날 (Promise You)</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/chain/">Chain</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/sugar/">SUGAR</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/gas/">Gas</a></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 127/s/사랑한다는말의뜻을알아가자/">사랑한다는 말의 뜻을 알아가자 (Meaning of Love)</a></li>
+      <li><a href="https://kpop-universe.kr/g/엔시티 127/s/無限的我/">無限的我</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/boss/">BOSS</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/far/">Far</a></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 127/s/無限的我/">無限的我</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/skyscraper/">Skyscraper (摩天樓; 마천루)</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/새봄의노래/">새봄의 노래 (Beginning)</a></li>
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/crzy/">CRZY</a></li>
@@ -219,55 +237,34 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/엔시티 127/s/gimmegimme/">gimme gimme</a></li>
     </ul></details>
   
-    <h2 id="albums">앨범·수록곡</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/엔시티 127/a/blingy/">BLINGY</a> <span class="yr">2026</span></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 127/a/walk/">WALK</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 127/a/factcheck/">Fact Check</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 127/a/ayyo/">Ay-Yo</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 127/a/질주/">질주 (2 Baddies)</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 127/a/favoritethe3rdalbumrepackage/">Favorite - The 3rd Album Repackage</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 127/a/sticker/">Sticker</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 127/a/loveholic/">LOVEHOLIC</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 127/a/nct127neozonethefinalround/">NCT #127 Neo Zone The Final Round</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 127/a/nct127neozone/">NCT #127 Neo Zone</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 127/a/nct127wearesuperhuman/">NCT #127 WE ARE SUPERHUMAN</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 127/a/awaken/">Awaken</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 127/a/nct127regulate/">NCT #127 Regulate</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 127/a/nct127regularirregular/">NCT #127 Regular-Irregular</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 127/a/nct127cherrybomb/">NCT #127 CHERRY BOMB</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 127/a/nct127limitless/">NCT #127 LIMITLESS</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/엔시티 127/a/nct127/">NCT #127</a> <span class="yr">2016</span></li>
-    </ul>
-  
-    <h2>디스코그래피</h2>
-    <ul class="discog-list">
-      <li>BLINGY <span class="yr">(2026)</span> <span class="tag">정규 7집</span></li>
-      <li>WALK <span class="yr">(2024)</span> <span class="tag">정규 6집</span></li>
-      <li>Colors <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-      <li>Be There For Me - Winter Special Single <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>Fact Check <span class="yr">(2023)</span> <span class="tag">정규 5집</span></li>
-      <li>Sunny Road <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>Ay-Yo <span class="yr">(2023)</span> <span class="tag">리패키지</span></li>
-      <li>질주 (2 Baddies) <span class="yr">(2022)</span> <span class="tag">정규 4집</span></li>
-      <li>Favorite - The 3rd Album Repackage <span class="yr">(2021)</span> <span class="tag">정규 3집 리패키지</span></li>
-      <li>Sticker <span class="yr">(2021)</span> <span class="tag">정규 3집</span></li>
-      <li>Save <span class="yr">(2021)</span> <span class="tag">싱글</span></li>
-      <li>LOVEHOLIC <span class="yr">(2021)</span> <span class="tag">미니</span></li>
-      <li>NCT #127 Neo Zone The Final Round <span class="yr">(2020)</span> <span class="tag">리패키지</span></li>
-      <li>NCT #127 Neo Zone <span class="yr">(2020)</span> <span class="tag">정규 2집</span></li>
-      <li>Highway to Heaven <span class="yr">(2019)</span> <span class="tag">싱글</span></li>
-      <li>NCT #127 WE ARE SUPERHUMAN <span class="yr">(2019)</span> <span class="tag">미니 4집</span></li>
-      <li>Awaken <span class="yr">(2019)</span> <span class="tag">정규</span></li>
-      <li>NCT #127 Regulate <span class="yr">(2018)</span> <span class="tag">리패키지</span></li>
-      <li>NCT #127 Regular-Irregular <span class="yr">(2018)</span> <span class="tag">정규 1집</span></li>
-      <li>Touch <span class="yr">(2018)</span> <span class="tag">싱글</span></li>
-      <li>Chain <span class="yr">(2018)</span> <span class="tag">싱글</span></li>
-      <li>NCT #127 CHERRY BOMB <span class="yr">(2017)</span> <span class="tag">미니 3집</span></li>
-      <li>NCT #127 LIMITLESS <span class="yr">(2017)</span> <span class="tag">미니 2집</span></li>
-      <li>Taste The Feeling - SM STATION <span class="yr">(2016)</span> <span class="tag">싱글</span></li>
-      <li>NCT #127 <span class="yr">(2016)</span> <span class="tag">미니 1집</span></li>
-    </ul>
+    <h2 id="albums">디스코그래피</h2>
+    <div class="sp-tiles dg-tiles">
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엔시티 127/a/blingy/"><img src="https://i.scdn.co/image/ab67616d00001e02e54a22c0f4de92384b2c3dbf" alt="" loading="lazy"><span class="sp-tile-t">BLINGY</span><span class="sp-tile-n">2026 · 정규 7집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엔시티 127/a/walk/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/34/579/11534579_20240715135825_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">WALK</span><span class="sp-tile-n">2024 · 정규 6집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/95/700/11495700_20240522164801_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Colors</span><span class="sp-tile-n">2024 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/88/535/11388535_20231221164244_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Be There For Me - Winter Special Single</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엔시티 127/a/factcheck/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/39/400/11339400_20231005153430_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Fact Check</span><span class="sp-tile-n">2023 · 정규 5집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/31/794/11231794_20230426114245_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Sunny Road</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엔시티 127/a/ayyo/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/111/58/641/11158641_20230130141206_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Ay-Yo</span><span class="sp-tile-n">2023 · 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엔시티 127/a/질주/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/56/832/11056832_20220915150210_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">질주 (2 Baddies)</span><span class="sp-tile-n">2022 · 정규 4집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엔시티 127/a/favoritethe3rdalbumrepackage/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/107/51/155/10751155_20211025161054_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Favorite - The 3rd Album Repackage</span><span class="sp-tile-n">2021 · 정규 3집 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엔시티 127/a/sticker/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/107/03/942/10703942_20210917110116_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Sticker</span><span class="sp-tile-n">2021 · 정규 3집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/19/880/10619880_20210604103029_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Save</span><span class="sp-tile-n">2021 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엔시티 127/a/loveholic/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/53/410/10553410_20210126122751_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">LOVEHOLIC</span><span class="sp-tile-n">2021 · 미니</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엔시티 127/a/nct127neozonethefinalround/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/28/910/10428910_20200519153008_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">NCT #127 Neo Zone The Final Round</span><span class="sp-tile-n">2020 · 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엔시티 127/a/nct127neozone/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/91/380/10391380_20200306142806_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">NCT #127 Neo Zone</span><span class="sp-tile-n">2020 · 정규 2집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/103/08/878/10308878_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Highway to Heaven</span><span class="sp-tile-n">2019 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엔시티 127/a/nct127wearesuperhuman/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/84/718/10284718_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">NCT #127 WE ARE SUPERHUMAN</span><span class="sp-tile-n">2019 · 미니 4집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엔시티 127/a/awaken/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/75/043/10275043_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Awaken</span><span class="sp-tile-n">2019 · 정규</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엔시티 127/a/nct127regulate/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/25/508/10225508_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">NCT #127 Regulate</span><span class="sp-tile-n">2018 · 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엔시티 127/a/nct127regularirregular/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/10/444/10210444_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">NCT #127 Regular-Irregular</span><span class="sp-tile-n">2018 · 정규 1집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/08/777/10208777_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Touch</span><span class="sp-tile-n">2018 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/67/214/10167214_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Chain</span><span class="sp-tile-n">2018 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엔시티 127/a/nct127cherrybomb/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/71/172/10071172_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">NCT #127 CHERRY BOMB</span><span class="sp-tile-n">2017 · 미니 3집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엔시티 127/a/nct127limitless/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/28/650/10028650_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">NCT #127 LIMITLESS</span><span class="sp-tile-n">2017 · 미니 2집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/027/00/914/2700914_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Taste The Feeling - SM STATION</span><span class="sp-tile-n">2016 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/엔시티 127/a/nct127/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/96/324/2696324_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">NCT #127</span><span class="sp-tile-n">2016 · 미니 1집</span></a>
+    </div>
   
     <h2>함께 보면 좋은 그룹</h2>
     <ul class="member-list rel">
@@ -282,7 +279,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/nct-127/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=엔시티%20127">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"질주 (2 Baddies)","s":"영상 140개","img":"-JwH3Jgfyts","m":"질주","h":"https://kpop-universe.kr/g/엔시티 127/s/질주/"},{"k":"멤버 직캠","t":"재현","s":"직캠 230개","img":"PVa0zpoOVko","h":"https://kpop-universe.kr/g/엔시티 127/재현/fancams/"},{"k":"앨범","t":"BLINGY","s":"수록곡 9곡","im":"https://i.scdn.co/image/ab67616d0000b273e54a22c0f4de92384b2c3dbf","h":"https://kpop-universe.kr/g/엔시티 127/a/blingy/"},{"k":"곡별 직캠·무대","t":"Fact Check (불가사의; 不可思議)","s":"영상 130개","img":"IeUDEew2W6Q","m":"Fact Check","h":"https://kpop-universe.kr/g/엔시티 127/s/factcheck/"},{"k":"멤버 직캠","t":"마크","s":"직캠 230개","img":"9fRfVMTrszA","h":"https://kpop-universe.kr/g/엔시티 127/마크/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"질주 (2 Baddies)","s":"영상 143개","img":"-JwH3Jgfyts","m":"질주","h":"https://kpop-universe.kr/g/엔시티 127/s/질주/"},{"k":"멤버 직캠","t":"재현","s":"직캠 230개","img":"PVa0zpoOVko","h":"https://kpop-universe.kr/g/엔시티 127/재현/fancams/"},{"k":"앨범","t":"BLINGY","s":"수록곡 9곡","im":"https://i.scdn.co/image/ab67616d0000b273e54a22c0f4de92384b2c3dbf","h":"https://kpop-universe.kr/g/엔시티 127/a/blingy/"},{"k":"곡별 직캠·무대","t":"Fact Check (불가사의; 不可思議)","s":"영상 130개","img":"IeUDEew2W6Q","m":"Fact Check","h":"https://kpop-universe.kr/g/엔시티 127/s/factcheck/"},{"k":"멤버 직캠","t":"마크","s":"직캠 230개","img":"9fRfVMTrszA","h":"https://kpop-universe.kr/g/엔시티 127/마크/fancams/"}]</script>
 </div>
 </body>
 </html>

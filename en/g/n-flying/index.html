@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="509 N.Flying fancams and stages, most viewed first. N.Flying: members, debut 2015.05.20, FNC Entertainment. 3 music show wins. Fancams, stages and discography on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/R9L89LbMrs4/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"N.Flying","alternateName":"엔플라잉","genre":"K-pop","foundingDate":"2015-05-20","url":"https://kpop-universe.kr/en/g/n-flying/","image":"https://img.youtube.com/vi/R9L89LbMrs4/maxresdefault.jpg","member":[{"@type":"Person","name":"Lee Seung Hyub"},{"@type":"Person","name":"Cha Hoon"},{"@type":"Person","name":"Kim Jaehyun"},{"@type":"Person","name":"Yoo Hwe Seung"},{"@type":"Person","name":"Seo Dongsung"},{"@type":"Person","name":"Kwon Kwang Jin"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"N.Flying","alternateName":"엔플라잉","genre":"K-pop","description":"N.Flying is a 5-member K-pop boy group under FNC Entertainment, debuting in 2015. Fan club: N.Fia. Recent releases: Still (2026), 아는 결말 (Our Ending) (2026), 환절기 (換節期) (2026).","foundingDate":"2015-05-20","url":"https://kpop-universe.kr/en/g/n-flying/","image":"https://img.youtube.com/vi/R9L89LbMrs4/maxresdefault.jpg","member":[{"@type":"Person","name":"Lee Seung Hyub"},{"@type":"Person","name":"Cha Hoon"},{"@type":"Person","name":"Kim Jaehyun"},{"@type":"Person","name":"Yoo Hwe Seung"},{"@type":"Person","name":"Seo Dongsung"},{"@type":"Person","name":"Kwon Kwang Jin"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["2 new videos this week","Latest music show win · 만년설 (Everlasting) (2025.06.10)","3 music show wins","1,485 stages & videos collected","Most viewed · 73M views"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
-  <p class="intro">N.Flying is a 5-member K-pop boy group under FNC Entertainment, debuting in 2015. Fan club: N.Fia. Recent releases: Still (2026), 아는 결말 (Our Ending) (2026), 환절기 (換節期) (2026).</p>
   
     <h2 id="members">Members</h2>
     <div class="faces">
@@ -137,30 +155,30 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/n-flying/s/잔불/">잔불 (Still)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/n-flying/s/폭망/">폭망 (I Like You)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/n-flying/s/flashback/">Flashback</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/n-flying/s/봄이부시게/">봄이 부시게 (Spring Memories)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/n-flying/s/아진짜요/">아 진짜요. (Oh really.)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/n-flying/s/봄이부시게/">봄이 부시게 (Spring Memories)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/n-flying/s/굿밤/">굿밤 (GOOD BAM)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/n-flying/s/sober/">Sober</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/n-flying/s/lonely/">Lonely</a></li>
       <li><a href="https://kpop-universe.kr/en/g/n-flying/s/진짜가나타났다/">진짜가 나타났다 The Real</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/n-flying/s/howrutoday/">HOW R U TODAY</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/n-flying/s/upallnight/">UP ALL NIGHT</a></li>
       <li><a href="https://kpop-universe.kr/en/g/n-flying/s/놔/">놔 (Leave It)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/n-flying/s/뜨거운감자/">뜨거운 감자</a></li>
       <li><a href="https://kpop-universe.kr/en/g/n-flying/s/bluemoon/">Blue Moon</a></li>
       <li><a href="https://kpop-universe.kr/en/g/n-flying/s/hotpotato/">Hot Potato(Live-2019 Hall Tour -Kick Ass-)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/n-flying/s/네가내마음에자리잡았다/">네가 내 마음에 자리 잡았다 (Into You)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/n-flying/s/howrutoday/">HOW R U TODAY</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/n-flying/s/upallnight/">UP ALL NIGHT</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/n-flying/s/lonely/">Lonely</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/n-flying/s/기가막혀/">기가 막혀 (Awesome)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/n-flying/s/autumndream/">Autumn Dream</a></li>
       <li><a href="https://kpop-universe.kr/en/g/n-flying/s/flowerfantasy/">FLOWER FANTASY</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/n-flying/s/autumndream/">Autumn Dream</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/n-flying/s/기가막혀/">기가 막혀 (Awesome)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/n-flying/s/그랬나봐/">그랬나봐</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/n-flying/s/songbird/">Songbird</a></li>
       <li><a href="https://kpop-universe.kr/en/g/n-flying/s/그밤/">그 밤 (The Night)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/n-flying/s/thereal/">The Real(Live 2017 FNC KINGDOM -MIDNIGHT CIRCUS-)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/n-flying/s/그랬나봐/">그랬나봐</a></li>
       <li><a href="https://kpop-universe.kr/en/g/n-flying/s/환절기/">환절기 In Between Seasons</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/n-flying/s/songbird/">Songbird</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/n-flying/s/sunset/">Sunset</a></li>
       <li><a href="https://kpop-universe.kr/en/g/n-flying/s/뫼비우스/">뫼비우스 (Moebius)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/n-flying/s/star/">Star</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/n-flying/s/sunset/">Sunset</a></li>
       <li><a href="https://kpop-universe.kr/en/g/n-flying/s/starlight/">STARLIGHT</a></li>
       <li><a href="https://kpop-universe.kr/en/g/n-flying/s/꽃/">꽃 (Like a Flower)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/n-flying/s/골목길에서/">골목길에서</a></li>
@@ -169,51 +187,35 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/n-flying/s/클리커/">클리커 (Clicker)</a></li>
     </ul>
   
-    <h2 id="albums">Albums & tracklists</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/n-flying/a/still/">Still</a> <span class="yr">2026</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/n-flying/a/everlasting/">Everlasting</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/n-flying/a/dearest/">Dearest</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/n-flying/a/turbulence/">TURBULENCE</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/n-flying/a/manonthemoon/">Man on the Moon</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/n-flying/a/so通/">So, 通 (소통)</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/n-flying/a/야호/">야호(夜好)</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/n-flying/a/brotherhood/">BROTHERHOOD</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/n-flying/a/봄이부시게/">봄이 부시게</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/n-flying/a/nflying4thminialbum/">N.Flying 4TH MINI ALBUM [HOW ARE YOU?]</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/n-flying/a/nflying3rdminialbumthehottestnflying/">N.Flying 3rd Mini Album &#39;THE HOTTEST : N.Flying&#39;</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/n-flying/a/nflying2ndminialbumtherealnflying/">N.Flying 2nd Mini Album &#39;THE REAL : N.Flying&#39;</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/n-flying/a/기가막혀/">기가 막혀</a> <span class="yr">2015</span></li>
-    </ul>
-  
-    <h2>Discography</h2>
-    <ul class="discog-list">
-      <li>Still <span class="yr">(2026)</span> <span class="tag">9th EP</span></li>
-      <li>아는 결말 (Our Ending) <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>환절기 (換節期) <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>Everlasting <span class="yr">(2025)</span> <span class="tag">2nd Album</span></li>
-      <li>네가 내 마음에 자리 잡았다 <span class="yr">(2024)</span> <span class="tag">Single</span></li>
-      <li>Lover <span class="yr">(2023)</span> <span class="tag">Single</span></li>
-      <li>Once in a BLUE MOON <span class="yr">(2023)</span> <span class="tag">Single</span></li>
-      <li>Dearest <span class="yr">(2022)</span> <span class="tag">8th EP</span></li>
-      <li>Amnesia <span class="yr">(2021)</span> <span class="tag">Single</span></li>
-      <li>Man on the Moon <span class="yr">(2021)</span> <span class="tag">1st Album</span></li>
-      <li>STARLIGHT <span class="yr">(2020)</span> <span class="tag">Single</span></li>
-      <li>So, 通 (소통) <span class="yr">(2020)</span> <span class="tag">7th EP</span></li>
-      <li>다들어줄개 III <span class="yr">(2019)</span> <span class="tag">Single</span></li>
-      <li>Doll/Kick-Ass <span class="yr">(2019)</span> <span class="tag">Single</span></li>
-      <li>야호(夜好) <span class="yr">(2019)</span> <span class="tag">6th EP</span></li>
-      <li>BROTHERHOOD <span class="yr">(2019)</span> <span class="tag">Album</span></li>
-      <li>봄이 부시게 <span class="yr">(2019)</span> <span class="tag">5th EP</span></li>
-      <li>FLY HIGH PROJECT #2 &#39;옥탑방&#39; <span class="yr">(2019)</span> <span class="tag">Single</span></li>
-      <li>FLY HIGH PROJECT #1 &#39;꽃&#39; <span class="yr">(2018)</span> <span class="tag">Single</span></li>
-      <li>N.Flying 4TH MINI ALBUM [HOW ARE YOU?] <span class="yr">(2018)</span> <span class="tag">4th EP</span></li>
-      <li>N.Flying 3rd Mini Album &#39;THE HOTTEST : N.Flying&#39; <span class="yr">(2018)</span> <span class="tag">3rd EP</span></li>
-      <li>N.Flying 2nd Mini Album &#39;THE REAL : N.Flying&#39; <span class="yr">(2017)</span> <span class="tag">2nd EP</span></li>
-      <li>Endless Summer <span class="yr">(2016)</span> <span class="tag">Single</span></li>
-      <li>Lonely <span class="yr">(2015)</span> <span class="tag">Single</span></li>
-      <li>기가 막혀 <span class="yr">(2015)</span> <span class="tag">1st EP</span></li>
-    </ul>
+    <h2 id="albums">Discography</h2>
+    <div class="sp-tiles dg-tiles">
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/n-flying/a/still/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/146/25/616/14625616_20261006174429_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Still</span><span class="sp-tile-n">2026 · 9th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/145/75/535/14575535_20260922110121_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">아는 결말 (Our Ending)</span><span class="sp-tile-n">2026 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/136/93/466/13693466_20260528113944_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">환절기 (換節期)</span><span class="sp-tile-n">2026 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/n-flying/a/everlasting/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/118/33/677/11833677_20250527173238_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Everlasting</span><span class="sp-tile-n">2025 · 2nd Album</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/20/156/11520156_20240624152617_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">네가 내 마음에 자리 잡았다</span><span class="sp-tile-n">2024 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/76/569/11276569_20230629163638_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Lover</span><span class="sp-tile-n">2023 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/48/657/11248657_20230519153325_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Once in a BLUE MOON</span><span class="sp-tile-n">2023 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/n-flying/a/dearest/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/73/649/11073649_20221007180039_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Dearest</span><span class="sp-tile-n">2022 · 8th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/n-flying/a/turbulence/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/107/32/802/10732802_20211006114535_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">TURBULENCE</span><span class="sp-tile-n">2021 · Repackage</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/40/341/10640341_20210629154546_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Amnesia</span><span class="sp-tile-n">2021 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/n-flying/a/manonthemoon/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/21/180/10621180_20210607140232_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Man on the Moon</span><span class="sp-tile-n">2021 · 1st Album</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/66/816/10466816_20200724143944_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">STARLIGHT</span><span class="sp-tile-n">2020 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/n-flying/a/so通/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/40/418/10440418_20200610155925_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">So, 通 (소통)</span><span class="sp-tile-n">2020 · 7th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/67/144/10367144_20191219174745_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">다들어줄개 III</span><span class="sp-tile-n">2019 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/50/682/10350682_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Doll/Kick-Ass</span><span class="sp-tile-n">2019 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/n-flying/a/야호/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/38/871/10338871_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">야호(夜好)</span><span class="sp-tile-n">2019 · 6th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/n-flying/a/brotherhood/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/88/410/10288410_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BROTHERHOOD</span><span class="sp-tile-n">2019 · Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/n-flying/a/봄이부시게/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/77/761/10277761_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">봄이 부시게</span><span class="sp-tile-n">2019 · 5th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/38/711/10238711_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">FLY HIGH PROJECT #2 &#39;옥탑방&#39;</span><span class="sp-tile-n">2019 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/16/656/10216656_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">FLY HIGH PROJECT #1 &#39;꽃&#39;</span><span class="sp-tile-n">2018 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/n-flying/a/nflying4thminialbum/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/67/585/10167585_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">N.Flying 4TH MINI ALBUM [HOW ARE YOU?]</span><span class="sp-tile-n">2018 · 4th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/n-flying/a/nflying3rdminialbumthehottestnflying/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/24/795/10124795_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">N.Flying 3rd Mini Album &#39;THE HOTTEST : N.Flying&#39;</span><span class="sp-tile-n">2018 · 3rd EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/n-flying/a/nflying2ndminialbumtherealnflying/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/84/834/10084834_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">N.Flying 2nd Mini Album &#39;THE REAL : N.Flying&#39;</span><span class="sp-tile-n">2017 · 2nd EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/95/916/2695916_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Endless Summer</span><span class="sp-tile-n">2016 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/45/357/2645357_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Lonely</span><span class="sp-tile-n">2015 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/n-flying/a/기가막혀/"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/19/554/2319554_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">기가 막혀</span><span class="sp-tile-n">2015 · 1st EP</span></a>
+    </div>
   
     <h2>Related groups</h2>
     <ul class="member-list rel">
@@ -228,7 +230,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/엔플라잉/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=엔플라잉">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"Moonshot","s":"45 videos","img":"aJX1rqwmlLw","m":"Moonshot","h":"https://kpop-universe.kr/en/g/n-flying/s/moonshot/"},{"k":"Member fancams","t":"Lee Seung Hyub","s":"47 fancams","img":"t17fnPbpbpY","h":"https://kpop-universe.kr/en/g/n-flying/lee-seung-hyub/fancams/"},{"k":"Album","t":"Still","s":"7 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/146/25/616/14625616_20261006174429_500.jpg","h":"https://kpop-universe.kr/en/g/n-flying/a/still/"},{"k":"Song fancams","t":"만년설 (Everlasting)","s":"40 videos","img":"2L_W8hPpdhg","m":"만년설","h":"https://kpop-universe.kr/en/g/n-flying/s/만년설/"},{"k":"Member fancams","t":"Yoo Hwe Seung","s":"33 fancams","img":"8261BMr1PoY","h":"https://kpop-universe.kr/en/g/n-flying/yoo-hwe-seung/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"Moonshot","s":"45 videos","img":"aJX1rqwmlLw","m":"Moonshot","h":"https://kpop-universe.kr/en/g/n-flying/s/moonshot/"},{"k":"Member fancams","t":"Lee Seung Hyub","s":"47 fancams","img":"t17fnPbpbpY","h":"https://kpop-universe.kr/en/g/n-flying/lee-seung-hyub/fancams/"},{"k":"Album","t":"Still","s":"7 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/146/25/616/14625616_20261006174429_500.jpg","h":"https://kpop-universe.kr/en/g/n-flying/a/still/"},{"k":"Song fancams","t":"만년설 (Everlasting)","s":"41 videos","img":"2L_W8hPpdhg","m":"만년설","h":"https://kpop-universe.kr/en/g/n-flying/s/만년설/"},{"k":"Member fancams","t":"Yoo Hwe Seung","s":"33 fancams","img":"8261BMr1PoY","h":"https://kpop-universe.kr/en/g/n-flying/yoo-hwe-seung/fancams/"}]</script>
 </div>
 </body>
 </html>

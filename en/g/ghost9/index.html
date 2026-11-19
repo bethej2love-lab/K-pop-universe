@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="389 GHOST9 fancams and stages, most viewed first (Shin, Son Junhyung, Lee Kangseong, Choi Junseong, Prince, Lee Woojin, Lee Jinwoo). GHOST9: members, debut 2020.09.23, 마루기획. Fancams, stages and discography on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/raGlhGiLy0A/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"GHOST9","alternateName":"고스트나인","genre":"K-pop","foundingDate":"2020-09-23","url":"https://kpop-universe.kr/en/g/ghost9/","image":"https://img.youtube.com/vi/raGlhGiLy0A/maxresdefault.jpg","member":[{"@type":"Person","name":"Shin"},{"@type":"Person","name":"Son Junhyung"},{"@type":"Person","name":"Lee Kangseong"},{"@type":"Person","name":"Choi Junseong"},{"@type":"Person","name":"Prince"},{"@type":"Person","name":"Lee Woojin"},{"@type":"Person","name":"Lee Jinwoo"},{"@type":"Person","name":"Hwang Dongjun"},{"@type":"Person","name":"Lee Taeseung"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"GHOST9","alternateName":"고스트나인","genre":"K-pop","description":"GHOST9 is a 7-member K-pop boy group under 마루기획, debuting in 2020. Fan club: Ghostie. Recent releases: Moonlight (2026), 서있을게(Down for you) (2024), Awesome day (2024).","foundingDate":"2020-09-23","url":"https://kpop-universe.kr/en/g/ghost9/","image":"https://img.youtube.com/vi/raGlhGiLy0A/maxresdefault.jpg","member":[{"@type":"Person","name":"Shin"},{"@type":"Person","name":"Son Junhyung"},{"@type":"Person","name":"Lee Kangseong"},{"@type":"Person","name":"Choi Junseong"},{"@type":"Person","name":"Prince"},{"@type":"Person","name":"Lee Woojin"},{"@type":"Person","name":"Lee Jinwoo"},{"@type":"Person","name":"Hwang Dongjun"},{"@type":"Person","name":"Lee Taeseung"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["1 new video this week","1,421 stages & videos collected","Most viewed · 13M views"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
-  <p class="intro">GHOST9 is a 7-member K-pop boy group under 마루기획, debuting in 2020. Fan club: Ghostie. Recent releases: Moonlight (2026), 서있을게(Down for you) (2024), Awesome day (2024).</p>
   
     <h2 id="members">Members</h2>
     <div class="faces">
@@ -133,8 +151,8 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/ghost9/s/밤샜다/">밤샜다 (Up All Night)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ghost9/s/xray/">X-Ray</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ghost9/s/thinkofdawn/">Think of Dawn</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/ghost9/s/wall/">W.ALL</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ghost9/s/ruckus/">RUCKUS</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/ghost9/s/wall/">W.ALL</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ghost9/s/fever/">FEVER</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ghost9/s/monster/">MONSTER</a></li>
       <li><a href="https://kpop-universe.kr/en/g/ghost9/s/champion/">CHAMPION</a></li>
@@ -143,32 +161,20 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/ghost9/s/째깍째깍/">째깍째깍 (Awesome day)</a></li>
     </ul>
   
-    <h2 id="albums">Albums & tracklists</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/ghost9/a/arcadeo/">ARCADE : O</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/ghost9/a/listenup/">Listen-Up(리슨업) EP.5</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/ghost9/a/arcadev/">ARCADE : V</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/ghost9/a/nowwhowearefacing/">NOW : Who we are facing</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/ghost9/a/nowwhenweareinlove/">NOW : When we are in Love</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/ghost9/a/nowwherewearehere/">NOW : Where we are, here</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/ghost9/a/preepisode2wall/">PRE EPISODE 2 : W.ALL</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/ghost9/a/preepisode1door/">PRE EPISODE 1 : DOOR</a> <span class="yr">2020</span></li>
-    </ul>
-  
-    <h2>Discography</h2>
-    <ul class="discog-list">
-      <li>Moonlight <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>서있을게(Down for you) <span class="yr">(2024)</span> <span class="tag">Single</span></li>
-      <li>Awesome day <span class="yr">(2024)</span> <span class="tag">Single</span></li>
-      <li>ARCADE : O <span class="yr">(2023)</span> <span class="tag">7th EP</span></li>
-      <li>Listen-Up(리슨업) EP.5 <span class="yr">(2022)</span> <span class="tag">Special</span></li>
-      <li>ARCADE : V <span class="yr">(2022)</span> <span class="tag">6th EP</span></li>
-      <li>NOW : Who we are facing <span class="yr">(2021)</span> <span class="tag">5th EP</span></li>
-      <li>NOW : When we are in Love <span class="yr">(2021)</span> <span class="tag">4th EP</span></li>
-      <li>NOW : Where we are, here <span class="yr">(2021)</span> <span class="tag">3rd EP</span></li>
-      <li>PRE EPISODE 2 : W.ALL <span class="yr">(2020)</span> <span class="tag">2nd EP</span></li>
-      <li>PRE EPISODE 1 : DOOR <span class="yr">(2020)</span> <span class="tag">1st EP</span></li>
-    </ul>
+    <h2 id="albums">Discography</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/145/72/170/14572170_20260921163401_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Moonlight</span><span class="sp-tile-n">2026 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/76/361/11676361_20241223121105_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">서있을게(Down for you)</span><span class="sp-tile-n">2024 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/05/797/11505797_20240605131743_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Awesome day</span><span class="sp-tile-n">2024 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ghost9/a/arcadeo/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/50/303/11350303_20231024162210_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ARCADE : O</span><span class="sp-tile-n">2023 · 7th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ghost9/a/listenup/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/38/671/11038671_20220826110257_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Listen-Up(리슨업) EP.5</span><span class="sp-tile-n">2022 · Special</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ghost9/a/arcadev/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/109/13/275/10913275_20220407111652_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ARCADE : V</span><span class="sp-tile-n">2022 · 6th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ghost9/a/nowwhowearefacing/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/107/90/777/10790777_20211124173100_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">NOW : Who we are facing</span><span class="sp-tile-n">2021 · 5th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ghost9/a/nowwhenweareinlove/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/19/055/10619055_20210603113954_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">NOW : When we are in Love</span><span class="sp-tile-n">2021 · 4th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ghost9/a/nowwherewearehere/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/75/867/10575867_20210310165315_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">NOW : Where we are, here</span><span class="sp-tile-n">2021 · 3rd EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ghost9/a/preepisode2wall/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/31/727/10531727_20201209181118_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">PRE EPISODE 2 : W.ALL</span><span class="sp-tile-n">2020 · 2nd EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/ghost9/a/preepisode1door/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/94/462/10494462_20200922174614_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">PRE EPISODE 1 : DOOR</span><span class="sp-tile-n">2020 · 1st EP</span></a>
+    </div>
   
     <h2>Related groups</h2>
     <ul class="member-list rel">
@@ -183,7 +189,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/고스트나인/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=고스트나인">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"Control","s":"75 videos","img":"WeX17mX3Tbo","m":"Control","h":"https://kpop-universe.kr/en/g/ghost9/s/control/"},{"k":"Member fancams","t":"Lee Jinwoo","s":"28 fancams","img":"-hEgAefbeCc","h":"https://kpop-universe.kr/en/g/ghost9/lee-jinwoo/fancams/"},{"k":"Album","t":"ARCADE : O","s":"6 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/113/50/303/11350303_20231024162210_500.jpg","h":"https://kpop-universe.kr/en/g/ghost9/a/arcadeo/"},{"k":"Song fancams","t":"SEOUL","s":"73 videos","img":"WtYnxxZ6EVE","m":"SEOUL","h":"https://kpop-universe.kr/en/g/ghost9/s/seoul/"},{"k":"Member fancams","t":"Lee Kangseong","s":"23 fancams","img":"cQVUdxPQ9gY","h":"https://kpop-universe.kr/en/g/ghost9/lee-kangseong/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"Control","s":"75 videos","img":"WeX17mX3Tbo","m":"Control","h":"https://kpop-universe.kr/en/g/ghost9/s/control/"},{"k":"Member fancams","t":"Lee Jinwoo","s":"28 fancams","img":"-hEgAefbeCc","h":"https://kpop-universe.kr/en/g/ghost9/lee-jinwoo/fancams/"},{"k":"Album","t":"ARCADE : O","s":"6 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/113/50/303/11350303_20231024162210_500.jpg","h":"https://kpop-universe.kr/en/g/ghost9/a/arcadeo/"},{"k":"Song fancams","t":"SEOUL","s":"74 videos","img":"WtYnxxZ6EVE","m":"SEOUL","h":"https://kpop-universe.kr/en/g/ghost9/s/seoul/"},{"k":"Member fancams","t":"Lee Kangseong","s":"23 fancams","img":"cQVUdxPQ9gY","h":"https://kpop-universe.kr/en/g/ghost9/lee-kangseong/fancams/"}]</script>
 </div>
 </body>
 </html>

@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="25 S.E.S. fancams and stages, most viewed first. S.E.S.: members, debut 1997.11.28, SM Entertainment. Fancams, stages and discography on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/asf16ziTgYY/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"S.E.S.","genre":"K-pop","foundingDate":"1997-11-28","url":"https://kpop-universe.kr/en/g/s-e-s/","image":"https://img.youtube.com/vi/asf16ziTgYY/maxresdefault.jpg","member":[{"@type":"Person","name":"Bada"},{"@type":"Person","name":"Eugene"},{"@type":"Person","name":"Shoo"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"S.E.S.","genre":"K-pop","description":"S.E.S. was K-pop girl group under SM Entertainment, debuting in 1997. Recent releases: Umi no Aurora (2025), I'm your Girl (2025), Yume wo Kasanete (2023).","foundingDate":"1997-11-28","url":"https://kpop-universe.kr/en/g/s-e-s/","image":"https://img.youtube.com/vi/asf16ziTgYY/maxresdefault.jpg","member":[{"@type":"Person","name":"Bada"},{"@type":"Person","name":"Eugene"},{"@type":"Person","name":"Shoo"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["87 stages & videos collected","Most viewed · 7.5M views"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
-  <p class="intro">S.E.S. was K-pop girl group under SM Entertainment, debuting in 1997. Recent releases: Umi no Aurora (2025), I&#39;m your Girl (2025), Yume wo Kasanete (2023).</p>
   
     <h2 id="members">Members</h2>
     <div class="faces">
@@ -124,50 +142,34 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <ul class="member-list rel">
       <li><a href="https://kpop-universe.kr/en/g/s-e-s/s/love/">Love</a></li>
       <li><a href="https://kpop-universe.kr/en/g/s-e-s/s/국지성호우/">국지성 호우</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/s-e-s/s/justafeeling/">Just a Feeling</a></li>
       <li><a href="https://kpop-universe.kr/en/g/s-e-s/s/dreamscometrue/">Dreams Come True</a></li>
     </ul>
   
-    <h2 id="albums">Albums & tracklists</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/s-e-s/a/aitoiunanohokori/">Ai to Iu Na no Hokori</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/s-e-s/a/reachout/">REACH OUT</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/s-e-s/a/heretheresessinglecollection/">HERE &amp; THERE -S.E.S Single Collection</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/s-e-s/a/lovinyou/">Lovin&#39; you</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/s-e-s/a/remember20thanniversaryspecialalbum/">Remember - 20th Anniversary Special Album</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/s-e-s/a/shooeugeneseafriend/">Shoo. Eugene. Sea - Friend</a> <span class="yr">2002</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/s-e-s/a/choosemylifeu/">Choose My Life-U</a> <span class="yr">2002</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/s-e-s/a/surprise45집/">Surprise - 4.5집</a> <span class="yr">2001</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/s-e-s/a/aletterfromgreenland4집/">A Letter from Greenland - 4집</a> <span class="yr">2000</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/s-e-s/a/beeverwonderful/">Be Ever Wonderful</a> <span class="yr">2000</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/s-e-s/a/love/">Love</a> <span class="yr">1999</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/s-e-s/a/seaeugeneshoo2집/">Sea &amp; Eugene &amp; Shoo - 2집</a> <span class="yr">1998</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/s-e-s/a/ses1집/">S.E.S. - 1집</a> <span class="yr">1997</span></li>
-    </ul>
-  
-    <h2>Discography</h2>
-    <ul class="discog-list">
-      <li>Umi no Aurora <span class="yr">(2025)</span> <span class="tag">Single</span></li>
-      <li>I&#39;m your Girl <span class="yr">(2025)</span> <span class="tag">EP</span></li>
-      <li>Yume wo Kasanete <span class="yr">(2023)</span> <span class="tag">Single</span></li>
-      <li>Ai to Iu Na no Hokori <span class="yr">(2023)</span> <span class="tag">EP</span></li>
-      <li>Meguriau Sekai <span class="yr">(2023)</span> <span class="tag">Single</span></li>
-      <li>REACH OUT <span class="yr">(2023)</span> <span class="tag">Album</span></li>
-      <li>HERE &amp; THERE -S.E.S Single Collection <span class="yr">(2023)</span> <span class="tag">Album</span></li>
-      <li>T.O.P. (Twinkling of paradise) <span class="yr">(2023)</span> <span class="tag">Single</span></li>
-      <li>Lovin&#39; you <span class="yr">(2023)</span> <span class="tag">EP</span></li>
-      <li>Remember - 20th Anniversary Special Album <span class="yr">(2017)</span> <span class="tag">Special</span></li>
-      <li>Love [Story] <span class="yr">(2016)</span> <span class="tag">Single</span></li>
-      <li>Shoo. Eugene. Sea - Friend <span class="yr">(2002)</span> <span class="tag">Special</span></li>
-      <li>Choose My Life-U <span class="yr">(2002)</span> <span class="tag">5th Album</span></li>
-      <li>Surprise - 4.5집 <span class="yr">(2001)</span> <span class="tag">Special</span></li>
-      <li>A Letter from Greenland - 4집 <span class="yr">(2000)</span> <span class="tag">4th Album</span></li>
-      <li>Be Ever Wonderful <span class="yr">(2000)</span> <span class="tag">Album</span></li>
-      <li>Love <span class="yr">(1999)</span> <span class="tag">3rd Album</span></li>
-      <li>T.O.P. (Twinkling Of Paradise) <span class="yr">(1999)</span> <span class="tag">Single</span></li>
-      <li>(사랑)이라는 이름의 명성 <span class="yr">(1999)</span> <span class="tag">Single</span></li>
-      <li>Sea &amp; Eugene &amp; Shoo - 2집 <span class="yr">(1998)</span> <span class="tag">2nd Album</span></li>
-      <li>S.E.S. - 1집 <span class="yr">(1997)</span> <span class="tag">1st Album</span></li>
-    </ul>
+    <h2 id="albums">Discography</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/56/360/11756360_20250331152318_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Umi no Aurora</span><span class="sp-tile-n">2025 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/56/334/11756334_20250331152201_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">I&#39;m your Girl</span><span class="sp-tile-n">2025 · EP</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/83/761/11383761_20231213114924_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Yume wo Kasanete</span><span class="sp-tile-n">2023 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/s-e-s/a/aitoiunanohokori/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/83/760/11383760_20231213114918_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Ai to Iu Na no Hokori</span><span class="sp-tile-n">2023 · EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/83/757/11383757_20231213114851_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Meguriau Sekai</span><span class="sp-tile-n">2023 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/s-e-s/a/reachout/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/78/071/11378071_20231204185046_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">REACH OUT</span><span class="sp-tile-n">2023 · Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/s-e-s/a/heretheresessinglecollection/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/76/701/11376701_20231201112053_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">HERE &amp; THERE -S.E.S Single Collection</span><span class="sp-tile-n">2023 · Album</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/74/336/11374336_20231129100759_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">T.O.P. (Twinkling of paradise)</span><span class="sp-tile-n">2023 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/s-e-s/a/lovinyou/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/74/337/11374337_20231129100858_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Lovin&#39; you</span><span class="sp-tile-n">2023 · EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/s-e-s/a/remember20thanniversaryspecialalbum/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/56/6c/a4/566ca45e-0c53-208b-cc6d-f54a65fb6391/contsched.rrghvbad.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Remember - 20th Anniversary Special Album</span><span class="sp-tile-n">2017 · Special</span></a>
+      <div class="sp-tile"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music71/v4/a1/f2/4b/a1f24b21-3cc7-e8d9-725a-2bbbb73a7e39/SES_station_cover.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Love [Story]</span><span class="sp-tile-n">2016 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/s-e-s/a/shooeugeneseafriend/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music18/v4/75/22/a3/7522a3b5-4416-39b5-d13a-2da7e4161a8e/mzm.bpjiugdr.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Shoo. Eugene. Sea - Friend</span><span class="sp-tile-n">2002 · Special</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/s-e-s/a/choosemylifeu/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/7a/0f/df/7a0fdfda-aa99-6b19-e590-4591cc073227/ses_U.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Choose My Life-U</span><span class="sp-tile-n">2002 · 5th Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/s-e-s/a/surprise45집/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music69/v4/9e/b1/ae/9eb1ae38-3757-fe4b-122c-62c0c2c85f0f/ses_surprise.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Surprise - 4.5집</span><span class="sp-tile-n">2001 · Special</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/s-e-s/a/aletterfromgreenland4집/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music69/v4/16/5a/a3/165aa370-c8ec-1fbc-6ce8-5fcb494265e6/ses_4th.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">A Letter from Greenland - 4집</span><span class="sp-tile-n">2000 · 4th Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/s-e-s/a/beeverwonderful/"><img src="https://cdnimg.melon.co.kr/cm/album/images/000/80/021/80021_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Be Ever Wonderful</span><span class="sp-tile-n">2000 · Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/s-e-s/a/love/"><img src="https://cdnimg.melon.co.kr/cm/album/images/000/05/394/5394_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Love</span><span class="sp-tile-n">1999 · 3rd Album</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/000/80/022/80022_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">T.O.P. (Twinkling Of Paradise)</span><span class="sp-tile-n">1999 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/000/80/235/80235_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">(사랑)이라는 이름의 명성</span><span class="sp-tile-n">1999 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/s-e-s/a/seaeugeneshoo2집/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/08/02/57/08025725-a6bb-2692-a6bc-6d12f6f20698/mzm.zdiivoem.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Sea &amp; Eugene &amp; Shoo - 2집</span><span class="sp-tile-n">1998 · 2nd Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/s-e-s/a/ses1집/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/34/7c/5f/347c5f8c-f792-e629-918e-bce5db845e0d/ses_1st.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">S.E.S. - 1집</span><span class="sp-tile-n">1997 · 1st Album</span></a>
+    </div>
   
     <h2>Related groups</h2>
     <ul class="member-list rel">
@@ -182,7 +184,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/S.E.S/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=S.E.S.">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"Love","s":"5 videos","img":"g3-N701TQCU","m":"Love","h":"https://kpop-universe.kr/en/g/s-e-s/s/love/"},{"k":"Album","t":"Ai to Iu Na no Hokori","s":"4 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/113/83/760/11383760_20231213114918_500.jpg","h":"https://kpop-universe.kr/en/g/s-e-s/a/aitoiunanohokori/"},{"k":"Song fancams","t":"국지성 호우","s":"5 videos","img":"31VoA1UMyXI","m":"국지성 호우","h":"https://kpop-universe.kr/en/g/s-e-s/s/국지성호우/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"Love","s":"6 videos","img":"g3-N701TQCU","m":"Love","h":"https://kpop-universe.kr/en/g/s-e-s/s/love/"},{"k":"Album","t":"Ai to Iu Na no Hokori","s":"4 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/113/83/760/11383760_20231213114918_500.jpg","h":"https://kpop-universe.kr/en/g/s-e-s/a/aitoiunanohokori/"},{"k":"Song fancams","t":"국지성 호우","s":"5 videos","img":"31VoA1UMyXI","m":"국지성 호우","h":"https://kpop-universe.kr/en/g/s-e-s/s/국지성호우/"}]</script>
 </div>
 </body>
 </html>

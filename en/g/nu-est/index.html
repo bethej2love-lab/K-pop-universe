@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="636 NU&#39;EST fancams and stages, most viewed first. NU&#39;EST: members, debut 2012.03.15, PLEDIS / HYBE. 17 music show wins, 1 grand prizes (daesang). Fancams, stages and discography on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/yZfSRHJoBRs/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"NU'EST","alternateName":"뉴이스트","genre":"K-pop","foundingDate":"2012-03-15","url":"https://kpop-universe.kr/en/g/nu-est/","image":"https://img.youtube.com/vi/yZfSRHJoBRs/maxresdefault.jpg","member":[{"@type":"Person","name":"JR"},{"@type":"Person","name":"Aron"},{"@type":"Person","name":"Baekho"},{"@type":"Person","name":"Minhyun"},{"@type":"Person","name":"Ren"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"NU'EST","alternateName":"뉴이스트","genre":"K-pop","description":"NU'EST was K-pop boy group under PLEDIS / HYBE, debuting in 2012. Recent releases: The 2nd Album 'Romanticize' (2021), NU’EST JAPAN FULL ALBUM ‘DRIVE’ (2020), Best Summer (with Spoonz) (2020).","foundingDate":"2012-03-15","url":"https://kpop-universe.kr/en/g/nu-est/","image":"https://img.youtube.com/vi/yZfSRHJoBRs/maxresdefault.jpg","member":[{"@type":"Person","name":"JR"},{"@type":"Person","name":"Aron"},{"@type":"Person","name":"Baekho"},{"@type":"Person","name":"Minhyun"},{"@type":"Person","name":"Ren"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["Latest music show win · INSIDE OUT (2021.05.02)","17 music show wins","1,732 stages & videos collected","Most viewed · 41M views"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
-  <p class="intro">NU&#39;EST was K-pop boy group under PLEDIS / HYBE, debuting in 2012. Recent releases: The 2nd Album &#39;Romanticize&#39; (2021), NU’EST JAPAN FULL ALBUM ‘DRIVE’ (2020), Best Summer (with Spoonz) (2020).</p>
   
     <h2 id="members">Members</h2>
     <div class="faces">
@@ -146,63 +164,47 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/nu-est/s/여보세요/">여보세요 Hello</a></li>
       <li><a href="https://kpop-universe.kr/en/g/nu-est/s/lovepaint/">Love Paint</a></li>
       <li><a href="https://kpop-universe.kr/en/g/nu-est/s/segno/">Segno</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/nu-est/s/잠꼬대/">잠꼬대 Sleep Talking</a></li>
       <li><a href="https://kpop-universe.kr/en/g/nu-est/s/여왕의기사/">여왕의 기사 Overcome</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/nu-est/s/잠꼬대/">잠꼬대 Sleep Talking</a></li>
       <li><a href="https://kpop-universe.kr/en/g/nu-est/s/backtome/">Back To Me (평행우주)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/nu-est/s/goodbyebye/">Good Bye Bye</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/nu-est/s/밤새/">밤새 Stay Up All Night</a></li>
       <li><a href="https://kpop-universe.kr/en/g/nu-est/s/face/">FACE</a></li>
       <li><a href="https://kpop-universe.kr/en/g/nu-est/s/dress/">DRESS</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/nu-est/s/밤새/">밤새 Stay Up All Night</a></li>
       <li><a href="https://kpop-universe.kr/en/g/nu-est/s/bass/">BASS</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/nu-est/s/drive/">DRIVE</a></li>
       <li><a href="https://kpop-universe.kr/en/g/nu-est/s/stayupallnight/">Stay up all night</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/nu-est/s/drive/">DRIVE</a></li>
       <li><a href="https://kpop-universe.kr/en/g/nu-est/s/notoveryou/">Not Over You</a></li>
       <li><a href="https://kpop-universe.kr/en/g/nu-est/s/beautifulghost/">Beautiful Ghost</a></li>
       <li><a href="https://kpop-universe.kr/en/g/nu-est/s/our/">OUR</a></li>
       <li><a href="https://kpop-universe.kr/en/g/nu-est/s/thankyou/">Thank You</a></li>
       <li><a href="https://kpop-universe.kr/en/g/nu-est/s/action/">Action</a></li>
       <li><a href="https://kpop-universe.kr/en/g/nu-est/s/look/">Look</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/nu-est/s/callmeback/">Call me back</a></li>
       <li><a href="https://kpop-universe.kr/en/g/nu-est/s/universe/">Universe (별의 언어)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/nu-est/s/callmeback/">Call me back</a></li>
     </ul>
   
-    <h2 id="albums">Albums & tracklists</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/nu-est/a/the2ndalbumromanticize/">The 2nd Album &#39;Romanticize&#39;</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/nu-est/a/nuestjapanfullalbumdrive/">NU’EST JAPAN FULL ALBUM ‘DRIVE’</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/nu-est/a/the8thminialbumthenocturne/">The 8th Mini Album ‘The Nocturne’</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/nu-est/a/the7thminialbumthetable/">The 7th Mini Album ‘The Table’</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/nu-est/a/the6thminialbumhappilyeverafter/">The 6th Mini Album ‘Happily Ever After’</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/nu-est/a/the5thminialbumcanvas/">The 5th Mini Album &#39;CANVAS&#39;</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/nu-est/a/qis/">Q is.</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/nu-est/a/bridgetheworld/">Bridge The World</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/nu-est/a/nuestthefirstalbumrebirth/">NU&#39;EST The First Album &#39;Re:BIRTH&#39;</a> <span class="yr">2014</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/nu-est/a/the3rdminialbum잠꼬대/">THE 3rd MINI ALBUM 잠꼬대</a> <span class="yr">2013</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/nu-est/a/thesecondminialbum여보세요/">THE SECOND MINI ALBUM &#39;여보세요&#39;</a> <span class="yr">2013</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/nu-est/a/action/">Action</a> <span class="yr">2012</span></li>
-    </ul>
-  
-    <h2>Discography</h2>
-    <ul class="discog-list">
-      <li>The 2nd Album &#39;Romanticize&#39; <span class="yr">(2021)</span> <span class="tag">2nd Album</span></li>
-      <li>NU’EST JAPAN FULL ALBUM ‘DRIVE’ <span class="yr">(2020)</span> <span class="tag">Album</span></li>
-      <li>Best Summer (with Spoonz) <span class="yr">(2020)</span> <span class="tag">Single</span></li>
-      <li>The 8th Mini Album ‘The Nocturne’ <span class="yr">(2020)</span> <span class="tag">8th EP</span></li>
-      <li>Let&#39;s Love (with Spoonz) <span class="yr">(2020)</span> <span class="tag">Single</span></li>
-      <li>The 7th Mini Album ‘The Table’ <span class="yr">(2019)</span> <span class="tag">7th EP</span></li>
-      <li>The 6th Mini Album ‘Happily Ever After’ <span class="yr">(2019)</span> <span class="tag">6th EP</span></li>
-      <li>NU&#39;EST &#39;노래 제목&#39; <span class="yr">(2019)</span> <span class="tag">Single</span></li>
-      <li>The 5th Mini Album &#39;CANVAS&#39; <span class="yr">(2016)</span> <span class="tag">5th EP</span></li>
-      <li>Cherry (English Ver.) <span class="yr">(2016)</span> <span class="tag">Single</span></li>
-      <li>Q is. <span class="yr">(2016)</span> <span class="tag">4th EP</span></li>
-      <li>Bridge The World <span class="yr">(2015)</span> <span class="tag">Album</span></li>
-      <li>Special Single &#39;I&#39;m Bad&#39; <span class="yr">(2015)</span> <span class="tag">Single</span></li>
-      <li>NU&#39;EST The First Album &#39;Re:BIRTH&#39; <span class="yr">(2014)</span> <span class="tag">1st Album</span></li>
-      <li>THE 3rd MINI ALBUM 잠꼬대 <span class="yr">(2013)</span> <span class="tag">3rd EP</span></li>
-      <li>THE SECOND MINI ALBUM &#39;여보세요&#39; <span class="yr">(2013)</span> <span class="tag">2nd EP</span></li>
-      <li>Action <span class="yr">(2012)</span> <span class="tag">1st EP</span></li>
-      <li>FACE <span class="yr">(2012)</span> <span class="tag">Single</span></li>
-    </ul>
+    <h2 id="albums">Discography</h2>
+    <div class="sp-tiles dg-tiles">
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/nu-est/a/the2ndalbumromanticize/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/94/831/10594831_20210419142324_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">The 2nd Album &#39;Romanticize&#39;</span><span class="sp-tile-n">2021 · 2nd Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/nu-est/a/nuestjapanfullalbumdrive/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/89/703/10489703_20201005175959_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">NU’EST JAPAN FULL ALBUM ‘DRIVE’</span><span class="sp-tile-n">2020 · Album</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/38/504/10438504_20200602154225_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Best Summer (with Spoonz)</span><span class="sp-tile-n">2020 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/nu-est/a/the8thminialbumthenocturne/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/28/727/10428727_20200511165948_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">The 8th Mini Album ‘The Nocturne’</span><span class="sp-tile-n">2020 · 8th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/88/450/10388450_20200214121927_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Let&#39;s Love (with Spoonz)</span><span class="sp-tile-n">2020 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/nu-est/a/the7thminialbumthetable/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/41/625/10341625_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">The 7th Mini Album ‘The Table’</span><span class="sp-tile-n">2019 · 7th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/nu-est/a/the6thminialbumhappilyeverafter/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/79/502/10279502_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">The 6th Mini Album ‘Happily Ever After’</span><span class="sp-tile-n">2019 · 6th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/61/906/10261906_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">NU&#39;EST &#39;노래 제목&#39;</span><span class="sp-tile-n">2019 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/nu-est/a/the5thminialbumcanvas/"><img src="https://cdnimg.melon.co.kr/cm/album/images/027/07/281/2707281_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">The 5th Mini Album &#39;CANVAS&#39;</span><span class="sp-tile-n">2016 · 5th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/74/734/2674734_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Cherry (English Ver.)</span><span class="sp-tile-n">2016 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/nu-est/a/qis/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/67/560/2667560_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Q is.</span><span class="sp-tile-n">2016 · 4th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/nu-est/a/bridgetheworld/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/51/930/2651930_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Bridge The World</span><span class="sp-tile-n">2015 · Album</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/06/278/2306278_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Special Single &#39;I&#39;m Bad&#39;</span><span class="sp-tile-n">2015 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/nu-est/a/nuestthefirstalbumrebirth/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/65/927/2265927_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">NU&#39;EST The First Album &#39;Re:BIRTH&#39;</span><span class="sp-tile-n">2014 · 1st Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/nu-est/a/the3rdminialbum잠꼬대/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/97/825/2197825_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">THE 3rd MINI ALBUM 잠꼬대</span><span class="sp-tile-n">2013 · 3rd EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/nu-est/a/thesecondminialbum여보세요/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/75/137/2175137_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">THE SECOND MINI ALBUM &#39;여보세요&#39;</span><span class="sp-tile-n">2013 · 2nd EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/nu-est/a/action/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/36/575/2136575_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Action</span><span class="sp-tile-n">2012 · 1st EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/020/93/307/2093307_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">FACE</span><span class="sp-tile-n">2012 · Single</span></div>
+    </div>
   
     <h2>Related groups</h2>
     <ul class="member-list rel">
@@ -217,7 +219,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/뉴이스트/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=뉴이스트">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"LOVE ME","s":"92 videos","img":"m5kOBOfoySA","m":"LOVE ME","h":"https://kpop-universe.kr/en/g/nu-est/s/loveme/"},{"k":"Member fancams","t":"Baekho","s":"79 fancams","img":"8CstQd9f5ks","h":"https://kpop-universe.kr/en/member/baekho/fancams/"},{"k":"Album","t":"The 2nd Album 'Romanticize'","s":"10 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/105/94/831/10594831_20210419142324_500.jpg","h":"https://kpop-universe.kr/en/g/nu-est/a/the2ndalbumromanticize/"},{"k":"Song fancams","t":"I’m in Trouble","s":"72 videos","img":"4Lm9u-iXrDc","m":"I’m in Trouble","h":"https://kpop-universe.kr/en/g/nu-est/s/imintrouble/"},{"k":"Member fancams","t":"Minhyun","s":"77 fancams","img":"EK74B568q2Y","h":"https://kpop-universe.kr/en/g/nu-est/minhyun/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"LOVE ME","s":"98 videos","img":"m5kOBOfoySA","m":"LOVE ME","h":"https://kpop-universe.kr/en/g/nu-est/s/loveme/"},{"k":"Member fancams","t":"Baekho","s":"79 fancams","img":"8CstQd9f5ks","h":"https://kpop-universe.kr/en/member/baekho/fancams/"},{"k":"Album","t":"The 2nd Album 'Romanticize'","s":"10 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/105/94/831/10594831_20210419142324_500.jpg","h":"https://kpop-universe.kr/en/g/nu-est/a/the2ndalbumromanticize/"},{"k":"Song fancams","t":"I’m in Trouble","s":"77 videos","img":"4Lm9u-iXrDc","m":"I’m in Trouble","h":"https://kpop-universe.kr/en/g/nu-est/s/imintrouble/"},{"k":"Member fancams","t":"Minhyun","s":"77 fancams","img":"EK74B568q2Y","h":"https://kpop-universe.kr/en/g/nu-est/minhyun/fancams/"}]</script>
 </div>
 </body>
 </html>

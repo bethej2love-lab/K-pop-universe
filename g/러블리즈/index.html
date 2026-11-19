@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="러블리즈 직캠·무대 영상 1059개를 조회수 순으로(베이비소울·유지애·서지수·이미주·Kei·JIN·류수정·정예인). 러블리즈 멤버·데뷔일(2014.11.12)·소속사(울림엔터테인먼트). 음악방송 1위 4회, 대상 1개. 직캠·무대 영상과 디스코그래피를 K-POP UNIVERSE에서.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/k8WfhSZJUVc/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"러블리즈","alternateName":"Lovelyz","genre":"K-pop","foundingDate":"2014-11-12","url":"https://kpop-universe.kr/g/러블리즈/","image":"https://img.youtube.com/vi/k8WfhSZJUVc/maxresdefault.jpg","member":[{"@type":"Person","name":"베이비소울"},{"@type":"Person","name":"유지애"},{"@type":"Person","name":"서지수"},{"@type":"Person","name":"이미주"},{"@type":"Person","name":"Kei"},{"@type":"Person","name":"JIN"},{"@type":"Person","name":"류수정"},{"@type":"Person","name":"정예인"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"러블리즈","alternateName":"Lovelyz","genre":"K-pop","description":"8인조 걸그룹. 울림엔터테인먼트. 2014년 데뷔. 팬덤명 러블리너스. 대표 앨범 Dear(2024), 닿으면, 너(2024), 싱스트리트 - 러블리즈 X 골든차일드 '순천의 하늘 아래에서'(2020).","foundingDate":"2014-11-12","url":"https://kpop-universe.kr/g/러블리즈/","image":"https://img.youtube.com/vi/k8WfhSZJUVc/maxresdefault.jpg","member":[{"@type":"Person","name":"베이비소울"},{"@type":"Person","name":"유지애"},{"@type":"Person","name":"서지수"},{"@type":"Person","name":"이미주"},{"@type":"Person","name":"Kei"},{"@type":"Person","name":"JIN"},{"@type":"Person","name":"류수정"},{"@type":"Person","name":"정예인"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["최근 음방 1위 · Obliviate (2019.09.08)","음방 1위 4회","모아둔 무대·영상 1,895개","가장 많이 본 영상 · 조회수 12M"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
-  <p class="intro">8인조 걸그룹. 울림엔터테인먼트. 2014년 데뷔. 팬덤명 러블리너스. 대표 앨범 Dear(2024), 닿으면, 너(2024), 싱스트리트 - 러블리즈 X 골든차일드 &#39;순천의 하늘 아래에서&#39;(2020).</p>
   
     <h2 id="members">멤버</h2>
     <div class="faces">
@@ -159,9 +177,9 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/러블리즈/s/여름한조각/">여름 한 조각 Wag-Zak</a></li>
       <li><a href="https://kpop-universe.kr/g/러블리즈/s/moonlight/">Moonlight</a></li>
       <li><a href="https://kpop-universe.kr/g/러블리즈/s/unforgettable/">Unforgettable</a></li>
+      <li><a href="https://kpop-universe.kr/g/러블리즈/s/삼각형/">삼각형 (Triangle)</a></li>
       <li><a href="https://kpop-universe.kr/g/러블리즈/s/미묘미묘해/">미묘미묘해 Mi-myo Mi-myo</a></li>
       <li><a href="https://kpop-universe.kr/g/러블리즈/s/secretstory/">Secret Story</a></li>
-      <li><a href="https://kpop-universe.kr/g/러블리즈/s/삼각형/">삼각형 (Triangle)</a></li>
       <li><a href="https://kpop-universe.kr/g/러블리즈/s/첫눈/">첫눈 First Snow</a></li>
       <li><a href="https://kpop-universe.kr/g/러블리즈/s/수채화/">수채화 (Watercolor)</a></li>
       <li><a href="https://kpop-universe.kr/g/러블리즈/s/어제처럼굿나잇/">어제처럼 굿나잇 Good Night Like Yesterday</a></li>
@@ -172,45 +190,28 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/러블리즈/s/내가너의봄이되어줄게/">내가 너의 봄이 되어줄게</a></li>
     </ul>
   
-    <h2 id="albums">앨범·수록곡</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/러블리즈/a/unforgettable/">Unforgettable</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/g/러블리즈/a/onceuponatime/">Once upon a time</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/g/러블리즈/a/sanctuary/">SANCTUARY</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/러블리즈/a/museonmusic/">Muse on Music</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/러블리즈/a/治癒/">治癒 (Heal)</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/러블리즈/a/fallinlovelyz/">Fall in Lovelyz</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/러블리즈/a/피버뮤직2017/">피버뮤직 2017</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/러블리즈/a/lovelyz2ndalbumrepackage지금우리/">Lovelyz 2nd Album Repackage &#39;지금, 우리&#39;</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/러블리즈/a/ruready/">R U Ready?</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/러블리즈/a/anewtrilogy/">A New Trilogy</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/g/러블리즈/a/lovelyz8/">Lovelyz8</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/g/러블리즈/a/hi/">Hi~</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/g/러블리즈/a/girlsinvasion/">Girls&#39; Invasion</a> <span class="yr">2014</span></li>
-    </ul>
-  
-    <h2>디스코그래피</h2>
-    <ul class="discog-list">
-      <li>Dear <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-      <li>닿으면, 너 <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-      <li>싱스트리트 - 러블리즈 X 골든차일드 &#39;순천의 하늘 아래에서&#39; <span class="yr">(2020)</span> <span class="tag">싱글</span></li>
-      <li>Unforgettable <span class="yr">(2020)</span> <span class="tag">미니 7집</span></li>
-      <li>Once upon a time <span class="yr">(2019)</span> <span class="tag">미니 6집</span></li>
-      <li>SANCTUARY <span class="yr">(2018)</span> <span class="tag">미니 5집</span></li>
-      <li>tvN 300 x NC 피버뮤직 - EP4 <span class="yr">(2018)</span> <span class="tag">싱글</span></li>
-      <li>Muse on Music <span class="yr">(2018)</span> <span class="tag">스페셜</span></li>
-      <li>Lovelyz Digital Single &#39;여름 한 조각&#39; <span class="yr">(2018)</span> <span class="tag">싱글</span></li>
-      <li>治癒 (Heal) <span class="yr">(2018)</span> <span class="tag">미니 4집</span></li>
-      <li>Fall in Lovelyz <span class="yr">(2017)</span> <span class="tag">미니 3집</span></li>
-      <li>피버뮤직 2017 <span class="yr">(2017)</span> <span class="tag">스페셜</span></li>
-      <li>Lovelyz 2nd Album Repackage &#39;지금, 우리&#39; <span class="yr">(2017)</span> <span class="tag">리패키지</span></li>
-      <li>R U Ready? <span class="yr">(2017)</span> <span class="tag">정규 2집</span></li>
-      <li>A New Trilogy <span class="yr">(2016)</span> <span class="tag">미니 2집</span></li>
-      <li>Lovelinus <span class="yr">(2015)</span> <span class="tag">싱글</span></li>
-      <li>Lovelyz8 <span class="yr">(2015)</span> <span class="tag">미니 1집</span></li>
-      <li>Hi~ <span class="yr">(2015)</span> <span class="tag">정규 1집 리패키지</span></li>
-      <li>Girls&#39; Invasion <span class="yr">(2014)</span> <span class="tag">정규 1집</span></li>
-    </ul>
+    <h2 id="albums">디스코그래피</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/48/368/11648368_20241122114251_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Dear</span><span class="sp-tile-n">2024 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/38/412/11638412_20241111161344_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">닿으면, 너</span><span class="sp-tile-n">2024 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/38/617/10538617_20201223171703_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">싱스트리트 - 러블리즈 X 골든차일드 &#39;순천의 하늘 아래에서&#39;</span><span class="sp-tile-n">2020 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/러블리즈/a/unforgettable/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/84/139/10484139_20200901154342_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Unforgettable</span><span class="sp-tile-n">2020 · 미니 7집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/러블리즈/a/onceuponatime/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/87/665/10287665_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Once upon a time</span><span class="sp-tile-n">2019 · 미니 6집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/러블리즈/a/sanctuary/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/26/229/10226229_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SANCTUARY</span><span class="sp-tile-n">2018 · 미니 5집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/06/843/10206843_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">tvN 300 x NC 피버뮤직 - EP4</span><span class="sp-tile-n">2018 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/러블리즈/a/museonmusic/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/02/702/10202702_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Muse on Music</span><span class="sp-tile-n">2018 · 스페셜</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/80/637/10180637_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Lovelyz Digital Single &#39;여름 한 조각&#39;</span><span class="sp-tile-n">2018 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/러블리즈/a/治癒/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/60/931/10160931_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">治癒 (Heal)</span><span class="sp-tile-n">2018 · 미니 4집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/러블리즈/a/fallinlovelyz/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/11/399/10111399_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Fall in Lovelyz</span><span class="sp-tile-n">2017 · 미니 3집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/러블리즈/a/피버뮤직2017/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/00/636/10100636_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">피버뮤직 2017</span><span class="sp-tile-n">2017 · 스페셜</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/러블리즈/a/lovelyz2ndalbumrepackage지금우리/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/59/493/10059493_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Lovelyz 2nd Album Repackage &#39;지금, 우리&#39;</span><span class="sp-tile-n">2017 · 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/러블리즈/a/ruready/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/41/929/10041929_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">R U Ready?</span><span class="sp-tile-n">2017 · 정규 2집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/러블리즈/a/anewtrilogy/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/81/331/2681331_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">A New Trilogy</span><span class="sp-tile-n">2016 · 미니 2집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/54/998/2654998_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Lovelinus</span><span class="sp-tile-n">2015 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/러블리즈/a/lovelyz8/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/39/766/2639766_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Lovelyz8</span><span class="sp-tile-n">2015 · 미니 1집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/러블리즈/a/hi/"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/06/957/2306957_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Hi~</span><span class="sp-tile-n">2015 · 정규 1집 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/러블리즈/a/girlsinvasion/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/89/906/2289906_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Girls&#39; Invasion</span><span class="sp-tile-n">2014 · 정규 1집</span></a>
+    </div>
   
     <h2>함께 보면 좋은 그룹</h2>
     <ul class="member-list rel">
@@ -224,7 +225,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/lovelyz/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=러블리즈">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"Obliviate","s":"영상 115개","img":"TArBtJ0IwCc","m":"Obliviate","h":"https://kpop-universe.kr/g/러블리즈/s/obliviate/"},{"k":"멤버 직캠","t":"JIN","s":"직캠 109개","img":"0qaYOIgN1ss","h":"https://kpop-universe.kr/g/러블리즈/JIN/fancams/"},{"k":"앨범","t":"Unforgettable","s":"수록곡 6곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/104/84/139/10484139_20200901154342_500.jpg","h":"https://kpop-universe.kr/g/러블리즈/a/unforgettable/"},{"k":"곡별 직캠·무대","t":"그 시절 우리가 사랑했던 우리 (Beautiful Days)","s":"영상 80개","img":"ffNvuDInIjM","m":"그 시절 우리가 사랑했던 우리","h":"https://kpop-universe.kr/g/러블리즈/s/그시절우리가사랑했던우리/"},{"k":"멤버 직캠","t":"류수정","s":"직캠 66개","img":"ADS0sEqze0o","h":"https://kpop-universe.kr/g/러블리즈/류수정/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"Obliviate","s":"영상 117개","img":"TArBtJ0IwCc","m":"Obliviate","h":"https://kpop-universe.kr/g/러블리즈/s/obliviate/"},{"k":"멤버 직캠","t":"JIN","s":"직캠 109개","img":"0qaYOIgN1ss","h":"https://kpop-universe.kr/g/러블리즈/JIN/fancams/"},{"k":"앨범","t":"Unforgettable","s":"수록곡 6곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/104/84/139/10484139_20200901154342_500.jpg","h":"https://kpop-universe.kr/g/러블리즈/a/unforgettable/"},{"k":"곡별 직캠·무대","t":"그 시절 우리가 사랑했던 우리 (Beautiful Days)","s":"영상 81개","img":"ffNvuDInIjM","m":"그 시절 우리가 사랑했던 우리","h":"https://kpop-universe.kr/g/러블리즈/s/그시절우리가사랑했던우리/"},{"k":"멤버 직캠","t":"류수정","s":"직캠 66개","img":"ADS0sEqze0o","h":"https://kpop-universe.kr/g/러블리즈/류수정/fancams/"}]</script>
 </div>
 </body>
 </html>

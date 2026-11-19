@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="863 BTOB fancams and stages, most viewed first. BTOB: members, debut 2012.03.21, BTOB Company. 12 music show wins. Fancams, stages and discography on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/ChJvBeUdpjQ/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"BTOB","alternateName":"비투비","genre":"K-pop","foundingDate":"2012-03-21","url":"https://kpop-universe.kr/en/g/btob/","image":"https://img.youtube.com/vi/ChJvBeUdpjQ/maxresdefault.jpg","member":[{"@type":"Person","name":"Eunkwang"},{"@type":"Person","name":"Minhyuk"},{"@type":"Person","name":"Changsub"},{"@type":"Person","name":"Hyunsik"},{"@type":"Person","name":"Peniel"},{"@type":"Person","name":"Sungjae"},{"@type":"Person","name":"Ilhoon"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"BTOB","alternateName":"비투비","genre":"K-pop","description":"BTOB is a 6-member K-pop boy group under BTOB Company, debuting in 2012. Fan club: Melody. Recent releases: We Together (2026), BTODAY (2025), 이보다 더 좋을 수 있을까 (2024).","foundingDate":"2012-03-21","url":"https://kpop-universe.kr/en/g/btob/","image":"https://img.youtube.com/vi/ChJvBeUdpjQ/maxresdefault.jpg","member":[{"@type":"Person","name":"Eunkwang"},{"@type":"Person","name":"Minhyuk"},{"@type":"Person","name":"Changsub"},{"@type":"Person","name":"Hyunsik"},{"@type":"Person","name":"Peniel"},{"@type":"Person","name":"Sungjae"},{"@type":"Person","name":"Ilhoon"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -104,10 +123,9 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>Fandom</b> Melody</span>
     </div>
     <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/@BTOB_COMPANY" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://www.instagram.com/official_btob" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/OFFICIALBTOB" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://www.tiktok.com/@official_btob" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-weverse" href="https://weverse.io/btob/" target="_blank" rel="noopener noreferrer">Weverse</a><a class="sns-namu" href="https://namu.wiki/w/비투비" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
-    <script type="application/json" id="kpu-facts">["4 new videos this week","Latest music show win · Outsider (2022.03.03)","12 music show wins","2,010 stages & videos collected","Most viewed · 26M views"]</script>
+    <script type="application/json" id="kpu-facts">["3 new videos this week","Latest music show win · Outsider (2022.03.03)","12 music show wins","2,010 stages & videos collected","Most viewed · 26M views"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
-  <p class="intro">BTOB is a 6-member K-pop boy group under BTOB Company, debuting in 2012. Fan club: Melody. Recent releases: We Together (2026), BTODAY (2025), 이보다 더 좋을 수 있을까 (2024).</p>
   
     <h2 id="members">Members</h2>
     <div class="faces">
@@ -146,36 +164,36 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/btob/s/너없인안된다/">너 없인 안 된다 Only One For Me</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/movie/">MOVIE</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/아름답고도아프구나/">아름답고도 아프구나</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/btob/s/봄날의기억/">봄날의 기억</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/기도/">기도 (Dear Lord)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/괜찮아요/">괜찮아요 (It&#39;s Okay)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/s/봄날의기억/">봄날의 기억</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/illbeyourman/">I&#39;ll Be Your Man</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/s/스릴러/">스릴러 Thriller</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/뛰뛰빵빵/">뛰뛰빵빵</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/btob/s/스릴러/">스릴러 Thriller</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/두번째고백/">두 번째 고백 Second Confession</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/집으로가는길/">집으로 가는 길 Song of Wind</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/비밀/">비밀 (Insane)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/s/이보다더좋을수있을까/">이보다 더 좋을 수 있을까 Hi Beautiful</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/bora/">Bora</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/btob/s/이보다더좋을수있을까/">이보다 더 좋을 수 있을까 Hi Beautiful</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/불씨/">불씨 Please Stay</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/울면안돼/">울면 안 돼 Winter Story</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/bealright/">Be Alright</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/봄이피어나/">봄이 피어나</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/sayyes/">Say Yes</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/s/icyspicy/">Icy &amp; Spicy</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/bluemoon/">Blue Moon</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/btob/s/icyspicy/">Icy &amp; Spicy</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/btob/s/dreamer/">DREAMER</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/btob/s/미치고싶어/">미치고 싶어 Can&#39;t breathe</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/언젠가/">언젠가 (SOMEDAY)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/wow/">WOW</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/사랑밖에난몰라/">사랑밖에 난 몰라 Lover Boy</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/feelalive/">Feel Alive</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/내곁에서있어줘/">내 곁에 서 있어줘</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/starrynight/">Starry Night</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/s/dreamer/">DREAMER</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/s/미치고싶어/">미치고 싶어 Can&#39;t breathe</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/여행/">여행 (Traveler)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/btob/s/피날레/">피날레 (Show And Prove)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/고독한바다/">고독한 바다 (La Mar)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/우리다시/">우리 다시 We Together</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/s/피날레/">피날레 (Show And Prove)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/아무도모른다/">아무도 모른다</a></li>
     </ul>
     <details class="more-songs"><summary>11 more songs</summary>
@@ -183,79 +201,52 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/btob/s/ya/">YA</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/나의대답/">나의 대답</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/아버지/">아버지 Father</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/btob/s/lastlight/">Last Light</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/주르르/">주르르</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/surrender/">SURRENDER</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/daydream/">Daydream</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/s/lastlight/">Last Light</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/greatestmoment/">Greatest Moment</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/ko/">KO</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/천상연/">천상연</a></li>
       <li><a href="https://kpop-universe.kr/en/g/btob/s/miobi/">MIoBI</a></li>
     </ul></details>
   
-    <h2 id="albums">Albums & tracklists</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/btob/a/btoday/">BTODAY</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/a/windandwish/">Wind and Wish</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/a/betogether/">Be Together</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/a/outsider/">Outsider</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/a/4uoutside/">4U : OUTSIDE</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/a/hourmoment/">Hour Moment</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/a/thisisus/">This Is Us</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/a/brotheract/">Brother Act.</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/a/brandnewdaysどんな未来をbrandnewdays어떤미래를/">Brand new days ~ どんな未来を ~ / Brand new days ~어떤 미래를~</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/a/movie/">MOVIE - JPN Ver. -</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/a/feelem/">Feel&#39;eM</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/a/247/">24/7 (TWENTY FOUR/SEVEN)</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/a/newmen/">New Men</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/a/luv/">L.U.V</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/a/rememberthat/">Remember That</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/a/dearbride/">Dear Bride</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/a/imean/">I Mean</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/a/夏色mygirl여름색mygirl/">夏色 MY GIRL / 여름색 MY GIRL</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/a/complete/">Complete</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/a/未來あした미래/">未來（あした）/ 미래</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/a/thewinterstale/">The Winter&#39;s Tale</a> <span class="yr">2014</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/a/move/">Move</a> <span class="yr">2014</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/a/beepbeep/">Beep Beep</a> <span class="yr">2014</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/a/스릴러/">스릴러 (Thriller)</a> <span class="yr">2013</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/a/pressplay/">Press Play</a> <span class="yr">2012</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/btob/a/borntobeat/">Born to Beat</a> <span class="yr">2012</span></li>
-    </ul>
-  
-    <h2>Discography</h2>
-    <ul class="discog-list">
-      <li>We Together <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>BTODAY <span class="yr">(2025)</span> <span class="tag">13th EP</span></li>
-      <li>이보다 더 좋을 수 있을까 <span class="yr">(2024)</span> <span class="tag">Single</span></li>
-      <li>Be Alright <span class="yr">(2024)</span> <span class="tag">Single</span></li>
-      <li>불씨 <span class="yr">(2024)</span> <span class="tag">Single</span></li>
-      <li>Wind and Wish <span class="yr">(2023)</span> <span class="tag">12th EP</span></li>
-      <li>Be Together <span class="yr">(2022)</span> <span class="tag">3rd Album</span></li>
-      <li>Outsider <span class="yr">(2021)</span> <span class="tag">EP</span></li>
-      <li>Outsider (Japanese ver.) <span class="yr">(2021)</span> <span class="tag">Single</span></li>
-      <li>4U : OUTSIDE <span class="yr">(2021)</span> <span class="tag">Special</span></li>
-      <li>미안해 (Song by 서은광, 이민혁, 이창섭) <span class="yr">(2019)</span> <span class="tag">Single</span></li>
-      <li>Hour Moment <span class="yr">(2018)</span> <span class="tag">스페셜 앨범</span></li>
-      <li>This Is Us <span class="yr">(2018)</span> <span class="tag">11th EP</span></li>
-      <li>Brother Act. <span class="yr">(2017)</span> <span class="tag">2nd Album</span></li>
-      <li>Brand new days ~ どんな未来を ~ / Brand new days ~어떤 미래를~ <span class="yr">(2017)</span> <span class="tag">EP</span></li>
-      <li>MOVIE - JPN Ver. - <span class="yr">(2017)</span> <span class="tag">EP</span></li>
-      <li>Feel&#39;eM <span class="yr">(2017)</span> <span class="tag">10th EP</span></li>
-      <li>24/7 (TWENTY FOUR/SEVEN) <span class="yr">(2016)</span> <span class="tag">Album</span></li>
-      <li>New Men <span class="yr">(2016)</span> <span class="tag">9th EP</span></li>
-      <li>여행 가고 싶어 <span class="yr">(2016)</span> <span class="tag">Single</span></li>
-      <li>L.U.V <span class="yr">(2016)</span> <span class="tag">EP</span></li>
-      <li>Remember That <span class="yr">(2016)</span> <span class="tag">8th EP</span></li>
-      <li>Dear Bride <span class="yr">(2016)</span> <span class="tag">EP</span></li>
-      <li>I Mean <span class="yr">(2015)</span> <span class="tag">7th EP</span></li>
-      <li>夏色 MY GIRL / 여름색 MY GIRL <span class="yr">(2015)</span> <span class="tag">EP</span></li>
-      <li>Complete <span class="yr">(2015)</span> <span class="tag">1st Album</span></li>
-      <li>未來（あした）/ 미래 <span class="yr">(2015)</span> <span class="tag">EP</span></li>
-      <li>The Winter&#39;s Tale <span class="yr">(2014)</span> <span class="tag">6th EP</span></li>
-      <li>Move <span class="yr">(2014)</span> <span class="tag">5th EP</span></li>
-      <li>Beep Beep <span class="yr">(2014)</span> <span class="tag">4th EP</span></li>
-    </ul>
+    <h2 id="albums">Discography</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02f2716d2008ddb2b8cf68c592" alt="" loading="lazy"><span class="sp-tile-t">We Together</span><span class="sp-tile-n">2026 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/btob/a/btoday/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/27/459/11727459_20250304163159_500.jpg?d2bcd3640306c7928d07edd18747df17" alt="" loading="lazy"><span class="sp-tile-t">BTODAY</span><span class="sp-tile-n">2025 · 13th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/80/445/11680445_20241230104155_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">이보다 더 좋을 수 있을까</span><span class="sp-tile-n">2024 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/48/800/11648800_20241122154447_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Be Alright</span><span class="sp-tile-n">2024 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/30/123/11630123_20241031100251_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">불씨</span><span class="sp-tile-n">2024 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/btob/a/windandwish/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/35/799/11235799_20230502104633_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Wind and Wish</span><span class="sp-tile-n">2023 · 12th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/btob/a/betogether/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/108/73/531/10873531_20220221102734_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Be Together</span><span class="sp-tile-n">2022 · 3rd Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/btob/a/outsider/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/107/52/647/10752647_20211026134234_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Outsider</span><span class="sp-tile-n">2021 · EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/107/37/346/10737346_20211012152149_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Outsider (Japanese ver.)</span><span class="sp-tile-n">2021 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/btob/a/4uoutside/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/96/991/10696991_20210830142403_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">4U : OUTSIDE</span><span class="sp-tile-n">2021 · Special</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/70/726/10270726_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">미안해 (Song by 서은광, 이민혁, 이창섭)</span><span class="sp-tile-n">2019 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/btob/a/hourmoment/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/15/293/10215293_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Hour Moment</span><span class="sp-tile-n">2018 · 스페셜 앨범</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/btob/a/thisisus/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/75/106/10175106_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">This Is Us</span><span class="sp-tile-n">2018 · 11th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/btob/a/brotheract/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/02/658/10102658_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Brother Act.</span><span class="sp-tile-n">2017 · 2nd Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/btob/a/brandnewdaysどんな未来をbrandnewdays어떤미래를/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/28/653/10228653_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Brand new days ~ どんな未来を ~ / Brand new days ~어떤 미래를~</span><span class="sp-tile-n">2017 · EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/btob/a/movie/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/28/651/10228651_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">MOVIE - JPN Ver. -</span><span class="sp-tile-n">2017 · EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/btob/a/feelem/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/41/603/10041603_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Feel&#39;eM</span><span class="sp-tile-n">2017 · 10th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/btob/a/247/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/28/650/10228650_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">24/7 (TWENTY FOUR/SEVEN)</span><span class="sp-tile-n">2016 · Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/btob/a/newmen/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/12/901/10012901_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">New Men</span><span class="sp-tile-n">2016 · 9th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/027/02/799/2702799_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">여행 가고 싶어</span><span class="sp-tile-n">2016 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/btob/a/luv/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/28/622/10228622_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">L.U.V</span><span class="sp-tile-n">2016 · EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/btob/a/rememberthat/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/75/661/2675661_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Remember That</span><span class="sp-tile-n">2016 · 8th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/btob/a/dearbride/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/28/621/10228621_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Dear Bride</span><span class="sp-tile-n">2016 · EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/btob/a/imean/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/44/202/2644202_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">I Mean</span><span class="sp-tile-n">2015 · 7th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/btob/a/夏色mygirl여름색mygirl/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/28/620/10228620_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">夏色 MY GIRL / 여름색 MY GIRL</span><span class="sp-tile-n">2015 · EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/btob/a/complete/"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/26/467/2326467_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Complete</span><span class="sp-tile-n">2015 · 1st Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/btob/a/未來あした미래/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/28/619/10228619_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">未來（あした）/ 미래</span><span class="sp-tile-n">2015 · EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/btob/a/thewinterstale/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/93/456/2293456_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">The Winter&#39;s Tale</span><span class="sp-tile-n">2014 · 6th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/btob/a/move/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/83/301/2283301_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Move</span><span class="sp-tile-n">2014 · 5th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/btob/a/beepbeep/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/33/451/2233451_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Beep Beep</span><span class="sp-tile-n">2014 · 4th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/btob/a/스릴러/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/00/239/2200239_500.jpg?8e08b8d8ee957a96cd9317b1641ad216/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">스릴러 (Thriller)</span><span class="sp-tile-n">2013 · 3rd EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/btob/a/pressplay/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/49/892/2149892_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Press Play</span><span class="sp-tile-n">2012 · 2nd EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/btob/a/borntobeat/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/04/986/2104986_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Born to Beat</span><span class="sp-tile-n">2012 · 1st EP</span></a>
+    </div>
   
     <h2>Related groups</h2>
     <ul class="member-list rel">
@@ -265,7 +256,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/비투비/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=비투비">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"나의 바람 (Wind And Wish)","s":"73 videos","img":"8anfh0IJ8Z4","m":"나의 바람","h":"https://kpop-universe.kr/en/g/btob/s/나의바람/"},{"k":"Member fancams","t":"Minhyuk","s":"94 fancams","img":"Na5Jp7M7rCw","h":"https://kpop-universe.kr/en/g/btob/minhyuk/fancams/"},{"k":"Album","t":"BTODAY","s":"6 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/117/27/459/11727459_20250304163159_500.jpg?d2bcd3640306c7928d07edd18747df17","h":"https://kpop-universe.kr/en/g/btob/a/btoday/"},{"k":"Song fancams","t":"Outsider","s":"56 videos","img":"Lgr5ty2-_lY","m":"Outsider","h":"https://kpop-universe.kr/en/g/btob/s/outsider/"},{"k":"Member fancams","t":"Changsub","s":"59 fancams","img":"7Pc6SZbuRYc","h":"https://kpop-universe.kr/en/g/btob/changsub/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"나의 바람 (Wind And Wish)","s":"73 videos","img":"8anfh0IJ8Z4","m":"나의 바람","h":"https://kpop-universe.kr/en/g/btob/s/나의바람/"},{"k":"Member fancams","t":"Minhyuk","s":"94 fancams","img":"Na5Jp7M7rCw","h":"https://kpop-universe.kr/en/g/btob/minhyuk/fancams/"},{"k":"Album","t":"BTODAY","s":"6 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/117/27/459/11727459_20250304163159_500.jpg?d2bcd3640306c7928d07edd18747df17","h":"https://kpop-universe.kr/en/g/btob/a/btoday/"},{"k":"Song fancams","t":"Outsider","s":"58 videos","img":"Lgr5ty2-_lY","m":"Outsider","h":"https://kpop-universe.kr/en/g/btob/s/outsider/"},{"k":"Member fancams","t":"Changsub","s":"59 fancams","img":"7Pc6SZbuRYc","h":"https://kpop-universe.kr/en/g/btob/changsub/fancams/"}]</script>
 </div>
 </body>
 </html>

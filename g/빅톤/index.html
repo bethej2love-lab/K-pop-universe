@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="빅톤 직캠·무대 영상 480개를 조회수 순으로. 빅톤 멤버·데뷔일(2016.11.09)·소속사(IST엔터테인먼트). 음악방송 1위 3회. 직캠·무대 영상과 디스코그래피를 K-POP UNIVERSE에서.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/Ihpp2qlwtvA/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"빅톤","alternateName":"VICTON","genre":"K-pop","foundingDate":"2016-11-09","url":"https://kpop-universe.kr/g/빅톤/","image":"https://img.youtube.com/vi/Ihpp2qlwtvA/maxresdefault.jpg","member":[{"@type":"Person","name":"한승우"},{"@type":"Person","name":"강승식"},{"@type":"Person","name":"임세준"},{"@type":"Person","name":"도한세"},{"@type":"Person","name":"최병찬"},{"@type":"Person","name":"정수빈"},{"@type":"Person","name":"허찬"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"빅톤","alternateName":"VICTON","genre":"K-pop","description":"보이그룹. IST엔터테인먼트. 2016년 데뷔. 해체. 대표 앨범 Choice(2022), Chaos(2022), Chronograph(2022).","foundingDate":"2016-11-09","url":"https://kpop-universe.kr/g/빅톤/","image":"https://img.youtube.com/vi/Ihpp2qlwtvA/maxresdefault.jpg","member":[{"@type":"Person","name":"한승우"},{"@type":"Person","name":"강승식"},{"@type":"Person","name":"임세준"},{"@type":"Person","name":"도한세"},{"@type":"Person","name":"최병찬"},{"@type":"Person","name":"정수빈"},{"@type":"Person","name":"허찬"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["최근 음방 1위 · 그리운 밤 (2019.11.12)","음방 1위 3회","모아둔 무대·영상 1,644개","가장 많이 본 영상 · 조회수 30M"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
-  <p class="intro">보이그룹. IST엔터테인먼트. 2016년 데뷔. 해체. 대표 앨범 Choice(2022), Chaos(2022), Chronograph(2022).</p>
   
     <h2 id="members">멤버</h2>
     <div class="faces">
@@ -142,8 +160,8 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/빅톤/s/mayday/">Mayday</a></li>
       <li><a href="https://kpop-universe.kr/g/빅톤/s/flipacoin/">Flip A Coin</a></li>
       <li><a href="https://kpop-universe.kr/g/빅톤/s/나를기억해/">나를 기억해 Remember Me</a></li>
-      <li><a href="https://kpop-universe.kr/g/빅톤/s/오월애/">오월애 Time of Sorrow</a></li>
       <li><a href="https://kpop-universe.kr/g/빅톤/s/eyezeyez/">EYEZ EYEZ</a></li>
+      <li><a href="https://kpop-universe.kr/g/빅톤/s/오월애/">오월애 Time of Sorrow</a></li>
       <li><a href="https://kpop-universe.kr/g/빅톤/s/circle/">Circle</a></li>
       <li><a href="https://kpop-universe.kr/g/빅톤/s/아무렇지않은척/">아무렇지 않은 척 I&#39;m Fine</a></li>
       <li><a href="https://kpop-universe.kr/g/빅톤/s/말도안돼/">말도 안돼 Unbelievable</a></li>
@@ -154,35 +172,22 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/빅톤/s/sweettravel/">Sweet Travel</a></li>
     </ul>
   
-    <h2 id="albums">앨범·수록곡</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/빅톤/a/choice/">Choice</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/g/빅톤/a/chaos/">Chaos</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/g/빅톤/a/voicethefutureisnow/">VOICE : The future is now</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/g/빅톤/a/continuous/">Continuous</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/g/빅톤/a/nostalgia/">nostalgia</a> <span class="yr">2019</span></li>
-      <li><a href="https://kpop-universe.kr/g/빅톤/a/fromvicton/">From. VICTON</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/빅톤/a/identity/">IDENTITY</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/빅톤/a/ready/">READY</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/빅톤/a/voicetonewworld/">Voice To New World</a> <span class="yr">2016</span></li>
-    </ul>
-  
-    <h2>디스코그래피</h2>
-    <ul class="discog-list">
-      <li>Choice <span class="yr">(2022)</span> <span class="tag">미니 8집</span></li>
-      <li>Chaos <span class="yr">(2022)</span> <span class="tag">미니 7집</span></li>
-      <li>Chronograph <span class="yr">(2022)</span> <span class="tag">싱글</span></li>
-      <li>Sweet Travel <span class="yr">(2021)</span> <span class="tag">싱글</span></li>
-      <li>VOICE : The future is now <span class="yr">(2021)</span> <span class="tag">정규 1집</span></li>
-      <li>Mayday <span class="yr">(2020)</span> <span class="tag">싱글</span></li>
-      <li>Continuous <span class="yr">(2020)</span> <span class="tag">미니 6집</span></li>
-      <li>nostalgia <span class="yr">(2019)</span> <span class="tag">미니 5집</span></li>
-      <li>오월애 (俉月哀) <span class="yr">(2018)</span> <span class="tag">싱글</span></li>
-      <li>From. VICTON <span class="yr">(2017)</span> <span class="tag">미니 4집</span></li>
-      <li>IDENTITY <span class="yr">(2017)</span> <span class="tag">미니 3집</span></li>
-      <li>READY <span class="yr">(2017)</span> <span class="tag">미니 2집</span></li>
-      <li>Voice To New World <span class="yr">(2016)</span> <span class="tag">미니 1집</span></li>
-    </ul>
+    <h2 id="albums">디스코그래피</h2>
+    <div class="sp-tiles dg-tiles">
+      <a class="sp-tile" href="https://kpop-universe.kr/g/빅톤/a/choice/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/111/02/360/11102360_20221115013002_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Choice</span><span class="sp-tile-n">2022 · 미니 8집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/빅톤/a/chaos/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/109/71/997/10971997_20220531101715_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Chaos</span><span class="sp-tile-n">2022 · 미니 7집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/108/43/456/10843456_20220117191449_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Chronograph</span><span class="sp-tile-n">2022 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/107/67/507/10767507_20211108155821_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Sweet Travel</span><span class="sp-tile-n">2021 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/빅톤/a/voicethefutureisnow/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/45/280/10545280_20210111122646_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">VOICE : The future is now</span><span class="sp-tile-n">2021 · 정규 1집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/38/489/10438489_20200602151443_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Mayday</span><span class="sp-tile-n">2020 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/빅톤/a/continuous/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/104/00/080/10400080_20200309160449_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Continuous</span><span class="sp-tile-n">2020 · 미니 6집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/빅톤/a/nostalgia/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/103/47/217/10347217_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">nostalgia</span><span class="sp-tile-n">2019 · 미니 5집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/69/552/10169552_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">오월애 (俉月哀)</span><span class="sp-tile-n">2018 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/빅톤/a/fromvicton/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/10/239/10110239_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">From. VICTON</span><span class="sp-tile-n">2017 · 미니 4집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/빅톤/a/identity/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/89/996/10089996_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">IDENTITY</span><span class="sp-tile-n">2017 · 미니 3집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/빅톤/a/ready/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/42/684/10042684_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">READY</span><span class="sp-tile-n">2017 · 미니 2집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/빅톤/a/voicetonewworld/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/13/586/10013586_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Voice To New World</span><span class="sp-tile-n">2016 · 미니 1집</span></a>
+    </div>
   
     <h2>함께 보면 좋은 그룹</h2>
     <ul class="member-list rel">
@@ -197,7 +202,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/victon/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=빅톤">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"What I Said","s":"영상 67개","img":"1WVkRRgcymw","m":"What I Said","h":"https://kpop-universe.kr/g/빅톤/s/whatisaid/"},{"k":"멤버 직캠","t":"한승우","s":"직캠 39개","img":"YWEMuFZLbcc","h":"https://kpop-universe.kr/member/한승우/fancams/"},{"k":"앨범","t":"Choice","s":"수록곡 5곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/111/02/360/11102360_20221115013002_500.jpg","h":"https://kpop-universe.kr/g/빅톤/a/choice/"},{"k":"곡별 직캠·무대","t":"Stupid O'clock","s":"영상 54개","img":"OqVgOyrJsng","m":"Stupid O'clock","h":"https://kpop-universe.kr/g/빅톤/s/stupidoclock/"},{"k":"멤버 직캠","t":"최병찬","s":"직캠 39개","img":"pLNb2k2xUwg","h":"https://kpop-universe.kr/member/최병찬/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"What I Said","s":"영상 68개","img":"1WVkRRgcymw","m":"What I Said","h":"https://kpop-universe.kr/g/빅톤/s/whatisaid/"},{"k":"멤버 직캠","t":"한승우","s":"직캠 39개","img":"YWEMuFZLbcc","h":"https://kpop-universe.kr/member/한승우/fancams/"},{"k":"앨범","t":"Choice","s":"수록곡 5곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/111/02/360/11102360_20221115013002_500.jpg","h":"https://kpop-universe.kr/g/빅톤/a/choice/"},{"k":"곡별 직캠·무대","t":"Stupid O'clock","s":"영상 55개","img":"OqVgOyrJsng","m":"Stupid O'clock","h":"https://kpop-universe.kr/g/빅톤/s/stupidoclock/"},{"k":"멤버 직캠","t":"최병찬","s":"직캠 39개","img":"pLNb2k2xUwg","h":"https://kpop-universe.kr/member/최병찬/fancams/"}]</script>
 </div>
 </body>
 </html>

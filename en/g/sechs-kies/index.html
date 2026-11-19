@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="78 Sechs Kies fancams and stages, most viewed first. Sechs Kies: members, debut 1997.04.15, YG Entertainment. 2 music show wins, 2 grand prizes (daesang). Fancams, stages and discography on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/2ma3SO_5RsQ/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"Sechs Kies","alternateName":"젝스키스","genre":"K-pop","foundingDate":"1997-04-15","url":"https://kpop-universe.kr/en/g/sechs-kies/","image":"https://img.youtube.com/vi/2ma3SO_5RsQ/maxresdefault.jpg","member":[{"@type":"Person","name":"Eun Jiwon"},{"@type":"Person","name":"Lee Jaejin"},{"@type":"Person","name":"Kim Jaeduck"},{"@type":"Person","name":"Kang Sunghoon"},{"@type":"Person","name":"Ko Jiyong"},{"@type":"Person","name":"Jang Suwon"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"Sechs Kies","alternateName":"젝스키스","genre":"K-pop","description":"Sechs Kies was K-pop boy group under YG Entertainment, debuting in 1997. Recent releases: 뒤돌아보지 말아요 (2021), ALL FOR YOU (2020), ANOTHER LIGHT (2017).","foundingDate":"1997-04-15","url":"https://kpop-universe.kr/en/g/sechs-kies/","image":"https://img.youtube.com/vi/2ma3SO_5RsQ/maxresdefault.jpg","member":[{"@type":"Person","name":"Eun Jiwon"},{"@type":"Person","name":"Lee Jaejin"},{"@type":"Person","name":"Kim Jaeduck"},{"@type":"Person","name":"Kang Sunghoon"},{"@type":"Person","name":"Ko Jiyong"},{"@type":"Person","name":"Jang Suwon"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["Latest music show win · 아프지 마요 (2017.05.13)","2 music show wins","284 stages & videos collected","Most viewed · 13M views"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
-  <p class="intro">Sechs Kies was K-pop boy group under YG Entertainment, debuting in 1997. Recent releases: 뒤돌아보지 말아요 (2021), ALL FOR YOU (2020), ANOTHER LIGHT (2017).</p>
   
     <h2 id="members">Members</h2>
     <div class="faces">
@@ -140,40 +158,28 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/sechs-kies/s/커플/">커플 Couple</a></li>
       <li><a href="https://kpop-universe.kr/en/g/sechs-kies/s/슬픈노래/">슬픈 노래 SAD SONG</a></li>
       <li><a href="https://kpop-universe.kr/en/g/sechs-kies/s/세단어/">세 단어 THREE WORDS</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/sechs-kies/s/특별해/">특별해</a></li>
       <li><a href="https://kpop-universe.kr/en/g/sechs-kies/s/allforyou/">ALL FOR YOU</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/sechs-kies/s/특별해/">특별해</a></li>
       <li><a href="https://kpop-universe.kr/en/g/sechs-kies/s/불나방/">불나방</a></li>
       <li><a href="https://kpop-universe.kr/en/g/sechs-kies/s/웃어줘/">웃어줘</a></li>
     </ul>
   
-    <h2 id="albums">Albums & tracklists</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/sechs-kies/a/allforyou/">ALL FOR YOU</a> <span class="yr">2020</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/sechs-kies/a/anotherlight/">ANOTHER LIGHT</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/sechs-kies/a/the20thanniversaryjapanedition/">THE 20TH ANNIVERSARY -Japan Edition-</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/sechs-kies/a/the20thanniversary5집/">THE 20TH ANNIVERSARY - 5집</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/sechs-kies/a/2016realbum/">2016 Re-ALBUM</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/sechs-kies/a/bluenote4집/">Blue Note - 4집</a> <span class="yr">2000</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/sechs-kies/a/comback/">Com&#39; Back</a> <span class="yr">1999</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/sechs-kies/a/special98스페셜앨범/">Special - 98 스페셜앨범</a> <span class="yr">1998</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/sechs-kies/a/roadfighter2집/">Road Fighter - 2집</a> <span class="yr">1998</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/sechs-kies/a/welcometothesechskiesland스페셜/">Welcome to the Sechskies Land - 스페셜</a> <span class="yr">1997</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/sechs-kies/a/학교별곡1집/">학교별곡 - 1집</a> <span class="yr">1997</span></li>
-    </ul>
-  
-    <h2>Discography</h2>
-    <ul class="discog-list">
-      <li>뒤돌아보지 말아요 <span class="yr">(2021)</span> <span class="tag">Single</span></li>
-      <li>ALL FOR YOU <span class="yr">(2020)</span> <span class="tag">1st EP</span></li>
-      <li>ANOTHER LIGHT <span class="yr">(2017)</span> <span class="tag">Special</span></li>
-      <li>THE 20TH ANNIVERSARY -Japan Edition- <span class="yr">(2017)</span> <span class="tag">Album</span></li>
-      <li>THE 20TH ANNIVERSARY - 5집 <span class="yr">(2017)</span> <span class="tag">5th Album</span></li>
-      <li>세 단어 <span class="yr">(2016)</span> <span class="tag">Single</span></li>
-      <li>Blue Note - 4집 <span class="yr">(2000)</span> <span class="tag">4th Album</span></li>
-      <li>Com&#39; Back <span class="yr">(1999)</span> <span class="tag">3rd Album</span></li>
-      <li>Road Fighter - 2집 <span class="yr">(1998)</span> <span class="tag">2nd Album</span></li>
-      <li>학교별곡 - 1집 <span class="yr">(1997)</span> <span class="tag">1st Album</span></li>
-    </ul>
+    <h2 id="albums">Discography</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/7c/83/fa/7c83faaf-7b72-62e6-70bd-471b6189fcdb/Cover.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">뒤돌아보지 말아요</span><span class="sp-tile-n">2021 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/sechs-kies/a/allforyou/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/02/a5/bb/02a5bb52-9cf7-7488-90a7-87b949051dd6/SECHSKIES_ALLFORYOU_DS_5000-5000.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">ALL FOR YOU</span><span class="sp-tile-n">2020 · 1st EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/sechs-kies/a/anotherlight/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/ad/21/0b/ad210b32-86a4-c395-5631-b3ef4acdea85/DS_COVER.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">ANOTHER LIGHT</span><span class="sp-tile-n">2017 · Special</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/sechs-kies/a/the20thanniversaryjapanedition/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/119/64/837/11964837_20250729174442_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">THE 20TH ANNIVERSARY -Japan Edition-</span><span class="sp-tile-n">2017 · Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/sechs-kies/a/the20thanniversary5집/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music117/v4/c8/44/20/c8442096-84f3-e3e9-f53e-10c4f5b1a963/sechskies_digitalcover4000.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">THE 20TH ANNIVERSARY - 5집</span><span class="sp-tile-n">2017 · 5th Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/sechs-kies/a/2016realbum/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/e1/d2/bb/e1d2bb9f-b422-3dd0-6e11-0d8b35307d9f/sechskies1201.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">2016 Re-ALBUM</span><span class="sp-tile-n">2016 · Repackage</span></a>
+      <div class="sp-tile"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/d1/a6/8d/d1a68d8c-744f-7b35-76b3-d16346a7857e/DIGITAL_SINGLE_COVER_4000.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">세 단어</span><span class="sp-tile-n">2016 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/sechs-kies/a/bluenote4집/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/10/94/02/1094029d-7298-ec51-9a26-bd774b371c68/cover-_Blue_Note.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Blue Note - 4집</span><span class="sp-tile-n">2000 · 4th Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/sechs-kies/a/comback/"><img src="https://cdnimg.melon.co.kr/cm/album/images/000/05/362/5362_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Com&#39; Back</span><span class="sp-tile-n">1999 · 3rd Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/sechs-kies/a/special98스페셜앨범/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/48/95/68/48956863-3eff-b102-908b-1db1ff35899a/5360.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Special - 98 스페셜앨범</span><span class="sp-tile-n">1998 · Special</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/sechs-kies/a/roadfighter2집/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/62/ce/c6/62cec617-f0ca-5dc5-ce7e-85f8635c6e24/5359.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Road Fighter - 2집</span><span class="sp-tile-n">1998 · 2nd Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/sechs-kies/a/welcometothesechskiesland스페셜/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/2d/5d/a0/2d5da0bd-b3b5-652d-49a2-3cdadbb94cea/cover-_Welcome_To_The_Sechskies_Land.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">Welcome to the Sechskies Land - 스페셜</span><span class="sp-tile-n">1997 · Special</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/sechs-kies/a/학교별곡1집/"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/fc/7b/76/fc7b765a-7264-2ca2-5714-f9a131a18a48/5368.jpg/600x600bb.jpg" alt="" loading="lazy"><span class="sp-tile-t">학교별곡 - 1집</span><span class="sp-tile-n">1997 · 1st Album</span></a>
+    </div>
   
     <h2>Related groups</h2>
     <ul class="member-list rel">

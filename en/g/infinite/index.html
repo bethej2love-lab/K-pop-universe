@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="282 INFINITE fancams and stages, most viewed first. INFINITE: members, debut 2010.06.09, INFINITE Company. 15 music show wins. Fancams, stages and discography on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/1LLOvq_qqd8/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"INFINITE","alternateName":"인피니트","genre":"K-pop","foundingDate":"2010-06-09","url":"https://kpop-universe.kr/en/g/infinite/","image":"https://img.youtube.com/vi/1LLOvq_qqd8/maxresdefault.jpg","member":[{"@type":"Person","name":"Kim Sungkyu"},{"@type":"Person","name":"Jang Dongwoo"},{"@type":"Person","name":"Nam Woohyun"},{"@type":"Person","name":"Lee Sungyeol"},{"@type":"Person","name":"L"},{"@type":"Person","name":"Lee Sungjong"},{"@type":"Person","name":"Hoya"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"INFINITE","alternateName":"인피니트","genre":"K-pop","description":"INFINITE is a 6-member K-pop boy group under INFINITE Company, debuting in 2010. Fan club: Inspirit. Recent releases: I Still Remember (2026), LIKE INFINITE (2025), 볼 수 있어 (Sad Loop) (2024).","foundingDate":"2010-06-09","url":"https://kpop-universe.kr/en/g/infinite/","image":"https://img.youtube.com/vi/1LLOvq_qqd8/maxresdefault.jpg","member":[{"@type":"Person","name":"Kim Sungkyu"},{"@type":"Person","name":"Jang Dongwoo"},{"@type":"Person","name":"Nam Woohyun"},{"@type":"Person","name":"Lee Sungyeol"},{"@type":"Person","name":"L"},{"@type":"Person","name":"Lee Sungjong"},{"@type":"Person","name":"Hoya"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -107,7 +126,6 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <script type="application/json" id="kpu-facts">["Latest music show win · Tell Me (2018.01.20)","15 music show wins","868 stages & videos collected","Most viewed · 13M views"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
-  <p class="intro">INFINITE is a 6-member K-pop boy group under INFINITE Company, debuting in 2010. Fan club: Inspirit. Recent releases: I Still Remember (2026), LIKE INFINITE (2025), 볼 수 있어 (Sad Loop) (2024).</p>
   
     <h2 id="members">Members</h2>
     <div class="faces">
@@ -143,20 +161,20 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/infinite/s/dangerous/">Dangerous</a></li>
       <li><a href="https://kpop-universe.kr/en/g/infinite/s/devil/">DEVIL</a></li>
       <li><a href="https://kpop-universe.kr/en/g/infinite/s/tellme/">Tell Me</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/infinite/s/추격자/">추격자 (The Chaser)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/infinite/s/다시돌아와/">다시 돌아와 (Come Back Again)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/infinite/s/내꺼하자/">내꺼하자 (Be Mine)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/infinite/s/태풍/">태풍 (The Eye)</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/infinite/s/lastromeo/">Last Romeo</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/infinite/s/추격자/">추격자 (The Chaser)</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/infinite/s/다시돌아와/">다시 돌아와 (Come Back Again)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/infinite/s/destiny/">Destiny</a></li>
       <li><a href="https://kpop-universe.kr/en/g/infinite/s/back/">Back</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/infinite/s/lastromeo/">Last Romeo</a></li>
       <li><a href="https://kpop-universe.kr/en/g/infinite/s/파라다이스/">파라다이스 (Paradise)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/infinite/s/holdonme/">Hold On Me</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/infinite/s/only직진/">Only 직진</a></li>
       <li><a href="https://kpop-universe.kr/en/g/infinite/s/newemotions/">New Emotions</a></li>
       <li><a href="https://kpop-universe.kr/en/g/infinite/s/clock/">CLOCK</a></li>
       <li><a href="https://kpop-universe.kr/en/g/infinite/s/남자가사랑할때/">남자가 사랑할 때 (Man in Love)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/infinite/s/news/">News</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/infinite/s/only직진/">Only 직진</a></li>
       <li><a href="https://kpop-universe.kr/en/g/infinite/s/nomore/">No More</a></li>
       <li><a href="https://kpop-universe.kr/en/g/infinite/s/btd/">BTD</a></li>
       <li><a href="https://kpop-universe.kr/en/g/infinite/s/truelove/">True Love</a></li>
@@ -164,57 +182,40 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/en/g/infinite/s/imcold/">I&#39;m Cold</a></li>
       <li><a href="https://kpop-universe.kr/en/g/infinite/s/sway/">SWAY</a></li>
       <li><a href="https://kpop-universe.kr/en/g/infinite/s/babybaby/">Baby Baby</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/infinite/s/러브레터/">러브레터 (Love Letter)</a></li>
       <li><a href="https://kpop-universe.kr/en/g/infinite/s/냉정과열정사이/">냉정과 열정 사이</a></li>
     </ul>
   
-    <h2 id="albums">Albums & tracklists</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/infinite/a/likeinfinite/">LIKE INFINITE</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/infinite/a/13egin/">13egin</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/infinite/a/topseed/">TOP SEED</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/infinite/a/infiniteonly/">INFINITE ONLY</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/infinite/a/reality/">Reality</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/infinite/a/beback/">Be Back</a> <span class="yr">2014</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/infinite/a/season2/">Season 2</a> <span class="yr">2014</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/infinite/a/theorigin/">The Origin</a> <span class="yr">2014</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/infinite/a/newchallenge/">New Challenge</a> <span class="yr">2013</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/infinite/a/infinitize/">INFINITIZE</a> <span class="yr">2012</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/infinite/a/paradise/">&#39;Paradise&#39; (정규 1집 스페셜 리패키지)</a> <span class="yr">2011</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/infinite/a/overthetop/">Over The Top</a> <span class="yr">2011</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/infinite/a/evolution/">Evolution</a> <span class="yr">2011</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/infinite/a/firstinvasion/">First Invasion</a> <span class="yr">2010</span></li>
-    </ul>
-  
-    <h2>Discography</h2>
-    <ul class="discog-list">
-      <li>I Still Remember <span class="yr">(2026)</span> <span class="tag">Single</span></li>
-      <li>LIKE INFINITE <span class="yr">(2025)</span> <span class="tag">8th EP</span></li>
-      <li>볼 수 있어 (Sad Loop) <span class="yr">(2024)</span> <span class="tag">Single</span></li>
-      <li>인피니트(INFINITE) Digital Single [Flower] <span class="yr">(2024)</span> <span class="tag">Single</span></li>
-      <li>13egin <span class="yr">(2023)</span> <span class="tag">7th EP</span></li>
-      <li>CLOCK <span class="yr">(2019)</span> <span class="tag">Single</span></li>
-      <li>TOP SEED <span class="yr">(2018)</span> <span class="tag">3rd Album</span></li>
-      <li>INFINITE ONLY <span class="yr">(2016)</span> <span class="tag">6th EP</span></li>
-      <li>그 해 여름 (두 번째 이야기) <span class="yr">(2016)</span> <span class="tag">Single</span></li>
-      <li>Reality <span class="yr">(2015)</span> <span class="tag">5th EP</span></li>
-      <li>Be Back <span class="yr">(2014)</span> <span class="tag">정규 2집 리패키지</span></li>
-      <li>Season 2 <span class="yr">(2014)</span> <span class="tag">2nd Album</span></li>
-      <li>The Origin <span class="yr">(2014)</span> <span class="tag">Special</span></li>
-      <li>Galaxy Music <span class="yr">(2013)</span> <span class="tag">Single</span></li>
-      <li>Destiny <span class="yr">(2013)</span> <span class="tag">Single</span></li>
-      <li>New Challenge <span class="yr">(2013)</span> <span class="tag">4th EP</span></li>
-      <li>INFINITIZE <span class="yr">(2012)</span> <span class="tag">3rd EP</span></li>
-      <li>눈물만 <span class="yr">(2012)</span> <span class="tag">Single</span></li>
-      <li>Second Invasion <span class="yr">(2012)</span> <span class="tag">Single</span></li>
-      <li>하얀 고백 (Lately) <span class="yr">(2011)</span> <span class="tag">Single</span></li>
-      <li>&#39;Paradise&#39; (정규 1집 스페셜 리패키지) <span class="yr">(2011)</span> <span class="tag">정규 1집 리패키지</span></li>
-      <li>Over The Top <span class="yr">(2011)</span> <span class="tag">1st Album</span></li>
-      <li>Can U Smile (Digital Single) <span class="yr">(2011)</span> <span class="tag">Single</span></li>
-      <li>Inspirit <span class="yr">(2011)</span> <span class="tag">Single</span></li>
-      <li>Evolution <span class="yr">(2011)</span> <span class="tag">2nd EP</span></li>
-      <li>She&#39;s Back <span class="yr">(2010)</span> <span class="tag">Single</span></li>
-      <li>First Invasion <span class="yr">(2010)</span> <span class="tag">1st EP</span></li>
-    </ul>
+    <h2 id="albums">Discography</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e0260a0cd65011c04b5dd10aac8" alt="" loading="lazy"><span class="sp-tile-t">I Still Remember</span><span class="sp-tile-n">2026 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/infinite/a/likeinfinite/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/30/412/11730412_20250306095103_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">LIKE INFINITE</span><span class="sp-tile-n">2025 · 8th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/77/339/11677339_20241224112301_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">볼 수 있어 (Sad Loop)</span><span class="sp-tile-n">2024 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/07/033/11507033_20240607113722_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">인피니트(INFINITE) Digital Single [Flower]</span><span class="sp-tile-n">2024 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/infinite/a/13egin/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/96/459/11296459_20230731112406_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">13egin</span><span class="sp-tile-n">2023 · 7th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/50/872/10250872_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">CLOCK</span><span class="sp-tile-n">2019 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/infinite/a/topseed/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/26/375/10126375_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">TOP SEED</span><span class="sp-tile-n">2018 · 3rd Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/infinite/a/infiniteonly/"><img src="https://cdnimg.melon.co.kr/cm/album/images/027/11/212/2711212_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">INFINITE ONLY</span><span class="sp-tile-n">2016 · 6th EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/96/433/2696433_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">그 해 여름 (두 번째 이야기)</span><span class="sp-tile-n">2016 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/infinite/a/reality/"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/27/888/2327888_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Reality</span><span class="sp-tile-n">2015 · 5th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/infinite/a/beback/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/68/235/2268235_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Be Back</span><span class="sp-tile-n">2014 · 정규 2집 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/infinite/a/season2/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/56/759/2256759_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Season 2</span><span class="sp-tile-n">2014 · 2nd Album</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/infinite/a/theorigin/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/50/447/2250447_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">The Origin</span><span class="sp-tile-n">2014 · Special</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/03/009/2203009_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Galaxy Music</span><span class="sp-tile-n">2013 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/92/958/2192958_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Destiny</span><span class="sp-tile-n">2013 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/infinite/a/newchallenge/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/78/881/2178881_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">New Challenge</span><span class="sp-tile-n">2013 · 4th EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/infinite/a/infinitize/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/23/894/2123894_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">INFINITIZE</span><span class="sp-tile-n">2012 · 3rd EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/23/248/2123248_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">눈물만</span><span class="sp-tile-n">2012 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/020/85/371/2085371_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Second Invasion</span><span class="sp-tile-n">2012 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/020/45/049/2045049_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">하얀 고백 (Lately)</span><span class="sp-tile-n">2011 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/infinite/a/paradise/"><img src="https://cdnimg.melon.co.kr/cm/album/images/020/15/246/2015246_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">&#39;Paradise&#39; (정규 1집 스페셜 리패키지)</span><span class="sp-tile-n">2011 · 정규 1집 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/infinite/a/overthetop/"><img src="https://cdnimg.melon.co.kr/cm/album/images/013/39/753/1339753_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Over The Top</span><span class="sp-tile-n">2011 · 1st Album</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/012/69/660/1269660_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Can U Smile (Digital Single)</span><span class="sp-tile-n">2011 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/011/99/651/1199651_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Inspirit</span><span class="sp-tile-n">2011 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/infinite/a/evolution/"><img src="https://cdnimg.melon.co.kr/cm/album/images/011/20/763/1120763_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Evolution</span><span class="sp-tile-n">2011 · 2nd EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/009/89/161/989161_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">She&#39;s Back</span><span class="sp-tile-n">2010 · Single</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/infinite/a/firstinvasion/"><img src="https://cdnimg.melon.co.kr/cm/album/images/009/18/052/918052_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">First Invasion</span><span class="sp-tile-n">2010 · 1st EP</span></a>
+    </div>
   
     <h2>Related groups</h2>
     <ul class="member-list rel">
@@ -224,7 +225,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/인피니트/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=인피니트">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"Dangerous","s":"57 videos","img":"O4WQFp9oCRQ","m":"Dangerous","h":"https://kpop-universe.kr/en/g/infinite/s/dangerous/"},{"k":"Member fancams","t":"Nam Woohyun","s":"44 fancams","img":"TS_GXyVtRx4","h":"https://kpop-universe.kr/en/g/infinite/nam-woohyun/fancams/"},{"k":"Album","t":"LIKE INFINITE","s":"6 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/117/30/412/11730412_20250306095103_500.jpg","h":"https://kpop-universe.kr/en/g/infinite/a/likeinfinite/"},{"k":"Song fancams","t":"DEVIL","s":"15 videos","img":"QaPLKsonxu4","m":"DEVIL","h":"https://kpop-universe.kr/en/g/infinite/s/devil/"},{"k":"Member fancams","t":"Kim Sungkyu","s":"39 fancams","img":"u5-68_sqap4","h":"https://kpop-universe.kr/en/g/infinite/kim-sungkyu/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"Dangerous","s":"58 videos","img":"O4WQFp9oCRQ","m":"Dangerous","h":"https://kpop-universe.kr/en/g/infinite/s/dangerous/"},{"k":"Member fancams","t":"Nam Woohyun","s":"44 fancams","img":"TS_GXyVtRx4","h":"https://kpop-universe.kr/en/g/infinite/nam-woohyun/fancams/"},{"k":"Album","t":"LIKE INFINITE","s":"6 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/117/30/412/11730412_20250306095103_500.jpg","h":"https://kpop-universe.kr/en/g/infinite/a/likeinfinite/"},{"k":"Song fancams","t":"DEVIL","s":"16 videos","img":"QaPLKsonxu4","m":"DEVIL","h":"https://kpop-universe.kr/en/g/infinite/s/devil/"},{"k":"Member fancams","t":"Kim Sungkyu","s":"39 fancams","img":"u5-68_sqap4","h":"https://kpop-universe.kr/en/g/infinite/kim-sungkyu/fancams/"}]</script>
 </div>
 </body>
 </html>

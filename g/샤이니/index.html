@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="샤이니 직캠·무대 영상 1536개를 조회수 순으로. 샤이니 멤버·데뷔일(2008.05.22)·소속사(SM엔터테인먼트). 음악방송 1위 82회, 대상 1개. 직캠·무대 영상과 디스코그래피를 K-POP UNIVERSE에서.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/nwinAFz_vxU/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"샤이니","alternateName":"SHINee","genre":"K-pop","foundingDate":"2008-05-22","url":"https://kpop-universe.kr/g/샤이니/","image":"https://img.youtube.com/vi/nwinAFz_vxU/maxresdefault.jpg","member":[{"@type":"Person","name":"온유"},{"@type":"Person","name":"키"},{"@type":"Person","name":"민호"},{"@type":"Person","name":"태민"},{"@type":"Person","name":"종현"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"샤이니","alternateName":"SHINee","genre":"K-pop","description":"보이그룹. SM엔터테인먼트. 2008년 데뷔. 팬덤명 샤월. 대표 앨범 Atmos(2026), Poet | Artist(2025), HARD(2023).","foundingDate":"2008-05-22","url":"https://kpop-universe.kr/g/샤이니/","image":"https://img.youtube.com/vi/nwinAFz_vxU/maxresdefault.jpg","member":[{"@type":"Person","name":"온유"},{"@type":"Person","name":"키"},{"@type":"Person","name":"민호"},{"@type":"Person","name":"태민"},{"@type":"Person","name":"종현"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -104,10 +123,9 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>팬덤명</b> 샤월</span>
     </div>
     <div class="sns"><a class="sns-youtube" href="https://youtube.com/@SHINee" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://instagram.com/shinee" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/SHINee" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://tiktok.com/@shinee_official" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-weverse" href="https://weverse.io/shinee" target="_blank" rel="noopener noreferrer">Weverse</a><a class="sns-namu" href="https://namu.wiki/w/샤이니" target="_blank" rel="noopener noreferrer">나무위키</a></div>
-    <script type="application/json" id="kpu-facts">["이번 주 새 영상 6개","최근 음방 1위 · HUNTER (2025.08.22)","음방 1위 82회","모아둔 무대·영상 2,814개","가장 많이 본 영상 · 조회수 15M"]</script>
+    <script type="application/json" id="kpu-facts">["이번 주 새 영상 5개","최근 음방 1위 · HUNTER (2025.08.22)","음방 1위 82회","모아둔 무대·영상 2,814개","가장 많이 본 영상 · 조회수 15M"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
-  <p class="intro">보이그룹. SM엔터테인먼트. 2008년 데뷔. 팬덤명 샤월. 대표 앨범 Atmos(2026), Poet | Artist(2025), HARD(2023).</p>
   
     <h2 id="members">멤버</h2>
     <div class="faces">
@@ -166,18 +184,18 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/샤이니/s/dreamgirl/">Dream Girl</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/want/">WANT</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/heartattack/">Heart Attack</a></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/s/everybody/">Everybody</a></li>
+      <li><a href="https://kpop-universe.kr/g/샤이니/s/sherlock/">Sherlock</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/1of1/">1 of 1</a></li>
+      <li><a href="https://kpop-universe.kr/g/샤이니/s/everybody/">Everybody</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/hunter/">HUNTER</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/guilty/">Guilty</a></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/s/sherlock/">Sherlock</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/iwantyou/">I Want You</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/callback/">CALL BACK</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/놓아줘/">놓아줘 (Let Me Out)</a></li>
+      <li><a href="https://kpop-universe.kr/g/샤이니/s/데리러가/">데리러 가 (Good Evening)</a></li>
+      <li><a href="https://kpop-universe.kr/g/샤이니/s/lucifer/">Lucifer</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/move/">MOVE</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/atlantis/">Atlantis</a></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/s/lucifer/">Lucifer</a></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/s/데리러가/">데리러 가 (Good Evening)</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/줄리엣/">줄리엣 (Juliette)</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/ringdingdong/">Ring Ding Dong</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/whysoserious/">Why So Serious?</a></li>
@@ -189,54 +207,54 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/샤이니/s/finale/">FINALE</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/tellmewhattodo/">Tell Me What To Do</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/tempo/">TEMPO</a></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/s/heaven/">Heaven</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/아미고/">아.미.고 (Amigo)</a></li>
+      <li><a href="https://kpop-universe.kr/g/샤이니/s/heaven/">Heaven</a></li>
+      <li><a href="https://kpop-universe.kr/g/샤이니/s/네가남겨둔말/">네가 남겨둔 말 (Our Page)</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/juliette/">Juliette</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/sherlock셜록/">Sherlock•셜록 Sherlock (Clue + Note)</a></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/s/네가남겨둔말/">네가 남겨둔 말 (Our Page)</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/sexyintheair/">Sexy In The Air</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/산소같은너/">산소 같은 너 (Love Like Oxygen)</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/runaway/">Runaway</a></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/s/crush/">Crush</a></li>
+      <li><a href="https://kpop-universe.kr/g/샤이니/s/hello/">Hello</a></li>
     </ul>
     <details class="more-songs"><summary>나머지 53곡 더 보기</summary>
     <ul class="member-list rel">
+      <li><a href="https://kpop-universe.kr/g/샤이니/s/crush/">Crush</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/dejavu/">Deja Vu</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/alldayallnight/">All Day All Night</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/jojo/">JoJo</a></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/s/hello/">Hello</a></li>
+      <li><a href="https://kpop-universe.kr/g/샤이니/s/아름다워/">아름다워 (Beautiful)</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/somethingaboutu/">Something About U</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/cameandleftme/">Came And Left Me</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/독감/">독감 (Who Waits For Love)</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/shift/">SHIFT</a></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/s/아름다워/">아름다워 (Beautiful)</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/therizzness/">The Rizzness</a></li>
+      <li><a href="https://kpop-universe.kr/g/샤이니/s/괴도/">괴도 (Danger)</a></li>
+      <li><a href="https://kpop-universe.kr/g/샤이니/s/marriedtothemusic/">Married To The Music</a></li>
+      <li><a href="https://kpop-universe.kr/g/샤이니/s/낯선자/">낯선자 (Stranger)</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/heartbreak/">Heartbreak</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/sayless/">Say Less</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/이데아/">이데아 (IDEA:理想)</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/일식/">일식</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/guesswho/">Guess Who</a></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/s/괴도/">괴도 (Danger)</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/poetartist/">Poet | Artist</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/shine/">SHINe</a></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/s/낯선자/">낯선자 (Stranger)</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/lovesick/">Love Sick</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/savior/">SAVIOR</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/상사병/">상사병 (Symptoms)</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/sexuality/">Sexuality</a></li>
+      <li><a href="https://kpop-universe.kr/g/샤이니/s/starlight/">Starlight</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/gravity/">Gravity</a></li>
+      <li><a href="https://kpop-universe.kr/g/샤이니/s/같은자리/">같은 자리 (Area)</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/electric/">Electric</a></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/s/marriedtothemusic/">Married To The Music</a></li>
+      <li><a href="https://kpop-universe.kr/g/샤이니/s/히치하이킹/">히치하이킹 (Hitchhiking)</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/goat/">G.O.A.T</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/stayforanight/">Stay for a night</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/hours/">HOURS</a></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/s/starlight/">Starlight</a></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/s/같은자리/">같은 자리 (Area)</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/셀수없는/">셀 수 없는 (Countless)</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/chemistry/">Chemistry</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/tonight/">Tonight</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/diamondsky/">Diamond Sky</a></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/s/히치하이킹/">히치하이킹 (Hitchhiking)</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/방백/">방백 (Aside)</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/lovelikeoxygen/">Love Like Oxygen</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/pleasureshop/">Pleasure Shop</a></li>
@@ -249,84 +267,59 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/샤이니/s/exclusive/">Exclusive</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/사랑인것같아/">사랑인 것 같아 (I Think It’s Love)</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/10x/">10X</a></li>
+      <li><a href="https://kpop-universe.kr/g/샤이니/s/likeit/">Like It</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/standbyme/">Stand By Me</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/pressyournumber/">Press Your Number</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/낮과밤/">낮과 밤 (Day and Night)</a></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/s/likeit/">Like It</a></li>
       <li><a href="https://kpop-universe.kr/g/샤이니/s/spoiler/">Spoiler</a></li>
     </ul></details>
   
-    <h2 id="albums">앨범·수록곡</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/atmos/">Atmos</a> <span class="yr">2026</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/hard/">HARD</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/2022wintersmtownsmcupalace/">2022 Winter SMTOWN : SMCU PALACE</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/superstar/">SUPERSTAR</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/atlantisthe7thalbumrepackage/">Atlantis - The 7th Album Repackage</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/dontcallme/">Don&#39;t Call Me</a> <span class="yr">2021</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/thestoryoflightepilogue/">&#39;The Story of Light&#39; Epilogue</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/fromnowon/">FROM NOW ON</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/thestoryoflightep3/">&#39;The Story of Light&#39; EP.3</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/thestoryoflightep2/">&#39;The Story of Light&#39; EP.2</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/thestoryoflightep1/">&#39;The Story of Light&#39; EP.1</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/shineethebestfromnowon/">SHINee THE BEST FROM NOW ON</a> <span class="yr">2018</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/five/">FIVE</a> <span class="yr">2017</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/1and1the5thalbumrepackage/">1 and 1 - The 5th Album Repackage</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/1of1/">1 of 1</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/dxdxd/">D x D x D</a> <span class="yr">2016</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/marriedtothemusicthe4thalbumrepackage/">Married To The Music - The 4th Album Repackage</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/odd/">Odd</a> <span class="yr">2015</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/imyourboy/">I&#39;m Your Boy</a> <span class="yr">2014</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/321/">3 2 1</a> <span class="yr">2013</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/the5thminialbumeverybody/">The 5th Mini Album &#39;Everybody&#39;</a> <span class="yr">2013</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/shineethe3rdalbumthemisconceptionsofus/">SHINee The 3rd Album &#39;The Misconceptions Of Us&#39;</a> <span class="yr">2013</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/boysmeetu/">Boys Meet U</a> <span class="yr">2013</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/shineethe3rdalbumchapter2whysoseriousthemisconceptionsofme/">SHINee The 3rd Album Chapter 2. &#39;Why So Serious? - The Misconceptions Of Me&#39;</a> <span class="yr">2013</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/shineethe3rdalbumchapter1dreamgirlthemisconceptionsofyou/">SHINee The 3rd Album Chapter 1. &#39;Dream Girl - The Misconceptions Of You&#39;</a> <span class="yr">2013</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/sherlockshineethe4thminialbum/">&#39;Sherlock&#39; SHINee The 4th Mini Album</a> <span class="yr">2012</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/thefirst/">THE FIRST</a> <span class="yr">2012</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/helloshineethe2ndalbumrepackage/">&#39;Hello&#39; SHINee The 2nd Album Repackage</a> <span class="yr">2010</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/the2ndalbumlucifer/">The 2nd Album &#39;Lucifer&#39;</a> <span class="yr">2010</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/2009yearofus/">2009, Year Of Us</a> <span class="yr">2009</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/romeothesecondminialbum/">&#39;ROMEO&#39; The Second Mini Album</a> <span class="yr">2009</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/shineethefirstalbum/">SHINee The First Album (Repackage) - Amigo</a> <span class="yr">2008</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/shineethe1stalbumtheshineeworld/">SHINee The 1st Album &#39;The SHINee World&#39;</a> <span class="yr">2008</span></li>
-      <li><a href="https://kpop-universe.kr/g/샤이니/a/누난너무예뻐/">누난 너무 예뻐 (Replay)</a> <span class="yr">2008</span></li>
-    </ul>
-  
-    <h2>디스코그래피</h2>
-    <ul class="discog-list">
-      <li>Atmos <span class="yr">(2026)</span> <span class="tag">미니 6집</span></li>
-      <li>Poet | Artist <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>HARD <span class="yr">(2023)</span> <span class="tag">정규 8집</span></li>
-      <li>2022 Winter SMTOWN : SMCU PALACE <span class="yr">(2022)</span> <span class="tag">스페셜</span></li>
-      <li>SUPERSTAR <span class="yr">(2021)</span> <span class="tag">미니</span></li>
-      <li>Atlantis - The 7th Album Repackage <span class="yr">(2021)</span> <span class="tag">정규 7집 리패키지</span></li>
-      <li>Don&#39;t Call Me <span class="yr">(2021)</span> <span class="tag">정규 7집</span></li>
-      <li>&#39;The Story of Light&#39; Epilogue <span class="yr">(2018)</span> <span class="tag">정규 6집</span></li>
-      <li>Sunny Side <span class="yr">(2018)</span> <span class="tag">싱글</span></li>
-      <li>FROM NOW ON <span class="yr">(2018)</span> <span class="tag">미니</span></li>
-      <li>&#39;The Story of Light&#39; EP.3 <span class="yr">(2018)</span> <span class="tag">정규 6집</span></li>
-      <li>&#39;The Story of Light&#39; EP.2 <span class="yr">(2018)</span> <span class="tag">정규 6집</span></li>
-      <li>&#39;The Story of Light&#39; EP.1 <span class="yr">(2018)</span> <span class="tag">정규 6집</span></li>
-      <li>SHINee THE BEST FROM NOW ON <span class="yr">(2018)</span> <span class="tag">정규</span></li>
-      <li>FIVE <span class="yr">(2017)</span> <span class="tag">정규</span></li>
-      <li>Winter Wonderland <span class="yr">(2017)</span> <span class="tag">싱글</span></li>
-      <li>1 and 1 - The 5th Album Repackage <span class="yr">(2016)</span> <span class="tag">정규 5집 리패키지</span></li>
-      <li>1 of 1 <span class="yr">(2016)</span> <span class="tag">정규 5집</span></li>
-      <li>君のせいで / Kimino Seide (너때문에) <span class="yr">(2016)</span> <span class="tag">싱글</span></li>
-      <li>D x D x D <span class="yr">(2016)</span> <span class="tag">정규</span></li>
-      <li>Sing Your Song <span class="yr">(2015)</span> <span class="tag">싱글</span></li>
-      <li>Married To The Music - The 4th Album Repackage <span class="yr">(2015)</span> <span class="tag">정규 4집 리패키지</span></li>
-      <li>Odd <span class="yr">(2015)</span> <span class="tag">정규 4집</span></li>
-      <li>Your Number <span class="yr">(2015)</span> <span class="tag">싱글</span></li>
-      <li>I&#39;m Your Boy <span class="yr">(2014)</span> <span class="tag">정규</span></li>
-      <li>LUCKY STAR <span class="yr">(2014)</span> <span class="tag">싱글</span></li>
-      <li>Tell Me Why <span class="yr">(2014)</span> <span class="tag">싱글</span></li>
-      <li>3 2 1 <span class="yr">(2013)</span> <span class="tag">미니</span></li>
-      <li>The 5th Mini Album &#39;Everybody&#39; <span class="yr">(2013)</span> <span class="tag">미니 5집</span></li>
-      <li>Boys Meet U <span class="yr">(2013)</span> <span class="tag">싱글</span></li>
-    </ul>
+    <h2 id="albums">디스코그래피</h2>
+    <div class="sp-tiles dg-tiles">
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/atmos/"><img src="https://i.scdn.co/image/ab67616d00001e02922f33aa8b9155e9080dc875" alt="" loading="lazy"><span class="sp-tile-t">Atmos</span><span class="sp-tile-n">2026 · 미니 6집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/118/23/532/11823532_20250523121147_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Poet | Artist</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/hard/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/62/304/11262304_20230626133223_500.jpg?775172b4f93e6bbac300943c9eea8448/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">HARD</span><span class="sp-tile-n">2023 · 정규 8집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/2022wintersmtownsmcupalace/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/111/22/330/11122330_20221226132433_500.jpg?36b98c496903310f90e57d249694eb67/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">2022 Winter SMTOWN : SMCU PALACE</span><span class="sp-tile-n">2022 · 스페셜</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/superstar/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/106/37/602/10637602_20210625112825_500.jpg?31fb7614bb571bba3cd58c54da0bfbdb/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">SUPERSTAR</span><span class="sp-tile-n">2021 · 미니</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/atlantisthe7thalbumrepackage/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/91/034/10591034_20210412150849_500.jpg?108af522ca11ea11b985189ac0c415f1/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Atlantis - The 7th Album Repackage</span><span class="sp-tile-n">2021 · 정규 7집 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/dontcallme/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/105/68/243/10568243_20210222152849_500.jpg?5a45fc03322e78df7308056a243f45b9/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Don&#39;t Call Me</span><span class="sp-tile-n">2021 · 정규 7집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/thestoryoflightepilogue/"><img src="https://cdnimg.melon.co.kr/cm/album/images/102/02/682/10202682_500.jpg?0295f5244fac86ed060a1e74afe7b55e/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">&#39;The Story of Light&#39; Epilogue</span><span class="sp-tile-n">2018 · 정규 6집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/88/932/10188932_500.jpg?6d3396781641adf0c5d71d283b7b4fde/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Sunny Side</span><span class="sp-tile-n">2018 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/fromnowon/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/83/630/10183630_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">FROM NOW ON</span><span class="sp-tile-n">2018 · 미니</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/thestoryoflightep3/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/78/864/10178864_500.jpg?094a35fdadfa9f13ab8b7dd3220ba24d/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">&#39;The Story of Light&#39; EP.3</span><span class="sp-tile-n">2018 · 정규 6집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/thestoryoflightep2/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/75/119/10175119_500.jpg?701888ea7704f2a679500d85d1f48478/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">&#39;The Story of Light&#39; EP.2</span><span class="sp-tile-n">2018 · 정규 6집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/thestoryoflightep1/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/70/914/10170914_500.jpg?3011bfc00533c569ae5794b26ee1ff23/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">&#39;The Story of Light&#39; EP.1</span><span class="sp-tile-n">2018 · 정규 6집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/shineethebestfromnowon/"><img src="https://cdnimg.melon.co.kr/cm/album/images/101/59/110/10159110_500.jpg?4de96565783134dea6ea3bd7fa7aba28/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">SHINee THE BEST FROM NOW ON</span><span class="sp-tile-n">2018 · 정규</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/five/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/40/682/10040682_500.jpg?b94609162214db206cfc5b92508a1129/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">FIVE</span><span class="sp-tile-n">2017 · 정규</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/31/270/10031270_500.jpg?064c1458957258e3ac62e9e853807095/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Winter Wonderland</span><span class="sp-tile-n">2017 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/1and1the5thalbumrepackage/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/15/244/10015244_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">1 and 1 - The 5th Album Repackage</span><span class="sp-tile-n">2016 · 정규 5집 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/1of1/"><img src="https://cdnimg.melon.co.kr/cm/album/images/100/03/272/10003272_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">1 of 1</span><span class="sp-tile-n">2016 · 정규 5집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/90/241/2690241_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">君のせいで / Kimino Seide (너때문에)</span><span class="sp-tile-n">2016 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/dxdxd/"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/60/003/2660003_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">D x D x D</span><span class="sp-tile-n">2016 · 정규</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/026/47/086/2647086_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Sing Your Song</span><span class="sp-tile-n">2015 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/marriedtothemusicthe4thalbumrepackage/"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/32/709/2332709_500.jpg?e38283dba370b5360ae338976d00ec6b/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Married To The Music - The 4th Album Repackage</span><span class="sp-tile-n">2015 · 정규 4집 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/odd/"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/19/050/2319050_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Odd</span><span class="sp-tile-n">2015 · 정규 4집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/023/08/352/2308352_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Your Number</span><span class="sp-tile-n">2015 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/imyourboy/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/84/050/2284050_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">I&#39;m Your Boy</span><span class="sp-tile-n">2014 · 정규</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/62/601/2262601_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">LUCKY STAR</span><span class="sp-tile-n">2014 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/49/135/2249135_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Tell Me Why</span><span class="sp-tile-n">2014 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/321/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/26/392/2226392_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">3 2 1</span><span class="sp-tile-n">2013 · 미니</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/the5thminialbumeverybody/"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/10/329/2210329_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">The 5th Mini Album &#39;Everybody&#39;</span><span class="sp-tile-n">2013 · 미니 5집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm/album/images/022/00/679/2200679_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Boys Meet U</span><span class="sp-tile-n">2013 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/shineethe3rdalbumthemisconceptionsofus/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/96/165/2196165_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">SHINee The 3rd Album &#39;The Misconceptions Of Us&#39;</span><span class="sp-tile-n">2013 · 정규 3집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/boysmeetu/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/91/613/2191613_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Boys Meet U</span><span class="sp-tile-n">2013 · 정규</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/shineethe3rdalbumchapter2whysoseriousthemisconceptionsofme/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/83/157/2183157_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">SHINee The 3rd Album Chapter 2. &#39;Why So Serious? - The Misconceptions Of Me&#39;</span><span class="sp-tile-n">2013 · 정규 3집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/shineethe3rdalbumchapter1dreamgirlthemisconceptionsofyou/"><img src="https://cdnimg.melon.co.kr/cm/album/images/021/75/668/2175668_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">SHINee The 3rd Album Chapter 1. &#39;Dream Girl - The Misconceptions Of You&#39;</span><span class="sp-tile-n">2013 · 정규 3집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/sherlockshineethe4thminialbum/"><img src="https://cdnimg.melon.co.kr/cm/album/images/020/93/546/2093546_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">&#39;Sherlock&#39; SHINee The 4th Mini Album</span><span class="sp-tile-n">2012 · 미니 4집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/thefirst/"><img src="https://cdnimg.melon.co.kr/cm/album/images/020/87/969/2087969_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">THE FIRST</span><span class="sp-tile-n">2012 · 정규</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/helloshineethe2ndalbumrepackage/"><img src="https://cdnimg.melon.co.kr/cm/album/images/010/30/252/1030252_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">&#39;Hello&#39; SHINee The 2nd Album Repackage</span><span class="sp-tile-n">2010 · 정규 2집 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/the2ndalbumlucifer/"><img src="https://cdnimg.melon.co.kr/cm/album/images/009/66/451/966451_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">The 2nd Album &#39;Lucifer&#39;</span><span class="sp-tile-n">2010 · 정규 2집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/2009yearofus/"><img src="https://cdnimg.melon.co.kr/cm/album/images/006/91/052/691052_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">2009, Year Of Us</span><span class="sp-tile-n">2009 · 미니 3집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/romeothesecondminialbum/"><img src="https://cdnimg.melon.co.kr/cm/album/images/005/65/252/565252_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">&#39;ROMEO&#39; The Second Mini Album</span><span class="sp-tile-n">2009 · 미니 2집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/shineethefirstalbum/"><img src="https://cdnimg.melon.co.kr/cm/album/images/003/99/303/399303_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">SHINee The First Album (Repackage) - Amigo</span><span class="sp-tile-n">2008 · 정규 1집 리패키지</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/shineethe1stalbumtheshineeworld/"><img src="https://cdnimg.melon.co.kr/cm/album/images/003/94/951/394951_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">SHINee The 1st Album &#39;The SHINee World&#39;</span><span class="sp-tile-n">2008 · 정규 1집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/샤이니/a/누난너무예뻐/"><img src="https://cdnimg.melon.co.kr/cm/album/images/003/82/083/382083_500.jpg/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">누난 너무 예뻐 (Replay)</span><span class="sp-tile-n">2008 · 미니 1집</span></a>
+    </div>
   
     <h2>함께 보면 좋은 그룹</h2>
     <ul class="member-list rel">
@@ -341,7 +334,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/shinee/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=샤이니">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"HARD","s":"영상 119개","img":"cygGvm2tlE8","m":"HARD","h":"https://kpop-universe.kr/g/샤이니/s/hard/"},{"k":"멤버 직캠","t":"태민","s":"직캠 625개","img":"unZbfEEfyIw","h":"https://kpop-universe.kr/g/샤이니/태민/fancams/"},{"k":"앨범","t":"Atmos","s":"수록곡 6곡","im":"https://i.scdn.co/image/ab67616d0000b273922f33aa8b9155e9080dc875","h":"https://kpop-universe.kr/g/샤이니/a/atmos/"},{"k":"곡별 직캠·무대","t":"Don't Call Me","s":"영상 70개","img":"3SdinYFN6sM","m":"Don't Call Me","h":"https://kpop-universe.kr/g/샤이니/s/dontcallme/"},{"k":"멤버 직캠","t":"키","s":"직캠 233개","img":"7LvOtUjIxKw","h":"https://kpop-universe.kr/g/샤이니/키/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"HARD","s":"영상 119개","img":"cygGvm2tlE8","m":"HARD","h":"https://kpop-universe.kr/g/샤이니/s/hard/"},{"k":"멤버 직캠","t":"태민","s":"직캠 625개","img":"unZbfEEfyIw","h":"https://kpop-universe.kr/g/샤이니/태민/fancams/"},{"k":"앨범","t":"Atmos","s":"수록곡 6곡","im":"https://i.scdn.co/image/ab67616d0000b273922f33aa8b9155e9080dc875","h":"https://kpop-universe.kr/g/샤이니/a/atmos/"},{"k":"곡별 직캠·무대","t":"Don't Call Me","s":"영상 74개","img":"3SdinYFN6sM","m":"Don't Call Me","h":"https://kpop-universe.kr/g/샤이니/s/dontcallme/"},{"k":"멤버 직캠","t":"키","s":"직캠 233개","img":"7LvOtUjIxKw","h":"https://kpop-universe.kr/g/샤이니/키/fancams/"}]</script>
 </div>
 </body>
 </html>

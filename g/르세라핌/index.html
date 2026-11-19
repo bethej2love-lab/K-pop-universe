@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="르세라핌 직캠·무대 영상 1641개를 조회수 순으로. 르세라핌 멤버·데뷔일(2022.05.02)·소속사(쏘스뮤직 / HYBE). 음악방송 1위 39회, 대상 2개, 밀리언셀러 앨범 2장. 직캠·무대 영상과 디스코그래피를 K-POP UNIVERSE에서.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/u7vLV0zcdiE/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"르세라핌","alternateName":"LE SSERAFIM","genre":"K-pop","foundingDate":"2022-05-02","url":"https://kpop-universe.kr/g/르세라핌/","image":"https://img.youtube.com/vi/u7vLV0zcdiE/maxresdefault.jpg","member":[{"@type":"Person","name":"사쿠라"},{"@type":"Person","name":"김채원"},{"@type":"Person","name":"허윤진"},{"@type":"Person","name":"카즈하"},{"@type":"Person","name":"홍은채"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"르세라핌","alternateName":"LE SSERAFIM","genre":"K-pop","description":"5인조 걸그룹. 쏘스뮤직 / HYBE. 2022년 데뷔. 팬덤명 피어나. 대표 앨범 Made My Night (feat. EJAE)(2026), Made My Night(2026), BOOMPALA (feat. Ayra Starr)(2026).","foundingDate":"2022-05-02","url":"https://kpop-universe.kr/g/르세라핌/","image":"https://img.youtube.com/vi/u7vLV0zcdiE/maxresdefault.jpg","member":[{"@type":"Person","name":"사쿠라"},{"@type":"Person","name":"김채원"},{"@type":"Person","name":"허윤진"},{"@type":"Person","name":"카즈하"},{"@type":"Person","name":"홍은채"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -104,10 +123,9 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>팬덤명</b> 피어나</span>
     </div>
     <div class="sns"><a class="sns-youtube" href="https://www.youtube.com/@LESSERAFIM_official" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://instagram.com/le_sserafim" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/IM_LESSERAFIM" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://tiktok.com/@le_sserafim" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-weverse" href="https://weverse.io/lesserafim" target="_blank" rel="noopener noreferrer">Weverse</a><a class="sns-namu" href="https://namu.wiki/w/르세라핌" target="_blank" rel="noopener noreferrer">나무위키</a></div>
-    <script type="application/json" id="kpu-facts">["이번 주 새 영상 7개","최근 음방 1위 · ICONIC BY MISTAKE (2026.07.09)","음방 1위 39회","모아둔 무대·영상 3,325개","가장 많이 본 영상 · 조회수 287M"]</script>
+    <script type="application/json" id="kpu-facts">["이번 주 새 영상 6개","최근 음방 1위 · ICONIC BY MISTAKE (2026.07.09)","음방 1위 39회","모아둔 무대·영상 3,325개","가장 많이 본 영상 · 조회수 287M"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
-  <p class="intro">5인조 걸그룹. 쏘스뮤직 / HYBE. 2022년 데뷔. 팬덤명 피어나. 대표 앨범 Made My Night (feat. EJAE)(2026), Made My Night(2026), BOOMPALA (feat. Ayra Starr)(2026).</p>
   
     <h2 id="members">멤버</h2>
     <div class="faces">
@@ -164,15 +182,15 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/르세라핌/s/hot/">HOT</a></li>
       <li><a href="https://kpop-universe.kr/g/르세라핌/s/celebration/">CELEBRATION</a></li>
       <li><a href="https://kpop-universe.kr/g/르세라핌/s/boompala/">BOOMPALA</a></li>
-      <li><a href="https://kpop-universe.kr/g/르세라핌/s/smart/">Smart</a></li>
       <li><a href="https://kpop-universe.kr/g/르세라핌/s/이브프시케그리고푸른수염의아내/">이브, 프시케 그리고 푸른 수염의 아내 Eve, Psyche &amp; the Bluebeard&#39;s Wife</a></li>
+      <li><a href="https://kpop-universe.kr/g/르세라핌/s/smart/">Smart</a></li>
       <li><a href="https://kpop-universe.kr/g/르세라핌/s/perfectnight/">Perfect Night</a></li>
       <li><a href="https://kpop-universe.kr/g/르세라핌/s/comeover/">Come Over</a></li>
       <li><a href="https://kpop-universe.kr/g/르세라핌/s/different/">DIFFERENT</a></li>
       <li><a href="https://kpop-universe.kr/g/르세라핌/s/swansong/">Swan Song</a></li>
       <li><a href="https://kpop-universe.kr/g/르세라핌/s/blueflame/">Blue Flame</a></li>
-      <li><a href="https://kpop-universe.kr/g/르세라핌/s/mademynight/">Made My Night</a></li>
       <li><a href="https://kpop-universe.kr/g/르세라핌/s/noreturn/">No-Return</a></li>
+      <li><a href="https://kpop-universe.kr/g/르세라핌/s/mademynight/">Made My Night</a></li>
       <li><a href="https://kpop-universe.kr/g/르세라핌/s/impurities/">Impurities</a></li>
       <li><a href="https://kpop-universe.kr/g/르세라핌/s/1800hotnfun/">1-800-hot-n-fun</a></li>
       <li><a href="https://kpop-universe.kr/g/르세라핌/s/nocelestial/">No Celestial</a></li>
@@ -182,11 +200,11 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/르세라핌/s/ash/">Ash</a></li>
       <li><a href="https://kpop-universe.kr/g/르세라핌/s/fireinthebelly/">Fire in the belly</a></li>
       <li><a href="https://kpop-universe.kr/g/르세라핌/s/kawaii/">Kawaii</a></li>
+      <li><a href="https://kpop-universe.kr/g/르세라핌/s/goodparts/">Good Parts</a></li>
       <li><a href="https://kpop-universe.kr/g/르세라핌/s/thegreatmermaid/">The Great Mermaid</a></li>
       <li><a href="https://kpop-universe.kr/g/르세라핌/s/irony/">Irony</a></li>
       <li><a href="https://kpop-universe.kr/g/르세라핌/s/pierrot/">Pierrot</a></li>
       <li><a href="https://kpop-universe.kr/g/르세라핌/s/flashforward/">Flash Forward</a></li>
-      <li><a href="https://kpop-universe.kr/g/르세라핌/s/goodparts/">Good Parts</a></li>
       <li><a href="https://kpop-universe.kr/g/르세라핌/s/goodbones/">Good Bones</a></li>
       <li><a href="https://kpop-universe.kr/g/르세라핌/s/jewelry/">Jewelry</a></li>
       <li><a href="https://kpop-universe.kr/g/르세라핌/s/theworldismyoyster/">The World Is My Oyster</a></li>
@@ -202,49 +220,37 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/르세라핌/s/thehydra/">The Hydra</a></li>
     </ul></details>
   
-    <h2 id="albums">앨범·수록곡</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/르세라핌/a/boompala/">BOOMPALA (LE SSERAFIM Packages)</a> <span class="yr">2026</span></li>
-      <li><a href="https://kpop-universe.kr/g/르세라핌/a/pureflowpt1/">&#39;PUREFLOW&#39; pt.1</a> <span class="yr">2026</span></li>
-      <li><a href="https://kpop-universe.kr/g/르세라핌/a/hot/">HOT</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/g/르세라핌/a/crazy/">CRAZY</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/g/르세라핌/a/easy/">EASY</a> <span class="yr">2024</span></li>
-      <li><a href="https://kpop-universe.kr/g/르세라핌/a/unforgiven/">UNFORGIVEN</a> <span class="yr">2023</span></li>
-      <li><a href="https://kpop-universe.kr/g/르세라핌/a/antifragile/">ANTIFRAGILE</a> <span class="yr">2022</span></li>
-      <li><a href="https://kpop-universe.kr/g/르세라핌/a/fearless/">FEARLESS</a> <span class="yr">2022</span></li>
-    </ul>
-  
-    <h2>디스코그래피</h2>
-    <ul class="discog-list">
-      <li>Made My Night (feat. EJAE) <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>Made My Night <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>BOOMPALA (feat. Ayra Starr) <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>ICONIC BY MISTAKE <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>BOOMPALA (feat. GURU RANDHAWA) <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>BOOMPALA (feat. SANTOS BRAVOS) <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>BOOMPALA (LE SSERAFIM Packages) <span class="yr">(2026)</span> <span class="tag">미니</span></li>
-      <li>&#39;PUREFLOW&#39; pt.1 <span class="yr">(2026)</span> <span class="tag">정규 2집</span></li>
-      <li>CELEBRATION <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>SPAGHETTI <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>the NOISE (Contains a Samples of 夜に駆ける) <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>DIFFERENT <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>HOT <span class="yr">(2025)</span> <span class="tag">미니 5집</span></li>
-      <li>Star Signs <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-      <li>CRAZY (feat. PinkPantheress) <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-      <li>CRAZY <span class="yr">(2024)</span> <span class="tag">미니 4집</span></li>
-      <li>Perfect Night (for FEARNOT) <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-      <li>EASY <span class="yr">(2024)</span> <span class="tag">미니 3집</span></li>
-      <li>Dresscode (Prod. imase) <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>Perfect Night <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>UNFORGIVEN (feat. Nile Rodgers, Ado) -Japanese ver.- <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>이브, 프시케 그리고 푸른 수염의 아내 (feat. Demi Lovato) <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>Jewelry (Prod. imase) <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>이브, 프시케 그리고 푸른 수염의 아내 (feat. UPSAHL) <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>UNFORGIVEN <span class="yr">(2023)</span> <span class="tag">정규 1집</span></li>
-      <li>Choices <span class="yr">(2023)</span> <span class="tag">싱글</span></li>
-      <li>ANTIFRAGILE <span class="yr">(2022)</span> <span class="tag">미니 2집</span></li>
-      <li>FEARLESS <span class="yr">(2022)</span> <span class="tag">미니 1집</span></li>
-    </ul>
+    <h2 id="albums">디스코그래피</h2>
+    <div class="sp-tiles dg-tiles">
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e024ca01ac40ddd7549f3401266" alt="" loading="lazy"><span class="sp-tile-t">Made My Night (feat. EJAE)</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02290ff94ac8607ccd9eb3eb5c" alt="" loading="lazy"><span class="sp-tile-t">Made My Night</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/139/65/781/13965781_20260723105747_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BOOMPALA (feat. Ayra Starr)</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/137/26/574/13726574_20260612110952_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ICONIC BY MISTAKE</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/137/10/365/13710365_20260605112050_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">BOOMPALA (feat. GURU RANDHAWA)</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e026948dbc453c434c3b9d799f4" alt="" loading="lazy"><span class="sp-tile-t">BOOMPALA (feat. SANTOS BRAVOS)</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/르세라핌/a/boompala/"><img src="https://i.scdn.co/image/ab67616d00001e02f2161be573b19d8c58ced7ec" alt="" loading="lazy"><span class="sp-tile-t">BOOMPALA (LE SSERAFIM Packages)</span><span class="sp-tile-n">2026 · 미니</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/르세라핌/a/pureflowpt1/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/133/49/271/13349271_20260522105159_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">&#39;PUREFLOW&#39; pt.1</span><span class="sp-tile-n">2026 · 정규 2집</span></a>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e021360594b237bf3e322d5de58" alt="" loading="lazy"><span class="sp-tile-t">CELEBRATION</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/121/75/901/12175901_20251024094040_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">SPAGHETTI</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e02053c94f86ee741dd8d615ca1" alt="" loading="lazy"><span class="sp-tile-t">the NOISE (Contains a Samples of 夜に駆ける)</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e024c202a1aba2e5faa4898680b" alt="" loading="lazy"><span class="sp-tile-t">DIFFERENT</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/르세라핌/a/hot/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/38/155/11738155_20250314101906_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">HOT</span><span class="sp-tile-n">2025 · 미니 5집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/39/225/11639225_20241112145519_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Star Signs</span><span class="sp-tile-n">2024 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/83/622/11583622_20240903174348_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">CRAZY (feat. PinkPantheress)</span><span class="sp-tile-n">2024 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/르세라핌/a/crazy/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/79/884/11579884_20240830100608_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">CRAZY</span><span class="sp-tile-n">2024 · 미니 4집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/63/914/11563914_20240809102158_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Perfect Night (for FEARNOT)</span><span class="sp-tile-n">2024 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/르세라핌/a/easy/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/07/156/11407156_20240219142535_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">EASY</span><span class="sp-tile-n">2024 · 미니 3집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/67/962/11367962_20231117144541_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Dresscode (Prod. imase)</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/52/904/11352904_20231027101104_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Perfect Night</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/113/01/694/11301694_20230808103900_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">UNFORGIVEN (feat. Nile Rodgers, Ado) -Japanese ver.-</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/99/729/11299729_20230803170256_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">이브, 프시케 그리고 푸른 수염의 아내 (feat. Demi Lovato)</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/91/991/11291991_20230725100706_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Jewelry (Prod. imase)</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/86/004/11286004_20230713174352_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">이브, 프시케 그리고 푸른 수염의 아내 (feat. UPSAHL)</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/르세라핌/a/unforgiven/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/112/34/678/11234678_20230502162327_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">UNFORGIVEN</span><span class="sp-tile-n">2023 · 정규 1집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/111/41/303/11141303_20230106144548_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">Choices</span><span class="sp-tile-n">2023 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/르세라핌/a/antifragile/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/110/78/496/11078496_20221014153848_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">ANTIFRAGILE</span><span class="sp-tile-n">2022 · 미니 2집</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/르세라핌/a/fearless/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/109/39/458/10939458_20220502123814_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">FEARLESS</span><span class="sp-tile-n">2022 · 미니 1집</span></a>
+    </div>
   
     <h2>함께 보면 좋은 그룹</h2>
     <ul class="member-list rel">
@@ -259,7 +265,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/le-sserafim/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=르세라핌">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"FEARLESS","s":"영상 164개","img":"4vbDFu0PUew","m":"FEARLESS","h":"https://kpop-universe.kr/g/르세라핌/s/fearless/"},{"k":"멤버 직캠","t":"사쿠라","s":"직캠 290개","img":"5Sm68912ANE","h":"https://kpop-universe.kr/g/르세라핌/사쿠라/fancams/"},{"k":"앨범","t":"BOOMPALA (LE SSERAFIM Packages)","s":"수록곡 6곡","im":"https://i.scdn.co/image/ab67616d0000b273f2161be573b19d8c58ced7ec","h":"https://kpop-universe.kr/g/르세라핌/a/boompala/"},{"k":"곡별 직캠·무대","t":"CRAZY","s":"영상 157개","img":"n6B5gQXlB-0","m":"CRAZY","h":"https://kpop-universe.kr/g/르세라핌/s/crazy/"},{"k":"멤버 직캠","t":"카즈하","s":"직캠 205개","img":"ZSrike90S_Q","h":"https://kpop-universe.kr/g/르세라핌/카즈하/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"FEARLESS","s":"영상 167개","img":"4vbDFu0PUew","m":"FEARLESS","h":"https://kpop-universe.kr/g/르세라핌/s/fearless/"},{"k":"멤버 직캠","t":"사쿠라","s":"직캠 290개","img":"5Sm68912ANE","h":"https://kpop-universe.kr/g/르세라핌/사쿠라/fancams/"},{"k":"앨범","t":"BOOMPALA (LE SSERAFIM Packages)","s":"수록곡 6곡","im":"https://i.scdn.co/image/ab67616d0000b273f2161be573b19d8c58ced7ec","h":"https://kpop-universe.kr/g/르세라핌/a/boompala/"},{"k":"곡별 직캠·무대","t":"CRAZY","s":"영상 164개","img":"n6B5gQXlB-0","m":"CRAZY","h":"https://kpop-universe.kr/g/르세라핌/s/crazy/"},{"k":"멤버 직캠","t":"카즈하","s":"직캠 205개","img":"ZSrike90S_Q","h":"https://kpop-universe.kr/g/르세라핌/카즈하/fancams/"}]</script>
 </div>
 </body>
 </html>

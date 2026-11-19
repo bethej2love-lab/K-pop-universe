@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="리센느 직캠·무대 영상 1066개를 조회수 순으로. 리센느 멤버·데뷔일(2024.03.27)·소속사(더뮤즈). 음악방송 1위 10회, 대상 1개. 직캠·무대 영상과 디스코그래피를 K-POP UNIVERSE에서.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/L7OsQMbzmfU/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"리센느","alternateName":"RESCENE","genre":"K-pop","foundingDate":"2024-03-27","url":"https://kpop-universe.kr/g/리센느/","image":"https://img.youtube.com/vi/L7OsQMbzmfU/maxresdefault.jpg","member":[{"@type":"Person","name":"원이"},{"@type":"Person","name":"리브"},{"@type":"Person","name":"미나미"},{"@type":"Person","name":"메이"},{"@type":"Person","name":"제나"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"리센느","alternateName":"RESCENE","genre":"K-pop","description":"5인조 걸그룹. 더뮤즈. 2024년 데뷔. 팬덤명 리마인. 대표 앨범 PULSE(2026), Pretty Girl - Special Single(2026), Runaway(2026).","foundingDate":"2024-03-27","url":"https://kpop-universe.kr/g/리센느/","image":"https://img.youtube.com/vi/L7OsQMbzmfU/maxresdefault.jpg","member":[{"@type":"Person","name":"원이"},{"@type":"Person","name":"리브"},{"@type":"Person","name":"미나미"},{"@type":"Person","name":"메이"},{"@type":"Person","name":"제나"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -104,10 +123,9 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>팬덤명</b> 리마인</span>
     </div>
     <div class="sns"><a class="sns-youtube" href="https://youtube.com/@RESCENE_official" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://instagram.com/rescene_official" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/RESCENEofficial" target="_blank" rel="noopener noreferrer">X</a><a class="sns-tiktok" href="https://tiktok.com/@rescene_official" target="_blank" rel="noopener noreferrer">TikTok</a><a class="sns-namu" href="https://namu.wiki/w/RESCENE" target="_blank" rel="noopener noreferrer">나무위키</a></div>
-    <script type="application/json" id="kpu-facts">["이번 주 새 영상 77개","최근 음방 1위 · With (2026.11.15)","음방 1위 10회","모아둔 무대·영상 2,192개","가장 많이 본 영상 · 조회수 32M"]</script>
+    <script type="application/json" id="kpu-facts">["이번 주 새 영상 67개","최근 음방 1위 · With (2026.11.15)","음방 1위 10회","모아둔 무대·영상 2,192개","가장 많이 본 영상 · 조회수 32M"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">멤버</a></li><li><a href="#songs">곡별 직캠</a></li><li><a href="#albums">앨범</a></li></ul>
-  <p class="intro">5인조 걸그룹. 더뮤즈. 2024년 데뷔. 팬덤명 리마인. 대표 앨범 PULSE(2026), Pretty Girl - Special Single(2026), Runaway(2026).</p>
   
     <h2 id="members">멤버</h2>
     <div class="faces">
@@ -150,44 +168,36 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <li><a href="https://kpop-universe.kr/g/리센느/s/yoyo/">YoYo</a></li>
       <li><a href="https://kpop-universe.kr/g/리센느/s/busyboy/">Busy Boy</a></li>
       <li><a href="https://kpop-universe.kr/g/리센느/s/crash/">CRASH</a></li>
-      <li><a href="https://kpop-universe.kr/g/리센느/s/newworld/">New World</a></li>
       <li><a href="https://kpop-universe.kr/g/리센느/s/inmylotion/">In my lotion</a></li>
+      <li><a href="https://kpop-universe.kr/g/리센느/s/newworld/">New World</a></li>
       <li><a href="https://kpop-universe.kr/g/리센느/s/loveecho/">Love Echo</a></li>
       <li><a href="https://kpop-universe.kr/g/리센느/s/mvp/">MVP</a></li>
       <li><a href="https://kpop-universe.kr/g/리센느/s/mood/">Mood</a></li>
+      <li><a href="https://kpop-universe.kr/g/리센느/s/밤밤밤/">밤밤밤 BamBamBam</a></li>
     </ul>
   
-    <h2 id="albums">앨범·수록곡</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/g/리센느/a/pulse/">PULSE</a> <span class="yr">2026</span></li>
-      <li><a href="https://kpop-universe.kr/g/리센느/a/musicfromthespecials/">Music from THE SPECIALS</a> <span class="yr">2026</span></li>
-      <li><a href="https://kpop-universe.kr/g/리센느/a/lipbomb/">lip bomb</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/g/리센느/a/glowup/">Glow Up</a> <span class="yr">2025</span></li>
-      <li><a href="https://kpop-universe.kr/g/리센느/a/scenedrome/">SCENEDROME</a> <span class="yr">2024</span></li>
-    </ul>
-  
-    <h2>디스코그래피</h2>
-    <ul class="discog-list">
-      <li>PULSE <span class="yr">(2026)</span> <span class="tag">미니 4집</span></li>
-      <li>Pretty Girl - Special Single <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>Runaway <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>Music from THE SPECIALS <span class="yr">(2026)</span> <span class="tag">정규</span></li>
-      <li>[RESCENE X ???] <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>Pinball (Japanese Ver.) <span class="yr">(2026)</span> <span class="tag">싱글</span></li>
-      <li>lip bomb <span class="yr">(2025)</span> <span class="tag">미니 3집</span></li>
-      <li>Heart Drop <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>고백주파수 (첫사랑 엔딩 X RESCENE (리센느)) <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>Dearest (Sped Up Version) <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>Dearest <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>Glow Up (English Version) <span class="yr">(2025)</span> <span class="tag">싱글</span></li>
-      <li>Glow Up <span class="yr">(2025)</span> <span class="tag">미니 2집</span></li>
-      <li>UhUh (Japanese Version) <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-      <li>SCENEDROME <span class="yr">(2024)</span> <span class="tag">미니 1집</span></li>
-      <li>YoYo (Japanese Version) <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-      <li>Counting Star (더 매직스타 X RESCENE (리센느)) <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-      <li>Re:Scene <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-      <li>YoYo <span class="yr">(2024)</span> <span class="tag">싱글</span></li>
-    </ul>
+    <h2 id="albums">디스코그래피</h2>
+    <div class="sp-tiles dg-tiles">
+      <a class="sp-tile" href="https://kpop-universe.kr/g/리센느/a/pulse/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/150/82/293/15082293_20261026170443_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">PULSE</span><span class="sp-tile-n">2026 · 미니 4집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/137/88/545/13788545_20260707111659_500.jpg?3ef0f9e6af1ea09e3f919c7cb69065ed/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Pretty Girl - Special Single</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/133/12/413/13312413_20260406143448_500.jpg?0d1b1aec895dbf60aa601748ddf64dd9/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Runaway</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/리센느/a/musicfromthespecials/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/129/13/719/12913719_20260311112740_500.jpg?YUV444/melon/resize/260" alt="" loading="lazy"><span class="sp-tile-t">Music from THE SPECIALS</span><span class="sp-tile-n">2026 · 정규</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/128/83/155/12883155_20260225151920_500.jpg?e8f14cab4f1bbe6e698d883fcac3c9d5/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">[RESCENE X ???]</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/124/58/571/12458571_20251226164101_500.jpg?5729f871c63aa8b18978b78644a66dd1/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Pinball (Japanese Ver.)</span><span class="sp-tile-n">2026 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/리센느/a/lipbomb/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/121/96/394/12196394_20251125142736_500.jpg?5bae99da5dfd7a705e81148b272a1001/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">lip bomb</span><span class="sp-tile-n">2025 · 미니 3집</span></a>
+      <div class="sp-tile"><img src="https://i.scdn.co/image/ab67616d00001e023d67bd00971ccd1712a6252e" alt="" loading="lazy"><span class="sp-tile-t">Heart Drop</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/121/18/697/12118697_20250916162456_500.jpg?c4940f805c9b23d0f108f9f8c6cac3cc/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">고백주파수 (첫사랑 엔딩 X RESCENE (리센느))</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/118/85/178/11885178_20250708161041_500.jpg?bef6eac3698d86c3acdd9d4c3a50a057/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Dearest (Sped Up Version)</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/118/75/116/11875116_20250701165641_500.jpg?86da3088c776a346e926b1b4052f227c/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Dearest</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/15/686/11715686_20250214151013_500.jpg?a45c68a8ca78f6660c7e2b07d513e441/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Glow Up (English Version)</span><span class="sp-tile-n">2025 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/리센느/a/glowup/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/117/07/015/11707015_20250204161952_500.jpg?0182a19eaabcf2081a0744212b9f09f1/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Glow Up</span><span class="sp-tile-n">2025 · 미니 2집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/57/100/11657100_20241203103151_500.jpg?YUV444/melon/resize/260" alt="" loading="lazy"><span class="sp-tile-t">UhUh (Japanese Version)</span><span class="sp-tile-n">2024 · 싱글</span></div>
+      <a class="sp-tile" href="https://kpop-universe.kr/g/리센느/a/scenedrome/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/75/849/11575849_20240826152240_500.jpg?da43be78cb2cc67e9ee423c739bc09b6/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">SCENEDROME</span><span class="sp-tile-n">2024 · 미니 1집</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/69/373/11569373_20240819105413_500.jpg?YUV444/melon/resize/260" alt="" loading="lazy"><span class="sp-tile-t">YoYo (Japanese Version)</span><span class="sp-tile-n">2024 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/115/21/376/11521376_20240625161225_500.jpg?eaf6420e06dae04bd1546d204dc7fdc1/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Counting Star (더 매직스타 X RESCENE (리센느))</span><span class="sp-tile-n">2024 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/50/232/11450232_20240325152500_500.jpg?90cb61e1cabcd0c1808b1fc20f8b01ec/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">Re:Scene</span><span class="sp-tile-n">2024 · 싱글</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/114/30/883/11430883_20240228160647_500.jpg?74668a6f1aef2bb4c67a674108b7bbfd/melon/resize/260/quality/80/optimize" alt="" loading="lazy"><span class="sp-tile-t">YoYo</span><span class="sp-tile-n">2024 · 싱글</span></div>
+    </div>
   
     <h2>함께 보면 좋은 그룹</h2>
     <ul class="member-list rel">
@@ -202,7 +212,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/en/g/rescene/">View in English</a> · <a href="https://kpop-universe.kr/about.html">사이트 소개 · 삭제 요청</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=리센느">직캠·영상 아카이브 보기 →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"LOVE ATTACK","s":"영상 198개","img":"9XttLI0oH0I","m":"LOVE ATTACK","h":"https://kpop-universe.kr/g/리센느/s/loveattack/"},{"k":"멤버 직캠","t":"원이","s":"직캠 278개","img":"VINDNiicjb4","h":"https://kpop-universe.kr/g/리센느/원이/fancams/"},{"k":"앨범","t":"PULSE","s":"수록곡 5곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/150/82/293/15082293_20261026170443_500.jpg","h":"https://kpop-universe.kr/g/리센느/a/pulse/"},{"k":"곡별 직캠·무대","t":"Deja Vu","s":"영상 178개","img":"ZbO9PBdFRdc","m":"Deja Vu","h":"https://kpop-universe.kr/g/리센느/s/dejavu/"},{"k":"멤버 직캠","t":"리브","s":"직캠 128개","img":"a6uFyfzz6r4","h":"https://kpop-universe.kr/g/리센느/리브/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"곡별 직캠·무대","t":"LOVE ATTACK","s":"영상 201개","img":"9XttLI0oH0I","m":"LOVE ATTACK","h":"https://kpop-universe.kr/g/리센느/s/loveattack/"},{"k":"멤버 직캠","t":"원이","s":"직캠 278개","img":"VINDNiicjb4","h":"https://kpop-universe.kr/g/리센느/원이/fancams/"},{"k":"앨범","t":"PULSE","s":"수록곡 5곡","im":"https://cdnimg.melon.co.kr/cm2/album/images/150/82/293/15082293_20261026170443_500.jpg","h":"https://kpop-universe.kr/g/리센느/a/pulse/"},{"k":"곡별 직캠·무대","t":"Deja Vu","s":"영상 188개","img":"ZbO9PBdFRdc","m":"Deja Vu","h":"https://kpop-universe.kr/g/리센느/s/dejavu/"},{"k":"멤버 직캠","t":"리브","s":"직캠 128개","img":"a6uFyfzz6r4","h":"https://kpop-universe.kr/g/리센느/리브/fancams/"}]</script>
 </div>
 </body>
 </html>

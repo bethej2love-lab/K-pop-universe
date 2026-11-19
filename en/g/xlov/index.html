@@ -24,7 +24,7 @@
 <meta name="twitter:description" content="293 XLOV fancams and stages, most viewed first. XLOV: members, debut 2025.01.07, WM Entertainment. Fancams, stages and discography on K-POP UNIVERSE.">
 <meta name="twitter:image" content="https://img.youtube.com/vi/EeyAk6Ft4RI/maxresdefault.jpg">
 <link rel="icon" href="https://kpop-universe.kr/icons/icon-192.png" type="image/png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"XLOV","alternateName":"엑스러브","genre":"K-pop","foundingDate":"2025-01-07","url":"https://kpop-universe.kr/en/g/xlov/","image":"https://img.youtube.com/vi/EeyAk6Ft4RI/maxresdefault.jpg","member":[{"@type":"Person","name":"Wumuti"},{"@type":"Person","name":"Rui"},{"@type":"Person","name":"Hyun"},{"@type":"Person","name":"Haru"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicGroup","name":"XLOV","alternateName":"엑스러브","genre":"K-pop","description":"XLOV is a 4-member K-pop boy group under WM Entertainment, debuting in 2025. Fan club: EVOL. Recent releases: i=! (2026), I,God (2026), UXLXVE (2025).","foundingDate":"2025-01-07","url":"https://kpop-universe.kr/en/g/xlov/","image":"https://img.youtube.com/vi/EeyAk6Ft4RI/maxresdefault.jpg","member":[{"@type":"Person","name":"Wumuti"},{"@type":"Person","name":"Rui"},{"@type":"Person","name":"Hyun"},{"@type":"Person","name":"Haru"}]}</script>
 <style>
   :root{color-scheme:dark;}
   body{margin:0;background:#0a0a0d;color:rgba(220,230,255,0.92);font-family:-apple-system,'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:1.6;}
@@ -48,6 +48,7 @@
   .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
   .lang-switch{margin-top:40px;font-size:12px;}
   .lang-switch a{color:rgba(150,175,255,0.7);}
+  a{text-decoration:none;transition:color .15s,text-shadow .15s;}a:not(.cta):not(.brand):hover{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
   .intro{font-size:14px;line-height:1.75;color:rgba(200,215,255,0.78);margin:0 0 22px;}
   .hub-more{margin:14px 0 0;}.hub-top{margin-bottom:14px;}
   .hub-more a{display:inline-flex;align-items:center;padding:4px 12px;border-radius:10px;background:rgba(150,175,255,0.07);border:0.5px solid rgba(150,175,255,0.2);color:rgba(190,210,255,0.75);text-decoration:none;font-size:12.5px;}
@@ -81,6 +82,24 @@
 .sns a{font-size:12.5px;padding:4px 11px;border-radius:999px;background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.2);color:rgba(210,222,255,0.9);text-decoration:none;}
 .sns a:hover{background:rgba(150,175,255,0.16);}
 .cover.avatar{width:104px;height:104px;max-width:none;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center 30%;margin:6px 0 18px;box-shadow:0 0 0 1px rgba(150,175,255,0.18);}
+/* 멤버 얼굴 줄(2026-11-19 사용자 "프로필 사진이 대빵만한 사각") — 그룹 페이지가 .faces 마크업을 쓰는데 이 규칙이 song-page.css에만 있어서
+   (그룹·멤버 페이지는 그 파일을 안 불러온다) 사진이 원본 크기 네모로, 이름엔 밑줄이 붙어 나왔다. song-page.css와 같은 값. */
+.faces{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:none;}
+.faces::-webkit-scrollbar{display:none;}
+.face{flex:0 0 auto;width:72px;text-align:center;text-decoration:none;}
+.face-img{display:block;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1e1e21;box-shadow:0 0 0 2px rgba(150,175,255,0.25);}
+.face-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.5);transform-origin:58% 35%;display:block;}
+.face-nm{display:block;font-size:12.5px;color:rgba(225,232,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.face-nm .tag{display:block;}
+@media(min-width:1000px){.faces{flex-wrap:wrap;overflow:visible;gap:18px 16px;}.face{width:92px;}.face-img{width:84px;height:84px;}.face-nm{font-size:13.5px;}}
+/* 링크 밑줄 없음(2026-11-19 사용자 "밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색") — 글자 링크는 색으로, 올리면 은은한 빛 */
+h2 a{color:inherit;}
+.note a,.intro a{color:rgba(170,196,255,0.95);}
+.face:hover .face-nm,a.sp-tile:hover .sp-tile-t{color:#fff;text-shadow:0 0 10px rgba(150,175,255,0.55);}
+.face:hover .face-img{box-shadow:0 0 0 2px rgba(170,190,255,0.55),0 0 14px rgba(150,175,255,0.35);}
+/* 디스코그래피 커버 격자 — 곡 타일(.sp-tiles)과 같은 모양, 넓은 화면은 6열 */
+.dg-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(min-width:1000px){.dg-tiles{grid-template-columns:repeat(6,minmax(0,1fr));gap:18px 14px;}}
 </style>
 <script>
 try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|puppeteer/i.test(navigator.userAgent||''))window['ga-disable-G-Z5NTV6X3YF']=true;}catch(e){}
@@ -104,10 +123,9 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
       <span><b>Fandom</b> EVOL</span>
     </div>
     <div class="sns"><a class="sns-youtube" href="https://youtube.com/channel/UCHWhn9xw7x8NPPnV6eWQDQA" target="_blank" rel="noopener noreferrer">YouTube</a><a class="sns-instagram" href="https://www.instagram.com/xlov_official/" target="_blank" rel="noopener noreferrer">Instagram</a><a class="sns-x" href="https://x.com/xlov_official" target="_blank" rel="noopener noreferrer">X</a><a class="sns-namu" href="https://namu.wiki/w/XLOV" target="_blank" rel="noopener noreferrer">Namuwiki</a></div>
-    <script type="application/json" id="kpu-facts">["18 new videos this week","518 stages & videos collected","Most viewed · 32M views"]</script>
+    <script type="application/json" id="kpu-facts">["15 new videos this week","518 stages & videos collected","Most viewed · 32M views"]</script>
   </div>
   <ul class="member-list jump" style="margin:4px 0 16px"><li><a href="#members">Members</a></li><li><a href="#songs">Songs</a></li><li><a href="#albums">Albums</a></li></ul>
-  <p class="intro">XLOV is a 4-member K-pop boy group under WM Entertainment, debuting in 2025. Fan club: EVOL. Recent releases: i=! (2026), I,God (2026), UXLXVE (2025).</p>
   
     <h2 id="members">Members</h2>
     <div class="faces">
@@ -124,36 +142,29 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     <h2 id="songs">Fancams & stages by song</h2>
     <ul class="member-list rel">
       <li><a href="https://kpop-universe.kr/en/g/xlov/s/serve/">SERVE</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/xlov/s/rizz/">Rizz</a></li>
       <li><a href="https://kpop-universe.kr/en/g/xlov/s/1only/">1&amp;Only</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/xlov/s/rizz/">Rizz</a></li>
       <li><a href="https://kpop-universe.kr/en/g/xlov/s/biiip/">Biii:-P</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/xlov/s/hush/">Hush</a></li>
       <li><a href="https://kpop-universe.kr/en/g/xlov/s/immabe/">I&#39;mma Be</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/xlov/s/hush/">Hush</a></li>
       <li><a href="https://kpop-universe.kr/en/g/xlov/s/bizness/">BIZNESS</a></li>
       <li><a href="https://kpop-universe.kr/en/g/xlov/s/투스젬치와와/">투스젬치와와 Tooth Gem Chiwawa</a></li>
+      <li><a href="https://kpop-universe.kr/en/g/xlov/s/dirtybaby/">Dirty Baby</a></li>
       <li><a href="https://kpop-universe.kr/en/g/xlov/s/dripdrip/">Drip Drip</a></li>
       <li><a href="https://kpop-universe.kr/en/g/xlov/s/extancy/">Extancy</a></li>
       <li><a href="https://kpop-universe.kr/en/g/xlov/s/hips/">HIPS</a></li>
       <li><a href="https://kpop-universe.kr/en/g/xlov/s/masterpiece/">Masterpiece</a></li>
-      <li><a href="https://kpop-universe.kr/en/g/xlov/s/dirtybaby/">Dirty Baby</a></li>
       <li><a href="https://kpop-universe.kr/en/g/xlov/s/1oflov/">1 of LOV</a></li>
     </ul>
   
-    <h2 id="albums">Albums & tracklists</h2>
-    <ul class="member-list rel">
-      <li><a href="https://kpop-universe.kr/en/g/xlov/a/i/">i=!</a> <span class="yr">2026</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/xlov/a/igod/">I,God</a> <span class="yr">2026</span></li>
-      <li><a href="https://kpop-universe.kr/en/g/xlov/a/uxlxve/">UXLXVE</a> <span class="yr">2025</span></li>
-    </ul>
-  
-    <h2>Discography</h2>
-    <ul class="discog-list">
-      <li>i=! <span class="yr">(2026)</span> <span class="tag">3rd EP</span></li>
-      <li>I,God <span class="yr">(2026)</span> <span class="tag">2nd EP</span></li>
-      <li>UXLXVE <span class="yr">(2025)</span> <span class="tag">1st EP</span></li>
-      <li>I ONE <span class="yr">(2025)</span> <span class="tag">Single</span></li>
-      <li>I&#39;mma Be <span class="yr">(2025)</span> <span class="tag">Single</span></li>
-    </ul>
+    <h2 id="albums">Discography</h2>
+    <div class="sp-tiles dg-tiles">
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/xlov/a/i/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/150/86/776/15086776_20261027153450_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">i=!</span><span class="sp-tile-n">2026 · 3rd EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/xlov/a/igod/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/136/87/450/13687450_20260526152243_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">I,God</span><span class="sp-tile-n">2026 · 2nd EP</span></a>
+      <a class="sp-tile" href="https://kpop-universe.kr/en/g/xlov/a/uxlxve/"><img src="https://cdnimg.melon.co.kr/cm2/album/images/121/91/266/12191266_20251104180627_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">UXLXVE</span><span class="sp-tile-n">2025 · 1st EP</span></a>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/118/54/252/11854252_20250612122351_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">I ONE</span><span class="sp-tile-n">2025 · Single</span></div>
+      <div class="sp-tile"><img src="https://cdnimg.melon.co.kr/cm2/album/images/116/85/131/11685131_20250106114344_500.jpg" alt="" loading="lazy"><span class="sp-tile-t">I&#39;mma Be</span><span class="sp-tile-n">2025 · Single</span></div>
+    </div>
   
     <h2>Related groups</h2>
     <ul class="member-list rel">
@@ -168,7 +179,7 @@ try{if(navigator.webdriver||/headless|bot|crawl|spider|lighthouse|playwright|pup
     </ul>
   <div class="lang-switch"><a href="https://kpop-universe.kr/g/엑스러브/">한국어로 보기</a> · <a href="https://kpop-universe.kr/about.html">About · removal requests</a></div>
   <div class="cta-dock"><a class="cta" href="https://kpop-universe.kr/#g=엑스러브">View videos in the Universe →</a></div>
-  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"SERVE","s":"50 videos","img":"1IzZezTfwE0","m":"SERVE","h":"https://kpop-universe.kr/en/g/xlov/s/serve/"},{"k":"Member fancams","t":"Haru","s":"41 fancams","img":"xBqdDOuXlB8","h":"https://kpop-universe.kr/en/g/xlov/haru/fancams/"},{"k":"Album","t":"i=!","s":"8 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/150/86/776/15086776_20261027153450_500.jpg","h":"https://kpop-universe.kr/en/g/xlov/a/i/"},{"k":"Song fancams","t":"Rizz","s":"40 videos","img":"NCuFonpf-qk","m":"Rizz","h":"https://kpop-universe.kr/en/g/xlov/s/rizz/"},{"k":"Member fancams","t":"Wumuti","s":"27 fancams","img":"ds-6aD8gx-0","h":"https://kpop-universe.kr/en/g/xlov/wumuti/fancams/"}]</script>
+  <script type="application/json" id="kpu-next">[{"k":"Song fancams","t":"SERVE","s":"52 videos","img":"1IzZezTfwE0","m":"SERVE","h":"https://kpop-universe.kr/en/g/xlov/s/serve/"},{"k":"Member fancams","t":"Haru","s":"41 fancams","img":"xBqdDOuXlB8","h":"https://kpop-universe.kr/en/g/xlov/haru/fancams/"},{"k":"Album","t":"i=!","s":"8 tracks","im":"https://cdnimg.melon.co.kr/cm2/album/images/150/86/776/15086776_20261027153450_500.jpg","h":"https://kpop-universe.kr/en/g/xlov/a/i/"},{"k":"Song fancams","t":"1&Only","s":"43 videos","img":"NBZgirj_C2Y","m":"1&Only","h":"https://kpop-universe.kr/en/g/xlov/s/1only/"},{"k":"Member fancams","t":"Wumuti","s":"27 fancams","img":"ds-6aD8gx-0","h":"https://kpop-universe.kr/en/g/xlov/wumuti/fancams/"}]</script>
 </div>
 </body>
 </html>
