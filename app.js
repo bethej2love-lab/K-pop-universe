@@ -26417,6 +26417,12 @@ function _renderChartStory(box,st,hist,size,tab,onTab,spanDays){
   const gcol=s=>{const c=GROUPS[s.groupKo]&&GROUPS[s.groupKo].color;return c?`rgb(${c[0]},${c[1]},${c[2]})`:'#b9b4e6';};
   // ── 그림 ──
   const fig=document.createElement('div');fig.className='cs-fig';
+  // 펼친 그래프 맨 위 '접기' 버튼(2026-11-19 사용자 "그래프 열고는 다시 닫는 버튼이 없네") — 아래 흐린 글자 줄(cs-cap)에만 접기가 있어 안 보였다
+  if(exp){const hd=document.createElement('div');hd.className='cs-fig-hd';
+    const tt=document.createElement('span');tt.textContent=isKo?`최근 ${days.length}일 순위 흐름`:`Rank paths · ${days.length} days`;
+    const cl=document.createElement('button');cl.type='button';cl.className='cs-fig-close';cl.textContent=isKo?'접기 ⌃':'Close ⌃';
+    cl.addEventListener('click',e=>{e.stopPropagation();_toggleExp();});
+    hd.appendChild(tt);hd.appendChild(cl);fig.appendChild(hd);}
   const svg=mk('svg',{viewBox:`0 0 ${W} ${H}`,width:W,height:H,class:'cs-svg',role:'img','aria-label':isKo?'순위 궤적':'Rank paths'});
   const grid=mk('g',{class:'cs-grid'});
   (exp?[1,5,10,15,20,25,30]:[1,10,size]).filter(r=>r<=size).forEach(r=>{
@@ -26480,7 +26486,7 @@ function _renderChartStory(box,st,hist,size,tab,onTab,spanDays){
   if(!exp)svg.classList.add('cs-mini');
   const cap=document.createElement('button');cap.type='button';cap.className='cs-cap';
   cap.textContent=exp
-    ?(isKo?`최근 ${days.length}일 순위 궤적 · 선을 누르면 그 무대만 · 접기 ⌃`:`Rank paths, last ${days.length} days · tap a line · Collapse ⌃`)
+    ?(isKo?`선을 누르면 그 무대만 · 접기 ⌃`:`Tap a line to focus · Collapse ⌃`)
     :(isKo?`최근 ${days.length}일 순위 흐름 크게 보기 ⌄`:`Show ${days.length}-day rank paths ⌄`);
   cap.addEventListener('click',e=>{e.stopPropagation();_toggleExp();});
   fig.appendChild(cap);

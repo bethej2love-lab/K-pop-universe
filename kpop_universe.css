@@ -5152,6 +5152,9 @@
 .cs-svg.cs-mini{cursor:var(--kpu-cursor-pointer,pointer);}
 .cs-svg.cs-mini .cs-line{cursor:var(--kpu-cursor-pointer,pointer);}
 .cs-fig{position:relative;}
+.cs-fig-hd{display:flex;align-items:center;justify-content:space-between;margin:0 0 6px;font-size:12px;font-weight:600;color:rgba(255,255,255,0.75);}
+.cs-fig-close{all:unset;box-sizing:border-box;padding:6px 12px;border-radius:9px;background:rgba(255,255,255,0.09);font-size:12px;font-weight:600;color:#fff;cursor:var(--kpu-cursor-pointer,pointer);-webkit-tap-highlight-color:transparent;}
+.cs-fig-close:active{opacity:.7;}
 .cs-svg-wrap{overflow-x:auto;scrollbar-width:none;}
 .cs-svg-wrap::-webkit-scrollbar{display:none;}
 .cs-svg{display:block;margin:0 auto;overflow:visible;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;}
