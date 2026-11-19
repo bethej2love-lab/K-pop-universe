@@ -28384,8 +28384,9 @@ async function _buildFeedFavNew(opts){
     const _done=s=>_feedVidDone(s._apiId); // 다 본 영상 — NEW를 떼고 선반 맨 뒤로
     const _isNewSince=s=>{if(_done(s))return false;const t=Date.parse(s.paFull||'');if(!isFinite(t)||String(s.paFull).length<=10)return false;return (Date.now()-t<_NEW_WIN)||(!!_prevSeen&&t>_prevSeen);};
     // 최애 묶음: NEW 뱃지(안 본 새 영상) 먼저(2026-11-19 사용자) → 즐겨찾기 겹친 수(#26) → 최신순(안정 정렬). 나머지는 최신순 그대로.
-    const _favFirst=songs.filter(_isFav).sort((a,b)=>((_isNewSince(b)?1:0)-(_isNewSince(a)?1:0))||(_favN(b)-_favN(a))),_rest=songs.filter(s=>!_isFav(s));
-    const rows=_packRows(_feedSinkWatched(_favFirst.concat(_rest),_done),_songIsShort,{landscapeFull:true});
+    // 다 본 영상(92%↑)은 최애여도 맨 뒤(_rest 끝) — 2026-11-19
+    const _favFirst=songs.filter(s=>_isFav(s)&&!_done(s)).sort((a,b)=>((_isNewSince(b)?1:0)-(_isNewSince(a)?1:0))||(_favN(b)-_favN(a))),_rest=_feedSinkWatched(songs.filter(s=>!_isFav(s)||_done(s)),_done);
+    const rows=_packRows(_favFirst.concat(_rest),_songIsShort,{landscapeFull:true});
     if(rows.length&&!rows[rows.length-1].wide&&rows[rows.length-1].items.length===1)rows.pop(); // 끝에 홀로 남은 반폭 제거
     const flat=rows.flatMap(r=>r.items); // 라이트박스 재생목록 순서를 화면 순서와 일치
     const drawItem=({song,row})=>{

@@ -13,5 +13,5 @@ ok(ctx._feedVidDone('none')===false&&ctx._feedVidDone('nod')===false&&ctx._feedV
 const out=ctx._feedSinkWatched(['a','done','half','edge','b'],x=>ctx._feedVidDone(x));
 ok(out.join(',')==='a,half,b,done,edge','다 본 것만 뒤로, 각 묶음 안 순서 유지 → '+out.join(','));
 ok(ctx._feedSinkWatched(null,()=>false).length===0,'빈 입력 안전');
-ok(/_packRows\(_feedSinkWatched\(_favFirst\.concat\(_rest\),_done\)/.test(src),'New Videos 선반이 실제로 이 정렬을 쓴다');
+ok(/_rest=_feedSinkWatched\(songs\.filter\(s=>!_isFav\(s\)\|\|_done\(s\)\),_done\)/.test(src)&&/_favFirst=songs\.filter\(s=>_isFav\(s\)&&!_done\(s\)\)/.test(src),'New Videos 선반이 실제로 이 정렬을 쓴다');
 console.log(`\n${pass} 통과 / ${fail} 실패`);process.exit(fail?1:0);
