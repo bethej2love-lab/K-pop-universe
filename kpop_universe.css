@@ -1038,7 +1038,12 @@
     #yt-lightbox.lb-browse{padding:44px 28px 24px;box-sizing:border-box;align-items:safe center;overflow-y:auto;overscroll-behavior:contain;}
     #yt-lightbox.lb-browse #yt-lb-wrap{width:100%;max-width:calc((100vh - 330px) * 16 / 9 + 346px);display:flex;align-items:flex-start;gap:26px;}
     #yt-lightbox.lb-browse #yt-lb-main{flex:1;min-width:0;}
-    #yt-lightbox.lb-browse #yt-lb-uplist{width:320px;flex-shrink:0;max-height:min(80vh,720px);overflow-y:auto;padding-left:2px;overscroll-behavior:contain;will-change:transform;}
+    #yt-lightbox.lb-browse #yt-lb-uplist{width:340px;flex-shrink:0;max-height:min(80vh,720px);overflow-y:auto;padding-left:2px;overscroll-behavior:contain;will-change:transform;}
+    /* 이어서 보기 썸네일 더 크게 — 제목 영역을 줄이더라도(2026-11-19 사용자 "여전히 너무 작음, 더더 크게").
+       래퍼(.lb-uplist-tw)도 같이 키워야 한다 — 썸네일만 키우면 78px 래퍼를 넘쳐 제목을 덮는다. */
+    #yt-lightbox.lb-browse :is(.lb-uplist-thumb,.lb-uplist-tw){width:132px;height:74px;border-radius:8px;}
+    #yt-lightbox.lb-browse :is(.lb-uplist-thumb.is-shorts,.lb-uplist-tw.is-shorts){width:60px;height:107px;}
+    #yt-lightbox.lb-browse .lb-uplist-title{font-size:12.5px;line-height:1.35;}
     #yt-lightbox.lb-browse #yt-lb-uplist-scroll{padding-bottom:8px;}
     /* Up Next 패널 토글 버튼 — 데스크톱 비-narrow 모드 전용 */
     #yt-lightbox.lb-browse:not(.lb-narrow) #yt-lb-uplist-tog{display:flex;align-items:center;justify-content:center;width:20px;height:28px;border-radius:6px;border:none;background:rgba(255,255,255,0.05);color:rgba(180,200,240,0.5);font-size:11px;cursor:var(--kpu-cursor-pointer,pointer);flex-shrink:0;padding:0;transition:background .15s,color .15s;margin-right:4px;}
@@ -1093,9 +1098,17 @@
     /* ── 데스크톱 쇼츠: 세로 영상 + 우측 정보 패널 (YouTube Shorts 데스크톱 레이아웃 참고) ── */
     /* wrap을 컨텐츠 너비에 맞게(고정 1080px 아님), main을 auto-shrink, video를 높이 기준으로 키움 */
     #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-wrap{width:auto;max-width:92vw;}
-    #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-main{flex:0 0 auto;width:calc(min(82vh,680px) * 9/16);}/* 제목 길이 무관 너비 고정 */
+    #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-main{flex:0 0 auto;width:calc(min(86vh,760px) * 9/16);}/* 제목 길이 무관 너비 고정 */
     #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-video-box{
-      height:min(82vh,680px);width:auto;aspect-ratio:9/16;margin:0;}
+      height:min(86vh,760px);width:auto;aspect-ratio:9/16;margin:0;}
+    /* 넓은 화면: 정보(제목·이모지·출연 아티스트·곡)는 영상 '아래'가 아니라 '옆' 칼럼 — 유튜브 쇼츠 웹 참고(2026-11-19 사용자
+       "영상은 더 크게, 밑 정보는 옆 영역으로, 여백 없이"). 영상 왼쪽 큰 빈 공간이 정보 칼럼으로 채워진다. */
+    @media(min-width:1360px){
+      #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-main{display:grid;width:auto;grid-template-columns:auto minmax(300px,380px);column-gap:22px;align-content:start;}
+      #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-main>#yt-lb-video-box{grid-column:1;grid-row:1/span 14;}
+      #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-main>*:not(#yt-lb-video-box){grid-column:2;min-width:0;width:auto;}
+      #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-toolbar{justify-content:flex-start;}
+    }
     /* .is-shorts 기본 규칙(width:min(54vw,420px);margin:0 auto) 덮어씀 — 높이 기준이 우선 */
     #yt-lightbox.lb-browse.lb-shorts-desk #yt-lb-video-box.is-shorts{
       width:auto;margin:0;}
@@ -1414,6 +1427,16 @@
   }
   #side-panel>#gc{padding-top:44px;}
   #side-panel>#tt{padding-top:40px;}
+  /* 웹 카드 헤더 고정(2026-11-19 사용자 합의 — X·유튜브 채널 헤더 관례): 컬러 라인 + 이름 줄은 스크롤해도 위에 남는다.
+     이름 줄(#gc-name-row)은 부모(#gc-header-text)가 작아 sticky가 안 먹어 #gc-header째 고정하고,
+     스크롤이 내려가면(.hdr-stuck, app.js) 사진·SNS 줄을 숨겨 컴팩트하게. 폰(바텀시트)은 그대로. */
+  #side-panel>#gc{overflow:visible!important;} /* 기본 #gc의 overflow:hidden이 sticky를 죽인다 — 패널 안에선 각이 없어 불필요 */
+  #side-panel>#gc>#gc-bar{position:sticky;top:0;z-index:7;}
+  #side-panel #gc-header{position:sticky;top:3px;z-index:6;}
+  #side-panel.hdr-stuck #gc-header{background:rgba(13,13,16,0.94);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    margin:0 calc(-1*var(--card-pad));padding:6px var(--card-pad);}
+  #side-panel.hdr-stuck #gc-pic-wrap{display:none!important;}
+  #side-panel.hdr-stuck #gc-en-row{display:none;}
   @media(max-width:768px),(pointer:coarse) and (max-height:500px){#side-panel{display:none;}}
   /* 라이트박스 칩 클릭 시 이미 열린 카드 번쩍 */
   @keyframes panel-flash{0%,100%{box-shadow:-6px 0 32px rgba(0,0,0,0.45);}50%{box-shadow:-6px 0 0 0 rgba(200,218,255,0.35),0 0 28px 4px rgba(200,218,255,0.18);}}

@@ -2382,7 +2382,8 @@ function animate(){
   // 열려 있는 동안은 기기 종류와 무관하게 뒤의 3D 우주가 안 보임 — 그런데도 계속 풀 렌더링을 돌리면
   // 안 보이는 화면 그리는 데 GPU/CPU를 써서 정작 그 위에서 재생 중인 유튜브 영상이 끊기게 됨.
   const _lbEl=document.getElementById('yt-lightbox');
-  if(_lbEl.classList.contains('open')&&!(_MM&&_MM.full)){ // 우주 모드에선 재생 화면이 비켜 있다(소리만)
+  // _MM.on(웹 미니맵)도 제외 — 멈추면 탭바 옆 미니맵이 빈 칸으로 보였다(2026-11-19 사용자 스크린샷). 132×52라 렌더 비용 미미.
+  if(_lbEl.classList.contains('open')&&!(_MM&&(_MM.full||_MM.on))){ // 우주 모드에선 재생 화면이 비켜 있다(소리만)
     // 캔버스를 합성에서까지 빼는 건 라이트박스가 뒤를 **완전히** 가릴 때만 — 안 그러면 우주가
     // 사라진 게 눈에 보인다. 가리는 경우: 모바일(아래 CSS에서 .open 배경을 불투명으로 깔았다) 또는
     // 브라우즈 모드(#0a0a0d 불투명). 데스크톱 "카드 보며 재생"은 라이트박스가 우측을 비워 그
@@ -8665,6 +8666,8 @@ function _finalizeStackAnim(){
   }
 }
 const sidePanelEl=document.getElementById('side-panel');
+// 웹 카드 헤더 고정 보조(2026-11-19) — 스크롤이 내려가면 .hdr-stuck으로 헤더를 컴팩트하게(CSS가 사진·SNS 숨김)
+sidePanelEl&&sidePanelEl.addEventListener('scroll',()=>{sidePanelEl.classList.toggle('hdr-stuck',sidePanelEl.scrollTop>120);},{passive:true});
 const memberPanelEl=document.getElementById('member-panel');
 let _memberPanelShifted=false;
 
