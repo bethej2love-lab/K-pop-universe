@@ -12969,8 +12969,15 @@ function _ytSubEntry(url){
 // '투모로우바이투게더 TOMORROW X TOGETHER'는 이름 줄에 안 들어가 'TO…'가 됐다). 줄 폭이 아직 0(시트가 안 그려짐)이면 건드리지 않는다 — 크기가 잡히면 다시 불린다.
 function _gcEnInlineFit(){
   const il=document.getElementById('gc-en-inline'),en=document.getElementById('gc-en'),row=document.getElementById('gc-name-row');
-  if(!il||!en||!row||il.hidden||!il.textContent||!row.clientWidth)return;
-  if(il.scrollWidth>il.clientWidth+1){en.textContent=il.textContent;en.style.display='';il.textContent='';il.hidden=true;_gcEnFit();}
+  if(!row||!row.clientWidth)return;
+  // 한글명은 절대 자르지 않는다(2026-11-19 사용자 "한글명 잘리는 거 진짜 에바 — 다 표기되게"). 폰 CSS에서 이름은 안 줄어들게 해 뒀고,
+  // 그래도 이름+버튼이 줄 폭을 넘으면(좁은 폰·긴 이름) 별자리 장식을 빼고 글자를 한 단계 줄인다(gc-name-tight).
+  row.classList.remove('gc-name-tight');
+  if(row.scrollWidth>row.clientWidth+1)row.classList.add('gc-name-tight');
+  if(!il||!en||il.hidden||!il.textContent)return;
+  if(il.scrollWidth>il.clientWidth+1){en.textContent=il.textContent;en.style.display='';il.textContent='';il.hidden=true;_gcEnFit();
+    // 영문명이 빠져 자리가 생겼으면 줄인 글자를 되돌린다
+    row.classList.remove('gc-name-tight');if(row.scrollWidth>row.clientWidth+1)row.classList.add('gc-name-tight');}
 }
 function _gcEnFit(){
   const row=document.getElementById('gc-en-row'),en=document.getElementById('gc-en');

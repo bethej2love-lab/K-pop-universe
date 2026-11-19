@@ -6372,4 +6372,8 @@
   #gc-name-row>#gc-name{flex:0 0 auto;margin-right:7px;}
   #gc-name-row>.gc-en-inline{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;margin-right:4px;font-size:12px;}
   #gc-name-row .fav-btn,#gc-name-row .trophy-btn,#gc-name-row .share-btn{padding:7px 5px;margin-left:0!important;}
+  /* 이름+버튼이 줄을 넘칠 때만(app.js _gcEnInlineFit): 장식 빼고 글자 한 단계 작게 — 한글명은 끝까지 보인다 */
+  #gc-name-row.gc-name-tight>#gc-glyph{display:none;}
+  #gc-name-row.gc-name-tight>#gc-name{font-size:14px;letter-spacing:-.035em;margin-right:4px;}
+  #gc-name-row.gc-name-tight .fav-btn,#gc-name-row.gc-name-tight .trophy-btn,#gc-name-row.gc-name-tight .share-btn{padding:7px 4px;}
 }
