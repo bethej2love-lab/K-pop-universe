@@ -6220,3 +6220,29 @@
 @media (display-mode: standalone) and (max-width:768px) and (orientation:portrait){
   #yt-lightbox.lb-browse #yt-lb-anchor-chip{top:calc(24px + env(safe-area-inset-top,0px));} /* 웹앱 상단 흐림 보정 — 닫기·메뉴와 같은 높이 */
 }
+
+/* ── 폰 세로 재생 화면 = 영상은 위에 붙고 그 아래 전부가 한 덩어리로 스크롤(2026-11-19 사용자 스크린샷 "다음 영상 쪽 스크롤이 안 먹는다",
+   "다음 영상 썸네일 너무 작고 제목 영역은 너무 크다") ──
+   예전: wrap이 overflow:hidden이라 영상+제목+이모지+출연자+곡 카드가 화면을 다 차지하면 그 아래 '다음' 미리보기(#yt-lb-uplist-preview)는 잘린 채 밀어도 안 움직였다.
+   이제: wrap이 격자이자 스크롤 통, #yt-lb-main은 display:contents로 풀어 자식들이 같은 격자 배치 그대로(D안 규칙 재사용), 영상은 sticky로 위에 고정(유튜브 방식).
+   영상 위 띠(닫기·이름 줄 자리)로 내용이 비쳐 올라오지 않게 영상 ::before가 같은 배경으로 덮는다. 쇼츠(세로 영상)는 고정하지 않는다.
+   폰에서 '다음'은 #yt-lb-uplist가 아니라 미리보기다(전체 목록은 큐 시트). 짝: app.js — 미리보기 개수(8)·당겨 닫기 판정(wrap 기준)·새 영상이면 맨 위로. */
+@media (max-width:768px) and (orientation:portrait){
+  #yt-lightbox.lb-browse #yt-lb-wrap,#yt-lightbox.lb-browse.lb-has-chips #yt-lb-wrap{display:grid;grid-template-columns:minmax(0,1fr) 44px 44px 44px;column-gap:2px;
+    align-items:center;align-content:start;grid-auto-rows:max-content;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
+  #yt-lightbox.lb-browse #yt-lb-main{display:contents;}
+  #yt-lightbox.lb-browse #yt-lb-video-box:not(.is-shorts){position:sticky;top:0;z-index:1;}
+  /* 덮개: 위 띠 + 영상 둥근 모서리 뒤(14px)까지 — 스크롤된 썸네일이 모서리 틈으로 비치지 않게. z-index:-1 = 영상 뒤, 스크롤 내용 앞 */
+  #yt-lightbox.lb-browse #yt-lb-video-box:not(.is-shorts)::before{content:'';position:absolute;left:-14px;right:-14px;top:-140px;height:154px;z-index:-1;pointer-events:none;background:#0d0d10;}
+  #yt-lightbox.lb-browse #yt-lb-uplist-preview{grid-column:1/-1;grid-row:40;position:relative;z-index:0;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 16px);}
+  /* '다음' 미리보기 — 썸네일 크게(폭 42%, 16:9), 글은 그 옆 두 줄(유튜브 모바일 목록). 쇼츠는 폭 22% 세로 */
+  #yt-lightbox.lb-browse .lb-preview-item{gap:12px;padding:6px 2px;align-items:flex-start;}
+  #yt-lightbox.lb-browse .lb-preview-tw{width:42%;height:auto;aspect-ratio:16/9;}
+  #yt-lightbox.lb-browse .lb-preview-tw.is-shorts{width:22%;height:auto;aspect-ratio:9/16;}
+  #yt-lightbox.lb-browse .lb-preview-tw>.lb-preview-thumb.lb-preview-thumb{width:100%;height:100%;border-radius:8px;}
+  #yt-lightbox.lb-browse .lb-preview-tw .vdur{font-size:10.5px;padding:1px 4px;right:4px;bottom:4px;}
+  #yt-lightbox.lb-browse .lb-preview-tw.is-shorts .vdur{display:block;}
+  #yt-lightbox.lb-browse .lb-preview-info{padding-top:2px;}
+  #yt-lightbox.lb-browse .lb-preview-title{font-size:13px;line-height:1.36;white-space:normal;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;}
+  #yt-lightbox.lb-browse .lb-preview-meta{font-size:11.5px;margin-top:4px;}
+}

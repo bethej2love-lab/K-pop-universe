@@ -6230,11 +6230,11 @@ function _lbUpdateUplist(){
   }else{
     if(cntEl)cntEl.textContent=(_lbPlaylist.length>1&&_lbIdx>=0)?`${_lbIdx+1} / ${_lbPlaylist.length}`:'';
   }
-  // 미리보기 꼬리 — 현재 다음 2개 항목 표시
+  // 미리보기 꼬리 — 다음 8개(2026-11-19: 폰 세로 화면이 통째로 스크롤되면서 2개→8개. 그 뒤는 '이어서 보기 전체' 시트)
   const _prevEl=document.getElementById('yt-lb-uplist-preview');
   if(_prevEl){
     _prevEl.innerHTML='';
-    const _nextItems=(_lbPlaylist&&_lbIdx>=0)?_lbPlaylist.slice(_lbIdx+1,_lbIdx+3):[];
+    const _nextItems=(_lbPlaylist&&_lbIdx>=0)?_lbPlaylist.slice(_lbIdx+1,_lbIdx+9):[];
     if(_nextItems.length){
       const _ph=document.createElement('div');_ph.id='yt-lb-uplist-preview-hd';_ph.textContent='다음';_prevEl.appendChild(_ph);
       _nextItems.forEach((item,i)=>{
@@ -7574,6 +7574,8 @@ function _lbSetIframeSrc(url){
   const fr=old.cloneNode(false);
   if(url)fr.src=url;else fr.removeAttribute('src');
   old.replaceWith(fr);
+  // 새 영상이면 맨 위로(폰 세로 — 화면 전체가 스크롤되는 배치에서 목록을 내려 다음 영상을 골랐을 때 제목·정보가 보이게)
+  try{const _w=document.getElementById('yt-lb-wrap');if(_w&&_w.scrollTop>0&&document.getElementById('yt-lightbox').classList.contains('lb-browse'))_w.scrollTo({top:0,behavior:'smooth'});}catch(e){}
   _lbCcOffVid=null;_lbCcUserTouched=false; // 새 틀 = 새 재생 — 같은 영상을 다시 열어도 자막 끄기 신호를 다시 보낸다(_lbCaptionsOffOnce 주석)
   // 데스크톱: iframe이 로드되면 YouTube 플레이어가 포커스를 가져가 ESC가 부모 window에 안 옴 — 부모로 돌려줌
   // 모바일은 무대 옆 패널 아닌 전체화면이라 포커스 반환 불필요
@@ -7697,7 +7699,9 @@ document.getElementById('yt-lightbox').addEventListener('click',e=>{e.stopPropag
     if(e.touches.length!==1||_queueSheetOpen)return;
     _lbTX=e.touches[0].clientX;_lbTY=e.touches[0].clientY;
     _lbDragging=true;_lbAxis=null;_lbTStart=e.timeStamp;_lbPullMode=false;
-    _lbScrollEl=e.target.closest('#yt-lb-uplist')?_lbUplist:_lbWrap;
+    // 목록이 실제로 스크롤될 때만 목록을 본다 — 폰 세로는 화면 전체(wrap)가 스크롤(2026-11-19). 안 그러면 목록 위에서 아래로 밀 때
+    // 목록 scrollTop이 늘 0이라 '맨 위에서 당김'으로 오판해 화면이 닫힌다.
+    _lbScrollEl=(e.target.closest('#yt-lb-uplist')&&_lbUplist.scrollHeight>_lbUplist.clientHeight+1)?_lbUplist:_lbWrap;
     // 닫기 제스처는 "처음부터 맨 위에서 시작한 아래 방향 당김"일 때만 인정한다.
     _lbStartedAtTop=_lbScrollEl.scrollTop<=0;
     _lbDidScroll=false;
