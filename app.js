@@ -8449,7 +8449,15 @@ function _weightedShuffleByCat(arr,catOf){
 //   · 하트(_scrapCounts, 로그) · 최애(그룹 카드에서 내 즐겨찾기·최애 멤버가 나온 영상) · 분류(직캠 > 쇼츠 > MV > 예능, 예전 가중치) · 무작위(열 때마다 조금씩 다르게).
 // 깃발(입덕 영상)은 지금 계정별로만 저장돼 있고 쓴 사람이 1명이라(10-28 실측) 집계를 만들지 않았다 — 쌓이면 user_data.flag_videos 집계로 추가.
 // 하트도 10-28 기준 115개 영상뿐이라 가중치는 작게. 다양성(같은 멤버·같은 날 몰림 방지)은 호출부의 기존 단계가 그대로 이어 받는다.
-const _REC_W={fresh:0.28,pop:0.22,rise:0.18,heart:0.12,fav:0.10,cat:0.10,rnd:0.20};
+// 2026-11-19 개편(사용자 "추천순 그냥 내내 유지되는 거야? 적어도 하루 한 번은 순서 바꾸는 게 — 그래야 안 지겹지"):
+//   실제로 거의 안 바뀌었다 — 후보에 '최신 16 + 조회수 16'이 늘 들어오고 최신·조회수 점수가 커서 그 32개가 매번 맨 위를 차지, 무작위 항(0.20)은 그 안에서만 조금 섞었다.
+//   ① 무작위를 **날짜 씨앗**으로(_recNoise: 영상 id+오늘 날짜 → 0~1). 같은 날엔 거의 같은 순서(아까 본 걸 다시 찾을 수 있게), 자정(KST)이 지나면 판이 바뀐다. 열 때마다의 흔들림은 1/4만.
+//   ② 무작위 몫을 0.20→0.28로 키우고 최신·조회수 몫을 줄여, 매일 다른 영상이 첫 화면에 올라올 틈을 만든다.
+//   ③ 이미 본 영상은 내린다(_recSeenPen: 다 봤으면 −0.30, 열어만 봤으면 −0.10) — 안 본 영상이 먼저.
+const _REC_W={fresh:0.26,pop:0.18,rise:0.16,heart:0.10,fav:0.10,cat:0.08,rnd:0.28};
+function _recDayKey(){return new Date(Date.now()+9*3600e3).toISOString().slice(0,10);}
+function _recNoise(id){let h=2166136261;const k=String(id)+'|'+_recDayKey();for(let i=0;i<k.length;i++){h^=k.charCodeAt(i);h=Math.imul(h,16777619);}h^=h>>>13;h=Math.imul(h,0x5bd1e995);h^=h>>>15;return (h>>>0)/4294967296;}
+function _recSeenPen(id){const p=(typeof _vidProg!=='undefined'&&id)?_vidProg.get(id):null;if(!p)return 0;return p.d>0&&p.t/p.d>=0.92?0.30:0.10;}
 function _recOrder(vids,memberKo){
   if(!vids.length)return vids;
   const now=Date.now();
@@ -8465,7 +8473,7 @@ function _recOrder(vids,memberKo){
     const heart=Math.min(1,Math.log2(1+h)/3);
     const fav=!memberKo&&(v.members||[]).some(m=>{const k=(v.group_ko||'')+':'+m;return favMembers.has(k)||bias.has(k);})?1:0;
     const cat=_vidCatWeight(v.category)/4;
-    return _REC_W.fresh*fresh+_REC_W.pop*pop+_REC_W.rise*(v._rise?1:0)+_REC_W.heart*heart+_REC_W.fav*fav+_REC_W.cat*cat+_REC_W.rnd*Math.random();
+    return _REC_W.fresh*fresh+_REC_W.pop*pop+_REC_W.rise*(v._rise?1:0)+_REC_W.heart*heart+_REC_W.fav*fav+_REC_W.cat*cat+_REC_W.rnd*(0.75*_recNoise(v.id)+0.25*Math.random())-_recSeenPen(v.id);
   };
   // 모음 영상(개별출연·제목 '모음/몰아보기/.zip' 등)은 첫 화면 맨 뒤로(2026-11-18 사용자 "모음 영상은 중요도가 높진 않음, 최신이어도 추천순 상위에 둘 필요 없음").
   // 점수 순서는 각 묶음 안에서 그대로. 모음뿐이면 그대로 보인다.
@@ -19098,7 +19106,7 @@ function _openCardMenu(btn,ctx){
   const pop=document.createElement('div');pop.id='card-menu-pop';
   pop.style.cssText='position:fixed;background:rgba(26,26,29,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0.5px solid rgba(255,255,255,0.12);border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,0.5);padding:5px;min-width:190px;';
   const item=(label,onClick)=>{const b=document.createElement('button');b.textContent=label;b.style.cssText='display:block;width:100%;text-align:left;background:none;border:none;color:#e6edff;font-family:inherit;font-size:13px;padding:10px 12px;border-radius:8px;cursor:var(--kpu-cursor-pointer,pointer);white-space:nowrap;';b.addEventListener('click',e=>{e.stopPropagation();pop.remove();onClick();});pop.appendChild(b);};
-  item(currentLang==='ko'?'+ 사진 컬렉션 만들기':'+ New photo collection',()=>_createPhotoColFromCard(ctx));
+  // '+ 사진 컬렉션 만들기'는 2026-11-19에 카드 컬렉션 줄 끝의 + 칸으로 옮겼다(_colAddTile — 사용자 "케밥에서 빼고 컬렉션에 + 버튼이 자연스럽다")
   if(ctx&&ctx.groupKo&&GROUPS[ctx.groupKo]||ctx&&ctx.memberKo&&ctx.groupKo)item('Chemistry',()=>_chemPickPartner(ctx.groupKo,ctx.memberKo||null)); // 이 멤버와 함께 나온 사람 → Chemistry
   // For You 덜 보기(2026-11-11) — 그룹 멤버만(솔로 아티스트는 '혼자 나온 영상'이 곧 전부라 의미가 없다)
   // 소속 그룹을 즐겨찾기했을 때만 보인다(2026-11-11 사용자 "쓸데없이 모든 경우에 노출될 필요는 없다") — 그때만 그 멤버 단독 영상이 For You에 들어온다.
@@ -31092,7 +31100,22 @@ async function _loadCollectionRow(ko,containerId,memberKo,cardMemberKo){
   if(cardMemberKo?_openTArtist?.name?.ko!==cardMemberKo:_openGCko!==ko)return;
   if(_stale())return; // 이 행을 더 새로 부른 호출이 있음
   _renderCollectionRow(containerId,[...mine,...pub]);
+  _colAddTile(containerId,{groupKo:ko,memberKo:memberKo||null}); // 줄 끝 + 칸(컬렉션이 없어도 줄을 띄운다)
   _loadProgramRow(ko,containerId,memberKo,cardMemberKo,_stale);
+}
+// 카드 컬렉션 줄 끝의 '+' 칸 — 누르면 이 카드의 그룹/멤버로 사진 컬렉션 만들기(2026-11-19 사용자 "맨 오른쪽 컬렉션 옆에 + 버튼, 케밥에서는 빼고").
+// 프로그램 칩이 뒤늦게 같은 목록에 붙으므로 자리는 CSS order로 맨 끝에 고정한다(DOM 순서와 무관). 컬렉션이 하나도 없어도 줄을 띄워 만들 길을 남긴다.
+function _colAddTile(containerId,ctx){
+  const row=document.getElementById(containerId);const listEl=row&&row.querySelector('.gc-collection-list');if(!listEl)return;
+  listEl.querySelector('.gc-collection-add')?.remove();
+  const b=document.createElement('button');b.type='button';b.className='gc-collection-chip gc-collection-add';
+  b.setAttribute('aria-label',currentLang==='ko'?'사진 컬렉션 만들기':'New photo collection');
+  const box=document.createElement('div');box.className='gc-collection-chip-thumb-wrap';box.textContent='+';
+  const nm=document.createElement('div');nm.className='gc-collection-chip-name';nm.textContent=currentLang==='ko'?'사진 컬렉션':'Photo collection';
+  b.appendChild(box);b.appendChild(nm);
+  b.addEventListener('click',e=>{e.stopPropagation();_createPhotoColFromCard(ctx);});
+  listEl.appendChild(b);
+  row.style.display='';
 }
 function _renderCollectionRow(containerId,list){
   const row=document.getElementById(containerId);
@@ -31125,7 +31148,7 @@ function _renderCollectionRow(containerId,list){
         }
         chip.remove();
         const listEl2=document.getElementById(containerId)?.querySelector('.gc-collection-list');
-        if(listEl2&&!listEl2.children.length)document.getElementById(containerId).style.display='none';
+        if(listEl2&&!listEl2.children.length)document.getElementById(containerId).style.display='none'; // + 칸이 있으면 줄은 남는다
       });
       thumbWrap.appendChild(del);
     }

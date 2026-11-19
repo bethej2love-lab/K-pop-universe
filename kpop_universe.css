@@ -6289,3 +6289,12 @@
 @media (display-mode: standalone) and (max-width:768px) and (orientation:portrait){
   #yt-lightbox.lb-browse{--lb-pad:calc(74px + env(safe-area-inset-top,0px));}
 }
+/* 카드 디스코그래피 — 머리줄과 커버 사이 여백 절반으로(2026-11-19 사용자 "앨범 커버 위에 여백 더 줄여줘, 지금의 반 정도"). 실측 34px(머리줄 아래 12 + 활동기 묶음 몫 22) → 17px.
+   묶음 뒷장은 왼쪽 아래를 축으로 시계 방향으로 눕혀 위로는 5~6px만 올라온다(실측) — 22px(웹 16px)은 과했다. 파일 끝이라 위 규칙들을 덮는다. */
+.gc-discog-strip.has-stacks{padding-top:6px;}
+#gc-discog-row .gc-discog-hd,#tt-discog-row .gc-discog-hd{margin-bottom:11px;}
+/* 카드 컬렉션 줄 끝 '+' 칸(2026-11-19) — 테두리 없이 옅은 칸 + 가운데 +. order로 늘 맨 끝(프로그램 칩이 나중에 붙어도) */
+.gc-collection-add{all:unset;box-sizing:border-box;flex-shrink:0;width:var(--card-thumb);order:99;cursor:var(--kpu-cursor-pointer,pointer);-webkit-tap-highlight-color:transparent;}
+.gc-collection-add .gc-collection-chip-thumb-wrap{display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:300;line-height:1;color:rgba(200,214,245,0.6);background:rgba(255,255,255,0.05);}
+.gc-collection-add:active .gc-collection-chip-thumb-wrap{background:rgba(255,255,255,0.1);}
+.gc-collection-add .gc-collection-chip-name{color:rgba(190,205,240,0.6);}
