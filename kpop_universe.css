@@ -6377,3 +6377,7 @@
   #gc-name-row.gc-name-tight>#gc-name{font-size:14px;letter-spacing:-.035em;margin-right:4px;}
   #gc-name-row.gc-name-tight .fav-btn,#gc-name-row.gc-name-tight .trophy-btn,#gc-name-row.gc-name-tight .share-btn{padding:7px 4px;}
 }
+/* 폰 카드 이름 앞 별자리 장식을 뺀다(2026-11-19 사용자 "그룹 멤버 이름 앞에 저 별자리 일단 빼버리자, 자리 차지하니까"). 이름·영문명·버튼이 쓸 자리가 25px쯤 늘어난다. 웹은 그대로. */
+@media(max-width:768px){
+  #gc-name-row>#gc-glyph,#tt-name-row>#tt-glyph{display:none!important;}
+}
