@@ -6385,3 +6385,5 @@
 #igv-vplay{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:5;padding:11px 18px;border-radius:12px;background:rgba(0,0,0,0.6);color:#fff;font-size:14px;font-weight:700;text-decoration:none;white-space:nowrap;-webkit-tap-highlight-color:transparent;}
 #igv-vplay[hidden]{display:none;}
 #igv-vplay:active{background:rgba(0,0,0,0.75);}
+/* 카드 안 공연 포스터 줄 — 피드용 가로 선반의 왼쪽 여백(20px)이 카드 안에서도 붙어 첫 포스터가 'CONCERTS' 제목보다 안쪽에서 시작했다(2026-11-19) */
+.concert-row .card-concert-rail{padding-left:0!important;scroll-padding-left:0!important;}
