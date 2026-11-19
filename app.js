@@ -17640,7 +17640,7 @@ function _closeKpopLinks(){document.getElementById('kpop-links-overlay').classLi
 const _MX_NAT_FLAG={'한국':'🇰🇷','대한민국':'🇰🇷','일본':'🇯🇵','중국':'🇨🇳','태국':'🇹🇭','미국':'🇺🇸','호주':'🇦🇺','캐나다':'🇨🇦','뉴질랜드':'🇳🇿','NZ':'🇳🇿','대만':'🇹🇼','홍콩':'🇭🇰','필리핀':'🇵🇭','인도네시아':'🇮🇩','말레이시아':'🇲🇾','브라질':'🇧🇷','영국':'🇬🇧','베트남':'🇻🇳','프랑스':'🇫🇷','독일':'🇩🇪','이탈리아':'🇮🇹','스위스':'🇨🇭','스웨덴':'🇸🇪'};
 const _mxFlagsFor=nat=>{if(!nat)return'';const flags=nat.split(/[·,\/]\s*/).map(k=>_MX_NAT_FLAG[k.trim()]||'').filter(Boolean).join('');return flags||nat;};
 let _mxState={gender:'',gen:'',yearLo:1985,yearHi:2012,co:''};
-let _mxChartType='fig'; // 기본 = 데뷔 나이 산점도(2026-10-16 — 가장 많은 걸 한눈에 보여주는 그림을 첫 화면으로)
+let _mxChartType='birth'; // 기본 = 생년(2026-11-19 사용자 "데뷔 나이는 4개 중 마지막으로" — 탭 순서: 생년·국적·소속사·데뷔 나이. 예전 기본은 데뷔 나이 산점도)
 const _mxCoOf=gd=>{if(!gd?.co)return'';return gd.co.split(/\s*\/\s*/).pop().trim()||gd.co;};
 function _openMemberExplorer(preOpts){
   const ov=document.getElementById('mx-overlay');if(!ov)return;
@@ -17806,8 +17806,8 @@ function _mxFigUpdate(st,matchSet,filtered){
   const all=act.map(p=>p.age).sort((a,b)=>a-b);
   const m=all.length?all[all.length>>1]:null;
   st.cap.textContent=!all.length?(isKo?'그림에 찍을 생일·데뷔일 정보가 없어요':'No birthday/debut data for this filter')
-    :isKo?`${filtered?'이 조건 ':''}${all.length.toLocaleString()}명 · 데뷔 나이 중앙값 ${Math.floor(m)}세 ${Math.floor((m%1)*12)}개월`
-    :`${all.length.toLocaleString()} members · median debut age ${m.toFixed(1)}`;
+    :isKo?`${filtered?'이 조건 ':''}${all.length.toLocaleString()}명` // 중앙값 문구는 뺐다(2026-11-19 사용자 "아래 중앙값 노출도 빼버리고")
+    :`${all.length.toLocaleString()} members`;
 }
 function _mxFigMount(grid,results,filtered){
   if(!_mxFig){
