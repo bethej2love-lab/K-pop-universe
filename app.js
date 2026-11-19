@@ -840,12 +840,13 @@ function _refreshOpenCardText(){
       document.getElementById('gc-name').textContent=currentLang==='ko'?_openGCko:(info.en||_openGCko);
       {
         const _enShow=currentLang==='ko'&&info.en&&info.en!==_openGCko; // 키가 영문인 그룹(A2O MAY·SOUL)은 제목과 같은 글자가 두 번 보였다
-        const _enInlineShow=_enShow&&!isMob(); // 웹 한국어: 한글명 오른쪽 인라인, 모바일: 아래 행(gc-en-row)
+        const _enInlineShow=_enShow; // 한글명 오른쪽 인라인 — 폰도(2026-11-19 사용자 "그룹 한글 이름 옆에 영문 이름 써달라니까 왜 혼자 줄 다 차지"). 예전엔 웹만
         const _enEl=document.getElementById('gc-en');
         _enEl.textContent=_enShow&&!_enInlineShow?info.en:'';
         _enEl.style.display=_enShow&&!_enInlineShow?'':'none';
         const _enInlineEl=document.getElementById('gc-en-inline');
         if(_enInlineEl){_enInlineEl.textContent=_enInlineShow?info.en:'';_enInlineEl.hidden=!_enInlineShow;}
+        requestAnimationFrame(()=>{try{_gcEnInlineFit();}catch(e){}});
         // 영문명이 길어 A안(영문+SNS 한 줄)에서 어정쩡하게 눌리는 그룹만 강제로 세로 분리(4줄)한다
         // (2026-08-28, 사용자 지정 목록 — 나머지는 flex-wrap 자동). 추가 그룹은 여기 배열에 넣으면 됨.
         document.getElementById('gc-en-row').classList.toggle('gc-en-stack',
@@ -12964,6 +12965,13 @@ function _ytSubEntry(url){
 }
 // 영문명 줄이 잘리면(…) 영문/SNS를 세로로 나눈다(2026-10-20 — 유튜브 구독자 수가 붙으며 휴대폰에서 "AESPA"가 "A…"로 잘렸다).
 // 위 고정 목록(gc-en-stack)과 같은 클래스를 쓰되, 숫자가 늦게 채워져도 다시 재서 맞춘다.
+// 인라인 영문명(한글명 옆)이 자리가 모자라 잘리면(…) 그 그룹만 예전처럼 아랫줄(#gc-en)로 내린다(2026-11-19 — 폰에서도 인라인으로 바꾸며:
+// '투모로우바이투게더 TOMORROW X TOGETHER'는 이름 줄에 안 들어가 'TO…'가 됐다). 줄 폭이 아직 0(시트가 안 그려짐)이면 건드리지 않는다 — 크기가 잡히면 다시 불린다.
+function _gcEnInlineFit(){
+  const il=document.getElementById('gc-en-inline'),en=document.getElementById('gc-en'),row=document.getElementById('gc-name-row');
+  if(!il||!en||!row||il.hidden||!il.textContent||!row.clientWidth)return;
+  if(il.scrollWidth>il.clientWidth+1){en.textContent=il.textContent;en.style.display='';il.textContent='';il.hidden=true;_gcEnFit();}
+}
 function _gcEnFit(){
   const row=document.getElementById('gc-en-row'),en=document.getElementById('gc-en');
   if(!row||!en||en.style.display==='none'||!en.textContent)return;
@@ -12973,7 +12981,7 @@ function _gcEnFit(){
 }
 // 모바일 카드는 숫자가 채워질 때 시트가 아직 안 그려져 폭이 0으로 재진다 — 줄 크기가 바뀔 때마다 다시 잰다
 // (재는 동안 클래스를 뗐다 붙이는 건 한 콜백 안에서 끝나 최종 크기가 안 바뀌면 다시 불리지 않는다)
-try{const _r=document.getElementById('gc-en-row');if(_r&&window.ResizeObserver)new ResizeObserver(()=>_gcEnFit()).observe(_r.parentElement||_r);}catch(e){}
+try{const _r=document.getElementById('gc-en-row');if(_r&&window.ResizeObserver)new ResizeObserver(()=>{_gcEnInlineFit();_gcEnFit();}).observe(_r.parentElement||_r);}catch(e){}
 // 메시지 서비스(2026-11-10 사용자 — "메시지 아이콘 옆에 bubble 같은 텍스트, 누르면 그 서비스로"). 아티스트마다 많아야 1~2개라
 // 펼침 없이 SNS 줄 끝에 그대로 붙인다. 데이터는 fan_platforms.json(조사·근거는 tools/fan_platforms/), m=입점 멤버 명단이 있으면
 // 멤버 카드에선 그 멤버가 들어 있을 때만. 로그인이 필요한 앱도 일단 그 서비스 첫 화면/채널로 보낸다.
@@ -16267,12 +16275,13 @@ function showGC(ko,cx,cy,keepMemberPanel,skipRipple,urlMode,_unusedPushMobNav){
   {
     const _enShow=currentLang==='ko'&&info.en&&info.en!==ko; // 키가 영문인 그룹(A2O MAY·SOUL 등)은 제목과 같은 글자가 두 번 보였다(2026-10-15)
     // 웹 한국어는 한글명 오른쪽 인라인(11-17 결정) — 11-17엔 언어 전환 경로(_refreshOpenCardText)에만 넣어서 카드를 처음 열 땐 예전 아랫줄로 나왔다(11-18 사용자)
-    const _enInlineShow=_enShow&&!isMob();
+    const _enInlineShow=_enShow; // 폰도 인라인(2026-11-19) — 위 _refreshOpenCardText와 같이
     const _enEl=document.getElementById('gc-en');
     _enEl.textContent=_enShow&&!_enInlineShow?info.en:'';
     _enEl.style.display=_enShow&&!_enInlineShow?'':'none';
     const _enInlineEl=document.getElementById('gc-en-inline');
     if(_enInlineEl){_enInlineEl.textContent=_enInlineShow?info.en:'';_enInlineEl.hidden=!_enInlineShow;}
+    requestAnimationFrame(()=>{try{_gcEnInlineFit();}catch(e){}}); // 안 들어가면 아랫줄로
   }
   _renderTagChip(document.getElementById('gc-co'),(info.co==='무소속'?'':_dispAgency(info.co))||'','agency',(info.co==='무소속'?'':info.co)||'',!!info.disbanded);
   if(info.co&&info.co!=='무소속'&&_CO_URL[info.co]){const coLink=document.createElement('a');coLink.href=_CO_URL[info.co];coLink.target='_blank';coLink.rel='noopener noreferrer';coLink.className='co-ext-link';coLink.textContent='↗';coLink.title=info.co+' 홈페이지';document.getElementById('gc-co').appendChild(coLink);}
@@ -25107,10 +25116,10 @@ function _igAgo(iso){
   return ko?Math.floor(d/24)+'일 전':Math.floor(d/24)+'d ago';
 }
 // rows: [{handle, media}] → 최근 사진들(기간 안) 최신순
-function _igPhotos(rows,days,max){
+function _igPhotos(rows,days,max,withVideo){ // withVideo: 영상(릴스)도 — For You만(2026-11-19). 발견 탭은 사진만(10-19 설계)
   const lim=Date.now()-days*86400000,own=_igOwners(),out=[];
   (rows||[]).forEach(r=>(r.media||[]).forEach(m=>{
-    if(!m||!m.u||!m.p||(m.ty!=='IMAGE'&&m.ty!=='CAROUSEL_ALBUM'))return;
+    if(!m||!m.u||!m.p||(m.ty!=='IMAGE'&&m.ty!=='CAROUSEL_ALBUM'&&!(withVideo&&m.ty==='VIDEO')))return;
     const t=Date.parse(m.t);if(!isFinite(t)||t<lim)return;
     out.push({...m,ts:t,owner:own.get(r.handle),h:r.handle});
   }));
@@ -25139,7 +25148,10 @@ function _igBiasOf(owner){
 function _igRenderRail(list,photos){
   photos.forEach((m,i)=>{
     const cap1=String(m.cap||'').split('\n').map(x=>x.trim()).find(Boolean)||''; // 본문 첫 줄
-    const card=_appendFeedCard(list,'📷',(m._emoji?m._emoji+' ':'')+m.owner.name,'',()=>_openIgViewer(m,m.h,0),_igSmall(m.u),null,{meta:_igAgo(m.t)});
+    // 영상(릴스)은 카드 인스타 줄과 같게: 누르면 인스타 재생 창(_openIgEmbed), 썸네일에 ▶
+    const _open=m.ty==='VIDEO'?()=>{const k=_igPostKey(m.p);if(k)_openIgEmbed({post_key:k,v:m.v,u:m.u});else window.open(m.p,'_blank','noopener');}:()=>_openIgViewer(m,m.h,0);
+    const card=_appendFeedCard(list,'📷',(m._emoji?m._emoji+' ':'')+m.owner.name,'',_open,_igSmall(m.u),null,{meta:_igAgo(m.t)});
+    if(m.ty==='VIDEO'&&card){const _tw=card.querySelector('.feed-card-thumb-wrap');if(_tw){const _pb=document.createElement('span');_pb.className='ig-play';_pb.textContent='▶';_tw.appendChild(_pb);}}
     // 이름 옆 흐린 @계정 — 카드 인스타 줄(_igCaption)과 같은 표기(2026-11-05 사용자 "카드엔 있는데 발견 탭엔 없다, 발견 탭이 더 필요")
     const tt=card&&card.querySelector('.feed-card-title');
     if(tt&&m.h){const hs=document.createElement('span');hs.className='ig-cap-h';hs.textContent='@'+m.h;tt.appendChild(hs);}
@@ -25150,7 +25162,7 @@ function _igRenderRail(list,photos){
       // 앞 두 장은 즉시·우선 로딩 — 재방문 For You 첫 화면에서 인스타 사진이 늦게 뜨던 것(2026-11-18 사용자 "최소 첫 사진이라도 빨리")
       if(i<2){img.loading='eager';try{img.fetchPriority='high';}catch(_){}img.setAttribute('fetchpriority','high');}
     }
-    _igFeedDeck(card,m);
+    if(m.ty!=='VIDEO')_igFeedDeck(card,m);
   });
   list.scrollLeft=0;_enableDragScroll(list);
 }
@@ -25190,7 +25202,8 @@ async function _buildFeedFavIg(){
     const[{data,error},magItems]=await Promise.all([
       sb.from('ig_accounts').select('handle,media').in('handle',[...hs].slice(0,300)).eq('status','ok').limit(300),
       _igMagFor([...hs]).catch(()=>[])]);
-    const photos=error?[]:_igPhotos(data,14,24); // 2행 레일(2026-10-27 사용자 "인스타 더 노출") — 15장이면 2줄에서 8칸 만에 끝나 24장
+    // 영상(릴스)도 포함(2026-11-19 사용자 "코르티스 최근 인스타 게시물, 카드엔 수집됐는데 왜 포유탭에선 앞에 안 뜨지" — 최근 5개가 전부 릴스였고 이 줄은 사진만 받았다)
+    const photos=error?[]:_igPhotos(data,14,24,true); // 2행 레일(2026-10-27 사용자 "인스타 더 노출") — 15장이면 2줄에서 8칸 만에 끝나 24장
     const magRecent=magItems.filter(m=>m.ts>Date.now()-30*86400000).slice(0,15); // 매거진은 올리는 간격이 길어 30일
     _feedSkelClear(list);
     if(!photos.length&&!magRecent.length){section.style.display='none';return;}
@@ -25198,7 +25211,9 @@ async function _buildFeedFavIg(){
     const ttl=document.getElementById('feed-favig-ttl');if(ttl)ttl.textContent='📷 On Instagram';
     // 최애 표시(_igBiasOf) — 최애 계정 사진을 앞으로(안정 정렬이라 각자 최신순 유지) + 이름 앞 이모티콘
     photos.forEach(m=>{const b=_igBiasOf(m.owner);m._emoji=b.emoji;m._isBias=b.isBias;});
-    photos.sort((a,b)=>(b._isBias?1:0)-(a._isBias?1:0));
+    // 순서: 48시간 안 새 게시물이 맨 앞(최신순, 누구 것이든) → 그다음 최애 계정 → 나머지 최신순. 예전엔 무조건 최애 먼저라
+    // 다른 즐겨찾기 팀이 방금 올린 게 최애의 2주 전 사진 뒤로 밀렸다(2026-11-19).
+    {const _fresh=m=>m.ts>Date.now()-48*3600e3?1:0;photos.sort((a,b)=>(_fresh(b)-_fresh(a))||(_fresh(a)?0:((b._isBias?1:0)-(a._isBias?1:0))));}
     if(photos.length)_igRenderRail(list,photos);
     if(mag&&magRecent.length)_igRenderMagRail(mag,magRecent);
     section.style.display='';
