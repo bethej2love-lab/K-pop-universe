@@ -3343,7 +3343,7 @@ function _srVidQuery(q,like,hint,fallbackGroup){
     //    같이 걸어 좁히고, 게스트 출연은 with_members가 "이름(그룹)" 형식이라 그대로 정확하다.
     vq=hint.gko
       ? vq.or(`and(members.cs.{"${esc(hint.ko)}"},group_ko.eq.${_pgFilterVal(hint.gko)}),with_members.cs.{"${esc(hint.ko)}(${esc(hint.gko)})"}`)
-      : vq.or(`members.cs.{"${esc(hint.ko)}"}`);
+      : (hint.soloKey?vq.or(`group_ko.eq.${_pgFilterVal(hint.soloKey)},members.cs.{"${esc(hint.ko)}"}`):vq.or(`members.cs.{"${esc(hint.ko)}"}`));
   }else if(hint&&hint.kind==='group'){
     vq=vq.or(`group_ko.eq.${_pgFilterVal(hint.ko)},with_groups.cs.{"${String(hint.ko).replace(/["\\]/g,'')}"}`);
   }else{
@@ -3358,7 +3358,7 @@ function _srVidQuery(q,like,hint,fallbackGroup){
   if(catHit){
     if(catHit.cat)vq=catHit.cat==='short'?vq.eq('is_short',true):vq.eq('category',catHit.cat);
     // 직캠처럼 category만으론 안 갈리는 형식은 제목 표기로 한 번 더 좁힌다
-    if(catHit.titleAny)vq=vq.or(catHit.titleAny.map(w=>`title_norm.ilike.%${w}%`).join(','));
+    if(catHit.titleAny)vq=vq.or(catHit.titleAny.map(w=>`title_norm.ilike.%${String(w).replace(/[,()"%_*\\]/g,' ').trim()}%`).join(','));
   }
   return vq.or('content_flag.is.null,content_flag.neq.무관').or('content_flag.is.null,content_flag.neq.보류')
     .or('content_flag.is.null,content_flag.neq.hidden');
@@ -4539,7 +4539,7 @@ const _NL_LATEST=/^(최근|최신|요즘|요새|최신순|최근순|새|신상|n
 const _NL_POPULAR=/^(인기|인기순|조회수|조회수순|레전드|베스트|유명한|많이본|best|top|popular|legendary)$/i;
 const _NL_STOP=/^(영상|영상들|동영상|모음|모아보기|보여줘|보여줘요|찾아줘|찾아줘요|틀어줘|좀|추천|순|순으로|관련|video|videos|clip|clips|of|the)$/i;
 const _NL_GLUE=['페이스캠','직캠','무대','뮤비','쇼츠','챌린지','예능','안무']; // "성현직캠"처럼 붙여 쓴 꼬리
-function _nlParse(q){
+function _nlParse(q,progs){
   let toks=String(q||'').trim().split(/\s+/).filter(Boolean);
   if(toks.length<1)return null;
   // 붙여 쓴 꼬리·조사 '의' 떼기
@@ -4549,6 +4549,14 @@ function _nlParse(q){
     return g?[t.slice(0,-g.length),g]:[t];
   });
   const out={full:String(q).trim(),ent:'',cat:null,sort:null,year:null};
+  // 프로그램 이름('성현 릴레이댄스', '카리나 주간 아이돌') — 낱말 1~3개를 붙여 프로그램 표기와 통째로 같으면 그 프로그램 영상(제목 표기)으로 좁힌다. 이름 부분이 남을 때만.
+  if(progs){
+    for(let n=Math.min(3,toks.length-1);n>=1&&!out.cat;n--)for(let i=0;i+n<=toks.length&&!out.cat;i++){
+      const j=toks.slice(i,i+n).join('').toLowerCase();if(j.length<3)continue;
+      const pg=progs.find(x=>[x.label,...(x.kw||[])].some(k=>String(k).toLowerCase().replace(/\s+/g,'')===j));
+      if(pg){out.cat={key:'prog',ko:pg.label,en:pg.en||pg.label,titleAny:[...new Set([pg.label,...(pg.kw||[])].map(k=>String(k).toLowerCase()))].slice(0,4)};toks.splice(i,n);}
+    }
+  }
   const rest=[];
   for(const t of toks){
     const c=!out.cat&&_NL_CATS.find(x=>x.re.test(t));
@@ -4592,7 +4600,7 @@ function doSearch(q){
   q=q.trim();
   // 말하듯 검색: 이름 부분(ent)만 아래 매칭에 넘긴다. 더보기·곡 인덱스 도착 같은 재호출은 이름 부분으로 들어오므로, 입력창에 원문이 그대로면 원문으로 되돌려 해석을 유지한다.
   if(_srNlNow&&q===_srNlNow.ent){try{if([...document.querySelectorAll('#search-input,#msheet-input,#mob-search-input,#tab-sb-input')].some(i=>i.value.trim()===_srNlNow.full))q=_srNlNow.full;}catch(e){}}
-  {const nl=obSr?null:_nlParse(q);_srNlNow=(nl&&!_nlIsPlainName(q))?nl:null;if(_srNlNow)q=_srNlNow.ent;}
+  {const nl=obSr?null:_nlParse(q,typeof _PROGRAM_COLLECTIONS!=='undefined'?_PROGRAM_COLLECTIONS:null);_srNlNow=(nl&&!_nlIsPlainName(q))?nl:null;if(_srNlNow)q=_srNlNow.ent;}
   _curSearchQ=q;
   _invalidateRemoteSearch(); // 빈 입력·한 글자·다른 결과 그릇도 이전 요청과 분리한다
   _srResetLimits(q); // 검색어가 바뀌었을 때만 '더보기'로 늘려둔 양을 되돌린다
@@ -4799,7 +4807,9 @@ function doSearch(q){
         Object.keys(GROUPS).forEach(ko=>{
           if(_expandFrom.some(e=>e.ko===ko))return;
           const enN=GROUPS[ko].en||'';
-          const s=Math.min(_mScore(ko,tok,tl),enN?_mScore(enN,tok,tl):99,_csScore(ko,tok));
+          // 줄임말(altNames: 스키즈·투바투·블핑)도 — '스키즈 필릭스 직캠'이 그룹을 못 찾아 제목 검색 1건만 냈다(2026-11-20)
+          const altHit=(GROUPS[ko].altNames||[]).some(x=>String(x).toLowerCase()===tl);
+          const s=altHit?0:Math.min(_mScore(ko,tok,tl),enN?_mScore(enN,tok,tl):99,_csScore(ko,tok));
           if(s<=1&&bubbleMeshes.some(b=>b.ko===ko))_expandFrom.push({ko,score:s});
         });
       });
@@ -4834,7 +4844,7 @@ function doSearch(q){
     // 그룹명 자체에 공백이 있는 경우(예: "엔시티 127")는 그룹 매칭이 이미 통째로 됐으므로,
     // 그룹명으로 안 걸리고 남은 토큰만 필터로 본다.
     const _toks=q.split(/\s+/).filter(Boolean);
-    const _memFilter=_toks.length>1?_toks.filter(t=>!_expandFrom.some(e=>e.ko.includes(t)||(GROUPS[e.ko].en||'').toLowerCase().includes(t.toLowerCase()))):[];
+    const _memFilter=_toks.length>1?_toks.filter(t=>!_expandFrom.some(e=>e.ko.includes(t)||(GROUPS[e.ko].en||'').toLowerCase().includes(t.toLowerCase())||(GROUPS[e.ko].altNames||[]).some(x=>String(x).toLowerCase()===t.toLowerCase()))):[];
     _expandFrom.forEach(({ko,score})=>{
       const roster=ARTISTS.filter(a=>_artistGroups(a).some(g=>g.ko===ko));
       roster.forEach(a=>{
@@ -4946,6 +4956,8 @@ function doSearch(q){
     // 공백 쿼리에서 토큰 하나가 **멤버 이름**인 경우("카리나 뮤비") — 위 매칭은 쿼리 전체로만 보므로
     // 여기까지 오면 hits가 비어 있고, 그러면 제목 검색으로 떨어져 0건이 된다(실측). 그룹 토큰은
     // 위 _expandFrom 패스가 이미 처리하므로, 대칭으로 멤버 토큰도 본다.
+    // 말하듯 검색에서 낱말 하나가 그룹이면('코르티스 redred 무대') 그 그룹 영상에서 찾는다 — 나머지 낱말은 아래에서 곡 제목 조건이 된다
+    if(_srNlNow&&_expandFrom.length){const e=[..._expandFrom].sort((x,y)=>x.score-y.score)[0];return{kind:'group',ko:e.ko};}
     const toks=q.split(/\s+/).filter(t=>t.length>=2);
     for(const t of toks){
       const tl=t.toLowerCase();
@@ -4955,6 +4967,8 @@ function doSearch(q){
     return null;
   })();
   // 말하듯 검색이면 해석 결과를 힌트에 실어 보낸다 + 이름으로 안 쓰인 나머지 낱말은 곡 제목 조건(titleForms)
+  // 솔로 가수(아이유)는 소속 그룹이 가짜('솔로')라 group_ko 조건이 0건을 냈다 — 본인 이름 키(_ytGroupKoFor)로 찾는다
+  if(_hint&&_hint.kind==='member'&&_hint.gko&&!GROUPS[_hint.gko]){const a0=ARTISTS.find(x=>x.name.ko===_hint.ko&&x.group&&x.group.ko===_hint.gko);_hint.soloKey=a0?_ytGroupKoFor(a0):_hint.ko;_hint.gko='';}
   let _hintNl=_hint;
   if(_srNlNow){
     _hintNl=Object.assign({kind:null},_hint||{});_hintNl.nl=_srNlNow;
@@ -4977,7 +4991,7 @@ function doSearch(q){
     if(_hintNl.kind&&!_hintNl._song){
       const low=x=>String(x||'').toLowerCase().replace(/\s+/g,'');
       const names=[];
-      if(_hintNl.kind==='member'){const a=ARTISTS.find(x=>x.name.ko===_hintNl.ko&&(!_hintNl.gko||(x.group&&x.group.ko===_hintNl.gko)));names.push(_hintNl.ko,a&&a.name.en,a&&a.displayName,_hintNl.gko,_hintNl.gko&&GROUPS[_hintNl.gko]&&GROUPS[_hintNl.gko].en);}
+      if(_hintNl.kind==='member'){const a=ARTISTS.find(x=>x.name.ko===_hintNl.ko&&(!_hintNl.gko||(x.group&&x.group.ko===_hintNl.gko)));names.push(_hintNl.ko,a&&a.name.en,a&&a.displayName,_hintNl.gko,_hintNl.gko&&GROUPS[_hintNl.gko]&&GROUPS[_hintNl.gko].en,...((_hintNl.gko&&GROUPS[_hintNl.gko]&&GROUPS[_hintNl.gko].altNames)||[]));}
       else{const g=GROUPS[_hintNl.ko]||{};names.push(_hintNl.ko,g.en,...(g.altNames||[]));}
       const nm=names.filter(Boolean).map(low);
       const left=q.split(/\s+/).filter(t=>{const tl=low(t);return tl&&!nm.some(n=>n===tl||n.includes(tl));});
