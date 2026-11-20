@@ -6408,3 +6408,5 @@
   #tt-name-row>#tn{font-size:16px;}
   #tt-name-row>#tg{font-size:13.5px;}
 }
+/* 카드 이름 앞 별자리 장식은 모든 화면에서 뺀다(2026-11-20 사용자 "영문명 앞엔 붙어있네? 떼줘, 맥락이 비슷하면 통일") — 11-19엔 폰만 뺐다. 복제된 카드(id 없음)도 잡히게 클래스로. */
+.card-glyph{display:none!important;}

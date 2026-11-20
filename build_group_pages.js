@@ -92,6 +92,12 @@ function agencyEn(co) {
 function escHtml(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
+// 화면 머리(h1·소속 줄)용 — 괄호 없이 한 칸 띄어 '코르티스 CORTIS'(2026-11-20 사용자 "괄호 떼고 띄어쓰기 한 칸"). 앱 카드의 '한글명 영문명' 표기와 같다.
+// 검색 제목(<title>)·설명·목록 글자는 bilingualLabel(괄호) 그대로 — docs/NAMING.md.
+function spacedLabel(primary, alternate) {
+  const a=String(primary||'').trim(),b=String(alternate||'').trim();
+  return a && b && a.toLocaleLowerCase()!==b.toLocaleLowerCase() ? `${a} ${b}` : (a||b);
+}
 function bilingualLabel(primary, alternate) {
   const a=String(primary||'').trim(),b=String(alternate||'').trim();
   // 이름 표기(2026-11-11 사용자 확정): 한글(영문) — '영재(Youngjae)', 영문 페이지는 'Youngjae(영재)'. 규칙 전체는 docs/NAMING.md
@@ -628,7 +634,7 @@ ${SEO_GA_TAG}
   <a class="brand" href="${SITE}/${isEn ? 'en/g/' : 'g/'}" style="margin-left:10px;">${isEn ? 'All groups' : '그룹 전체'}</a>
   <a class="brand" href="${SITE}/${isEn ? 'en/all/' : 'all/'}" style="margin-left:10px;">${isEn ? 'Browse all' : '모아보기'}</a>
   <div class="top2">
-    <h1>${escHtml(bilingualLabel(displayName,subName))}</h1>
+    <h1>${escHtml(spacedLabel(displayName,subName))}</h1>
     ${(() => { const pic = groupPicUrl(ko); return pic ? `<img class="cover avatar" src="${pic}" alt="${escHtml(displayName)}" loading="eager" width="240" height="240">` : `<img class="cover" src="${ogImage}" alt="${escHtml(displayName)}" loading="lazy">`; })()}
     <div class="meta">
       ${debutIso ? `<span><b>${debutLabel}</b> ${escHtml(info.debut)}</span>` : ''}
@@ -638,7 +644,7 @@ ${SEO_GA_TAG}
     ${snsRowHtml(info.links, isEn)}
     ${factsTag(pageFacts({ vids: VIDS[ko], wins: EX.wins[ko], isEn }))}
   </div>
-  ${(() => { const e2 = lang === 'en'; const parts = [[memberListHtml(lang), 'members', e2 ? 'Members' : '멤버'], [songLinksHtml(ko, lang), 'songs', e2 ? 'Songs' : '곡별 직캠'], [discogHtml(lang), 'albums', e2 ? 'Albums' : '앨범']].filter(x => x[0]); return parts.length ? `<ul class="member-list jump" style="margin:4px 0 16px">${parts.map(x => `<li><a href="#${x[1]}">${x[2]}</a></li>`).join('')}</ul>` : ''; })()}
+  ${(() => { const e2 = lang === 'en'; const parts = [[songLinksHtml(ko, lang), 'songs', e2 ? 'Songs' : '곡별 직캠'], [discogHtml(lang), 'albums', e2 ? 'Albums' : '앨범']].filter(x => x[0]); return parts.length ? `<ul class="member-list jump" style="margin:4px 0 16px">${parts.map(x => `<li><a href="#${x[1]}">${x[2]}</a></li>`).join('')}</ul>` : ''; })()}
   ${memberListHtml(lang)}
   ${hasStage ? `
   <h2>${isEn ? `${escHtml(en)} fancams & stages` : `${escHtml(ko)} 직캠·무대`}</h2>
@@ -648,9 +654,9 @@ ${SEO_GA_TAG}
   ${discogHtml(lang)}
   ${(() => { const rel = relatedGroups(ko); return rel.length ? `
     <h2>${isEn ? 'Related groups' : '함께 보면 좋은 그룹'}</h2>
-    <ul class="member-list rel">
-      ${rel.map(k => `<li><a href="${SITE}/${groupPagePath(k, lang)}">${escHtml(isEn ? (groups[k].en || k) : k)}</a></li>`).join('\n      ')}
-    </ul>` : ''; })()}
+    <div class="faces rel-faces">
+      ${rel.map(k => { const pic = groupPicUrl(k), img = pic || ogImageForGroup(k, groups[k]); return `<a class="face" href="${SITE}/${groupPagePath(k, lang)}"><span class="face-img">${img ? `<img${pic ? ' class="pf"' : ''} src="${img}" alt="" loading="lazy">` : ''}</span><span class="face-nm">${escHtml(isEn ? (groups[k].en || k) : k)}</span></a>`; }).join('\n      ')}
+    </div>` : ''; })()}
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a> · <a href="${SITE}/about.html">${isEn ? 'About · removal requests' : '사이트 소개 · 삭제 요청'}</a></div>
   <div class="cta-dock"><a class="cta" href="${SITE}/${deepLinkHash}">${isEn ? 'View videos in the Universe →' : '직캠·영상 아카이브 보기 →'}</a></div>
   ${groupNextJson(ko, lang)}
@@ -888,10 +894,10 @@ ${SEO_GA_TAG}
   <a class="brand" href="${SITE}/${isEn ? 'en/g/' : 'g/'}" style="margin-left:10px;">${isEn ? 'All groups' : '그룹 전체'}</a>
   <a class="brand" href="${SITE}/${isEn ? 'en/all/' : 'all/'}" style="margin-left:10px;">${isEn ? 'Browse all' : '모아보기'}</a>
   <div class="top2">
-    <h1>${escHtml(bilingualLabel(displayName,subName))}</h1>
+    <h1>${escHtml(spacedLabel(displayName,subName))}</h1>
     ${(() => { const pic = memberPicUrl(a), ig = memberPicInstagram(a); const img = pic ? `<img class="cover avatar" src="${pic}" alt="${escHtml(displayName)}" loading="eager" width="240" height="240">` : ''; return pic ? (ig ? `<a class="avatar-link" href="${escHtml(ig)}" target="_blank" rel="noopener noreferrer" title="Instagram">${img}</a>` : img) : `<img class="cover" src="${ogImage}" alt="${escHtml(displayName)}" loading="lazy">`; })()}
     <div class="meta">
-      ${groupDisplay ? `<span><b>${groupLabel}</b> ${escHtml(bilingualLabel(groupDisplay,isEn?primaryGko:groupInfo.en))}</span>` : ''}
+      ${groupDisplay ? `<span><b>${groupLabel}</b> ${escHtml(spacedLabel(groupDisplay,isEn?primaryGko:groupInfo.en))}</span>` : ''}
       ${bdayIso ? `<span><b>${debutLabel}</b> ${escHtml(a.bday)}</span>` : ''}
       ${ag.debutDate ? `<span><b>${isEn ? 'Debut' : '데뷔'}</b> ${ag.debutDate}</span>` : ''}
       ${agency ? `<span><b>${agencyLabel}</b> ${escHtml(agency)}</span>` : ''}
@@ -915,9 +921,9 @@ ${SEO_GA_TAG}
   ${linksHtml(lang)}
   ${(() => { const y = String(a.bday || '').slice(0, 4); const peers = (byBirthYear[y] || []).filter(x => x !== a && x.name.ko !== ko).sort((p, q) => (+(groups[q.group.ko]?.pri || 0)) - (+(groups[p.group.ko]?.pri || 0))).slice(0, 10); return peers.length ? `
     <h2>${(bornAllCount[y] || 0) >= 5 ? `<a href="${SITE}/${yearPagePath('born', y, lang)}">${isEn ? `Other idols born in ${y}` : `${y}년생 아이돌`} ›</a>` : (isEn ? `Other idols born in ${y}` : `${y}년생 아이돌`)}</h2>
-    <ul class="member-list rel">
-      ${peers.map(p => `<li><a href="${SITE}/${memberPagePath(p, lang)}">${escHtml(isEn ? (p.name.en || p.name.ko) : p.name.ko)}</a>${groups[p.group.ko] ? ` <span class="tag">${escHtml(isEn ? (groups[p.group.ko].en || p.group.ko) : p.group.ko)}</span>` : ''}</li>`).join('\n      ')}
-    </ul>` : ''; })()}
+    <div class="faces rel-faces">
+      ${peers.map(p => { const img = memberFaceUrl(p, p.group.ko); return `<a class="face" href="${SITE}/${memberPagePath(p, lang)}"><span class="face-img">${img ? `<img${/#pf$/.test(img) ? ' class="pf"' : ''} src="${img}" alt="" loading="lazy">` : ''}</span><span class="face-nm">${escHtml(isEn ? (p.name.en || p.name.ko) : p.name.ko)}</span>${groups[p.group.ko] ? `<span class="face-n">${escHtml(isEn ? (groups[p.group.ko].en || p.group.ko) : p.group.ko)}</span>` : ''}</a>`; }).join('\n      ')}
+    </div>` : ''; })()}
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a> · <a href="${SITE}/about.html">${isEn ? 'About · removal requests' : '사이트 소개 · 삭제 요청'}</a></div>
   ${nextItemsJson(a, lang)}
   <div class="cta-dock"><a class="cta" href="${SITE}/${deepLinkHash}${memberIdParam}">${isEn ? 'View profile, fancams & stages →' : '프로필·직캠·무대 영상 보기 →'}</a></div>
@@ -2177,7 +2183,7 @@ function memberFaceUrl(a, gko) {
   return id ? ytThumb(id, 'mqdefault') : null;
 }
 // 스타일은 저장소의 song-page.css 한 파일(페이지마다 넣으면 3만 쪽 × 5KB) — 바꾸면 SONG_CSS_V를 올릴 것
-const SONG_CSS_V = 16;
+const SONG_CSS_V = 17;
 function songShareVideo(vids) {
   return vids.find(v => (v.category === 'live' || FANCAM_RE.test(v.title || ''))
     && !/\bM\/?V\b|music\s*video|뮤직비디오|\bteaser\b|티저/i.test(v.title || '')) || vids[0];

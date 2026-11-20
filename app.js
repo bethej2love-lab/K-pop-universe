@@ -3349,9 +3349,13 @@ function _srVidQuery(q,like,hint,fallbackGroup){
     vq=vq.ilike('title_norm',like.toLowerCase());
   }
   // 쿼리에 형식 낱말이 있으면 같이 좁힌다("카리나 직캠" → 카리나 태그 + live)
-  const catHit=hint?_SEARCH_CAT_WORDS.find(c=>c.re.test(q)):null;
+  const nl=hint&&hint.nl;
+  const catHit=nl?nl.cat:(hint?_SEARCH_CAT_WORDS.find(c=>c.re.test(q)):null);
+  // 말하듯 검색의 곡 제목 낱말·연도("성현 조이라이드 직캠", "아이브 2024 무대")
+  if(hint&&hint.titleForms&&hint.titleForms.length)vq=vq.or(hint.titleForms.map(w=>`title_norm.ilike.%${w}%`).join(','));
+  if(nl&&nl.year)vq=vq.gte('published_at',nl.year+'-01-01').lt('published_at',(nl.year+1)+'-01-01');
   if(catHit){
-    vq=catHit.cat==='short'?vq.eq('is_short',true):vq.eq('category',catHit.cat);
+    if(catHit.cat)vq=catHit.cat==='short'?vq.eq('is_short',true):vq.eq('category',catHit.cat);
     // 직캠처럼 category만으론 안 갈리는 형식은 제목 표기로 한 번 더 좁힌다
     if(catHit.titleAny)vq=vq.or(catHit.titleAny.map(w=>`title_norm.ilike.%${w}%`).join(','));
   }
@@ -3362,8 +3366,9 @@ function _srVidQuery(q,like,hint,fallbackGroup){
 // ⚠️ id 2차 정렬은 페이지네이션 때문이다 — view_count 동점(특히 NULL)이 많아 1차 키만으로는 행 순서가
 //    요청마다 달라질 수 있고, 그러면 다음 쪽에서 같은 영상이 또 오거나 아예 건너뛴다.
 function _srVidPage(q,like,hint,fallbackGroup,from,size){
-  return _srVidQuery(q,like,hint,fallbackGroup)
-    .order('view_count',{ascending:false,nullsFirst:false}).order('id',{ascending:true})
+  const _q0=_srVidQuery(q,like,hint,fallbackGroup);
+  // 말하듯 검색의 '최근·최신'은 올린 날짜순(나머지는 조회수순)
+  return (hint&&hint.nl&&hint.nl.sort==='latest'?_q0.order('published_at',{ascending:false,nullsFirst:false}):_q0.order('view_count',{ascending:false,nullsFirst:false})).order('id',{ascending:true})
     .range(from,from+size-1)
     .then(r=>r,()=>({data:null}));
 }
@@ -3540,19 +3545,24 @@ function _appendSearchSections(out,res,mobSearch,obSearch){
     res.insertBefore(top,res.firstChild);
   }
   let added=0;
+  // 말하듯 검색("성현 최근 직캠")은 찾는 게 영상이다 — 영상 줄을 그룹·멤버 줄보다 **위**에, 머리글에 해석한 조건을 적는다("영상 · 직캠 · 최신순")
+  const nlTop=!!(_srNlNow&&out.video&&out.video.length);
+  const topAnchor=nlTop?res.firstChild:null;
+  const put=el=>{if(nlTop&&el._nlTop)res.insertBefore(el,topAnchor);else res.appendChild(el);};
   for(const t of ['event','venue','video']){
     const arr=out[t];if(!arr||!arr.length)continue;
-    const lb=document.createElement('div');lb.className='sr-sec-label sr-remote';lb.dataset.type=t;
-    lb.textContent=(label[t]||{})[currentLang==='ko'?'ko':'en']||t;
-    res.appendChild(lb);
+    const top=nlTop&&t==='video';
+    const lb=document.createElement('div');lb.className='sr-sec-label sr-remote';lb.dataset.type=t;lb._nlTop=top;
+    lb.textContent=top?_nlLabel(_srNlNow):((label[t]||{})[currentLang==='ko'?'ko':'en']||t);
+    put(lb);
     arr.forEach(h=>{
       const div=_makeSearchItem(h,res,mobSearch,obSearch);
-      div.classList.add('sr-remote');
-      res.appendChild(div);added++;
+      div.classList.add('sr-remote');div._nlTop=top;
+      put(div);added++;
     });
   }
   // 영상은 첫 쪽(6건)이 꽉 찼으면 뒤에 더 있다 — 그 자리에서 이어 받을 수 있게 더보기 줄을 붙인다.
-  if(out.video&&out.video.length&&_srVidMore&&!_srVidMore.done)res.appendChild(_makeSearchMoreRow('video'));
+  if(out.video&&out.video.length&&_srVidMore&&!_srVidMore.done){const mr=_makeSearchMoreRow('video');mr._nlTop=nlTop;put(mr);}
   // 동기 결과가 0건이라 "검색 결과가 없어요"가 떠 있었는데 서버 결과가 왔으면 그 문구를 치운다
   if(added)res.querySelector('.sr-empty')?.remove();
   // 풀스크린 시트의 타입 탭은 DOM을 세므로, 늦게 도착한 이 결과들까지 반영되게 여기서 다시 맞춘다
@@ -4504,6 +4514,73 @@ function _renderRelatedChips(hits,res,q){
     ARTISTS.filter(a=>a._worldPos&&a.group&&a.group.ko===gko).slice(0,4).forEach(a=>addChip(a.displayName||a.name.ko,a.name.ko));
   }
 }
+// ── 말하듯 검색(2026-11-20 사용자 "'성현 최근 직캠'처럼 말하듯 쳐도 결과가 나오게, 아무렇게나 검색해도 최상의 결과") ─────────────
+// 검색어를 **누구(이름·곡)** 와 **무엇을 어떻게(형식·정렬·연도)** 로 가른다. 이름 부분만 기존 검색(그룹·멤버·곡 매칭)에 넘기고,
+// 나머지는 영상 조회 조건이 된다: "성현 최근 직캠" → 성현 태그 + 직캠 + 최신순, "아이브 2024 무대", "카리나 인기 쇼츠", "성현 조이라이드 직캠"(남는 낱말=곡 제목).
+// 형식·정렬·연도 낱말이 하나도 없거나 이름 부분이 비면 null(예전 검색 그대로). 순수 함수 — tests/nl-search.test.js
+const _NL_CATS=[ // 구체적인 것부터. cat=DB category, titleAny=제목에 이 표기 중 하나
+  {key:'facecam',ko:'페이스캠',en:'Facecam',re:/^(페이스캠|face ?cam)$/i,cat:'live',titleAny:['페이스캠','facecam','face cam']},
+  {key:'fancam',ko:'직캠',en:'Fancam',re:/^(직캠|입덕직캠|세로직캠|fan ?cams?)$/i,cat:'live',titleAny:['직캠','fancam']},
+  {key:'encore',ko:'앵콜',en:'Encore',re:/^(앵콜|앙코르|encore)$/i,titleAny:['앵콜','encore']},
+  {key:'challenge',ko:'챌린지',en:'Challenge',re:/^(챌린지|challenge)$/i,titleAny:['챌린지','challenge']},
+  {key:'practice',ko:'안무',en:'Dance practice',re:/^(안무|안무영상|안무연습|연습영상|dance ?practice|choreography)$/i,titleAny:['안무','dance practice','choreography']},
+  {key:'cover',ko:'커버',en:'Cover',re:/^(커버|cover)$/i,titleAny:['커버','cover']},
+  {key:'behind',ko:'비하인드',en:'Behind',re:/^(비하인드|메이킹|behind)$/i,titleAny:['비하인드','behind','메이킹','making']},
+  {key:'vlog',ko:'브이로그',en:'Vlog',re:/^(브이로그|vlog)$/i,titleAny:['브이로그','vlog']},
+  {key:'interview',ko:'인터뷰',en:'Interview',re:/^(인터뷰|interview)$/i,titleAny:['인터뷰','interview']},
+  {key:'cheer',ko:'응원법',en:'Fanchant',re:/^(응원법|fanchant)$/i,titleAny:['응원법','fanchant']},
+  {key:'live',ko:'무대',en:'Stages',re:/^(무대|라이브|live|stage|stages)$/i,cat:'live'},
+  {key:'mv',ko:'뮤비',en:'MV',re:/^(뮤비|뮤직비디오|mv|m\/v)$/i,cat:'mv'},
+  {key:'variety',ko:'예능',en:'Variety',re:/^(예능|variety)$/i,cat:'variety'},
+  {key:'short',ko:'쇼츠',en:'Shorts',re:/^(쇼츠|숏츠|shorts?)$/i,cat:'short'},
+];
+const _NL_LATEST=/^(최근|최신|요즘|요새|최신순|최근순|새|신상|new|newest|latest|recent)$/i;
+const _NL_POPULAR=/^(인기|인기순|조회수|조회수순|레전드|베스트|유명한|많이본|best|top|popular|legendary)$/i;
+const _NL_STOP=/^(영상|영상들|동영상|모음|모아보기|보여줘|보여줘요|찾아줘|찾아줘요|틀어줘|좀|추천|순|순으로|관련|video|videos|clip|clips|of|the)$/i;
+const _NL_GLUE=['페이스캠','직캠','무대','뮤비','쇼츠','챌린지','예능','안무']; // "성현직캠"처럼 붙여 쓴 꼬리
+function _nlParse(q){
+  let toks=String(q||'').trim().split(/\s+/).filter(Boolean);
+  if(toks.length<1)return null;
+  // 붙여 쓴 꼬리·조사 '의' 떼기
+  toks=toks.flatMap(t=>{
+    if(/[가-힣]{2,}의$/.test(t)&&t.length>=3)t=t.slice(0,-1);
+    const g=_NL_GLUE.find(w=>t.length>=w.length+2&&t.endsWith(w));
+    return g?[t.slice(0,-g.length),g]:[t];
+  });
+  const out={full:String(q).trim(),ent:'',cat:null,sort:null,year:null};
+  const rest=[];
+  for(const t of toks){
+    const c=!out.cat&&_NL_CATS.find(x=>x.re.test(t));
+    if(c){out.cat=c;continue;}
+    if(!out.sort&&_NL_LATEST.test(t)){out.sort='latest';continue;}
+    if(!out.sort&&_NL_POPULAR.test(t)){out.sort='popular';continue;}
+    const y=/^(20\d\d)년?$/.exec(t)||/^(\d\d)년$/.exec(t);
+    if(y&&!out.year){const n=+y[1];const yr=n<100?2000+n:n;if(yr>=1990&&yr<=2100){out.year=yr;continue;}}
+    if(_NL_STOP.test(t))continue;
+    rest.push(t);
+  }
+  if(!(out.cat||out.sort||out.year))return null;
+  out.ent=rest.join(' ');
+  return out.ent?out:null;
+}
+// 검색어 전체가 그대로 그룹·멤버·곡 이름이면 해석하지 않는다("Cover Girl", 곡 'Live' 같은 것)
+function _nlIsPlainName(q){
+  const n=String(q).toLowerCase().replace(/\s+/g,'');if(!n)return false;
+  const eq=x=>!!x&&String(x).toLowerCase().replace(/\s+/g,'')===n;
+  for(const ko in GROUPS){const g=GROUPS[ko];if(eq(ko)||eq(g.en)||(g.altNames||[]).some(eq))return true;}
+  for(const a of ARTISTS){if(eq(a.name.ko)||eq(a.name.en)||eq(a.displayName))return true;}
+  for(const s of (_songIndex||[])){if(eq(s.mt)||(s.alt||[]).some(eq))return true;}
+  return false;
+}
+// 결과 영상 줄 머리글 — "영상 · 직캠 · 최신순"
+function _nlLabel(nl){
+  const ko=currentLang==='ko',p=[ko?'영상':'Videos'];
+  if(nl.cat)p.push(ko?nl.cat.ko:nl.cat.en);
+  if(nl.year)p.push(ko?nl.year+'년':String(nl.year));
+  if(nl.sort)p.push(nl.sort==='latest'?(ko?'최신순':'Newest'):(ko?'조회수순':'Most viewed'));
+  return p.join(' · ');
+}
+let _srNlNow=null; // 지금 화면의 검색이 '말하듯 검색'으로 해석됐으면 그 결과(_nlParse), 아니면 null
 function doSearch(q){
   const obSr=_obSearchMode?document.getElementById('ob-sr'):null;
   // 풀스크린 시트가 열려 있으면 그 본문이 결과 그릇이다(2026-09-02) — 매칭·랭킹은 그대로 두고
@@ -4511,7 +4588,11 @@ function doSearch(q){
   const msOpen=!obSr&&typeof _msIsOpen==='function'&&_msIsOpen();
   const mobSearch=!obSr&&!msOpen&&isMob()&&document.getElementById('tabbar').classList.contains('search-mode');
   const res=obSr||(msOpen?document.getElementById('msheet-body'):(mobSearch?document.getElementById('mob-sr'):document.getElementById('search-results')));
-  q=q.trim();_curSearchQ=q;
+  q=q.trim();
+  // 말하듯 검색: 이름 부분(ent)만 아래 매칭에 넘긴다. 더보기·곡 인덱스 도착 같은 재호출은 이름 부분으로 들어오므로, 입력창에 원문이 그대로면 원문으로 되돌려 해석을 유지한다.
+  if(_srNlNow&&q===_srNlNow.ent){try{if([...document.querySelectorAll('#search-input,#msheet-input,#mob-search-input')].some(i=>i.value.trim()===_srNlNow.full))q=_srNlNow.full;}catch(e){}}
+  {const nl=obSr?null:_nlParse(q);_srNlNow=(nl&&!_nlIsPlainName(q))?nl:null;if(_srNlNow)q=_srNlNow.ent;}
+  _curSearchQ=q;
   _invalidateRemoteSearch(); // 빈 입력·한 글자·다른 결과 그릇도 이전 요청과 분리한다
   _srResetLimits(q); // 검색어가 바뀌었을 때만 '더보기'로 늘려둔 양을 되돌린다
   _srSongTotal=0;    // 곡 블록이 이번 패스에서 안 돌 수도 있다(온보딩 검색·1글자) — 지난 값이 남으면 헛더보기가 생긴다
@@ -4872,7 +4953,48 @@ function doSearch(q){
     }
     return null;
   })();
-  if(!obSr&&q.length>=2)_searchRemote(q,res,mobSearch,!!obSr,_hint);
+  // 말하듯 검색이면 해석 결과를 힌트에 실어 보낸다 + 이름으로 안 쓰인 나머지 낱말은 곡 제목 조건(titleForms)
+  let _hintNl=_hint;
+  if(_srNlNow){
+    _hintNl=Object.assign({kind:null},_hint||{});_hintNl.nl=_srNlNow;
+    // 이름 부분이 통째로 **곡 제목**이면("love dive 무대") 그 곡 주인의 영상에서 제목으로 찾는다. 낱말 하나가 우연히 멤버 이름과 같아도
+    // (온리원오프 '러브'=Love) 곡이 이긴다 — 실측에서 'love dive 무대'가 러브의 'Dive into Live' 한 건만 냈다. 그룹·멤버 이름과 통째로 같으면 그쪽이 우선.
+    {const low0=x=>String(x||'').toLowerCase().replace(/\s+/g,''),qn=low0(q);
+      const isName=Object.keys(GROUPS).some(k=>low0(k)===qn||low0(GROUPS[k].en)===qn)||ARTISTS.some(x=>low0(x.name.ko)===qn||low0(x.name.en)===qn);
+      if(!isName&&qn.length>=2){
+        const pri=sg=>{const g=sg.ownerType==='group'?sg.owner:(sg.owner&&sg.owner.group&&sg.owner.group.ko);return ((GROUPS[g]&&GROUPS[g].pri)||0)+(sg.isTitle?10:0);};
+        const cand=(_songIndex||[]).filter(sg=>low0(sg.mt)===qn||(sg.koPho&&qn.length>=3&&low0(sg.koPho).split(/[|,\/]/).some(v=>v===qn))||(sg.alt||[]).some(x=>low0(x)===qn)).sort((x,y)=>(pri(y)-pri(x))||(x.mt.length-y.mt.length))[0]; // 같은 순위면 짧은 제목(원곡)을 — 'LOVE DIVE -Japanese version-'이 뽑히면 제목 조건이 너무 좁아진다
+        if(cand){
+          const forms=[cand.mtL,...(cand.alt||[]).map(x=>String(x).toLowerCase())].map(f=>f.replace(/[,()"%_*\\]/g,' ').trim()).filter(f=>f.length>=2).slice(0,4);
+          if(forms.length){
+            if(cand.ownerType==='group')_hintNl={kind:'group',ko:cand.owner,nl:_srNlNow,titleForms:forms,_song:true};
+            else if(cand.owner&&cand.owner.name)_hintNl={kind:'member',ko:cand.owner.name.ko,gko:(cand.owner.group&&cand.owner.group.ko)||'',nl:_srNlNow,titleForms:forms,_song:true};
+          }
+        }
+      }
+    }
+    if(_hintNl.kind&&!_hintNl._song){
+      const low=x=>String(x||'').toLowerCase().replace(/\s+/g,'');
+      const names=[];
+      if(_hintNl.kind==='member'){const a=ARTISTS.find(x=>x.name.ko===_hintNl.ko&&(!_hintNl.gko||(x.group&&x.group.ko===_hintNl.gko)));names.push(_hintNl.ko,a&&a.name.en,a&&a.displayName,_hintNl.gko,_hintNl.gko&&GROUPS[_hintNl.gko]&&GROUPS[_hintNl.gko].en);}
+      else{const g=GROUPS[_hintNl.ko]||{};names.push(_hintNl.ko,g.en,...(g.altNames||[]));}
+      const nm=names.filter(Boolean).map(low);
+      const left=q.split(/\s+/).filter(t=>{const tl=low(t);return tl&&!nm.some(n=>n===tl||n.includes(tl));});
+      if(left.length){
+        const phrase=left.join(' '),pl=phrase.toLowerCase(),pns=low(phrase);
+        const forms=new Set([pl]);
+        const gko=_hintNl.kind==='member'?_hintNl.gko:_hintNl.ko;
+        for(const sng of (_songIndex||[])){
+          if(forms.size>=5)break;
+          const own=sng.ownerType==='group'?sng.owner:(sng.owner&&sng.owner.group&&sng.owner.group.ko);
+          if(gko&&own!==gko)continue;
+          if(low(sng.mt)===pns||(sng.koPho&&String(sng.koPho).replace(/\s+/g,'')===pns)||(sng.alt||[]).some(x=>low(x)===pns)){forms.add(sng.mtL);(sng.alt||[]).forEach(x=>forms.add(String(x).toLowerCase()));}
+        }
+        _hintNl.titleForms=[...forms].map(f=>f.replace(/[,()"%_*\\]/g,' ').trim()).filter(f=>f.length>=2).slice(0,5);
+      }
+    }
+  }
+  if(!obSr&&q.length>=2)_searchRemote(q,res,mobSearch,!!obSr,_hintNl);
   // Chemistry(2026-11-02) — 아는 이름 2~4개면 결과 맨 위에 진입 줄
   if(!obSr&&sb&&q.length>=2){const _cp=_chemParse(q);if(_cp)_appendChemEntry(res,_cp);}
   if(!obSr&&sb&&q.length>=2){const _coll=_parseCollabQuery(q);if(_coll){(async()=>{
@@ -12893,10 +13015,10 @@ const _LINK_DEFS=[
   // 위버스는 공식 글리프를 구하지 못해 예전 그림 그대로(임의로 그리지 않는다). 홈페이지는 브랜드가 아니라 지구본 그대로.
   // ⚠️ YouTube API Services 감사(2026-11-16, III.F.2a) — 윤곽선 단색 아이콘이 브랜딩 규정 위반으로 지적됐다. 공식 아이콘 모양·색 그대로(변형·투명도·필터 금지), 높이 20dp 이상(CSS .gc-link-icon-youtube).
   {key:'youtube',label:'YouTube',svg:'<svg viewBox="0 0 28.57 20" role="img" aria-label="YouTube"><path fill="#FF0000" d="M27.9727 3.12324C27.6435 1.89323 26.6768 0.926623 25.4468 0.597366C23.2197 2.24288e-07 14.285 0 14.285 0C14.285 0 5.35042 2.24288e-07 3.12323 0.597366C1.89323 0.926623 0.926623 1.89323 0.597366 3.12324C2.24288e-07 5.35042 0 10 0 10C0 10 2.24288e-07 14.6496 0.597366 16.8768C0.926623 18.1068 1.89323 19.0734 3.12323 19.4026C5.35042 20 14.285 20 14.285 20C14.285 20 23.2197 20 25.4468 19.4026C26.6768 19.0734 27.6435 18.1068 27.9727 16.8768C28.5701 14.6496 28.5701 10 28.5701 10C28.5701 10 28.5701 5.35042 27.9727 3.12324Z"/><path fill="#FFFFFF" d="M11.4253 14.2854L18.8477 10.0004L11.4253 5.71533V14.2854Z"/></svg>'},
-  {key:'instagram',label:'Instagram',svg:'<svg viewBox="-2.5 -2.5 29 29" role="img" aria-label="Instagram"><defs><radialGradient id="kpuIgG" cx="0.3" cy="1.07" r="1.3"><stop offset="0" stop-color="#FFD600"/><stop offset="0.25" stop-color="#FF7A00"/><stop offset="0.5" stop-color="#FF0069"/><stop offset="0.75" stop-color="#D300C5"/><stop offset="1" stop-color="#7638FA"/></radialGradient></defs><path fill="url(#kpuIgG)" d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></svg>'},
+  {key:'instagram',label:'Instagram',svg:'<svg viewBox="-1 -1 26 26" role="img" aria-label="Instagram"><defs><radialGradient id="kpuIgG" cx="0.3" cy="1.07" r="1.3"><stop offset="0" stop-color="#FFD600"/><stop offset="0.25" stop-color="#FF7A00"/><stop offset="0.5" stop-color="#FF0069"/><stop offset="0.75" stop-color="#D300C5"/><stop offset="1" stop-color="#7638FA"/></radialGradient></defs><path fill="url(#kpuIgG)" d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></svg>'},
   // 인스타 2개인 그룹(예: 브브걸=BBGIRLS 새 계정 + 브레이브걸스 구 공식)용 보조 인스타 아이콘 — 메인(instagram) 바로 오른쪽에 그린다.
   // 프로필 사진 클릭은 여전히 메인(links.instagram)으로 가고(_gcPicCfg), 이건 링크 줄에 아이콘만 하나 더.
-  {key:'instagram2',label:'Instagram',svg:'<svg viewBox="-2.5 -2.5 29 29" role="img" aria-label="Instagram"><defs><radialGradient id="kpuIgG" cx="0.3" cy="1.07" r="1.3"><stop offset="0" stop-color="#FFD600"/><stop offset="0.25" stop-color="#FF7A00"/><stop offset="0.5" stop-color="#FF0069"/><stop offset="0.75" stop-color="#D300C5"/><stop offset="1" stop-color="#7638FA"/></radialGradient></defs><path fill="url(#kpuIgG)" d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></svg>'},
+  {key:'instagram2',label:'Instagram',svg:'<svg viewBox="-1 -1 26 26" role="img" aria-label="Instagram"><defs><radialGradient id="kpuIgG" cx="0.3" cy="1.07" r="1.3"><stop offset="0" stop-color="#FFD600"/><stop offset="0.25" stop-color="#FF7A00"/><stop offset="0.5" stop-color="#FF0069"/><stop offset="0.75" stop-color="#D300C5"/><stop offset="1" stop-color="#7638FA"/></radialGradient></defs><path fill="url(#kpuIgG)" d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></svg>'},
   {key:'x',label:'X',svg:'<svg viewBox="-3 -3 30 30" fill="#fff" role="img" aria-label="X"><path d="M18.24 2.25h3.31L14.32 10.5l8.5 11.25H16.2l-4.72-6.23-5.4 6.23H2.75l7.73-8.84L2 2.25h6.06l4.26 5.63L18.24 2.25zm-1.16 17.52h1.83L7.08 4.13H5.12L17.08 19.77z"/></svg>'},
   {key:'tiktok',label:'TikTok',svg:'<svg viewBox="-3 -3 30 30" role="img" aria-label="TikTok"><path fill="#25F4EE" transform="translate(-0.9 -0.7)" d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/><path fill="#FE2C55" transform="translate(0.9 0.7)" d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/><path fill="#fff" d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>'},
   {key:'weverse',label:'Weverse',svg:'<svg viewBox="0 0 24 24" fill="none"><path d="M12 21C6 17 2 13 2 9 2 6 4.5 4 7.5 4 9.5 4 11.2 5.8 12 7.5 12.8 5.8 14.5 4 16.5 4 19.5 4 22 6 22 9 22 13 18 17 12 21z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>'},

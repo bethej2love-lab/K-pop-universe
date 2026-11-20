@@ -11,7 +11,7 @@ function defer(){let resolve;const promise=new Promise(r=>resolve=r);return {pro
 function fixture(){
  const timers=new Map(),requests=[],rendered=[],items=[];let seq=0;
  const body={innerHTML:'',style:{},classList:{remove(){}}},sheet={classList:{remove(){}},setAttribute(){}};
- const box={_remoteSearchToken:0,_remoteSearchTimer:null,_srVidMore:null,_curSearchQ:'old',_SR_VID_FIRST:6,_SR_VID_STEP:20,
+ const box={_srNlNow:null,_nlParse:()=>null,_nlIsPlainName:()=>false,_remoteSearchToken:0,_remoteSearchTimer:null,_srVidMore:null,_curSearchQ:'old',_SR_VID_FIRST:6,_SR_VID_STEP:20,
    _obSearchMode:false,_msEl:sheet,_msInput:{value:'old'},_msBody:body,_msTabs:{innerHTML:''},_msTab:'all',currentLang:'ko',
    document:{getElementById:id=>id==='msheet-body'?body:{classList:{remove(){},contains:()=>false}}},
    isMob:()=>false,_msIsOpen:()=>true,_srResetLimits(){},_resolveRecentSearches:()=>[],_trendingSearchHits:()=>[],_msSyncTabs(){},
