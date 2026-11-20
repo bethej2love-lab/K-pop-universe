@@ -3344,6 +3344,14 @@ function _srVidQuery(q,like,hint,fallbackGroup){
     vq=hint.gko
       ? vq.or(`and(members.cs.{"${esc(hint.ko)}"},group_ko.eq.${_pgFilterVal(hint.gko)}),with_members.cs.{"${esc(hint.ko)}(${esc(hint.gko)})"}`)
       : (hint.soloKey?vq.or(`group_ko.eq.${_pgFilterVal(hint.soloKey)},members.cs.{"${esc(hint.ko)}"}`):vq.or(`members.cs.{"${esc(hint.ko)}"}`));
+  }else if(hint&&hint.kind==='pair'){
+    const esc=s=>String(s).replace(/["\\]/g,'');
+    const nA=esc(hint.a.ko),nB=esc(hint.b.ko),gA=esc(hint.a.gko),gB=esc(hint.b.gko);
+    const ors=[`and(members.cs.{"${nA}"},members.cs.{"${nB}"})`];
+    if(gA)ors.push(`and(with_members.cs.{"${nA}(${gA})"},members.cs.{"${nB}"})`);
+    if(gB)ors.push(`and(with_members.cs.{"${nB}(${gB})"},members.cs.{"${nA}"})`);
+    if(gA&&gB)ors.push(`and(with_members.cs.{"${nA}(${gA})"},with_members.cs.{"${nB}(${gB})"})`);
+    vq=vq.or(ors.join(','));
   }else if(hint&&hint.kind==='group'){
     vq=vq.or(`group_ko.eq.${_pgFilterVal(hint.ko)},with_groups.cs.{"${String(hint.ko).replace(/["\\]/g,'')}"}`);
   }else{
@@ -4909,6 +4917,37 @@ function doSearch(q){
       }
     }
   }
+  // ── 그래도 0건이면 가까운 이름을 제안한다(2026-11-20 "아무렇게나 검색해도 최상의 결과") ──
+  // 낱말 쪼개기·프로그램 매칭까지 다 돈 뒤에 본다('뉴진스 하니'는 그 단계에서 잡히므로 여기 오지 않는다). 위 오타 폴백은 검색어 **전체**가 이름과 한 글자 차이일 때만 잡는다. 여기서는 ①낱말 하나하나를 이름과 비교(한 글자 차이·앞부분 일치)
+  // ②긴 검색어(5자 이상)는 두 글자 차이까지 본다. 결과 맨 위에 '비슷한 이름' 머리글을 단다(_suggested).
+  let _suggested=false;
+  if(!hits.length&&q.length>=2&&!obSr){
+    const d2=(a,b)=>{a=String(a).toLowerCase();b=String(b).toLowerCase();if(Math.abs(a.length-b.length)>2)return 9;
+      let prev=Array.from({length:b.length+1},(_,i)=>i);
+      for(let i=1;i<=a.length;i++){const cur=[i];for(let j=1;j<=b.length;j++)cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));prev=cur;}
+      return prev[b.length];};
+    const toks=[...new Set([q,...q.split(/\s+/)])].filter(t=>t.length>=2);
+    const near=(name,t)=>{if(!name)return false;const n=String(name).toLowerCase(),tl=t.toLowerCase();
+      return (tl.length>=3&&n.startsWith(tl))||_editDist1(n,tl)||(tl.length>=5&&d2(n,tl)<=2);};
+    let n=0;const seenG=new Set(),seenA=new Set();
+    toks.forEach(t=>{
+      Object.keys(GROUPS).forEach(ko=>{
+        if(n>=6||seenG.has(ko))return;const enN=GROUPS[ko].en||'';
+        if(!(near(ko,t)||near(enN,t)||(GROUPS[ko].altNames||[]).some(x=>near(x,t))))return;
+        const bm=bubbleMeshes.find(b=>b.ko===ko);if(!bm)return;seenG.add(ko);
+        const dispName=(_hasLatin&&enN)?enN:(currentLang==='ko'?ko:(enN||ko));
+        hits.push({type:'group',name:dispName,sub:(enN&&enN!==dispName)?enN:'',pos:bm.mesh.position.clone(),data:ko,score:6});n++;
+      });
+      ARTISTS.forEach(a=>{
+        if(n>=6||seenA.has(a)||!a._worldPos)return;const enN=a.name.en||'';
+        if(!(near(a.name.ko,t)||near(enN,t)||(a.displayName&&near(a.displayName,t))))return;seenA.add(a);
+        const dispName=(_hasLatin&&enN)?enN:(currentLang==='ko'?(a.displayName||a.name.ko):(enN||a.name.ko));
+        const {sub:dispSub,former}=_searchGroupTag(a,null,_hasLatin);
+        hits.push({type:'member',name:dispName,sub:dispSub,subFormer:former,pos:a._worldPos,data:a,score:6});n++;
+      });
+    });
+    _suggested=n>0;
+  }
   // ── 동점 타이브레이커(2026-09-02, 2026-09-08 타입 순위 추가) ────────────────
   // 매칭 등급(score)은 그대로 두고 **동점만** 가른다 — "소녀시대"를 치면 여전히 정확 매칭이 위다.
   // 등급을 뒤집지 않으므로 결과가 결정적이고 설명 가능하다("같은 점수면 활동 중이 위, 그다음 내 최애").
@@ -4939,6 +4978,7 @@ function doSearch(q){
     return a.name.localeCompare(b.name,'ko');
   });
   _renderSearchHits(hits.slice(0,obSr?5:40),res,mobSearch,false,!!obSr);
+  if(_suggested&&hits.every(h=>h.score===6)){const sl=document.createElement('div');sl.className='sr-sec-label sr-suggest';sl.textContent=currentLang==='ko'?'비슷한 이름':'Similar names';res.insertBefore(sl,res.firstChild);}
   if(!obSr)_renderRelatedChips(hits,res,q);
   // 서버가 필요한 결과(영상·공연)는 늦게 도착하므로 뒤에 이어 붙인다(2026-08-31, 검색 확장 4단계)
   // 영상은 제목이 아니라 태그로 찾으므로, 방금 푼 엔티티를 힌트로 넘긴다(2026-09-02).
@@ -4988,7 +5028,14 @@ function doSearch(q){
         }
       }
     }
-    if(_hintNl.kind&&!_hintNl._song){
+    // 두 사람을 같이 쳤으면('카리나 윈터 직캠') **둘 다 나온 영상**을 찾는다 — 예전엔 첫 사람 태그 + 둘째 이름이 제목에 든 것이었다
+    {const ppl=[];q.split(/\s+/).forEach(t=>{const a=_resolveArtistByStr(t);if(a&&!ppl.includes(a))ppl.push(a);});
+      if(ppl.length===2&&!_hintNl._song&&q.split(/\s+/).length===2){
+        const P=a=>({ko:a.name.ko,gko:GROUPS[a.group&&a.group.ko]?a.group.ko:''});
+        _hintNl={kind:'pair',a:P(ppl[0]),b:P(ppl[1]),nl:_srNlNow};
+      }
+    }
+    if(_hintNl.kind&&_hintNl.kind!=='pair'&&!_hintNl._song){
       const low=x=>String(x||'').toLowerCase().replace(/\s+/g,'');
       const names=[];
       if(_hintNl.kind==='member'){const a=ARTISTS.find(x=>x.name.ko===_hintNl.ko&&(!_hintNl.gko||(x.group&&x.group.ko===_hintNl.gko)));names.push(_hintNl.ko,a&&a.name.en,a&&a.displayName,_hintNl.gko,_hintNl.gko&&GROUPS[_hintNl.gko]&&GROUPS[_hintNl.gko].en,...((_hintNl.gko&&GROUPS[_hintNl.gko]&&GROUPS[_hintNl.gko].altNames)||[]));}
@@ -11616,6 +11663,18 @@ function _enableDragScroll(el){
 }
 _enableDragScroll(document.getElementById('tco'));
 _enableDragScroll(document.getElementById('tg-row'));
+// 폰 멤버 카드: 링크 아이콘이 하나뿐이면(대개 나무위키) 둘째 줄을 혼자 차지하지 않게 이름 줄(공유·+ 뒤)로 옮긴다(2026-11-20, TASTE '한 줄에 덜렁 하나 금지').
+// 둘 이상이거나 웹이면 원래 자리(#tg-row 맨 앞). 링크는 비동기로도 붙으므로(개인 채널·구독자 수) 바뀔 때마다 다시 본다.
+function _ttLinksPlace(){
+  try{
+    const L=document.getElementById('tt-links'),row=document.getElementById('tg-row'),nr=document.getElementById('tt-name-row');if(!L||!row||!nr)return;
+    const lone=isMob()&&L.children.length===1;
+    if(lone){if(L.parentElement!==nr){const cb=document.getElementById('tt-conn-btn');nr.insertBefore(L,cb&&cb.parentElement===nr?cb:null);}}
+    else if(L.parentElement!==row)row.insertBefore(L,row.firstChild);
+    L.classList.toggle('tt-links-lone',lone);
+  }catch(e){}
+}
+try{new MutationObserver(_ttLinksPlace).observe(document.getElementById('tt-links'),{childList:true});}catch(e){}
 
 // ── 세로 목록 드래그 재정렬(공용) ────────────────────────────────
 // 콜렉션 목록(.col-row)·콜렉션 안 영상 목록(.cve-item) 둘 다 이걸로 재정렬한다(2026-08-12, 사용자 요청).

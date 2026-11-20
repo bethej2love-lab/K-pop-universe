@@ -85,6 +85,7 @@
     +'@media(max-width:600px){.top2>.meta{gap:7px 12px;font-size:13px!important}}' // 나이 괄호를 뺀 자리에 한 줄 세 칸(소속·생일·데뷔)이 들어가게 — 그래야 둘째 줄에 소속사+나무위키가 같이 선다
     +'.meta .kpu-meta-link{display:inline-flex;align-items:center}.meta .kpu-meta-link a:not(.kpu-sns-ic){color:rgba(170,190,240,.82);text-decoration:none}'
     // 바로가기 칩·관련 목록의 둥근 네모 테두리 제거(2026-11-20 사용자 "버튼 디자인 거지같음, 테두리 지워") — 글자 링크로
+    +'.hub-more a{padding:0;border:0;border-radius:0;background:none;color:rgba(170,190,240,.85);font-size:13.5px}.member-list,.discog-list{gap:6px 16px}.member-list li,.discog-list li{background:none;border:0;border-radius:0;padding:0}'
     +'.member-list.jump{gap:4px 18px;margin-top:10px!important}.member-list.jump li,.member-list.rel li{background:none;border:0;border-radius:0;padding:0}'
     +'.member-list.jump a{color:rgba(170,190,240,.85);font-size:13.5px}.member-list.jump a:after{content:" ›";opacity:.6}.member-list.rel{gap:6px 16px}'
     +'.sns.kpu-sns-row{gap:14px;align-items:center;margin-top:12px}'

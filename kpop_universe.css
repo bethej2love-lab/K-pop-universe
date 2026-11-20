@@ -6410,3 +6410,11 @@
 }
 /* 카드 이름 앞 별자리 장식은 모든 화면에서 뺀다(2026-11-20 사용자 "영문명 앞엔 붙어있네? 떼줘, 맥락이 비슷하면 통일") — 11-19엔 폰만 뺐다. 복제된 카드(id 없음)도 잡히게 클래스로. */
 .card-glyph{display:none!important;}
+/* 2026-11-20 정리(사용자 "다 ㄱㄱ"): 폰 그룹 카드 한글명을 멤버 카드와 같은 16px로, 링크 하나짜리 멤버 카드는 아이콘을 이름 줄로(app.js _ttLinksPlace) */
+@media(max-width:768px){
+  #gc-name-row>#gc-name{font-size:16px;}
+  #gc-name-row.gc-name-tight>#gc-name{font-size:15px;}
+  #tt-name-row>#tt-links.tt-links-lone{display:flex;align-items:center;margin-left:7px;gap:0;}
+  #tg-row:empty{display:none;}
+}
+.sr-sec-label.sr-suggest{opacity:.8;}
