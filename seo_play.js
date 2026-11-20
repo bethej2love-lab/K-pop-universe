@@ -137,7 +137,8 @@
       var st=document.createElement('style');
       st.textContent='.kpu-fbar{display:flex;align-items:center;gap:4px 16px;flex-wrap:wrap;margin:0 0 12px;font-size:13.5px}'
         +'.kpu-fbar button{background:none;border:0;padding:6px 0;margin:0;font:inherit;color:rgba(160,180,230,.7);cursor:pointer;-webkit-tap-highlight-color:transparent}'
-        +'.kpu-fbar button.on{color:#f1f4ff;font-weight:650}.kpu-fbar .sp{flex:1}.kpu-fbar .rnd{color:rgba(190,205,250,.9)}'
+        +'.kpu-fbar button.on{color:#f1f4ff;font-weight:650}.kpu-fbar .rt{margin-left:auto;display:flex;align-items:center;gap:16px}.kpu-fbar .rnd{color:rgba(190,205,250,.9)}.kpu-fbar button{white-space:nowrap}'
+        +'@media(max-width:430px){.kpu-fbar{gap:4px 12px;font-size:13px}.kpu-fbar .rt{gap:12px}}'
         +'.mf-card.kpu-hide{display:none}';
       document.head.appendChild(st);
       var bar=document.createElement('div');bar.className='kpu-fbar';
@@ -150,15 +151,154 @@
       };
       if(kinds.length>2)kinds.forEach(function(k){var b=document.createElement('button');b.type='button';b.setAttribute('data-k',k[0]);b.textContent=k[1];
         b.addEventListener('click',function(){cur=k[0];apply();try{log('fbar_'+k[0]);}catch(e){}});bar.appendChild(b);});
-      var sp=document.createElement('span');sp.className='sp';bar.appendChild(sp);
-      var sortB=document.createElement('button');sortB.type='button';sortB.addEventListener('click',function(){byDate=!byDate;apply();try{log('fbar_sort');}catch(e){}});bar.appendChild(sortB);
+      var rt=document.createElement('span');rt.className='rt';bar.appendChild(rt);
+      var sortB=document.createElement('button');sortB.type='button';sortB.addEventListener('click',function(){byDate=!byDate;apply();try{log('fbar_sort');}catch(e){}});rt.appendChild(sortB);
       var rnd=document.createElement('button');rnd.type='button';rnd.className='rnd';rnd.textContent=en?'Shuffle':'랜덤 재생';
       rnd.addEventListener('click',function(){var vis=cards.filter(function(c){return !c.classList.contains('kpu-hide');});if(!vis.length)return;try{log('fbar_random');}catch(e){}vis[Math.floor(Math.random()*vis.length)].click();});
-      bar.appendChild(rnd);
+      rt.appendChild(rnd);
       grid.parentNode.insertBefore(bar,grid);apply();
     }catch(e){}
   }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',fanBar);else fanBar(); // 아주 좁은 폰(360)은 셋째 링크(모아보기)까지는 안 들어가 한 줄을 더 먹었다 — 그 폭에서만 뺀다
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',fanBar);else fanBar();
+  // ── 여러 나라 말 표기(2026-11-20 사용자 "정적 페이지는 글자가 많지 않으니 중국어·일본어 등 여러 언어로") ─────────────
+  // 방식: 영어 페이지(/en/…)를 바탕으로 **화면 글자만** 그 자리에서 바꾼다(이름·곡명은 영어 표기 그대로). 새 페이지를 만들지 않으므로 재생성·페이지 수 증가 없음.
+  //  · 검색엔진에는 한국어·영어 페이지만 잡힌다(이 방식의 한계) — 일본어·중국어 검색 유입이 필요해지면 그때 빌더에서 진짜 페이지를 만든다.
+  //  · 고른 언어는 localStorage('kpu_hl')에 기억. 처음 온 사람은 브라우저 언어가 ja/zh/es이고 지금 영어 페이지일 때만 자동 적용(한국어 페이지에서 강제로 옮기지 않는다).
+  //  · 오른쪽 위 언어 글자(English/한국어) 자리에 '언어 ▾' 메뉴. 테두리 없는 글자 + 어두운 판(TASTE).
+  // 순서: [ja, zh-Hans, zh-Hant, es]
+  var HL_LIST=[['ko','한국어'],['en','English'],['ja','日本語'],['zh','简体中文'],['zt','繁體中文'],['es','Español']],HL_IX={ja:0,zh:1,zt:2,es:3};
+  var HL_D={
+    'Agency':['事務所','经纪公司','經紀公司','Agencia'],'Album':['アルバム','专辑','專輯','Álbum'],'Albums':['アルバム','专辑','專輯','Álbumes'],'Birthday':['誕生日','生日','生日','Cumpleaños'],
+    'Debut':['デビュー','出道','出道','Debut'],'Fandom':['ファンダム','粉丝名','粉絲名','Fandom'],'Group':['グループ','组合','團體','Grupo'],'Groups':['グループ','组合','團體','Grupos'],
+    'Music show wins':['音楽番組1位','音乐节目一位','音樂節目一位','Victorias en programas'],'Release':['発売','发行','發行','Lanzamiento'],
+    'All groups':['全グループ','全部组合','全部團體','Grupos'],'Browse all':['まとめ','全部浏览','全部瀏覽','Explorar'],
+    'View all videos in the Universe →':['ユニバースですべての動画を見る →','在 Universe 查看全部视频 →','在 Universe 查看全部影片 →','Ver todos los videos en Universe →'],
+    'View profile, fancams & stages →':['プロフィール・チッケム・ステージを見る →','查看资料・直拍・舞台 →','查看資料・直拍・舞台 →','Ver perfil, fancams y presentaciones →'],
+    'View videos in the Universe →':['ユニバースで動画を見る →','在 Universe 观看视频 →','在 Universe 觀看影片 →','Ver videos en Universe →'],
+    'Concert tours':['コンサートツアー','巡回演唱会','巡迴演唱會','Giras'],'Discography':['ディスコグラフィー','音乐作品','音樂作品','Discografía'],
+    'Fancams & stages by song':['曲別チッケム・ステージ','按歌曲看直拍・舞台','依歌曲看直拍・舞台','Fancams y presentaciones por canción'],'Fancams by song':['曲別チッケム','按歌曲看直拍','依歌曲看直拍','Fancams por canción'],
+    'Featured Videos':['代表動画','代表视频','代表影片','Videos destacados'],'Grand prizes (Daesang)':['大賞受賞','大赏获奖','大賞獲獎','Grandes premios (Daesang)'],
+    'Members':['メンバー','成员','成員','Miembros'],'Members in these videos':['動画に出ているメンバー','视频中的成员','影片中的成員','Miembros en estos videos'],
+    'Million-selling albums':['ミリオンセラーアルバム','百万销量专辑','百萬銷量專輯','Álbumes millonarios'],'Most viewed fancams':['再生回数の多いチッケム','播放量最高的直拍','觀看數最高的直拍','Fancams más vistos'],
+    'Most viewed fancams & stages':['再生回数の多いチッケム・ステージ','播放量最高的直拍・舞台','觀看數最高的直拍・舞台','Fancams y presentaciones más vistos'],
+    'Related groups':['一緒に見たいグループ','相关组合','相關團體','Grupos relacionados'],'Songwriting credits':['作詞・作曲','作词・作曲','作詞・作曲','Créditos de composición'],
+    'Songs':['曲','歌曲','歌曲','Canciones'],'Credits page →':['クレジットページ →','制作名单页 →','製作名單頁 →','Página de créditos →'],
+    'Lyrics':['作詞','作词','作詞','Letra'],'Lyrics·Music':['作詞・作曲','作词・作曲','作詞・作曲','Letra·Música'],'Music':['作曲','作曲','作曲','Música'],
+    'About · removal requests':['サイト紹介・削除依頼','网站介绍・删除请求','網站介紹・刪除請求','Acerca de · solicitudes de eliminación'],
+    'All':['すべて','全部','全部','Todo'],'Full body':['全身','全身','全身','Completo'],'Face':['顔','脸部','臉部','Rostro'],'Voice':['ボイス','人声','人聲','Voz'],
+    'Most viewed':['人気順','按播放量','依觀看數','Más vistos'],'Newest':['新着順','最新','最新','Recientes'],'Shuffle':['ランダム','随机播放','隨機播放','Aleatorio'],
+    'Back':['戻る','返回','返回','Atrás'],'Close':['閉じる','关闭','關閉','Cerrar'],'Up next':['次の動画','接下来','接下來','A continuación'],'See more in the app':['アプリでもっと見る','在应用中查看更多','在應用程式中查看更多','Ver más en la app'],
+    'Explore':['もっと見る','继续浏览','繼續瀏覽','Explorar'],'Profile · fancams · stages':['プロフィール・チッケム・ステージ','资料・直拍・舞台','資料・直拍・舞台','Perfil · fancams · presentaciones'],
+    'Show less':['閉じる','收起','收起','Ver menos'],'Add to favorites':['お気に入りに追加','加入收藏','加入收藏','Añadir a favoritos'],'In your favorites':['お気に入り登録済み','已收藏','已收藏','En tus favoritos'],
+    'Open my universe':['マイユニバースを開く','打开我的宇宙','打開我的宇宙','Abrir mi universo'],'Trending fancams this week':['今週の人気チッケム','本周热门直拍','本週熱門直拍','Fancams en tendencia esta semana'],
+    'Rankings ›':['ランキング ›','排行榜 ›','排行榜 ›','Rankings ›'],'Fancams posted in the last 7 days · trending':['直近7日のチッケム・人気順','最近7天的直拍・按热度','最近7天的直拍・依熱度','Fancams de los últimos 7 días · tendencia'],
+    'Grand Prize':['大賞','大赏','大賞','Gran Premio'],'Song of the Year':['今年の歌','年度歌曲','年度歌曲','Canción del Año'],'Album of the Year':['今年のアルバム','年度专辑','年度專輯','Álbum del Año'],
+    'Artist of the Year':['今年のアーティスト','年度艺人','年度藝人','Artista del Año'],'Record of the Year':['今年のレコード','年度唱片','年度唱片','Grabación del Año']
+  };
+  var HL_R=[
+    [/^(.+) "(.+)" fancams & stages \((\d+)\) ›$/,['$1「$2」チッケム・ステージ ($3) ›','$1《$2》直拍・舞台 ($3) ›','$1《$2》直拍・舞台 ($3) ›','Fancams y presentaciones de "$2" de $1 ($3) ›']],
+    [/^(.+) "(.+)" fancams › (\d+)$/,['$1「$2」チッケム › $3','$1《$2》直拍 › $3','$1《$2》直拍 › $3','Fancams de $1 en "$2" › $3']],
+    [/^All "(.+)" videos$/,['「$1」のすべての動画','《$1》全部视频','《$1》全部影片','Todos los videos de "$1"']],
+    [/^More songs by (.+)$/,['$1の他の曲','$1的其他歌曲','$1的其他歌曲','Más canciones de $1']],
+    [/^Other (.+) members' fancams$/,['$1 他のメンバーのチッケム','$1其他成员的直拍','$1其他成員的直拍','Fancams de otros miembros de $1']],
+    [/^Other members' "(.+)" fancams$/,['他のメンバーの「$1」チッケム','其他成员的《$1》直拍','其他成員的《$1》直拍','Fancams de "$1" de otros miembros']],
+    [/^Other fancams (\d+)$/,['その他のチッケム $1','其他直拍 $1','其他直拍 $1','Otros fancams $1']],
+    [/^Other idols born in (\d+) ›$/,['$1年生まれのアイドル ›','$1年出生的偶像 ›','$1年出生的偶像 ›','Otros idols nacidos en $1 ›']],
+    [/^(.+) fancam ranking · Top (\d+)$/,['$1 チッケムランキング TOP $2','$1 直拍排行 TOP $2','$1 直拍排行 TOP $2','Ranking de fancams de $1 · Top $2']],
+    [/^(.+) fancams popular this year$/,['$1 この1年の人気チッケム','$1 近一年热门直拍','$1 近一年熱門直拍','Fancams populares de $1 este año']],
+    [/^(.+)'s other fancams by song$/,['$1 他の曲のチッケム','$1其他歌曲的直拍','$1其他歌曲的直拍','Otros fancams de $1 por canción']],
+    [/^All (.+) songs, fancams & stages →$/,['$1の全曲・チッケム・ステージ →','$1全部歌曲・直拍・舞台 →','$1全部歌曲・直拍・舞台 →','Todas las canciones, fancams y presentaciones de $1 →']],
+    [/^All (\d+) "(.+)" fancams →$/,['「$2」チッケム全$1本を見る →','查看全部$1个《$2》直拍 →','查看全部$1個《$2》直拍 →','Ver los $1 fancams de "$2" →']],
+    [/^All (\d+) fancams by song →$/,['チッケム全$1本を曲別に見る →','按歌曲查看全部$1个直拍 →','依歌曲查看全部$1個直拍 →','Ver los $1 fancams por canción →']],
+    [/^All (\d+) (.+) fancams by song →$/,['$2 チッケム全$1本を曲別に見る →','按歌曲查看$2全部$1个直拍 →','依歌曲查看$2全部$1個直拍 →','Ver los $1 fancams de $2 por canción →']],
+    [/^All (\d+) songs →$/,['全$1曲を見る →','查看全部$1首歌 →','查看全部$1首歌 →','Ver las $1 canciones →']],
+    [/^All (\d+) songs$/,['全$1曲','全部$1首','全部$1首','Las $1 canciones']],
+    [/^← All (.+) fancams \((\d+)\)$/,['← $1 チッケム一覧 ($2)','← $1全部直拍 ($2)','← $1全部直拍 ($2)','← Todos los fancams de $1 ($2)']],
+    [/^(.+) fancams & stages$/,['$1 チッケム・ステージ','$1 直拍・舞台','$1 直拍・舞台','Fancams y presentaciones de $1']],
+    [/^(\d[\d,]*) fancams collected$/,['チッケム $1本を収録','已收录 $1 个直拍','已收錄 $1 個直拍','$1 fancams reunidos']],
+    [/^(\d[\d,]*) stages & videos collected$/,['ステージ・動画 $1本を収録','已收录 $1 个舞台・视频','已收錄 $1 個舞台・影片','$1 presentaciones y videos reunidos']],
+    [/^(\d[\d,]*) fancams$/,['チッケム $1','直拍 $1','直拍 $1','$1 fancams']],
+    [/^(.+) fancams$/,['$1 チッケム','$1 直拍','$1 直拍','Fancams de $1']],
+    [/^(.+) profile →$/,['$1 プロフィール →','$1 资料 →','$1 資料 →','Perfil de $1 →']],
+    [/^Lyrics (\d+) · Music (\d+)$/,['作詞 $1 · 作曲 $2','作词 $1 · 作曲 $2','作詞 $1 · 作曲 $2','Letra $1 · Música $2']],
+    [/^Lyrics (\d+)$/,['作詞 $1','作词 $1','作詞 $1','Letra $1']],
+    [/^(\d+) wins in total\. First win: '(.+)' on (.+) \((.+)\)\.$/,['通算$1回。初1位は$4 $3「$2」。','共$1次。首次一位：$4 $3《$2》。','共$1次。首次一位：$4 $3《$2》。','$1 victorias en total. Primera: "$2" en $3 ($4).']],
+    [/^Top (\d+) of ([\d,]+) videos$/,['動画$2本中 上位$1本','$2个视频中的前$1个','$2個影片中的前$1個','Top $1 de $2 videos']],
+    [/^(\d{4}) · Single$/,['$1 · シングル','$1 · 单曲','$1 · 單曲','$1 · Sencillo']],
+    [/^(\d{4}) · EP$/,['$1 · ミニ','$1 · 迷你专辑','$1 · 迷你專輯','$1 · EP']],
+    [/^(\d{4}) · (\d+)(?:st|nd|rd|th) EP$/,['$1 · ミニ$2集','$1 · 迷你$2辑','$1 · 迷你$2輯','$1 · $2.º EP']],
+    [/^(\d{4}) · (\d+)(?:st|nd|rd|th) Album$/,['$1 · 正規$2集','$1 · 正规$2辑','$1 · 正規$2輯','$1 · $2.º álbum']],
+    [/^([\d,]+) new videos this week$/,['今週の新着動画 $1本','本周新视频 $1 个','本週新影片 $1 個','$1 videos nuevos esta semana']],
+    [/^Latest music show win · (.+)$/,['最近の音楽番組1位 · $1','最近音乐节目一位 · $1','最近音樂節目一位 · $1','Última victoria · $1']],
+    [/^([\d,]+) music show wins$/,['音楽番組1位 $1回','音乐节目一位 $1 次','音樂節目一位 $1 次','$1 victorias en programas']],
+    [/^Most viewed · (.+) views$/,['最多再生 · $1回','最高播放 · $1次','最高觀看 · $1次','Más visto · $1 vistas']],
+    [/^([\d,]+) like this$/,['$1人がお気に入り','$1人喜欢','$1人喜歡','A $1 les gusta']],
+    [/^([\d,]+) left ([\d,]+) traces this week$/,['今週$1人が$2件の足あと','本周$1人留下$2个足迹','本週$1人留下$2個足跡','$1 dejaron $2 huellas esta semana']],
+    [/^([\d,]+) visited this week$/,['今週$1人が訪問','本周$1人来访','本週$1人來訪','$1 visitas esta semana']],
+    [/^([\d,]+) visited so far$/,['これまで$1人が訪問','至今$1人来访','至今$1人來訪','$1 visitas hasta ahora']],
+    [/^(\d+)d ago$/,['$1日前','$1天前','$1天前','hace $1 d']],
+    [/^New fancams & stages of (.+) will gather in your universe$/,['$1の新しいチッケム・ステージがあなたのユニバースに集まります','$1的新直拍・舞台会汇集到你的宇宙','$1的新直拍・舞台會匯集到你的宇宙','Los nuevos fancams y presentaciones de $1 se reunirán en tu universo']],
+    [/^(.+) is already in your universe$/,['$1はすでにあなたのユニバースにいます','$1已在你的宇宙中','$1已在你的宇宙中','$1 ya está en tu universo']]
+  ];
+  var HL=(function(){try{return localStorage.getItem('kpu_hl')||'';}catch(e){return '';}})();
+  if(!HL&&EN){var nl=(navigator.language||'').toLowerCase();HL=/^ja/.test(nl)?'ja':/^zh-(tw|hk|mo|hant)/.test(nl)?'zt':/^zh/.test(nl)?'zh':/^es/.test(nl)?'es':'';}
+  var HLI=(EN&&HL_IX[HL]!=null)?HL_IX[HL]:-1; // 영어 페이지에서만 바꾼다
+  function hlText(s){
+    var t=s.trim();if(!t||t.length>160)return null;
+    var d=HL_D[t];if(d)return d[HLI];
+    for(var i=0;i<HL_R.length;i++){var m=HL_R[i][0].exec(t);if(m)return HL_R[i][1][HLI].replace(/\$(\d)/g,function(_,n){return m[+n]||'';});}
+    return null;
+  }
+  function hlWalk(root){
+    if(HLI<0||!root)return;
+    try{
+      var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,null,false),n,list=[];
+      while((n=w.nextNode())){var p=n.parentNode;if(!p||/^(SCRIPT|STYLE|TEXTAREA)$/.test(p.nodeName)||n._hl)continue;list.push(n);}
+      list.forEach(function(n){var v=n.nodeValue,r=hlText(v);if(r!=null){n._hl=1;n.nodeValue=v.replace(v.trim(),r);}});
+    }catch(e){}
+  }
+  function hlMenu(){
+    try{
+      var nav=document.querySelector('.language-nav');if(!nav||nav.querySelector('.kpu-hl'))return;
+      var alt=nav.querySelector('a');var altHref=alt?alt.href:'';
+      var cur=EN?(HLI>=0?HL:'en'):'ko';
+      var st=document.createElement('style');
+      st.textContent='.kpu-hl{position:relative;display:inline-block}'
+        +'.kpu-hl-b{display:inline-flex;align-items:center;gap:5px;background:none;border:0;margin:-8px 0;padding:8px 2px;font:inherit;font-size:12.5px;line-height:20px;color:rgba(170,190,240,.86);cursor:pointer;-webkit-tap-highlight-color:transparent}'
+        +'.kpu-hl-b svg{width:14px;height:14px;flex:none;opacity:.85}.kpu-hl-b i{font-style:normal;font-size:9px;opacity:.6;transition:transform .15s}.kpu-hl.open .kpu-hl-b i{transform:rotate(180deg)}'
+        +'.kpu-hl-m{position:absolute;right:-6px;top:calc(100% + 8px);z-index:30;min-width:148px;padding:6px;border-radius:14px;background:rgba(24,24,32,.98);box-shadow:0 14px 40px rgba(0,0,0,.55);display:none}'
+        +'.kpu-hl.open .kpu-hl-m{display:block}'
+        +'.kpu-hl-m button{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;background:none;border:0;border-radius:9px;padding:10px 12px;font:inherit;font-size:14px;color:rgba(214,224,250,.88);text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}'
+        +'.kpu-hl-m button:hover,.kpu-hl-m button:active{background:rgba(255,255,255,.07)}.kpu-hl-m button.on{color:#fff;font-weight:650}.kpu-hl-m button.on:after{content:"✓";font-size:12px;color:rgba(170,190,255,.95)}';
+      document.head.appendChild(st);
+      var box=document.createElement('span');box.className='kpu-hl';
+      var b=document.createElement('button');b.type='button';b.className='kpu-hl-b';b.setAttribute('aria-haspopup','true');b.setAttribute('aria-label','Language');
+      var nm=HL_LIST.filter(function(x){return x[0]===cur;})[0][1];
+      b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.7 3.9 5.7 3.9 9s-1.3 6.3-3.9 9c-2.6-2.7-3.9-5.7-3.9-9S9.4 5.7 12 3z"/></svg><span></span><i>▾</i>';
+      b.querySelector('span').textContent=nm;
+      var m=document.createElement('div');m.className='kpu-hl-m';m.setAttribute('role','menu');
+      HL_LIST.forEach(function(x){var it=document.createElement('button');it.type='button';it.setAttribute('role','menuitem');it.textContent=x[1];if(x[0]===cur)it.className='on';
+        it.addEventListener('click',function(e){e.stopPropagation();
+          try{localStorage.setItem('kpu_hl',x[0]);}catch(_){}
+          try{log('hl_'+x[0]);}catch(_){}
+          var wantEn=x[0]!=='ko';
+          if(wantEn===EN)location.reload();else if(altHref)location.href=altHref;else location.reload();});
+        m.appendChild(it);});
+      b.addEventListener('click',function(e){e.stopPropagation();box.classList.toggle('open');});
+      document.addEventListener('click',function(){box.classList.remove('open');});
+      box.appendChild(b);box.appendChild(m);
+      nav.innerHTML='';nav.appendChild(box);
+    }catch(e){}
+  }
+  function hlInit(){
+    hlMenu();
+    if(HLI<0)return;
+    try{document.documentElement.lang=({ja:'ja',zh:'zh-Hans',zt:'zh-Hant',es:'es'})[HL]||'en';}catch(e){}
+    hlWalk(document.body);
+    try{var q=0;new MutationObserver(function(ms){if(q)return;q=setTimeout(function(){q=0;hlWalk(document.body);},60);}).observe(document.body,{childList:true,subtree:true,characterData:false});}catch(e){}
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',hlInit);else hlInit();
+ // 아주 좁은 폰(360)은 셋째 링크(모아보기)까지는 안 들어가 한 줄을 더 먹었다 — 그 폭에서만 뺀다
   // 폰(600px 이하): 이름 옆 원형 사진으로 — 이름 2줄 + 큰 대표 이미지(~200px)가 첫 화면을 나눠 써서 직캠이 아래로 밀렸다
   function compactHead(){
     if(innerWidth>600)return;
