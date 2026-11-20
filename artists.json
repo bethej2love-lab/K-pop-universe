@@ -46596,6 +46596,34 @@
     },
     "discography": [
       {
+        "title": "NA-sty",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/81/680/15181680_20261119103644_500.jpg",
+        "releaseDate": "2026.11.20",
+        "trackCount": 3,
+        "titleTrack": "BABY ANGEL",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "BABY ANGEL",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "SHiVER",
+            "isTitle": false
+          },
+          {
+            "no": 3,
+            "title": "BOY",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15181680"
+      },
+      {
         "title": "Bye Bye Inhibitions",
         "type": "싱글",
         "isMain": true,
@@ -64368,6 +64396,24 @@
       }
     ],
     "discography": [
+      {
+        "title": "Party Is Not Over",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/59/184/15159184_20261113114803_500.jpg",
+        "releaseDate": "2026.11.20",
+        "trackCount": 1,
+        "titleTrack": "Party Is Not Over",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Party Is Not Over",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15159184"
+      },
       {
         "title": "DEJAVU",
         "type": "싱글",
@@ -105400,6 +105446,24 @@
     ],
     "discography": [
       {
+        "title": "Look At You",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/82/462/15182462_20261119154953_500.jpg",
+        "releaseDate": "2026.11.20",
+        "trackCount": 1,
+        "titleTrack": "Look At You",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Look At You",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15182462"
+      },
+      {
         "title": "CORE",
         "type": "미니 4집",
         "isMain": true,
@@ -130626,6 +130690,44 @@
       }
     ],
     "discography": [
+      {
+        "title": "Cute & Anxiety",
+        "type": "미니",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/77/120/15177120_20261118140332_500.jpg",
+        "releaseDate": "2026.11.20",
+        "trackCount": 5,
+        "titleTrack": "Polaroid",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "Too Much (feat. AKRIILA)",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "Polaroid",
+            "isTitle": true
+          },
+          {
+            "no": 3,
+            "title": "Hysteric",
+            "isTitle": true
+          },
+          {
+            "no": 4,
+            "title": "Bat",
+            "isTitle": false
+          },
+          {
+            "no": 5,
+            "title": "Adam",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15177120"
+      },
       {
         "title": "Hysteric / Adam",
         "type": "싱글",

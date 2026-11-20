@@ -96319,6 +96319,34 @@
   },
   "discography": [
    {
+    "title": "THE SIN : PARALLEL WORLD",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/60/014/15160014_20261119175208_500.jpg",
+    "releaseDate": "2026.11.20",
+    "trackCount": 3,
+    "titleTrack": "I Want You",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "I Want You",
+      "isTitle": true
+     },
+     {
+      "no": 2,
+      "title": "Don′t Stop",
+      "isTitle": false
+     },
+     {
+      "no": 3,
+      "title": "ILY Season",
+      "isTitle": false
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15160014"
+   },
+   {
     "title": "Bloody Paradise x VELOCIDADE (PETERBLUE Remix)",
     "type": "싱글",
     "isMain": false,
@@ -128598,6 +128626,24 @@
    "x": "https://x.com/YG_GlobalVIP"
   },
   "discography": [
+   {
+    "title": "기립 (GiiiRIP)",
+    "type": "싱글",
+    "isMain": true,
+    "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/85/441/15185441_20261120095643_500.jpg",
+    "releaseDate": "2026.11.20",
+    "trackCount": 1,
+    "titleTrack": "기립 (GiiiRIP)",
+    "tracks": [
+     {
+      "no": 1,
+      "title": "기립 (GiiiRIP)",
+      "isTitle": true
+     }
+    ],
+    "src": "melon",
+    "melonAlbumId": "15185441"
+   },
    {
     "title": "BiiiG",
     "type": "싱글",
