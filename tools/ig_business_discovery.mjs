@@ -3,7 +3,7 @@
 // 왜: 아이돌 인스타(그룹 253 + 멤버 1,247 링크)의 프로필 사진·팔로워·게시물 수를 공식 API로 받는다. 사진은 지금 관리자가
 // 손으로 등록하고(artist_pics), 팔로워는 아예 없었다. 날짜별 팔로워를 쌓아 두면 증가·돌파 같은 소식을 만들 수 있다.
 //
-// 동작: 2시간마다(ig-stats.yml) 최근 활동·기존 전체 순환·미수집 계정을 섞어 회당 최대 180개. Business Discovery는 앱 기준 시간당 약 200회라
+// 동작: 대략 한 시간마다(6시간에 5번, sync-ticker.yml) 관심(유저 즐겨찾기)·최근 활동·기존 전체 순환·미수집 계정을 섞어 회당 최대 180개. Business Discovery는 앱 기준 시간당 약 200회라
 // 한 회차가 한 시간 몫을 넘지 않게 한다(응답 헤더 x-app-usage / x-business-use-case-usage가 90%를 넘으면 그 자리에서 멈춤).
 // 실제로는 스케줄 지연·사용량 제한으로 180개 전에 멈출 수 있다. 전체가 하루에 한 바퀴 돈다고 가정하지 않는다.
 //
@@ -110,7 +110,25 @@ function imageExp(r) {
 const imageExpiries = new Map(known.map(h => [h, imageExp(previous.get(h))]));
 const expiring = known.filter(h => previous.get(h).status === 'ok' && imageExpiries.get(h) < now + 36 * 3600e3)
   .sort((a, b) => imageExpiries.get(a) - imageExpiries.get(b));
-const pools = { expiring, rotation: known, active, fresh }, cursor = { expiring: 0, rotation: 0, active: 0, fresh: 0 };
+// 관심 계정(hot, 2026-11-20 사용자 "코르티스 16시간 전 게시물이 아직 수집 안 됐다, 재빨리 수집할 방법") — 실제 유저가 즐겨찾기한 그룹·멤버의 계정.
+// 한도(회당 ~68개) 안에서 300개쯤 되는 활동 계정을 수집 오래된 순으로만 돌리면 한 바퀴에 하루가 걸려, 정작 누군가 보고 있는 계정도 하루 늦었다.
+// 공개 통계(get_live_stats: fav=그룹별 즐겨찾기 수, favm='그룹:멤버')에서 이름을 받아 핸들로 바꾸고, 수집한 지 90분 넘었으면 매 회차 맨 앞 몫으로 돈다.
+// 통계를 못 받으면 빈 목록 — 나머지 몫은 그대로 돈다.
+function hotHandles(stats, groups, artists, handleOf) {
+  const out = new Set(), fav = (stats && stats.fav) || {}, favm = (stats && stats.favm) || {};
+  for (const g of Object.keys(fav)) { const h = handleOf(groups[g] && groups[g].links && groups[g].links.instagram); if (h) out.add(h); }
+  for (const key of Object.keys(favm)) {
+    const i = key.indexOf(':'), g = i < 0 ? '' : key.slice(0, i), m = i < 0 ? key : key.slice(i + 1);
+    for (const a of artists) if (a && a.name && a.name.ko === m && (!g || (a.group && a.group.ko === g))) { const h = handleOf(a.links && a.links.instagram); if (h) out.add(h); }
+    const gh = handleOf(groups[g] && groups[g].links && groups[g].links.instagram); if (gh) out.add(gh);
+  }
+  return out;
+}
+let liveStats = null;
+try { const r = await fetch(`${SB}/rpc/get_live_stats`, { method: 'POST', headers: SBH, body: '{}' }); if (r.ok) liveStats = await r.json(); } catch { }
+const hotSet = hotHandles(liveStats, groups, artists, handleOf);
+const hot = known.filter(h => hotSet.has(h) && previous.get(h).status === 'ok' && now - Date.parse(previous.get(h).fetched_at) >= 90 * 60e3);
+const pools = { hot, expiring, rotation: known, active, fresh }, cursor = { hot: 0, expiring: 0, rotation: 0, active: 0, fresh: 0 };
 const selected = new Set(), lanes = new Map(), queue = [];
 function take(lane) {
   const pool = pools[lane];
@@ -121,14 +139,15 @@ function take(lane) {
 }
 if (ONLY) { queue.push(ONLY.toLowerCase()); lanes.set(queue[0], 'only'); }
 else for (let i = 0; queue.length < MAX; i++) {
-  const lane = ['expiring', 'rotation', 'active', 'expiring', 'fresh', 'active'][i % 6];
-  const h = take(lane) || take('rotation') || take('fresh') || take('active');
+  // 9칸 주기: 관심 3 · 활동 3 · 만료 임박 1 · 전체 순환 1 · 신규 1. 관심 계정이 다 돌았으면 그 몫은 활동 계정으로 간다.
+  const lane = ['hot', 'active', 'expiring', 'hot', 'active', 'rotation', 'hot', 'active', 'fresh'][i % 9];
+  const h = take(lane) || (lane === 'hot' && take('active')) || take('rotation') || take('fresh') || take('active');
   if (!h) break;
   queue.push(h);
 }
 const laneCounts = hs => hs.reduce((n, h) => { const lane = lanes.get(h); n[lane] = (n[lane] || 0) + 1; return n; }, {});
 if (DRY) {
-  console.log(JSON.stringify({ total: handles.size, activeEligible: active.length, expiringPics: expiring.length, rotationEligible: known.length, neverFetched: fresh.length,
+  console.log(JSON.stringify({ total: handles.size, hotAccounts: hotSet.size, hotEligible: hot.length, activeEligible: active.length, expiringPics: expiring.length, rotationEligible: known.length, neverFetched: fresh.length,
     coolingInvalidUser: coolingCount, planned: laneCounts(queue), first16: queue.slice(0, 16).map(h => ({ handle: h, lane: lanes.get(h) })) }, null, 2));
   process.exit(0);
 }
