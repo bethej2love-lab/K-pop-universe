@@ -12977,7 +12977,9 @@ function _gcEnInlineFit(){
   // 한글명은 절대 자르지 않는다(2026-11-19 사용자 "한글명 잘리는 거 진짜 에바 — 다 표기되게"). 폰 CSS에서 이름은 안 줄어들게 해 뒀고,
   // 그래도 이름+버튼이 줄 폭을 넘으면(좁은 폰·긴 이름) 별자리 장식을 빼고 글자를 한 단계 줄인다(gc-name-tight).
   row.classList.remove('gc-name-tight');
-  if(row.scrollWidth>row.clientWidth+1)row.classList.add('gc-name-tight');
+  // 줄 폭은 부모 기준으로 잰다 — 이름 줄은 inline-flex라 자기 폭이 내용에 맞춰 줄어들고, 버튼의 음수 여백 때문에 scrollWidth가 늘 2~3px 커서
+  // 자리가 남아도 모든 그룹이 '좁은 화면용' 14px로 줄어 있었다(2026-11-20 실측: 줄 185/182, 부모 349).
+  {const pw=(row.parentElement&&row.parentElement.clientWidth)||row.clientWidth;if(row.scrollWidth>pw+1)row.classList.add('gc-name-tight');}
   if(!il||!en||il.hidden||!il.textContent)return;
   if(il.scrollWidth>il.clientWidth+1){en.textContent=il.textContent;en.style.display='';il.textContent='';il.hidden=true;_gcEnFit();
     // 영문명이 빠져 자리가 생겼으면 줄인 글자를 되돌린다

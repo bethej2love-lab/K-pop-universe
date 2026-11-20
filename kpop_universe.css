@@ -6390,3 +6390,11 @@
 #igv-vplay:active{background:rgba(0,0,0,0.75);}
 /* 카드 안 공연 포스터 줄 — 피드용 가로 선반의 왼쪽 여백(20px)이 카드 안에서도 붙어 첫 포스터가 'CONCERTS' 제목보다 안쪽에서 시작했다(2026-11-19) */
 .concert-row .card-concert-rail{padding-left:0!important;scroll-padding-left:0!important;}
+/* 폰 그룹 카드 머리(2026-11-20 사용자 "한글·영문 그룹명 한 포인트씩 크게, + 버튼 살짝 크게·가운데 맞춤, '이번 주 n명' 글자 톤다운") */
+@media(max-width:768px){
+  #gc-name-row>.gc-en-inline{font-size:13px;}
+  /* + 는 글자라 글꼴마다 세로 중심이 달랐다(아이폰에선 아래로, 다른 글꼴에선 위로). 글자를 숨기고 18px 그림으로 그려 옆 아이콘(16px)과 중심을 맞춘다 */
+  #gc-name-row .card-menu-btn{font-size:0;top:0;padding:7px 5px;display:inline-flex;align-items:center;}
+  #gc-name-row .card-menu-btn::before{content:'';display:block;width:18px;height:18px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M9 2.5v13M2.5 9h13' stroke='%23bec5e0' stroke-opacity='.62' stroke-width='1.5' stroke-linecap='round' fill='none'/%3E%3C/svg%3E") center/contain no-repeat;}
+  .gc-status-inner.type-visits,.gc-status-inner.type-traces{color:#a9b7d0;}
+}
