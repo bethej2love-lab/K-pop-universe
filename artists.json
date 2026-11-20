@@ -109896,6 +109896,29 @@
     ],
     "discography": [
       {
+        "title": "각설탕 소리 OST Part.2",
+        "type": "OST",
+        "isMain": false,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/55/807/15155807_20261112151329_500.jpg",
+        "releaseDate": "2026.11.13",
+        "trackCount": 2,
+        "titleTrack": "각설탕 소리 (Ballad Ver.)",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "각설탕 소리 (Ballad Ver.)",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "각설탕 소리 (Ballad Ver.) (inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15155807"
+      },
+      {
         "title": "돌싱N모솔 시즌2",
         "type": "싱글",
         "isMain": true,
