@@ -78,7 +78,22 @@
     +'.top2:has(.avatar)>.meta{margin-top:12px;margin-bottom:0}.top2:has(.avatar)>.sns{margin:10px 0 0}'
     // 맨 윗줄(이전 ‹ · 브랜드 · 그룹 전체 · 모아보기 · 언어)이 한 줄에 들어가게 보조 링크만 한 단계 작게
     +'.brand+.brand{font-size:11px;margin-left:8px!important}}'
-    +'@media(max-width:380px){.brand+.brand+.brand{display:none}}'; // 아주 좁은 폰(360)은 셋째 링크(모아보기)까지는 안 들어가 한 줄을 더 먹었다 — 그 폭에서만 뺀다
+    +'@media(max-width:380px){.brand+.brand+.brand{display:none}}'
+    // 2026-11-20 사용자: ①위 안내 줄과 브랜드 줄 사이 여백이 쓸데없이 크다 → 폰 .wrap 위 여백 23→11px(정적 CSS는 캐시 때문에 여기서도)
+    // ②'나무위키' 알약 하나가 한 줄을 통째로 차지 → 링크가 하나뿐이면 소속·생일 줄 끝에 글자 링크로 붙인다(metaTidy) ③생일 옆 '(만 n세)' 제거(재생성 전 페이지용)
+    +'@media(max-width:700px){.kpu-topbar+.wrap,.wrap{padding-top:11px}}'
+    +'@media(max-width:600px){.top2>.meta{gap:7px 12px;font-size:13px!important}}' // 나이 괄호를 뺀 자리에 한 줄 세 칸(소속·생일·데뷔)이 들어가게 — 그래야 둘째 줄에 소속사+나무위키가 같이 선다
+    +'.meta .kpu-meta-link a{color:rgba(170,190,240,.82);text-decoration:none}.meta .kpu-meta-link a:after{content:" ↗";font-size:.85em;opacity:.7}';
+  function metaTidy(){
+    try{
+      var meta=document.querySelector('.top2>.meta');if(!meta)return;
+      [].forEach.call(meta.querySelectorAll('span'),function(sp){var n=sp.lastChild;if(n&&n.nodeType===3)n.nodeValue=n.nodeValue.replace(/\s*\((만\s*\d+세|age\s*\d+)\)\s*$/,'');});
+      var sns=document.querySelector('.top2>.sns');if(!sns)return;
+      var links=sns.querySelectorAll('a');
+      if(links.length===1){var sp=document.createElement('span');sp.className='kpu-meta-link';var a=links[0];a.className='';sp.appendChild(a);meta.appendChild(sp);sns.parentNode.removeChild(sns);}
+    }catch(e){}
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',metaTidy);else metaTidy(); // 아주 좁은 폰(360)은 셋째 링크(모아보기)까지는 안 들어가 한 줄을 더 먹었다 — 그 폭에서만 뺀다
   // 폰(600px 이하): 이름 옆 원형 사진으로 — 이름 2줄 + 큰 대표 이미지(~200px)가 첫 화면을 나눠 써서 직캠이 아래로 밀렸다
   function compactHead(){
     if(innerWidth>600)return;

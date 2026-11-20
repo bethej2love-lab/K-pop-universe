@@ -390,7 +390,8 @@ function _ageChipText(a){
   const[by,bm,bd]=a.bday.split('.').map(Number);
   const now=new Date();let age=now.getFullYear()-by;
   if(now.getMonth()+1<bm||(now.getMonth()+1===bm&&now.getDate()<bd))age--;
-  return a.bday+(age>=0?` (${age}${currentLang==='ko'?'세':'y.o.'})`:' ');
+  // 나이 괄호는 뺐다(2026-11-20 사용자 "자리 차지 — 생년 알면 계산할 수 있으니까"). 폰에서 생일·소속사 줄이 넘쳐 국적이 아랫줄로 떨어졌다.
+  return a.bday;
 }
 // 고인 표기 — "故" 한자는 너무 무겁다는 피드백(2026-08-04)으로 별 하나만 붙이기로 했었는데, 유니코드
 // 문자(✦)를 이름 뒤에 텍스트로 그냥 붙인 거라 성의 없어 보인다는 재피드백(2026-08-06) — 우주에서 멤버들이
