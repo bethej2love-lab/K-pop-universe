@@ -802,6 +802,7 @@ function applyLang(){
   const _nl=document.getElementById('pp-nick-label');if(_nl&&_nl.childNodes[0])_nl.childNodes[0].textContent=t.ppNick+' ';
   const si=document.getElementById('search-input');if(si)si.placeholder=t.searchPH;
   const msi=document.getElementById('tab-sb-input');if(msi)msi.placeholder=t.searchPH;
+  {const ms2=document.getElementById('msheet-input');if(ms2)ms2.placeholder=t.searchPH;} // 풀스크린 검색 시트만 옛 문구('그룹 · 멤버 검색…')였다 — 세 입력창 문구 통일(2026-11-20)
   _updateGenButtonsLang();
   _refreshOpenCardText();
   renderFavList();
@@ -4590,7 +4591,7 @@ function doSearch(q){
   const res=obSr||(msOpen?document.getElementById('msheet-body'):(mobSearch?document.getElementById('mob-sr'):document.getElementById('search-results')));
   q=q.trim();
   // 말하듯 검색: 이름 부분(ent)만 아래 매칭에 넘긴다. 더보기·곡 인덱스 도착 같은 재호출은 이름 부분으로 들어오므로, 입력창에 원문이 그대로면 원문으로 되돌려 해석을 유지한다.
-  if(_srNlNow&&q===_srNlNow.ent){try{if([...document.querySelectorAll('#search-input,#msheet-input,#mob-search-input')].some(i=>i.value.trim()===_srNlNow.full))q=_srNlNow.full;}catch(e){}}
+  if(_srNlNow&&q===_srNlNow.ent){try{if([...document.querySelectorAll('#search-input,#msheet-input,#mob-search-input,#tab-sb-input')].some(i=>i.value.trim()===_srNlNow.full))q=_srNlNow.full;}catch(e){}}
   {const nl=obSr?null:_nlParse(q);_srNlNow=(nl&&!_nlIsPlainName(q))?nl:null;if(_srNlNow)q=_srNlNow.ent;}
   _curSearchQ=q;
   _invalidateRemoteSearch(); // 빈 입력·한 글자·다른 결과 그릇도 이전 요청과 분리한다
