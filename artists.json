@@ -123766,6 +123766,29 @@
     },
     "discography": [
       {
+        "title": "ICONIC",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/82/375/15182375_20261119151337_500.jpg",
+        "releaseDate": "2026.11.20",
+        "trackCount": 2,
+        "titleTrack": "ICONIC",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "SAY IT TO MY FACE",
+            "isTitle": false
+          },
+          {
+            "no": 2,
+            "title": "ICONIC",
+            "isTitle": true
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15182375"
+      },
+      {
         "title": "아기상어 올리와 윌리엄 OST (Special Track)",
         "type": "OST",
         "isMain": false,
@@ -171645,6 +171668,29 @@
       "케이"
     ],
     "discography": [
+      {
+        "title": "뻔한 이별",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/77/132/15177132_20261118140836_500.jpg",
+        "releaseDate": "2026.11.20",
+        "trackCount": 2,
+        "titleTrack": "뻔한 이별",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "뻔한 이별",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "뻔한 이별 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15177132"
+      },
       {
         "title": "투비(鬪悲)",
         "type": "싱글",
