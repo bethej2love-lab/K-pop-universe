@@ -52,12 +52,21 @@ const INVALID_USER_RECHECK_MS = 7 * 24 * 3600e3; // Invalid user id는 매 회�
 const DBKEY = DRY ? 'sb_publishable_SjNC-N_9TUqaQcCxhVinGA_ULyX6tA0' : SKEY;
 const SBH = { apikey: DBKEY, Authorization: 'Bearer ' + DBKEY, 'Content-Type': 'application/json' };
 async function sbGetAll(qs) {
-  const out = [];
-  for (let from = 0; ; from += 1000) {
-    const r = await fetch(`${SB}/${qs}`, { headers: { ...SBH, Range: `${from}-${from + 999}` } });
+  // 한 번에 1,000줄(게시물 묶음 jsonb 포함)을 받다가 DB가 바쁠 때 시간 초과(57014)로 회차가 통째로 날아갔다(2026-11-20 run 210).
+  // 300줄씩 나눠 받고, 5xx·네트워크 오류는 15초·30초 뒤 두 번 더 시도한다.
+  const out = [], PAGE = 300;
+  for (let from = 0; ; from += PAGE) {
+    let r, err;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      if (attempt) await new Promise(res => setTimeout(res, attempt * 15000));
+      err = null;
+      try { r = await fetch(`${SB}/${qs}`, { headers: { ...SBH, Range: `${from}-${from + PAGE - 1}` } }); } catch (e) { err = e; continue; }
+      if (r.ok || r.status < 500) break;
+    }
+    if (err) throw err;
     if (!r.ok) throw new Error('DB 조회 실패 ' + r.status + ' ' + (await r.text()).slice(0, 200));
     const d = await r.json(); out.push(...d);
-    if (d.length < 1000) return out;
+    if (d.length < PAGE) return out;
   }
 }
 // 캡션 자르기 — 이모지가 반으로 잘린 깨진 글자·널 문자가 있으면 DB가 묶음 전체를 400으로 거절한다(ig_backfill.mjs와 같은 규칙, 2026-11-16)
