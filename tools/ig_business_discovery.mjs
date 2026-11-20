@@ -70,7 +70,18 @@ const capCut = (s, n) => {
 async function sbUpsert(table, rows, conflict) {
   if (!rows.length) return;
   for (const o of rows) if (typeof o.cap === 'string') o.cap = capCut(o.cap, 2200); // 저장 직전에 깨진 글자 정리(자르는 줄은 테스트가 원문을 잘라 실행해서 그대로 둔다)
-  const r = await fetch(`${SB}/${table}?on_conflict=${conflict}`, { method: 'POST', headers: { ...SBH, Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify(rows) });
+  // DB가 잠깐 5xx(예: 520)를 내면 그 회차에 받은 계정 전부가 버려졌다 — Meta 호출 한도는 이미 썼는데 저장만 실패(2026-11-20 run 209).
+  // 저장은 같은 줄을 덮어쓰는 방식이라 다시 보내도 안전하다. 5xx·네트워크 오류만 20초·40초 뒤 두 번 더 시도한다.
+  const body = JSON.stringify(rows);
+  let r, err;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    if (attempt) await new Promise(res => setTimeout(res, attempt * 20000));
+    err = null;
+    try { r = await fetch(`${SB}/${table}?on_conflict=${conflict}`, { method: 'POST', headers: { ...SBH, Prefer: 'resolution=merge-duplicates,return=minimal' }, body }); }
+    catch (e) { err = e; continue; }
+    if (r.ok || r.status < 500) break;
+  }
+  if (err) throw err;
   if (!r.ok) throw new Error(`${table} 저장 실패 ${r.status} ${(await r.text()).slice(0, 300)}`);
 }
 
