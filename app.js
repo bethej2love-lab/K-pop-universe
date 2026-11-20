@@ -27206,6 +27206,31 @@ function _loadUpcomingConcerts(){
   return p;
 }
 // 공연 하나를 작은 창으로 — 카드의 공연 항목(공연장·예매·다녀왔어요)을 그대로 쓴다. 공연장 창과 같은 틀
+// 공연 → .ics(iCalendar) 글. 종일 일정이라 DTEND는 마지막 날 **다음 날**(규격). 글자 이스케이프: \ ; , 줄바꿈.
+function _concertIcs(ev){
+  const d=x=>String(x||'').slice(0,10).replace(/-/g,'');
+  const s=d(ev.date_start);if(!/^\d{8}$/.test(s))return '';
+  const e0=d(ev.date_end)||s,ed=new Date(Date.UTC(+e0.slice(0,4),+e0.slice(4,6)-1,+e0.slice(6,8)+1));
+  const end=ed.toISOString().slice(0,10).replace(/-/g,'');
+  const esc=t=>String(t||'').replace(/\\/g,'\\\\').replace(/([;,])/g,'\\$1').replace(/\r?\n/g,'\\n');
+  const loc=[typeof _venueName==='function'?_venueName(ev.venue):ev.venue,ev.city].filter(Boolean).join(', ');
+  const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//K-POP UNIVERSE//Concerts//KO','BEGIN:VEVENT',
+    'UID:concert-'+String(ev.id||s+'-'+(ev.title||'')).replace(/[^A-Za-z0-9_-]/g,'')+'@kpop-universe.kr',
+    'DTSTAMP:'+new Date().toISOString().replace(/[-:]/g,'').slice(0,15)+'Z',
+    'DTSTART;VALUE=DATE:'+s,'DTEND;VALUE=DATE:'+end,'SUMMARY:'+esc(ev.title)];
+  if(loc)L.push('LOCATION:'+esc(loc));
+  if(ev.official_url)L.push('URL:'+String(ev.official_url).replace(/[\r\n]/g,''));
+  L.push('END:VEVENT','END:VCALENDAR');
+  return L.join('\r\n')+'\r\n';
+}
+function _concertIcsDownload(ev){
+  const ics=_concertIcs(ev);if(!ics)return;
+  try{
+    const url=URL.createObjectURL(new Blob([ics],{type:'text/calendar;charset=utf-8'}));
+    const a=document.createElement('a');a.href=url;a.download='concert.ics';document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),4000);
+  }catch(_){}
+}
 function _openConcertSheet(ev,_back){
   const overlay=document.getElementById('venue-overlay');
   const tok=_vpEnter({k:'c',ev},_back);
@@ -31092,6 +31117,10 @@ function _makeConcertItem(ev){
   // 공연 당일(KST)부터만 — 아직 안 한 공연에 "다녀왔어요"는 어색하다(2026-10-22 사용자). 이미 기록한 건 날짜와 무관하게 남겨 둔다(취소할 수 있게)
   const _todayKst=new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
   if(entry||!ev.date_start||String(ev.date_start).slice(0,10)<=_todayKst)chips.appendChild(attendBtn);
+  // 다가올 공연은 '캘린더에 추가'(2026-11-20) — 날짜를 외워 두거나 따로 적는 일을 대신한다. 기기 캘린더 앱이 여는 .ics 파일(종일 일정) 한 개.
+  else{const calBtn=document.createElement('button');calBtn.type='button';calBtn.className='concert-ticket-btn concert-cal-btn';
+    calBtn.textContent=currentLang==='ko'?'캘린더에 추가':'Add to calendar';
+    calBtn.addEventListener('click',e=>{e.stopPropagation();_concertIcsDownload(ev);});chips.appendChild(calBtn);}
   body.appendChild(chips);
   const reactionRow=document.createElement('div');reactionRow.className='concert-reaction-row'+(entry?' open':'');
   CONCERT_REACTIONS.forEach(emo=>{
