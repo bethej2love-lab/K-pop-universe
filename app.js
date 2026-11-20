@@ -7000,6 +7000,7 @@ function _surfLoadGlobalW(){
   if(!_surfGlobalWP)_surfGlobalWP=(async()=>{try{const{data,error}=await sb.rpc('get_surf_rel_weights');if(!error&&data){_surfGlobalW={};data.forEach(r=>_surfGlobalW[r.rel]=+r.total||0);}}catch(e){}})();
   return _surfGlobalWP;
 }
+let _surfMoreKey='',_surfMoreOpen=false; // Up Next '더 보기' 펼침 — 영상·필터가 바뀌면 다시 접힌다
 function _surfSortRows(rows){
   const tot=Object.values(_surfPrefs).reduce((s,x)=>s+(+x||0),0);
   const gtot=_surfGlobalW?Object.values(_surfGlobalW).reduce((s,x)=>s+x,0):0;
@@ -7109,8 +7110,26 @@ function _surfRender(){
   }
   const lensName=(_SURF_LENSES.find(l=>l[0]===_surfLens)||[])[ko?1:2];
   // 고른 필터(직캠·무대…)에 영상이 없는 줄은 아예 안 보인다(2026-11-13 사용자 "영상 없으면 그 목록 아예 보여주지 말아야") — 전부 비면 한 줄 안내
-  const _surfVis=_surfSortRows(_surfRows).map(row=>[row,_surfItemsFor(row)]).filter(([,it])=>it.length);
+  let _surfVis=_surfSortRows(_surfRows).map(row=>[row,_surfItemsFor(row)]).filter(([,it])=>it.length);
+  // 제안은 4줄까지만, 나머지는 '더 보기'(2026-11-20 사용자 "7개는 너무 많다 — 3~4개에 더 누르면 더, 그때그때 다르게").
+  // 앞 2줄은 우선순위 그대로, 그 뒤는 영상마다 시작점을 돌려서 같은 순서만 반복되지 않게 한다. 펼쳐 둔 줄은 숨기지 않는다.
+  let _surfHid=0;
+  {const cur=(_lbPlaylist&&_lbIdx>=0&&_lbPlaylist[_lbIdx])||{},key=String(cur.u||_lbIdx)+'|'+_surfLens;
+    if(_surfMoreKey!==key){_surfMoreKey=key;_surfMoreOpen=false;}
+    const CAP=4;
+    if(_surfVis.length>CAP+1){
+      let h=0;for(const ch of String(cur.u||''))h=(h*31+ch.charCodeAt(0))>>>0;
+      const head=_surfVis.slice(0,2),tail=_surfVis.slice(2),k=tail.length?h%tail.length:0;
+      _surfVis=head.concat(tail.slice(k),tail.slice(0,k));
+      if(!_surfMoreOpen){
+        const keep=_surfVis.slice(0,CAP),open=_surfVis.find(([r])=>r.key===_surfOpen);
+        if(open&&!keep.includes(open))keep[CAP-1]=open;
+        _surfHid=_surfVis.length-keep.length;_surfVis=keep;
+      }
+    }
+  }
   if(!_surfVis.length){list.innerHTML=`<div class="surf-empty">${ko?`${lensName} 영상이 아직 없어요`:`No ${lensName} yet`}</div>`;box.appendChild(list);return;}
+  box._surfHid=_surfHid;
   _surfVis.forEach(([row,items])=>{
     const isOpen=_surfOpen===row.key;
     const grp=document.createElement('div');grp.className='surf-grp'+(isOpen?' open':'');
@@ -7184,6 +7203,12 @@ function _surfRender(){
     }
     list.appendChild(grp);
   });
+  if(box._surfHid>0){
+    const mb=document.createElement('button');mb.type='button';mb.className='surf-more-rows';
+    mb.textContent=(currentLang==='ko'?'더 보기 ':'More ')+box._surfHid;
+    mb.addEventListener('click',e=>{e.stopPropagation();_surfMoreOpen=true;_surfRender();});
+    list.appendChild(mb);
+  }
   box.appendChild(list);
 }
 function _surfHopTo(row,shown,i){
@@ -14577,7 +14602,7 @@ function _feedWideSync(){
 function _closeGcDiscogDetail(){
   clearInterval(_albPlaceT);_albPlaceT=null;
   _stageClose('alb');
-  document.getElementById('gc-discog-detail').classList.remove('open','lb-dock');
+  document.getElementById('gc-discog-detail').classList.remove('open','lb-dock','al-full');
   _discogCtx=null;_albScrollPending=false;
   const _vp=document.getElementById('gc-discog-video-panel');
   if(_vp){
@@ -16212,7 +16237,15 @@ window.addEventListener('resize',()=>{_albPlace();if(!_stageWide())delete docume
 // 폰: 앨범 창도 카드 시트처럼 맨 위에서 아래로 끌어 닫기(2026-10-21 사용자 — "닫기 버튼 말고 카드형으로, 스와이프로 닫는 게 떠오르게").
 // 손잡이 막대를 달고 ✕는 폰에서 숨긴다(CSS). 제스처 코드는 탐험 패널과 같은 것(문턱 44px·튕김 속도).
 {const _ads=document.getElementById('gc-discog-detail-sheet');
- _wireFeedSwipeDismiss(_ads,_ads,()=>{_ads.style.transition='transform 0.22s cubic-bezier(0.32,0.72,0,1)';_ads.style.transform=`translateY(${window.innerHeight}px)`;
+ // 위로 끌면(또는 손잡이를 누르면) 화면 가득 찬 카드로(2026-11-20 사용자 "상단 바 위로 끌면 전체 화면 카드로도"). 가득 찬 상태에서 아래로 끌면 먼저 원래 높이로 돌아오고, 한 번 더 끌면 닫힌다.
+ {const _det=document.getElementById('gc-discog-detail');let y0=null,x0=0;
+  _ads.addEventListener('touchstart',e=>{const t=e.touches[0],r=_ads.getBoundingClientRect();y0=(e.touches.length===1&&t.clientY-r.top<72)?t.clientY:null;x0=t.clientX;},{passive:true});
+  _ads.addEventListener('touchend',e=>{if(y0==null)return;const t=e.changedTouches[0],dy=t.clientY-y0,dx=t.clientX-x0;y0=null;if(!isMob())return;
+    if(dy<-44&&Math.abs(dy)>Math.abs(dx)*1.2)_det.classList.add('al-full');},{passive:true});
+  document.getElementById('gc-discog-detail-handle')?.addEventListener('click',e=>{e.stopPropagation();if(isMob())_det.classList.toggle('al-full');});}
+ _wireFeedSwipeDismiss(_ads,_ads,()=>{
+   {const _det=document.getElementById('gc-discog-detail');if(_det.classList.contains('al-full')){_det.classList.remove('al-full');_ads.style.transition='';_ads.style.transform='';return;}}
+   _ads.style.transition='transform 0.22s cubic-bezier(0.32,0.72,0,1)';_ads.style.transform=`translateY(${window.innerHeight}px)`;
    setTimeout(()=>{_closeGcDiscogDetail();_ads.style.transition='';_ads.style.transform='';},220);});}
 document.getElementById('gc-discog-detail-prev').addEventListener('click',e=>{e.stopPropagation();_gcDiscogDetailGo(-1);});
 document.getElementById('gc-discog-detail-next').addEventListener('click',e=>{e.stopPropagation();_gcDiscogDetailGo(1);});

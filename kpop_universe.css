@@ -6418,3 +6418,21 @@
   #tg-row:empty{display:none;}
 }
 .sr-sec-label.sr-suggest{opacity:.8;}
+/* 2026-11-20 사용자 스크린샷 4건 */
+/* ① Up Next 위의 흰 '›' — 데스크톱 옆 패널 접기 버튼이 폰에서 스타일 없이 드러난 것. 데스크톱 배치(위 규칙들이 display:flex로 켠다)가 아니면 숨긴다. 폰은 시트 손잡이로 여닫는다. */
+#yt-lb-uplist-tog{display:none;}
+/* ② Up Next 제안 '더 보기' 줄 — 테두리 없는 글자 */
+.surf-more-rows{display:block;width:100%;padding:11px 14px;background:none;border:0;border-top:0.5px solid rgba(255,255,255,0.07);color:rgba(165,185,235,0.78);font:inherit;font-size:12.5px;text-align:center;cursor:var(--kpu-cursor-pointer,pointer);-webkit-tap-highlight-color:transparent;}
+.surf-more-rows:active{background:rgba(255,255,255,0.05);}
+/* ③ 앨범 창 아티스트 이름 — 밑줄 대신 살짝 굵게(누를 수 있다는 표시는 굵기·밝기로) */
+.gc-discog-artist-link{text-decoration:none!important;font-weight:600;color:rgba(214,226,250,0.95);}
+.gc-discog-artist-link:hover{color:#fff;}
+/* ④ 곡 화면 크레딧 묶음 위아래 여백 */
+#gc-discog-song-view #gc-track-videos-credits{padding:12px 0 8px;}
+/* ⑤ 폰 앨범 창 — 위로 끌면 화면 가득(app.js al-full) */
+@media(max-width:768px){
+  #gc-discog-detail-sheet{transition:max-height .32s cubic-bezier(0.22,0.86,0.24,1),height .32s cubic-bezier(0.22,0.86,0.24,1),border-radius .2s;}
+  #gc-discog-detail.al-full #gc-discog-detail-sheet{max-height:100dvh!important;height:100dvh;border-radius:0;padding-top:calc(22px + env(safe-area-inset-top,0px));overflow-y:auto;}
+  #gc-discog-detail-handle{padding:0;cursor:pointer;position:relative;}
+  #gc-discog-detail-handle::after{content:'';position:absolute;inset:-14px -40px;}
+}
