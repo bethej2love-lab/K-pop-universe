@@ -6354,8 +6354,11 @@
   #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-scrap{left:calc(50vw - 136px + 0*38px);}
   #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-col{left:calc(50vw - 136px + 1*38px);}
   #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-flag{left:calc(50vw - 136px + 2*38px);}
-  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-video-box.is-shorts~#yt-lb-info{position:relative;top:7px;}
-  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-reactions{position:relative;top:11px;justify-content:flex-start;padding-left:calc(50vw - 136px + 3*38px + 6px);box-sizing:border-box;}
+  /* 가운데 맞춤(2026-11-20 사용자 "이모티콘이랑 하트·저장 높이가 안 맞는다") — 버튼 셋은 화면 고정 좌표인데 이모지 줄은 날짜 줄 높이(글꼴마다 12~16px)에 밀려
+     기기에서 7px쯤 아래로 어긋났다. 날짜 칸 높이를 33px로 고정하고 이모지 줄을 버튼과 같은 38px 상자(영상 아랫변+46px)에 가운데 정렬한다. */
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-video-box.is-shorts~#yt-lb-info{position:relative;top:7px;height:33px;box-sizing:border-box;overflow:visible;}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-reactions{position:relative;top:13px;height:38px;padding-top:0;padding-bottom:0;align-items:center;flex-wrap:nowrap;justify-content:flex-start;padding-left:calc(50vw - 136px + 3*38px + 6px);box-sizing:border-box;}
+  #yt-lightbox.lb-shorts:not(.lb-browse) #yt-lb-reactions.expanded{height:auto;min-height:38px;flex-wrap:wrap;}
 }
 /* 쇼츠 넘기기 미리보기(2026-11-19) — 다음/이전 영상의 썸네일 한 장. 영상 칸과 같은 자리·크기로 화면 밖에 대기하다 손가락을 따라 들어온다(좌표는 app.js _lbPeekShow) */
 #yt-lb-peek{position:fixed;z-index:3;border-radius:12px;overflow:hidden;background:#15161c;pointer-events:none;will-change:transform;}

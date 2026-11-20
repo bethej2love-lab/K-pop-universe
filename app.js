@@ -7897,7 +7897,7 @@ function _lbMenuFill(){
   const close=()=>document.querySelector('.lb-menu-wrap')?.classList.remove('open');
   const add=(t,fn)=>{const b=document.createElement('button');b.type='button';b.className='lb-more-item lb-menu-dyn';b.setAttribute('role','menuitem');b.textContent=t;
     b.addEventListener('click',e=>{e.stopPropagation();close();try{fn();}catch(_){}});panel.appendChild(b);};
-  add(isKo?'전체 화면':'Full screen',()=>_lbRequestFs());
+  // '전체 화면' 항목은 뺐다(2026-11-20 사용자 "눌러도 반응 없음, 유튜브 화면 안 전체화면 버튼 쓰면 된다")
   if(yt)add(isKo?'유튜브에서 보기 ↗':'Open on YouTube ↗',()=>window.open(yt,'_blank','noopener'));
   if(yt)add(isKo?'링크 복사':'Copy link',()=>{const done=()=>{try{_showToast(isKo?'링크를 복사했어요':'Link copied');}catch(_){}};
     if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(yt).then(done,()=>{});});
@@ -25225,10 +25225,11 @@ async function _buildFeedFavIg(){
     list.hidden=!photos.length;
     const ttl=document.getElementById('feed-favig-ttl');if(ttl)ttl.textContent='📷 On Instagram';
     // 최애 표시(_igBiasOf) — 최애 계정 사진을 앞으로(안정 정렬이라 각자 최신순 유지) + 이름 앞 이모티콘
-    photos.forEach(m=>{const b=_igBiasOf(m.owner);m._emoji=b.emoji;m._isBias=b.isBias;});
+    photos.forEach(m=>{const b=_igBiasOf(m.owner);m._emoji=b.isBias?b.emoji:'';m._isBias=b.isBias;}); // 이모티콘은 최애만 — 그냥 즐겨찾기에 🤍를 붙이지 않는다(2026-11-20 사용자 "왜 즐찾 다 하얀 하트, 이모티콘은 최애만")
     // 순서: 48시간 안 새 게시물이 맨 앞(최신순, 누구 것이든) → 그다음 최애 계정 → 나머지 최신순. 예전엔 무조건 최애 먼저라
     // 다른 즐겨찾기 팀이 방금 올린 게 최애의 2주 전 사진 뒤로 밀렸다(2026-11-19).
-    {const _fresh=m=>m.ts>Date.now()-48*3600e3?1:0;photos.sort((a,b)=>(_fresh(b)-_fresh(a))||(_fresh(a)?0:((b._isBias?1:0)-(a._isBias?1:0))));}
+    // 2026-11-20 사용자 "코르티스가 최애면 더 앞에 나와야지" — 하루 만에 되돌림: **최애 계정이 항상 맨 앞**(각자 최신순), 그 뒤가 나머지 최신순. 48시간 우선 규칙은 뺐다.
+    photos.sort((a,b)=>((b._isBias?1:0)-(a._isBias?1:0))||((b.ts||0)-(a.ts||0)));
     if(photos.length)_igRenderRail(list,photos);
     if(mag&&magRecent.length)_igRenderMagRail(mag,magRecent);
     section.style.display='';
