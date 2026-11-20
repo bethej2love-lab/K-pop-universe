@@ -1582,15 +1582,22 @@ function songLinksHtml(gko, lang) {
   const list = SONGS[gko] || [];
   if (!list.length) return '';
   const isEn = lang === 'en';
+  // 글자 목록 → 앨범 커버 타일(2026-11-20 사용자 "사진이 필요한데 글자만 있는 곳"). 처음 12곡만 펼쳐 두고 나머지는 접는다(폰 3칸이라 40곡이면 14줄).
+  // 40곡 넘는 그룹(샤이니 96·세븐틴 95·방탄 84)의 나머지 곡은 접힌 안에서 글자 링크로 전부 잇는다(고아 페이지 583개 방지 — 예전 규칙 유지).
+  const tile = s => `<a class="sp-tile" href="${SITE}/${songPagePath(gko, s.b, lang)}">${s.cover ? `<img src="${escHtml(s.cover)}" alt="" loading="lazy">` : `<span class="sp-tile-ph"></span>`}<span class="sp-tile-t">${escHtml(s.bilingualTitle || s.title)}</span></a>`;
+  const FIRST = 12, rest = list.length - FIRST;
   return `
     <h2 id="songs">${isEn ? 'Fancams & stages by song' : '곡별 직캠·무대'}</h2>
-    <ul class="member-list rel">
-      ${list.slice(0, 40).map(s => `<li><a href="${SITE}/${songPagePath(gko, s.b, lang)}">${escHtml(s.bilingualTitle || s.title)}</a></li>`).join('\n      ')}
-    </ul>${list.length > 40 ? `
-    <details class="more-songs"><summary>${isEn ? `${list.length - 40} more songs` : `나머지 ${list.length - 40}곡 더 보기`}</summary>
-    <ul class="member-list rel">
+    <div class="sp-tiles">
+      ${list.slice(0, FIRST).map(tile).join('\n      ')}
+    </div>${rest > 0 ? `
+    <details class="more-songs"><summary>${isEn ? `${rest} more songs` : `나머지 ${rest}곡 더 보기`}</summary>
+    <div class="sp-tiles" style="margin-top:12px">
+      ${list.slice(FIRST, 40).map(tile).join('\n      ')}
+    </div>${list.length > 40 ? `
+    <ul class="member-list rel" style="margin-top:14px">
       ${list.slice(40).map(s => `<li><a href="${SITE}/${songPagePath(gko, s.b, lang)}">${escHtml(s.bilingualTitle || s.title)}</a></li>`).join('\n      ')}
-    </ul></details>` : ''}`; // 40곡 넘는 그룹(샤이니 96·세븐틴 95·방탄 84)은 나머지 곡 페이지가 어디서도 링크를 못 받았다(고아 583개) — 접어서라도 전부 링크
+    </ul>` : ''}</details>` : ''}`;
 }
 // ── 합쳐진 판본 곡 페이지 정리(2026-11-11) ────────────────────────────────────────────────────────────────
 // 곡 목록에서 판본 곡('plot twist (Japanese ver.)')을 한국 원곡('첫 만남은 계획대로 되지 않아')에 합치면(shared.js _songAddNicks)
@@ -2182,7 +2189,7 @@ function memberFaceUrl(a, gko) {
   return id ? ytThumb(id, 'mqdefault') : null;
 }
 // 스타일은 저장소의 song-page.css 한 파일(페이지마다 넣으면 3만 쪽 × 5KB) — 바꾸면 SONG_CSS_V를 올릴 것
-const SONG_CSS_V = 19;
+const SONG_CSS_V = 20;
 function songShareVideo(vids) {
   return vids.find(v => (v.category === 'live' || FANCAM_RE.test(v.title || ''))
     && !/\bM\/?V\b|music\s*video|뮤직비디오|\bteaser\b|티저/i.test(v.title || '')) || vids[0];
@@ -2311,9 +2318,9 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
   const mySongs = ms ? (MEMBER_SONGS_BY_ARTIST.get(ms.a) || []).filter(x => x.s.b !== s.b) : [];
   const mySongsHtml = mySongs.length ? `
   <h2>${isEn ? `${mName}'s other fancams by song` : `${mName} 다른 곡 직캠`}</h2>
-  <ul class="chips">
-    ${mySongs.slice(0, 16).map(x => `<li><a href="${SITE}/${memberSongPagePath(ms.a, x.s.b, lang)}" style="color:inherit;text-decoration:none">${escHtml(x.s.bilingualTitle || x.s.title)} <span style="color:rgba(160,180,230,0.6);font-size:11px">${x.n}</span></a></li>`).join('')}
-  </ul>${hubUrl ? `
+  <div class="sp-tiles">
+    ${mySongs.slice(0, 16).map(x => `<a class="sp-tile" href="${SITE}/${memberSongPagePath(ms.a, x.s.b, lang)}">${x.s.cover ? `<img src="${escHtml(x.s.cover)}" alt="" loading="lazy">` : `<span class="sp-tile-ph"></span>`}<span class="sp-tile-t">${escHtml(x.s.bilingualTitle || x.s.title)}</span><span class="sp-tile-n">${isEn ? `${x.n} fancams` : `직캠 ${x.n}`}</span></a>`).join('\n    ')}
+  </div>${hubUrl ? `
   <p class="lead"><a href="${hubUrl}">${isEn ? `All ${hubTotal} ${mName} fancams by song →` : `${mName} 직캠 전체 ${hubTotal}개 보기 →`}</a></p>` : ''}` : hubUrl ? `
   <p class="lead"><a href="${hubUrl}">${isEn ? `All ${hubTotal} ${mName} fancams by song →` : `${mName} 직캠 전체 ${hubTotal}개 보기 →`}</a></p>` : '';
   // '이어서' 카드(2026-11-12) — 정적 페이지 유입의 70%가 곡 페이지인데 재생 화면 '이어서'는 기본 카드 1개뿐이었다.

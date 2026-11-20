@@ -122,16 +122,21 @@
   // 영상 카드가 8개 이상인 첫 목록에만. 테두리 없는 글자 버튼(TASTE). 재생성 없이 전 페이지 적용.
   function fanBar(){
     try{
-      var grid=document.querySelector('.wrap>.mf-grid');if(!grid||grid.previousElementSibling&&grid.previousElementSibling.classList.contains('kpu-fbar'))return;
-      var cards=[].slice.call(grid.querySelectorAll('a.mf-card[href*="youtube.com/watch"],a.mf-card[href*="youtu.be/"]'));if(cards.length<8)return;
+      // 그룹·멤버 페이지는 첫 목록(.mf-grid) 하나, 곡별 페이지(곡·멤버×곡·직캠 전체)는 영상 격자(.grid) 전부를 한 도구 줄로 다룬다(2026-11-20 사용자 "곡별 직캠 페이지에도 같은 도구 줄").
+      // 곡 페이지의 예전 정렬 줄(#kpu-sortbar, 테두리 알약)은 이 줄로 대체.
+      var grid=document.querySelector('.wrap>.mf-grid'),grids=grid?[grid]:[].slice.call(document.querySelectorAll('.wrap .grid'));
+      if(document.getElementById('kpu-vids')&&document.getElementById('kpu-sortbar'))return; // 곡·멤버×곡 페이지는 seo_vids.js가 같은 모양의 도구 줄을 직접 그린다(목록을 그쪽이 다시 그리므로)
+      if(!grids.length||document.querySelector('.kpu-fbar'))return;grid=grids[0];
+      var cards=[];grids.forEach(function(g,gi){[].forEach.call(g.querySelectorAll('a.mf-card[href*="youtu"],a.card[href*="youtu"]'),function(c){c._g=g;cards.push(c);});});
+      if(cards.length<8)return;
       var en=/^en/i.test(document.documentElement.lang||'');
       var kindOf=function(s){s=s.toLowerCase();
         if(/보이스캠|voice ?cam/.test(s))return 'voice';
         if(/페이스캠|face ?cam|얼빡|최애직캠/.test(s))return 'face';
         if(/직캠|fan ?cam|focus ?cam|unfiltered cam|세로캠/.test(s))return 'full';
         return 'etc';};
-      var dateOf=function(c){var m=/(\d{4})\.(\d{2})\.(\d{2})/.exec((c.querySelector('.mf-y')||{}).textContent||'');return m?+(m[1]+m[2]+m[3]):0;};
-      cards.forEach(function(c,i){c._k=kindOf((c.querySelector('.mf-t')||c).textContent||'');c._i=i;c._d=dateOf(c);});
+      var dateOf=function(c){var m=/(\d{4})\.(\d{2})\.(\d{2})/.exec((c.querySelector('.mf-y,.card-y')||{}).textContent||'');return m?+(m[1]+m[2]+m[3]):0;};
+      cards.forEach(function(c,i){c._k=kindOf((c.querySelector('.mf-t,.card-t')||c).textContent||'');c._i=i;c._d=dateOf(c);});
       var cnt={};cards.forEach(function(c){cnt[c._k]=(cnt[c._k]||0)+1;});
       var kinds=[['all',en?'All':'전체'],['full',en?'Full body':'전신'],['face',en?'Face':'얼굴'],['voice',en?'Voice':'보이스']].filter(function(k){return k[0]==='all'||cnt[k[0]]>=2;});
       var st=document.createElement('style');
@@ -139,13 +144,17 @@
         +'.kpu-fbar button{background:none;border:0;padding:6px 0;margin:0;font:inherit;color:rgba(160,180,230,.7);cursor:pointer;-webkit-tap-highlight-color:transparent}'
         +'.kpu-fbar button.on{color:#f1f4ff;font-weight:650}.kpu-fbar .rt{margin-left:auto;display:flex;align-items:center;gap:16px}.kpu-fbar .rnd{color:rgba(190,205,250,.9)}.kpu-fbar button{white-space:nowrap}'
         +'@media(max-width:430px){.kpu-fbar{gap:4px 12px;font-size:13px}.kpu-fbar .rt{gap:12px}}'
-        +'.mf-card.kpu-hide{display:none}';
+        +'.mf-card.kpu-hide,.card.kpu-hide,.kpu-sec-hide{display:none!important}';
       document.head.appendChild(st);
       var bar=document.createElement('div');bar.className='kpu-fbar';
       var cur='all',byDate=false;
       var apply=function(){
         var arr=cards.slice().sort(function(x,y){return byDate?(y._d-x._d)||(x._i-y._i):x._i-y._i;});
-        arr.forEach(function(c){c.classList.toggle('kpu-hide',cur!=='all'&&c._k!==cur);grid.appendChild(c);});
+        arr.forEach(function(c){c.classList.toggle('kpu-hide',cur!=='all'&&c._k!==cur);c._g.appendChild(c);});
+        // 격자가 여럿인 페이지: 고른 종류가 하나도 없는 구획은 제목째 숨긴다(빈 제목만 남지 않게)
+        if(grids.length>1)grids.forEach(function(g){var any=!!g.querySelector('a:not(.kpu-hide)');g.classList.toggle('kpu-sec-hide',!any);
+          var h=g.previousElementSibling;if(h&&/^H2$/.test(h.nodeName))h.classList.toggle('kpu-sec-hide',!any);
+          var n=g.nextElementSibling;if(n&&n.classList&&n.classList.contains('lead'))n.classList.toggle('kpu-sec-hide',!any);});
         [].forEach.call(bar.querySelectorAll('button[data-k]'),function(b){b.classList.toggle('on',b.getAttribute('data-k')===cur);});
         sortB.textContent=byDate?(en?'Newest':'최신순'):(en?'Most viewed':'조회수순');
       };
@@ -189,7 +198,7 @@
     'Most viewed':['人気順','按播放量','依觀看數','Más vistos'],'Newest':['新着順','最新','最新','Recientes'],'Shuffle':['ランダム','随机播放','隨機播放','Aleatorio'],
     'Back':['戻る','返回','返回','Atrás'],'Close':['閉じる','关闭','關閉','Cerrar'],'Up next':['次の動画','接下来','接下來','A continuación'],'See more in the app':['アプリでもっと見る','在应用中查看更多','在應用程式中查看更多','Ver más en la app'],
     'Explore':['もっと見る','继续浏览','繼續瀏覽','Explorar'],'Profile · fancams · stages':['プロフィール・チッケム・ステージ','资料・直拍・舞台','資料・直拍・舞台','Perfil · fancams · presentaciones'],
-    'Show less':['閉じる','收起','收起','Ver menos'],'Add to favorites':['お気に入りに追加','加入收藏','加入收藏','Añadir a favoritos'],'In your favorites':['お気に入り登録済み','已收藏','已收藏','En tus favoritos'],
+    'Show less':['閉じる','收起','收起','Ver menos'],'Oldest':['古い順','最早','最早','Más antiguos'],'Newest fancams':['新着チッケム','最新直拍','最新直拍','Fancams más recientes'],'Oldest fancams':['古い順のチッケム','最早的直拍','最早的直拍','Fancams más antiguos'],'Newest fancams & stages':['新着チッケム・ステージ','最新直拍・舞台','最新直拍・舞台','Fancams y presentaciones más recientes'],'Oldest fancams & stages':['古い順のチッケム・ステージ','最早的直拍・舞台','最早的直拍・舞台','Fancams y presentaciones más antiguos'],'Add to favorites':['お気に入りに追加','加入收藏','加入收藏','Añadir a favoritos'],'In your favorites':['お気に入り登録済み','已收藏','已收藏','En tus favoritos'],
     'Open my universe':['マイユニバースを開く','打开我的宇宙','打開我的宇宙','Abrir mi universo'],'Trending fancams this week':['今週の人気チッケム','本周热门直拍','本週熱門直拍','Fancams en tendencia esta semana'],
     'Rankings ›':['ランキング ›','排行榜 ›','排行榜 ›','Rankings ›'],'Fancams posted in the last 7 days · trending':['直近7日のチッケム・人気順','最近7天的直拍・按热度','最近7天的直拍・依熱度','Fancams de los últimos 7 días · tendencia'],
     'Grand Prize':['大賞','大赏','大賞','Gran Premio'],'Song of the Year':['今年の歌','年度歌曲','年度歌曲','Canción del Año'],'Album of the Year':['今年のアルバム','年度专辑','年度專輯','Álbum del Año'],
@@ -236,6 +245,7 @@
     [/^([\d,]+) left ([\d,]+) traces this week$/,['今週$1人が$2件の足あと','本周$1人留下$2个足迹','本週$1人留下$2個足跡','$1 dejaron $2 huellas esta semana']],
     [/^([\d,]+) visited this week$/,['今週$1人が訪問','本周$1人来访','本週$1人來訪','$1 visitas esta semana']],
     [/^([\d,]+) visited so far$/,['これまで$1人が訪問','至今$1人来访','至今$1人來訪','$1 visitas hasta ahora']],
+    [/^Show more \((\d+) left\)$/,['もっと見る（残り$1本）','显示更多（剩余$1个）','顯示更多（剩餘$1個）','Ver más ($1 restantes)']],
     [/^(\d+)d ago$/,['$1日前','$1天前','$1天前','hace $1 d']],
     [/^New fancams & stages of (.+) will gather in your universe$/,['$1の新しいチッケム・ステージがあなたのユニバースに集まります','$1的新直拍・舞台会汇集到你的宇宙','$1的新直拍・舞台會匯集到你的宇宙','Los nuevos fancams y presentaciones de $1 se reunirán en tu universo']],
     [/^(.+) is already in your universe$/,['$1はすでにあなたのユニバースにいます','$1已在你的宇宙中','$1已在你的宇宙中','$1 ya está en tu universo']]
