@@ -86,6 +86,8 @@
     +'.meta .kpu-meta-link{display:inline-flex;align-items:center}.meta .kpu-meta-link a:not(.kpu-sns-ic){color:rgba(170,190,240,.82);text-decoration:none}'
     // 바로가기 칩·관련 목록의 둥근 네모 테두리 제거(2026-11-20 사용자 "버튼 디자인 거지같음, 테두리 지워") — 글자 링크로
     +'.hub-more a{padding:0;border:0;border-radius:0;background:none;color:rgba(170,190,240,.85);font-size:13.5px}.member-list,.discog-list{gap:6px 16px}.member-list li,.discog-list li{background:none;border:0;border-radius:0;padding:0}'
+    // 사진 줄 아래 소속 글자가 본문 크기로 커 보였다(멤버 페이지엔 .face-n 규칙이 없다) — 작고 흐리게, 한 줄로(2026-11-20 재생성 뒤 실페이지 확인)
+    +'.rel-faces .face-nm{font-size:12.5px}.rel-faces .face-n{display:block;font-size:11px;color:rgba(160,180,230,.65);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
     +'.member-list.jump{gap:4px 18px;margin-top:10px!important}.member-list.jump li,.member-list.rel li{background:none;border:0;border-radius:0;padding:0}'
     +'.member-list.jump a{color:rgba(170,190,240,.85);font-size:13.5px}.member-list.jump a:after{content:" ›";opacity:.6}.member-list.rel{gap:6px 16px}'
     +'.sns.kpu-sns-row{gap:14px;align-items:center;margin-top:12px}'
@@ -96,6 +98,8 @@
       // 재생성 전 페이지 보정(2026-11-20 사용자): 이름의 영문 괄호를 한 칸 띄어쓰기로('코르티스(CORTIS)'→'코르티스 CORTIS'), 바로가기 칩의 '멤버' 제거(바로 아래에 보인다)
       var h1=document.querySelector('.top2>h1');
       if(h1&&h1.childNodes.length===1&&h1.firstChild.nodeType===3){var m1=/^(.+?)\(([^()]+)\)$/.exec(h1.textContent.trim());if(m1)h1.textContent=m1[1]+' '+m1[2];}
+      // 페이지 아래 '링크' 묶음(나무위키·인스타 글자)은 위쪽 아이콘 줄과 같은 링크라 뺀다
+      [].forEach.call(document.querySelectorAll('.wrap>h2'),function(h){var tx=h.textContent.trim();if(tx!=='링크'&&tx!=='Links')return;var ul=h.nextElementSibling;if(ul&&ul.classList.contains('member-list')){ul.parentNode.removeChild(ul);h.parentNode.removeChild(h);}});
       var jm=document.querySelector('.member-list.jump a[href="#members"]');if(jm&&jm.parentNode)jm.parentNode.parentNode.removeChild(jm.parentNode);
       var meta=document.querySelector('.top2>.meta');if(!meta)return;
       var s0=meta.querySelector('span');if(s0&&s0.lastChild&&s0.lastChild.nodeType===3){var m2=/^(\s*.+?)\(([^()]+)\)\s*$/.exec(s0.lastChild.nodeValue);if(m2)s0.lastChild.nodeValue=m2[1]+' '+m2[2];}
