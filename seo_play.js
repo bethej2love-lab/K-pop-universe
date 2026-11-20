@@ -114,7 +114,51 @@
       if(links.length===1){var sp=document.createElement('span');sp.className='kpu-meta-link';sp.appendChild(links[0]);meta.appendChild(sp);sns.parentNode.removeChild(sns);}
     }catch(e){}
   }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',metaTidy);else metaTidy(); // 아주 좁은 폰(360)은 셋째 링크(모아보기)까지는 안 들어가 한 줄을 더 먹었다 — 그 폭에서만 뺀다
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',metaTidy);else metaTidy(); // 아래 주석은 다음 줄(fanBar)용
+  // ── 직캠 목록 도구 줄(2026-11-20) — 다른 직캠 사이트·팬 후기 비교에서 가져온 세 가지 ─────────────
+  // ①종류 구분: 같은 무대가 방송사마다 다른 이름으로 올라온다(입덕·MPD·안방1열·음중 = 전신/상반신, 페이스캠·얼빡·최애직캠 = 얼굴 위주, 보이스캠).
+  //   팬은 이 이름으로 골라 보는데 목록은 섞여 있었다 → '전체 · 전신 · 얼굴 · 보이스' 글자 칩(있는 종류만).
+  // ②정렬: 조회수순(기본) ↔ 최신순. ③랜덤 재생(직캠 사이트 moonpa의 랜덤 재생 방식 — 뭘 볼지 모를 때 한 번에).
+  // 영상 카드가 8개 이상인 첫 목록에만. 테두리 없는 글자 버튼(TASTE). 재생성 없이 전 페이지 적용.
+  function fanBar(){
+    try{
+      var grid=document.querySelector('.wrap>.mf-grid');if(!grid||grid.previousElementSibling&&grid.previousElementSibling.classList.contains('kpu-fbar'))return;
+      var cards=[].slice.call(grid.querySelectorAll('a.mf-card[href*="youtube.com/watch"],a.mf-card[href*="youtu.be/"]'));if(cards.length<8)return;
+      var en=/^en/i.test(document.documentElement.lang||'');
+      var kindOf=function(s){s=s.toLowerCase();
+        if(/보이스캠|voice ?cam/.test(s))return 'voice';
+        if(/페이스캠|face ?cam|얼빡|최애직캠/.test(s))return 'face';
+        if(/직캠|fan ?cam|focus ?cam|unfiltered cam|세로캠/.test(s))return 'full';
+        return 'etc';};
+      var dateOf=function(c){var m=/(\d{4})\.(\d{2})\.(\d{2})/.exec((c.querySelector('.mf-y')||{}).textContent||'');return m?+(m[1]+m[2]+m[3]):0;};
+      cards.forEach(function(c,i){c._k=kindOf((c.querySelector('.mf-t')||c).textContent||'');c._i=i;c._d=dateOf(c);});
+      var cnt={};cards.forEach(function(c){cnt[c._k]=(cnt[c._k]||0)+1;});
+      var kinds=[['all',en?'All':'전체'],['full',en?'Full body':'전신'],['face',en?'Face':'얼굴'],['voice',en?'Voice':'보이스']].filter(function(k){return k[0]==='all'||cnt[k[0]]>=2;});
+      var st=document.createElement('style');
+      st.textContent='.kpu-fbar{display:flex;align-items:center;gap:4px 16px;flex-wrap:wrap;margin:0 0 12px;font-size:13.5px}'
+        +'.kpu-fbar button{background:none;border:0;padding:6px 0;margin:0;font:inherit;color:rgba(160,180,230,.7);cursor:pointer;-webkit-tap-highlight-color:transparent}'
+        +'.kpu-fbar button.on{color:#f1f4ff;font-weight:650}.kpu-fbar .sp{flex:1}.kpu-fbar .rnd{color:rgba(190,205,250,.9)}'
+        +'.mf-card.kpu-hide{display:none}';
+      document.head.appendChild(st);
+      var bar=document.createElement('div');bar.className='kpu-fbar';
+      var cur='all',byDate=false;
+      var apply=function(){
+        var arr=cards.slice().sort(function(x,y){return byDate?(y._d-x._d)||(x._i-y._i):x._i-y._i;});
+        arr.forEach(function(c){c.classList.toggle('kpu-hide',cur!=='all'&&c._k!==cur);grid.appendChild(c);});
+        [].forEach.call(bar.querySelectorAll('button[data-k]'),function(b){b.classList.toggle('on',b.getAttribute('data-k')===cur);});
+        sortB.textContent=byDate?(en?'Newest':'최신순'):(en?'Most viewed':'조회수순');
+      };
+      if(kinds.length>2)kinds.forEach(function(k){var b=document.createElement('button');b.type='button';b.setAttribute('data-k',k[0]);b.textContent=k[1];
+        b.addEventListener('click',function(){cur=k[0];apply();try{log('fbar_'+k[0]);}catch(e){}});bar.appendChild(b);});
+      var sp=document.createElement('span');sp.className='sp';bar.appendChild(sp);
+      var sortB=document.createElement('button');sortB.type='button';sortB.addEventListener('click',function(){byDate=!byDate;apply();try{log('fbar_sort');}catch(e){}});bar.appendChild(sortB);
+      var rnd=document.createElement('button');rnd.type='button';rnd.className='rnd';rnd.textContent=en?'Shuffle':'랜덤 재생';
+      rnd.addEventListener('click',function(){var vis=cards.filter(function(c){return !c.classList.contains('kpu-hide');});if(!vis.length)return;try{log('fbar_random');}catch(e){}vis[Math.floor(Math.random()*vis.length)].click();});
+      bar.appendChild(rnd);
+      grid.parentNode.insertBefore(bar,grid);apply();
+    }catch(e){}
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',fanBar);else fanBar(); // 아주 좁은 폰(360)은 셋째 링크(모아보기)까지는 안 들어가 한 줄을 더 먹었다 — 그 폭에서만 뺀다
   // 폰(600px 이하): 이름 옆 원형 사진으로 — 이름 2줄 + 큰 대표 이미지(~200px)가 첫 화면을 나눠 써서 직캠이 아래로 밀렸다
   function compactHead(){
     if(innerWidth>600)return;
