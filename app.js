@@ -24359,24 +24359,29 @@ function _renderFeedListFacet(ctx){
     requestAnimationFrame(()=>{const on=seg.querySelector('.seg-btn.active');if(on){thumb.style.transition='none';place(on);requestAnimationFrame(()=>thumb.style.transition='');}});
   });
   // 고르기·정렬은 한 줄(bar)에, 탭은 각자 한 줄
-  const barFs=facets.filter(f=>f.ui==='pick'||f.ui==='sort');
+  const mkPick=f=>{
+    const allOpt=f.options.find(o=>o.v==='all');
+    const cur=f.options.find(o=>o.v===f.sel)||allOpt||f.options[0];
+    const on=!!allOpt&&cur!==allOpt;
+    const b=document.createElement('button');b.type='button';b.className='gc-vid-pick'+(on?' on':'');
+    b.innerHTML=(f.icon||'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="5.6" r="2.4"/><path d="M1.8 13.2c.5-2.3 2.2-3.6 4.2-3.6s3.7 1.3 4.2 3.6"/><circle cx="11.2" cy="6.2" r="1.9"/><path d="M10.6 9.7c1.7.1 3 1.2 3.5 3.1"/></svg>')+'<span class="lbl"></span><span class="x">'+(on?'✕':'▾')+'</span>';
+    b.querySelector('.lbl').textContent=lbl(cur);
+    b.addEventListener('click',e=>{
+      e.stopPropagation();
+      if(on&&e.target.closest('.x')){run(f,allOpt.v);return;} // ✕만 해제, 이름은 다시 고르기(카드 ♪ 곡과 같게)
+      const items=f.options.filter(o=>o!==allOpt).map(o=>({key:o.v,label:lbl(o),n:o.n,alt:[o.ko,o.en,o.v].filter(Boolean).join(' ')}));
+      _openPickSheet(f.pickTitle||(ko?'누구 영상 볼까요':'Show videos of'),ko?'고를 수 있는 팀이 없어요':'Nothing to pick',Promise.resolve(items),k=>run(f,k));
+    });
+    return b;
+  };
+  const tailFs=facets.filter(f=>f.ui==='pick'&&f.tail); // 마지막 탭 줄 오른쪽 끝에 붙는 고르기(행사 화면의 '누가')
+  const barFs=facets.filter(f=>(f.ui==='pick'&&!f.tail)||f.ui==='sort');
   if(barFs.length){
     // 세그먼트 줄에 같이 넣을 수 있으면 그 줄을 쓴다(위 _pickInSeg) — 아니면 예전처럼 따로 한 줄
     const bar=(_pickInSeg&&_segRow)?_segRow:document.createElement('div');if(bar!==_segRow)bar.className='fl-facet-row fl-bar';
     barFs.forEach(f=>{
       if(f.ui==='pick'){
-        const allOpt=f.options.find(o=>o.v==='all');
-        const cur=f.options.find(o=>o.v===f.sel)||allOpt||f.options[0];
-        const on=!!allOpt&&cur!==allOpt;
-        const b=document.createElement('button');b.type='button';b.className='gc-vid-pick'+(on?' on':'');
-        b.innerHTML=(f.icon||'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="5.6" r="2.4"/><path d="M1.8 13.2c.5-2.3 2.2-3.6 4.2-3.6s3.7 1.3 4.2 3.6"/><circle cx="11.2" cy="6.2" r="1.9"/><path d="M10.6 9.7c1.7.1 3 1.2 3.5 3.1"/></svg>')+'<span class="lbl"></span><span class="x">'+(on?'✕':'▾')+'</span>';
-        b.querySelector('.lbl').textContent=lbl(cur);
-        b.addEventListener('click',e=>{
-          e.stopPropagation();
-          if(on&&e.target.closest('.x')){run(f,allOpt.v);return;} // ✕만 해제, 이름은 다시 고르기(카드 ♪ 곡과 같게)
-          const items=f.options.filter(o=>o!==allOpt).map(o=>({key:o.v,label:lbl(o),n:o.n,alt:[o.ko,o.en,o.v].filter(Boolean).join(' ')}));
-          _openPickSheet(f.pickTitle||(ko?'누구 영상 볼까요':'Show videos of'),ko?'고를 수 있는 팀이 없어요':'Nothing to pick',Promise.resolve(items),k=>run(f,k));
-        });
+        const b=mkPick(f);
         bar.appendChild(b);
       }else{
         let i=Math.max(0,f.options.findIndex(o=>o.v===f.sel));
@@ -24406,6 +24411,9 @@ function _renderFeedListFacet(ctx){
     _enableDragScroll(row);
     const on=row.querySelector('.gc-ch-filter.active');if(on&&on.offsetLeft>row.clientWidth-40)row.scrollLeft=Math.max(0,on.offsetLeft-row.offsetLeft-40);
   });
+  if(tailFs.length){const rows=el.querySelectorAll('.fl-tabs');const last=rows[rows.length-1];
+    if(last){last.classList.add('fl-has-tail');tailFs.forEach(f=>{const b=mkPick(f);b.classList.add('fl-tail');last.appendChild(b);});}
+    else{const bar=document.createElement('div');bar.className='fl-facet-row fl-bar';tailFs.forEach(f=>bar.appendChild(mkPick(f)));el.appendChild(bar);}}
 }
 function _openFeedListOverlay(title,sub,songs,ctx){
   const _flChem=(ctx&&Array.isArray(ctx.chem)&&ctx.chem.length>=2)?ctx.chem:null;
@@ -27760,6 +27768,9 @@ const _evKind=v=>{
   return'other';
 };
 const _evIsStage=v=>_evKind(v)==='stage';
+// 수상 장면·소감 영상 — 제목에 수상·소감·대상·winner·speech가 있는 것(무대 종류와 별개로 본다)
+const _EV_AWARD_RE=/수상|소감|대상|본상|신인상|winner|acceptance|speech|올해의 (?:가수|노래|앨범|아티스트)|of the year/i;
+const _evIsAward=v=>_EV_AWARD_RE.test(v.title||'');
 // who: 'all' | 'fav'(★ 즐겨찾기) | 그룹 키 — 프로그램 모아보기(_programFacetView)와 같은 '누가' 줄(2026-10-28 사용자 "시상식 창도 칩 구성 맞추기")
 async function _openEventPage(id,ed,view,who,_view){
   const s=_EVENT_SERIES.find(x=>x.id===id);if(!s)return;
@@ -27783,6 +27794,10 @@ async function _openEventPage(id,ed,view,who,_view){
   }
   if(!view)view='stage';
   const edAll=rows.filter(v=>v._ed===ed);
+  // '수상' 칸(2026-11-21 사용자 "무대·직캠·전체뿐인데 수상 옵션도") — 수상 목록(awards/행사-연도.json, 있는 회차만) + 수상 장면·소감 영상
+  let _awJson=null;try{if(ed)_awJson=await _awardFile({id,edition:String(ed).slice(0,4)});}catch(e){}
+  if(intent!==_feedListIntent)return;
+  const _hasAwList=!!(_awJson&&Array.isArray(_awJson.categories)&&_awJson.categories.length);
   // 누가 — 이 회차에 나온 그룹(게스트 포함) 영상 수 순 20개, 즐겨찾기는 이 회차에 하나라도 있을 때만
   const hasFav=(favGroups.size+favMembers.size)>0&&edAll.some(_PF_FAVHIT);
   const gCnt={};edAll.forEach(v=>{if(v.group_ko)gCnt[v.group_ko]=(gCnt[v.group_ko]||0)+1;});
@@ -27792,7 +27807,9 @@ async function _openEventPage(id,ed,view,who,_view){
   // 고른 칸이 비면(비하인드만 있는 회차) 직캠 → 전체 — 빈 화면을 만들지 않는다
   if(view==='stage'&&!inEd.some(_evIsStage))view=inEd.some(v=>_evKind(v)==='fancam')?'fancam':'all';
   if(view==='fancam'&&!inEd.some(v=>_evKind(v)==='fancam'))view='all';
-  const list=(view==='all'?inEd:inEd.filter(v=>_evKind(v)===view)).sort((a,b)=>(b.view_count||0)-(a.view_count||0));
+  const _hasAward=_hasAwList||inEd.some(_evIsAward);
+  if(view==='award'&&!_hasAward)view='all';
+  const list=(view==='all'?inEd:view==='award'?inEd.filter(_evIsAward):inEd.filter(v=>_evKind(v)===view)).sort((a,b)=>(b.view_count||0)-(a.view_count||0));
   const vidUrl=x=>_isShortV(x)?`https://youtube.com/shorts/${x.id}`:`https://www.youtube.com/watch?v=${x.id}`;
   const songs=list.slice(0,300).map(x=>({..._rowTags(x),t:x.title,u:vidUrl(x),thumb:x.thumb,vc:x.view_count,dur:x.duration_sec,pa:x.published_at?.slice(0,10),_apiId:x.id,_apiGroupKo:x.group_ko}));
   const sub=!ed?(isKo?'아직 모인 영상이 없어요':'No videos yet')
@@ -27800,15 +27817,25 @@ async function _openEventPage(id,ed,view,who,_view){
   Object.assign(st,{ed,view,who}); // 정규화된 선택도 다음 축 변경이 함께 유지한다.
   const facets=[];
   if(eds.length)facets.push({key:'ed',labelKo:'',labelEn:'',scroll:eds.length>6,sel:ed,options:eds.map(e=>({v:e,ko:_evEdLabel(e),en:_evEdLabel(e)})),onPick:v=>_openEventPage(id,v,undefined,undefined,st)});
-  if(ed)facets.push({key:'view',labelKo:'',labelEn:'',sel:view,options:[{v:'stage',ko:'무대',en:'Stages'},{v:'fancam',ko:'직캠',en:'Fancams'},{v:'all',ko:'전체',en:'All'}].filter(o=>o.v!=='fancam'||inEd.some(v=>_evKind(v)==='fancam')),onPick:v=>_openEventPage(id,undefined,v,undefined,st)});
+  if(ed)facets.push({key:'view',labelKo:'',labelEn:'',sel:view,options:[{v:'stage',ko:'무대',en:'Stages'},{v:'fancam',ko:'직캠',en:'Fancams'},{v:'award',ko:'수상',en:'Awards'},{v:'all',ko:'전체',en:'All'}].filter(o=>(o.v!=='fancam'||inEd.some(v=>_evKind(v)==='fancam'))&&(o.v!=='award'||_hasAward)),onPick:v=>_openEventPage(id,undefined,v,undefined,st)});
   if(ed&&(hasFav||tops.length>1)){
     const whoOpts=[{v:'all',ko:'전체',en:'All'}];
     if(hasFav)whoOpts.push({v:'fav',ko:'★ 즐겨찾기',en:'★ Favorites'});
     tops.forEach(g=>whoOpts.push({v:g,ko:g,en:(GROUPS[g]&&GROUPS[g].en)||g}));
-    facets.push({key:'who',ui:'pick',sel:who,options:whoOpts,onPick:v=>_openEventPage(id,undefined,undefined,v,st)});
+    // tail: 종류 탭(무대·직캠·수상·전체) 줄 오른쪽 끝에 붙인다 — 따로 한 줄을 쓰지 않는다(2026-11-21 사용자 "상단 고정 영역이 너무 크다, 사람 선택은 무대·전체 줄 오른쪽으로")
+    facets.push({key:'who',ui:'pick',tail:true,sel:who,options:whoOpts,onPick:v=>_openEventPage(id,undefined,undefined,v,st)});
   }
   _feedListRankedNext=false;
-  _openFeedListOverlay(s.ko,sub,songs,{facets,attend:ed?{id:id,ed:ed,label:s.ko.replace(/\s*\(.*\)$/,'')+' '+_evEdLabel(ed)}:null});
+  // 수상 칸: 수상 목록을 머리 영역으로(영상 목록과 같이 스크롤). 이번 주 소식의 '수상 목록' 펼침(_awardFillDetail)과 같은 모양.
+  let head=null;
+  if(view==='award'&&_hasAwList){head=document.createElement('div');head.className='ev-award-head fa-detail';try{_awardFillDetail(head,{id,edition:String(ed).slice(0,4)});}catch(e){}}
+  _openFeedListOverlay(s.ko,sub,songs,{facets,head,attend:ed?{id:id,ed:ed,label:s.ko.replace(/\s*\(.*\)$/,'')+' '+_evEdLabel(ed)}:null});
+  // 부제의 개최 장소는 누르면 공연장 창으로(2026-11-21 사용자 "교세라 돔도 클릭하면 공연장 정보")
+  try{const place=ed&&_evPlace(id,ed),subEl=document.getElementById('feed-list-sub');
+    if(place&&subEl&&subEl.textContent.includes(place)){const [pre,post]=subEl.textContent.split(place);subEl.textContent='';
+      const b=document.createElement('button');b.type='button';b.className='fl-sub-place';b.textContent=place;
+      b.addEventListener('click',e=>{e.stopPropagation();_gaEvent('event_place_click',{});_openVenueEvents(place);});
+      subEl.append(document.createTextNode(pre),b,document.createTextNode(post||''));}}catch(e){}
 }
 // ── Events 선반(2026-10-16, 행사 3단계) ─────────────────────────────────────────────────────────────
 // ① 다가오는 행사: **공식 발표로 확인된 일정만** 손으로 적는다(추측 날짜 금지 — 2026-10-16 웹 확인, 출처는 src).

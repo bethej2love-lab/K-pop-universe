@@ -2537,8 +2537,19 @@
      (2026-08-12, 사용자 요청). 내 컬렉션일 때만 연필 아이콘으로 수정 가능, 남의 공개 컬렉션은 있을
      때만(비어있으면 행 자체를 숨김) 읽기 전용으로 노출. */
   #feed-list-desc-row{display:flex;align-items:center;gap:6px;margin-top:5px;}
-  #feed-list-attend-row{margin-top:7px;}
-  #feed-list-attend{font-size:12.5px;padding:7px 12px;border-radius:10px;}
+  /* 행사 화면 '다녀왔어요' — 상자 버튼 대신 부제 아래 작은 글자(2026-11-21 사용자 "너무 짜친다", 상단 고정 영역 줄이기) */
+  #feed-list-attend-row{margin-top:2px;}
+  #feed-list-attend{font-size:12.5px;font-weight:500;padding:4px 0;border:0;border-radius:0;background:none;color:rgba(170,195,255,0.9);min-height:0;}
+  #feed-list-attend.on{color:rgba(226,234,252,0.95);font-weight:600;background:none;}
+  /* 부제 속 개최 장소 — 누르면 공연장 창 */
+  .fl-sub-place{background:none;border:0;padding:0;margin:0;font:inherit;color:inherit;cursor:var(--kpu-cursor-pointer,pointer);-webkit-tap-highlight-color:transparent;}
+  .fl-sub-place::after{content:" ›";opacity:.6;}
+  /* 종류 탭 줄 오른쪽 끝의 '누가' 고르기 */
+  #feed-list-facets .fl-tabs.fl-has-tail{align-items:center;flex-wrap:nowrap;}
+  #feed-list-facets .fl-tabs .fl-tail{margin-left:auto;flex:none;}
+  #feed-list-facets .fl-tabs .fl-tail .lbl{max-width:8em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:none;}
+  #feed-list-facets .fl-tabs .fl-tail .ic{flex:none;width:16px;height:16px;}
+  .ev-award-head{grid-column:1/-1;padding:2px 4px 14px;}
   #feed-list-desc{font-size:var(--fz-body);color:rgba(200,215,250,0.72);line-height:1.4;}
   #feed-list-desc.placeholder{color:rgba(140,165,220,0.41);font-style:italic;}
   #feed-list-desc-edit{background:none;border:none;color:rgba(140,165,220,0.38);font-size:11px;cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M11,1 L12.3,9.7 L21,11 L12.3,12.3 L11,21 L9.7,12.3 L1,11 L9.7,9.7Z' fill='%23FFB0D0' opacity='.97'/></svg>") 11 11,pointer;padding:1px 4px;flex-shrink:0;}

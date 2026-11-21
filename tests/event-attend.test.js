@@ -39,7 +39,7 @@ check('알려진 일정(MMA 2026)은 날짜·장소가 붙는다', () => {
   assert.equal(ev.date_start, '2026-11-14'); assert.equal(ev.venue, '고척스카이돔');
 });
 check('모르는 시리즈는 null', () => assert.equal(vm.runInContext("_evLogAsEvent('EV:none:2026')", box), null));
-check('행사 페이지가 다녀왔어요 정보(ctx.attend)를 넘긴다', () => assert.ok(/_openFeedListOverlay\(s\.ko,sub,songs,\{facets,attend:ed\?/.test(src)));
+check('행사 페이지가 다녀왔어요 정보(ctx.attend)를 넘긴다', () => assert.ok(/_openFeedListOverlay\(s\.ko,sub,songs,\{facets,head,attend:ed\?/.test(src)));
 check('마이페이지 목록은 행사 키를 DB 조회에서 뺀다', () => assert.ok(/filter\(x=>!_isEvLogId\(x\)\)/.test(src)));
 check('검색에서 공연을 고르면 공연 창을 연다', () => assert.ok(/if\(h\.type==='event'\)\{[\s\S]{0,600}_openConcertSheet\(ev\)/.test(src)));
 console.log(fail ? '실패 ' + fail : '🎉 행사 다녀왔어요 테스트 통과');

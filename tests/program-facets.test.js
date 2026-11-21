@@ -63,7 +63,8 @@ async function ev(c,x){const r=await c.send('Runtime.evaluate',{expression:x,ret
       favGroups.clear();favMembers.clear();favGroups.add('르세라핌'); // 이 세션에서만(저장 안 함)
       await _openProgramCollection(_PROGRAM_COLLECTIONS.find(x=>x.key==='itslive'));await S(800);
       const rows=()=>[...document.querySelectorAll('#feed-list-facets .fl-tabs')].map(r=>[...r.querySelectorAll('.gc-ch-filter')].map(b=>b.textContent));
-      const pickBtn=()=>document.querySelector('#feed-list-facets .fl-bar .gc-vid-pick');
+      // 고르기 버튼 — 프로그램 화면은 따로 한 줄(.fl-bar), 시상식 화면은 종류 탭 줄 오른쪽 끝(.fl-tail, 2026-11-21 사용자 "상단이 너무 크다")
+      const pickBtn=()=>document.querySelector('#feed-list-facets .fl-bar .gc-vid-pick, #feed-list-facets .fl-tabs .gc-vid-pick.fl-tail');
       const sortBtn=()=>document.querySelector('#feed-list-facets .fl-bar .tvf-sort');
       const pickItems=async()=>{pickBtn().click();await S(400);const it=[...document.querySelectorAll('#vid-song-sheet-ov .vss-item .t')].map(x=>x.textContent);return {it,search:!!document.querySelector('#vid-song-sheet-ov .vss-search')};};
       const pickFav=async()=>{const b=[...document.querySelectorAll('#vid-song-sheet-ov .vss-item')].find(x=>x.querySelector('.t').textContent===(currentLang==='ko'?'★ 즐겨찾기':'★ Favorites'));if(!b)throw new Error('즐겨찾기 선택 항목 없음');b.click();
