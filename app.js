@@ -12285,6 +12285,11 @@ function showT(a,cx,cy,keepNavStack,urlMode,_unusedPushMobNav,noFly){
     tcoEl.appendChild(chip);
     if(p.type==='agency'&&_CO_URL[p.value]){const coLink=document.createElement('a');coLink.href=_CO_URL[p.value];coLink.target='_blank';coLink.rel='noopener noreferrer';coLink.className='co-ext-link';coLink.textContent='↗';coLink.title=p.value+' 홈페이지';tcoEl.appendChild(coLink);}
   });
+  // 입덕 가이드 입구 — 정보 칩 줄 끝에 조용한 글자 링크(따로 줄을 만들지 않는다)
+  {const gk=_ytGroupKoFor(a);if(sb&&gk&&!String(gk).includes('#')){
+    if(_tcoParts.length){const sep=document.createElement('span');sep.textContent='·';sep.style.cssText='color:rgba(120,145,195,0.35);font-size:9px;margin:0 2px;vertical-align:middle;';tcoEl.appendChild(sep);}
+    const gb=document.createElement('button');gb.type='button';gb.className='starter-link';gb.textContent=currentLang==='ko'?'입덕 가이드':'Start here';
+    gb.addEventListener('click',e=>{e.stopPropagation();_openStarterGuide(gk,a);});tcoEl.appendChild(gb);}}
   document.getElementById('tm').innerHTML='';
   const tv=document.getElementById('tv');
   const _grpSongs=_aGroups.flatMap(g=>(GROUPS[g.ko]||{}).songs||[]);
@@ -16627,6 +16632,8 @@ function showGC(ko,cx,cy,keepMemberPanel,skipRipple,urlMode,_unusedPushMobNav){
       }
     }
   }
+  // 입덕 가이드 입구(데뷔 줄 오른쪽 끝) — 어느 그룹인지 버튼에 적어 둔다(카드가 복제돼 id가 지워져도 눌리게 클래스 위임)
+  document.querySelectorAll('#gc .gc-guide-btn').forEach(b=>{b.hidden=!sb;b.dataset.gko=ko;b.textContent=currentLang==='ko'?'입덕 가이드':'Start here';b.onclick=e=>{e.stopPropagation();_openStarterGuide(ko,null);};});
   const fandomRow=document.getElementById('gc-fandom-row');
   const fandomEl=document.getElementById('gc-fandom');
   const _fandomDisplay=_fandomText(info.fandom);
@@ -19346,6 +19353,56 @@ const SCRAP_KEY='kpu_scraps';
 let scraps=JSON.parse(localStorage.getItem(SCRAP_KEY)||'[]');
 function _scrapId(s){return s.u;}
 function _isScraped(s){return scraps.some(x=>x.u===_scrapId(s));}
+// ── 입덕 가이드(2026-11-21 사용자 "입덕 가이드 좋아, 깃발은 사실 입덕 가이드 목적이었다 — 병합하든 디벨롭하든") ──────────────
+// 한국 팬 커뮤니티에서는 '뭐부터 봐야 해?'에 팬이 손으로 입덕 가이드 글을 쓴다. 우리는 그룹·멤버마다 영상 태깅이 있으니 그 코스를 자동으로 만든다:
+//   (내 입덕 영상 = 깃발) → 대표곡 MV → 무대 → 직캠(그룹은 멤버마다 가장 많이 본 것 하나씩) → 예능·자컨.
+// 화면은 새로 짜지 않고 영상 목록 화면의 섹션(ctx.sections)에 얹는다. 입구: 그룹 카드 정보 줄 '입덕 가이드', 멤버 카드 정보 칩 끝.
+// 깃발(내가 입덕한 영상, 아티스트당 1개)은 이 가이드의 **첫 칸**으로 병합 — 기록 자체와 깃발 버튼은 그대로 둔다.
+// ⏳ 여러 사람의 깃발을 모아 '팬들이 입덕한 영상' 순위로 쓰려면 서버 집계(공개 RPC)가 필요하다 — DB 작업이라 노트북 세션 몫.
+let _starterReq=0;
+async function _openStarterGuide(gko,art){
+  if(!sb||!gko)return;
+  const ko=currentLang==='ko',req=++_starterReq; // 목록 화면이 자기 순번(_feedListIntent)을 올리므로 따로 센다
+  const name=art?_dispName(art):_gLabelKo(gko);
+  const title=ko?`${name} 입덕 가이드`:`Getting into ${name}`;
+  _openFeedListOverlay(title,ko?'불러오는 중…':'Loading…',[],{});
+  const esc=x=>String(x).replace(/["\\]/g,'');
+  const base=()=>{let q=sb.from(_YT_TABLE).select(_FEED_COLS()).is('unavailable_at',null).eq('group_ko',gko)
+      .or('content_flag.is.null,content_flag.not.in.("보류","hidden","무관")');
+    if(art)q=q.contains('members',[art.name.ko]);
+    return q.order('view_count',{ascending:false,nullsFirst:false});};
+  const get=q=>Promise.resolve(q).then(r=>Array.isArray(r&&r.data)?_filterBannedVideos(r.data):[],()=>[]);
+  const [mv,live,cam,variety]=await Promise.all([
+    get(base().eq('category','mv').eq('is_short',false).limit(12)),
+    get(base().eq('category','live').eq('is_short',false).limit(30)),
+    get(base().eq('category','live').eq('is_short',false).or('title_norm.ilike.%직캠%,title_norm.ilike.%fancam%').limit(art?12:60)),
+    get(base().eq('category','variety').limit(10)),
+  ]);
+  if(req!==_starterReq)return;
+  const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+  const song=v=>({..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),groupKo:v.group_ko,memberKos:v.members||[],_apiId:v.id,_apiGroupKo:v.group_ko});
+  const used=new Set(),take=(arr,n,ok)=>{const out=[];for(const v of arr){if(out.length>=n)break;if(used.has(v.id)||(ok&&!ok(v)))continue;used.add(v.id);out.push(song(v));}return out;};
+  const isCam=v=>/직캠|fan ?cam|focus ?cam|페이스캠|face ?cam|얼빡/i.test(v.title||'');
+  const noTeaser=v=>!/teaser|티저|trailer|트레일러|preview|highlight medley|behind|비하인드|making/i.test(v.title||'');
+  const sections=[];
+  // 내 입덕 영상(깃발)
+  const fl=flagVideos[_flagArtistKey(gko,art?art.name.ko:'')];
+  if(fl&&fl.ytId){used.add(fl.ytId);sections.push({title:ko?'내 입덕 영상':'Where I started',songs:[{t:fl.title,u:`https://www.youtube.com/watch?v=${fl.ytId}`,thumb:fl.thumb,groupKo:gko,memberKos:art?[art.name.ko]:[],_apiId:fl.ytId,_apiGroupKo:gko}]});}
+  const s1=take(mv,3,noTeaser);if(s1.length)sections.push({title:ko?'대표곡':'Signature songs',songs:s1});
+  const s2=take(live,4,v=>!isCam(v));if(s2.length)sections.push({title:ko?'무대':'Stages',songs:s2});
+  let s3;
+  if(art)s3=take(cam,4);
+  else{ // 그룹: 멤버마다 가장 많이 본 직캠 하나씩(태그가 한 명뿐인 영상), 최대 8명
+    const seen=new Set();s3=take(cam,8,v=>{const m=v.members||[];if(m.length!==1||seen.has(m[0]))return false;seen.add(m[0]);return true;});
+    if(s3.length<2)s3=s3.concat(take(cam,4-s3.length));
+  }
+  if(s3.length)sections.push({title:ko?(art?'직캠':'멤버 직캠'):(art?'Fancams':'Member fancams'),songs:s3});
+  const s4=take(variety,4);if(s4.length)sections.push({title:ko?'예능 · 자컨':'Variety & originals',songs:s4});
+  const all=sections.flatMap(x=>x.songs);
+  _gaEvent('starter_guide',{kind:art?'member':'group',n:all.length});
+  if(!all.length){_openFeedListOverlay(title,ko?'아직 모인 영상이 없어요':'No videos yet',[],{});return;}
+  _openFeedListOverlay(title,ko?`처음이라면 이 순서로 · 영상 ${all.length}개`:`Start here · ${all.length} videos`,all,{sections});
+}
 // ── 하트 기록 활용(2026-11-21 사용자 "즐겨찾기·좋아요 기록으로 더 나은 경험을") ─────────────────────────────
 // ① 즐겨찾기 제안: 즐겨찾기하지 않은 멤버(없으면 그룹) 영상에 하트를 3번 누르면 한 번만 "즐겨찾기할까요?"를 띄운다.
 //    즐겨찾기가 없으면 For You가 비어 있는데, 하트는 이미 누르고 있는 사람이 많다 — 그 신호를 즐겨찾기로 잇는다. 같은 대상은 다시 묻지 않는다(localStorage).
