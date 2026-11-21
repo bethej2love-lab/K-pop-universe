@@ -19371,11 +19371,13 @@ async function _openStarterGuide(gko,art){
       .or('content_flag.is.null,content_flag.not.in.("보류","hidden","무관")');
     if(art)q=q.contains('members',[art.name.ko]);
     return q.order('view_count',{ascending:false,nullsFirst:false});};
+  // 무대·직캠은 비하인드·리액션 같은 '무대 아닌 live'를 빼는 공통 조건을 거친다
+  const liveQ=()=>{const q=base();return _applyLiveExclude(q.eq('category','live')).eq('is_short',false);};
   const get=q=>Promise.resolve(q).then(r=>Array.isArray(r&&r.data)?_filterBannedVideos(r.data):[],()=>[]);
   const [mv,live,cam,variety]=await Promise.all([
     get(base().eq('category','mv').eq('is_short',false).limit(12)),
-    get(base().eq('category','live').eq('is_short',false).limit(30)),
-    get(base().eq('category','live').eq('is_short',false).or('title_norm.ilike.%직캠%,title_norm.ilike.%fancam%').limit(art?12:60)),
+    get(liveQ().limit(30)),
+    get(liveQ().or('title_norm.ilike.%직캠%,title_norm.ilike.%fancam%').limit(art?12:60)),
     get(base().eq('category','variety').limit(10)),
   ]);
   if(req!==_starterReq)return;
@@ -19474,7 +19476,7 @@ function toggleScrap(s,ctx){
     if(!c.groupKo&&(s.groupKo||s._apiGroupKo))c.groupKo=s.groupKo||s._apiGroupKo;
     if(!c.memberKo&&Array.isArray(s.memberKos)&&s.memberKos.length===1)c.memberKo=s.memberKos[0];
     delete c.chem;
-    scraps.unshift({t:s.t,u:s.u,...c});
+    scraps.unshift({t:s.t,u:s.u,...c,at:Date.now()}); // at: 언제 눌렀나 — 덕질 결산의 '이번 달 하트'
   }
   localStorage.setItem(SCRAP_KEY,JSON.stringify(scraps));_sbPushColumn('scraps',scraps);
   if(nowScrapped){try{_favSuggest(scraps[0]);}catch(e){}}
@@ -20206,6 +20208,7 @@ function renderFlagList(){
   const el=document.getElementById('flag-list');
   const sec=document.getElementById('flag-section');
   if(!el||!sec)return;
+  try{_renderMyRecap();}catch(e){} // '나' 탭 목록이 그려질 때 덕질 결산 한 줄도 같이
   const vEntries=Object.values(flagVideos).map(f=>({...f,_kind:'video'}));
   const aEntries=Object.values(flagAlbums).map(f=>({...f,_kind:'album'}));
   const entries=[...vEntries,...aEntries].sort((a,b)=>(b.at||'')>(a.at||'')?1:-1);
@@ -20901,6 +20904,7 @@ function _appendFavRow(el,{tag,name,sub,imgUrl,colorArr,people,bdayDays,annivDay
 }
 let _favListGen=0;
 async function renderFavList(){
+  try{_renderMyRecap();}catch(e){}
   const el=document.getElementById('fav-list');if(!el)return;
   // 우주 카드 아이콘은 궤도로 모을 그룹/멤버가 하나라도 있을 때만. favConnections(연결선 즐겨찾기)는
   // 카드 구도에 참여하지 않으므로 여기 안 센다 — 세면 "만들 게 없는" 카드가 열린다.
@@ -25044,8 +25048,75 @@ function _buildFeedForYouAnniv(){
 // 가장 싸고 강한 패턴. 서버 저장 없이 로컬 기기 기준(localStorage)으로만 최근 20개, id 중복은 최신
 // 시청으로 앞당김. openLightbox를 여는 모든 경로(그룹/멤버 카드, 탐험 패널, 라이트박스 자동재생 등)에서
 // 공통으로 호출되므로 어디서 봤든 다 기록된다.
+// ── 덕질 결산(2026-11-21 사용자 "입덕 가이드·덕질 결산 둘 다 좋아") ─────────────────────────────────────────
+// 한국 팬 앱들(블립 팬로그·아임덕 주간 리포트·체키록)이 채우는 니즈: 내가 이번 달 누구를·무엇을 얼마나 봤나.
+// 최근 본 영상 기록은 20개뿐이라 결산을 못 만든다 → 재생할 때마다 **달별 집계**를 따로 쌓는다(이 기기 localStorage, 서버로 안 보냄).
+//   L[YYYY-MM]={n:재생 수, d:{일:1}, g:{그룹:n}, m:{'그룹:멤버':n}, v:{영상id:{n,t,thumb,u,g,m}}} — 영상은 달마다 150개까지, 달은 최근 13개.
+// 화면: '나' 탭 맨 위 한 줄('11월 · 영상 34 · 12일 / 성현 12 · 코르티스 20') → 누르면 결산 목록(많이 본 멤버·그룹, 많이 본 영상, 이번 달 하트).
+// 오늘부터 쌓이므로 지난달 이전은 없다. ⏳ 공유용 이미지, 지난달 넘겨 보기, 기기 간 동기화(user_data 칸 필요 — DB 작업).
+const _WATCH_LOG_KEY='kpu_watch_log';
+function _watchYm(d){return new Date((d||Date.now())+9*3600e3).toISOString().slice(0,7);} // KST 기준 달
+function _watchLogLoad(){try{const o=JSON.parse(localStorage.getItem(_WATCH_LOG_KEY)||'{}');return o&&typeof o==='object'?o:{};}catch(e){return {};}}
+function _watchLogAdd(vid,song){
+  if(!vid)return;
+  try{
+    const L=_watchLogLoad(),ym=_watchYm(),day=new Date(Date.now()+9*3600e3).toISOString().slice(8,10);
+    const M=L[ym]||(L[ym]={n:0,d:{},g:{},m:{},v:{}});
+    M.n++;M.d[day]=1;
+    const g=song&&song.groupKo||'',ms=(song&&Array.isArray(song.memberKos)?song.memberKos:[]).filter(Boolean).slice(0,6);
+    if(g)M.g[g]=(M.g[g]||0)+1;
+    ms.forEach(m=>{const k=g+':'+m;M.m[k]=(M.m[k]||0)+1;});
+    const e=M.v[vid]||(M.v[vid]={n:0,t:(song&&song.t)||'',thumb:(song&&song.thumb)||'',u:(song&&song.u)||'',g,m:ms});
+    e.n++;
+    const ids=Object.keys(M.v);if(ids.length>150)ids.sort((a,b)=>M.v[a].n-M.v[b].n).slice(0,ids.length-150).forEach(id=>delete M.v[id]);
+    const yms=Object.keys(L).sort();while(yms.length>13)delete L[yms.shift()];
+    localStorage.setItem(_WATCH_LOG_KEY,JSON.stringify(L));
+  }catch(e){}
+}
+function _recapOf(ym){
+  const M=_watchLogLoad()[ym];if(!M)return null;
+  const top=(o,n)=>Object.entries(o||{}).sort((a,b)=>b[1]-a[1]).slice(0,n);
+  const hearts=(typeof scraps!=='undefined'?scraps:[]).filter(x=>x&&x.at&&_watchYm(x.at)===ym);
+  return{ym,n:M.n||0,days:Object.keys(M.d||{}).length,topM:top(M.m,3),topG:top(M.g,3),
+    topV:Object.entries(M.v||{}).sort((a,b)=>b[1].n-a[1].n).slice(0,6).map(([id,v])=>Object.assign({id},v)),hearts};
+}
+function _recapMonthLabel(ym){const m=+ym.slice(5,7);return currentLang==='ko'?m+'월':new Date(Date.UTC(+ym.slice(0,4),m-1,1)).toLocaleString('en-US',{month:'long',timeZone:'UTC'});}
+function _recapNames(r){
+  const mem=r.topM.map(([k,n])=>{const i=k.indexOf(':'),g=k.slice(0,i),m=k.slice(i+1);const a=(typeof _artistByNameGroup==='function'&&_artistByNameGroup(m,g))||null;return [(a?_dispName(a):m),n];});
+  const grp=r.topG.map(([g,n])=>[GROUPS[g]?_gLabelKo(g):g,n]);
+  return{mem,grp};
+}
+function _renderMyRecap(){
+  const el=document.getElementById('my-recap');if(!el)return;
+  const r=_recapOf(_watchYm());
+  if(!r||r.n<3){el.hidden=true;return;}
+  const ko=currentLang==='ko',{mem,grp}=_recapNames(r);
+  el.hidden=false;el.innerHTML='';
+  const a=document.createElement('span');a.className='rc-a';a.textContent=ko?`${_recapMonthLabel(r.ym)} · 영상 ${r.n} · ${r.days}일`:`${_recapMonthLabel(r.ym)} · ${r.n} videos · ${r.days} days`;
+  const b=document.createElement('span');b.className='rc-b';b.textContent=[...mem.slice(0,2),...grp.slice(0,1)].map(x=>x[0]+' '+x[1]).join(' · ');
+  el.append(a,b);
+  if(!el._w){el._w=1;el.addEventListener('click',e=>{e.stopPropagation();_openRecap(_watchYm());});}
+}
+function _openRecap(ym){
+  const r=_recapOf(ym);if(!r)return;
+  const ko=currentLang==='ko',{mem,grp}=_recapNames(r);
+  const head=document.createElement('div');head.className='recap-head';
+  const row=(k,arr)=>{if(!arr.length)return;const d=document.createElement('div');d.className='recap-row';const kk=document.createElement('span');kk.className='k';kk.textContent=k;
+    const vv=document.createElement('span');vv.className='v';arr.forEach(([nm,n],i)=>{if(i)vv.appendChild(document.createTextNode(' · '));const sp=document.createElement('span');sp.textContent=nm+' ';const c=document.createElement('i');c.textContent=n;sp.appendChild(c);vv.appendChild(sp);});
+    d.append(kk,vv);head.appendChild(d);};
+  row(ko?'멤버':'Members',mem);row(ko?'그룹':'Groups',grp);
+  const song=v=>({t:v.t,u:v.u||`https://www.youtube.com/watch?v=${v.id}`,thumb:v.thumb||`https://i.ytimg.com/vi/${v.id}/mqdefault.jpg`,groupKo:v.g||v.groupKo||'',memberKos:v.m||(v.memberKo?[v.memberKo]:[]),_apiId:v.id||ytId(v.u||''),_apiGroupKo:v.g||v.groupKo||''});
+  const sections=[];
+  if(r.topV.length)sections.push({title:ko?'가장 많이 본 영상':'Most watched',songs:r.topV.map(song)});
+  if(r.hearts.length)sections.push({title:ko?'이번 달 하트':'Hearts this month',songs:r.hearts.slice(0,6).map(song)});
+  _gaEvent('recap_open',{n:r.n});
+  _openFeedListOverlay(ko?`${_recapMonthLabel(ym)} 덕질 결산`:`${_recapMonthLabel(ym)} recap`,
+    ko?`본 영상 ${r.n}개 · ${r.days}일${r.hearts.length?' · 하트 '+r.hearts.length:''}`:`${r.n} videos · ${r.days} days${r.hearts.length?' · '+r.hearts.length+' hearts':''}`,
+    sections.flatMap(x=>x.songs),{head,sections});
+}
 const _RECENT_VIEW_KEY='_kpu_recent_vids';
 function _recordRecentView(vid,song,shorts){
+  try{_watchLogAdd(vid,song);}catch(e){}
   try{
     let arr=JSON.parse(localStorage.getItem(_RECENT_VIEW_KEY)||'[]');
     arr=arr.filter(v=>v.id!==vid);
