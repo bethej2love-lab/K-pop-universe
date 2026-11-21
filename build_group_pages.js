@@ -2592,8 +2592,8 @@ function buildRankPages() {
   const thisYear = +TODAY_ISO.slice(0, 4);
   const defs = [
     { slug: '', ko: '아이돌 직캠 조회수 순위 TOP 100 (역대)', en: 'Most Viewed K-pop Fancams of All Time — TOP 100', koShort: '역대', enShort: 'All time', f: () => true },
-    { slug: 'girls', ko: '여자 아이돌 직캠 조회수 순위 TOP 100', en: 'Most Viewed Girl Group Fancams — TOP 100', koShort: '여자 아이돌', enShort: 'Girl groups', f: x => x.g === 'f' },
-    { slug: 'boys', ko: '남자 아이돌 직캠 조회수 순위 TOP 100', en: 'Most Viewed Boy Group Fancams — TOP 100', koShort: '남자 아이돌', enShort: 'Boy groups', f: x => x.g === 'm' },
+    { slug: 'girls', ko: '여자 아이돌 직캠 조회수 순위 TOP 100', en: 'Most Viewed Girl Group Fancams — TOP 100', koShort: '걸그룹', enShort: 'Girl groups', f: x => x.g === 'f' },
+    { slug: 'boys', ko: '남자 아이돌 직캠 조회수 순위 TOP 100', en: 'Most Viewed Boy Group Fancams — TOP 100', koShort: '보이그룹', enShort: 'Boy groups', f: x => x.g === 'm' },
   ];
   for (let y = thisYear; y >= thisYear - 7; y--) defs.push({ slug: String(y), ko: `${y} 아이돌 직캠 조회수 순위 TOP 100`, en: `Most Viewed K-pop Fancams of ${y} — TOP 100`, koShort: `${y}`, enShort: `${y}`, f: x => String(x.v.published_at || '').slice(0, 4) === String(y) });
   const built = defs.map(d => ({ d, list: all.filter(d.f).slice(0, RANK_TOP) })).filter(x => x.list.length >= 20);
@@ -2612,7 +2612,8 @@ function buildRankPages() {
         : `아이돌 개인 직캠 조회수 순위${d.slug ? `(${d.koShort})` : ''} TOP ${list.length}. 1위 ${gn(top)} ${nm(top)} ${SEO.fmtViews(top.v.view_count, false)}. 매주 갱신.`;
       const jsonLd = { '@context': 'https://schema.org', '@type': 'ItemList', name: h1, url: selfUrl,
         itemListElement: list.slice(0, 20).map((x, i) => ({ '@type': 'ListItem', position: i + 1, url: `https://www.youtube.com/watch?v=${x.v.id}`, name: x.v.title })) };
-      const cards = list.map((x, i) => `<a class="card" href="https://www.youtube.com/watch?v=${x.v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/${x.v.id}/mqdefault.jpg" alt="" loading="lazy"><span class="rank-n">${i + 1}</span></span><span class="card-t">${escHtml(x.v.title)}</span><span class="card-y">${escHtml(`${nm(x)} · ${gn(x)}`)} · ${[x.v.published_at ? String(x.v.published_at).slice(0, 10).replace(/-/g, '.') : '', SEO.fmtVC(x.v.view_count)].filter(Boolean).join(' · ')}</span></a>`).join('\n    ');
+      // data-g: 그룹 성별(f·m·coed) — 순위 페이지 도구 줄의 걸그룹·보이그룹·혼성 고르기(seo_play.js fanBar)가 읽는다(2026-11-21 사용자 "보이·걸·혼성 선택")
+      const cards = list.map((x, i) => `<a class="card" data-g="${x.g || ''}" href="https://www.youtube.com/watch?v=${x.v.id}" target="_blank" rel="noopener"><span class="card-th"><img src="https://i.ytimg.com/vi/${x.v.id}/mqdefault.jpg" alt="" loading="lazy"><span class="rank-n">${i + 1}</span></span><span class="card-t">${escHtml(x.v.title)}</span><span class="card-y">${escHtml(`${nm(x)} · ${gn(x)}`)} · ${[x.v.published_at ? String(x.v.published_at).slice(0, 10).replace(/-/g, '.') : '', SEO.fmtVC(x.v.view_count)].filter(Boolean).join(' · ')}</span></a>`).join('\n    ');
       // 같은 순위 표에서 1~20위 멤버의 직캠 모음 페이지로(내부 링크)
       const seen = new Set(), who = [];
       list.slice(0, 40).forEach(x => { const k = x.gko + '|' + x.a.name.ko; if (seen.has(k) || who.length >= 20) return; seen.add(k); who.push(x); });

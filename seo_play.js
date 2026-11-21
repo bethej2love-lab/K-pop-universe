@@ -143,23 +143,30 @@
       st.textContent='.kpu-fbar{display:flex;align-items:center;gap:4px 16px;flex-wrap:wrap;margin:0 0 12px;font-size:13.5px}'
         +'.kpu-fbar button{background:none;border:0;padding:6px 0;margin:0;font:inherit;color:rgba(160,180,230,.7);cursor:pointer;-webkit-tap-highlight-color:transparent}'
         +'.kpu-fbar button.on{color:#f1f4ff;font-weight:650}.kpu-fbar .rt{margin-left:auto;display:flex;align-items:center;gap:16px}.kpu-fbar .rnd{color:rgba(190,205,250,.9)}.kpu-fbar button{white-space:nowrap}'
-        +'@media(max-width:430px){.kpu-fbar{gap:4px 12px;font-size:13px}.kpu-fbar .rt{gap:12px}}'
+        +'.kpu-fbar .gd{display:flex;align-items:center;gap:16px;margin-left:10px}'
+        +'@media(max-width:430px){.kpu-fbar{gap:4px 12px;font-size:13px}.kpu-fbar .rt{gap:12px}.kpu-fbar .gd{gap:12px;margin-left:8px}}'
         +'.mf-card.kpu-hide,.card.kpu-hide,.kpu-sec-hide{display:none!important}';
       document.head.appendChild(st);
       var bar=document.createElement('div');bar.className='kpu-fbar';
-      var cur='all',byDate=false;
+      var cur='all',byDate=false,curG='';
+      // 순위 페이지: 카드에 그룹 성별(data-g)이 있으면 걸그룹·보이그룹·혼성 고르기(2026-11-21 사용자) — 다시 누르면 해제. 표현은 앱과 같은 '걸그룹/보이그룹'.
+      var gCnt={};cards.forEach(function(c){c._gd=c.getAttribute('data-g')||'';if(c._gd)gCnt[c._gd]=(gCnt[c._gd]||0)+1;});
+      var gKinds=[['f',en?'Girl groups':'걸그룹'],['m',en?'Boy groups':'보이그룹'],['coed',en?'Co-ed':'혼성']].filter(function(k){return gCnt[k[0]]>=1;});if(gKinds.length<2)gKinds=[];
       var apply=function(){
         var arr=cards.slice().sort(function(x,y){return byDate?(y._d-x._d)||(x._i-y._i):x._i-y._i;});
-        arr.forEach(function(c){c.classList.toggle('kpu-hide',cur!=='all'&&c._k!==cur);c._g.appendChild(c);});
+        arr.forEach(function(c){c.classList.toggle('kpu-hide',(cur!=='all'&&c._k!==cur)||(!!curG&&c._gd!==curG));c._g.appendChild(c);});
         // 격자가 여럿인 페이지: 고른 종류가 하나도 없는 구획은 제목째 숨긴다(빈 제목만 남지 않게)
         if(grids.length>1)grids.forEach(function(g){var any=!!g.querySelector('a:not(.kpu-hide)');g.classList.toggle('kpu-sec-hide',!any);
           var h=g.previousElementSibling;if(h&&/^H2$/.test(h.nodeName))h.classList.toggle('kpu-sec-hide',!any);
           var n=g.nextElementSibling;if(n&&n.classList&&n.classList.contains('lead'))n.classList.toggle('kpu-sec-hide',!any);});
         [].forEach.call(bar.querySelectorAll('button[data-k]'),function(b){b.classList.toggle('on',b.getAttribute('data-k')===cur);});
+        [].forEach.call(bar.querySelectorAll('button[data-gd]'),function(b){b.classList.toggle('on',b.getAttribute('data-gd')===curG);});
         sortB.textContent=byDate?(en?'Newest':'최신순'):(en?'Most viewed':'조회수순');
       };
       if(kinds.length>2)kinds.forEach(function(k){var b=document.createElement('button');b.type='button';b.setAttribute('data-k',k[0]);b.textContent=k[1];
         b.addEventListener('click',function(){cur=k[0];apply();try{log('fbar_'+k[0]);}catch(e){}});bar.appendChild(b);});
+      if(gKinds.length){var gw=document.createElement('span');gw.className='gd';gKinds.forEach(function(k){var b=document.createElement('button');b.type='button';b.setAttribute('data-gd',k[0]);b.textContent=k[1];
+        b.addEventListener('click',function(){curG=curG===k[0]?'':k[0];apply();try{log('fbar_g_'+k[0]);}catch(e){}});gw.appendChild(b);});bar.appendChild(gw);}
       var rt=document.createElement('span');rt.className='rt';bar.appendChild(rt);
       var sortB=document.createElement('button');sortB.type='button';sortB.addEventListener('click',function(){byDate=!byDate;apply();try{log('fbar_sort');}catch(e){}});rt.appendChild(sortB);
       var rnd=document.createElement('button');rnd.type='button';rnd.className='rnd';rnd.textContent=en?'Shuffle':'랜덤 재생';
