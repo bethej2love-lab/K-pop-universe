@@ -1764,6 +1764,8 @@
     /* 사진이 화면 맨 위(상태바 밑)에 딱 붙어 보기 불편했다(2026-10-21 제보) — 위에 닫기 버튼 줄만큼 띄운다. 닫기 버튼도 사진 위가 아니라 그 줄에 */
     #igv-panel{flex-direction:column;width:100vw;max-width:100vw;height:100dvh;border-radius:0;padding-top:calc(env(safe-area-inset-top,0px) + 52px);box-sizing:border-box;}
     #igv-media{flex:0 0 auto;min-width:0;max-height:62dvh;}
+    /* 가로로 긴 사진: 위 여백을 더 줘서 사진·정보를 화면 가운데 쪽으로(편집 중엔 제외) */
+    #igv-overlay:not(.igv-editing) #igv-panel.igv-wide{padding-top:calc(env(safe-area-inset-top,0px) + 52px + 9dvh);}
     #igv-img{max-width:100vw;max-height:62dvh;}
     /* 여러 장이면 틀을 첫 장 비율로 고정하고 가로 사진은 그 가운데(인스타와 같게, 2026-10-30) */
     #igv-media.igv-framed{width:100%;aspect-ratio:1 / var(--igv-ar);max-height:62dvh;}

@@ -25665,7 +25665,11 @@ function _openIgViewer(m,handle,idx){
   // 사진 틀 비율 = 첫 장 비율(인스타와 같게, 2026-10-30 사용자 "가로 사진은 위에 붙이지 말고 가운데"). 장마다 틀 높이가 바뀌면 가로 사진이
   // 위로 붙고 본문이 따라 올라왔다. 여러 장일 때만 — 한 장은 그 사진 비율 그대로. 인스타 허용 범위(1.91:1~3:4)로 자른다.
   {const md=ov.querySelector('#igv-media');md.classList.remove('igv-framed');md.style.removeProperty('--igv-ar');
-   if(pics.length>1){const f=new Image();f.onload=()=>{if(!_igv||_igv.pics!==pics||!f.naturalWidth)return;md.style.setProperty('--igv-ar',String(Math.min(Math.max(f.naturalHeight/f.naturalWidth,0.52),1.34)));md.classList.add('igv-framed');};f.src=pics[0];}}
+   // 가로로 긴 사진(첫 장 기준)은 폰에서 위에 붙어 아래가 휑했다(2026-11-21 사용자 "가로가 긴 사진만 있는 경우 위 여백을 더 줘서 좀 더 아래에") — 패널에 igv-wide를 달아 CSS가 위 여백을 늘린다
+   const pn=ov.querySelector('#igv-panel');pn&&pn.classList.remove('igv-wide');
+   if(pics.length){const f=new Image();f.onload=()=>{if(!_igv||_igv.pics!==pics||!f.naturalWidth)return;const ar=f.naturalHeight/f.naturalWidth;
+     if(pn)pn.classList.toggle('igv-wide',ar<0.85);
+     if(pics.length>1){md.style.setProperty('--igv-ar',String(Math.min(Math.max(ar,0.52),1.34)));md.classList.add('igv-framed');}};f.src=pics[0];}}
   const ko=currentLang==='ko',own=_igOwners().get(handle),ig=_igMap.get(handle);
   _igv.owner=own||null;
   ov.querySelector('#igv-name').textContent=own?own.name:(_igMagNames.get(handle)||('@'+handle));
