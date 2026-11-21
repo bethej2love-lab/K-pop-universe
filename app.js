@@ -29101,8 +29101,9 @@ async function _buildFeedMore(reset){
 }
 // For You 선반 기본 순서(index.html과 같게) + '오늘 일어난 일' 끌어올림(2026-11-04).
 // 2026-11-15 사용자 "사진이 보기 편하니 인스타를 비디오보다 위에" — favig를 favnew 앞으로(index.html DOM 순서도 함께 변경).
-const _FY_ORDER=['feed-recent-section','feed-favig-section','feed-favnew-section','feed-redisc-section','feed-favnews-section','feed-favalbum-section','feed-favchart-section',
-  'feed-favconcert-section','feed-foryou-anniv-section'];
+// Rediscover(예전에 본 것 다시)는 새 소식 선반들 **아래**로(2026-11-21 사용자 "너무 위에 보인다, 아래로") — 새 영상·뉴스·앨범·차트·공연·기념일 다음, More for you 바로 위.
+const _FY_ORDER=['feed-recent-section','feed-favig-section','feed-favnew-section','feed-favnews-section','feed-favalbum-section','feed-favchart-section',
+  'feed-favconcert-section','feed-foryou-anniv-section','feed-redisc-section'];
 function _fyUrgent(id,on){const el=document.getElementById(id);if(!el)return;const v=on?'1':'';if((el.dataset.urgent||'')===v)return;el.dataset.urgent=v;_fyReorder();}
 function _fyReorder(){
   const els=_FY_ORDER.map(id=>document.getElementById(id)).filter(Boolean);if(els.length<2)return;
