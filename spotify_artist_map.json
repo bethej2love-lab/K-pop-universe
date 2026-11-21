@@ -1040,6 +1040,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "다비치": {
+    "id": "4z6yrDz5GfKXkeQZjOaZdq",
+    "spotifyName": "DAVICHI",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-11-21"
+  },
   "다이고": {
     "id": "4qA6lhHIE0czZQ3xNd1b9e",
     "spotifyName": "Daigo",
@@ -1105,6 +1116,17 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-09-29"
+  },
+  "더로즈": {
+    "id": "5na1LmEmK2VzNLje9snJYW",
+    "spotifyName": "The Rose",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-11-21"
   },
   "더보이즈": {
     "id": "0CmvFWTX9zmMNCUi6fHtAx",
@@ -2157,6 +2179,17 @@
     },
     "checkedAt": "2026-09-15"
   },
+  "베스티": {
+    "id": "1HiZjIv6iLp9cs5vX0AJKo",
+    "spotifyName": "BESTie",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-11-21"
+  },
   "베이비돈크라이": {
     "id": "0dXoF2Q2WnVrhRT26SJNvs",
     "spotifyName": "Baby DONT Cry",
@@ -3199,6 +3232,17 @@
       "titleOverlap": 0
     },
     "checkedAt": "2026-10-10"
+  },
+  "씨야": {
+    "id": "3Mbxr8TL0Sny7dUNicKWm2",
+    "spotifyName": "SeeYa",
+    "kind": "group",
+    "confidence": "low",
+    "why": "동명 후보 2명 중 앨범 대조",
+    "evidence": {
+      "titleOverlap": 0
+    },
+    "checkedAt": "2026-11-21"
   },
   "씨엔블루": {
     "id": "6dCz3spfpIvqqqsIoP6wXi",
@@ -6170,6 +6214,17 @@
       "titleOverlap": 1
     },
     "checkedAt": "2026-09-17"
+  },
+  "크로스진": {
+    "id": "5xKVZmAj8EnT9X9Acz1Qvv",
+    "spotifyName": "CROSS GENE",
+    "kind": "group",
+    "confidence": "medium",
+    "why": "이름 유일 일치",
+    "evidence": {
+      "titleOverlap": null
+    },
+    "checkedAt": "2026-11-21"
   },
   "크리스": {
     "id": "7bXgB6jMjp9ATFy66eO08Z",
