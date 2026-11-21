@@ -427,7 +427,7 @@ function _coverChips(gko, s, lang) {
 }
 function grpCard(gko, lang) {
   const info = groups[gko]; if (!info) return null; const isEn = lang === 'en';
-  const gi = ogImageForGroup(gko, info);
+  const gi = groupFaceUrl(gko) || ogImageForGroup(gko, info);
   return { k: isEn ? 'Group' : '그룹', t: isEn ? (info.en || gko) : gko, s: isEn ? 'Stages · MVs · members' : '무대 · 뮤비 · 멤버', im: /og-image\.png$/.test(gi) ? '' : gi.replace('/maxresdefault.', '/mqdefault.').replace('/hq720.', '/mqdefault.'), h: SITE + '/' + groupPagePath(gko, lang) };
 }
 function groupNextJson(gko, lang) {
@@ -635,7 +635,7 @@ ${SEO_GA_TAG}
   <a class="brand" href="${SITE}/${isEn ? 'en/all/' : 'all/'}" style="margin-left:10px;">${isEn ? 'Browse all' : '모아보기'}</a>
   <div class="top2">
     <h1>${escHtml(spacedLabel(displayName,subName))}</h1>
-    ${(() => { const pic = groupPicUrl(ko); return pic ? `<img class="cover avatar" src="${pic}" alt="${escHtml(displayName)}" loading="eager" width="240" height="240">` : `<img class="cover" src="${ogImage}" alt="${escHtml(displayName)}" loading="lazy">`; })()}
+    ${(() => { const pic = groupFaceUrl(ko); return pic ? `<img class="cover avatar" src="${pic}" alt="${escHtml(displayName)}" loading="eager" width="240" height="240">` : `<img class="cover" src="${ogImage}" alt="${escHtml(displayName)}" loading="lazy">`; })()}
     <div class="meta">
       ${debutIso ? `<span><b>${debutLabel}</b> ${escHtml(info.debut)}</span>` : ''}
       ${agency ? `<span><b>${agencyLabel}</b> ${escHtml(agency)}</span>` : ''}
@@ -655,7 +655,7 @@ ${SEO_GA_TAG}
   ${(() => { const rel = relatedGroups(ko); return rel.length ? `
     <h2>${isEn ? 'Related groups' : '함께 보면 좋은 그룹'}</h2>
     <div class="faces rel-faces">
-      ${rel.map(k => { const pic = groupPicUrl(k), img = pic || ogImageForGroup(k, groups[k]); return `<a class="face" href="${SITE}/${groupPagePath(k, lang)}"><span class="face-img">${img ? `<img${pic ? ' class="pf"' : ''} src="${img}" alt="" loading="lazy">` : ''}</span><span class="face-nm">${escHtml(isEn ? (groups[k].en || k) : k)}</span></a>`; }).join('\n      ')}
+      ${rel.map(k => { const pic = groupFaceUrl(k), img = pic || ogImageForGroup(k, groups[k]); return `<a class="face" href="${SITE}/${groupPagePath(k, lang)}"><span class="face-img">${img ? `<img${pic ? ' class="pf"' : ''} src="${img}" alt="" loading="lazy">` : ''}</span><span class="face-nm">${escHtml(isEn ? (groups[k].en || k) : k)}</span></a>`; }).join('\n      ')}
     </div>` : ''; })()}
   <div class="lang-switch"><a href="${altUrl}">${isEn ? '한국어로 보기' : 'View in English'}</a> · <a href="${SITE}/about.html">${isEn ? 'About · removal requests' : '사이트 소개 · 삭제 요청'}</a></div>
   <div class="cta-dock"><a class="cta" href="${SITE}/${deepLinkHash}">${isEn ? 'View videos in the Universe →' : '직캠·영상 아카이브 보기 →'}</a></div>
@@ -1247,6 +1247,15 @@ async function fetchProfilePics() {
   console.log(`프로필 사진 ${PROFILE_PICS.size}장(그룹 ${rows.filter(r => !r.ko_name).length})`);
 }
 function groupPicUrl(gko) { return PROFILE_PICS.get(picKey(gko, '')) || null; }
+// 등록 사진이 없는 그룹의 얼굴 — 영상 썸네일(멤버 한 명 직캠·예능 장면일 수 있다) 대신 최신 앨범 커버(2026-11-21 사용자 "미쓰에이·씨엔블루·아이덴티티처럼 프로필이 그룹 전체를 대변하지 못하는 경우").
+// 커버는 그룹 전체의 얼굴이고 정사각이라 원형 칸에도 맞는다. OST·참여 앨범은 뺀다. 커버도 없으면 null(호출부가 영상 썸네일로).
+function groupCoverUrl(gko) {
+  const d = ((groups[gko] || {}).discography || []).filter(a => a && a.cover && !/ost/i.test(String(a.type || '')) && !/OST|Original Sound ?track/i.test(String(a.title || '')));
+  if (!d.length) return null;
+  d.sort((x, y) => String(y.releaseDate || '').localeCompare(String(x.releaseDate || '')));
+  return d[0].cover;
+}
+function groupFaceUrl(gko) { return groupPicUrl(gko) || groupCoverUrl(gko) || null; }
 // 멤버 큰 원을 눌렀을 때 갈 인스타(2026-11-18 사용자 "카드 프로필 사진이 인스타 프로필인 경우 클릭하면 인스타로") —
 // 개인 인스타 링크가 있고 사진 출처가 위버스·유튜브로 기록되지 않았을 때만(출처 빈칸 1,306장은 대개 인스타 프로필로 지정한 것).
 function memberPicInstagram(a) {
@@ -1901,7 +1910,7 @@ function nextItemsJson(a, lang) {
   if (songs[0]) items.push(songItem(songs[0]));
   if (songs[0]) { const mate = (MEMBER_SONGS_BY_SONG.get(gko + '|' + songs[0].s.b) || []).find(y => y.a !== a); if (mate) { const v = topVid(mate.vids);
     items.push({ k: isEn ? 'Same song' : '같은 곡', t: `${nm(mate.a)} · ${songs[0].s.title}`, s: isEn ? `${mate.vids.length} fancams` : `직캠 ${mate.vids.length}개`, img: v ? v.id : '', m: songs[0].s.title, h: `${SITE}/${memberSongPagePath(mate.a, songs[0].s.b, lang)}` }); } }
-  { const G = isEn ? (groups[gko].en || gko) : gko; const gi = ogImageForGroup(gko, groups[gko]);
+  { const G = isEn ? (groups[gko].en || gko) : gko; const gi = groupFaceUrl(gko) || ogImageForGroup(gko, groups[gko]);
     items.push({ k: isEn ? 'Group' : '그룹', t: G, s: isEn ? 'Stages · MVs · members' : '무대 · 뮤비 · 멤버', im: /og-image\.png$/.test(gi) ? '' : gi.replace('/maxresdefault.', '/mqdefault.').replace('/hq720.', '/mqdefault.'), h: `${SITE}/${groupPagePath(gko, lang)}` }); }
   const c = chemPartnersOf(a)[0];
   if (c) { const key = [a, c.other].map(x => x.name.ko + '~' + c.g).join(',');
@@ -2331,7 +2340,7 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
     const topV = vs => (vs || []).slice().sort((p, q) => (q.view_count || 0) - (p.view_count || 0))[0];
     const memItem = (x, title) => { const v = topV(x.vids); const nm = isEn ? x.nmEn : x.nm;
       return { k: isEn ? 'Member fancams' : '멤버 직캠', t: `${nm} · ${title}`, s: isEn ? `${x.vids.length} fancams` : `직캠 ${x.vids.length}개`, img: v ? v.id : '', m: title, h: `${SITE}/${memberSongPagePath(x.a, s.b, lang)}` }; };
-    const grpItem = () => { const gi = ogImageForGroup(gko, info);
+    const grpItem = () => { const gi = groupFaceUrl(gko) || ogImageForGroup(gko, info);
       return { k: isEn ? 'Group' : '그룹', t: gName, s: isEn ? 'Stages · MVs · members' : '무대 · 뮤비 · 멤버', im: /og-image\.png$/.test(gi) ? '' : gi.replace('/maxresdefault.', '/mqdefault.').replace('/hq720.', '/mqdefault.'), h: `${SITE}/${groupPagePath(gko, lang)}` }; };
     const items = [];
     if (ms) {
@@ -2465,7 +2474,7 @@ function buildAllIndexPages(relPages) {
     // 그룹: 프로필 원형 사진(없으면 대표 썸네일)
     // 그룹 줄은 가나다순 앞 48팀이 아니라 만들 때마다 무작위 48팀(2026-11-21 사용자 "디폴트가 가나다순 — 랜덤이 어때") — 늘 같은 팀만 보이지 않게. 전체는 '전체 보기'(/g/)
     const gPick = groupKos.slice(); for (let i = gPick.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [gPick[i], gPick[j]] = [gPick[j], gPick[i]]; }
-    const gFaces = gPick.slice(0, 48).map(k => { const img = groupPicUrl(k) || ogImageForGroup(k, groups[k]); return `<a class="face" href="${SITE}/${groupPagePath(k, lang)}"><span class="face-img"><img src="${img}" alt="" loading="lazy"></span><span class="face-n">${escHtml(isEn ? (groups[k].en || k) : k)}</span></a>`; }).join('');
+    const gFaces = gPick.slice(0, 48).map(k => { const img = groupFaceUrl(k) || ogImageForGroup(k, groups[k]); return `<a class="face" href="${SITE}/${groupPagePath(k, lang)}"><span class="face-img"><img src="${img}" alt="" loading="lazy"></span><span class="face-n">${escHtml(isEn ? (groups[k].en || k) : k)}</span></a>`; }).join('');
     const stats = [[fmt(groupKos.length), T('그룹', 'groups')], [fmt(nMember), T('멤버·솔로', 'artists')], [fmt(nSong), T('곡', 'songs')], [fmt(nAlbum), T('앨범', 'albums')], [fmt(nFancam), T('직캠 모음', 'fancam hubs')], [fmt(nShowEp), T('음방 회차', 'show episodes')]]
       .map(([n, l]) => `<li><b>${n}</b><span>${l}</span></li>`).join('');
     const nav = [['top-cams', T('최근 직캠', 'Recent')], ['groups', T('그룹', 'Groups')], ['ranks', T('직캠 순위', 'Fancam rankings')], ['shows', T('음악방송', 'Music shows')], ['wins', T('1위 기록', 'Wins')], ['born', T('생년', 'Birth years')], ['agency', T('기획사', 'Agencies')], ['programs', T('프로그램', 'Programs')], ['relations', T('커버·콜라보', 'Covers & collabs')], ['awards', T('시상식', 'Awards')]]
