@@ -313480,5 +313480,109 @@
       "bugs": "https://music.bugs.co.kr/artist/80053703"
     },
     "id": "a1897"
+  },
+  {
+    "name": {
+      "ko": "혜연",
+      "en": "Hyeyeon"
+    },
+    "group": {
+      "ko": "베스티",
+      "en": "BESTie"
+    },
+    "co": "YNB엔터테인먼트",
+    "active": true,
+    "color": [
+      232,
+      150,
+      178
+    ],
+    "bday": "1990.12.08",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {},
+    "id": "a1899"
+  },
+  {
+    "name": {
+      "ko": "유지",
+      "en": "UJi"
+    },
+    "group": {
+      "ko": "베스티",
+      "en": "BESTie"
+    },
+    "co": "YNB엔터테인먼트",
+    "active": true,
+    "color": [
+      232,
+      150,
+      178
+    ],
+    "bday": "1991.01.02",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {},
+    "id": "a1900"
+  },
+  {
+    "name": {
+      "ko": "다혜",
+      "en": "Dahye"
+    },
+    "group": {
+      "ko": "베스티",
+      "en": "BESTie"
+    },
+    "co": "YNB엔터테인먼트",
+    "active": true,
+    "color": [
+      232,
+      150,
+      178
+    ],
+    "bday": "1993.06.12",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {},
+    "id": "a1901"
+  },
+  {
+    "name": {
+      "ko": "해령",
+      "en": "Haeryung"
+    },
+    "group": {
+      "ko": "베스티",
+      "en": "BESTie"
+    },
+    "co": "YNB엔터테인먼트",
+    "active": true,
+    "color": [
+      232,
+      150,
+      178
+    ],
+    "bday": "1994.11.11",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {},
+    "id": "a1902"
   }
 ]

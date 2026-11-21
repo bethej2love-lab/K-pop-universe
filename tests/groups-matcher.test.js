@@ -34,7 +34,8 @@ const COMMON_NOUN_GATE = new Set(['카드', '아이콘', '시그니처', '위너
 const HASHTAG_ONLY_GROUPS = new Set(['에이스', '하이라이트']);
 // 근거 동반 그룹 (admin.js _GROUP_TOKEN_NEEDS_CORROBORATION) — 그룹명 단독은 null, 멤버명·곡명이 같이 있어야 인정
 // 퍼즐(2026-10-26): 곡명 puzzle·퀸덤퍼즐·드라마 나인 퍼즐이 그룹으로 잡히던 것
-const CORROBORATION_GROUPS = new Set(['퍼즐']);
+// 베스티(2026-11-21): 'bestie'·'베스티'가 '찐친'이란 일상어 — 곡명·멤버명·제목 맨 앞 표기가 같이 있어야 인정
+const CORROBORATION_GROUPS = new Set(['퍼즐', '베스티']);
 
 // CLI 옵션
 const args = process.argv.slice(2);

@@ -9297,6 +9297,7 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // 사고, _atmStripSurname 주석). 조사가 붙으면 토큰 경계에서 이미 걸러지지만 이 단어들은 단독으로도 흔하다.
   const _ATM_COMMON_KO_WORDS=new Set(['도시', /* 2026-11-18 검수: 퍼플키스 장은성 별칭 '도시'가 '첫 도시 보고타' 같은 제목에 콜라보로 8건 */ '베이비','하루','하늘','바다','봄','여름','겨울','별','사랑','달','천사','하트','메이','가을','노을','소원','하나','루비','미소','마이','렉스',
     '우리','한국','아이','정신','학년','형식','성원','나은','수원','수정','준수',
+    '유지', // 2026-11-21 베스티 유지(U.JI) 추가 — '체중 유지 비결'이 베스티 유지로 잡혔다(추가 직후 시험). 그룹 근거·해시태그가 있을 때만
     // 2026-10-12 티오원 전수(사용자: "티오원 오태깅 엄청 많다"): 여정(전여여정 별칭 — "특별한 여정"·"다이어트 여정"·
     // 포레스텔라 '사랑의 여정' 등 수십 건)·민수(가수 민수·최민수)·경호(슬기로운의사생활 캐릭터·"경호원"). 티오원 확정
     // 문맥(자체 채널·TO1 표기)에선 평문 그대로 잡히고, 역추론만 해시태그로 좁혀진다.
@@ -9423,7 +9424,13 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 로에베 퍼즐 백이 전부 그룹 퍼즐로(외부 채널 64건 대부분). 멤버명이나 곡명(SAVIOR)이 같이 있어야 인정.
     '퍼즐':{gko:'퍼즐',ctx:[]},'PUZZLE':{gko:'퍼즐',ctx:[]},
     // NOWADAYS(나우즈 옛 영문명, 2026-10-30 Codex 검수27차 — STUDIO CHOOM 'NOWADAYS HYEONBIN(현빈)'이 올아워즈 현빈으로). 흔한 영단어라 대문자 그대로 + 멤버명 동반일 때만
-    'NOWADAYS':{gko:'나우즈',ctx:['HYEONBIN']}};
+    'NOWADAYS':{gko:'나우즈',ctx:['HYEONBIN']},
+    // 베스티(BESTie, 2013 데뷔·2026 '연애의 조건' 역주행으로 재결합, 2026-11-21 그룹 추가): 'bestie'는 영어 일상어("my bestie", "#bestie")이고
+    // 한글 '베스티'도 '찐친'이란 뜻으로 쓴다 — 추가 직후 시험에서 "my bestie and I tried the REDRED challenge"·"ME AND MY BESTIE #aespa"가 베스티로 잡혔다.
+    // 공식 표기 그대로(BESTie/베스티) + 곡명·멤버명·제목 맨 앞 아티스트 표기가 같이 있을 때만 인정. 디스코가 아직 비어 있어 곡명은 여기 적는다.
+    'BESTie':{gko:'베스티',ctx:['연애의 조건','LOVE OPTIONS','두근두근','PITAPAT','THANK U VERY MUCH','HOT BABY','EXCUSE ME']},
+    'BESTIE':{gko:'베스티',ctx:['연애의 조건','LOVE OPTIONS','두근두근','PITAPAT','THANK U VERY MUCH','HOT BABY','EXCUSE ME']}, // 방송사 영문 채널의 전부 대문자 표기(altNames)
+    '베스티':{gko:'베스티',ctx:['연애의 조건','LOVE OPTIONS','두근두근','PITAPAT','THANK U VERY MUCH','HOT BABY','EXCUSE ME','BESTIE']}};
   function hitCorroborated(t){
     const {gko,ctx,ctxUpper,hashtag}=_GROUP_TOKEN_NEEDS_CORROBORATION[t];
     if(hashtag?!hitHashtag(t):!new RegExp('(^|[^A-Za-z])'+_atmEscRe(t)+'(?![A-Za-z])').test(title||''))return false; // 대소문자 그대로
