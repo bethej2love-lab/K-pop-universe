@@ -2468,7 +2468,7 @@ function buildAllIndexPages(relPages) {
     const gFaces = gPick.slice(0, 48).map(k => { const img = groupPicUrl(k) || ogImageForGroup(k, groups[k]); return `<a class="face" href="${SITE}/${groupPagePath(k, lang)}"><span class="face-img"><img src="${img}" alt="" loading="lazy"></span><span class="face-n">${escHtml(isEn ? (groups[k].en || k) : k)}</span></a>`; }).join('');
     const stats = [[fmt(groupKos.length), T('그룹', 'groups')], [fmt(nMember), T('멤버·솔로', 'artists')], [fmt(nSong), T('곡', 'songs')], [fmt(nAlbum), T('앨범', 'albums')], [fmt(nFancam), T('직캠 모음', 'fancam hubs')], [fmt(nShowEp), T('음방 회차', 'show episodes')]]
       .map(([n, l]) => `<li><b>${n}</b><span>${l}</span></li>`).join('');
-    const nav = [['top-cams', T('요즘 직캠', 'Trending')], ['groups', T('그룹', 'Groups')], ['ranks', T('직캠 순위', 'Fancam rankings')], ['shows', T('음악방송', 'Music shows')], ['wins', T('1위 기록', 'Wins')], ['born', T('생년', 'Birth years')], ['agency', T('기획사', 'Agencies')], ['programs', T('프로그램', 'Programs')], ['relations', T('커버·콜라보', 'Covers & collabs')], ['awards', T('시상식', 'Awards')]]
+    const nav = [['top-cams', T('최근 직캠', 'Recent')], ['groups', T('그룹', 'Groups')], ['ranks', T('직캠 순위', 'Fancam rankings')], ['shows', T('음악방송', 'Music shows')], ['wins', T('1위 기록', 'Wins')], ['born', T('생년', 'Birth years')], ['agency', T('기획사', 'Agencies')], ['programs', T('프로그램', 'Programs')], ['relations', T('커버·콜라보', 'Covers & collabs')], ['awards', T('시상식', 'Awards')]]
       .map(([id, l]) => `<li><a href="#${id}">${l}</a></li>`).join('');
     const h1 = T('K-POP UNIVERSE 모아보기', 'Browse K-POP UNIVERSE');
     const desc = T(`그룹 ${fmt(groupKos.length)}팀·멤버 ${fmt(nMember)}명·곡 ${fmt(nSong)}곡·직캠과 음악방송·1위 기록까지, K-POP UNIVERSE의 정적 페이지 ${fmt(total)}개를 종류별로 한눈에.`,
@@ -2532,7 +2532,7 @@ ${SEO_GA_TAG}
   <h1 class="rank-h1">${escHtml(h1)}</h1>
   <ul class="all-stats">${stats}</ul>
   <ul class="all-nav">${nav}</ul>
-  ${camCards ? sec('top-cams', T('요즘 인기 직캠', 'Trending fancams'), '', `<div class="grid">${camCards}</div>`, SITE + '/' + rankPagePath('', lang)) : ''}
+  ${camCards ? sec('top-cams', T('최근 인기 직캠', 'Recent top fancams'), '', `<div class="grid">${camCards}</div>`, SITE + '/' + rankPagePath('', lang)) : ''}
   ${sec('groups', T('그룹', 'Groups'), T(fmt(groupKos.length) + '팀', fmt(groupKos.length) + ' groups'), `<div class="all-groups">${gFaces}</div><p class="all-note">${T('그룹 페이지마다 멤버·곡별 직캠·앨범·작사작곡 페이지로 이어져요. 멤버 페이지 ' + fmt(nMember) + '개 · 곡 ' + fmt(nSong) + ' · 앨범 ' + fmt(nAlbum) + ' · 작사·작곡 ' + fmt(nCredit), 'Each group page links to members, fancams by song, albums and credits.')}</p>`, SITE + '/' + (isEn ? 'en/' : '') + 'g/')}
   ${(RANK_LINKS[lang] || []).length ? sec('ranks', T('직캠 순위', 'Fancam rankings'), '', foldChips(RANK_LINKS[lang], x => `<a href="${x.href}">${escHtml(x.label.replace(/ \| .*/, ''))}</a>`, x => { const y = (String(x.label).match(/\b(20\d{2})\b/) || [])[1]; return !y || +y >= +TODAY_ISO.slice(0, 4) - 1; })) : ''}
   ${shows.length ? sec('shows', T('음악방송', 'Music shows'), T('회차 ' + fmt(nShowEp) + '개', fmt(nShowEp) + ' episodes'), chipList(shows), SITE + '/' + (isEn ? 'en/' : '') + 'show/') : ''}

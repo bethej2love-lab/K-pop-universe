@@ -6515,3 +6515,13 @@
 .recap-row{display:flex;align-items:baseline;gap:12px;padding:5px 0;font-size:14px;color:rgba(226,234,252,0.94);}
 .recap-row .k{flex:none;min-width:44px;font-size:12px;color:rgba(150,174,225,0.75);}
 .recap-row .v i{font-style:normal;color:rgba(138,176,255,0.9);font-weight:600;}
+/* ── 폰: 거의 불투명한 큰 패널의 배경 흐림 끄기(2026-11-21 사용자 "유니버스 스크롤·터치감이 아직 편하지 않다") ──
+   아래 패널들은 배경이 96~98% 불투명이라 뒤를 흐리게 해도 눈에 거의 안 보이는데, blur(28~40px)는 패널을 끌거나 그 안을 스크롤할 때마다
+   패널 넓이만큼 다시 계산돼 폰 GPU를 계속 쓴다(전수 조사: 105곳 중 큰 패널 30여 곳이 이 경우). 흐림만 끈다(비치는 양이 2~4%라 색은 그대로 둔다).
+   탭바·작은 메뉴처럼 뒤가 실제로 비쳐 보이는 것(0.92 이하)은 그대로 둔다. 데스크톱(마우스)은 GPU 여유가 있어 그대로. */
+@media (max-width:768px),(pointer:coarse){
+  #mob-sheet,#mob-card-stack,#conn-sheet,#mob-filter-sheet,#msheet,#feed-list-panel,#gc-discog-detail-sheet,#gc-discog-video-panel,
+  #gc-track-videos-sheet,#combo-sheet,#col-picker-sheet,#profile-panel,#ev-panel,#col-card-panel,#debut-card-panel,#uc-card-panel,
+  #feedback-panel,#trophy-panel,#venue-panel,#vid-tag-panel,#vm-panel,#gp-panel,#hnn-panel,#fbv-panel,#kpop-links-panel,#mob-sr,
+  #search-wrap.open,#ob-sr,#pp-bias-emoji-panel{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
+}

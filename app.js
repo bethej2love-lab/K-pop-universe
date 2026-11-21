@@ -2358,6 +2358,9 @@ function _curRenderInterval(){
 //     비용은 계속. visibility:hidden으로 합성 대상에서 아예 빼면 이 몫이 사라진다.
 //     WebGL 컨텍스트는 살아있으므로 닫을 때 재초기화·재로딩이 없다(캔버스 크기·상태 그대로 복귀).
 let _renderSkipped=false;
+// UI 스크롤 중 표시 — 어떤 요소든 스크롤이 일어나면 그 뒤 180ms까지 '스크롤 중'으로 본다(관성 스크롤은 이벤트가 계속 온다). animate()가 이 동안 3D 렌더를 건너뛴다.
+let _uiScrollUntil=0;
+document.addEventListener('scroll',()=>{_uiScrollUntil=performance.now()+180;},{capture:true,passive:true});
 let _uniCanvasHidden=false;
 function _setUniverseCanvasVisible(v){
   if(v!==_uniCanvasHidden)return;            // 상태가 그대로면 DOM을 건드리지 않는다(매 프레임 호출됨)
@@ -2435,6 +2438,10 @@ function animate(){
   // ⚠️ 이 줄보다 아래의 return(프레임 페이싱 `_curRenderInterval` 게이트)은 "안 보여서 스킵"이
   //    아니라 정상적인 fps 제한이므로 저주파 타이머로 내려가면 안 된다 — 그래서 여기서 끊는다.
   _renderSkipped=false;
+  // 카드·패널·목록을 스크롤하는 동안은 우주를 그리지 않는다(2026-11-21 사용자 "스크롤·터치감이 아직 편하지 않다").
+  // 실측(폰 조건, 그룹 카드 반쯤 열림): 카드를 넘기는 동안에도 뒤 우주가 30fps로 그려져 GPU 시간의 대부분을 썼고 스크롤이 최대 3.5초 멈췄다.
+  // 스크롤 중엔 느린 자동회전이 잠깐 서도 눈에 안 띈다. 카메라 비행(flyState)과 우주를 직접 만지는 조작은 scroll 이벤트가 없어 영향 없다.
+  if(!flyState.active&&performance.now()<_uiScrollUntil)return;
   if(flyState.active){
     const raw=Math.min((performance.now()-flyState.t0)/flyState.dur,1);
     const k=easeInOut(raw);
