@@ -1628,6 +1628,8 @@ if(typeof window.supabase==='undefined'){
       </div>
       <!-- 즐겨찾기 인스타 사진(2026-10-19) — 영상은 유튜브에서 이미 모으니 **사진 게시물만**(사용자 결정). 신보 레일과 같은 정사각 카드.
            2026-11-15 사용자 "사진이 보기 편하니 비디오보다 위에" — New Videos 위로 올림(_FY_ORDER와 함께). -->
+      <!-- 큰 행사 스포트라이트(2026-11-21) — 진행 중이거나 막 끝난 시상식 무대. app.js _buildEventSpotlight -->
+      <div class="feed-section" id="feed-evspot-fy-section" style="display:none"></div>
       <div class="feed-section" id="feed-favig-section" style="display:none">
         <div class="feed-section-ttl" id="feed-favig-ttl">📷 On Instagram</div>
         <div id="feed-favig" class="feed-album-grid feed-album-rail hscroll-drag"></div>
@@ -1683,6 +1685,7 @@ if(typeof window.supabase==='undefined'){
     </div>
     <!-- Discover = "전체·탐색": 오늘의 소식 → 기념일 → 차트 → Trend → 디스커버리 (2026-09-23 오늘의 소식 추가). -->
     <div id="feed-pane-disc" class="feed-pane">
+      <div class="feed-section" id="feed-evspot-section" style="display:none"></div>
       <button id="mx-open-btn" class="mx-feed-btn" type="button">
         <span class="mx-feed-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg></span>
         <span class="mx-feed-txt">

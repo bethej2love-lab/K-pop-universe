@@ -6436,3 +6436,9 @@
   #gc-discog-detail-handle{padding:0;cursor:pointer;position:relative;}
   #gc-discog-detail-handle::after{content:'';position:absolute;inset:-14px -40px;}
 }
+/* 큰 행사 스포트라이트(2026-11-21) — 제목 줄: 이름 · 날짜(흐리게) · 오른쪽 끝 '전체 n ›'(테두리 없는 글자) */
+.evspot-hd{letter-spacing:.06em;text-transform:none;}
+.evspot-name{font-size:13.5px;font-weight:700;color:rgba(226,234,252,0.95);letter-spacing:.01em;}
+.evspot-when{font-size:11.5px;font-weight:500;color:rgba(150,174,225,0.7);letter-spacing:.02em;}
+.evspot-all{margin-left:auto;background:none;border:0;padding:6px 0 6px 10px;font:inherit;font-size:12px;font-weight:500;letter-spacing:.01em;color:rgba(165,185,235,0.85);cursor:var(--kpu-cursor-pointer,pointer);-webkit-tap-highlight-color:transparent;}
+.lb-anchor-x{opacity:.6;font-size:.92em;}

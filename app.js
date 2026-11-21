@@ -6291,12 +6291,26 @@ function _lbUpdateMemberInfo(){
     b.addEventListener('click',e=>{e.stopPropagation();fn();});
     return b;
   };
-  if(mName&&artist)anchorEl.appendChild(_mkPart(mName,()=>_openLbHalf('member',artist)));
+  // Chemistry에서 연 영상(2026-11-21 사용자 "신유·영재 케미스트리에서 눌렀으면 상단에 투어스가 아니라 신유 × 영재, 이름 누르면 카드로") —
+  // 어디서 왔는지가 상단에 보이게: 그 사람들 이름을 ×로 잇고 각각 카드로 연결. 영상 태그에 그중 한 명도 없으면(다른 목록으로 넘어간 뒤) 평소대로.
+  // Chemistry 항목은 {name:'신유',group:'투어스'}(사람) 또는 {g:true,group:'투어스'}(그룹) — 사람은 아티스트로 풀어 쓴다
+  const _chem=((_lbCtx&&Array.isArray(_lbCtx.chem))?_lbCtx.chem:[]).map(p=>!p?null:p.g?{g:p.group}:{a:(typeof _artistByNameGroup==='function'&&_artistByNameGroup(p.name,p.group))||ARTISTS.find(x=>x.name.ko===p.name)||null})
+    .filter(x=>x&&(x.g?GROUPS[x.g]:x.a));
+  const _chemOn=_chem.length>=2&&(!_own||_chem.some(x=>x.a?s.memberKos.includes(x.a.name.ko):((s.groupKo||s._apiGroupKo)===x.g)));
+  if(_chemOn){
+    _chem.forEach((x,i)=>{
+      if(i){const sep=document.createElement('span');sep.className='lb-anchor-sep lb-anchor-x';sep.textContent='×';anchorEl.appendChild(sep);}
+      if(x.a)anchorEl.appendChild(_mkPart(_dispName(x.a),()=>_openLbHalf('member',x.a)));
+      else anchorEl.appendChild(_mkPart(currentLang==='ko'?x.g:(GROUPS[x.g].en||x.g),()=>_openLbHalf('group',x.g)));
+    });
+  }
+  else if(mName&&artist)anchorEl.appendChild(_mkPart(mName,()=>_openLbHalf('member',artist)));
   else if(mName)anchorEl.appendChild(document.createTextNode(mName));
-  if(mName&&gName){const sep=document.createElement('span');sep.className='lb-anchor-sep';sep.textContent='·';anchorEl.appendChild(sep);}
-  if(gName&&GROUPS[groupKo])anchorEl.appendChild(_mkPart(gName,()=>_openLbHalf('group',groupKo)));
+  if(!_chemOn&&mName&&gName){const sep=document.createElement('span');sep.className='lb-anchor-sep';sep.textContent='·';anchorEl.appendChild(sep);}
+  if(_chemOn){}
+  else if(gName&&GROUPS[groupKo])anchorEl.appendChild(_mkPart(gName,()=>_openLbHalf('group',groupKo)));
   else if(gName)anchorEl.appendChild(document.createTextNode(gName));
-  wrap.style.display=(mName||gName||(s&&((s.with&&s.with.length)||(s.withMembers&&s.withMembers.length)||(s.withGroups&&s.withGroups.length))))?'':'none';
+  wrap.style.display=(_chemOn||mName||gName||(s&&((s.with&&s.with.length)||(s.withMembers&&s.withMembers.length)||(s.withGroups&&s.withGroups.length))))?'':'none';
   withEl.innerHTML='';
   // 한 그룹이 전원 나온 영상은 멤버 칩 대신 그룹 칩 하나로(2026-09-29 — 빅톤 6명이 칩 6개로 늘어서던 것).
   // 묶음·전원 판정은 카드 목록 함께한 줄과 같은 헬퍼(_withGroupOf/_withIsFullGroup). 앵커 자신의 그룹은 접지 않는다.
@@ -24177,6 +24191,7 @@ function _renderFeedListFacet(ctx){
   });
 }
 function _openFeedListOverlay(title,sub,songs,ctx){
+  const _flChem=(ctx&&Array.isArray(ctx.chem)&&ctx.chem.length>=2)?ctx.chem:null;
   _winEnter('list',!!document.getElementById('feed-list-overlay')?.classList.contains('open'),[title,sub,songs,ctx],title);
   ++_feedListIntent;++_feedListCloseSeq;
   {const _ca=document.getElementById('feed-list-chem-add');if(_ca)_ca.style.display=ctx&&ctx.chem?'':'none';} // Chemistry 사람 추가(+)는 그 화면에서만
@@ -24412,6 +24427,7 @@ function _openFeedListOverlay(title,sub,songs,ctx){
       // 자신의 groupKo/memberKos에서 뽑는다 — 없으면(포맷/장르 모아보기처럼 애초에 이 정보가 없는
       // 목록) 빈 ctx로 자연히 폴백(라이트박스 브라우즈 모드의 멤버 정보 칸만 숨겨짐, 2026-08-11).
       const ctx=s.groupKo?{groupKo:s.groupKo,memberKo:(s.memberKos&&s.memberKos[0])||undefined}:{};
+      if(_flChem)ctx.chem=_flChem; // Chemistry 목록에서 연 영상 — 재생 화면 상단에 그 사람들 이름(_lbUpdateMemberInfo)
       // forceBrowseMode:true — 컬렉션/탐험 모아보기 등 이 목록에서 열 때는 쇼츠도 몰입형 스와이프
       // 대신 브라우즈 레이아웃(세로 비율만 유지)으로 통일(2026-08-11, 사용자 요청).
       openLightbox(s.u,shortFlag,orderedSongs,idx,ctx,false,true);
@@ -27403,6 +27419,64 @@ const _EVENT_UPCOMING=[
   {id:'aaa',ed:'2026',start:'2026-12-05',end:'2026-12-06',place:'대만 가오슝 국립경기장',src:'https://www.dailian.co.kr/news/view/1674145'},
   {id:'sbs-gayo',ed:'2026',start:'2026-12-24',end:'2026-12-25',place:'일산 킨텍스',src:'https://isplus.com/article/view/isp202610010202'},
 ];
+// ── 큰 행사 스포트라이트(2026-11-21 사용자 "어제 마마 첫날이었는데 For You든 발견이든 첫눈에 마마 콘텐츠를 충분히 보여줘야") ─────────────
+// 그날 케이팝에서 제일 큰 일이 첫 화면에 없었다 — 행사 무대는 발견 탭 맨 아래 Events 선반에만 있었다.
+// 일정표(_EVENT_UPCOMING)에 있는 행사가 **진행 중이거나 끝난 지 3일 안**이면, 그 회차 무대(EV:행사:회차 태그)를 두 탭 맨 위에 올린다:
+//   발견 = 조회수 높은 무대 4개 / For You = 내 즐겨찾기가 나온 무대 먼저(없으면 조회수순) — 이어보기 바로 다음.
+// 영상이 3개 미만이면(아직 안 올라옴) 선반을 띄우지 않는다. '전체 보기'는 행사 페이지(_openEventPage)의 그 회차.
+function _evSpotCurrent(){
+  const today=new Date(Date.now()+9*3600e3).toISOString().slice(0,10); // KST 날짜
+  const plus=(d,n)=>new Date(Date.parse(d)+n*864e5).toISOString().slice(0,10);
+  return _EVENT_UPCOMING.find(u=>u.start<=today&&today<=plus(u.end||u.start,3))||null;
+}
+let _evSpotP=null,_evSpotKey='';
+function _evSpotRows(u){
+  const key=u.id+':'+u.ed+':'+new Date().toISOString().slice(0,13); // 한 시간 캐시
+  if(_evSpotP&&_evSpotKey===key)return _evSpotP;
+  _evSpotKey=key;
+  const from=new Date(Date.parse(u.start)-2*864e5).toISOString().slice(0,10);
+  return(_evSpotP=Promise.resolve(sb.from(_YT_TABLE).select(_EV_SEL).contains('content_formats',['EV:'+u.id+':'+u.ed]).gte('published_at',from).is('unavailable_at',null)
+    .order('view_count',{ascending:false,nullsFirst:false}).limit(80)).then(r=>Array.isArray(r&&r.data)?r.data.filter(v=>!_FLAG_HIDE.includes(v.content_flag)):[],()=>[]));
+}
+async function _buildEventSpotlight(){
+  const boxes=['feed-evspot-section','feed-evspot-fy-section'].map(id=>document.getElementById(id)).filter(Boolean);
+  const hide=()=>boxes.forEach(b=>{b.style.display='none';});
+  try{
+    const u=_evSpotCurrent(),s=u&&_EVENT_SERIES.find(x=>x.id===u.id);
+    if(!u||!s||!sb){hide();return;}
+    const rows=await _evSpotRows(u);
+    const stages=rows.filter(_evIsStage),pool=stages.length>=3?stages:rows;
+    if(pool.length<3){hide();return;}
+    const isKo=currentLang==='ko';
+    const today=new Date(Date.now()+9*3600e3).toISOString().slice(0,10),live=today<=(u.end||u.start);
+    const md=d=>{const x=new Date(d);return (x.getUTCMonth()+1)+'.'+x.getUTCDate();};
+    const name=s.ko.replace(/\s*\(.*\)$/,'')+' '+u.ed;
+    const vidUrl=x=>_isShortV(x)?`https://youtube.com/shorts/${x.id}`:`https://www.youtube.com/watch?v=${x.id}`;
+    boxes.forEach(box=>{
+      const fy=box.id==='feed-evspot-fy-section';
+      // For You: 내 즐겨찾기가 나온 무대를 앞으로(안정 정렬 — 각자 조회수순 유지)
+      const list=fy?[...pool].sort((a,b)=>(_PF_FAVHIT(b)?1:0)-(_PF_FAVHIT(a)?1:0)):pool;
+      const songs=list.slice(0,40).map(x=>({..._rowTags(x),t:x.title,u:vidUrl(x),thumb:x.thumb,vc:x.view_count,dur:x.duration_sec,pa:x.published_at?.slice(0,10),groupKo:x.group_ko,memberKos:x.members||[],_apiId:x.id,_apiGroupKo:x.group_ko}));
+      box.innerHTML='';
+      const hd=document.createElement('div');hd.className='feed-section-ttl feed-ttl-row evspot-hd';
+      const nm=document.createElement('span');nm.className='evspot-name';nm.textContent='🏆 '+name;
+      const wh=document.createElement('span');wh.className='evspot-when';wh.textContent=live?(isKo?'진행 중':'Live now'):(md(u.start)+(u.end&&u.end!==u.start?'–'+md(u.end):''));
+      const all=document.createElement('button');all.type='button';all.className='evspot-all';all.textContent=isKo?'전체 보기 ›':'See all ›'; // 개수는 적지 않는다 — 여기 조회는 상위 80개까지만 받아 실제 수와 다르다
+      all.addEventListener('click',e=>{e.stopPropagation();_gaEvent('shelf_click',{action:'evspot_all'});_feedNav(()=>_openEventPage(s.id,u.ed));});
+      hd.append(nm,wh,all);box.appendChild(hd);
+      const grid=document.createElement('div');grid.className='feed-grid evspot-grid';box.appendChild(grid);
+      songs.slice(0,4).forEach((song,idx)=>{
+        const who=song.groupKo&&GROUPS[song.groupKo]?_gLabelKo(song.groupKo):'';
+        _appendFeedCard(grid,'',_cleanTitle(song.t),[who,_fmtVC(song.vc)].filter(Boolean).join(' · '),()=>{
+          _gaEvent('shelf_click',{action:fy?'evspot_fy':'evspot'});
+          _feedNav(()=>openLightbox(song.u,false,songs,idx,{groupKo:song.groupKo},false,true));
+        },song.thumb);
+      });
+      box.style.display='';
+    });
+    if(typeof _fyReorder==='function')_fyReorder();
+  }catch(e){console.warn('[feed] 행사 스포트라이트 실패 — 이 줄만 빠집니다',e);hide();}
+}
 function _evUpcomingCard(list,u,s){
   const isKo=currentLang==='ko';
   const today=new Date(new Date().toISOString().slice(0,10)),st=new Date(u.start),en=new Date(u.end||u.start);
@@ -29106,7 +29180,7 @@ async function _buildFeedMore(reset){
 // For You 선반 기본 순서(index.html과 같게) + '오늘 일어난 일' 끌어올림(2026-11-04).
 // 2026-11-15 사용자 "사진이 보기 편하니 인스타를 비디오보다 위에" — favig를 favnew 앞으로(index.html DOM 순서도 함께 변경).
 // Rediscover(예전에 본 것 다시)는 새 소식 선반들 **아래**로(2026-11-21 사용자 "너무 위에 보인다, 아래로") — 새 영상·뉴스·앨범·차트·공연·기념일 다음, More for you 바로 위.
-const _FY_ORDER=['feed-recent-section','feed-favig-section','feed-favnew-section','feed-favnews-section','feed-favalbum-section','feed-favchart-section',
+const _FY_ORDER=['feed-recent-section','feed-evspot-fy-section','feed-favig-section','feed-favnew-section','feed-favnews-section','feed-favalbum-section','feed-favchart-section',
   'feed-favconcert-section','feed-foryou-anniv-section','feed-redisc-section'];
 function _fyUrgent(id,on){const el=document.getElementById(id);if(!el)return;const v=on?'1':'';if((el.dataset.urgent||'')===v)return;el.dataset.urgent=v;_fyReorder();}
 function _fyReorder(){
@@ -29122,6 +29196,7 @@ function _fyReorder(){
 // 추천(For You) 탭 빌드 — 가볍게(이어보기=로컬, 즐겨찾기신작·Trend=Supabase). 나침반 열 때마다 호출(TTL 캐시).
 function _buildFeedRec(){
   if(_feedRecPending)return _feedRecPending;
+  _buildEventSpotlight(); // 큰 행사 스포트라이트(발견 탭과 같은 조회 결과를 쓴다)
   document.getElementById('feed-empty-rec').hidden=true;
   // For You 선반 순서(2026-11-04 사용자 "젤 먼저 보고 싶은 건 최애의 new video") — index.html 순서 = _FY_ORDER.
   //   예전(09-18)엔 시간 민감도 순(기념일 맨 위·신작 영상 7번째)이었는데, 기념일은 1년에 몇 번뿐이라 평소엔 맨 위를 차지할 이유가 없다.
@@ -29168,6 +29243,7 @@ function _feedBuildIdle(){
 function _buildFeedDisc(){
   if(_feedDiscPending)return _feedDiscPending;
   _feedBuildQ=[]; // 패널을 다시 열면 이전 대기분은 버린다(중복 그리기·유령 요청 방지)
+  _buildEventSpotlight(); // 진행 중·막 끝난 큰 행사 무대 — 두 탭 맨 위(2026-11-21)
   _feedDailyNewsP=_buildFeedDailyNews(); // 오늘의 소식이 Discover 맨 첫 섹션(2026-09-23) — 기념일보다도 먼저. 앨범 블록이 이걸 기다린다
   const jobs=[_feedDailyNewsP,_buildFeedIg()]; // 인스타 사진(팔로워 많은 계정 최근 3일, 영상 제외)
   _buildFeedAnniversaries(); // 기념일 선반은 그 다음(2026-08-30 이동)
