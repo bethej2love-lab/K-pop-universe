@@ -8165,6 +8165,7 @@ function _lbMenuFill(){
   if(yt)add(isKo?'유튜브에서 보기 ↗':'Open on YouTube ↗',()=>window.open(yt,'_blank','noopener'));
   if(yt)add(isKo?'링크 복사':'Copy link',()=>{const done=()=>{try{_showToast(isKo?'링크를 복사했어요':'Link copied');}catch(_){}};
     if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(yt).then(done,()=>{});});
+  {const yi=_yeOn()&&s?_yeVideoItem(s):null;if(yi){const has=_yeHas('video',yi.k);add(has?(isKo?'올해의 케이팝에서 빼기':'Remove from K-pop of '+_YE_YEAR):(isKo?_YE_YEAR+' 올해의 케이팝에 담기':'Add to K-pop of '+_YE_YEAR),()=>_yeSay(_yeToggle(yi)));}}
   add(T[currentLang].fbReport,()=>{const vid=s&&(_lbApiId(s)||id);openFeedback(vid?{type:'video',id:vid,label:s.t||''}:null);});
 }
 document.getElementById('yt-lb-menu-btn')?.addEventListener('click',e=>{
@@ -14134,6 +14135,9 @@ function _openGcDiscogDetail(a,idx,ctx){
   document.getElementById('gc-discog-detail-title').textContent=a.title;
   _renderDiscogDetailArtists(a);
   document.getElementById('gc-discog-detail-meta').textContent=a.releaseDate;
+  {const mt=document.getElementById('gc-discog-detail-meta');const yi=_yeOn()?_yeAlbumItem(a):null; // 그해 앨범이면 발매일 옆에 '올해의 케이팝' 글자 버튼
+    if(yi){const b=document.createElement('button');b.type='button';b.id='gc-discog-detail-ye';const paint=()=>{const on=_yeHas('album',yi.k);b.classList.toggle('on',on);b.textContent=(currentLang==='ko'?'올해의 케이팝':'K-pop of '+_YE_YEAR)+(on?' ✓':' +');};
+      paint();b.addEventListener('click',e=>{e.stopPropagation();const r=_yeToggle(yi);paint();_yeSay(r);});mt.appendChild(b);}}
   // 멜론 앨범 페이지 — 번호 없으면 그 곡이 든 본 앨범(melonVia, 멜론엔 따로 없는 선공개 싱글), 그것도 없으면 "주인 + 앨범명" 멜론 검색 — 가사·전체 크레딧을 보러 가는 길(2026-10-14)
   {const ml=document.getElementById('gc-discog-detail-melon');if(ml){
     const owner=(_dArtist()&&_dArtist().name&&_dArtist().name.ko)||(_discogDetailGko&&!String(_discogDetailGko).startsWith('unit:')?_discogDetailGko:'')||'';
@@ -20231,6 +20235,7 @@ function renderFlagList(){
   const sec=document.getElementById('flag-section');
   if(!el||!sec)return;
   try{_renderMyRecap();}catch(e){} // '나' 탭 목록이 그려질 때 덕질 결산 한 줄도 같이
+  try{_renderMyYe();}catch(e){}
   const vEntries=Object.values(flagVideos).map(f=>({...f,_kind:'video'}));
   const aEntries=Object.values(flagAlbums).map(f=>({...f,_kind:'album'}));
   const entries=[...vEntries,...aEntries].sort((a,b)=>(b.at||'')>(a.at||'')?1:-1);
@@ -20927,6 +20932,7 @@ function _appendFavRow(el,{tag,name,sub,imgUrl,colorArr,people,bdayDays,annivDay
 let _favListGen=0;
 async function renderFavList(){
   try{_renderMyRecap();}catch(e){}
+  try{_renderMyYe();}catch(e){}
   const el=document.getElementById('fav-list');if(!el)return;
   // 우주 카드 아이콘은 궤도로 모을 그룹/멤버가 하나라도 있을 때만. favConnections(연결선 즐겨찾기)는
   // 카드 구도에 참여하지 않으므로 여기 안 센다 — 세면 "만들 게 없는" 카드가 열린다.
@@ -25203,6 +25209,56 @@ function _openRecapStory(ym){
   document.body.appendChild(root);_recapStoryClose=close;
   _gaEvent('recap_open',{n:r.n,story:1});
   go(0);raf=requestAnimationFrame(tick);
+}
+// ── 올해의 케이팝(2026-11-21 사용자 "부문 나누지 말고 올해의 케이팝으로 퉁쳐서 다 — 곡·영상·앨범 형식을 하나로 통일할 수 없다", 장기적으로 '죽기 전에 봐야 할 케이팝 1001') ──
+// 형식을 가리지 않는 '항목'(ty: video|album, 이후 song 등) 10개까지 고르는 내 목록. 기기에 저장하고, DB 함수(cast_yearend_pick)가 있으면 익명 기기 번호로 같이 보낸다
+// (sql/yearend_votes_2026-11-21.sql — 없으면 조용히 건너뜀). 입구는 그해 영상의 ⋮ 메뉴·그해 앨범 창의 작은 글자 버튼, 고른 게 있으면 '나' 탭에 한 줄.
+const _YE_YEAR=2026,_YE_MAX=10,_YE_KEY='kpu_ye'+_YE_YEAR,_YE_DEV_KEY='kpu_ye_dev';
+function _yeOn(){return Date.now()<Date.UTC(_YE_YEAR+1,1,1);} // 이듬해 1월 말까지
+function _yeLoad(){try{const a=JSON.parse(localStorage.getItem(_YE_KEY)||'[]');return Array.isArray(a)?a.filter(x=>x&&x.ty&&x.k):[];}catch(e){return [];}}
+function _yeHas(ty,k){return _yeLoad().some(x=>x.ty===ty&&x.k===k);}
+function _yeDev(){let d='';try{d=localStorage.getItem(_YE_DEV_KEY)||'';if(!d){d=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2));localStorage.setItem(_YE_DEV_KEY,d);}}catch(e){}return d;}
+// 고르기/빼기 — 돌려주는 값: 'on' | 'off' | 'full'(10개 참)
+function _yeToggle(item){
+  if(!item||!item.ty||!item.k)return 'off';
+  let a=_yeLoad();const i=a.findIndex(x=>x.ty===item.ty&&x.k===item.k);let r;
+  if(i>=0){a.splice(i,1);r='off';}
+  else if(a.length>=_YE_MAX)return 'full';
+  else{a.push(Object.assign({},item,{at:Date.now()}));r='on';}
+  try{localStorage.setItem(_YE_KEY,JSON.stringify(a));}catch(e){}
+  try{const dev=_yeDev();if(dev&&typeof sb!=='undefined'&&sb&&sb.rpc)Promise.resolve(sb.rpc('cast_yearend_pick',{p_yr:_YE_YEAR,p_voter:dev,p_type:item.ty,p_key:String(item.k).slice(0,200),p_on:r==='on'})).then(()=>{},()=>{});}catch(e){}
+  _gaEvent('yearend_pick',{action:r,ty:item.ty});
+  try{_renderMyYe();}catch(e){}
+  return r;
+}
+function _yeSay(r){const ko=currentLang==='ko',n=_yeLoad().length;
+  try{_showToast(r==='full'?(ko?`${_YE_MAX}개까지 고를 수 있어요`:`Up to ${_YE_MAX} picks`):r==='on'?(ko?`올해의 케이팝 ${n}/${_YE_MAX}`:`Picks ${n}/${_YE_MAX}`):(ko?'올해의 케이팝에서 뺐어요':'Removed'));}catch(e){}}
+function _yeVideoItem(s){const id=s&&(ytId(s.u||'')||s._apiId);if(!id||!s.pa||String(s.pa).slice(0,4)!==String(_YE_YEAR))return null;
+  return{ty:'video',k:id,t:s.t||'',thumb:s.thumb||'',u:s.u||'',g:s.groupKo||s._apiGroupKo||'',m:Array.isArray(s.memberKos)?s.memberKos.slice(0,6):[],d:s.pa};}
+function _yeAlbumItem(a){if(!a||!a.title||String(a.releaseDate||'').slice(0,4)!==String(_YE_YEAR))return null;
+  const art=typeof _dArtist==='function'?_dArtist():null,gko=(typeof _discogDetailGko!=='undefined'&&_discogDetailGko)||'';
+  const own=art?{ak:'m',o:art.name.ko,g:art.group.ko,i:art.id}:(gko&&GROUPS[gko]?{ak:'g',o:gko}:null);if(!own)return null;
+  return Object.assign({ty:'album',k:own.o+'|'+a.title,t:a.title,thumb:a.cover||'',d:a.releaseDate},own);}
+function _renderMyYe(){
+  const host=document.getElementById('my-recap');if(!host)return;
+  let el=document.getElementById('my-ye');
+  const a=_yeOn()?_yeLoad():[];
+  if(!a.length){if(el)el.hidden=true;return;}
+  if(!el){el=document.createElement('button');el.type='button';el.id='my-ye';host.insertAdjacentElement('afterend',el);el.addEventListener('click',e=>{e.stopPropagation();_openYePicks();});}
+  el.hidden=false;el.textContent=(currentLang==='ko'?`${_YE_YEAR} 올해의 케이팝 · ${a.length}/${_YE_MAX}`:`K-pop of ${_YE_YEAR} · ${a.length}/${_YE_MAX}`);
+}
+function _openYePicks(){
+  const ko=currentLang==='ko',a=_yeLoad();
+  const vids=a.filter(x=>x.ty==='video').map(v=>({t:v.t,u:v.u||`https://www.youtube.com/watch?v=${v.k}`,thumb:v.thumb||`https://i.ytimg.com/vi/${v.k}/mqdefault.jpg`,groupKo:v.g||'',memberKos:v.m||[],pa:v.d,_apiId:v.k,_apiGroupKo:v.g||''}));
+  const albs=a.filter(x=>x.ty==='album');
+  let head=null;
+  if(albs.length){head=document.createElement('div');head.className='ye-albums';
+    albs.forEach(x=>{const b=document.createElement('button');b.type='button';b.className='ye-alb';
+      const im=document.createElement('img');im.alt='';im.loading='lazy';im.referrerPolicy='no-referrer';im.src=x.thumb||'';
+      const t=document.createElement('span');t.className='ye-alb-t';t.textContent=x.t;
+      const o=document.createElement('span');o.className='ye-alb-o';o.textContent=x.ak==='g'&&GROUPS[x.o]?_gLabelKo(x.o):x.o;
+      b.append(im,t,o);b.addEventListener('click',_albumCardNav({k:x.ak==='g'?'g':'m',o:x.o,g:x.g,i:x.i,t:x.t,d:x.d,c:x.thumb}));head.appendChild(b);});}
+  _openFeedListOverlay(ko?`나의 ${_YE_YEAR} 올해의 케이팝`:`My K-pop of ${_YE_YEAR}`,`${a.length}/${_YE_MAX}`,vids,head?{head}:{});
 }
 const _RECENT_VIEW_KEY='_kpu_recent_vids';
 function _recordRecentView(vid,song,shorts){

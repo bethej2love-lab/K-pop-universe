@@ -6459,6 +6459,19 @@
 #my-recap .rc-a{display:block;font-size:13.5px;font-weight:600;color:rgba(226,234,252,0.94);}
 #my-recap .rc-a::after{content:" ›";font-weight:400;color:rgba(150,174,225,0.7);}
 #my-recap .rc-b{display:block;margin-top:3px;font-size:12.5px;color:rgba(160,180,225,0.78);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* 올해의 케이팝 — '나' 탭 한 줄, 앨범 창 글자 버튼, 내 목록의 앨범 줄. 테두리 없이 글자만 */
+#my-ye{display:block;width:100%;margin:0 0 6px;padding:6px 2px;background:none;border:0;text-align:left;font:inherit;font-size:13.5px;font-weight:600;color:rgba(226,234,252,0.94);cursor:var(--kpu-cursor-pointer,pointer);-webkit-tap-highlight-color:transparent;}
+#my-ye[hidden]{display:none;}
+#my-ye::after{content:" ›";font-weight:400;color:rgba(150,174,225,0.7);}
+#gc-discog-detail-ye{margin-left:10px;padding:4px 2px;background:none;border:0;font:inherit;font-size:inherit;color:rgba(150,180,255,0.9);cursor:var(--kpu-cursor-pointer,pointer);}
+#gc-discog-detail-ye.on{color:rgba(226,234,252,0.94);font-weight:600;}
+.ye-albums{grid-column:1/-1;display:flex;gap:12px;overflow-x:auto;padding:2px 4px 14px;scrollbar-width:none;}
+.ye-albums::-webkit-scrollbar{display:none;}
+#feed-list-grid:has(.ye-albums){align-content:start;} /* 항목이 적을 때 줄이 늘어나 앨범 줄 아래가 비던 것 */
+.ye-alb{flex:none;width:104px;padding:0;background:none;border:0;text-align:left;font:inherit;color:inherit;cursor:var(--kpu-cursor-pointer,pointer);}
+.ye-alb img{width:104px;height:104px;border-radius:8px;object-fit:cover;display:block;background:rgba(255,255,255,.06);}
+.ye-alb-t{display:block;margin-top:6px;font-size:12.5px;font-weight:600;color:rgba(226,234,252,0.94);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ye-alb-o{display:block;font-size:11.5px;color:rgba(160,180,225,0.75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 /* 덕질 결산 스토리 — 화면 가득, 한 장에 한 가지. 배경은 그달 가장 많이 본 그룹의 행성 색(--rs1/--rs2). 테두리·상자 없이 글자와 사진만. */
 #recap-story{position:fixed;inset:0;z-index:12000;overflow:hidden;background:#0a0b12;color:#fff;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;animation:rsIn .28s ease both;}
 #recap-story.out{opacity:0;transition:opacity .22s ease;}
