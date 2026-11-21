@@ -6463,8 +6463,8 @@
 #my-ye{display:block;width:100%;margin:0 0 6px;padding:6px 2px;background:none;border:0;text-align:left;font:inherit;font-size:13.5px;font-weight:600;color:rgba(226,234,252,0.94);cursor:var(--kpu-cursor-pointer,pointer);-webkit-tap-highlight-color:transparent;}
 #my-ye[hidden]{display:none;}
 #my-ye::after{content:" ›";font-weight:400;color:rgba(150,174,225,0.7);}
-#gc-discog-detail-ye{margin-left:10px;padding:4px 2px;background:none;border:0;font:inherit;font-size:inherit;color:rgba(150,180,255,0.9);cursor:var(--kpu-cursor-pointer,pointer);}
-#gc-discog-detail-ye.on{color:rgba(226,234,252,0.94);font-weight:600;}
+#gc-discog-detail-ye{position:absolute;left:6px;bottom:6px;height:30px;padding:0 11px;border:0;border-radius:15px;background:rgba(0,0,0,0.55);font:inherit;font-size:11.5px;font-weight:600;letter-spacing:-.01em;color:rgba(255,255,255,0.92);cursor:var(--kpu-cursor-pointer,pointer);-webkit-tap-highlight-color:transparent;}
+#gc-discog-detail-ye.on{background:rgba(255,255,255,0.92);color:#101218;}
 .ye-albums{grid-column:1/-1;display:flex;gap:12px;overflow-x:auto;padding:2px 4px 14px;scrollbar-width:none;}
 .ye-albums::-webkit-scrollbar{display:none;}
 #feed-list-grid:has(.ye-albums){align-content:start;} /* 항목이 적을 때 줄이 늘어나 앨범 줄 아래가 비던 것 */

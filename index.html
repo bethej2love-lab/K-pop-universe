@@ -88,8 +88,10 @@
      ⚠️ crossorigin 필수 — REST 호출이 CORS라, 없으면 연결이 재사용되지 않아 효과가 사라진다. -->
 <link rel="preconnect" href="https://dukgguehegnembimqvkm.supabase.co" crossorigin>
 <link rel="preconnect" href="https://i.ytimg.com"><!-- 영상 썸네일 서버 — 카드 위쪽 영상이 첫 화면이라 연결을 미리 연다(2026-10-13) -->
-<link rel="stylesheet" as="style" crossorigin
+<!-- 글꼴 CSS는 화면 그리기를 막지 않게 뒤늦게 붙인다(2026-11-21) — jsdelivr가 느린 나라에선 이 한 줄이 첫 화면을 통째로 붙잡았다. 붙기 전엔 기기 기본 글꼴로 보인다. -->
+<link rel="stylesheet" crossorigin media="print" onload="this.media='all'"
   href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@1.3.9/dist/web/static/pretendard-dynamic-subset.css">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@1.3.9/dist/web/static/pretendard-dynamic-subset.css"></noscript>
 <!-- 이 `?v=` 값들과 아래 _ADMIN_JS_VER, sw.js의 CACHE_VERSION은 **손으로 고치지 않는다** —
      push하면 GitHub Action(bump-cache-version)이 파일 내용 해시로 자동 갱신한다(2026-08-25).
      형식은 `<YYYYMMDD>-<내용해시8>`이라 내용이 같으면 값도 그대로다(불필요한 재다운로드 없음).
@@ -1570,10 +1572,13 @@
   <div class="conn-handle"></div>
   <div id="mob-filter-sheet-inner"></div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/renderers/CSS2DRenderer.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.1/dist/umd/supabase.js"></script>
+<!-- 필수 라이브러리는 우리 서버(vendor/)에서 받는다(2026-11-21 사용자 "중국에서 정적 페이지는 열리는데 유니버스는 안 열리는 수준") —
+     예전엔 cdnjs·jsdelivr 두 곳에서 순서대로 받아서, 그 CDN이 느리거나 막힌 나라에선 앱 스크립트가 시작도 못 했다.
+     같은 서버라 연결을 새로 열 필요도 없다. 파일명에 버전이 들어 있어 영구 캐시해도 안전. 실패하면 아래에서 CDN으로 한 번 더. -->
+<script src="vendor/three-0.128.0.min.js"></script>
+<script src="vendor/three-0.128.0-OrbitControls.js"></script>
+<script src="vendor/three-0.128.0-CSS2DRenderer.js"></script>
+<script src="vendor/supabase-js-2.110.1.js"></script>
 <script>
 // ── CDN 폴백 + 필수 라이브러리 가드 (2026-08-18) ─────────────────────────────
 // three.js가 로드에 실패하면 아래 메인 스크립트가 최상위에서 즉시 throw돼 로딩 화면

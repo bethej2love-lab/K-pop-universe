@@ -14135,9 +14135,10 @@ function _openGcDiscogDetail(a,idx,ctx){
   document.getElementById('gc-discog-detail-title').textContent=a.title;
   _renderDiscogDetailArtists(a);
   document.getElementById('gc-discog-detail-meta').textContent=a.releaseDate;
-  {const mt=document.getElementById('gc-discog-detail-meta');const yi=_yeOn()?_yeAlbumItem(a):null; // 그해 앨범이면 발매일 옆에 '올해의 케이팝' 글자 버튼
-    if(yi){const b=document.createElement('button');b.type='button';b.id='gc-discog-detail-ye';const paint=()=>{const on=_yeHas('album',yi.k);b.classList.toggle('on',on);b.textContent=(currentLang==='ko'?'올해의 케이팝':'K-pop of '+_YE_YEAR)+(on?' ✓':' +');};
-      paint();b.addEventListener('click',e=>{e.stopPropagation();const r=_yeToggle(yi);paint();_yeSay(r);});mt.appendChild(b);}}
+  // 그해 앨범이면 커버 왼쪽 아래에 '올해의 케이팝' 배지(행사 기간에만) — 발매일 옆에 뒀다가 옮김(2026-11-21 사용자 "이벤트성인데 발매일 옆은 이상하다")
+  {const wrap=document.querySelector('#gc-discog-detail .gc-discog-cover-wrap');document.getElementById('gc-discog-detail-ye')?.remove();const yi=_yeOn()?_yeAlbumItem(a):null;
+    if(wrap&&yi){const b=document.createElement('button');b.type='button';b.id='gc-discog-detail-ye';const paint=()=>{const on=_yeHas('album',yi.k);b.classList.toggle('on',on);b.textContent=(currentLang==='ko'?'올해의 케이팝':'K-pop of '+_YE_YEAR)+(on?' ✓':' +');b.setAttribute('aria-pressed',on?'true':'false');};
+      paint();b.addEventListener('click',e=>{e.stopPropagation();const r=_yeToggle(yi);paint();_yeSay(r);});wrap.appendChild(b);}}
   // 멜론 앨범 페이지 — 번호 없으면 그 곡이 든 본 앨범(melonVia, 멜론엔 따로 없는 선공개 싱글), 그것도 없으면 "주인 + 앨범명" 멜론 검색 — 가사·전체 크레딧을 보러 가는 길(2026-10-14)
   {const ml=document.getElementById('gc-discog-detail-melon');if(ml){
     const owner=(_dArtist()&&_dArtist().name&&_dArtist().name.ko)||(_discogDetailGko&&!String(_discogDetailGko).startsWith('unit:')?_discogDetailGko:'')||'';
