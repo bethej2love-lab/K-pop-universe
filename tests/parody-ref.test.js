@@ -72,7 +72,44 @@ need(/tab==='review'&&typeof _parodyRefCueFor==='function'/.test(admin), '검수
     ['에스파 커버 해봤습니다', '에스파'],                      // 커버는 원곡 태깅 몫
   ].forEach(([t, k]) => need(!g(t, k), `안 잡음: ${t.slice(0, 36)}${g(t, k) ? ' → ' + g(t, k) : ''}`));
   need(/const parodySelf=!owner&&!members\.length&&tier!=='fans'&&tier!=='official'&&tier!=='grpsub'&&[^\n]*_parodySelfCueFor\(v\.title,match\.primaryGroup\)/.test(admin)
-    && /\(held\|\|parodySelf\)\?_flagPatch\('보류','auto',\{needs_review:true\}\)/.test(admin), '외부 동기화: 따라 해 본 영상은 보류+검수(주인·팬채널·멤버 태깅 제외)');
+    && /\(held\|\|parodySelf\|\|mentionOnly\)\?_flagPatch\('보류','auto',\{needs_review:true\}\)/.test(admin), '외부 동기화: 따라 해 본 영상은 보류+검수(주인·팬채널·멤버 태깅 제외)');
+}
+
+// ── 그 그룹이 나오지 않고 얘기만 나오는 영상 → 보류(2026-11-21 사용자: A2O LITE 두 건을 손으로 무관 처리) ──
+{
+  const s3 = shared.indexOf('const _MENTION_AFTER'), e3 = shared.indexOf('\n// ── 음방 회차 묶기');
+  const ctx3 = { GROUPS };
+  vm.runInNewContext(shared.slice(s3, e3) + ';this.a=_mentionOnlyCueFor;this.b=_featJokeCueFor;', ctx3);
+  const a = ctx3.a, b = ctx3.b;
+  // ① 후기형 — 그룹이 목적어, 다른 사람이 주어
+  [
+    ['A2O LITE 만나고 현타 온 영미 DJ #MBCRADIO #Mhz #므흐즈 #두시의데이트 #안영미 #snl #분장', 'A2O LITE'],
+    ['아이브 만나고 온 썰 푼다', '아이브'],
+    ['에스파 만난 뒤 충격 받은 아저씨', '에스파'],
+    ['ILLIT 만나고 성덕 된 조나단', '아일릿'],
+    ['뉴진스 영접하고 기절한 팬', '뉴진스'],
+  ].forEach(([t, k]) => need(!!a(t, k), `후기형 잡음: ${t.slice(0, 36)} → ${a(t, k)}`));
+  [
+    ['팬들 만나고 온 아이브 퇴근길', '아이브'],                // 그룹이 주어
+    ['아이브 보고 싶다 #IVE', '아이브'],
+    ['아이브를 만나고 싶어', '아이브'],
+    ['코르티스 만나고 왔어요! 팬싸 후기', '코르티스'],           // '왔어요'는 뒤에 다른 사람이 안 붙는 꼴 — 넓히지 않는다
+    ['코르티스 무대 직캠 #코르티스', '코르티스'],
+  ].forEach(([t, k]) => need(!a(t, k), `후기형 안 잡음: ${t.slice(0, 36)}${a(t, k) ? ' → ' + a(t, k) : ''}`));
+  // ② 농담 feat — 제목 전체가 "짧은 말 (feat. …)"이고 이름이 괄호 안에만
+  [
+    ['아저찡 (feat.A2O LITE 아이찡)', 'A2O LITE', ['아이찡']],
+    ['밥 먹자 (feat. 르세라핌 카즈하) #shorts', '르세라핌', ['카즈하']],
+  ].forEach(([t, k, m]) => need(!!b(t, k, m), `농담 feat 잡음: ${t.slice(0, 36)} → ${b(t, k, m)}`));
+  [
+    ['에스파 Supernova (feat. 카리나)', '에스파', ['카리나']],            // 괄호 앞에 그룹 표기 = 그 그룹의 곡
+    ['[MPD직캠] 아이브 직캠 (feat. 장원영)', '아이브', ['장원영']],
+    ['아이브 장원영이랑 밥 먹는 날 (feat. 수다) 풀버전 공개합니다 여러분', '아이브', ['장원영']],
+    ['Whiplash 무대', '에스파', []],
+  ].forEach(([t, k, m]) => need(!b(t, k, m), `농담 feat 안 잡음: ${t.slice(0, 36)}${b(t, k, m) ? ' → ' + b(t, k, m) : ''}`));
+  // 연결: 농담 feat는 예능·출연·잡지 채널에서만(음악 채널의 "곡명 (feat. 가수)"는 진짜 참여), 주인·팬·공식 채널 제외
+  need(/const _extNoSelf=!owner&&tier!=='fans'&&tier!=='official'&&tier!=='grpsub';/.test(admin)
+    && /\(tier==='variety'\|\|tier==='appear'\|\|tier==='magazine'\)&&typeof _featJokeCueFor==='function'/.test(admin), '외부 동기화: 얘기만 나오는 영상은 보류+검수, 농담 feat는 예능 계열 채널만');
 }
 
 console.log(fail ? `\n❌ ${fail}개 실패` : '\n✅ 빗댐 제목 테스트 통과');

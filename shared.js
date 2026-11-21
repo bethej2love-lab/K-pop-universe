@@ -811,6 +811,49 @@ function _parodySelfCueFor(title,gko){
   return _parodySelfCue(title,[gko,g&&g.en]);
 }
 
+// 그 그룹이 **나오지 않고 얘기만 나오는** 영상(2026-11-21 사용자 — "A2O LITE 만나고 현타 온 영미 DJ #두시의데이트 #안영미", "아저찡 (feat.A2O LITE 아이찡)":
+// 둘 다 A2O LITE 얘기를 한 것이고 출연은 없어 손으로 무관 처리했다, "제목만으로 쉽진 않겠지만 로직을 진지하게 고민해 달라").
+// 제목만으로 100% 가를 수는 없으니 **좁고 확실한 두 꼴**만 잡아 외부 동기화가 '보류'(화면에서 빠짐+검수 큐)로 넣는다 — 틀리게 잡혀도 검수에서 풀면 된다.
+//  ① 후기형: 그룹명이 목적어이고 다른 사람이 주어 — "○○(을/를/랑) 만나고 … 온/난/된/받은/빠진 △△", "○○ 만난 뒤/후 …", "○○ 영접하고 …".
+//     그룹이 주어인 문장("팬들 만나고 온 ○○")은 그룹명이 동사 뒤에 오므로 안 걸린다. '보고'는 "보고 싶다·보고 가세요" 때문에 넣지 않는다.
+//  ② 농담 feat: 제목 전체가 "짧은 말 (feat. …)"이고 그룹·멤버 이름이 그 괄호 안에만 있는 꼴 — 예능·라디오 쇼츠가 '○○ 얘기가 나왔다'는 뜻으로 쓴다.
+//     음악 채널·음악방송에서 "곡명 (feat. 가수)"는 진짜 참여라 **호출부가 채널 종류로 거른다**(admin.js _extBuildRows: variety·appear·magazine만).
+// ⚠️ 정규식에 백슬래시를 쓰지 않는다(위 _parodyRefCue 주의와 같은 이유).
+const _MENTION_AFTER='(?: ?(?:을|를|와|과|랑|이랑|하고))? ?(?:만나고|만난 ?(?:뒤|후)|영접하고|영접한 ?(?:뒤|후))(?: ?[가-힣A-Za-z!?~]{1,6}){0,2} ?(?:온|난|된|받은|빠진|한)(?=$|[^가-힣])';
+const _mentionReCache=new Map();
+function _mentionOnlyCue(title,names){
+  const t=String(title||'');
+  if(!t)return '';
+  const BS=String.fromCharCode(92);
+  for(const n of names||[]){
+    if(!n||n.length<2)continue;
+    let r=_mentionReCache.get(n);
+    if(!r){const e=[...n].map(c=>('.*+?^$|()[]{}'.includes(c)||c===BS)?BS+c:c).join('');r=new RegExp(e+_MENTION_AFTER,'i');_mentionReCache.set(n,r);}
+    const a=t.match(r);if(a)return a[0];
+  }
+  return '';
+}
+function _mentionOnlyCueFor(title,gko){
+  const g=(typeof GROUPS!=='undefined'&&GROUPS)?GROUPS[gko]:null;
+  return _mentionOnlyCue(title,[gko,g&&g.en,...((g&&g.altNames)||[])]);
+}
+// 농담 feat — 해시태그를 떼고 남은 제목이 "12자 이하의 한 덩어리 (feat. …)" 꼴인지. 괄호 앞 말에 그룹 표기가 있으면(그 그룹의 곡·콘텐츠) 아니다.
+const _FEAT_JOKE_RE=/^ *([^()#]{1,12}?) *[(（] *feat[.]? *([^()（）]{2,40}) *[)）] *$/i;
+function _featJokeCue(title,names){
+  const t=String(title||'').replace(/#[^ #]+/g,' ').replace(/ +/g,' ').trim();
+  const m=t.match(_FEAT_JOKE_RE);
+  if(!m)return '';
+  const head=m[1].toLowerCase(),inner=m[2].toLowerCase();
+  const ns=(names||[]).filter(n=>n&&n.length>=2).map(n=>String(n).toLowerCase());
+  if(!ns.some(n=>inner.includes(n)))return '';   // 괄호 안에 그 그룹(멤버) 표기가 있어야
+  if(ns.some(n=>head.includes(n)))return '';     // 괄호 앞에도 있으면 그 그룹 자신의 콘텐츠
+  return m[0].trim();
+}
+function _featJokeCueFor(title,gko,memberNames){
+  const g=(typeof GROUPS!=='undefined'&&GROUPS)?GROUPS[gko]:null;
+  return _featJokeCue(title,[gko,g&&g.en,...((g&&g.altNames)||[]),...(memberNames||[])]);
+}
+
 // ── 음방 회차 묶기(2026-11-03) — 앱 회차 화면(_openShowEp)과 정적 회차 페이지(build_group_pages.js buildShowPages)가 같이 쓴다 ──
 // 출처는 방송사 공식 채널만. 회차 날짜 = ①제목 속 날짜(261030·2026.10.22·20261025)가 그 방송 요일과 맞을 때 ②없으면 같은 방송 다른 영상에서
 // 배운 'EP.번호→날짜' ③그래도 없으면 올린 날(KST) 기준 3일 안의 직전 방송일. 요일이 안 맞는 날짜(해외 특집·연말 무대)는 뺀다.
