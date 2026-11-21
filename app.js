@@ -14504,7 +14504,10 @@ function _lbNarrowSync(){
 }
 function _feedWideScroller(){
   const fo=document.getElementById('feed-overlay');if(!fo)return null;
-  return [...fo.querySelectorAll('.feed-pane,#feed-body')].find(el=>el.offsetParent&&el.scrollHeight>el.clientHeight+2)||null;
+  // 두 탭(For You·발견) 칸은 옆으로 나란히 있고 안 보이는 쪽은 화면 밖으로 밀려 있다. 예전엔 '스크롤되는 첫 칸'을 골라,
+  // 화면 밖 For You 칸이 길어지면(2026-11-21 행사 스포트라이트로 실제로 그렇게 됨) 보이지 않는 칸을 집었다 → **화면에 걸친 칸**만 본다.
+  const onScreen=el=>{const r=el.getBoundingClientRect();return r.right>1&&r.left<window.innerWidth-1;};
+  return [...fo.querySelectorAll('.feed-pane,#feed-body')].find(el=>el.offsetParent&&onScreen(el)&&el.scrollHeight>el.clientHeight+2)||null;
 }
 // ── 나침반 폭 3단계(2026-11-03 사용자: "자유롭게 끄는 건 너무 많은 선택지, 최대 3단계 — 열린 창 조합 다 고려해서 쓸데없는 여백이 거의 없게") ──
 // 단계는 픽셀이 아니라 '나침반이 얼마나 양보하나'다. 좁게=늘 360 · 보통=혼자면 넓은 홈(최대 960)·다른 창과 함께면 440(예전 동작 그대로)
