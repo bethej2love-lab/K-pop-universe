@@ -3467,6 +3467,21 @@ function _searchRemote(q,res,mobSearch,obSearch,hint){
 // 검색 로그를 안 남기므로 "인기 검색어"는 만들 수 없다(있는 척하면 가짜다). 대신 **우리가 실제로
 // 가진 신호**를 쓴다 — groups.json의 pri(유명도)와 최근 즐겨찾기. DB를 안 치므로 즉시 뜬다.
 // ⚠️ 매번 같은 순서면 "고정 배너"처럼 보여 아무도 안 누른다 — pri 상위 풀에서 매번 섞어 6개만 낸다.
+// 검색 빈 화면의 즐겨찾기 줄 — 최애(프로필 bias) → 즐겨찾기 멤버 → 즐겨찾기 그룹 순. skip에 있는 대상(최근 검색)은 뺀다.
+function _favSearchHits(skip){
+  const seen=new Set((skip||[]).map(h=>h.type==='member'&&h.data&&h.data.id!=null?'m:'+h.data.id:h.type==='group'?'g:'+h.data:''));
+  const out=[],max=5;
+  const addM=a=>{if(!a||!a._worldPos||out.length>=max)return;const k='m:'+a.id;if(seen.has(k))return;seen.add(k);
+    const nm=_dispName(a),g=currentLang==='ko'?a.group.ko:(a.group.en||a.group.ko);out.push({type:'member',name:nm,sub:g,pos:a._worldPos,data:a,score:0});};
+  const addG=ko=>{if(out.length>=max||!GROUPS[ko])return;const k='g:'+ko;if(seen.has(k))return;const bm=bubbleMeshes.find(b=>b.ko===ko);if(!bm)return;seen.add(k);
+    const en=GROUPS[ko].en||'',nm=currentLang==='ko'?ko:(en||ko);out.push({type:'group',name:nm,sub:(en&&en!==nm)?en:'',pos:bm.mesh.position.clone(),data:ko,score:0});};
+  const byKey=k=>ARTISTS.find(a=>_mFavKey(a)===k);
+  ((typeof myProfile!=='undefined'&&myProfile&&myProfile.bias)||[]).forEach(b=>{
+    if((b.type||'member')==='group')addG(b.ko);else addM(_artistByNameGroup(b.ko,b.groupKo));});
+  [...favMembers].forEach(k=>addM(byKey(k)));
+  [...favGroups].forEach(addG);
+  return out;
+}
 function _trendingSearchHits(){
   const pool=Object.keys(GROUPS)
     .filter(ko=>(GROUPS[ko].pri||0)>=1.5&&bubbleMeshes.some(b=>b.ko===ko))
@@ -4634,6 +4649,10 @@ function doSearch(q){
         const lb=document.createElement('div');lb.className='sr-sec-label sr-now';lb.textContent=currentLang==='ko'?'지금':'Now';
         const it=_makeSearchItem({type:'program',name:currentLang==='ko'?`${nm} 무대`:`${nm} stages`,data:{__festival:sr.id},score:0},res,mobSearch,false);
         res.insertBefore(it,res.firstChild);res.insertBefore(lb,it);}}catch(e){}}
+    // 즐겨찾기 바로가기(2026-11-21 하트 활용) — 검색을 여는 이유의 대부분은 '늘 보는 그 사람'이다. 최애 먼저, 최근 검색에 이미 있는 건 빼고 5줄까지.
+    if(!obSr){try{const fh=_favSearchHits(recentHits);
+      if(fh.length){const lb=document.createElement('div');lb.className='sr-sec-label sr-favs';lb.textContent=currentLang==='ko'?'즐겨찾기':'Favorites';res.appendChild(lb);
+        fh.forEach(h=>res.appendChild(_makeSearchItem(h,res,mobSearch,false)));}}catch(e){}}
     if(trending.length)_appendTrendingSection(trending,res,mobSearch,!!obSr);
     if(!obSr)_appendComboEntry(res); // "멤버 조합 찾기" 진입 배너(온보딩 제외)
     if(msOpen)_msSyncTabs();
@@ -7038,7 +7057,9 @@ function _surfSortRows(rows){
   const tot=Object.values(_surfPrefs).reduce((s,x)=>s+(+x||0),0);
   const gtot=_surfGlobalW?Object.values(_surfGlobalW).reduce((s,x)=>s+x,0):0;
   const boost=k=>tot>=5?2.5*((+_surfPrefs[k]||0)/tot):(gtot>=10?1.5*((_surfGlobalW[k]||0)/gtot):0);
-  const score=r=>(_SURF_ROW_ORDER[r.key]??9)-boost(r.key);
+  // 지금 영상에 하트를 눌렀으면 '같은 무대의 다른 멤버' 줄을 맨 앞으로(2026-11-21 하트 활용) — 마음에 든 무대는 다른 멤버 직캠으로 이어 보는 게 가장 흔한 다음 행동이다
+  let hearted=false;try{const cur=(_lbPlaylist&&_lbIdx>=0&&_lbPlaylist[_lbIdx])||null;hearted=!!(cur&&cur.u&&scraps.some(x=>x.u===cur.u));}catch(e){}
+  const score=r=>(hearted&&r.key==='stage')?-9:(_SURF_ROW_ORDER[r.key]??9)-boost(r.key);
   return rows.map((r,i)=>[r,i]).sort((p,q)=>(score(p[0])-score(q[0]))||(p[1]-q[1])).map(p=>p[0]);
 }
 let _surfWrittenP=null;
@@ -19480,6 +19501,7 @@ function toggleScrap(s,ctx){
   }
   localStorage.setItem(SCRAP_KEY,JSON.stringify(scraps));_sbPushColumn('scraps',scraps);
   if(nowScrapped){try{_favSuggest(scraps[0]);}catch(e){}}
+  try{if(document.getElementById('yt-lightbox')?.classList.contains('open')&&typeof _surfRender==='function')_surfRender();}catch(e){}
   renderScrapList();
   document.querySelectorAll(`.scrap-btn[data-u="${CSS.escape(id)}"]`).forEach(btn=>{
     btn.classList.toggle('scrapped',nowScrapped);
