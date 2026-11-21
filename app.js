@@ -4628,6 +4628,12 @@ function doSearch(q){
       return;
     }
     _renderSearchHits(obSr?recentHits.slice(0,5):recentHits,res,mobSearch,true,!!obSr);
+    // 지금 진행 중이거나 막 끝난 큰 행사가 있으면 검색 빈 화면 맨 위에 그 입구를 둔다(2026-11-21 사용자 "발견 탭이든 검색창이든 형식에 갇히지 말고 시의성 있게")
+    if(!obSr){try{const u=_evSpotCurrent(),sr=u&&_EVENT_SERIES.find(x=>x.id===u.id);
+      if(sr){const nm=sr.ko.replace(/\s*\(.*\)$/,'')+' '+u.ed;
+        const lb=document.createElement('div');lb.className='sr-sec-label sr-now';lb.textContent=currentLang==='ko'?'지금':'Now';
+        const it=_makeSearchItem({type:'program',name:currentLang==='ko'?`${nm} 무대`:`${nm} stages`,data:{__festival:sr.id},score:0},res,mobSearch,false);
+        res.insertBefore(it,res.firstChild);res.insertBefore(lb,it);}}catch(e){}}
     if(trending.length)_appendTrendingSection(trending,res,mobSearch,!!obSr);
     if(!obSr)_appendComboEntry(res); // "멤버 조합 찾기" 진입 배너(온보딩 제외)
     if(msOpen)_msSyncTabs();
@@ -27396,7 +27402,7 @@ async function _openEventPage(id,ed,view,who,_view){
   const vidUrl=x=>_isShortV(x)?`https://youtube.com/shorts/${x.id}`:`https://www.youtube.com/watch?v=${x.id}`;
   const songs=list.slice(0,300).map(x=>({..._rowTags(x),t:x.title,u:vidUrl(x),thumb:x.thumb,vc:x.view_count,dur:x.duration_sec,pa:x.published_at?.slice(0,10),_apiId:x.id,_apiGroupKo:x.group_ko}));
   const sub=!ed?(isKo?'아직 모인 영상이 없어요':'No videos yet')
-    :`${_evEdLabel(ed)} · ${isKo?`영상 ${list.length}개`:`${list.length} videos`}`;
+    :[_evEdLabel(ed),_evPlace(id,ed),isKo?`영상 ${list.length}개`:`${list.length} videos`].filter(Boolean).join(' · ');
   Object.assign(st,{ed,view,who}); // 정규화된 선택도 다음 축 변경이 함께 유지한다.
   const facets=[];
   if(eds.length)facets.push({key:'ed',labelKo:'',labelEn:'',scroll:eds.length>6,sel:ed,options:eds.map(e=>({v:e,ko:_evEdLabel(e),en:_evEdLabel(e)})),onPick:v=>_openEventPage(id,v,undefined,undefined,st)});
@@ -27427,6 +27433,28 @@ const _EVENT_UPCOMING=[
 // 일정표(_EVENT_UPCOMING)에 있는 행사가 **진행 중이거나 끝난 지 3일 안**이면, 그 회차 무대(EV:행사:회차 태그)를 두 탭 맨 위에 올린다:
 //   발견 = 조회수 높은 무대 4개 / For You = 내 즐겨찾기가 나온 무대 먼저(없으면 조회수순) — 이어보기 바로 다음.
 // 영상이 3개 미만이면(아직 안 올라옴) 선반을 띄우지 않는다. '전체 보기'는 행사 페이지(_openEventPage)의 그 회차.
+// 행사 회차별 개최 장소(2026-11-21 사용자 "마마는 매년 장소가 다를 텐데 다 수집정리") — 회차 화면 부제에 '2025 · 홍콩 카이탁 스타디움 · 영상 n개'로 보인다.
+// 확인된 것만 적는다. MAMA 2010~2025: setlist.fm 행사 목록·CJ ENM 'MAMA AWARDS History'·팬 위키 개최지 표를 교차 확인(2026-11-21 검색).
+// 1999~2009(서울: 리틀엔젤스예술회관 → 경희대 → 올림픽 체조경기장 등)는 연도별 장소가 출처마다 한 줄로 확인되지 않아 비워 둔다 — 확인되면 추가.
+// 올해 회차는 _EVENT_UPCOMING의 place가 우선. 다른 시상식(MMA·골든디스크 등)도 같은 표에 행사 id로 추가하면 된다.
+const _EVENT_PLACES={mama:{
+  '2010':{ko:'마카오 코타이 아레나',en:'Cotai Arena, Macau'},'2011':{ko:'싱가포르 인도어 스타디움',en:'Singapore Indoor Stadium'},
+  '2012':{ko:'홍콩 컨벤션센터',en:'HKCEC, Hong Kong'},'2013':{ko:'홍콩 아시아월드 엑스포',en:'AsiaWorld–Expo, Hong Kong'},
+  '2014':{ko:'홍콩 아시아월드 엑스포',en:'AsiaWorld–Expo, Hong Kong'},'2015':{ko:'홍콩 아시아월드 엑스포',en:'AsiaWorld–Expo, Hong Kong'},
+  '2016':{ko:'홍콩 아시아월드 엑스포',en:'AsiaWorld–Expo, Hong Kong'},
+  '2017':{ko:'베트남 호아빈 극장 · 요코하마 아레나 · 홍콩 아시아월드 엑스포',en:'Hoa Binh Theater · Yokohama Arena · AsiaWorld–Expo'},
+  '2018':{ko:'서울 DDP · 사이타마 슈퍼 아레나 · 홍콩 아시아월드 엑스포',en:'DDP Seoul · Saitama Super Arena · AsiaWorld–Expo'},
+  '2019':{ko:'나고야 돔',en:'Nagoya Dome'},'2020':{ko:'파주 CJ ENM 콘텐츠월드',en:'CJ ENM Contents World, Paju'},'2021':{ko:'파주 CJ ENM 콘텐츠월드',en:'CJ ENM Contents World, Paju'},
+  '2022':{ko:'교세라 돔 오사카',en:'Kyocera Dome Osaka'},'2023':{ko:'도쿄 돔',en:'Tokyo Dome'},
+  '2024':{ko:'LA 돌비 극장 · 교세라 돔 오사카',en:'Dolby Theatre LA · Kyocera Dome Osaka'},'2025':{ko:'홍콩 카이탁 스타디움',en:'Kai Tak Stadium, Hong Kong'},
+}};
+function _evPlace(id,ed){
+  const y=String(ed||'').slice(0,4);
+  const up=_EVENT_UPCOMING.find(u=>u.id===id&&String(u.ed)===String(ed));
+  if(up&&up.place)return up.place;
+  const p=_EVENT_PLACES[id]&&_EVENT_PLACES[id][y];
+  return p?(currentLang==='ko'?p.ko:p.en):'';
+}
 function _evSpotCurrent(){
   const today=new Date(Date.now()+9*3600e3).toISOString().slice(0,10); // KST 날짜
   const plus=(d,n)=>new Date(Date.parse(d)+n*864e5).toISOString().slice(0,10);
