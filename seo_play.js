@@ -608,6 +608,8 @@
       if(w)met.push({t:'vis',s:EN?(f(w)+' visited this week'):('이번 주 '+f(w)+'명이 다녀갔어요')});
       else if(t)met.push({t:'vis',s:EN?(f(t)+' visited so far'):('지금까지 '+f(t)+'명이 다녀갔어요')});
       if(!met.length)return;
+      // 처음엔 '다녀갔어요'부터(2026-11-21 사용자 "맨 처음 접속했을 때 '이번 주 n명이 다녀갔어요'부터") — 다녀간 사람 → 좋아해요 → 흔적 순으로 돈다
+      met.sort(function(x,y){var o={vis:0,fav:1,tr:2};return o[x.t]-o[y.t];});
       items=met.concat(info);render();
     }
     var KEY='kpu_ls_v1';
