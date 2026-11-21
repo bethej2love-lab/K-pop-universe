@@ -285398,6 +285398,29 @@
     "left": "2018.12.26",
     "discography": [
       {
+        "title": "낮잠 잘래",
+        "type": "싱글",
+        "isMain": true,
+        "cover": "https://cdnimg.melon.co.kr/cm2/album/images/151/77/699/15177699_20261118164847_500.jpg",
+        "releaseDate": "2026.11.21",
+        "trackCount": 2,
+        "titleTrack": "낮잠 잘래",
+        "tracks": [
+          {
+            "no": 1,
+            "title": "낮잠 잘래",
+            "isTitle": true
+          },
+          {
+            "no": 2,
+            "title": "낮잠 잘래 (Inst.)",
+            "isTitle": false
+          }
+        ],
+        "src": "melon",
+        "melonAlbumId": "15177699"
+      },
+      {
         "title": "욕망의 덫 OST Part.11",
         "type": "OST",
         "isMain": false,
