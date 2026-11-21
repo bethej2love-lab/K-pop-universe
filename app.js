@@ -6316,6 +6316,19 @@ function _lbUpdateMemberInfo(){
   if(_chemOn){}
   else if(gName&&GROUPS[groupKo])anchorEl.appendChild(_mkPart(gName,()=>_openLbHalf('group',groupKo)));
   else if(gName)anchorEl.appendChild(document.createTextNode(gName));
+  // 하트를 여러 번 누른 대상이면 이름 옆에 작은 하트(즐겨찾기 제안) — 그 사람/그룹 영상일 때만, 이미 즐겨찾기면 없음
+  if(_favHintFor&&!_chemOn){
+    const h=_favHintFor,hit=h.kind==='member'?(artist&&artist===h.art&&!favMembers.has(_mFavKey(h.art))):(groupKo===h.gko&&!favGroups.has(h.gko));
+    if(hit){
+      const fb=document.createElement('button');fb.type='button';fb.className='lb-fav-hint';
+      fb.setAttribute('aria-label',currentLang==='ko'?`${h.name} 즐겨찾기`:`Favorite ${h.name}`);fb.title=fb.getAttribute('aria-label');
+      fb.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5C6.5 16.2 3 13 3 9.2 3 6.6 5 4.5 7.6 4.5c1.7 0 3.3.9 4.4 2.3 1.1-1.4 2.7-2.3 4.4-2.3C19 4.5 21 6.6 21 9.2c0 3.8-3.5 7-9 11.3z"/></svg>';
+      fb.addEventListener('click',e=>{e.stopPropagation();_gaEvent('fav_suggest',{action:'accept',kind:h.kind});
+        if(h.kind==='member'){if(!favMembers.has(_mFavKey(h.art)))toggleFavMember(h.art);}else if(!favGroups.has(h.gko))toggleFavGroup(h.gko);
+        fb.classList.add('on');_favHintFor=null;setTimeout(()=>fb.remove(),900);});
+      anchorEl.appendChild(fb);
+    }
+  }
   wrap.style.display=(_chemOn||mName||gName||(s&&((s.with&&s.with.length)||(s.withMembers&&s.withMembers.length)||(s.withGroups&&s.withGroups.length))))?'':'none';
   withEl.innerHTML='';
   // 한 그룹이 전원 나온 영상은 멤버 칩 대신 그룹 칩 하나로(2026-09-29 — 빅톤 6명이 칩 6개로 늘어서던 것).
@@ -19350,20 +19363,15 @@ function _favSuggest(rec){
     kind='group';key='g:'+gko;name=_gLabelKo(gko);n=scraps.filter(x=>x.groupKo===gko).length;
   }
   if(!kind||n<3||asked[key])return;
+  // 팝업처럼 눈앞에 띄우지 않는다(2026-11-21 사용자 "정보를 냅다 턱 보여주는 건 촌스럽다, 은은하게 스며들게") —
+  // 재생 화면 위쪽 이름 옆에 작은 하트 하나가 조용히 생긴다(_lbUpdateMemberInfo). 누르면 즐겨찾기. 재생 화면이 아니면 아무것도 하지 않고 다음 기회로 둔다.
+  if(!document.getElementById('yt-lightbox')?.classList.contains('open'))return;
   asked[key]=Date.now();try{localStorage.setItem(_FAVSUG_KEY,JSON.stringify(asked));}catch(e){}
-  const ko=currentLang==='ko';
-  let el=document.getElementById('fav-suggest');
-  if(!el){el=document.createElement('div');el.id='fav-suggest';el.setAttribute('role','status');
-    el.innerHTML='<span class="fs-txt"></span><button type="button" class="fs-go"></button><button type="button" class="fs-x" aria-label="닫기">✕</button>';
-    document.body.appendChild(el);
-    el.querySelector('.fs-x').addEventListener('click',e=>{e.stopPropagation();el.classList.remove('show');});}
-  el.querySelector('.fs-txt').textContent=ko?`${name} 영상에 하트 ${n}번`:`${n} hearts on ${name}`;
-  const go=el.querySelector('.fs-go');go.textContent=ko?'즐겨찾기':'Favorite';
-  go.onclick=e=>{e.stopPropagation();el.classList.remove('show');_gaEvent('fav_suggest',{action:'accept',kind});
-    if(kind==='member'){if(!favMembers.has(_mFavKey(art)))toggleFavMember(art);}else if(!favGroups.has(gko))toggleFavGroup(gko);};
+  _favHintFor={kind,art,gko,name};
   _gaEvent('fav_suggest',{action:'show',kind});
-  clearTimeout(el._t);requestAnimationFrame(()=>el.classList.add('show'));el._t=setTimeout(()=>el.classList.remove('show'),8000);
+  try{_lbUpdateMemberInfo();}catch(e){}
 }
+let _favHintFor=null; // 지금 재생 화면 이름 옆에 조용히 하트를 보여 줄 대상({kind:'member'|'group',art,gko})
 function _vidKindOf(t){t=String(t||'').toLowerCase();
   if(/보이스캠|voice ?cam/.test(t))return 'voice';
   if(/페이스캠|face ?cam|얼빡|최애직캠/.test(t))return 'face';
@@ -19392,15 +19400,11 @@ function _visitNote(kind,times){
   _visitCounts[kind]=(times||[]).filter(t=>t&&t>_visitPrev).length;_visitRender();
 }
 function _visitRender(){
-  const el=document.getElementById('feed-since');if(!el)return;
-  const ko=currentLang==='ko',p=[];
-  if(_visitPrev&&_visitMarkedAt-_visitPrev>=3*3600e3){
-    if(_visitCounts.vid)p.push(ko?`새 영상 ${_visitCounts.vid}`:`${_visitCounts.vid} new videos`);
-    if(_visitCounts.ig)p.push(ko?`인스타 ${_visitCounts.ig}`:`${_visitCounts.ig} Instagram`);
-  }
-  el.hidden=!p.length;
-  if(p.length)el.textContent=(ko?'지난 방문 이후 · ':'Since your last visit · ')+p.join(' · ');
-  if(!el._w){el._w=1;el.addEventListener('click',e=>{e.stopPropagation();const t=document.getElementById('feed-favnew-section');if(t&&t.offsetParent)t.scrollIntoView({block:'start',behavior:'smooth'});});}
+  // 맨 위에 문장으로 알리지 않는다(같은 날 사용자 "은은하게") — 해당 선반 제목 옆에 작은 '+n'만. 제목 글자가 다시 써져도 남게 data 속성 + CSS(::after).
+  const on=_visitPrev&&_visitMarkedAt-_visitPrev>=3*3600e3;
+  const set=(el,n)=>{if(!el)return;if(on&&n)el.dataset.new=String(n);else delete el.dataset.new;};
+  set(document.querySelector('#feed-favnew-section .feed-section-ttl'),_visitCounts.vid);
+  set(document.querySelector('#feed-favig-section .feed-section-ttl'),_visitCounts.ig);
 }
 function toggleScrap(s,ctx){
   const id=_scrapId(s);
