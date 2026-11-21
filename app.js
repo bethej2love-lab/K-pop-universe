@@ -25117,7 +25117,7 @@ function _renderMyRecap(){
   const a=document.createElement('span');a.className='rc-a';a.textContent=ko?`${_recapMonthLabel(r.ym)} · 영상 ${r.n} · ${r.days}일`:`${_recapMonthLabel(r.ym)} · ${r.n} videos · ${r.days} days`;
   const b=document.createElement('span');b.className='rc-b';b.textContent=[...mem.slice(0,2),...grp.slice(0,1)].map(x=>x[0]+' '+x[1]).join(' · ');
   el.append(a,b);
-  if(!el._w){el._w=1;el.addEventListener('click',e=>{e.stopPropagation();_openRecap(_watchYm());});}
+  if(!el._w){el._w=1;el.addEventListener('click',e=>{e.stopPropagation();_openRecapStory(_watchYm());});}
 }
 function _openRecap(ym){
   const r=_recapOf(ym);if(!r)return;
@@ -25135,6 +25135,74 @@ function _openRecap(ym){
   _openFeedListOverlay(ko?`${_recapMonthLabel(ym)} 덕질 결산`:`${_recapMonthLabel(ym)} recap`,
     ko?`본 영상 ${r.n}개 · ${r.days}일${r.hearts.length?' · 하트 '+r.hearts.length:''}`:`${r.n} videos · ${r.days} days${r.hearts.length?' · '+r.hearts.length+' hearts':''}`,
     sections.flatMap(x=>x.songs),{head,sections});
+}
+// 결산을 '스토리'로(2026-11-21 사용자 "스포티파이 충성팬 카드처럼 — 결산도 저런 식으로"): 화면 가득, 한 장에 한 가지, 위쪽 진행 막대, 좌우 탭으로 넘김·누르고 있으면 멈춤.
+// 배경은 그달 가장 많이 본 그룹의 행성 색(없으면 기본 파랑) — 사람마다 다른 색이 된다. 마지막 장 '영상 목록'은 기존 목록 화면(_openRecap).
+function _recapSlides(r){
+  const ko=currentLang==='ko',month=_recapMonthLabel(r.ym),out=[];
+  const art=k=>{const i=k.indexOf(':'),g=k.slice(0,i),m=k.slice(i+1);return{g,m,a:(typeof _artistByNameGroup==='function'&&_artistByNameGroup(m,g))||null};};
+  out.push({k:ko?`${month} 덕질 결산`:`${month} recap`,big:String(r.n),unit:ko?'개의 영상':'videos',sub:ko?`${r.days}일 동안${r.hearts.length?` · 하트 ${r.hearts.length}`:''}`:`over ${r.days} days${r.hearts.length?` · ${r.hearts.length} hearts`:''}`});
+  if(r.topM.length){const [k,n]=r.topM[0],x=art(k);
+    out.push({k:ko?'가장 많이 본 멤버':'Most watched member',pic:{kind:'member',a:x.a,g:x.g},name:x.a?_dispName(x.a):x.m,sub:ko?`${n}번`:`${n} plays`,
+      rest:r.topM.slice(1).map(([k2,n2])=>{const y=art(k2);return (y.a?_dispName(y.a):y.m)+' '+n2;})});}
+  if(r.topG.length){const [g,n]=r.topG[0];
+    out.push({k:ko?'가장 많이 본 그룹':'Most watched group',pic:{kind:'group',g},name:GROUPS[g]?_gLabelKo(g):g,sub:ko?`${n}번`:`${n} plays`,
+      rest:r.topG.slice(1).map(([g2,n2])=>(GROUPS[g2]?_gLabelKo(g2):g2)+' '+n2)});}
+  if(r.topV.length){const v=r.topV[0];
+    out.push({k:ko?'가장 많이 본 영상':'Most watched video',thumb:v.thumb||`https://i.ytimg.com/vi/${v.id}/mqdefault.jpg`,title:v.t||'',sub:ko?`${v.n}번`:`${v.n} plays`,list:true});}
+  return out;
+}
+let _recapStoryClose=null;
+function _openRecapStory(ym){
+  const r=_recapOf(ym);if(!r)return;
+  if(_recapStoryClose)_recapStoryClose();
+  const ko=currentLang==='ko',slides=_recapSlides(r),DUR=window._recapStoryDur||5200;
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const col=g=>{const c=GROUPS[g]&&GROUPS[g].color;return Array.isArray(c)?c:null;};
+  const c1=col((r.topG[0]||[])[0])||[126,156,255],c2=col((r.topG[1]||[])[0])||[c1[2],c1[0],c1[1]];
+  const root=document.createElement('div');root.id='recap-story';root.setAttribute('role','dialog');root.setAttribute('aria-label',ko?'덕질 결산':'Recap');
+  root.style.setProperty('--rs1',c1.join(','));root.style.setProperty('--rs2',c2.join(','));
+  root.innerHTML='<div class="rs-bg"><i class="rs-orb a"></i><i class="rs-orb b"></i></div><div class="rs-bars"></div><button type="button" class="rs-x" aria-label="'+(ko?'닫기':'Close')+'"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button><div class="rs-stage"></div>';
+  const bars=root.querySelector('.rs-bars'),stage=root.querySelector('.rs-stage');
+  slides.forEach(()=>{const b=document.createElement('span');b.innerHTML='<i></i>';bars.appendChild(b);});
+  let idx=-1,t0=0,acc=0,paused=false,raf=0,closed=false;
+  const fill=p=>{[...bars.children].forEach((b,i)=>{b.firstChild.style.transform=`scaleX(${i<idx?1:i>idx?0:p})`;});};
+  const tick=now=>{if(closed)return;if(!paused){const p=Math.min(1,(acc+(now-t0))/DUR);fill(p);if(p>=1){if(idx<slides.length-1)go(idx+1);else{paused=true;acc=DUR;}}}raf=requestAnimationFrame(tick);};
+  const close=()=>{if(closed)return;closed=true;cancelAnimationFrame(raf);document.removeEventListener('keydown',onKey,true);root.classList.add('out');setTimeout(()=>root.remove(),reduce?0:240);_recapStoryClose=null;};
+  const paintPic=(el,pic)=>{
+    const c=col(pic.g)||c1;el.style.background=`radial-gradient(circle at 34% 28%, rgb(${c.join(',')}), rgba(9,9,12,.55))`;
+    const p=pic.kind==='member'?(pic.a?_srAvUrl(pic.a):Promise.resolve(null)):_groupAvUrl(pic.g);
+    Promise.resolve(p).then(u=>{if(!u||closed)return;const im=_avImg(u,img=>{img.className='rs-pic-img';el.appendChild(img);});void im;}).catch(()=>{});
+  };
+  function go(i){
+    if(i<0)i=0;if(i>=slides.length){close();return;}
+    idx=i;acc=0;t0=performance.now();paused=false;fill(0);
+    const sl=slides[i],el=document.createElement('div');el.className='rs-slide';
+    const add=(cls,txt,tag)=>{if(!txt)return null;const d=document.createElement(tag||'div');d.className=cls;d.textContent=txt;el.appendChild(d);return d;};
+    add('rs-k',sl.k);
+    if(sl.pic){const pc=document.createElement('div');pc.className='rs-pic';el.appendChild(pc);paintPic(pc,sl.pic);}
+    if(sl.thumb){const th=document.createElement('div');th.className='rs-thumb';const im=new Image();im.alt='';im.referrerPolicy='no-referrer';im.src=sl.thumb;th.appendChild(im);el.appendChild(th);}
+    if(sl.big){const b=add('rs-big',sl.big);if(b&&sl.unit){const u=document.createElement('span');u.textContent=sl.unit;b.appendChild(u);}}
+    add('rs-name',sl.name);add('rs-title',sl.title);add('rs-sub',sl.sub);
+    if(sl.rest&&sl.rest.length)add('rs-rest',sl.rest.join(' · '));
+    if(sl.list){const bt=add('rs-list',ko?'영상 목록 ›':'All videos ›','button');bt.type='button';bt.addEventListener('click',e=>{e.stopPropagation();close();_openRecap(ym);});}
+    stage.innerHTML='';stage.appendChild(el);
+  }
+  const onKey=e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close();}else if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();go(idx+1);}else if(e.key==='ArrowLeft'){e.preventDefault();go(idx-1);}};
+  // 탭: 왼쪽 1/3은 이전, 나머지는 다음. 0.25초 넘게 누르고 있으면 멈췄다가 떼면 이어진다(넘기지 않음).
+  let downAt=0,held=false,holdT=0;
+  root.addEventListener('pointerdown',e=>{if(e.target.closest('.rs-x,.rs-list'))return;downAt=performance.now();held=false;holdT=setTimeout(()=>{held=true;if(!paused){acc+=performance.now()-t0;paused=true;}},250);});
+  const up=e=>{clearTimeout(holdT);if(!downAt)return;downAt=0;
+    if(held){t0=performance.now();paused=acc>=DUR;return;}
+    if(e.type==='pointercancel'||e.target.closest('.rs-x,.rs-list'))return;
+    const x=e.clientX/Math.max(1,root.clientWidth);if(x<0.33)go(idx-1);else go(idx+1);};
+  root.addEventListener('pointerup',up);root.addEventListener('pointercancel',up);
+  root.addEventListener('click',e=>e.stopPropagation());
+  root.querySelector('.rs-x').addEventListener('click',e=>{e.stopPropagation();close();});
+  document.addEventListener('keydown',onKey,true);
+  document.body.appendChild(root);_recapStoryClose=close;
+  _gaEvent('recap_open',{n:r.n,story:1});
+  go(0);raf=requestAnimationFrame(tick);
 }
 const _RECENT_VIEW_KEY='_kpu_recent_vids';
 function _recordRecentView(vid,song,shorts){

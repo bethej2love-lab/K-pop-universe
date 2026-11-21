@@ -6459,6 +6459,45 @@
 #my-recap .rc-a{display:block;font-size:13.5px;font-weight:600;color:rgba(226,234,252,0.94);}
 #my-recap .rc-a::after{content:" ›";font-weight:400;color:rgba(150,174,225,0.7);}
 #my-recap .rc-b{display:block;margin-top:3px;font-size:12.5px;color:rgba(160,180,225,0.78);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* 덕질 결산 스토리 — 화면 가득, 한 장에 한 가지. 배경은 그달 가장 많이 본 그룹의 행성 색(--rs1/--rs2). 테두리·상자 없이 글자와 사진만. */
+#recap-story{position:fixed;inset:0;z-index:12000;overflow:hidden;background:#0a0b12;color:#fff;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;animation:rsIn .28s ease both;}
+#recap-story.out{opacity:0;transition:opacity .22s ease;}
+#recap-story .rs-bg{position:absolute;inset:0;background:
+  radial-gradient(95% 62% at 88% 6%,rgba(var(--rs1),.62),transparent 68%),
+  radial-gradient(90% 60% at 4% 96%,rgba(var(--rs2),.46),transparent 70%),
+  linear-gradient(160deg,rgba(var(--rs1),.20),rgba(10,11,18,0) 55%),#0a0b12;}
+#recap-story .rs-orb{position:absolute;border-radius:50%;background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.55),rgba(var(--rs1),.55) 38%,rgba(var(--rs2),.18) 72%,transparent 74%);filter:blur(1.5px);opacity:.75;}
+#recap-story .rs-orb::after{content:"";position:absolute;left:-34%;right:-34%;top:38%;height:24%;border-radius:50%;border:1.5px solid rgba(255,255,255,.34);border-top-color:transparent;transform:rotate(-18deg);}
+#recap-story .rs-orb.a{width:150px;height:150px;left:-46px;top:14%;animation:rsFloat 9s ease-in-out infinite alternate;}
+#recap-story .rs-orb.b{width:96px;height:96px;right:-18px;bottom:17%;opacity:.6;animation:rsFloat 11s ease-in-out infinite alternate-reverse;}
+#recap-story .rs-bars{position:absolute;z-index:2;left:12px;right:12px;top:calc(10px + env(safe-area-inset-top,0px));display:flex;gap:4px;}
+#recap-story .rs-bars span{flex:1;height:2.5px;border-radius:2px;background:rgba(255,255,255,.28);overflow:hidden;}
+#recap-story .rs-bars i{display:block;height:100%;background:#fff;transform:scaleX(0);transform-origin:left center;}
+#recap-story .rs-x{position:absolute;z-index:3;right:8px;top:calc(22px + env(safe-area-inset-top,0px));width:44px;height:44px;display:grid;place-items:center;background:none;border:0;color:rgba(255,255,255,.9);cursor:var(--kpu-cursor-pointer,pointer);}
+#recap-story .rs-stage{position:absolute;inset:0;display:grid;place-items:center;padding:84px 28px calc(64px + env(safe-area-inset-bottom,0px));}
+#recap-story .rs-slide{width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center;text-align:center;}
+#recap-story .rs-slide>*{animation:rsRise .6s cubic-bezier(.2,.75,.2,1) both;}
+#recap-story .rs-slide>*:nth-child(2){animation-delay:.08s;}
+#recap-story .rs-slide>*:nth-child(3){animation-delay:.16s;}
+#recap-story .rs-slide>*:nth-child(4){animation-delay:.24s;}
+#recap-story .rs-slide>*:nth-child(n+5){animation-delay:.32s;}
+#recap-story .rs-k{font-size:14px;font-weight:600;letter-spacing:.01em;color:rgba(255,255,255,.78);margin-bottom:22px;}
+#recap-story .rs-big{font-size:104px;line-height:1;font-weight:800;letter-spacing:-.045em;font-variant-numeric:tabular-nums;}
+#recap-story .rs-big span{display:block;margin-top:12px;font-size:22px;font-weight:700;letter-spacing:-.02em;}
+#recap-story .rs-pic{position:relative;width:168px;height:168px;border-radius:50%;overflow:hidden;margin-bottom:24px;box-shadow:0 18px 50px rgba(0,0,0,.35);}
+#recap-story .rs-pic-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+#recap-story .rs-thumb{width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;margin-bottom:22px;background:rgba(255,255,255,.08);box-shadow:0 18px 50px rgba(0,0,0,.35);}
+#recap-story .rs-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+#recap-story .rs-name{font-size:40px;line-height:1.15;font-weight:800;letter-spacing:-.035em;word-break:keep-all;}
+#recap-story .rs-title{font-size:19px;line-height:1.4;font-weight:700;letter-spacing:-.02em;word-break:keep-all;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+#recap-story .rs-sub{margin-top:12px;font-size:17px;font-weight:600;color:rgba(255,255,255,.86);}
+#recap-story .rs-rest{margin-top:26px;font-size:14px;color:rgba(255,255,255,.66);}
+#recap-story .rs-list{margin-top:26px;padding:10px 6px;background:none;border:0;font:inherit;font-size:14.5px;font-weight:600;color:#fff;cursor:var(--kpu-cursor-pointer,pointer);}
+@keyframes rsIn{from{opacity:0}to{opacity:1}}
+@keyframes rsRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes rsFloat{from{transform:translateY(0)}to{transform:translateY(-16px)}}
+@media (prefers-reduced-motion:reduce){#recap-story,#recap-story .rs-slide>*,#recap-story .rs-orb{animation:none;}}
+@media (min-width:700px){#recap-story .rs-bars{left:50%;right:auto;width:420px;transform:translateX(-50%);}#recap-story .rs-big{font-size:128px;}}
 .recap-head{grid-column:1/-1;padding:2px 4px 10px;}
 .recap-row{display:flex;align-items:baseline;gap:12px;padding:5px 0;font-size:14px;color:rgba(226,234,252,0.94);}
 .recap-row .k{flex:none;min-width:44px;font-size:12px;color:rgba(150,174,225,0.75);}
