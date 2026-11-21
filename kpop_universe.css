@@ -6446,6 +6446,9 @@
   #tg-row:empty{display:none;}
 }
 .sr-sec-label.sr-suggest{opacity:.8;}
+/* 검색 빈 화면의 테마 줄 — 테두리 없는 글자 버튼 */
+.sr-themes{display:flex;flex-wrap:wrap;gap:2px 14px;padding:2px 16px 10px;}
+.sr-theme{background:none;border:0;padding:7px 0;font:inherit;font-size:14px;color:rgba(190,208,250,0.9);cursor:var(--kpu-cursor-pointer,pointer);-webkit-tap-highlight-color:transparent;}
 /* 2026-11-20 사용자 스크린샷 4건 */
 /* ① Up Next 위의 흰 '›' — 데스크톱 옆 패널 접기 버튼이 폰에서 스타일 없이 드러난 것. 데스크톱 배치(위 규칙들이 display:flex로 켠다)가 아니면 숨긴다. 폰은 시트 손잡이로 여닫는다. */
 #yt-lb-uplist-tog{display:none;}

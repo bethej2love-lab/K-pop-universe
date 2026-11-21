@@ -3361,7 +3361,7 @@ function _srVidQuery(q,like,hint,fallbackGroup){
     vq=vq.or(ors.join(','));
   }else if(hint&&hint.kind==='group'){
     vq=vq.or(`group_ko.eq.${_pgFilterVal(hint.ko)},with_groups.cs.{"${String(hint.ko).replace(/["\\]/g,'')}"}`);
-  }else{
+  }else if(!(hint&&hint.nl&&hint.nl._themeOnly)){ // 테마만 친 검색은 아래 테마 표기(동의어 포함) 조건만 건다
     vq=vq.ilike('title_norm',like.toLowerCase());
   }
   // 쿼리에 형식 낱말이 있으면 같이 좁힌다("카리나 직캠" → 카리나 태그 + live)
@@ -3370,6 +3370,7 @@ function _srVidQuery(q,like,hint,fallbackGroup){
   // 말하듯 검색의 곡 제목 낱말·연도("성현 조이라이드 직캠", "아이브 2024 무대")
   if(hint&&hint.titleForms&&hint.titleForms.length)vq=vq.or(hint.titleForms.map(w=>`title_norm.ilike.%${w}%`).join(','));
   if(nl&&nl.year)vq=vq.gte('published_at',nl.year+'-01-01').lt('published_at',(nl.year+1)+'-01-01');
+  if(nl&&nl.theme)vq=vq.or(nl.theme.titleAny.map(w=>`title_norm.ilike.%${String(w).replace(/[,()"%_*\\]/g,' ').trim()}%`).join(','));
   if(catHit){
     if(catHit.cat)vq=catHit.cat==='short'?vq.eq('is_short',true):vq.eq('category',catHit.cat);
     // 직캠처럼 category만으론 안 갈리는 형식은 제목 표기로 한 번 더 좁힌다
@@ -4549,6 +4550,23 @@ function _renderRelatedChips(hits,res,q){
 // 검색어를 **누구(이름·곡)** 와 **무엇을 어떻게(형식·정렬·연도)** 로 가른다. 이름 부분만 기존 검색(그룹·멤버·곡 매칭)에 넘기고,
 // 나머지는 영상 조회 조건이 된다: "성현 최근 직캠" → 성현 태그 + 직캠 + 최신순, "아이브 2024 무대", "카리나 인기 쇼츠", "성현 조이라이드 직캠"(남는 낱말=곡 제목).
 // 형식·정렬·연도 낱말이 하나도 없거나 이름 부분이 비면 null(예전 검색 그대로). 순수 함수 — tests/nl-search.test.js
+// 테마·컨셉 낱말(2026-11-21 사용자 "#교복 #수트 #여름처럼 컨셉·테마 키워드로 영상을 모아 보게" — A안 1단계: 제목에 그 말이 있는 영상).
+// 종류(_NL_CATS)와 **따로** 잡는다 — '아이브 교복 직캠'이면 테마=교복 + 종류=직캠. 제목 표기로만 고르므로 제목에 안 적힌 영상은 빠진다.
+// 확인 태깅(DB themes 열·관리자 확인)은 2단계(sql/video_themes_2026-11-21.sql, 미실행). 낱말을 늘릴 땐 일상 표현과 겹치지 않는지 볼 것('비'·'눈' 같은 한 글자는 넣지 않는다).
+const _NL_THEMES=[
+  {key:'uniform',ko:'교복',en:'School uniform',re:/^#?(교복|스쿨룩|school ?uniform)$/i,titleAny:['교복','스쿨룩','school uniform']},
+  {key:'suit',ko:'수트',en:'Suit',re:/^#?(수트|슈트|정장|suit)$/i,titleAny:['수트','슈트','정장','suit ver']},
+  {key:'hanbok',ko:'한복',en:'Hanbok',re:/^#?(한복|hanbok)$/i,titleAny:['한복','hanbok']},
+  {key:'summer',ko:'여름',en:'Summer',re:/^#?(여름|썸머|summer)$/i,titleAny:['여름','썸머','summer']},
+  {key:'winter',ko:'겨울',en:'Winter',re:/^#?(겨울|윈터송|winter)$/i,titleAny:['겨울','winter']},
+  {key:'xmas',ko:'크리스마스',en:'Christmas',re:/^#?(크리스마스|성탄|캐럴|christmas|xmas)$/i,titleAny:['크리스마스','christmas','캐럴','xmas']},
+  {key:'halloween',ko:'할로윈',en:'Halloween',re:/^#?(할로윈|핼러윈|halloween)$/i,titleAny:['할로윈','핼러윈','halloween']},
+  {key:'rain',ko:'우천',en:'Rain stage',re:/^#?(우천|빗속|수중전|rain)$/i,titleAny:['우천','빗속','수중전','in the rain']},
+  {key:'ending',ko:'엔딩요정',en:'Ending fairy',re:/^#?(엔딩요정|엔딩 ?포즈|ending ?fairy)$/i,titleAny:['엔딩요정','엔딩 요정','ending fairy']},
+  {key:'band',ko:'밴드 라이브',en:'Band live',re:/^#?(밴드라이브|밴드|band)$/i,titleAny:['밴드 라이브','band live','band ver']},
+  {key:'graduation',ko:'졸업',en:'Graduation',re:/^#?(졸업|졸업식|graduation)$/i,titleAny:['졸업','graduation']},
+  {key:'debut',ko:'데뷔 무대',en:'Debut stage',re:/^#?(데뷔무대|데뷔|debut)$/i,titleAny:['데뷔 무대','데뷔무대','debut stage']},
+];
 const _NL_CATS=[ // 구체적인 것부터. cat=DB category, titleAny=제목에 이 표기 중 하나
   {key:'facecam',ko:'페이스캠',en:'Facecam',re:/^(페이스캠|face ?cam)$/i,cat:'live',titleAny:['페이스캠','facecam','face cam']},
   {key:'fancam',ko:'직캠',en:'Fancam',re:/^(직캠|입덕직캠|세로직캠|fan ?cams?)$/i,cat:'live',titleAny:['직캠','fancam']},
@@ -4578,7 +4596,7 @@ function _nlParse(q,progs){
     const g=_NL_GLUE.find(w=>t.length>=w.length+2&&t.endsWith(w));
     return g?[t.slice(0,-g.length),g]:[t];
   });
-  const out={full:String(q).trim(),ent:'',cat:null,sort:null,year:null};
+  const out={full:String(q).trim(),ent:'',cat:null,sort:null,year:null,theme:null};
   // 프로그램 이름('성현 릴레이댄스', '카리나 주간 아이돌') — 낱말 1~3개를 붙여 프로그램 표기와 통째로 같으면 그 프로그램 영상(제목 표기)으로 좁힌다. 이름 부분이 남을 때만.
   if(progs){
     for(let n=Math.min(3,toks.length-1);n>=1&&!out.cat;n--)for(let i=0;i+n<=toks.length&&!out.cat;i++){
@@ -4589,6 +4607,8 @@ function _nlParse(q,progs){
   }
   const rest=[];
   for(const t of toks){
+    const th=!out.theme&&_NL_THEMES.find(x=>x.re.test(t));
+    if(th){out.theme=th;continue;}
     const c=!out.cat&&_NL_CATS.find(x=>x.re.test(t));
     if(c){out.cat=c;continue;}
     if(!out.sort&&_NL_LATEST.test(t)){out.sort='latest';continue;}
@@ -4598,8 +4618,10 @@ function _nlParse(q,progs){
     if(_NL_STOP.test(t))continue;
     rest.push(t);
   }
-  if(!(out.cat||out.sort||out.year))return null;
+  if(!(out.cat||out.sort||out.year||out.theme))return null;
   out.ent=rest.join(' ');
+  // 테마만 친 검색('교복', '#교복 직캠')은 대상 없이도 해석한다 — 제목에 그 말이 든 영상 전체
+  if(!out.ent&&out.theme){out.ent=out.theme.ko;out._themeOnly=true;} // 이름 자리엔 테마 낱말을 넣어 둔다(그룹·멤버 매칭은 0건, 영상은 아래 테마 조건으로)
   return out.ent?out:null;
 }
 // 검색어 전체가 그대로 그룹·멤버·곡 이름이면 해석하지 않는다("Cover Girl", 곡 'Live' 같은 것)
@@ -4614,6 +4636,7 @@ function _nlIsPlainName(q){
 // 결과 영상 줄 머리글 — "영상 · 직캠 · 최신순"
 function _nlLabel(nl){
   const ko=currentLang==='ko',p=[ko?'영상':'Videos'];
+  if(nl.theme)p.push('#'+(ko?nl.theme.ko:nl.theme.en));
   if(nl.cat)p.push(ko?nl.cat.ko:nl.cat.en);
   if(nl.year)p.push(ko?nl.year+'년':String(nl.year));
   if(nl.sort)p.push(nl.sort==='latest'?(ko?'최신순':'Newest'):(ko?'조회수순':'Most viewed'));
@@ -4660,6 +4683,16 @@ function doSearch(q){
     if(!obSr){try{const fh=_favSearchHits(recentHits);
       if(fh.length){const lb=document.createElement('div');lb.className='sr-sec-label sr-favs';lb.textContent=currentLang==='ko'?'즐겨찾기':'Favorites';res.appendChild(lb);
         fh.forEach(h=>res.appendChild(_makeSearchItem(h,res,mobSearch,false)));}}catch(e){}}
+    // 테마로 찾기(2026-11-21) — 검색 빈 화면에 '#교복 #수트 …' 글자 줄. 누르면 그 테마 검색(제목에 그 말이 든 영상).
+    if(!obSr){try{const lb=document.createElement('div');lb.className='sr-sec-label sr-themes-l';lb.textContent=currentLang==='ko'?'테마':'Themes';res.appendChild(lb);
+      const row=document.createElement('div');row.className='sr-themes';
+      _NL_THEMES.forEach(t=>{const b=document.createElement('button');b.type='button';b.className='sr-theme';b.textContent='#'+(currentLang==='ko'?t.ko:t.en);
+        b.addEventListener('click',e=>{e.stopPropagation();_gaEvent('search_theme',{key:t.key});const word=currentLang==='ko'?t.ko.replace(/\s+/g,''):t.titleAny[0];
+          const ins=[...document.querySelectorAll('#msheet-input,#tab-sb-input,#mob-search-input,#search-input')];ins.forEach(i=>{i.value=word;}); // 검색창들이 서로 값을 베끼므로 전부 같은 말로
+          const inp=ins.find(i=>i.offsetParent)||ins[0];
+          if(inp)inp.dispatchEvent(new Event('input',{bubbles:true}));else doSearch(word);});
+        row.appendChild(b);});
+      res.appendChild(row);}catch(e){}}
     if(trending.length)_appendTrendingSection(trending,res,mobSearch,!!obSr);
     if(!obSr)_appendComboEntry(res); // "멤버 조합 찾기" 진입 배너(온보딩 제외)
     if(msOpen)_msSyncTabs();
