@@ -43,6 +43,7 @@
     // 제목·날짜는 분리해 두 줄로(2026-11-16 사용자 "날짜·조회수는 제목 밑에 작게") — 긴 통짜 토큰이 가로를 밀지 않게 anywhere
     +'.kpu-pl-t{color:#eef2ff;font-size:15px;font-weight:600;line-height:1.4;margin:12px 2px 2px;word-break:keep-all;overflow-wrap:anywhere}'
     +'.kpu-pl-m{color:rgba(170,190,235,.62);font-size:12px;margin:0 2px 14px}'
+    +'.kpu-pl-ye{background:none;border:0;padding:4px 0;margin:0 0 0 12px;font:inherit;color:rgba(170,195,255,.9);cursor:pointer;-webkit-tap-highlight-color:transparent}.kpu-pl-ye.on{color:#eef2ff;font-weight:600}'
     // '이어서' 카드 — 폰은 가로로 넘기고, 넓은 화면은 칸을 나눠 한 줄에 여럿(빌더가 실은 #kpu-next: 케미·곡 → 앱의 그 화면)
     +'.kpu-pl-nx{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;margin:2px -16px 22px;padding:0 16px}.kpu-pl-nx::-webkit-scrollbar{display:none}'
     // 카드가 하나면 플레이어 너비에 딱 맞춤(2026-11-16 사용자 "배너 너비 맞추든지")
@@ -667,6 +668,25 @@
   function metaOf(a){var y=a.querySelector('.card-y,.v');return y?y.textContent.replace(/\s+/g,' ').trim():'';}
   function allLinks(){var seen={},out=[];[].forEach.call(document.querySelectorAll('a[href]'),function(a){if(a.closest&&a.closest('.kpu-pl'))return;var v=vidOf(a);if(!v||seen[v])return;seen[v]=1;out.push({v:v,a:a,t:titleOf(a),m:metaOf(a),sh:isShort(a)});});return out;}
   var ov=null,cur=-1,list=[];
+  // 올해의 케이팝(2026-11-21 사용자 "정적 페이지 유입이 훨씬 많으니 거기서도") — 그해 영상을 재생 창에서 '올해의 케이팝 +'로 담는다. 팝업·배너 없이 날짜 줄 옆 작은 글자.
+  // 앱과 같은 기기 저장(kpu_ye2026, 10개까지)이라 앱 '나' 탭 목록에 그대로 보인다. 이듬해 1월 말까지만 보인다. 영상 날짜를 못 읽으면 안 보인다.
+  var YE_Y=2026,YE_KEY='kpu_ye'+YE_Y,YE_MAX=10;
+  function yeLoad(){try{var a=JSON.parse(localStorage.getItem(YE_KEY)||'[]');return Array.isArray(a)?a:[];}catch(e){return [];}}
+  function yePaint(it){
+    var mEl=ov&&ov.querySelector('.kpu-pl-m');if(!mEl)return;
+    var old=ov.querySelector('.kpu-pl-ye');if(old)old.remove();
+    if(Date.now()>=Date.UTC(YE_Y+1,1,1)||!new RegExp('(^|[^0-9])'+YE_Y+'[.]').test(it.m||''))return;
+    var b=document.createElement('button');b.type='button';b.className='kpu-pl-ye';
+    var has=function(){return yeLoad().some(function(x){return x&&x.ty==='video'&&x.k===it.v;});};
+    var paint=function(){var on=has();b.classList.toggle('on',on);b.textContent=(EN?'K-pop of '+YE_Y:'올해의 케이팝')+(on?' ✓':' +');};
+    b.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();
+      var a=yeLoad(),i=-1;a.forEach(function(x,k){if(x&&x.ty==='video'&&x.k===it.v)i=k;});
+      if(i>=0)a.splice(i,1);else if(a.length>=YE_MAX){b.textContent=(EN?'Up to ':'')+YE_MAX+(EN?' picks':'개까지');setTimeout(paint,1600);return;}
+      else{var d=(/([0-9]{4})[.]([0-9]{2})[.]([0-9]{2})/.exec(it.m||'')||[]);a.push({ty:'video',k:it.v,t:it.t,thumb:'https://i.ytimg.com/vi/'+it.v+'/mqdefault.jpg',u:(it.sh?'https://youtube.com/shorts/':'https://www.youtube.com/watch?v=')+it.v,g:'',m:[],d:d[0]?d[1]+'-'+d[2]+'-'+d[3]:'',at:Date.now()});}
+      try{localStorage.setItem(YE_KEY,JSON.stringify(a));}catch(_){}
+      paint();ga('seo_ye_pick',{on:i<0?1:0});});
+    paint();mEl.appendChild(b);
+  }
   function close(fromPop){if(!ov)return;ov.remove();ov=null;document.documentElement.classList.remove('kpu-pl-open');if(!fromPop&&history.state&&history.state.kpuPlay)history.back();}
   function render(i){
     cur=i;var it=list[i];if(!it)return;
@@ -675,6 +695,7 @@
     box.querySelector('iframe').title=it.t;
     ov.querySelector('.kpu-pl-t').textContent=it.t;
     ov.querySelector('.kpu-pl-m').textContent=it.m||'';
+    yePaint(it);
     renderNext(it);
     var g=ov.querySelector('.kpu-pl-g');g.innerHTML='';
     for(var k=1,n=0;k<list.length&&n<6;k++){var j=(i+k)%list.length,x=list[j];if(j===i)continue;n++;
