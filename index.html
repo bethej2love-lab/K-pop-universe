@@ -1692,7 +1692,6 @@ if(typeof window.supabase==='undefined'){
     </div>
     <!-- Discover = "전체·탐색": 오늘의 소식 → 기념일 → 차트 → Trend → 디스커버리 (2026-09-23 오늘의 소식 추가). -->
     <div id="feed-pane-disc" class="feed-pane">
-      <div class="feed-section" id="feed-evspot-section" style="display:none"></div>
       <button id="mx-open-btn" class="mx-feed-btn" type="button">
         <span class="mx-feed-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg></span>
         <span class="mx-feed-txt">
@@ -1718,6 +1717,8 @@ if(typeof window.supabase==='undefined'){
           <div id="feed-showeps" class="feed-showeps hscroll-drag"></div>
         </div>
       </div>
+      <!-- 진행 중인 큰 행사 칸(MAMA 등) — 맨 위에서 This Week 아래로(2026-11-21 사용자 "지금 그대로 위치만 This Week 섹션 아래로") -->
+      <div class="feed-section" id="feed-evspot-section" style="display:none"></div>
       <!-- Charts를 This Week 바로 아래로(2026-11-19 사용자 승인 — 8번째라 한참 내려야 보였다. "좋은 콘텐츠인데 노출이 약하다").
            Trend·Picks(세로로 긴 격자)는 맨 아래 그대로 — 위로 올리면 그 아래 가로 선반들이 묻힌다. -->
       <div class="feed-section">

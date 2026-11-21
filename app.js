@@ -17613,7 +17613,37 @@ function _wireFirstScrollDamp(sc,factorFn){
   sc.addEventListener('touchcancel',()=>{on=false;if(sc.scrollTop>=_FIRST_SCROLL_RAMP)detach();},{passive:true});
 }
 _sheetScrollers.forEach(sc=>_wireFirstScrollDamp(sc,()=>_sheetFull?_FIRST_SCROLL_FACTOR:0));
-function _tlog(){}
+function _tlog(k,v){if(_scrollDiag)_scrollDiag.ev(k,v);}
+// ── 스크롤 진단(2026-11-21 사용자 "스크롤 시작할 때 너무 많이·민감하게 — 6번째 제보") ──
+// 헤드리스 크롬(진짜 터치 이벤트)으로는 재현이 안 된다: 손가락 160px에 카드·탐험 탭 모두 80~145px(배율 0.5→0.91), 튐 없음. 아이폰에서만 나는 현상이라
+// 추측으로 또 고치지 않고 **기기에서 직접 잰다**. 주소에 ?scrolldiag=1 을 붙여 열면(끄기: ?scrolldiag=0) 화면 위쪽에 최근 손짓 6개가 한 줄씩 찍힌다:
+//   손가락 이동 px → 손 대는 동안 스크롤된 px → 손 뗀 뒤 더 간 px(관성) · 그 사이 코드가 스크롤 위치를 바꾼 횟수/양(보정·코드set) · 탭바 숨김/표시 · 시트 펼침
+// 아무 동작도 바꾸지 않는다(읽기만). 사용자가 캡처를 보내면 그 숫자로 원인을 가른다 — 관성이 큰지, 코드 보정이 끼는지, 탭바 전환과 겹치는지.
+var _scrollDiag=null; // var: _tlog가 이 줄보다 먼저 불려도(초기화 중) 오류가 안 나게
+(function(){
+  let on=false;try{const q=new URLSearchParams(location.search).get('scrolldiag');if(q==='1')localStorage.setItem('kpu_scrolldiag','1');if(q==='0')localStorage.removeItem('kpu_scrolldiag');on=localStorage.getItem('kpu_scrolldiag')==='1';}catch(e){}
+  if(!on)return;
+  const box=document.createElement('div');box.id='scroll-diag';
+  box.style.cssText='position:fixed;left:6px;right:6px;top:calc(6px + env(safe-area-inset-top,0px));z-index:99999;pointer-events:none;background:rgba(0,0,0,.82);color:#d7ffd7;font:11px/1.45 ui-monospace,Menlo,monospace;padding:6px 8px;border-radius:8px;white-space:pre-wrap;word-break:break-all';
+  box.textContent='스크롤 진단 켜짐 — 카드·탐험 탭에서 평소처럼 스크롤해 보세요';
+  const mount=()=>document.body&&document.body.appendChild(box);if(document.body)mount();else document.addEventListener('DOMContentLoaded',mount);
+  const lines=[];let cur=null,seq=0;
+  const scrollerOf=t=>{for(let p=t;p&&p!==document.body;p=p.parentElement){const cs=getComputedStyle(p);if(/(auto|scroll)/.test(cs.overflowY)&&p.scrollHeight>p.clientHeight+4)return p;}return null;};
+  const name=e=>e?(e.id||String(e.className).split(' ')[0]||e.tagName):'-';
+  const paint=()=>{box.textContent=lines.slice(-6).join('\n');};
+  _scrollDiag={ev(k,v){if(cur)cur.evs.push(k+(v!=null?':'+v:''));}};
+  window.addEventListener('touchstart',e=>{if(e.touches.length!==1)return;if(pend&&pend.fin)pend.fin();const sc=scrollerOf(e.target);if(!sc)return;
+    cur={n:++seq,sc,y0:e.touches[0].clientY,y:e.touches[0].clientY,st0:sc.scrollTop,t0:performance.now(),evs:[],tb:document.getElementById('tabbar')?.classList.contains('tab-hidden')};},{capture:true,passive:true});
+  window.addEventListener('touchmove',e=>{if(cur&&e.touches[0])cur.y=e.touches[0].clientY;},{capture:true,passive:true});
+  let pend=null; // 손 뗀 뒤 관성을 재는 중인 손짓 — 다음 손짓이 시작되면 그 자리에서 마감한다(다음 손짓의 이동이 섞이지 않게)
+  const end=()=>{const g=cur;if(!g||g.done)return;const stEnd=g.sc.scrollTop,ms=Math.round(performance.now()-g.t0);
+    const fin_=()=>{if(g.done)return;g.done=true;clearTimeout(g.tm);if(pend===g)pend=null;const fin=g.sc.scrollTop,tb=document.getElementById('tabbar')?.classList.contains('tab-hidden');
+      const finger=Math.round(g.y0-g.y),dur=Math.round(stEnd-g.st0),mom=Math.round(fin-stEnd);
+      lines.push(`#${g.n} ${name(g.sc)} @${Math.round(g.st0)} 손${finger}→중${dur}→뒤${mom>=0?'+':''}${mom} ${ms}ms`+(g.tb!==tb?(tb?' 탭바숨김':' 탭바표시'):'')+(g.evs.length?' ['+g.evs.slice(0,6).join(' ')+(g.evs.length>6?' …'+g.evs.length:'')+']':''));
+      paint();if(cur===g)cur=null;};
+    g.fin=fin_;pend=g;g.tm=setTimeout(fin_,1800);};
+  window.addEventListener('touchend',end,{capture:true,passive:true});window.addEventListener('touchcancel',end,{capture:true,passive:true});
+})();
 // ── 카드를 "열 때"의 불변식: 새 카드는 scrollTop=0에서 시작하므로 탭바는 반드시 보이는 상태여야 한다.
 // 원래 tab-hidden을 떼는 코드는 **닫기 경로 4곳**(closeMobSheet / 스택 pop / 연결카드 닫기 / 라이트박스
 // 닫기)에만 있었고, 여는 쪽엔 _lastScroll·_tbAccum 리셋만 있었다. 추적값을 0으로 되돌려도 클래스는 그대로
