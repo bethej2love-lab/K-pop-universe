@@ -4,47 +4,128 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>소개 · K-pop Universe</title>
-<meta name="description" content="K-pop 그룹과 멤버, 그 사이의 연결을 탐색하는 팬 아카이브. 개인이 비영리로 운영합니다.">
+<meta name="description" content="K-pop 그룹과 멤버, 그 사이의 연결을 우주 지도처럼 탐험하는 팬 아카이브. 입덕 가이드, 말하듯 검색, 직캠 순위, 나의 기록. 개인이 비영리로 운영합니다.">
 <!-- 2026-11-02 서비스 소개 1페이지(사용자: "설정 안에 about, 너무 드러날 필요 없음, 짜치지 않게 단순하게, 신뢰감은 있게").
      모양은 privacy.html·terms.html과 같다. 문의 메일(contact@kpop-universe.kr — ImprovMX 무료 전달 → 운영자 Gmail, 2026-11-02)을 바꾸면 이 파일·privacy·terms·index.html 신고 링크·app.js 컬렉션 신고를 같이 바꿀 것. ADMIN_EMAIL과는 별개. -->
 <style>
   :root{color-scheme:dark;}
+  *{box-sizing:border-box;}
   body{
-    margin:0;padding:32px 20px 80px;
+    margin:0;padding:28px 20px 80px;
     background:#09090c;color:rgba(224,231,247,0.88);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Pretendard,sans-serif;
-    line-height:1.75;font-size:15px;word-break:keep-all;overflow-wrap:anywhere;
+    font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    line-height:1.7;font-size:15px;word-break:keep-all;overflow-wrap:anywhere;
+    background-image:radial-gradient(1px 1px at 12% 6%,rgba(255,255,255,.5),transparent 60%),radial-gradient(1px 1px at 34% 14%,rgba(200,215,255,.4),transparent 60%),radial-gradient(1.2px 1.2px at 58% 4%,rgba(255,200,230,.45),transparent 60%),radial-gradient(1px 1px at 81% 11%,rgba(255,255,255,.4),transparent 60%),radial-gradient(1px 1px at 92% 22%,rgba(200,215,255,.4),transparent 60%);
+    background-repeat:no-repeat;background-size:100% 520px;
   }
-  .wrap{max-width:720px;margin:0 auto;}
-  a{color:#8fb3ff;}
-  h1{font-size:22px;margin-bottom:4px;color:#fff;}
-  .lead{font-size:16px;color:rgba(232,238,252,0.92);margin:14px 0 30px;}
-  h2{font-size:16px;margin-top:34px;margin-bottom:10px;color:#fff;border-left:3px solid #6b8dff;padding-left:10px;}
-  p,li{color:rgba(224,231,247,0.8);}
-  ul{padding-left:20px;margin:8px 0;}
-  li{margin-bottom:4px;}
+  .wrap{max-width:880px;margin:0 auto;}
+  a{color:#9db8ff;text-decoration:none;}
+  a:hover{color:#c3d3ff;}
+  .back{display:inline-block;margin-bottom:34px;font-size:13px;color:rgba(155,178,228,0.7);}
+  /* 맨 위 — 한 문장과 숫자 */
+  .hero{display:grid;gap:28px;align-items:center;margin-bottom:72px;}
+  .kicker{font-size:12px;font-weight:600;letter-spacing:.14em;color:rgba(160,180,235,0.7);margin:0 0 14px;}
+  h1{font-size:34px;line-height:1.2;letter-spacing:-.03em;margin:0 0 16px;color:#fff;}
+  .lead{font-size:16px;color:rgba(226,233,250,0.86);margin:0 0 22px;max-width:30em;}
+  .nums{display:flex;flex-wrap:wrap;gap:8px 18px;list-style:none;padding:0;margin:0 0 24px;}
+  .nums li{font-size:13px;color:rgba(170,188,232,0.72);}
+  .nums b{display:block;font-size:20px;font-weight:700;letter-spacing:-.02em;color:#fff;font-variant-numeric:tabular-nums;}
+  .go{font-size:15px;font-weight:600;}
+  /* 화면 사진 — 테두리 없이 둥근 모서리와 그림자만 */
+  .shot{display:block;width:100%;max-width:300px;height:auto;aspect-ratio:600/916;object-fit:cover;object-position:top;border-radius:22px;margin:0 auto;background:#111116;box-shadow:0 24px 60px rgba(0,0,0,.5);}
+  /* 가이드 */
+  .guide{display:grid;gap:64px;margin-bottom:72px;}
+  .step{display:grid;gap:22px;align-items:center;}
+  .step .n{display:block;font-size:12px;font-weight:600;letter-spacing:.12em;color:rgba(150,172,230,0.6);margin-bottom:8px;font-variant-numeric:tabular-nums;}
+  .step h2{font-size:22px;line-height:1.3;letter-spacing:-.02em;margin:0 0 10px;color:#fff;}
+  .step p{margin:0 0 8px;color:rgba(222,230,248,0.8);}
+  .step .how{font-size:13.5px;color:rgba(165,184,230,0.74);}
+  .step .how b{font-weight:600;color:rgba(226,233,250,0.92);}
+  @media(min-width:760px){
+    body{padding-top:44px;}
+    .hero,.step{grid-template-columns:1fr 300px;gap:56px;}
+    .step:nth-child(even){grid-template-columns:300px 1fr;}
+    .step:nth-child(even) .txt{order:2;}
+    h1{font-size:44px;}
+    .guide{gap:96px;}
+  }
+  /* 아래 — 출처·운영·신고(예전 그대로의 담백한 글) */
+  .info{max-width:720px;}
+  .info h2{font-size:16px;margin:34px 0 10px;color:#fff;}
+  .info p,.info li{color:rgba(224,231,247,0.8);}
   dl{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;margin:10px 0;font-size:14px;}
   dt{color:rgba(155,178,228,0.7);}
   dd{margin:0;color:rgba(224,231,247,0.88);}
-  .back{display:inline-block;margin-bottom:22px;font-size:13px;color:rgba(155,178,228,0.7);text-decoration:none;}
-  .back:hover{color:#8fb3ff;}
   footer{margin-top:48px;font-size:12px;color:rgba(155,178,228,0.45);}
   footer a{color:rgba(155,178,228,0.6);}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="kpop_universe.html">← K-pop Universe로 돌아가기</a>
-  <h1>K-pop Universe</h1>
-  <p class="lead">K-pop 그룹과 멤버, 그리고 그 사이의 연결을 한곳에서 탐색하는 팬 아카이브입니다.</p>
+  <a class="back" href="./">← K-pop Universe로 돌아가기</a>
 
-  <h2>할 수 있는 것</h2>
-  <ul>
-    <li><b>탐색</b> — 그룹·멤버·유닛·콜라보 관계를 지도처럼 따라가며 볼 수 있습니다.</li>
-    <li><b>영상</b> — 무대·직캠·MV·자체 콘텐츠를 사람과 곡 기준으로 모아 봅니다.</li>
-    <li><b>기록</b> — 최애, 컬렉션, 다녀온 공연을 내 기록으로 남길 수 있습니다.</li>
-  </ul>
+  <section class="hero">
+    <div class="txt">
+      <p class="kicker">K-POP UNIVERSE</p>
+      <h1>Find your place<br>in K-pop</h1>
+      <p class="lead">K-pop 그룹과 멤버, 그 사이의 연결을 우주 지도처럼 탐험하는 팬 아카이브입니다. 무대·직캠·앨범·기록이 한곳에 모여 있습니다.</p>
+      <ul class="nums">
+        <li><b>290+</b>그룹</li><li><b>1,900+</b>멤버·솔로</li><li><b>14,000+</b>곡</li><li><b>2,000+</b>앨범</li>
+      </ul>
+      <a class="go" href="./">우주 열기 →</a>
+    </div>
+    <img class="shot" src="about/universe.jpg" alt="K-pop Universe 첫 화면 — 그룹이 행성처럼 떠 있는 우주" width="600" height="1191" loading="eager">
+  </section>
 
+  <section class="guide">
+    <article class="step">
+      <div class="txt">
+        <span class="n">01</span>
+        <h2>우주에서 찾기</h2>
+        <p>그룹은 행성, 멤버는 그 주위의 별입니다. 유닛·콜라보·함께한 무대가 선으로 이어져, 한 사람에서 다음 사람으로 따라갈 수 있습니다.</p>
+        <p class="how"><b>행성</b>을 누르면 그룹 카드, <b>별</b>을 누르면 멤버 카드가 열립니다.</p>
+      </div>
+      <img class="shot" src="about/card.jpg" alt="그룹 카드 — 대표 영상, 멤버, 데뷔일, 소속" width="600" height="771" loading="lazy">
+    </article>
+    <article class="step">
+      <div class="txt">
+        <span class="n">02</span>
+        <h2>처음이라면, 입덕 가이드</h2>
+        <p>처음 보는 그룹도 어디서부터 볼지 고민하지 않게 순서를 잡아 둡니다. 대표곡 → 무대 → 멤버별 직캠 → 예능·자체 콘텐츠.</p>
+        <p class="how">그룹·멤버 카드의 <b>입덕 가이드 ›</b>에서 시작합니다.</p>
+      </div>
+      <img class="shot" src="about/guide.jpg" alt="입덕 가이드 — 대표곡부터 순서대로 놓인 영상 목록" width="600" height="977" loading="lazy">
+    </article>
+    <article class="step">
+      <div class="txt">
+        <span class="n">03</span>
+        <h2>말하듯 검색</h2>
+        <p>이름만이 아니라 원하는 장면을 그대로 적으면 됩니다. 그룹·멤버·곡·프로그램·공연까지 한 번에 찾습니다.</p>
+        <p class="how"><b>성현 최근 직캠</b> · <b>아이브 음악중심 무대</b> · <b>신유 영재</b>처럼.</p>
+      </div>
+      <img class="shot" src="about/search.jpg" alt="검색 — '성현 최근 직캠'으로 찾은 직캠 목록" width="600" height="916" loading="lazy">
+    </article>
+    <article class="step">
+      <div class="txt">
+        <span class="n">04</span>
+        <h2>직캠 순위와 곡별 모음</h2>
+        <p>연도별 직캠 조회수 순위, 곡마다 모은 멤버별 직캠, 음악방송 회차와 1위 기록. 걸그룹·보이그룹, 전신·얼굴 직캠으로 골라 볼 수 있습니다.</p>
+        <p class="how"><a href="rank/fancam/">직캠 순위</a> · <a href="all/">전체 모아보기</a> — 페이지는 10개 언어로 볼 수 있습니다.</p>
+      </div>
+      <img class="shot" src="about/rank.jpg" alt="직캠 조회수 순위 페이지" width="600" height="916" loading="lazy">
+    </article>
+    <article class="step">
+      <div class="txt">
+        <span class="n">05</span>
+        <h2>나의 기록</h2>
+        <p>즐겨찾기와 최애, 컬렉션, 다녀온 공연을 남깁니다. 한 달 동안 누구를 얼마나 봤는지는 결산으로, 올해 가장 좋았던 것은 '올해의 케이팝'으로 모입니다.</p>
+        <p class="how"><b>나</b> 탭에서 볼 수 있고, 기록은 가입 없이도 이 기기에 저장됩니다.</p>
+      </div>
+      <img class="shot" src="about/recap.jpg" alt="덕질 결산 — 이번 달 본 영상 수" width="600" height="916" loading="lazy">
+    </article>
+  </section>
+
+  <section class="info">
   <h2>정보의 출처</h2>
   <p>공식 유튜브 채널, 음원 사이트, 공식 SNS 등 공개된 정보를 모아 정리합니다. 영상은 YouTube 플레이어로 재생되며, 사진·영상·앨범 이미지의 권리는 각 원저작권자에게 있습니다.</p>
   <p>잘못된 정보·태그, 추가했으면 하는 그룹이나 팬 채널이 있다면 앱의 <b>설정 → 제보·제안</b>(또는 영상·카드의 ⋮ → 제보하기)이나 아래 메일로 알려 주세요. 확인 후 반영합니다.</p>
@@ -63,6 +144,7 @@
     <a href="terms.html">이용약관</a> · <a href="privacy.html">개인정보처리방침</a><br>
     K-pop Universe · 개인 비영리 팬 프로젝트
   </footer>
+  </section>
 </div>
 </body>
 </html>
