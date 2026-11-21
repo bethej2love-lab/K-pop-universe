@@ -72,8 +72,10 @@ h2{font-size:17px;margin:26px 0 12px;color:#fff;}
 /* 크레딧 — 역할별 한 줄 글자(2026-11-17 알약 테두리 제거: 눌러지는 것처럼 보임). 우리 아티스트만 점선 밑줄 링크 */
 .credits{margin:20px 0 4px;}
 .credits-h{display:block;font-size:11.5px;font-weight:600;letter-spacing:.04em;color:rgba(185,200,240,0.6);margin:0 0 6px;}
-.cr-row{margin:0 0 3px;font-size:12.5px;line-height:1.6;color:rgba(200,212,240,0.68);}
-.cr-r{display:inline-block;min-width:4.6em;margin-right:8px;font-size:11.5px;color:rgba(185,200,240,0.48);}
+/* 내어쓰기: 이름이 다음 줄로 넘어가도 역할 칸(작사·작곡) 밑은 비우고 이름 칸 왼쪽에 맞춘다(2026-11-21 사용자) */
+.cr-row{margin:0 0 3px;font-size:12.5px;line-height:1.6;color:rgba(200,212,240,0.68);padding-left:62px;text-indent:-62px;}
+.cr-row *{text-indent:0;}
+.cr-r{display:inline-block;width:54px;margin-right:8px;font-size:11.5px;color:rgba(185,200,240,0.48);}
 .cr-a{color:rgba(170,196,255,0.95);}
 .cta-dock{position:sticky;bottom:0;z-index:5;margin-top:30px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#0a0a0d 62%,rgba(10,10,13,0));}
 .cta{display:block;text-align:center;padding:13px 22px;border-radius:24px;background:rgba(140,165,255,0.2);border:0.5px solid rgba(150,175,255,0.42);color:#fff;text-decoration:none;font-size:14.5px;font-weight:600;}
@@ -129,7 +131,8 @@ h2{font-size:17px;margin:26px 0 12px;color:#fff;}
 .kpu-sortbar{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px;}
 .kpu-sortbar button{font:inherit;font-size:13px;color:rgba(210,225,255,0.9);background:rgba(150,175,255,0.08);border:0.5px solid rgba(150,175,255,0.22);border-radius:18px;padding:0 14px;min-height:36px;cursor:pointer;}
 .kpu-sortbar button.on{background:rgba(150,175,255,0.22);border-color:rgba(170,195,255,0.55);color:#fff;}
-.kpu-more{display:block;width:100%;margin:16px 0 4px;font:inherit;font-size:14px;color:rgba(220,230,255,0.95);background:rgba(150,175,255,0.1);border:0.5px solid rgba(150,175,255,0.28);border-radius:12px;min-height:46px;cursor:pointer;}
+.kpu-more{display:block;width:100%;margin:8px 0 0;font:inherit;font-size:13.5px;color:rgba(170,195,255,0.9);background:none;border:0;min-height:44px;cursor:pointer;}
+.kpu-more::after{content:" ›";opacity:.7;}
 /* 링크 밑줄 없음(2026-11-19 사용자 "링크 밑줄 구려서 못 참겠음 — 앱처럼 은은한 글로우/색"). 문장 안 링크는 옅은 파랑으로 구분하고,
    목록·표·카드 링크는 글자색 그대로 — 올리면 은은하게 빛난다. 버튼(.cta)·대표 영상(.hero)은 제외. */
 .lead a,.note a,.intro a,.sub a,ol li>a{color:rgba(170,196,255,0.95);}

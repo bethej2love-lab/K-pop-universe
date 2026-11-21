@@ -86,14 +86,14 @@
     sortB.textContent=L[sort];
     setHead();
     var left=list.length-to;
-    more.style.display=left>0?'':'none';more.textContent=L.more+' ('+left+(EN?L.left:L.left)+')';
+    more.style.display=left>0?'':'none';more.textContent=L.more+' '+left;
     var note=document.getElementById('kpu-vnote');if(note)note.style.display='none';
   }
   // 처음엔 서버가 그려 준 카드를 그대로 두고(깜빡임 없음), 버튼 상태만 맞춘다.
   var initialLeft=data.length-STEP;
   Object.keys(chips).forEach(function(k){chips[k].className=k===kind?'on':'';chips[k].setAttribute('aria-pressed',k===kind?'true':'false');});
   sortB.textContent=L[sort];
-  if(initialLeft>0){more.style.display='';more.textContent=L.more+' ('+initialLeft+L.left+')';var n0=document.getElementById('kpu-vnote');if(n0)n0.style.display='none';}else more.style.display='none';
+  if(initialLeft>0){more.style.display='';more.textContent=L.more+' '+initialLeft;var n0=document.getElementById('kpu-vnote');if(n0)n0.style.display='none';}else more.style.display='none';
   // 영상이 적은 곡(6개 미만)은 도구 줄 없이 목록만 — 버튼이 내용보다 많아 보이지 않게
   bar.style.display=data.length>=6?'':'none';
 })();

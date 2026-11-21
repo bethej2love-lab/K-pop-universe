@@ -362,7 +362,8 @@
     var CUT=10;
     [].forEach.call(document.querySelectorAll('.chips'),function(ul){
       var lis=[].slice.call(ul.children).filter(function(li){return li.tagName==='LI';});
-      lis.forEach(function(li){if(!li.querySelector('a'))li.classList.add('kpu-plain');});
+      // 링크가 있어도 정보 칩(앨범 › 등 a.chip-go)은 알약 테두리 없이 글자만 — 화살표로 충분하다(2026-11-21 사용자 "화살표로 충분, 둥그런 테두리 지워줘")
+      lis.forEach(function(li){if(!li.querySelector('a')||li.querySelector('a.chip-go'))li.classList.add('kpu-plain');});
       var links=lis.filter(function(li){return li.querySelector('a');});
       if(links.length>CUT+2){
         links.slice(CUT).forEach(function(li){li.classList.add('kpu-chip-more');});
@@ -376,6 +377,9 @@
     });
   }
   css+='.chips li.kpu-plain{background:none;border:0;padding:5px 2px;color:rgba(190,205,240,.72)}'
+    // 더 보기 버튼 — 상자 없이 글자만(2026-11-21 사용자 "너무 투박해"), 크레딧 — 역할 칸 너비만큼 내어쓰기(둘째 줄부터 이름 칸 왼쪽에 맞춤). song-page.css에도 같은 규칙이 있고, 여기는 캐시된 옛 CSS를 덮는 용도.
+    +'.kpu-more{background:none!important;border:0!important;border-radius:0!important;min-height:44px;margin:8px 0 0!important;font-size:13.5px!important;color:rgba(170,195,255,.9)!important}.kpu-more::after{content:" ›";opacity:.7}'
+    +'.cr-row{padding-left:62px;text-indent:-62px}.cr-row .cr-r{text-indent:0;width:54px;min-width:0;margin-right:8px}.cr-row *{text-indent:0}'
     +'.chips li.kpu-chip-more{display:none}.chips.kpu-chips-open li.kpu-chip-more{display:block}'
     +'.kpu-chip-tg{background:none!important;border:0!important;padding:0!important}'
     +'.kpu-chip-tg button{font:inherit;font-size:12.5px;padding:5px 12px;border-radius:999px;background:rgba(150,175,255,0.14);border:0.5px solid rgba(150,175,255,0.3);color:#dce6ff;cursor:pointer}';
