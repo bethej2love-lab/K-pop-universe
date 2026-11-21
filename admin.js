@@ -7590,7 +7590,7 @@ function _atmTokenize(title){return(title||'').toLowerCase().split(/[^a-z0-9]+/)
 // 이름(고인)이라 재배포 없이 한 번의 실수 클릭으로 보호가 풀리지 않도록 계속 하드코딩으로 남긴다.
 // 나머지는 DB(name_match_whitelist)로 이전 — 이제 보호 목록 화면에서 × 눌러 즉시 제거 가능해짐
 // (SQL은 대화 참고, admin이 직접 실행).
-const _ATM_HASHTAG_ONLY_NAMES=new Set(['종현','문빈','구하라','설리',
+const _ATM_HASHTAG_ONLY_NAMES=new Set(['이정', /* 2026-11-21 검수: 가수 이정(천록담)의 컬투쇼 출연 7건이 히스토리 장이정·휘브 이정으로 — 그룹 근거가 있으면 평문 인정(_ATM_GROUP_CTX_PLAIN_OK_NAMES) */ '종현','문빈','구하라','설리',
   '보니', // 드림노트 보니 — '알고 보니'·'보니까' 일상어(2026-10-30 Codex 검수27차 TMI NEWS 예고편이 드림노트 보니로)
   // 흔한 한국어 어휘와 겹치는 멤버명(2026-09-03, 실데이터 감사로 확인). 평문에서 대량 오매칭됨:
   //  · '이런'(에버글로우 E:U 김이런) — "바로 이런 것"·"이런 거 처음이야"
@@ -7717,7 +7717,7 @@ const _ATM_NO_CONTEXT_RELAX_NAMES=new Set(['종현','문빈','구하라','설리
 // 안 풀면 자체 채널 "Jin's NORMAL LOG"·"Hyunjin X HAN X Seungmin"·"文俊辉 JUN", 외부 "더보이즈 현재가…"·"아일릿 윤아가…"가
 // 빠진다(2026-11-16 이전/새 매처 차분: 태깅된 1만 행 중 자체 채널 220·그룹명 동반 외부 75건 손실 → 복구).
 // ⚠️ '뉴'(영문 New)·'사랑'·'윤하'는 넣지 않는다 — 그룹이 확정돼도 흔한 낱말이라 오답이 많다.
-const _ATM_GROUP_CTX_PLAIN_OK_NAMES=new Set(['준','한','산','윤','제이','진','윤아','주연','현재']);
+const _ATM_GROUP_CTX_PLAIN_OK_NAMES=new Set(['준','한','산','윤','제이','진','윤아','주연','현재','이정']);
 function _atmContextRelaxesHashtagOnly(name,title,groupKo){
   if(_ATM_NO_CONTEXT_RELAX_NAMES.has(name))return false;
   if(groupKo&&_ATM_GROUP_CTX_PLAIN_OK_NAMES.has(name))return true;
@@ -8864,6 +8864,8 @@ const _GROUP_TITLE_CONFLICT_EXCLUDE={
   // "다이아 반지/귀걸이/수저/테스터기"·"진짜 다이아"·"5부 다이아". 그룹 다이아 영상은 이런 낱말과 붙어 나오지 않는다.
   '다이아':[/^(?!.*다이아)(?=.*\bDIA\b)(?=.*디아)/i,/다이아\s*버튼|diamond\s*(play\s*)?button/i,/\d\s*(캐럿|부)\s*다이아/,/다이아\s*(반지|귀걸이|목걸이|팔찌|수저|테스터기|몬드|플렉스|FLEX|도난|보석)/i,/(진짜|가짜|명품|보석)\s*다이아/],
   '아이들':[/서태지\s*와\s*아이들/],
+  // 씨야(SeeYa, 2006) ↔ 더 씨야(THE SEEYA, 2012 별개 그룹): 2026-11-21 씨야 추가 직후 검수에서 "THE SEEYA [내 맘은 죽어가요 (feat. SPEED 태운)]"가 씨야로 잡혔다
+  '씨야':[/더\s*씨야|THE\s*SEE\s*YA/i],
   // 2026-10-12: 곡·작품명 속 Beast — 티오원 'Son of Beast'(선 오브 비스트)·'Beauty and the Beast'(미녀와 야수)가 하이라이트 옛 이름
   // 비스트로 잡혀 함께한 그룹이 됐다(티오원 쇼챔·음중 5건, 존박X벨, 스테이씨 미녀와야수 챌린지).
   '하이라이트':[/son\s*of\s*(the\s*)?beast/i,/선\s*오브\s*비스트/,/beauty\s*(and|&)\s*the\s*beast/i,/뷰티\s*앤\s*더\s*비스트/,/미녀와\s*야수/],
