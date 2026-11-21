@@ -28,6 +28,7 @@ a{color:inherit;text-decoration:none;}
 .crumbs .hub-all{white-space:nowrap;color:#dce6ff;}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 18px;padding:0;list-style:none;}
 .chips li{font-size:12.5px;padding:5px 10px;border-radius:999px;background:rgba(150,175,255,0.09);border:0.5px solid rgba(150,175,255,0.16);color:rgba(205,218,255,0.86);}
+.chips li a.chip-go::after{content:" ›";opacity:.6;}
 .chips b{font-weight:600;color:#fff;margin-right:4px;}
 .lead{font-size:14px;color:rgba(200,214,250,0.8);margin:0 0 18px;}
 h2{font-size:17px;margin:26px 0 12px;color:#fff;}

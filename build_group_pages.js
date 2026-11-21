@@ -2189,7 +2189,7 @@ function memberFaceUrl(a, gko) {
   return id ? ytThumb(id, 'mqdefault') : null;
 }
 // 스타일은 저장소의 song-page.css 한 파일(페이지마다 넣으면 3만 쪽 × 5KB) — 바꾸면 SONG_CSS_V를 올릴 것
-const SONG_CSS_V = 20;
+const SONG_CSS_V = 21;
 function songShareVideo(vids) {
   return vids.find(v => (v.category === 'live' || FANCAM_RE.test(v.title || ''))
     && !/\bM\/?V\b|music\s*video|뮤직비디오|\bteaser\b|티저/i.test(v.title || '')) || vids[0];
@@ -2273,8 +2273,10 @@ function songLikePageHtml({ gko, info, s, lang, others, member }) {
     ${faces.map(f => { const img = memberFaceUrl(f.a, gko); return `<a class="face" href="${f.href}"><span class="face-img">${img ? `<img${/#pf$/.test(img) ? ' class="pf"' : ''} src="${img}" alt="${escHtml(f.nm)}" loading="lazy">` : ''}</span><span class="face-nm">${escHtml(f.nm)}</span>${f.n ? `<span class="face-n">${isEn ? `${f.n} fancams` : `직캠 ${f.n}`}</span>` : ''}</a>`; }).join('\n    ')}
   </div>` : '';
   const chip = (k, v) => v ? `<li><b>${k}</b>${escHtml(v)}</li>` : '';
+  // 앨범 이름은 그 앨범 페이지로 간다(2026-11-21 사용자 "앨범 이름 누르면 앨범 페이지 나와야지") — 앨범 페이지가 없는 앨범(제목 불일치)은 글자만
+  const albumChip = (() => { if (!s.album) return ''; let h = ''; try { const x = albumsFor(gko).find(y => y.al.title === s.album); const pth = x && albumPagePath(gko, x.slug, lang); if (pth) h = SITE + '/' + pth; } catch (e) {} return h ? `<li><b>${isEn ? 'Album' : '앨범'}</b><a class="chip-go" href="${h}">${escHtml(s.album)}</a></li>` : chip(isEn ? 'Album' : '앨범', s.album); })();
   const chipsHtml = `<ul class="chips">
-    ${chip(isEn ? 'Release' : '발매', date)}${chip(isEn ? 'Album' : '앨범', s.album)}${s.wins ? `<li><b>${isEn ? 'Music show wins' : '음악방송 1위'}</b>${s.wins}${isEn ? '' : '회'}</li>` : ''}${coverChipsHtml(gko, s, lang)}
+    ${chip(isEn ? 'Release' : '발매', date)}${albumChip}${s.wins ? `<li><b>${isEn ? 'Music show wins' : '음악방송 1위'}</b>${s.wins}${isEn ? '' : '회'}</li>` : ''}${coverChipsHtml(gko, s, lang)}
   </ul>`;
   // 크레딧(2026-11-12 사용자 "작사작곡은 뭔 기준? 작사인지 작곡인지 구분, 단독도 따로"): 예전엔 '작사 A, B…(6명) 작곡 A, B…(6명)'을 페이지 맨 아래
   // '다른 곡' 타일 밑에 붙여서 어느 곡 얘기인지, 누가 무엇을 했는지 안 읽혔다. 이제 이 곡 기준으로 사람마다 한 칩: 이름 + 역할(작사·작곡·편곡),
