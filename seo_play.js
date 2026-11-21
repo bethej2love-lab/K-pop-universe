@@ -178,23 +178,23 @@
   var HL_LIST=[['ko','한국어'],['en','English'],['ja','日本語'],['zh','简体中文'],['zt','繁體中文'],['es','Español']],HL_IX={ja:0,zh:1,zt:2,es:3};
   var HL_D={
     'Agency':['事務所','经纪公司','經紀公司','Agencia'],'Album':['アルバム','专辑','專輯','Álbum'],'Albums':['アルバム','专辑','專輯','Álbumes'],'Birthday':['誕生日','生日','生日','Cumpleaños'],
-    'Debut':['デビュー','出道','出道','Debut'],'Fandom':['ファンダム','粉丝名','粉絲名','Fandom'],'Group':['グループ','组合','團體','Grupo'],'Groups':['グループ','组合','團體','Grupos'],
-    'Music show wins':['音楽番組1位','音乐节目一位','音樂節目一位','Victorias en programas'],'Release':['発売','发行','發行','Lanzamiento'],
+    'Debut':['デビュー','出道','出道','Debut'],'Fandom':['ファンダム名','粉丝名','粉絲名','Fandom'],'Group':['所属グループ','所属组合','所屬團體','Grupo'],'Groups':['所属グループ','所属组合','所屬團體','Grupos'],
+    'Music show wins':['音楽番組1位','音乐节目一位','音樂節目一位','Wins en programas musicales'],'Release':['発売','发行','發行','Lanzamiento'],
     'All groups':['全グループ','全部组合','全部團體','Grupos'],'Browse all':['まとめ','全部浏览','全部瀏覽','Explorar'],
     'View all videos in the Universe →':['ユニバースですべての動画を見る →','在 Universe 查看全部视频 →','在 Universe 查看全部影片 →','Ver todos los videos en Universe →'],
     'View profile, fancams & stages →':['プロフィール・チッケム・ステージを見る →','查看资料・直拍・舞台 →','查看資料・直拍・舞台 →','Ver perfil, fancams y presentaciones →'],
     'View videos in the Universe →':['ユニバースで動画を見る →','在 Universe 观看视频 →','在 Universe 觀看影片 →','Ver videos en Universe →'],
     'Concert tours':['コンサートツアー','巡回演唱会','巡迴演唱會','Giras'],'Discography':['ディスコグラフィー','音乐作品','音樂作品','Discografía'],
     'Fancams & stages by song':['曲別チッケム・ステージ','按歌曲看直拍・舞台','依歌曲看直拍・舞台','Fancams y presentaciones por canción'],'Fancams by song':['曲別チッケム','按歌曲看直拍','依歌曲看直拍','Fancams por canción'],
-    'Featured Videos':['代表動画','代表视频','代表影片','Videos destacados'],'Grand prizes (Daesang)':['大賞受賞','大赏获奖','大賞獲獎','Grandes premios (Daesang)'],
-    'Members':['メンバー','成员','成員','Miembros'],'Members in these videos':['動画に出ているメンバー','视频中的成员','影片中的成員','Miembros en estos videos'],
+    'Featured Videos':['おすすめ動画','代表视频','代表影片','Videos destacados'],'Grand prizes (Daesang)':['大賞受賞','大赏获奖','大賞獲獎','Grandes premios (Daesang)'],
+    'Members':['メンバー','成员','成員','Integrantes'],'Members in these videos':['動画に出ているメンバー','视频中的成员','影片中的成員','Integrantes en estos videos'],
     'Million-selling albums':['ミリオンセラーアルバム','百万销量专辑','百萬銷量專輯','Álbumes millonarios'],'Most viewed fancams':['再生回数の多いチッケム','播放量最高的直拍','觀看數最高的直拍','Fancams más vistos'],
     'Most viewed fancams & stages':['再生回数の多いチッケム・ステージ','播放量最高的直拍・舞台','觀看數最高的直拍・舞台','Fancams y presentaciones más vistos'],
-    'Related groups':['一緒に見たいグループ','相关组合','相關團體','Grupos relacionados'],'Songwriting credits':['作詞・作曲','作词・作曲','作詞・作曲','Créditos de composición'],
-    'Songs':['曲','歌曲','歌曲','Canciones'],'Credits page →':['クレジットページ →','制作名单页 →','製作名單頁 →','Página de créditos →'],
+    'Related groups':['関連グループ','相关组合','相關團體','Grupos relacionados'],'Songwriting credits':['作詞・作曲','作词・作曲','作詞・作曲','Créditos de composición'],
+    'Songs':['曲別','歌曲','歌曲','Canciones'],'Credits page →':['クレジットページ →','制作名单页 →','製作名單頁 →','Página de créditos →'],
     'Lyrics':['作詞','作词','作詞','Letra'],'Lyrics·Music':['作詞・作曲','作词・作曲','作詞・作曲','Letra·Música'],'Music':['作曲','作曲','作曲','Música'],
     'About · removal requests':['サイト紹介・削除依頼','网站介绍・删除请求','網站介紹・刪除請求','Acerca de · solicitudes de eliminación'],
-    'All':['すべて','全部','全部','Todo'],'Full body':['全身','全身','全身','Completo'],'Face':['顔','脸部','臉部','Rostro'],'Voice':['ボイス','人声','人聲','Voz'],
+    'All':['すべて','全部','全部','Todo'],'Full body':['全身','全身直拍','全身直拍','Fullcam'],'Face':['フェイス','脸部直拍','臉部直拍','Facecam'],'Voice':['ボイス','人声直拍','人聲直拍','Voz'],
     'Most viewed':['人気順','按播放量','依觀看數','Más vistos'],'Newest':['新着順','最新','最新','Recientes'],'Shuffle':['ランダム','随机播放','隨機播放','Aleatorio'],
     'Back':['戻る','返回','返回','Atrás'],'Close':['閉じる','关闭','關閉','Cerrar'],'Up next':['次の動画','接下来','接下來','A continuación'],'See more in the app':['アプリでもっと見る','在应用中查看更多','在應用程式中查看更多','Ver más en la app'],
     'Explore':['もっと見る','继续浏览','繼續瀏覽','Explorar'],'Profile · fancams · stages':['プロフィール・チッケム・ステージ','资料・直拍・舞台','資料・直拍・舞台','Perfil · fancams · presentaciones'],
@@ -231,15 +231,15 @@
     [/^(.+) profile →$/,['$1 プロフィール →','$1 资料 →','$1 資料 →','Perfil de $1 →']],
     [/^Lyrics (\d+) · Music (\d+)$/,['作詞 $1 · 作曲 $2','作词 $1 · 作曲 $2','作詞 $1 · 作曲 $2','Letra $1 · Música $2']],
     [/^Lyrics (\d+)$/,['作詞 $1','作词 $1','作詞 $1','Letra $1']],
-    [/^(\d+) wins in total\. First win: '(.+)' on (.+) \((.+)\)\.$/,['通算$1回。初1位は$4 $3「$2」。','共$1次。首次一位：$4 $3《$2》。','共$1次。首次一位：$4 $3《$2》。','$1 victorias en total. Primera: "$2" en $3 ($4).']],
+    [/^(\d+) wins in total\. First win: '(.+)' on (.+) \((.+)\)\.$/,['通算$1回。初1位は$4 $3「$2」。','共$1次。首次一位：$4 $3《$2》。','共$1次。首次一位：$4 $3《$2》。','$1 wins en total. Primer win: "$2" en $3 ($4).']],
     [/^Top (\d+) of ([\d,]+) videos$/,['動画$2本中 上位$1本','$2个视频中的前$1个','$2個影片中的前$1個','Top $1 de $2 videos']],
     [/^(\d{4}) · Single$/,['$1 · シングル','$1 · 单曲','$1 · 單曲','$1 · Sencillo']],
-    [/^(\d{4}) · EP$/,['$1 · ミニ','$1 · 迷你专辑','$1 · 迷你專輯','$1 · EP']],
-    [/^(\d{4}) · (\d+)(?:st|nd|rd|th) EP$/,['$1 · ミニ$2集','$1 · 迷你$2辑','$1 · 迷你$2輯','$1 · $2.º EP']],
+    [/^(\d{4}) · EP$/,['$1 · ミニアルバム','$1 · 迷你专辑','$1 · 迷你專輯','$1 · Mini álbum']],
+    [/^(\d{4}) · (\d+)(?:st|nd|rd|th) EP$/,['$1 · ミニ$2集','$1 · 迷你$2辑','$1 · 迷你$2輯','$1 · $2.º mini álbum']],
     [/^(\d{4}) · (\d+)(?:st|nd|rd|th) Album$/,['$1 · 正規$2集','$1 · 正规$2辑','$1 · 正規$2輯','$1 · $2.º álbum']],
     [/^([\d,]+) new videos this week$/,['今週の新着動画 $1本','本周新视频 $1 个','本週新影片 $1 個','$1 videos nuevos esta semana']],
-    [/^Latest music show win · (.+)$/,['最近の音楽番組1位 · $1','最近音乐节目一位 · $1','最近音樂節目一位 · $1','Última victoria · $1']],
-    [/^([\d,]+) music show wins$/,['音楽番組1位 $1回','音乐节目一位 $1 次','音樂節目一位 $1 次','$1 victorias en programas']],
+    [/^Latest music show win · (.+)$/,['最近の音楽番組1位 · $1','最近音乐节目一位 · $1','最近音樂節目一位 · $1','Último win · $1']],
+    [/^([\d,]+) music show wins$/,['音楽番組1位 $1回','音乐节目一位 $1 次','音樂節目一位 $1 次','$1 wins en programas musicales']],
     [/^Most viewed · (.+) views$/,['最多再生 · $1回','最高播放 · $1次','最高觀看 · $1次','Más visto · $1 vistas']],
     [/^([\d,]+) like this$/,['$1人がお気に入り','$1人喜欢','$1人喜歡','A $1 les gusta']],
     [/^([\d,]+) left ([\d,]+) traces this week$/,['今週$1人が$2件の足あと','本周$1人留下$2个足迹','本週$1人留下$2個足跡','$1 dejaron $2 huellas esta semana']],
@@ -250,12 +250,25 @@
     [/^New fancams & stages of (.+) will gather in your universe$/,['$1の新しいチッケム・ステージがあなたのユニバースに集まります','$1的新直拍・舞台会汇集到你的宇宙','$1的新直拍・舞台會匯集到你的宇宙','Los nuevos fancams y presentaciones de $1 se reunirán en tu universo']],
     [/^(.+) is already in your universe$/,['$1はすでにあなたのユニバースにいます','$1已在你的宇宙中','$1已在你的宇宙中','$1 ya está en tu universo']]
   ];
+  // 소개 문장 '… is a K-pop idol of South Korean nationality, born in 2009. Member of CORTIS.' — 국적만 표로 옮기고 나머지는 틀로.
+  var HL_NAT={'South Korean':['韓国','韩国','韓國','Corea del Sur'],'Japanese':['日本','日本','日本','Japón'],'Chinese':['中国','中国','中國','China'],'Thai':['タイ','泰国','泰國','Tailandia'],
+    'American':['アメリカ','美国','美國','EE. UU.'],'Canadian':['カナダ','加拿大','加拿大','Canadá'],'Australian':['オーストラリア','澳大利亚','澳洲','Australia'],'Taiwanese':['台湾','台湾','台灣','Taiwán'],
+    'Vietnamese':['ベトナム','越南','越南','Vietnam'],'Indonesian':['インドネシア','印度尼西亚','印尼','Indonesia'],'Filipino':['フィリピン','菲律宾','菲律賓','Filipinas'],'Hong Kong':['香港','中国香港','香港','Hong Kong']};
+  function hlBio(tx){
+    var m=/^(.+?) is a K-pop idol of (.+?) nationality(?:, born in (\d{4}))?\.?\s*(?:(Member|Former member) of (.+?)\.)?$/.exec(tx);if(!m)return null;
+    var nat=m[2].split(/\s*(?:,|and|\/)\s*/).map(function(n){return HL_NAT[n]?HL_NAT[n][HLI]:n;}),yr=m[3],g=m[5],former=m[4]==='Former member';
+    if(HLI===0)return (g?g+(former?'の元メンバー。':'のメンバー。'):'')+nat.join('・')+'出身'+(yr?'、'+yr+'年生まれ':'')+'。';
+    if(HLI===1)return (g?g+(former?'前成员。':'成员。'):'')+nat.join('、')+'籍'+(yr?'，'+yr+'年出生':'')+'。';
+    if(HLI===2)return (g?g+(former?'前成員。':'成員。'):'')+nat.join('、')+'籍'+(yr?'，'+yr+'年出生':'')+'。';
+    return (g?(former?'Exintegrante de ':'Integrante de ')+g+'. ':'')+'Nacionalidad: '+nat.join(', ')+(yr?'. Nació en '+yr:'')+'.';
+  }
   var HL=(function(){try{return localStorage.getItem('kpu_hl')||'';}catch(e){return '';}})();
   if(!HL&&EN){var nl=(navigator.language||'').toLowerCase();HL=/^ja/.test(nl)?'ja':/^zh-(tw|hk|mo|hant)/.test(nl)?'zt':/^zh/.test(nl)?'zh':/^es/.test(nl)?'es':'';}
   var HLI=(EN&&HL_IX[HL]!=null)?HL_IX[HL]:-1; // 영어 페이지에서만 바꾼다
   function hlText(s){
     var t=s.trim();if(!t||t.length>160)return null;
     var d=HL_D[t];if(d)return d[HLI];
+    if(t.indexOf(' is a K-pop idol of ')>0){var bio=hlBio(t);if(bio)return bio;}
     for(var i=0;i<HL_R.length;i++){var m=HL_R[i][0].exec(t);if(m)return HL_R[i][1][HLI].replace(/\$(\d)/g,function(_,n){return m[+n]||'';});}
     return null;
   }
