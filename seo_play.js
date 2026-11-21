@@ -379,6 +379,7 @@
   css+='.chips li.kpu-plain{background:none;border:0;padding:5px 2px;color:rgba(190,205,240,.72)}'
     // 더 보기 버튼 — 상자 없이 글자만(2026-11-21 사용자 "너무 투박해"), 크레딧 — 역할 칸 너비만큼 내어쓰기(둘째 줄부터 이름 칸 왼쪽에 맞춤). song-page.css에도 같은 규칙이 있고, 여기는 캐시된 옛 CSS를 덮는 용도.
     +'.kpu-more{background:none!important;border:0!important;border-radius:0!important;min-height:44px;margin:8px 0 0!important;font-size:13.5px!important;color:rgba(170,195,255,.9)!important}.kpu-more::after{content:" ›";opacity:.7}'
+    +'ul.vid-list>li>.yr{font-size:11.5px;color:rgba(160,180,230,.6);margin-left:4px}'
     +'.cr-row{padding-left:62px;text-indent:-62px}.cr-row .cr-r{text-indent:0;width:54px;min-width:0;margin-right:8px}.cr-row *{text-indent:0}'
     +'.chips li.kpu-chip-more{display:none}.chips.kpu-chips-open li.kpu-chip-more{display:block}'
     +'.kpu-chip-tg{background:none!important;border:0!important;padding:0!important}'
