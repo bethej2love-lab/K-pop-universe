@@ -27968,12 +27968,74 @@ function _concertIcsDownload(ev){
 function _openConcertSheet(ev,_back){
   const overlay=document.getElementById('venue-overlay');
   const tok=_vpEnter({k:'c',ev},_back);
-  document.getElementById('venue-panel-title').textContent=(ev.groups||[]).map(_gLabelKo).filter(Boolean).join(', ')||ev.title;
+  // 머리줄의 아티스트 이름 — 누르면 그 그룹 카드로(2026-11-21 사용자 "공연 카드 아티스트 클릭하면 카드로도 넘어갈 수 있게")
+  {const tEl=document.getElementById('venue-panel-title');tEl.textContent='';
+    const gs=(ev.groups||[]).filter(g=>_gLabelKo(g));
+    if(!gs.length)tEl.textContent=ev.title;
+    gs.forEach((g,i)=>{if(i)tEl.appendChild(document.createTextNode(', '));
+      if(!GROUPS[g]){tEl.appendChild(document.createTextNode(_gLabelKo(g)));return;}
+      const b=document.createElement('button');b.type='button';b.className='vp-title-g';b.textContent=_gLabelKo(g);
+      b.addEventListener('click',e=>{e.stopPropagation();_gaEvent('concert_artist_click',{});_closeVenueOverlay();
+        _feedNav(()=>{const bm=bubbleMeshes.find(x=>x.ko===g);if(bm)flyToBubble(bm.mesh.position,bm.radius);showGC(g);});});
+      tEl.appendChild(b);});}
   const listEl=document.getElementById('venue-panel-list');listEl.innerHTML='';
   const vi=document.getElementById('venue-panel-info');if(vi)vi.hidden=true;
   listEl.appendChild(_makeConcertItem(ev));
+  _concertVidsInto(ev,listEl,tok);
   document.getElementById('venue-panel').classList.add('vp-concert'); // 공연 → 공연장 정보(좌석·위치·지도) 순(CSS order)
   if(ev.venue)_ensureVenuesInfo().then(()=>{if(tok===_vpTok&&overlay.classList.contains('open'))_renderVenueInfo(ev.venue);}).catch(()=>{});
+}
+// 공연 창 아래 '이 공연 영상'(2026-11-21 사용자 "기등록된 유튜브 팬채널에 관련 영상이 올라오면 이어 보여지게") — 그 그룹 영상 중
+// 공연 첫날부터 끝난 뒤 30일 안에 올라오고, 제목에 **공연 날짜 코드**(261120·20261120)나 **공연 종류 낱말**(팬콘·콘서트·투어·팬미팅)·공연장 이름이 있는 것.
+// 팬 채널 직캠은 대개 날짜 코드로 올라온다. 조회는 그룹+기간으로 좁힌 가벼운 한 번(최대 120건), 제목 판정은 기기에서. 없으면 아무것도 안 그린다.
+function _concertVidWords(ev){
+  const t=String(ev.title||''),w=[];
+  if(/fan ?con|팬 ?콘/i.test(t))w.push('팬콘','팬 콘','fancon','fan con','fan-con');
+  if(/fan ?meet|팬 ?미팅/i.test(t))w.push('팬미팅','팬 미팅','fanmeeting','fan meeting','fan-meeting');
+  if(/concert|콘서트|tour|투어/i.test(t)||!w.length)w.push('콘서트','concert','투어','tour');
+  const vn=(typeof _venueName==='function'?_venueName(ev.venue):ev.venue)||'';const v0=String(vn).split(/[ (]/)[0];if(v0&&[...v0].length>=3)w.push(v0);
+  return w.map(x=>x.toLowerCase());
+}
+function _concertDayCodes(ev){
+  const out=[],s=String(ev.date_start||'').slice(0,10),e=String(ev.date_end||ev.date_start||'').slice(0,10);
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(s))return out;
+  let d=new Date(s+'T00:00:00Z');const end=new Date((/^\d{4}-\d{2}-\d{2}$/.test(e)?e:s)+'T00:00:00Z');
+  for(let i=0;i<14&&d<=end;i++){const iso=d.toISOString().slice(0,10).replace(/-/g,'');out.push(iso,iso.slice(2));d=new Date(d.getTime()+864e5);}
+  return out;
+}
+function _concertVidMatch(title,codes,words){
+  const t=String(title||'').toLowerCase();
+  return codes.some(c=>t.includes(c))||words.some(w=>t.includes(w));
+}
+async function _concertVidsInto(ev,listEl,tok){
+  try{
+    const g=(ev.groups||[]).find(x=>GROUPS[x]);const s=String(ev.date_start||'').slice(0,10);
+    if(!g||!sb||!/^\d{4}-\d{2}-\d{2}$/.test(s)||new Date(s+'T00:00:00Z')>new Date())return; // 아직 안 열린 공연은 영상이 없다
+    const e=String(ev.date_end||ev.date_start).slice(0,10),until=new Date(new Date(e+'T00:00:00Z').getTime()+31*864e5).toISOString().slice(0,10);
+    const {data}=await sb.from(_YT_TABLE).select(_FEED_COLS()).is('unavailable_at',null).eq('group_ko',g)
+      .or('content_flag.is.null,content_flag.not.in.("보류","hidden","무관")').gte('published_at',s).lte('published_at',until)
+      .order('published_at',{ascending:false}).limit(120);
+    if(tok!==_vpTok||!listEl.isConnected)return;
+    const codes=_concertDayCodes(ev),words=_concertVidWords(ev);
+    const rows=_filterBannedVideos(data||[]).filter(v=>_concertVidMatch(v.title,codes,words));
+    if(!rows.length)return;
+    const ko=currentLang==='ko';
+    const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
+    const songs=rows.map(v=>({..._rowTags(v),t:v.title,u:vidUrl(v),thumb:v.thumb,vc:v.view_count,dur:v.duration_sec,pa:v.published_at?.slice(0,10),_apiId:v.id,_apiGroupKo:v.group_ko}));
+    const box=document.createElement('div');box.className='concert-vids';
+    const h=document.createElement('div');h.className='concert-vids-h';h.textContent=(ko?'이 공연 영상 ':'Videos ')+rows.length;box.appendChild(h);
+    const SHOW=6;
+    songs.slice(0,SHOW).forEach((sg,i)=>{const r=document.createElement('button');r.type='button';r.className='concert-vid';
+      const im=document.createElement('img');im.alt='';im.loading='lazy';im.referrerPolicy='no-referrer';im.src=sg.thumb||`https://i.ytimg.com/vi/${rows[i].id}/mqdefault.jpg`;
+      const tx=document.createElement('span');tx.className='concert-vid-t';tx.textContent=_cleanTitle(sg.t);
+      const mt=document.createElement('span');mt.className='concert-vid-m';mt.textContent=_fmtVidMeta(rows[i].published_at,rows[i].view_count);
+      const col=document.createElement('span');col.className='concert-vid-c';col.append(tx,mt);r.append(im,col);
+      r.addEventListener('click',ev2=>{ev2.stopPropagation();_gaEvent('concert_vid_click',{});openLightbox(sg.u,_songIsShort(sg),songs,i,{groupKo:g});});
+      box.appendChild(r);});
+    if(songs.length>SHOW){const more=document.createElement('button');more.type='button';more.className='concert-vids-more';more.textContent=(ko?'더 보기 ':'More ')+(songs.length-SHOW)+' ›';
+      more.addEventListener('click',ev2=>{ev2.stopPropagation();_openFeedListOverlay(ev.title,_gLabelKo(g),songs,{});});box.appendChild(more);}
+    listEl.appendChild(box);
+  }catch(_){}
 }
 function _appendConcertCard(list,ev){
   const own=(ev.groups||[])[0];
