@@ -6,7 +6,7 @@ const code=[pick(/const _VID_CAT_WEIGHT=[^\n]*\n/),pick(/function _vidCatWeight\
   pick(/function _recNoise\(id\)\{[^\n]*\n/),pick(/function _recSeenPen\(id\)\{[^\n]*\n/),pick(/function _recOrder\(vids,memberKo\)\{[\s\S]*?\n\}\n/),pick(/const _COMPILATION_RE=[^\n]*\n/),pick(/function _isCompilationVid\(v\)\{[^\n]*\n/)].join('');
 let nowMs=Date.parse('2026-11-19T03:00:00Z');
 class FD extends Date{constructor(...a){if(a.length)super(...a);else super(nowMs);}static now(){return nowMs;}}
-const ctx={Math:Object.create(Math),Date:FD,isNaN,Set,Map,_scrapCounts:new Map(),favMembers:new Set(),myProfile:null,_isShortV:()=>false,_vidProg:new Map()};
+const ctx={_recKindBoost:()=>0,Math:Object.create(Math),Date:FD,isNaN,Set,Map,_scrapCounts:new Map(),favMembers:new Set(),myProfile:null,_isShortV:()=>false,_vidProg:new Map()};
 ctx.Math.random=()=>0.5;
 vm.createContext(ctx);vm.runInContext(code+'\nthis.R=_recOrder;this.N=_recNoise;this.P=_recSeenPen;',ctx);
 let pass=0,fail=0;const ok=(c,m)=>{if(c){pass++;console.log('✅ '+m);}else{fail++;console.log('❌ '+m);}};

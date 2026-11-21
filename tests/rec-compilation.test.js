@@ -4,7 +4,7 @@ const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),asse
 const app=fs.readFileSync(path.join(__dirname,'..','app.js'),'utf8');
 function fn(name){const a=app.indexOf('function '+name+'(');if(a<0)throw new Error('missing '+name);return app.slice(a,app.indexOf('\n}',a)+2);}
 function line(prefix){const a=app.indexOf(prefix);if(a<0)throw new Error('missing '+prefix);return app.slice(a,app.indexOf('\n',a)+1);}
-const ctx={myProfile:null,favMembers:new Set(),_scrapCounts:new Map(),_isShortV:()=>false,_vidCatWeight:()=>2,Math,Date,_recNoise:()=>0,_recSeenPen:()=>0};
+const ctx={myProfile:null,favMembers:new Set(),_scrapCounts:new Map(),_isShortV:()=>false,_vidCatWeight:()=>2,Math,Date,_recKindBoost:()=>0,_recNoise:()=>0,_recSeenPen:()=>0};
 vm.createContext(ctx);
 vm.runInContext(line('const _REC_W=')+line('const _COMPILATION_RE=')+fn('_recOrder')+fn('_isCompilationVid'),ctx);
 let total=0,failed=0;const check=(n,f)=>{total++;try{f();}catch(e){failed++;console.error('FAIL '+n+': '+e.message);}};

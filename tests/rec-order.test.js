@@ -11,7 +11,7 @@ const code = [
   pick(/const _COMPILATION_RE=[^\n]*\n/),
   pick(/function _isCompilationVid\(v\)\{[^\n]*\n/),
 ].join('');
-const ctx = { Math: Object.create(Math), Date, isNaN, Set, Map, _scrapCounts: new Map(), favMembers: new Set(), myProfile: null, _isShortV: v => !!v.is_short, _recNoise: () => 0, _recSeenPen: () => 0 }; // 날짜 씨앗 무작위·본 영상 감점(2026-11-19)은 tests/rec-daily.test.js가 본다
+const ctx = { Math: Object.create(Math), Date, isNaN, Set, Map, _scrapCounts: new Map(), favMembers: new Set(), myProfile: null, _isShortV: v => !!v.is_short, _recKindBoost: () => 0, _recNoise: () => 0, _recSeenPen: () => 0 }; // 날짜 씨앗 무작위·본 영상 감점(2026-11-19)은 tests/rec-daily.test.js가 본다
 ctx.Math.random = () => 0;
 vm.createContext(ctx); vm.runInContext(code + '\nthis.R=_recOrder;', ctx);
 let pass = 0, fail = 0;

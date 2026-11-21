@@ -8766,7 +8766,7 @@ function _recOrder(vids,memberKo){
     const heart=Math.min(1,Math.log2(1+h)/3);
     const fav=!memberKo&&(v.members||[]).some(m=>{const k=(v.group_ko||'')+':'+m;return favMembers.has(k)||bias.has(k);})?1:0;
     const cat=_vidCatWeight(v.category)/4;
-    return _REC_W.fresh*fresh+_REC_W.pop*pop+_REC_W.rise*(v._rise?1:0)+_REC_W.heart*heart+_REC_W.fav*fav+_REC_W.cat*cat+_REC_W.rnd*(0.75*_recNoise(v.id)+0.25*Math.random())-_recSeenPen(v.id);
+    return _REC_W.fresh*fresh+_REC_W.pop*pop+_REC_W.rise*(v._rise?1:0)+_REC_W.heart*heart+_REC_W.fav*fav+_REC_W.cat*cat+_REC_W.rnd*(0.75*_recNoise(v.id)+0.25*Math.random())-_recSeenPen(v.id)+_recKindBoost(v);
   };
   // 모음 영상(개별출연·제목 '모음/몰아보기/.zip' 등)은 첫 화면 맨 뒤로(2026-11-18 사용자 "모음 영상은 중요도가 높진 않음, 최신이어도 추천순 상위에 둘 필요 없음").
   // 점수 순서는 각 묶음 안에서 그대로. 모음뿐이면 그대로 보인다.
@@ -19333,13 +19333,90 @@ const SCRAP_KEY='kpu_scraps';
 let scraps=JSON.parse(localStorage.getItem(SCRAP_KEY)||'[]');
 function _scrapId(s){return s.u;}
 function _isScraped(s){return scraps.some(x=>x.u===_scrapId(s));}
+// ── 하트 기록 활용(2026-11-21 사용자 "즐겨찾기·좋아요 기록으로 더 나은 경험을") ─────────────────────────────
+// ① 즐겨찾기 제안: 즐겨찾기하지 않은 멤버(없으면 그룹) 영상에 하트를 3번 누르면 한 번만 "즐겨찾기할까요?"를 띄운다.
+//    즐겨찾기가 없으면 For You가 비어 있는데, 하트는 이미 누르고 있는 사람이 많다 — 그 신호를 즐겨찾기로 잇는다. 같은 대상은 다시 묻지 않는다(localStorage).
+// ② 좋아하는 직캠 종류(_myKindPref): 하트 누른 영상 제목으로 전신/얼굴/보이스를 세어, 뚜렷하면(5개 이상·60% 이상) 추천순에서 그 종류를 조금 올린다(_recKindBoost).
+const _FAVSUG_KEY='kpu_fav_suggested';
+function _favSuggest(rec){
+  if(!rec||!rec.groupKo)return;
+  let asked={};try{asked=JSON.parse(localStorage.getItem(_FAVSUG_KEY)||'{}');}catch(e){}
+  const gko=rec.groupKo,mko=rec.memberKo||'';
+  const art=mko?((typeof _artistByNameGroup==='function'&&_artistByNameGroup(mko,gko))||ARTISTS.find(a=>a.name.ko===mko&&(a.group.ko===gko||_ytGroupKoFor(a)===gko))):null;
+  let kind=null,key='',name='',n=0;
+  if(art&&!favMembers.has(_mFavKey(art))&&!favGroups.has(art.group.ko)){
+    kind='member';key='m:'+_mFavKey(art);name=_dispName(art);n=scraps.filter(x=>x.memberKo===mko&&x.groupKo===gko).length;
+  }else if(!art&&GROUPS[gko]&&!favGroups.has(gko)){
+    kind='group';key='g:'+gko;name=_gLabelKo(gko);n=scraps.filter(x=>x.groupKo===gko).length;
+  }
+  if(!kind||n<3||asked[key])return;
+  asked[key]=Date.now();try{localStorage.setItem(_FAVSUG_KEY,JSON.stringify(asked));}catch(e){}
+  const ko=currentLang==='ko';
+  let el=document.getElementById('fav-suggest');
+  if(!el){el=document.createElement('div');el.id='fav-suggest';el.setAttribute('role','status');
+    el.innerHTML='<span class="fs-txt"></span><button type="button" class="fs-go"></button><button type="button" class="fs-x" aria-label="닫기">✕</button>';
+    document.body.appendChild(el);
+    el.querySelector('.fs-x').addEventListener('click',e=>{e.stopPropagation();el.classList.remove('show');});}
+  el.querySelector('.fs-txt').textContent=ko?`${name} 영상에 하트 ${n}번`:`${n} hearts on ${name}`;
+  const go=el.querySelector('.fs-go');go.textContent=ko?'즐겨찾기':'Favorite';
+  go.onclick=e=>{e.stopPropagation();el.classList.remove('show');_gaEvent('fav_suggest',{action:'accept',kind});
+    if(kind==='member'){if(!favMembers.has(_mFavKey(art)))toggleFavMember(art);}else if(!favGroups.has(gko))toggleFavGroup(gko);};
+  _gaEvent('fav_suggest',{action:'show',kind});
+  clearTimeout(el._t);requestAnimationFrame(()=>el.classList.add('show'));el._t=setTimeout(()=>el.classList.remove('show'),8000);
+}
+function _vidKindOf(t){t=String(t||'').toLowerCase();
+  if(/보이스캠|voice ?cam/.test(t))return 'voice';
+  if(/페이스캠|face ?cam|얼빡|최애직캠/.test(t))return 'face';
+  if(/직캠|fan ?cam|focus ?cam|unfiltered cam|세로캠/.test(t))return 'full';
+  return '';}
+let _kindPrefAt=-1,_kindPref='';
+function _myKindPref(){
+  if(_kindPrefAt===scraps.length)return _kindPref;
+  _kindPrefAt=scraps.length;_kindPref='';
+  const c={};let n=0;scraps.slice(0,80).forEach(x=>{const k=_vidKindOf(x.t);if(k){c[k]=(c[k]||0)+1;n++;}});
+  if(n>=5){const top=Object.keys(c).sort((a,b)=>c[b]-c[a])[0];if(c[top]/n>=0.6)_kindPref=top;}
+  return _kindPref;
+}
+function _recKindBoost(v){const p=_myKindPref();return p&&_vidKindOf(v.title)===p?0.07:0;}
+// ③ 지난 방문 이후: For You 맨 위 한 줄 "지난 방문 이후 · 새 영상 5 · 인스타 2"(3시간 넘게 지나 다시 왔을 때만). 누르면 New Videos로.
+const _FEED_VISIT_KEY='kpu_feed_last_visit';
+let _visitPrev=0,_visitMarkedAt=0;const _visitCounts={vid:0,ig:0};
+function _visitMark(){
+  if(Date.now()-_visitMarkedAt<3*3600e3)return; // 같은 방문 안에서는 기준을 바꾸지 않는다
+  _visitMarkedAt=Date.now();
+  try{_visitPrev=+localStorage.getItem(_FEED_VISIT_KEY)||0;localStorage.setItem(_FEED_VISIT_KEY,String(Date.now()));}catch(e){_visitPrev=0;}
+  _visitCounts.vid=0;_visitCounts.ig=0;_visitRender();
+}
+function _visitNote(kind,times){
+  if(!_visitPrev)return;
+  _visitCounts[kind]=(times||[]).filter(t=>t&&t>_visitPrev).length;_visitRender();
+}
+function _visitRender(){
+  const el=document.getElementById('feed-since');if(!el)return;
+  const ko=currentLang==='ko',p=[];
+  if(_visitPrev&&_visitMarkedAt-_visitPrev>=3*3600e3){
+    if(_visitCounts.vid)p.push(ko?`새 영상 ${_visitCounts.vid}`:`${_visitCounts.vid} new videos`);
+    if(_visitCounts.ig)p.push(ko?`인스타 ${_visitCounts.ig}`:`${_visitCounts.ig} Instagram`);
+  }
+  el.hidden=!p.length;
+  if(p.length)el.textContent=(ko?'지난 방문 이후 · ':'Since your last visit · ')+p.join(' · ');
+  if(!el._w){el._w=1;el.addEventListener('click',e=>{e.stopPropagation();const t=document.getElementById('feed-favnew-section');if(t&&t.offsetParent)t.scrollIntoView({block:'start',behavior:'smooth'});});}
+}
 function toggleScrap(s,ctx){
   const id=_scrapId(s);
   const i=scraps.findIndex(x=>x.u===id);
   const nowScrapped=i<0;
   if(i>=0)scraps.splice(i,1);
-  else scraps.unshift({t:s.t,u:s.u,...(ctx||{})});
+  else{
+    // 누구 영상인지 같이 적어 둔다 — 맥락(ctx)에 없으면 영상 태그에서(멤버가 한 명일 때만). 하트 기록으로 즐겨찾기를 제안하고(_favSuggest) 취향을 읽는 데 쓴다.
+    const c=Object.assign({},ctx||{});
+    if(!c.groupKo&&(s.groupKo||s._apiGroupKo))c.groupKo=s.groupKo||s._apiGroupKo;
+    if(!c.memberKo&&Array.isArray(s.memberKos)&&s.memberKos.length===1)c.memberKo=s.memberKos[0];
+    delete c.chem;
+    scraps.unshift({t:s.t,u:s.u,...c});
+  }
   localStorage.setItem(SCRAP_KEY,JSON.stringify(scraps));_sbPushColumn('scraps',scraps);
+  if(nowScrapped){try{_favSuggest(scraps[0]);}catch(e){}}
   renderScrapList();
   document.querySelectorAll(`.scrap-btn[data-u="${CSS.escape(id)}"]`).forEach(btn=>{
     btn.classList.toggle('scrapped',nowScrapped);
@@ -25477,7 +25554,8 @@ async function _buildFeedFavIg(){
       sb.from('ig_accounts').select('handle,media').in('handle',[...hs].slice(0,300)).eq('status','ok').limit(300),
       _igMagFor([...hs]).catch(()=>[])]);
     // 영상(릴스)도 포함(2026-11-19 사용자 "코르티스 최근 인스타 게시물, 카드엔 수집됐는데 왜 포유탭에선 앞에 안 뜨지" — 최근 5개가 전부 릴스였고 이 줄은 사진만 받았다)
-    const photos=error?[]:_igPhotos(data,14,24,true); // 2행 레일(2026-10-27 사용자 "인스타 더 노출") — 15장이면 2줄에서 8칸 만에 끝나 24장
+    const photos=error?[]:_igPhotos(data,14,24,true);
+    _visitNote('ig',photos.map(m=>m.ts)); // 2행 레일(2026-10-27 사용자 "인스타 더 노출") — 15장이면 2줄에서 8칸 만에 끝나 24장
     const magRecent=magItems.filter(m=>m.ts>Date.now()-30*86400000).slice(0,15); // 매거진은 올리는 간격이 길어 30일
     _feedSkelClear(list);
     if(!photos.length&&!magRecent.length){section.style.display='none';return;}
@@ -28941,6 +29019,7 @@ async function _buildFeedFavNew(opts){
       .sort((a,b)=>String(b.published_ts||b.published_at||'').localeCompare(String(a.published_ts||a.published_at||'')))
       .slice(0,_FEED_FAVNEW_MAX);
     if(!vids.length){_skOff();return;}
+    _visitNote('vid',vids.map(v=>Date.parse(v.published_ts||v.published_at||'')));
     _feedSkelClear(strip);
     const vidUrl=v=>_isShortV(v)?`https://youtube.com/shorts/${v.id}`:`https://www.youtube.com/watch?v=${v.id}`;
     // _apiId/_apiGroupKo: 어드민 편집(연필) 버튼이 어느 DB 행을 고칠지 아는 키 — 카드 그리드(_apiVidToSong)는
@@ -29227,6 +29306,7 @@ function _fyReorder(){
 // 추천(For You) 탭 빌드 — 가볍게(이어보기=로컬, 즐겨찾기신작·Trend=Supabase). 나침반 열 때마다 호출(TTL 캐시).
 function _buildFeedRec(){
   if(_feedRecPending)return _feedRecPending;
+  _visitMark();
   _buildEventSpotlight(); // 큰 행사 스포트라이트(발견 탭과 같은 조회 결과를 쓴다)
   document.getElementById('feed-empty-rec').hidden=true;
   // For You 선반 순서(2026-11-04 사용자 "젤 먼저 보고 싶은 건 최애의 new video") — index.html 순서 = _FY_ORDER.
