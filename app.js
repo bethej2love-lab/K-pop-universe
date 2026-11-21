@@ -25632,7 +25632,11 @@ function _collectWeekNews(){
         // 곡명이 짧거나 흔하면 다른 가수 1위 영상에 걸릴 수 있어 가수 확인: 그룹 키가 같거나 제목에 그룹/멤버 이름이 있어야
         const who=[w.group_ko,w.member_ko,GROUPS[w.group_ko]?.en,_gLabelKo(w.group_ko)].filter(x=>x&&x!=='솔로').map(_n).filter(x=>x.length>=2);
         if(v.group_ko!==w.group_ko&&!who.some(x=>nt.includes(x)))return;
-        const sc=(showKws.some(k=>nt.includes(k))?4:0)+(/앵콜|encore|챔피언송/i.test(v.title)?2:0)+(v.is_short?0:1);
+        // 제목이 **다른 음방**을 가리키면 이 1위의 영상이 아니다(2026-11-21 사용자 "리센느 음중 1위도 인가 1위 영상으로 들어가 있다") —
+        // 음중 1위(토)의 기간(전날~4일 뒤) 안에 다음 날 인기가요 앵콜캠이 들어와, 음중 영상이 없으면 그게 뽑혔다. 그 방송 이름이 없고 다른 방송 이름만 있으면 제외.
+        const thisShow=showKws.some(k=>nt.includes(k));
+        if(!thisShow&&Object.keys(_WIN_SHOW_KW).some(sh=>sh!==w.show&&_WIN_SHOW_KW[sh].some(k=>nt.includes(_n(k)))))return;
+        const sc=(thisShow?4:0)+(/앵콜|encore|챔피언송/i.test(v.title)?2:0)+(v.is_short?0:1);
         if(sc>bestSc){bestSc=sc;best=v;}
       });
       return best;
