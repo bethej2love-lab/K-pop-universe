@@ -17,7 +17,8 @@ need(/o\.c = cs\.slice\(0, 20\)/.test(col), '수집기: 캐러셀 사진 20장�
 need(/o\.cap = String\(m\.caption\)\.slice\(0, 2200\)/.test(col), '수집기: 본문 2,200자까지');
 need(/per:pics\.length>1&&paras\.length===pics\.length\?paras:null/.test(app), '뷰어: 문단 수=사진 수일 때만 사진별 글');
 need(/_igv\.per&&!_igv\.full\?_igv\.per\[i\]:\(_igv\.m\.cap\|\|''\)/.test(app), '뷰어: 지금 장 문단 / 전체 보기 토글');
-need(/md\.classList\.add\('igv-framed'\)/.test(app) && /naturalHeight\/f\.naturalWidth,0\.52\),1\.34/.test(app), '뷰어: 첫 장 비율 틀(1.91:1~3:4)');
+need(/md\.classList\.add\('igv-framed'\)/.test(app) && /const ar=f\.naturalHeight\/f\.naturalWidth;/.test(app) && /Math\.min\(Math\.max\(ar,0\.52\),1\.34\)/.test(app), '뷰어: 첫 장 비율 틀(1.91:1~3:4)');
+need(/pn\.classList\.toggle\('igv-wide',ar<0\.85\)/.test(app) && /#igv-overlay:not\(\.igv-editing\) #igv-panel\.igv-wide\{padding-top:/.test(css), '뷰어: 가로로 긴 사진은 폰에서 위 여백을 늘림(igv-wide)');
 need(/#igv-media\.igv-framed\{width:100%;aspect-ratio:1 \/ var\(--igv-ar\);max-height:62dvh;\}/.test(css), 'CSS 모바일: 틀 고정');
 need(/#igv-overlay\.igv-narrow #igv-media\.igv-framed\{/.test(css), 'CSS 좁은 무대: 틀 고정');
 
