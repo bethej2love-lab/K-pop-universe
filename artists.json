@@ -292579,6 +292579,14 @@
         "en": "Coed School",
         "active": false,
         "left": "2012"
+      },
+      {
+        "ko": "씨야",
+        "en": "SeeYa",
+        "active": false,
+        "left": "2010.07.23",
+        "name": "이수미",
+        "nameEn": "Lee Soo-mi"
       }
     ],
     "links": {
@@ -313584,5 +313592,551 @@
     "songs": [],
     "links": {},
     "id": "a1902"
+  },
+  {
+    "name": {
+      "ko": "이해리",
+      "en": "Lee Hae-ri"
+    },
+    "group": {
+      "ko": "다비치",
+      "en": "Davichi"
+    },
+    "co": "씨에이엠위더스",
+    "active": true,
+    "color": [
+      214,
+      170,
+      120
+    ],
+    "bday": "1985.02.14",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {},
+    "id": "a1903"
+  },
+  {
+    "name": {
+      "ko": "강민경",
+      "en": "Kang Min-kyung"
+    },
+    "group": {
+      "ko": "다비치",
+      "en": "Davichi"
+    },
+    "co": "씨에이엠위더스",
+    "active": true,
+    "color": [
+      214,
+      170,
+      120
+    ],
+    "bday": "1990.08.03",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {},
+    "id": "a1904"
+  },
+  {
+    "name": {
+      "ko": "신",
+      "en": "Shin"
+    },
+    "group": {
+      "ko": "크로스진",
+      "en": "CROSS GENE"
+    },
+    "co": "아뮤즈코리아",
+    "active": true,
+    "color": [
+      96,
+      140,
+      210
+    ],
+    "bday": "1991.10.23",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {},
+    "id": "a1905"
+  },
+  {
+    "name": {
+      "ko": "용석",
+      "en": "Yongseok"
+    },
+    "group": {
+      "ko": "크로스진",
+      "en": "CROSS GENE"
+    },
+    "co": "아뮤즈코리아",
+    "active": true,
+    "color": [
+      96,
+      140,
+      210
+    ],
+    "bday": "1993.01.08",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {},
+    "id": "a1906"
+  },
+  {
+    "name": {
+      "ko": "타쿠야",
+      "en": "Takuya"
+    },
+    "group": {
+      "ko": "크로스진",
+      "en": "CROSS GENE"
+    },
+    "co": "아뮤즈코리아",
+    "active": false,
+    "color": [
+      96,
+      140,
+      210
+    ],
+    "bday": "1992.03.18",
+    "nat": {
+      "ko": "일본",
+      "en": "JP"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {},
+    "left": "2018.12.10",
+    "id": "a1907"
+  },
+  {
+    "name": {
+      "ko": "캐스퍼",
+      "en": "Casper"
+    },
+    "group": {
+      "ko": "크로스진",
+      "en": "CROSS GENE"
+    },
+    "co": "아뮤즈코리아",
+    "active": false,
+    "color": [
+      96,
+      140,
+      210
+    ],
+    "bday": "1991.03.20",
+    "nat": {
+      "ko": "중국",
+      "en": "CN"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {},
+    "left": "2017.08.31",
+    "id": "a1908"
+  },
+  {
+    "name": {
+      "ko": "상민",
+      "en": "Sangmin"
+    },
+    "group": {
+      "ko": "크로스진",
+      "en": "CROSS GENE"
+    },
+    "co": "아뮤즈코리아",
+    "active": false,
+    "color": [
+      96,
+      140,
+      210
+    ],
+    "bday": "1992.07.07",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {},
+    "id": "a1909"
+  },
+  {
+    "name": {
+      "ko": "세영",
+      "en": "Seyoung"
+    },
+    "group": {
+      "ko": "크로스진",
+      "en": "CROSS GENE"
+    },
+    "co": "아뮤즈코리아",
+    "active": false,
+    "color": [
+      96,
+      140,
+      210
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {},
+    "left": "2020.12.09",
+    "id": "a1910"
+  },
+  {
+    "name": {
+      "ko": "제이지",
+      "en": "J.G"
+    },
+    "group": {
+      "ko": "크로스진",
+      "en": "CROSS GENE"
+    },
+    "co": "아뮤즈코리아",
+    "active": false,
+    "color": [
+      96,
+      140,
+      210
+    ],
+    "bday": "1993.01.12",
+    "nat": {
+      "ko": "중국",
+      "en": "CN"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {},
+    "left": "2013",
+    "id": "a1911"
+  },
+  {
+    "name": {
+      "ko": "이연",
+      "en": "Yiyeon"
+    },
+    "group": {
+      "ko": "밴디트",
+      "en": "BVNDIT"
+    },
+    "co": "MNH엔터테인먼트",
+    "active": true,
+    "color": [
+      186,
+      120,
+      214
+    ],
+    "bday": "1995.05.28",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {},
+    "id": "a1912"
+  },
+  {
+    "name": {
+      "ko": "송희",
+      "en": "Songhee"
+    },
+    "group": {
+      "ko": "밴디트",
+      "en": "BVNDIT"
+    },
+    "co": "MNH엔터테인먼트",
+    "active": true,
+    "color": [
+      186,
+      120,
+      214
+    ],
+    "bday": "1998.11.08",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {},
+    "id": "a1913"
+  },
+  {
+    "name": {
+      "ko": "정우",
+      "en": "Jungwoo"
+    },
+    "group": {
+      "ko": "밴디트",
+      "en": "BVNDIT"
+    },
+    "co": "MNH엔터테인먼트",
+    "active": true,
+    "color": [
+      186,
+      120,
+      214
+    ],
+    "bday": "1999.04.02",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {},
+    "id": "a1914"
+  },
+  {
+    "name": {
+      "ko": "시명",
+      "en": "Simyeong"
+    },
+    "group": {
+      "ko": "밴디트",
+      "en": "BVNDIT"
+    },
+    "co": "MNH엔터테인먼트",
+    "active": true,
+    "color": [
+      186,
+      120,
+      214
+    ],
+    "bday": "1999.05.27",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {},
+    "id": "a1915"
+  },
+  {
+    "name": {
+      "ko": "승은",
+      "en": "Seungeun"
+    },
+    "group": {
+      "ko": "밴디트",
+      "en": "BVNDIT"
+    },
+    "co": "MNH엔터테인먼트",
+    "active": true,
+    "color": [
+      186,
+      120,
+      214
+    ],
+    "bday": "2000.12.27",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {},
+    "id": "a1916"
+  },
+  {
+    "name": {
+      "ko": "남규리",
+      "en": "Nam Gyu-ri"
+    },
+    "group": {
+      "ko": "씨야",
+      "en": "SeeYa"
+    },
+    "co": "씨야 엔터테인먼트",
+    "active": true,
+    "color": [
+      206,
+      128,
+      150
+    ],
+    "bday": "1984.04.26",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {},
+    "id": "a1917"
+  },
+  {
+    "name": {
+      "ko": "김연지",
+      "en": "Kim Yeon-ji"
+    },
+    "group": {
+      "ko": "씨야",
+      "en": "SeeYa"
+    },
+    "co": "씨야 엔터테인먼트",
+    "active": true,
+    "color": [
+      206,
+      128,
+      150
+    ],
+    "bday": "1986.10.30",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {},
+    "id": "a1918"
+  },
+  {
+    "name": {
+      "ko": "이보람",
+      "en": "Lee Bo-ram"
+    },
+    "group": {
+      "ko": "씨야",
+      "en": "SeeYa"
+    },
+    "co": "씨야 엔터테인먼트",
+    "active": true,
+    "color": [
+      206,
+      128,
+      150
+    ],
+    "bday": "1987.02.17",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {},
+    "id": "a1919"
+  },
+  {
+    "name": {
+      "ko": "우성",
+      "en": "Woosung"
+    },
+    "group": {
+      "ko": "더로즈",
+      "en": "The Rose"
+    },
+    "co": "윈드폴",
+    "active": true,
+    "color": [
+      176,
+      60,
+      84
+    ],
+    "bday": "1993.02.25",
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {},
+    "id": "a1920"
+  },
+  {
+    "name": {
+      "ko": "도준",
+      "en": "Dojoon"
+    },
+    "group": {
+      "ko": "더로즈",
+      "en": "The Rose"
+    },
+    "co": "윈드폴",
+    "active": true,
+    "color": [
+      176,
+      60,
+      84
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {},
+    "id": "a1921"
+  },
+  {
+    "name": {
+      "ko": "하준",
+      "en": "Hajoon"
+    },
+    "group": {
+      "ko": "더로즈",
+      "en": "The Rose"
+    },
+    "co": "윈드폴",
+    "active": true,
+    "color": [
+      176,
+      60,
+      84
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {},
+    "id": "a1922"
+  },
+  {
+    "name": {
+      "ko": "태겸",
+      "en": "Taegyeom"
+    },
+    "group": {
+      "ko": "더로즈",
+      "en": "The Rose"
+    },
+    "co": "윈드폴",
+    "active": true,
+    "color": [
+      176,
+      60,
+      84
+    ],
+    "nat": {
+      "ko": "한국",
+      "en": "KR"
+    },
+    "sparkle": false,
+    "songs": [],
+    "links": {},
+    "id": "a1923"
   }
 ]

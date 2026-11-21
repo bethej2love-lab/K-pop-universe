@@ -9339,7 +9339,9 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // 이름 목록(위·_ATM_HASHTAG_ONLY_NAMES)에 넣으면 같은 이름의 다른 아티스트까지 막히므로 그룹으로 건다:
   // 이름만으로 이 그룹을 추측하지 않고, 제목에 그룹명(A2O LITE/#A2OLITE 등)이 있거나 자체 채널일 때만 멤버를 붙인다.
   // 활동이 쌓여 영상이 늘면 여기서 빼고 이름별로 다시 판단할 것.
-  const _ATM_INFER_EXCLUDE_GROUPS=new Set(['A2O LITE','A2O SOUL']);
+  // 2026-11-21 그룹 추가(크로스진·밴디트·더로즈): 멤버 이름이 상민·세영·용석·정우·이연·승은·우성·하준·도준처럼 흔한 이름이고 활동 영상도 적다 —
+  // 이름만으로 이 그룹을 추측하면 방송인 이상민·배우 이연 같은 남의 영상을 가져온다. 제목에 그룹명이 있거나 자체 채널일 때만 멤버를 붙인다.
+  const _ATM_INFER_EXCLUDE_GROUPS=new Set(['A2O LITE','A2O SOUL','크로스진','밴디트','더로즈']);
   const _atmInferExcluded=a=>_ATM_INFER_EXCLUDE_NAMES.has(a.name.ko)||_ATM_INFER_EXCLUDE_NAMES.has(a.name.en)||_artistGroups(a).some(g=>g&&_ATM_INFER_EXCLUDE_GROUPS.has(g.ko));
   // 데뷔보다 1년 이상 전에 나온 영상을 순전히 멤버 이름만으로 이 그룹으로 역추론하는 건 근거가 없다 — 그
   // 그룹이 존재하기도 전이라 대개 동명이인(옛 가수·배우가 이름만 겹침)이다(2026-09-01 실측: 올아워즈←현빈
@@ -9428,6 +9430,10 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 베스티(BESTie, 2013 데뷔·2026 '연애의 조건' 역주행으로 재결합, 2026-11-21 그룹 추가): 'bestie'는 영어 일상어("my bestie", "#bestie")이고
     // 한글 '베스티'도 '찐친'이란 뜻으로 쓴다 — 추가 직후 시험에서 "my bestie and I tried the REDRED challenge"·"ME AND MY BESTIE #aespa"가 베스티로 잡혔다.
     // 공식 표기 그대로(BESTie/베스티) + 곡명·멤버명·제목 맨 앞 아티스트 표기가 같이 있을 때만 인정. 디스코가 아직 비어 있어 곡명은 여기 적는다.
+    // 밴디트(BVNDIT, 2019~2022): 한글 '밴디트'는 영화·게임 이름으로도 쓴다 — 공식 표기 BVNDIT나 멤버명이 같이 있을 때만. 영문 BVNDIT는 고유해서 그대로.
+    '밴디트':{gko:'밴디트',ctx:['BVNDIT']},
+    // 더로즈(The Rose, 밴드): 'the rose'는 노래 제목·일반 구절 — 한글 표기나 멤버명이 같이 있을 때만.
+    'The Rose':{gko:'더로즈',ctx:['더로즈','더 로즈','WOOSUNG','BACK TO ME',"SHE'S IN THE RAIN"]},
     'BESTie':{gko:'베스티',ctx:['연애의 조건','LOVE OPTIONS','두근두근','PITAPAT','THANK U VERY MUCH','HOT BABY','EXCUSE ME']},
     'BESTIE':{gko:'베스티',ctx:['연애의 조건','LOVE OPTIONS','두근두근','PITAPAT','THANK U VERY MUCH','HOT BABY','EXCUSE ME']}, // 방송사 영문 채널의 전부 대문자 표기(altNames)
     '베스티':{gko:'베스티',ctx:['연애의 조건','LOVE OPTIONS','두근두근','PITAPAT','THANK U VERY MUCH','HOT BABY','EXCUSE ME','BESTIE']}};
