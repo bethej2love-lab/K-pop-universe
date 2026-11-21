@@ -34,7 +34,7 @@ const ctx={SITE:'https://example.test',SONG_CSS_V:4,coverChipsHtml:()=>'',heroCa
   memberPagePath:(a,l)=>`${l}/${a.id}/`,groupPagePath:(g,l)=>`${l}/${g}/`,
   MEMBER_SONGS_BY_SONG:new Map(),membersOf:()=>[],
   escHtml:s=>String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'),
-  hashEsc:encodeURIComponent,ogImageForGroup:()=>'/default.jpg',
+  hashEsc:encodeURIComponent,ogImageForGroup:()=>'/default.jpg',groupFaceUrl:()=>null,
   SEO:{fmtViews:String},languageNav:()=>'',LIST_FWD:'<script>FORWARD_LIST_HASH</script>'};
 vm.createContext(ctx);
 vm.runInContext(builder.match(/^const SEO_GA_TAG = [\s\S]*?^<script async[^\n]+\x60;/m)[0],ctx);
