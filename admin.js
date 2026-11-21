@@ -8864,8 +8864,6 @@ const _GROUP_TITLE_CONFLICT_EXCLUDE={
   // "다이아 반지/귀걸이/수저/테스터기"·"진짜 다이아"·"5부 다이아". 그룹 다이아 영상은 이런 낱말과 붙어 나오지 않는다.
   '다이아':[/^(?!.*다이아)(?=.*\bDIA\b)(?=.*디아)/i,/다이아\s*버튼|diamond\s*(play\s*)?button/i,/\d\s*(캐럿|부)\s*다이아/,/다이아\s*(반지|귀걸이|목걸이|팔찌|수저|테스터기|몬드|플렉스|FLEX|도난|보석)/i,/(진짜|가짜|명품|보석)\s*다이아/],
   '아이들':[/서태지\s*와\s*아이들/],
-  // 씨야(SeeYa, 2006) ↔ 더 씨야(THE SEEYA, 2012 별개 그룹): 2026-11-21 씨야 추가 직후 검수에서 "THE SEEYA [내 맘은 죽어가요 (feat. SPEED 태운)]"가 씨야로 잡혔다
-  '씨야':[/더\s*씨야|THE\s*SEE\s*YA/i],
   // 2026-10-12: 곡·작품명 속 Beast — 티오원 'Son of Beast'(선 오브 비스트)·'Beauty and the Beast'(미녀와 야수)가 하이라이트 옛 이름
   // 비스트로 잡혀 함께한 그룹이 됐다(티오원 쇼챔·음중 5건, 존박X벨, 스테이씨 미녀와야수 챌린지).
   '하이라이트':[/son\s*of\s*(the\s*)?beast/i,/선\s*오브\s*비스트/,/beauty\s*(and|&)\s*the\s*beast/i,/뷰티\s*앤\s*더\s*비스트/,/미녀와\s*야수/],
@@ -9341,9 +9339,9 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
   // 이름 목록(위·_ATM_HASHTAG_ONLY_NAMES)에 넣으면 같은 이름의 다른 아티스트까지 막히므로 그룹으로 건다:
   // 이름만으로 이 그룹을 추측하지 않고, 제목에 그룹명(A2O LITE/#A2OLITE 등)이 있거나 자체 채널일 때만 멤버를 붙인다.
   // 활동이 쌓여 영상이 늘면 여기서 빼고 이름별로 다시 판단할 것.
-  // 2026-11-21 그룹 추가(크로스진·밴디트·더로즈): 멤버 이름이 상민·세영·용석·정우·이연·승은·우성·하준·도준처럼 흔한 이름이고 활동 영상도 적다 —
+  // 2026-11-21 그룹 추가(크로스진·밴디트): 멤버 이름이 상민·세영·용석·정우·이연·승은처럼 흔한 이름이고 활동 영상도 적다 —
   // 이름만으로 이 그룹을 추측하면 방송인 이상민·배우 이연 같은 남의 영상을 가져온다. 제목에 그룹명이 있거나 자체 채널일 때만 멤버를 붙인다.
-  const _ATM_INFER_EXCLUDE_GROUPS=new Set(['A2O LITE','A2O SOUL','크로스진','밴디트','더로즈']);
+  const _ATM_INFER_EXCLUDE_GROUPS=new Set(['A2O LITE','A2O SOUL','크로스진','밴디트']);
   const _atmInferExcluded=a=>_ATM_INFER_EXCLUDE_NAMES.has(a.name.ko)||_ATM_INFER_EXCLUDE_NAMES.has(a.name.en)||_artistGroups(a).some(g=>g&&_ATM_INFER_EXCLUDE_GROUPS.has(g.ko));
   // 데뷔보다 1년 이상 전에 나온 영상을 순전히 멤버 이름만으로 이 그룹으로 역추론하는 건 근거가 없다 — 그
   // 그룹이 존재하기도 전이라 대개 동명이인(옛 가수·배우가 이름만 겹침)이다(2026-09-01 실측: 올아워즈←현빈
@@ -9434,8 +9432,6 @@ function _m2ParseTitle(rawTitle,selfGko,strict,publishedAt){
     // 공식 표기 그대로(BESTie/베스티) + 곡명·멤버명·제목 맨 앞 아티스트 표기가 같이 있을 때만 인정. 디스코가 아직 비어 있어 곡명은 여기 적는다.
     // 밴디트(BVNDIT, 2019~2022): 한글 '밴디트'는 영화·게임 이름으로도 쓴다 — 공식 표기 BVNDIT나 멤버명이 같이 있을 때만. 영문 BVNDIT는 고유해서 그대로.
     '밴디트':{gko:'밴디트',ctx:['BVNDIT']},
-    // 더로즈(The Rose, 밴드): 'the rose'는 노래 제목·일반 구절 — 한글 표기나 멤버명이 같이 있을 때만.
-    'The Rose':{gko:'더로즈',ctx:['더로즈','더 로즈','WOOSUNG','BACK TO ME',"SHE'S IN THE RAIN"]},
     'BESTie':{gko:'베스티',ctx:['연애의 조건','LOVE OPTIONS','두근두근','PITAPAT','THANK U VERY MUCH','HOT BABY','EXCUSE ME']},
     'BESTIE':{gko:'베스티',ctx:['연애의 조건','LOVE OPTIONS','두근두근','PITAPAT','THANK U VERY MUCH','HOT BABY','EXCUSE ME']}, // 방송사 영문 채널의 전부 대문자 표기(altNames)
     '베스티':{gko:'베스티',ctx:['연애의 조건','LOVE OPTIONS','두근두근','PITAPAT','THANK U VERY MUCH','HOT BABY','EXCUSE ME','BESTIE']}};
